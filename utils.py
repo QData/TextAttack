@@ -1,29 +1,31 @@
+import json
 import os
+import torch
 
-CONFIG = load_config()
+CONFIG = json.load(open('config.json', 'r'))
 
-def load_config():
-    config_file = open('config.json', 'r')
-    return json.load(config_file)
+def get_device():
+    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 DATA_URLS = {
     'infersent': {
         
     },
     'bert_for_sentiment_classification': {
-        'config.json': '...'
-        'URL'
+        'config.json': 'URL?'
     }
 }
 
 def cache_path(file_path):
     return os.path.join(CONFIG['CACHE_DIR'], file_path)
 
-def cache_folder_if_needed(folder):
-    folder_path = os.path.join(CONFIG['CACHE_DIR'], model_name)
+def download_if_needed(folder_path):
+    folder_path = os.path.join(CONFIG['CACHE_DIR'], folder_path)
     if os.path.exists(folder_path):
         return
-    for file_name, file_url in DATA_URLS[folder]:
+    raise NotImplementedException('Sorry, we haven\'t uploaded our models to the Internet yet.')
+        # @TODO: upload models & remove prev line
+    for file_name, file_url in DATA_URLS[folder_path]:
         file_path = os.path.join(folder_path, file_name)
         http_get(file_url, file_path)
         print(f'Saved {file_url} to {file_path}.')
