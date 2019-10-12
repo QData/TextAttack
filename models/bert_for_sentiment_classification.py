@@ -24,6 +24,7 @@ class BertForSentimentClassification:
         """ Takes a string input, tokenizes, formats,
             and returns a tensor with text IDs. """
         tokens = self.tokenizer.tokenize(input_text)
+        print('tokens:', tokens)
         while len(tokens) > self.max_seq_length:
             tokens.pop()
         tokens = ["[CLS]"] + tokens + ["[SEP]"]
