@@ -11,6 +11,7 @@
 
 import torch
 
+import utils
 from tokenized_text import TokenizedText
 
 class Attack:
@@ -50,8 +51,8 @@ class Attack:
     def _call_model(self, tokenized_text_list):
         """ Returns model predictions for a list of TokenizedText objects. """
         # @todo support models that take text instead of IDs.
-        print('L:', [t.ids for t in tokenized_text_list])
-        ids = torch.stack([t.ids for t in tokenized_text_list])
+        ids = torch.tensor([t.ids for t in tokenized_text_list])
+        ids = ids.to(utils.get_device())
         return self.model(ids).squeeze()
     
     def attack(self, dataset, n=None, shuffle=False):

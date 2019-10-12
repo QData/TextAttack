@@ -7,7 +7,7 @@ class TokenizedText:
         self.model = model
         self.text = text
         self.ids = model.convert_text_to_ids(text)
-        print('TokenizedText:', self.text, '/', self.words())
+        # print('TokenizedText:', self.text)
     
     def words(self):
         """ Returns the distinct words from self.text. """
@@ -15,21 +15,19 @@ class TokenizedText:
         # convert words to/from lowercase.
         return self.text.split(' ')
     
-    def first_word_diff(self, other_words):
+    def first_word_diff(self, other_tokenized_text):
         """ Returns the index of the first word in self.words() that differs
             from other_words. Useful for word swap strategies. """
-        sw = self.words()
-        for i in min(len(sw), len(other_words)):
-            if sw[i] != other_words[i]:
+        w1 = self.words()
+        w2 = other_tokenized_text.words()
+        for i in range(min(len(w1), len(w2))):
+            if w1[i] != w2[i]:
                 return i
         return None
     
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
-        print('self.words(): ', self.words(),
-            '/', self.text)
-        print('index/new_words:', index, new_word)
         new_words = self.words()[:]
         new_words[index] = new_word
         return self.replace_new_words(new_words)
@@ -49,7 +47,5 @@ class TokenizedText:
             final_sentence += adv_word
             text = text[word_end:]
         final_sentence += text # Add all of the ending punctuation.
-        print('replace_new_words:', adv_words)
-        print('final_sentence:', final_sentence)
         return TokenizedText(self.model, final_sentence)
         

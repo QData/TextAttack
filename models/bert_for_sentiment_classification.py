@@ -2,6 +2,7 @@ from transformers.modeling_bert import BertForSequenceClassification
 from transformers.tokenization_bert import BertTokenizer
 
 import utils
+import torch
 
 class BertForSentimentClassification:
     """ BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification. """
@@ -10,7 +11,6 @@ class BertForSentimentClassification:
     
     def __init__(self, max_seq_length=128):
         utils.download_if_needed(BertForSentimentClassification.MODEL_PATH)
-        
         self.model = BertForSequenceClassification.from_pretrained(
             BertForSentimentClassification.MODEL_PATH, 
             num_labels=2)
@@ -24,21 +24,20 @@ class BertForSentimentClassification:
         """ Takes a string input, tokenizes, formats,
             and returns a tensor with text IDs. """
         tokens = self.tokenizer.tokenize(input_text)
-        print('tokens:', tokens)
         while len(tokens) > self.max_seq_length:
             tokens.pop()
         tokens = ["[CLS]"] + tokens + ["[SEP]"]
-        while len(tokens) < self.max_seq_length:
-            tokens = tokens + [0]
-        return self.tokenizer.convert_tokens_to_ids(tokens)
+        ids = self.tokenizer.convert_tokens_to_ids(tokens)
+        while len(ids) < self.max_seq_length:
+            ids = ids + [0] # @TODO Is it correct to just pad with zeros?
+        return ids
     
     def __call__(self, text_ids):
-        if not isinstance(text_ids, torch.tensor):
+        if not isinstance(text_ids, torch.Tensor):
             raise ValueError(f'Object of type {type(text_ids)} must be of type torch.tensor')
-        print('Bert input:', text_ids)
         pred = self.model(text_ids)
+        print('pred[0]:', pred[0])
         # @TODO do we need to do crossentropy here?
-        print('bert output:', pred)
-        return pred
+        return pred[0]
 
 # Rewrite 'SimpleBertClassifier' from RobustNLP using new transformers package.
