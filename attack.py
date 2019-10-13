@@ -9,6 +9,7 @@
     - upload sample models and datasets
     - add logger... we should never call print()
     - make it much quieter when we load pretrained BERT. It's so noisy right now :(
+    - try to refer to 'text' not 'sentences' (better terminology)
 """
 
 import difflib

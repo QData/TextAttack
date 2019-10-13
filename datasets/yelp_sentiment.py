@@ -1,5 +1,5 @@
 import utils
-from dataset import TextAttackDataset
+from .dataset import TextAttackDataset
 
 class YelpSentiment(TextAttackDataset):
     DATA_PATH = '/p/qdata/jm8wx/research/OLD/TextFooler/data/yelp'

@@ -2,12 +2,13 @@ import numpy as np
 import os
 import utils
 
-from perturbation import Perturbation
+from .word_swap import WordSwap
 
-class WordSwapCounterfit(Perturbation):
+class WordSwapCounterfit(WordSwap):
     PATH = '/p/qdata/jm8wx/research/RobustNLP/AttackGeneration/word_embeddings/'
     
     def __init__(self, word_embedding_folder='paragram_300_sl999'):
+        super().__init__()
         if word_embedding_folder == 'paragram_300_sl999':
             word_embeddings_file = 'paragram_300_sl999.npy'
             word_list_file = 'wordlist.pickle'
@@ -51,23 +52,3 @@ class WordSwapCounterfit(Perturbation):
         except KeyError:
             # This word is not in our word embedding database, so return an empty list.
             return []
-    
-    def perturb(self, tokenized_text, indices_to_replace=None):
-        """ Returns a list of all possible perturbations for `text`.
-        
-            If indices_to_replace is set, only replaces words at those
-                indices.
-        """
-        words = tokenized_text.words()
-        if not indices_to_replace:
-            indices_to_replace = list(range(len(words)))
-        
-        perturbations = []
-        for i in indices_to_replace:
-            word_to_replace = words[i]
-            replacement_words = self._get_replacement_words(word_to_replace)
-            new_tokenized_texts = [tokenized_text.replace_word_at_index(i, r)
-                for r in replacement_words]
-            perturbations.extend(new_tokenized_texts)
-        
-        return perturbations
