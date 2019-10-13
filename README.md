@@ -5,7 +5,10 @@
 You must be running Python 3.6+ to use this package. A CUDA-compatible GPU is 
 optional but will greatly improve code speed.
 
+'conda create -n text-attack python=3.7'
+'conda activate text-attack'
 `pip install -r requirements.txt`
+'mkdir outputs'
 
 
 ## Features
