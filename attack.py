@@ -32,6 +32,7 @@ class Attack:
         # List of files to output to.
         self.output_files = []
         self.output_to_terminal = True
+        self.output_to_visdom = False
     
     def add_constraint(self, constraint):
         """ Add constraint to attack. """
@@ -79,15 +80,23 @@ class Attack:
             if n and _i > n:
                 break
         
-        for output_file in self.output_files:
-            for result in results:
-                output_file.write(str(result) + '\n')
+        # @TODO Support failed attacks. Right now they'll throw an error
         
         if self.output_to_terminal:
             for i, result in enumerate(results):
                 print('-'*35, 'Result', str(i+1), '-'*35)
                 result.print_()
                 print()
+        
+        if self.output_files:
+            for output_file in self.output_files:
+                for result in results:
+                    output_file.write(str(result) + '\n')
+        
+        if self.output_to_visdom:
+            # @TODO Support logging to Visdom.
+            raise NotImplementedException()
+        
         print('-'*80)
         
         return results
@@ -153,15 +162,14 @@ if __name__ == '__main__':
     #       (as opposed to code-based attacks)
     model = BertForSentimentClassification()
     
-    attack = attacks.GreedyWordSwap(
-        model,
-        WordSwapCounterfit()
-    )
+    perturbation = WordSwapCounterfit()
     
-    # attack.add_constraints(
+    # perturbation.add_constraints(
         # constraints.syntax.LanguageTool(1),
         # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine')
     # )
+    
+    attack = attacks.GreedyWordSwap(model, perturbation)
     
     yelp_data = YelpSentiment(n=2)
     # yelp_data = [
