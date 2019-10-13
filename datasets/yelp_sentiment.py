@@ -1,10 +1,10 @@
-from dataset import Dataset
+import utils
+from dataset import TextAttackDataset
 
-class YelpSentiment(Dataset):
-    def __init__(self):
+class YelpSentiment(TextAttackDataset):
+    DATA_PATH = '/p/qdata/jm8wx/research/OLD/TextFooler/data/yelp'
+    def __init__(self, N=None):
         """ Loads a full dataset from disk. """
-        raise NotImplementedException()
-    
-    def __iter__(self):
-        """ Called to iterate through a dataset. """
-        raise NotImplementedException()
+        utils.download_if_needed(YelpSentiment.DATA_PATH)
+        self.examples = self._load_text_file(YelpSentiment.DATA_PATH, N=N)
+        print('YelpSentiment loaded', len(self.examples), 'examples...')

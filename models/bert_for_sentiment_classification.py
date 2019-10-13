@@ -9,7 +9,7 @@ class BertForSentimentClassification:
     
     MODEL_PATH = '/p/qdata/jm8wx/research/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
     
-    def __init__(self, max_seq_length=128):
+    def __init__(self, max_seq_length=32):
         utils.download_if_needed(BertForSentimentClassification.MODEL_PATH)
         self.model = BertForSequenceClassification.from_pretrained(
             BertForSentimentClassification.MODEL_PATH, 
@@ -28,7 +28,7 @@ class BertForSentimentClassification:
             tokens.pop()
         tokens = ["[CLS]"] + tokens + ["[SEP]"]
         ids = self.tokenizer.convert_tokens_to_ids(tokens)
-        while len(ids) < self.max_seq_length:
+        while len(ids) < self.max_seq_length + 2:
             ids = ids + [0] # @TODO Is it correct to just pad with zeros?
         return ids
     
@@ -36,8 +36,6 @@ class BertForSentimentClassification:
         if not isinstance(text_ids, torch.Tensor):
             raise ValueError(f'Object of type {type(text_ids)} must be of type torch.tensor')
         pred = self.model(text_ids)
-        print('pred[0]:', pred[0])
-        # @TODO do we need to do crossentropy here?
         return pred[0]
 
 # Rewrite 'SimpleBertClassifier' from RobustNLP using new transformers package.
