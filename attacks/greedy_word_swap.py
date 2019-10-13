@@ -21,7 +21,6 @@ class GreedyWordSwap(Attack):
             if not perturbed_text_candidates:
                 # If we did not find any possible perturbations, give up.
                 return None
-            # @TODO filter candidates by constraints here
             scores = self._call_model(perturbed_text_candidates)
             # The best choice is the one that minimizes the original class label.
             best_index = scores[:, original_label].argmin()

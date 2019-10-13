@@ -12,7 +12,7 @@ class TextAttackDataset:
         """ Loads a full dataset from disk. Typically stores tuples in
             `self.examples`.
         """
-        raise NotImplementedException()
+        raise NotImplementedError()
     
     def __iter__(self):
         return self.examples.__iter__()

@@ -34,16 +34,6 @@ class Attack:
         self.output_to_terminal = True
         self.output_to_visdom = False
     
-    def add_constraint(self, constraint):
-        """ Add constraint to attack. """
-        raise NotImplementedException()
-    
-    def add_constraints(self, constraints):
-        """ Add multiple constraints.
-        """
-        for constraint in constraints:
-            self.add_constraint(constraint)
-    
     def add_output_file(self, file):
         """ When attack runs, it will output to this file. """
         if isinstance(file, str):
@@ -53,7 +43,7 @@ class Attack:
     def _attack_one(self, label, tokenized_text):
         """ Perturbs `text` to until `self.model` gives a different label
             than `label`. """
-        raise NotImplementedException()
+        raise NotImplementedError()
     
     def _call_model(self, tokenized_text_list):
         """ Returns model predictions for a list of TokenizedText objects. """
@@ -95,7 +85,7 @@ class Attack:
         
         if self.output_to_visdom:
             # @TODO Support logging to Visdom.
-            raise NotImplementedException()
+            raise NotImplementedError()
         
         print('-'*80)
         
