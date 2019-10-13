@@ -44,3 +44,44 @@ def http_get(url, out_file, proxies=None):
             progress.update(len(chunk))
             out_file.write(chunk)
     progress.close()
+
+
+LABEL_COLORS = [
+    'red', 'green', 
+    'blue', 'purple', 
+    'yellow', 'orange', 
+    'pink', 'cyan',
+    'gray', 'brown'
+]
+
+def color_from_label(label_num):
+    """ Colors for labels (arbitrary). """
+    label_num %= len(LABEL_COLORS)
+    return LABEL_COLORS[label_num]
+
+def color_text_terminal(text, color=None):
+    if color == 'green':
+        color = ANSI_ESCAPE_CODES.OKGREEN
+    elif color == 'red':
+        color = ANSI_ESCAPE_CODES.FAIL
+    elif color == 'blue':
+        color = ANSI_ESCAPE_CODES.OKBLUE
+    elif color == 'gray':
+        color = ANSI_ESCAPE_CODES.GRAY
+    else: 
+        color = ANSI_ESCAPE_CODES.BOLD
+    
+    return color + text + ANSI_ESCAPE_CODES.STOP
+
+class ANSI_ESCAPE_CODES:
+    """ Escape codes for printing color to the terminal. """
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    GRAY = '\033[37m'
+    FAIL = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    """ This color stops the current color sequence. """
+    STOP = '\033[0m'

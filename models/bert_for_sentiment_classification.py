@@ -35,7 +35,8 @@ class BertForSentimentClassification:
     def __call__(self, text_ids):
         if not isinstance(text_ids, torch.Tensor):
             raise ValueError(f'Object of type {type(text_ids)} must be of type torch.tensor')
-        pred = self.model(text_ids)
+        with torch.no_grad():
+            pred = self.model(text_ids)
         return pred[0]
 
 # Rewrite 'SimpleBertClassifier' from RobustNLP using new transformers package.

@@ -9,18 +9,18 @@ class TextAttackDataset:
         a TextAttackDataset.
     """
     def __init__(self):
-        """ Loads a full dataset from disk. """
+        """ Loads a full dataset from disk. Typically stores tuples in
+            `self.examples`.
+        """
         raise NotImplementedException()
     
     def __iter__(self):
-        """ Called to iterate through a dataset. """
         return self.examples.__iter__()
     
     def __next__(self):
-        """ Called to iterate through a dataset. """
         return self.examples.__next__()
     
-    def _load_text_file(self, text_file_name, N=None):
+    def _load_text_file(self, text_file_name, n=None):
         """ Loads (label, text) pairs from a text file. 
         
             Format must look like:
@@ -37,5 +37,5 @@ class TextAttackDataset:
             text = ' '.join(tokens[1:])
             examples.append((label, text))
             i += 1
-            if N and i >= N: break
+            if n and i >= n: break
         return examples
