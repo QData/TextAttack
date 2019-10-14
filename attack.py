@@ -54,23 +54,19 @@ class Attack:
         ids = ids.to(utils.get_device())
         return self.model(ids).squeeze()
     
-    def attack(self, dataset, n=None, shuffle=False):
+    def attack(self, dataset, shuffle=False):
         """ Runs an attack on some data and outputs results.
         
             - dataset: an iterable of (label, text) pairs
         """
         if shuffle:
             random.shuffle(dataset)
-
-        _i = 0
+        
         results = []
         for label, text in dataset:
             tokenized_text = TokenizedText(self.model, text)
             result = self._attack_one(label, tokenized_text)
             results.append(result)
-            _i += 1
-            if n and _i > n:
-                break
         
         # @TODO Support failed attacks. Right now they'll throw an error
         
@@ -174,4 +170,4 @@ if __name__ == '__main__':
     import sys
     attack.add_output_file(sys.stdout)
     
-    attack.attack(yelp_data, n=10, shuffle=False)
+    attack.attack(yelp_data, shuffle=False)

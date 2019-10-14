@@ -3,7 +3,6 @@ from constraints import TextConstraint
 class Perturbation:
     """ Generates perturbations for a given text input. """
     def __init__(self, constraints=[]):
-        print('Perturbation init')
         self.constraints = []
         if constraints:
             self.add_constraints(constraints)
