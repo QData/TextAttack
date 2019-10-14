@@ -10,6 +10,7 @@
     - add logger... we should never call print()
     - make it much quieter when we load pretrained BERT. It's so noisy right now :(
     - try to refer to 'text' not 'sentences' (better terminology)
+    - make this into a pip package (not on pypi, just a local package)
 """
 
 import difflib
