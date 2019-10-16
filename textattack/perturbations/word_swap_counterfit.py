@@ -5,7 +5,7 @@ import utils
 from .word_swap import WordSwap
 
 class WordSwapCounterfit(WordSwap):
-    PATH = '/p/qdata/jm8wx/research/RobustNLP/AttackGeneration/word_embeddings/'
+    PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/'
     
     def __init__(self, word_embedding_folder='paragram_300_sl999'):
         super().__init__()

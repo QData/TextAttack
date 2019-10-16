@@ -1,4 +1,7 @@
-from constraints import TextConstraint
+import numpy as np
+
+from constraints import Constraint
+
 
 class Perturbation:
     """ Generates perturbations for a given text input. """
@@ -33,7 +36,20 @@ class Perturbation:
     def add_constraints(self, constraints):
         """ Add multiple constraints.
         """
+        # Make sure constraints are iterable.
+        try:
+            iter(constraints)
+        except TypeError as te:
+            raise TypeError(f'Constraint list type {type(constraints)} is not iterable.')
+        # Store each constraint after validating its type.
         for constraint in constraints:
-            if not isinstance(constraint, TextConstraint):
+            if not isinstance(constraint, Constraint):
                 raise ValueError('Cannot add constraint of type', type(constraint))
             self.add_constraint(constraint)
+    
+    def _filter_perturbations(self, original_text, perturbations):
+        """ Filters a list of perturbations by self.constraints. """
+        perturbations = np.array(perturbations)
+        for C in self.constraints:
+            perturbations = C.call_many(original_text, perturbations)
+        return perturbations

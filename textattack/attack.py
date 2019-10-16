@@ -20,7 +20,7 @@ import utils
 from tokenized_text import TokenizedText
 
 class Attack:
-    
+    """ An attack generates adversarial examples on text. """
     def __init__(self, model, perturbation):
         """ Initialize an attack object.
         
@@ -90,6 +90,10 @@ class Attack:
         return results
 
 class AttackResult:
+    """ Result of an Attack run on a single (label, text_input) pair. 
+    
+        @TODO support attacks that fail (no perturbed label/text)
+    """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
         self.original_text = original_text
@@ -142,9 +146,10 @@ class AttackResult:
 
 if __name__ == '__main__':
     import attacks
+    import constraints
+    from datasets import YelpSentiment
     from models import BertForSentimentClassification
     from perturbations import WordSwapCounterfit
-    from datasets import YelpSentiment
     
     # @TODO: Running attack.py should parse args and run script-based attacks 
     #       (as opposed to code-based attacks)
@@ -152,10 +157,11 @@ if __name__ == '__main__':
     
     perturbation = WordSwapCounterfit()
     
-    # perturbation.add_constraints(
+    perturbation.add_constraints((
         # constraints.syntax.LanguageTool(1),
-        # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine')
-    # )
+        constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        )
+    )
     
     attack = attacks.GreedyWordSwap(model, perturbation)
     

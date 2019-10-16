@@ -7,7 +7,7 @@ import torch
 class BertForSentimentClassification:
     """ BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification. """
     
-    MODEL_PATH = '/p/qdata/jm8wx/research/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
+    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
     
     def __init__(self, max_seq_length=32):
         utils.download_if_needed(BertForSentimentClassification.MODEL_PATH)

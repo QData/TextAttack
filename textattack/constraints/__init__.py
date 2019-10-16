@@ -1,1 +1,4 @@
-from .constraint import TextConstraint, WordConstraint
+from .constraint import Constraint
+
+from .semantics import *
+from .syntax import *

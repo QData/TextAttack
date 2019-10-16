@@ -18,7 +18,7 @@ class GreedyWordSwap(Attack):
             num_words_changed += 1
             perturbed_text_candidates = self.perturbation.perturb(tokenized_text,
                 indices_to_replace=unswapped_word_indices)
-            if not perturbed_text_candidates:
+            if len(perturbed_text_candidates) == 0:
                 # If we did not find any possible perturbations, give up.
                 return None
             scores = self._call_model(perturbed_text_candidates)
