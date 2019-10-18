@@ -1,7 +1,7 @@
 import numpy as np
 import os
-import utils
 
+from textattack import utils as utils
 from .word_swap import WordSwap
 
 class WordSwapCounterfit(WordSwap):

@@ -2,7 +2,9 @@ import json
 import os
 import torch
 
-CONFIG = json.load(open('config.json', 'r'))
+dir_path = os.path.dirname(os.path.realpath(__file__))
+config_path = os.path.join(dir_path, 'config.json')
+CONFIG = json.load(open(config_path, 'r'))
 
 def get_device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")

@@ -2,9 +2,9 @@ import numpy as np
 import os
 import torch
 
-from constraints import Constraint
-from models import InferSent
-from utils import download_if_needed, get_device
+from textattack.constraints import Constraint
+from textattack.models import InferSent
+from textattack.utils import download_if_needed, get_device
 
 class UniversalSentenceEncoder(Constraint):
     """ Constraint using cosine similarity between Universal Sentence Encodings

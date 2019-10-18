@@ -1,7 +1,7 @@
 from transformers.modeling_bert import BertForSequenceClassification
 from transformers.tokenization_bert import BertTokenizer
 
-import utils
+import textattack.utils as utils
 import torch
 
 class BertForSentimentClassification:

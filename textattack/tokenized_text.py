@@ -1,4 +1,4 @@
-from utils import get_device
+from .utils import get_device
 
 class TokenizedText:
     def __init__(self, model, text):
