@@ -47,11 +47,6 @@ An attack method selects the best possible perturbation from a set of potential 
 Text input perturbations are only valid if they meet the constraints of the attack. This library supports constraints on the semantic, syntactic, and morphological level. Some constraints measure changes in the entire input, while others only take into account substitutions of a single word.
 
 #### Semantics
-
-##### Input-level Constraints
-- Universal Sentence Encoding cosine distance
-
-##### Word-level Constraints
 - Word embedding nearest-neighbor distance
 
 #### Syntax
