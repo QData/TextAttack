@@ -15,9 +15,9 @@
 
 import difflib
 import torch
-import utils
 
-from tokenized_text import TokenizedText
+from textattack import utils as utils
+from textattack.tokenized_text import TokenizedText
 
 class Attack:
     """ An attack generates adversarial examples on text. """
@@ -145,11 +145,11 @@ class AttackResult:
         print('\n'.join(self.diff()))
 
 if __name__ == '__main__':
-    import attacks
-    import constraints
-    from datasets import YelpSentiment
-    from models import BertForSentimentClassification
-    from perturbations import WordSwapCounterfit
+    from . import attacks
+    from . import constraints
+    from .datasets import YelpSentiment
+    from .models import BertForSentimentClassification
+    from .perturbations import WordSwapCounterfit
     
     # @TODO: Running attack.py should parse args and run script-based attacks 
     #       (as opposed to code-based attacks)

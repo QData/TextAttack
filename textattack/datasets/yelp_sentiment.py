@@ -1,4 +1,4 @@
-import utils
+from textattack import utils as utils
 from .dataset import TextAttackDataset
 
 class YelpSentiment(TextAttackDataset):

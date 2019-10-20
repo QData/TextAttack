@@ -1,4 +1,4 @@
-from attack import Attack, AttackResult
+from textattack.attacks import Attack, AttackResult
 
 class GreedyWordSwap(Attack):
     """ An attack that greedily chooses from a list of possible 

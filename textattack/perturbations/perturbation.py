@@ -1,6 +1,6 @@
 import numpy as np
 
-from constraints import Constraint
+from textattack.constraints import Constraint
 
 
 class Perturbation:

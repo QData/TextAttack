@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>textattack.models package &mdash; textattack  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> textattack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">textattack.models package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-textattack.models.bert_for_sentiment_classification">textattack.models.bert_for_sentiment_classification module</a></li>
+<li><a class="reference internal" href="#module-textattack.models.infer_sent">textattack.models.infer_sent module</a></li>
+<li><a class="reference internal" href="#textattack-models-lstm-for-sentiment-classification-module">textattack.models.lstm_for_sentiment_classification module</a></li>
+<li><a class="reference internal" href="#module-textattack.models">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">textattack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>textattack.models package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/textattack.models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="textattack-models-package">
+<h1>textattack.models package<a class="headerlink" href="#textattack-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-textattack.models.bert_for_sentiment_classification">
+<span id="textattack-models-bert-for-sentiment-classification-module"></span><h2>textattack.models.bert_for_sentiment_classification module<a class="headerlink" href="#module-textattack.models.bert_for_sentiment_classification" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="textattack.models.bert_for_sentiment_classification.BertForSentimentClassification">
+<em class="property">class </em><code class="sig-prename descclassname">textattack.models.bert_for_sentiment_classification.</code><code class="sig-name descname">BertForSentimentClassification</code><span class="sig-paren">(</span><em class="sig-param">max_seq_length=32</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.bert_for_sentiment_classification.BertForSentimentClassification" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification.</p>
+<dl class="attribute">
+<dt id="textattack.models.bert_for_sentiment_classification.BertForSentimentClassification.MODEL_PATH">
+<code class="sig-name descname">MODEL_PATH</code><em class="property"> = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'</em><a class="headerlink" href="#textattack.models.bert_for_sentiment_classification.BertForSentimentClassification.MODEL_PATH" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.bert_for_sentiment_classification.BertForSentimentClassification.convert_text_to_ids">
+<code class="sig-name descname">convert_text_to_ids</code><span class="sig-paren">(</span><em class="sig-param">input_text</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.bert_for_sentiment_classification.BertForSentimentClassification.convert_text_to_ids" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes a string input, tokenizes, formats,
+and returns a tensor with text IDs.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-textattack.models.infer_sent">
+<span id="textattack-models-infer-sent-module"></span><h2>textattack.models.infer_sent module<a class="headerlink" href="#module-textattack.models.infer_sent" title="Permalink to this headline">¶</a></h2>
+<p>This file contains the definition of encoders used in <a class="reference external" href="https://arxiv.org/pdf/1705.02364.pdf">https://arxiv.org/pdf/1705.02364.pdf</a></p>
+<dl class="class">
+<dt id="textattack.models.infer_sent.InferSent">
+<em class="property">class </em><code class="sig-prename descclassname">textattack.models.infer_sent.</code><code class="sig-name descname">InferSent</code><span class="sig-paren">(</span><em class="sig-param">config</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">torch.nn.modules.module.Module</span></code></p>
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.build_vocab">
+<code class="sig-name descname">build_vocab</code><span class="sig-paren">(</span><em class="sig-param">sentences</em>, <em class="sig-param">tokenize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.build_vocab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.build_vocab_k_words">
+<code class="sig-name descname">build_vocab_k_words</code><span class="sig-paren">(</span><em class="sig-param">K</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.build_vocab_k_words" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.encode">
+<code class="sig-name descname">encode</code><span class="sig-paren">(</span><em class="sig-param">sentences</em>, <em class="sig-param">bsize=64</em>, <em class="sig-param">tokenize=True</em>, <em class="sig-param">verbose=False</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.encode" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param">sent_tuple</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.get_batch">
+<code class="sig-name descname">get_batch</code><span class="sig-paren">(</span><em class="sig-param">batch</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.get_batch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.get_w2v">
+<code class="sig-name descname">get_w2v</code><span class="sig-paren">(</span><em class="sig-param">word_dict</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.get_w2v" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.get_w2v_k">
+<code class="sig-name descname">get_w2v_k</code><span class="sig-paren">(</span><em class="sig-param">K</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.get_w2v_k" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.get_word_dict">
+<code class="sig-name descname">get_word_dict</code><span class="sig-paren">(</span><em class="sig-param">sentences</em>, <em class="sig-param">tokenize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.get_word_dict" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.is_cuda">
+<code class="sig-name descname">is_cuda</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.is_cuda" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.prepare_samples">
+<code class="sig-name descname">prepare_samples</code><span class="sig-paren">(</span><em class="sig-param">sentences</em>, <em class="sig-param">bsize</em>, <em class="sig-param">tokenize</em>, <em class="sig-param">verbose</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.prepare_samples" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.set_w2v_path">
+<code class="sig-name descname">set_w2v_path</code><span class="sig-paren">(</span><em class="sig-param">w2v_path</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.set_w2v_path" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.tokenize">
+<code class="sig-name descname">tokenize</code><span class="sig-paren">(</span><em class="sig-param">s</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.tokenize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.update_vocab">
+<code class="sig-name descname">update_vocab</code><span class="sig-paren">(</span><em class="sig-param">sentences</em>, <em class="sig-param">tokenize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.update_vocab" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="textattack.models.infer_sent.InferSent.visualize">
+<code class="sig-name descname">visualize</code><span class="sig-paren">(</span><em class="sig-param">sent</em>, <em class="sig-param">tokenize=True</em><span class="sig-paren">)</span><a class="headerlink" href="#textattack.models.infer_sent.InferSent.visualize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="textattack-models-lstm-for-sentiment-classification-module">
+<h2>textattack.models.lstm_for_sentiment_classification module<a class="headerlink" href="#textattack-models-lstm-for-sentiment-classification-module" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-textattack.models">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-textattack.models" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, uva qdata lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
