@@ -14,6 +14,7 @@
 """
 
 import difflib
+import os
 import torch
 
 from textattack import utils as utils
@@ -39,25 +40,28 @@ class Attack:
     def add_output_file(self, file):
         """ When attack runs, it will output to this file. """
         if isinstance(file, str):
+            directory = os.path.dirname(file)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             file = open(file, 'w')
         self.output_files.append(file)
-    
+      
     def _attack_one(self, label, tokenized_text):
         """ Perturbs `text` to until `self.model` gives a different label
             than `label`. """
         raise NotImplementedError()
-    
+      
     def _call_model(self, tokenized_text_list):
         """ Returns model predictions for a list of TokenizedText objects. """
         # @todo support models that take text instead of IDs.
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         return self.model(ids).squeeze()
-    
+      
     def attack(self, dataset, shuffle=False):
         """ Runs an attack on some data and outputs results.
-        
-            - dataset: an iterable of (label, text) pairs
+          
+              - dataset: an iterable of (label, text) pairs
         """
         if shuffle:
             random.shuffle(dataset)
@@ -145,11 +149,11 @@ class AttackResult:
         print('\n'.join(self.diff()))
 
 if __name__ == '__main__':
-    from . import attacks
-    from . import constraints
-    from .datasets import YelpSentiment
-    from .models import BertForSentimentClassification
-    from .perturbations import WordSwapCounterfit
+    import textattack.attacks as attacks
+    import textattack.constraints as constraints
+    from textattack.datasets import YelpSentiment
+    from textattack.models import BertForSentimentClassification
+    from textattack.perturbations import WordSwapCounterfit
     
     # @TODO: Running attack.py should parse args and run script-based attacks 
     #       (as opposed to code-based attacks)
@@ -172,7 +176,7 @@ if __name__ == '__main__':
     # ]
     
     # attack.enable_visdom()
-    attack.add_output_file(open('outputs/test.txt', 'w'))
+    attack.add_output_file('outputs/test.txt')
     import sys
     attack.add_output_file(sys.stdout)
     
