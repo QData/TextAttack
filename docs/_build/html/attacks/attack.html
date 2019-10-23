@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Attack Documentation &mdash; TextAttack 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Greedy Word Swap" href="greedy_word_swap.html" />
+    <link rel="prev" title="Installation" href="../users/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> TextAttack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../users/introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../users/installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Attack Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Attack Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="greedy_word_swap.html">Greedy Word Swap</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">TextAttack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Attack Documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/attacks/attack.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-attacks.attack">
+<span id="attack-documentation"></span><h1>Attack Documentation<a class="headerlink" href="#module-attacks.attack" title="Permalink to this headline">¶</a></h1>
+<p>” &#64;TODOs:
+- Example of using with Pytorch and Tensorflow model.
+- sphinx documentation
+- add recipes with state-of-the-art attacks
+- add unit tests
+- add pep8 standard
+- upload sample models and datasets
+- add logger… we should never call print()
+- make it much quieter when we load pretrained BERT. It’s so noisy right now :(
+- try to refer to ‘text’ not ‘sentences’ (better terminology)
+- make this into a pip package (not on pypi, just a local package)</p>
+<dl class="class">
+<dt id="attacks.attack.Attack">
+<em class="property">class </em><code class="sig-prename descclassname">attacks.attack.</code><code class="sig-name descname">Attack</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">perturbation</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack" title="Permalink to this definition">¶</a></dt>
+<dd><p>An attack generates adversarial examples on text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The TensorFlow or PyTorch model to attack</p></li>
+<li><p><strong>perturbation</strong> – The type of attack to use, see Perturbations</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="attacks.attack.Attack.add_output_file">
+<code class="sig-name descname">add_output_file</code><span class="sig-paren">(</span><em class="sig-param">file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.add_output_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.add_output_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>When an attack runs, it will output the results to this file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – The path for the output file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="attacks.attack.Attack.attack">
+<code class="sig-name descname">attack</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">shuffle=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.attack" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs an attack on the dataset and outputs results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> – An iterable of (label, text) pairs to attack</p></li>
+<li><p><strong>shuffle</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to shuffle the dataset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An iterable of the results of the attack</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="attacks.attack.AttackResult">
+<em class="property">class </em><code class="sig-prename descclassname">attacks.attack.</code><code class="sig-name descname">AttackResult</code><span class="sig-paren">(</span><em class="sig-param">original_text</em>, <em class="sig-param">perturbed_text</em>, <em class="sig-param">original_label</em>, <em class="sig-param">perturbed_label</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#AttackResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.AttackResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Result of an Attack run on a single (label, text_input) pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>original_text</strong> (<em>str</em>) – The original text</p></li>
+<li><p><strong>perturbed_text</strong> (<em>str</em>) – The perturbed text</p></li>
+<li><p><strong>original_label</strong> (<em>int</em>) – The label of the original text</p></li>
+<li><p><strong>perturbed_label</strong> (<em>int</em>) – The label of the perturbed text</p></li>
+</ul>
+</dd>
+</dl>
+<p>&#64;TODO support attacks that fail (no perturbed label/text)</p>
+<dl class="method">
+<dt id="attacks.attack.AttackResult.diff">
+<code class="sig-name descname">diff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#AttackResult.diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.AttackResult.diff" title="Permalink to this definition">¶</a></dt>
+<dd><p>Shows the difference between the perturbed and original text using color.</p>
+<p>&#64;TODO abstract to work for general paraphrase.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="greedy_word_swap.html" class="btn btn-neutral float-right" title="Greedy Word Swap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../users/installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, UVA Qdata Lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

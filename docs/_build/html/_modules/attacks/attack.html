@@ -1,0 +1,401 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>attacks.attack &mdash; TextAttack 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> TextAttack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../users/introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Attack Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TextAttack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>attacks.attack</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for attacks.attack</h1><div class="highlight"><pre>
+<span></span><span class="c1"># @TODO all files should have some copyright header or something</span>
+
+<span class="sd">&quot;&quot;&quot;&quot; @TODOs:</span>
+<span class="sd">    - Example of using with Pytorch and Tensorflow model.</span>
+<span class="sd">    - sphinx documentation</span>
+<span class="sd">    - add recipes with state-of-the-art attacks</span>
+<span class="sd">    - add unit tests</span>
+<span class="sd">    - add pep8 standard</span>
+<span class="sd">    - upload sample models and datasets</span>
+<span class="sd">    - add logger... we should never call print()</span>
+<span class="sd">    - make it much quieter when we load pretrained BERT. It&#39;s so noisy right now :(</span>
+<span class="sd">    - try to refer to &#39;text&#39; not &#39;sentences&#39; (better terminology)</span>
+<span class="sd">    - make this into a pip package (not on pypi, just a local package)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">difflib</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">textattack</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">textattack.tokenized_text</span> <span class="k">import</span> <span class="n">TokenizedText</span>
+
+<div class="viewcode-block" id="Attack"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack">[docs]</a><span class="k">class</span> <span class="nc">Attack</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An attack generates adversarial examples on text. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        model: The TensorFlow or PyTorch model to attack</span>
+<span class="sd">        perturbation: The type of attack to use, see Perturbations</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">perturbation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an attack object.</span>
+<span class="sd">        </span>
+<span class="sd">        Attacks can be run multiple times</span>
+<span class="sd">        </span>
+<span class="sd">         @TODO should `tokenizer` be an additional parameter or should</span>
+<span class="sd">            we assume every model has a .tokenizer ?</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perturbation</span> <span class="o">=</span> <span class="n">perturbation</span>
+        <span class="c1"># List of files to output to.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_to_terminal</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_to_visdom</span> <span class="o">=</span> <span class="kc">False</span>
+    
+<div class="viewcode-block" id="Attack.add_output_file"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.add_output_file">[docs]</a>    <span class="k">def</span> <span class="nf">add_output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        When an attack runs, it will output the results to this file. </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            file (str): The path for the output file</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+    
+    <span class="k">def</span> <span class="nf">_attack_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Perturbs `text` to until `self.model` gives a different label</span>
+<span class="sd">            than `label`. &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_call_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns model predictions for a list of TokenizedText objects. &quot;&quot;&quot;</span>
+        <span class="c1"># @todo support models that take text instead of IDs.</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">ids</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokenized_text_list</span><span class="p">])</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">ids</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">())</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="Attack.attack"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.attack">[docs]</a>    <span class="k">def</span> <span class="nf">attack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs an attack on the dataset and outputs results.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset: An iterable of (label, text) pairs to attack</span>
+<span class="sd">            shuffle (:obj:`bool`, optional): Whether to shuffle the dataset</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An iterable of the results of the attack</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
+        
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">text</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="n">tokenized_text</span> <span class="o">=</span> <span class="n">TokenizedText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="n">text</span><span class="p">)</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attack_one</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        
+        <span class="c1"># @TODO Support failed attacks. Right now they&#39;ll throw an error</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_to_terminal</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">35</span><span class="p">,</span> <span class="s1">&#39;Result&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">35</span><span class="p">)</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">print_</span><span class="p">()</span>
+                <span class="nb">print</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_files</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">output_file</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_files</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+                    <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_to_visdom</span><span class="p">:</span>
+            <span class="c1"># @TODO Support logging to Visdom.</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
+        
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">results</span></div></div>
+
+<div class="viewcode-block" id="AttackResult"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.AttackResult">[docs]</a><span class="k">class</span> <span class="nc">AttackResult</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    Result of an Attack run on a single (label, text_input) pair. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        original_text (str): The original text</span>
+<span class="sd">        perturbed_text (str): The perturbed text</span>
+<span class="sd">        original_label (int): The label of the original text</span>
+<span class="sd">        perturbed_label (int): The label of the perturbed text</span>
+<span class="sd">    </span>
+<span class="sd">    @TODO support attacks that fail (no perturbed label/text)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_text</span><span class="p">,</span> <span class="n">perturbed_text</span><span class="p">,</span> <span class="n">original_label</span><span class="p">,</span>
+        <span class="n">perturbed_label</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span> <span class="o">=</span> <span class="n">original_text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_text</span> <span class="o">=</span> <span class="n">perturbed_text</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">original_label</span> <span class="o">=</span> <span class="n">original_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_label</span> <span class="o">=</span> <span class="n">perturbed_label</span>
+    
+    <span class="k">def</span> <span class="nf">__data__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_text</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_label</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">data</span><span class="p">))</span>
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data__</span><span class="p">())</span>
+    
+<div class="viewcode-block" id="AttackResult.diff"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.AttackResult.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Shows the difference between the perturbed and original text using color.</span>
+<span class="sd">        </span>
+<span class="sd">        @TODO abstract to work for general paraphrase.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#@TODO: Support printing to HTML in some cases.</span>
+        <span class="n">_color</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">color_text_terminal</span>
+        <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_text</span>
+        
+        <span class="n">words1</span> <span class="o">=</span> <span class="n">t1</span><span class="o">.</span><span class="n">words</span><span class="p">()</span>
+        <span class="n">words2</span> <span class="o">=</span> <span class="n">t2</span><span class="o">.</span><span class="n">words</span><span class="p">()</span>
+        
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">color_from_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_label</span><span class="p">)</span>
+        <span class="n">c2</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">color_from_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perturbed_label</span><span class="p">)</span>
+        <span class="n">new_is</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_w1s</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">new_w2s</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">words2</span><span class="p">))):</span>
+            <span class="n">w1</span> <span class="o">=</span> <span class="n">words1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">w2</span> <span class="o">=</span> <span class="n">words2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">w1</span> <span class="o">!=</span> <span class="n">w2</span><span class="p">:</span>
+                <span class="n">new_is</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">new_w1s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_color</span><span class="p">(</span><span class="n">w1</span><span class="p">,</span> <span class="n">c1</span><span class="p">))</span>
+                <span class="n">new_w2s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_color</span><span class="p">(</span><span class="n">w2</span><span class="p">,</span> <span class="n">c2</span><span class="p">))</span>
+        
+        <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span><span class="o">.</span><span class="n">replace_words_at_indices</span><span class="p">(</span><span class="n">new_is</span><span class="p">,</span> <span class="n">new_w1s</span><span class="p">)</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span><span class="o">.</span><span class="n">replace_words_at_indices</span><span class="p">(</span><span class="n">new_is</span><span class="p">,</span> <span class="n">new_w2s</span><span class="p">)</span>
+                
+        <span class="k">return</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">t1</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">t2</span><span class="p">))</span></div>
+    
+    <span class="k">def</span> <span class="nf">print_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">original_label</span><span class="p">),</span> <span class="s1">&#39;--&gt;&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perturbed_label</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="p">()))</span></div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">attacks</span>
+    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">constraints</span>
+    <span class="kn">from</span> <span class="nn">.datasets</span> <span class="k">import</span> <span class="n">YelpSentiment</span>
+    <span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">BertForSentimentClassification</span>
+    <span class="kn">from</span> <span class="nn">.perturbations</span> <span class="k">import</span> <span class="n">WordSwapCounterfit</span>
+    
+    <span class="c1"># @TODO: Running attack.py should parse args and run script-based attacks </span>
+    <span class="c1">#       (as opposed to code-based attacks)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">BertForSentimentClassification</span><span class="p">()</span>
+    
+    <span class="n">perturbation</span> <span class="o">=</span> <span class="n">WordSwapCounterfit</span><span class="p">()</span>
+    
+    <span class="n">perturbation</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">((</span>
+        <span class="c1"># constraints.syntax.LanguageTool(1),</span>
+        <span class="n">constraints</span><span class="o">.</span><span class="n">semantics</span><span class="o">.</span><span class="n">UniversalSentenceEncoder</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">),</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    
+    <span class="n">attack</span> <span class="o">=</span> <span class="n">attacks</span><span class="o">.</span><span class="n">GreedyWordSwap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">perturbation</span><span class="p">)</span>
+    
+    <span class="n">yelp_data</span> <span class="o">=</span> <span class="n">YelpSentiment</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># yelp_data = [</span>
+    <span class="c1">#     (1, &#39;I hate this Restaurant!&#39;), </span>
+    <span class="c1">#     (0, &quot;Texas Jack&#39;s has amazing food.&quot;)</span>
+    <span class="c1"># ]</span>
+    
+    <span class="c1"># attack.enable_visdom()</span>
+    <span class="n">attack</span><span class="o">.</span><span class="n">add_output_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/test.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
+    <span class="kn">import</span> <span class="nn">sys</span>
+    <span class="n">attack</span><span class="o">.</span><span class="n">add_output_file</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    
+    <span class="n">attack</span><span class="o">.</span><span class="n">attack</span><span class="p">(</span><span class="n">yelp_data</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, UVA Qdata Lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
