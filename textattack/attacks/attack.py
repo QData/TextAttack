@@ -167,7 +167,7 @@ if __name__ == '__main__':
         )
     )
     
-    attack = attacks.GreedyWordSwap(model, perturbation)
+    attack = attacks.GeneticAlgorithm(model, perturbation)
     
     yelp_data = YelpSentiment(n=2)
     # yelp_data = [

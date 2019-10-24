@@ -9,6 +9,7 @@ textattack.egg-info/dependency_links.txt
 textattack.egg-info/top_level.txt
 textattack/attacks/__init__.py
 textattack/attacks/attack.py
+textattack/attacks/genetic_alg.py
 textattack/attacks/greedy_word_swap.py
 textattack/constraints/__init__.py
 textattack/constraints/constraint.py
