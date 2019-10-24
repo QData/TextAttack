@@ -88,6 +88,20 @@
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Models Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models/bert.html">BERT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/infer_sent.html">InferSent</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../perturbations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../perturbations/word_swap.html">Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+</ul>
 
             
           
@@ -172,14 +186,15 @@
 <span class="kn">from</span> <span class="nn">textattack.tokenized_text</span> <span class="k">import</span> <span class="n">TokenizedText</span>
 
 <div class="viewcode-block" id="Attack"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack">[docs]</a><span class="k">class</span> <span class="nc">Attack</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    An attack generates adversarial examples on text. </span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
-<span class="sd">        model: The TensorFlow or PyTorch model to attack</span>
-<span class="sd">        perturbation: The type of attack to use, see Perturbations</span>
+<span class="sd">        model: A PyTorch NLP model</span>
+<span class="sd">        perturbation: The type of perturbation</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">perturbation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize an attack object.</span>
 <span class="sd">        </span>
@@ -196,14 +211,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">output_to_visdom</span> <span class="o">=</span> <span class="kc">False</span>
     
 <div class="viewcode-block" id="Attack.add_output_file"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.add_output_file">[docs]</a>    <span class="k">def</span> <span class="nf">add_output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        When an attack runs, it will output the results to this file. </span>
-<span class="sd">        </span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        When attack runs, it will output to this file. </span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            file (str): The path for the output file</span>
-
+<span class="sd">            file (str): The path to the output file</span>
+<span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
@@ -221,16 +235,16 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
     
 <div class="viewcode-block" id="Attack.attack"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.attack">[docs]</a>    <span class="k">def</span> <span class="nf">attack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Runs an attack on the dataset and outputs results.</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Runs an attack on the given dataset and outputs the results to the console and the output file.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            dataset: An iterable of (label, text) pairs to attack</span>
-<span class="sd">            shuffle (:obj:`bool`, optional): Whether to shuffle the dataset</span>
+<span class="sd">            dataset: An iterable of (label, text) pairs</span>
+<span class="sd">            shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            An iterable of the results of the attack</span>
-<span class="sd">        </span>
+<span class="sd">            The results of the attack on the dataset</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>
             <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">dataset</span><span class="p">)</span>
@@ -263,14 +277,15 @@
         <span class="k">return</span> <span class="n">results</span></div></div>
 
 <div class="viewcode-block" id="AttackResult"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.AttackResult">[docs]</a><span class="k">class</span> <span class="nc">AttackResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Result of an Attack run on a single (label, text_input) pair. </span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        original_text (str): The original text</span>
-<span class="sd">        perturbed_text (str): The perturbed text</span>
-<span class="sd">        original_label (int): The label of the original text</span>
-<span class="sd">        perturbed_label (int): The label of the perturbed text</span>
+<span class="sd">        perturbed_text (str): The perturbed text resulting from the attack</span>
+<span class="sd">        original_label (int): he classification label of the original text</span>
+<span class="sd">        perturbed_label (int): The classification label of the perturbed text</span>
+
 <span class="sd">    </span>
 <span class="sd">    @TODO support attacks that fail (no perturbed label/text)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -290,7 +305,8 @@
         <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__data__</span><span class="p">())</span>
     
 <div class="viewcode-block" id="AttackResult.diff"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.AttackResult.diff">[docs]</a>    <span class="k">def</span> <span class="nf">diff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Shows the difference between the perturbed and original text using color.</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Highlights the difference between two texts using color.</span>
 <span class="sd">        </span>
 <span class="sd">        @TODO abstract to work for general paraphrase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -369,7 +385,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, UVA Qdata Lab
+        &copy; Copyright 2019, UVA QData Lab
 
     </p>
   </div>

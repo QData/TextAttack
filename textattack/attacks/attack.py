@@ -20,7 +20,15 @@ from textattack import utils as utils
 from textattack.tokenized_text import TokenizedText
 
 class Attack:
-    """ An attack generates adversarial examples on text. """
+    """ 
+    An attack generates adversarial examples on text. 
+
+    Args:
+        model: A PyTorch NLP model
+        perturbation: The type of perturbation
+
+    """
+
     def __init__(self, model, perturbation):
         """ Initialize an attack object.
         
@@ -37,7 +45,13 @@ class Attack:
         self.output_to_visdom = False
     
     def add_output_file(self, file):
-        """ When attack runs, it will output to this file. """
+        """ 
+        When attack runs, it will output to this file. 
+
+        Args:
+            file (str): The path to the output file
+            
+        """
         if isinstance(file, str):
             file = open(file, 'w')
         self.output_files.append(file)
@@ -55,9 +69,16 @@ class Attack:
         return self.model(ids).squeeze()
     
     def attack(self, dataset, shuffle=False):
-        """ Runs an attack on some data and outputs results.
-        
-            - dataset: an iterable of (label, text) pairs
+        """ 
+        Runs an attack on the given dataset and outputs the results to the console and the output file.
+
+        Args:
+            dataset: An iterable of (label, text) pairs
+            shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
+
+        Returns:
+            The results of the attack on the dataset
+
         """
         if shuffle:
             random.shuffle(dataset)
@@ -90,9 +111,17 @@ class Attack:
         return results
 
 class AttackResult:
-    """ Result of an Attack run on a single (label, text_input) pair. 
+    """
+    Result of an Attack run on a single (label, text_input) pair. 
+
+    Args:
+        original_text (str): The original text
+        perturbed_text (str): The perturbed text resulting from the attack
+        original_label (int): he classification label of the original text
+        perturbed_label (int): The classification label of the perturbed text
+
     
-        @TODO support attacks that fail (no perturbed label/text)
+    @TODO support attacks that fail (no perturbed label/text)
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
@@ -110,7 +139,8 @@ class AttackResult:
         return '\n'.join(self.__data__())
     
     def diff(self):
-        """ Shows the difference between two strings in color.
+        """ 
+        Highlights the difference between two texts using color.
         
         @TODO abstract to work for general paraphrase.
         """

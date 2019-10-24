@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="BERT" href="../models/bert.html" />
     <link rel="prev" title="Attack Documentation" href="attack.html" /> 
 </head>
 
@@ -88,6 +89,20 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="attack.html">Attack Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Greedy Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Models Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../models/bert.html">BERT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/infer_sent.html">InferSent</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/word_swap.html">Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/built-in_datasets.html">Built-in Datasets</a></li>
 </ul>
 
             
@@ -157,14 +172,18 @@
 <dl class="class">
 <dt id="attacks.greedy_word_swap.GreedyWordSwap">
 <em class="property">class </em><code class="sig-prename descclassname">attacks.greedy_word_swap.</code><code class="sig-name descname">GreedyWordSwap</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">perturbation</em>, <em class="sig-param">max_depth=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/greedy_word_swap.html#GreedyWordSwap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.greedy_word_swap.GreedyWordSwap" title="Permalink to this definition">¶</a></dt>
-<dd><p>An attack that greedily chooses from a list of possible perturbations.</p>
+<dd><p>An attack that greedily chooses from a list of possible
+perturbations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – The TensorFlow or PyTorch model to attack</p></li>
-<li><p><strong>perturbation</strong> – The type of attack to use, see Perturbations</p></li>
-<li><p><strong>max_depth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optinal) – The maximum number of changed words</p></li>
+<li><p><strong>model</strong> – The PyTorch NLP model to attack</p></li>
+<li><p><strong>perturbation</strong> – The type of perturbation</p></li>
+<li><p><strong>(</strong> (<em>max_depth</em>) – obj`int`, optional): The maximum number of words to change. Defaults to 32.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result of the attack</p>
 </dd>
 </dl>
 </dd></dl>
@@ -179,6 +198,8 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="../models/bert.html" class="btn btn-neutral float-right" title="BERT" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
       
         <a href="attack.html" class="btn btn-neutral float-left" title="Attack Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
@@ -189,7 +210,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, UVA Qdata Lab
+        &copy; Copyright 2019, UVA QData Lab
 
     </p>
   </div>

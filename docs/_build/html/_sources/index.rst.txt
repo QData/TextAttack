@@ -24,9 +24,15 @@ Welcome to TextAttack's documentation!
    :maxdepth: 2
    :caption: Models Documentation:
 
+   models/bert.rst
+   models/infer_sent.rst
+
 .. toctree::
    :maxdepth: 2
    :caption: Perturbations Documentation:
+
+   perturbations/perturbation
+   perturbations/word_swap
 
 .. toctree::
    :maxdepth: 2
@@ -35,6 +41,8 @@ Welcome to TextAttack's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Datasets:
+
+   datasets/built-in_datasets
 
 
 

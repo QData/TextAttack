@@ -4,21 +4,46 @@ from textattack.constraints import Constraint
 
 
 class Perturbation:
-    """ Generates perturbations for a given text input. """
+    """
+    Abstract class for perturbing a string of text with the potential of
+    creating an adversial example. 
+
+    Args:
+        constraints (:obj:`list`, optional): A list of constraints. Defaults to None. 
+    
+    
+    """
     def __init__(self, constraints=[]):
         self.constraints = []
         if constraints:
             self.add_constraints(constraints)
     
-    """ An abstract class for perturbing a string of text to produce
-        a potential adversarial example. """
+    """
+    An abstract class for perturbing a string of text to produce
+    a potential adversarial example. 
+    """
     def perturb(self, tokenized_text):
-        """ Returns a list of all possible perturbations for `text`
-            that match provided constraints."""
+        """
+        Returns a list of all possible perturbations for `text`
+        that match provided constraints.
+
+        Args:
+            tokenized_test:
+
+        Raises:
+            NotImplementedError
+        """
         raise NotImplementedError()
     
     def _filter_perturbations(self, original_text, perturbations):
-        """ Filters a list of perturbations based on internal constraints. """
+        """
+        Filters a list of perturbations based on initalized constraints. 
+
+        Args:
+            original_text (str): The unaltered text
+            perturbations (list): The list of potential perturbations
+            
+        """
         good_perturbations = []
         for perturbed_text in perturbations:
             meets_constraints = True
@@ -30,11 +55,25 @@ class Perturbation:
         return good_perturbations
     
     def add_constraint(self, constraint):
-        """ Add constraint to attack. """
+        """
+        Add one constraint to the attack. 
+
+        Args:
+            constraint: A constraint to add to the perturbation (see TODO)
+        
+        """
         self.constraints.append(constraint)
     
     def add_constraints(self, constraints):
-        """ Add multiple constraints.
+        """ 
+        Add multiple constraints to the attack.
+
+        Args:
+            constraints: A list of constraints to add to the perturbation (see TODO)
+
+        Raises:
+            TypeError: If :obj:`constraints` are not iterable.
+
         """
         # Make sure constraints are iterable.
         try:

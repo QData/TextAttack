@@ -90,6 +90,20 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="greedy_word_swap.html">Greedy Word Swap</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Models Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../models/bert.html">BERT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/infer_sent.html">InferSent</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/word_swap.html">Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+</ul>
 
             
           
@@ -173,18 +187,18 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – The TensorFlow or PyTorch model to attack</p></li>
-<li><p><strong>perturbation</strong> – The type of attack to use, see Perturbations</p></li>
+<li><p><strong>model</strong> – A PyTorch NLP model</p></li>
+<li><p><strong>perturbation</strong> – The type of perturbation</p></li>
 </ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="attacks.attack.Attack.add_output_file">
 <code class="sig-name descname">add_output_file</code><span class="sig-paren">(</span><em class="sig-param">file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.add_output_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.add_output_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>When an attack runs, it will output the results to this file.</p>
+<dd><p>When attack runs, it will output to this file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – The path for the output file</p>
+<dd class="field-odd"><p><strong>file</strong> (<em>str</em>) – The path to the output file</p>
 </dd>
 </dl>
 </dd></dl>
@@ -192,16 +206,16 @@
 <dl class="method">
 <dt id="attacks.attack.Attack.attack">
 <code class="sig-name descname">attack</code><span class="sig-paren">(</span><em class="sig-param">dataset</em>, <em class="sig-param">shuffle=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.attack" title="Permalink to this definition">¶</a></dt>
-<dd><p>Runs an attack on the dataset and outputs results.</p>
+<dd><p>Runs an attack on the given dataset and outputs the results to the console and the output file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dataset</strong> – An iterable of (label, text) pairs to attack</p></li>
-<li><p><strong>shuffle</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to shuffle the dataset</p></li>
+<li><p><strong>dataset</strong> – An iterable of (label, text) pairs</p></li>
+<li><p><strong>shuffle</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to shuffle the data. Defaults to False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An iterable of the results of the attack</p>
+<dd class="field-even"><p>The results of the attack on the dataset</p>
 </dd>
 </dl>
 </dd></dl>
@@ -216,9 +230,9 @@
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>original_text</strong> (<em>str</em>) – The original text</p></li>
-<li><p><strong>perturbed_text</strong> (<em>str</em>) – The perturbed text</p></li>
-<li><p><strong>original_label</strong> (<em>int</em>) – The label of the original text</p></li>
-<li><p><strong>perturbed_label</strong> (<em>int</em>) – The label of the perturbed text</p></li>
+<li><p><strong>perturbed_text</strong> (<em>str</em>) – The perturbed text resulting from the attack</p></li>
+<li><p><strong>original_label</strong> (<em>int</em>) – he classification label of the original text</p></li>
+<li><p><strong>perturbed_label</strong> (<em>int</em>) – The classification label of the perturbed text</p></li>
 </ul>
 </dd>
 </dl>
@@ -226,7 +240,7 @@
 <dl class="method">
 <dt id="attacks.attack.AttackResult.diff">
 <code class="sig-name descname">diff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#AttackResult.diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.AttackResult.diff" title="Permalink to this definition">¶</a></dt>
-<dd><p>Shows the difference between the perturbed and original text using color.</p>
+<dd><p>Highlights the difference between two texts using color.</p>
 <p>&#64;TODO abstract to work for general paraphrase.</p>
 </dd></dl>
 
@@ -254,7 +268,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright 2019, UVA Qdata Lab
+        &copy; Copyright 2019, UVA QData Lab
 
     </p>
   </div>

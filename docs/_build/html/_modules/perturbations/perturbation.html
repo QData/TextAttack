@@ -1,0 +1,302 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>perturbations.perturbation &mdash; TextAttack 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> TextAttack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../users/introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/installation.html">Installation</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Attack Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Models Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models/bert.html">BERT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/infer_sent.html">InferSent</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../perturbations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../perturbations/word_swap.html">Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TextAttack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>perturbations.perturbation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for perturbations.perturbation</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">textattack.constraints</span> <span class="k">import</span> <span class="n">Constraint</span>
+
+
+<div class="viewcode-block" id="Perturbation"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation">[docs]</a><span class="k">class</span> <span class="nc">Perturbation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract class for perturbing a string of text with the potential of</span>
+<span class="sd">    creating an adversial example. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        constraints (:obj:`list`, optional): A list of constraints. Defaults to None. </span>
+<span class="sd">    </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An abstract class for perturbing a string of text to produce</span>
+<span class="sd">    a potential adversarial example. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Perturbation.perturb"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation.perturb">[docs]</a>    <span class="k">def</span> <span class="nf">perturb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all possible perturbations for `text`</span>
+<span class="sd">        that match provided constraints.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            tokenized_test:</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+    
+    <span class="k">def</span> <span class="nf">_filter_perturbations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_text</span><span class="p">,</span> <span class="n">perturbations</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters a list of perturbations based on initalized constraints. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            original_text (str): The unaltered text</span>
+<span class="sd">            perturbations (list): The list of potential perturbations</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">good_perturbations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">perturbed_text</span> <span class="ow">in</span> <span class="n">perturbations</span><span class="p">:</span>
+            <span class="n">meets_constraints</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+                <span class="n">meets_constraints</span> <span class="o">=</span> <span class="n">meets_constraints</span> <span class="ow">and</span> <span class="n">c</span><span class="p">(</span><span class="n">original_text</span><span class="p">,</span> 
+                    <span class="n">perturbed_text</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">meets_constraints</span><span class="p">:</span> <span class="k">break</span>
+            <span class="k">if</span> <span class="n">meets_constraints</span><span class="p">:</span> <span class="n">good_perturbations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">good_perturbations</span>
+    
+<div class="viewcode-block" id="Perturbation.add_constraint"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation.add_constraint">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add one constraint to the attack. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            constraint: A constraint to add to the perturbation (see TODO)</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Perturbation.add_constraints"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation.add_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Add multiple constraints to the attack.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            constraints: A list of constraints to add to the perturbation (see TODO)</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If :obj:`constraints` are not iterable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Make sure constraints are iterable.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">iter</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">te</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Constraint list type {type(constraints)} is not iterable.&#39;</span><span class="p">)</span>
+        <span class="c1"># Store each constraint after validating its type.</span>
+        <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">Constraint</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot add constraint of type&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">constraint</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span></div>
+    
+    <span class="k">def</span> <span class="nf">_filter_perturbations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_text</span><span class="p">,</span> <span class="n">perturbations</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Filters a list of perturbations by self.constraints. &quot;&quot;&quot;</span>
+        <span class="n">perturbations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">perturbations</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+            <span class="n">perturbations</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">call_many</span><span class="p">(</span><span class="n">original_text</span><span class="p">,</span> <span class="n">perturbations</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">perturbations</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, UVA QData Lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
