@@ -22,7 +22,7 @@ class GeneticAlgorithm(Attack):
         in (x_cur) between the words in replace_list """
         orig_words = x_orig.words()
         new_x_list = [x_cur.replace_word_at_index(
-            pos, w) if orig_words[pos] != w and w != 0 else x_cur for w in replace_list]
+            pos, w) if orig_words[pos] != w and w != '0.0' else x_cur for w in replace_list]
         new_x_preds = self._call_model(new_x_list)
 
         new_x_scores = new_x_preds[:, target]
@@ -127,7 +127,7 @@ class GeneticAlgorithm(Attack):
 
             logits = (pop_scores / self.temp).exp()
             select_probs = np.array(logits / logits.sum())
-
+            
             if np.argmax(pop_preds[top_attack, :]) == target:
                 return AttackResult(
                     original_tokenized_text,

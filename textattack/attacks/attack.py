@@ -177,7 +177,5 @@ if __name__ == '__main__':
     
     # attack.enable_visdom()
     attack.add_output_file('outputs/test.txt')
-    import sys
-    attack.add_output_file(sys.stdout)
     
     attack.attack(yelp_data, shuffle=False)
