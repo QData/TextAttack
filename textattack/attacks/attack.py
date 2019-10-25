@@ -167,7 +167,7 @@ if __name__ == '__main__':
         )
     )
     
-    attack = attacks.GreedyWordSwap(model, perturbation)
+    attack = attacks.GeneticAlgorithm(model, perturbation)
     
     yelp_data = YelpSentiment(n=2)
     # yelp_data = [
@@ -177,7 +177,5 @@ if __name__ == '__main__':
     
     # attack.enable_visdom()
     attack.add_output_file('outputs/test.txt')
-    import sys
-    attack.add_output_file(sys.stdout)
     
     attack.attack(yelp_data, shuffle=False)
