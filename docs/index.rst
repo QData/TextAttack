@@ -12,6 +12,7 @@ Welcome to TextAttack's documentation!
 
    users/introduction
    users/installation
+   users/examples
 
 .. toctree::
    :maxdepth: 2
@@ -37,6 +38,9 @@ Welcome to TextAttack's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Constraints Documentation:
+
+   constraints/constraint
+   constraints/semantics/semantics
 
 .. toctree::
    :maxdepth: 2

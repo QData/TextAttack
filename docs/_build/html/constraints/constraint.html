@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Perturbation &mdash; TextAttack 0.0.1 documentation</title>
+  <title>Constraints &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Word Swap" href="word_swap.html" />
-    <link rel="prev" title="InferSent" href="../models/infer_sent.html" /> 
+    <link rel="next" title="Semantics" href="semantics/semantics.html" />
+    <link rel="prev" title="Word Swap" href="../perturbations/word_swap.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -97,14 +97,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../models/infer_sent.html">InferSent</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Perturbation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="word_swap.html">Word Swap</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../constraints/constraint.html">Constraints</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../constraints/semantics/semantics.html">Semantics</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Constraints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="semantics/semantics.html">Semantics</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
@@ -154,13 +154,13 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Perturbation</li>
+      <li>Constraints</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/perturbations/perturbation.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/constraints/constraint.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -173,54 +173,38 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-perturbations.perturbation">
-<span id="perturbation"></span><h1>Perturbation<a class="headerlink" href="#module-perturbations.perturbation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-constraints.constraint">
+<span id="constraints"></span><h1>Constraints<a class="headerlink" href="#module-constraints.constraint" title="Permalink to this headline">¶</a></h1>
+<p>Abstract classes that represent constraints on text adversarial examples.</p>
+<dl class="simple">
+<dt>&#64;TODO: Smart ordering of constraints:</dt><dd><p>On each pass of call_many, time constraints and order them from fastest
+to slowest. That way, the fastest constraint does the most work, then
+subsequent constraints only have to examine perturbations that met
+previous constraints.</p>
+</dd>
+</dl>
 <dl class="class">
-<dt id="perturbations.perturbation.Perturbation">
-<em class="property">class </em><code class="sig-prename descclassname">perturbations.perturbation.</code><code class="sig-name descname">Perturbation</code><span class="sig-paren">(</span><em class="sig-param">constraints=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract class for perturbing a string of text with the potential of
-creating an adversial example.</p>
+<dt id="constraints.constraint.Constraint">
+<em class="property">class </em><code class="sig-prename descclassname">constraints.constraint.</code><code class="sig-name descname">Constraint</code><a class="reference internal" href="../_modules/constraints/constraint.html#Constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.constraint.Constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract class that represents constraints on adversial text examples.
+A constraint evaluates if (x,x_adv) meets a certain constraint.</p>
+<dl class="method">
+<dt id="constraints.constraint.Constraint.filter">
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/constraints/constraint.html#Constraint.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.constraint.Constraint.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters x_adv_list to x_adv where C(x,x_adv) is true.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>constraints</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – A list of constraints. Defaults to None.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – </p></li>
+<li><p><strong>x_adv_list</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>TODO</p>
 </dd>
 </dl>
-<dl class="method">
-<dt id="perturbations.perturbation.Perturbation.add_constraint">
-<code class="sig-name descname">add_constraint</code><span class="sig-paren">(</span><em class="sig-param">constraint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation.add_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation.add_constraint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one constraint to the attack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>constraint</strong> – A constraint to add to the perturbation (see TODO)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="perturbations.perturbation.Perturbation.add_constraints">
-<code class="sig-name descname">add_constraints</code><span class="sig-paren">(</span><em class="sig-param">constraints</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation.add_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation.add_constraints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add multiple constraints to the attack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>constraints</strong> – A list of constraints to add to the perturbation (see TODO)</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">constraints</span></code> are not iterable.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="perturbations.perturbation.Perturbation.perturb">
-<code class="sig-name descname">perturb</code><span class="sig-paren">(</span><em class="sig-param">tokenized_text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation.perturb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation.perturb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of all possible perturbations for <cite>text</cite>
-that match provided constraints.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tokenized_test</strong> – </p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>NotImplementedError</strong> – </p>
+<dl class="simple">
+<dt>&#64;TODO can we just call this <cite>filter</cite>? My syntax highlighter highlights</dt><dd><p>that so I’m inclined not to use that protected name…</p>
 </dd>
 </dl>
 </dd></dl>
@@ -237,10 +221,10 @@ that match provided constraints.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="word_swap.html" class="btn btn-neutral float-right" title="Word Swap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="semantics/semantics.html" class="btn btn-neutral float-right" title="Semantics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="../models/infer_sent.html" class="btn btn-neutral float-left" title="InferSent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../perturbations/word_swap.html" class="btn btn-neutral float-left" title="Word Swap" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

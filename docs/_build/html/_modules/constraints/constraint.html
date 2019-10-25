@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>datasets.yelp_sentiment &mdash; TextAttack 0.0.1 documentation</title>
+  <title>constraints.constraint &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -154,7 +154,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>datasets.yelp_sentiment</li>
+      <li>constraints.constraint</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -169,24 +169,44 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for datasets.yelp_sentiment</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">textattack</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">utils</span>
-<span class="kn">from</span> <span class="nn">.dataset</span> <span class="k">import</span> <span class="n">TextAttackDataset</span>
+  <h1>Source code for constraints.constraint</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot; Abstract classes that represent constraints on text adversarial examples. </span>
 
-<div class="viewcode-block" id="YelpSentiment"><a class="viewcode-back" href="../../datasets/built-in_datasets.html#datasets.yelp_sentiment.YelpSentiment">[docs]</a><span class="k">class</span> <span class="nc">YelpSentiment</span><span class="p">(</span><span class="n">TextAttackDataset</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Loads the Yelp Sentiment dataset</span>
+<span class="sd">    @TODO: Smart ordering of constraints:</span>
+<span class="sd">        On each pass of call_many, time constraints and order them from fastest </span>
+<span class="sd">        to slowest. That way, the fastest constraint does the most work, then </span>
+<span class="sd">        subsequent constraints only have to examine perturbations that met </span>
+<span class="sd">        previous constraints.</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        n (int): The number of examples to load</span>
-<span class="sd">    </span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Constraint"><a class="viewcode-back" href="../../constraints/constraint.html#constraints.constraint.Constraint">[docs]</a><span class="k">class</span> <span class="nc">Constraint</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    An abstract class that represents constraints on adversial text examples. </span>
+<span class="sd">    A constraint evaluates if (x,x_adv) meets a certain constraint. </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">DATA_PATH</span> <span class="o">=</span> <span class="s1">&#39;/p/qdata/jm8wx/research_OLD/TextFooler/data/yelp&#39;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Loads a full dataset from disk. &quot;&quot;&quot;</span>
-        <span class="n">utils</span><span class="o">.</span><span class="n">download_if_needed</span><span class="p">(</span><span class="n">YelpSentiment</span><span class="o">.</span><span class="n">DATA_PATH</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">examples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_text_file</span><span class="p">(</span><span class="n">YelpSentiment</span><span class="o">.</span><span class="n">DATA_PATH</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;YelpSentiment loaded&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">examples</span><span class="p">),</span> <span class="s1">&#39;examples...&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Constraint.filter"><a class="viewcode-back" href="../../constraints/constraint.html#constraints.constraint.Constraint.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters x_adv_list to x_adv where C(x,x_adv) is true.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x:</span>
+<span class="sd">            x_adv_list:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            TODO</span>
+<span class="sd">            </span>
+<span class="sd">        @TODO can we just call this `filter`? My syntax highlighter highlights</span>
+<span class="sd">            that so I&#39;m inclined not to use that protected name...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns True if C(x,x_adv) is true. &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

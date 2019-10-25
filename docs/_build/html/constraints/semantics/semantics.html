@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Semantics &mdash; TextAttack 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Built-in Datasets" href="../../datasets/built-in_datasets.html" />
+    <link rel="prev" title="Constraints" href="../constraint.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> TextAttack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../users/introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/examples.html">Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Attack Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Models Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models/bert.html">BERT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/infer_sent.html">InferSent</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../perturbations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../perturbations/word_swap.html">Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../constraint.html">Constraints</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Semantics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-constraints.semantics.universal_sentence_encoder">Universal Sentence Encoder</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TextAttack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>Semantics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/constraints/semantics/semantics.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="semantics">
+<h1>Semantics<a class="headerlink" href="#semantics" title="Permalink to this headline">¶</a></h1>
+<p>Semantic constraints.</p>
+<div class="section" id="module-constraints.semantics.universal_sentence_encoder">
+<span id="universal-sentence-encoder"></span><h2>Universal Sentence Encoder<a class="headerlink" href="#module-constraints.semantics.universal_sentence_encoder" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder">
+<em class="property">class </em><code class="sig-prename descclassname">constraints.semantics.universal_sentence_encoder.</code><code class="sig-name descname">UniversalSentenceEncoder</code><span class="sig-paren">(</span><em class="sig-param">threshold=0.8</em>, <em class="sig-param">metric='cosine'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/constraints/semantics/universal_sentence_encoder.html#UniversalSentenceEncoder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constraint using cosine similarity between Universal Sentence Encodings
+of x and x_adv where the text embeddings are created using InferSent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>threshold</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">float</span></code>, optional) – The threshold for the constraint to bet met.
+Defaults to 0.8</p></li>
+<li><p><strong>metric</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The metric function to use. Must be one of TODO.
+Defaults to cosine.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">metric</span></code> is not supported</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.filter">
+<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv_list</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/constraints/semantics/universal_sentence_encoder.html#UniversalSentenceEncoder.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters the list of perturbed texts so that the similarity between the original text
+and the perturbed text is greater than the <code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>str</em>) – The original text</p></li>
+<li><p><strong>x_adv_list</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – A list of perturbed texts</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A filtered list of perturbed texts where each perturbed text meets the similarity threshold.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.get_infersent_model">
+<code class="sig-name descname">get_infersent_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/constraints/semantics/universal_sentence_encoder.html#UniversalSentenceEncoder.get_infersent_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.get_infersent_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieves the InferSent model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The pretrained InferSent model.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.score">
+<code class="sig-name descname">score</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/constraints/semantics/universal_sentence_encoder.html#UniversalSentenceEncoder.score"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the metric similarity between embeddings of the text and
+the perturbed text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>str</em>) – The original text</p></li>
+<li><p><strong>x_adv</strong> (<em>str</em>) – The perturbed text</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The similarity between the original and perturbed text using the metric.</p>
+</dd>
+</dl>
+<p>&#64;TODO should this support multiple sentences for x_adv?</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.score_list">
+<code class="sig-name descname">score_list</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv_list</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/constraints/semantics/universal_sentence_encoder.html#UniversalSentenceEncoder.score_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.score_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the metric similarity between the embedding of the text and a list
+of perturbed text.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<em>str</em>) – The original text</p></li>
+<li><p><strong>x_adv_list</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – A list of perturbed texts</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list with the similarity between the original text and each perturbed text in <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_adv_list</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../datasets/built-in_datasets.html" class="btn btn-neutral float-right" title="Built-in Datasets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../constraint.html" class="btn btn-neutral float-left" title="Constraints" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, UVA QData Lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

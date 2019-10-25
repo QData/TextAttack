@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Word Swap &mdash; TextAttack 0.0.1 documentation</title>
+  <title>Examples &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Constraints" href="../constraints/constraint.html" />
-    <link rel="prev" title="Perturbation" href="perturbation.html" /> 
+    <link rel="next" title="Attack Documentation" href="../attacks/attack.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,10 +81,13 @@
             
             
               <p class="caption"><span class="caption-text">User Documentation</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../users/introduction.html">What is TextAttack?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../users/installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../users/examples.html">Examples</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bert-example">BERT Example</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption"><span class="caption-text">Attack Documentation:</span></p>
 <ul>
@@ -97,9 +100,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../models/infer_sent.html">InferSent</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="perturbation.html">Perturbation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Word Swap</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../perturbations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
 <ul>
@@ -154,13 +157,13 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Word Swap</li>
+      <li>Examples</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/perturbations/word_swap.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/users/examples.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -173,37 +176,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-perturbations.word_swap">
-<span id="word-swap"></span><h1>Word Swap<a class="headerlink" href="#module-perturbations.word_swap" title="Permalink to this headline">¶</a></h1>
-<dl class="class">
-<dt id="perturbations.word_swap.WordSwap">
-<em class="property">class </em><code class="sig-prename descclassname">perturbations.word_swap.</code><code class="sig-name descname">WordSwap</code><span class="sig-paren">(</span><em class="sig-param">constraints=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/word_swap.html#WordSwap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.word_swap.WordSwap" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract class that takes a sentence and perturbs it by replacing
-some of its words.</p>
-<p>Other classes can achieve this by inheriting from WordSwap and
-overriding self._get_replacement_words.</p>
-<dl class="method">
-<dt id="perturbations.word_swap.WordSwap.perturb">
-<code class="sig-name descname">perturb</code><span class="sig-paren">(</span><em class="sig-param">tokenized_text</em>, <em class="sig-param">indices_to_replace=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/word_swap.html#WordSwap.perturb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.word_swap.WordSwap.perturb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of all possible perturbations for <cite>text</cite>.</p>
-<p>If indices_to_replace is set, only replaces words at those
-indices.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tokenized_text</strong> (<em>TODO Type</em>) – The tokenized test</p></li>
-<li><p><strong>indicies_to_replace</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – The indicies of the text
-to replace. Defaults to None so that all indicies may be replaced.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The perturbed text filtered to meet the contraints of the perturbation</p>
-</dd>
-</dl>
-</dd></dl>
+  <div class="section" id="examples">
+<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="bert-example">
+<h2>BERT Example<a class="headerlink" href="#bert-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">BertForSentimentClassification</span><span class="p">()</span>
 
-</dd></dl>
+<span class="n">perturbation</span> <span class="o">=</span> <span class="n">WordSwapCounterfit</span><span class="p">()</span>
 
+<span class="n">perturbation</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">(</span>
+   <span class="n">constraints</span><span class="o">.</span><span class="n">semantics</span><span class="o">.</span><span class="n">UniversalSentenceEncoder</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="n">attack</span> <span class="o">=</span> <span class="n">attacks</span><span class="o">.</span><span class="n">GreedyWordSwap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">perturbation</span><span class="p">)</span>
+
+<span class="n">yelp_data</span> <span class="o">=</span> <span class="n">YelpSentiment</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">attack</span><span class="o">.</span><span class="n">add_output_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/test.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
+
+<span class="n">attack</span><span class="o">.</span><span class="n">attack</span><span class="p">(</span><span class="n">yelp_data</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 
@@ -214,10 +208,10 @@ to replace. Defaults to None so that all indicies may be replaced.</p></li>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../constraints/constraint.html" class="btn btn-neutral float-right" title="Constraints" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="../attacks/attack.html" class="btn btn-neutral float-right" title="Attack Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="perturbation.html" class="btn btn-neutral float-left" title="Perturbation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
