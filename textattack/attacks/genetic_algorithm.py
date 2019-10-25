@@ -13,8 +13,9 @@ class GeneticAlgorithm(Attack):
     def __init__(self, model, transformation, pop_size=20, max_iters=100, n1=20):
         if not isinstance(transformation, WordSwap):
             raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
-        super().__init__(model, transformation)
+        super().__init__(model)
         self.model = model
+        self.transformation = transformation
         # self.batch_model = batch_model
         self.max_iters = max_iters
         self.pop_size = pop_size
@@ -118,7 +119,12 @@ class GeneticAlgorithm(Attack):
         target = 1 - original_label
         original_tokenized_text = tokenized_text
         words = tokenized_text.words()
-        neighbors_list = [np.array(self.transformation._get_replacement_words(word)) for word in words]
+        neighbors_list = []
+        for i in range(len(words)):
+            transformations = self.get_transformations(self.transformation,
+                                                       original_tokenized_text,
+                                                       indices_to_replace=[i])
+            neighbors_list.append(np.array([t.words()[i] for t in transformations]))
         neighbors_len =[len(x) for x in neighbors_list]
         w_select_probs = neighbors_len / np.sum(neighbors_len)
         pop = self.generate_population(

@@ -49,7 +49,7 @@ class WordSwapCounterfit(WordSwap):
             word_id = self.word_embedding_word2index[word]
             nnids = self.nn[word_id][1:max_candidates+1]
             candidate_words = []
-            for i,wi in enumerate(nnids):
+            for i, wi in enumerate(nnids):
                 candidate_words.append(self.word_embedding_index2word[wi])
             return candidate_words
         except KeyError:

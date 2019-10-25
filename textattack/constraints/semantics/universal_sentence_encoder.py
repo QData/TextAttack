@@ -67,7 +67,11 @@ class UniversalSentenceEncoder(Constraint):
     
     def call_many(self, x, x_adv_list):
             # @TODO can we rename this function `filter`?
+        # print(x)
+        # for x_adv in x_adv_list:
+        #    print(x_adv)
         scores = self.score_list(x, x_adv_list)
+        # print(scores)
         mask = ((scores - self.threshold) > 0)
         mask = mask.cpu().numpy()
         return x_adv_list[mask]

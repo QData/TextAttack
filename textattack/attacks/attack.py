@@ -25,7 +25,7 @@ from textattack.tokenized_text import TokenizedText
 
 class Attack:
     """ An attack generates adversarial examples on text. """
-    def __init__(self, model, transformation, constraints=[]):
+    def __init__(self, model, constraints=[]):
         """ Initialize an attack object.
         
         Attacks can be run multiple times
@@ -35,7 +35,6 @@ class Attack:
         """
         self.model = model
         # Transformation and corresponding constraints.
-        self.transformation = transformation
         self.constraints = []
         if constraints:
             self.add_constraints(constraints)
@@ -70,11 +69,14 @@ class Attack:
         for constraint in constraints:
             self.add_constraint(constraint)
     
-    def get_transformations(self, original_text, comparison_text=None, **kwargs):
+    def get_transformations(self, transformation, original_text, **kwargs):
         """ Filters a list of transformations by self.constraints. """
-        transformations = np.array(self.transformation(original_text, ))
+        transformations = np.array(transformation(original_text, **kwargs))
+        # print(f'before: {len(transformations)}')
         for C in self.constraints:
+            # print('calling constraint')
             transformations = C.call_many(original_text, transformations)
+        # print(f'after: {len(transformations)}')
         return transformations
       
     def _attack_one(self, label, tokenized_text):
@@ -192,8 +194,8 @@ if __name__ == '__main__':
     
     transformation = WordSwapCounterfit()
     
-    attack = attacks.GreedyWordSwap(model, transformation)
-    # attack = attacks.GeneticAlgorithm(model, transformation)
+    # attack = attacks.GreedyWordSwap(model, transformation)
+    attack = attacks.GeneticAlgorithm(model, transformation)
     
     attack.add_constraints((
         # constraints.syntax.LanguageTool(1),

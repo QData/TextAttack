@@ -5,7 +5,8 @@ class GreedyWordSwap(Attack):
         perturbations.
     """
     def __init__(self, model, transformation,  max_depth=32):
-        super().__init__(model, transformation)
+        super().__init__(model)
+        self.transformation = transformation
         self.max_depth = max_depth
         
     def _attack_one(self, original_label, tokenized_text):
@@ -16,7 +17,9 @@ class GreedyWordSwap(Attack):
         new_text_label = None
         while num_words_changed <= self.max_depth and len(unswapped_word_indices):
             num_words_changed += 1
-            transformed_text_candidates = self.get_transformations(tokenized_text,
+            transformed_text_candidates = self.get_transformations(
+                self.transformation,
+                tokenized_text,
                 indices_to_replace=unswapped_word_indices)
             if len(transformed_text_candidates) == 0:
                 # If we did not find any possible perturbations, give up.
