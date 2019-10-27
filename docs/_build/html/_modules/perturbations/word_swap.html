@@ -94,10 +94,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../models/bert.html">BERT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models/infer_sent.html">InferSent</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
+<p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../perturbations/perturbation.html">Perturbation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../perturbations/word_swap.html">Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
 <ul>
@@ -173,7 +173,7 @@
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">.perturbation</span> <span class="k">import</span> <span class="n">Perturbation</span>
 
-<div class="viewcode-block" id="WordSwap"><a class="viewcode-back" href="../../perturbations/word_swap.html#perturbations.word_swap.WordSwap">[docs]</a><span class="k">class</span> <span class="nc">WordSwap</span><span class="p">(</span><span class="n">Perturbation</span><span class="p">):</span>
+<div class="viewcode-block" id="WordSwap"><a class="viewcode-back" href="../../transformations/word_swap.html#perturbations.word_swap.WordSwap">[docs]</a><span class="k">class</span> <span class="nc">WordSwap</span><span class="p">(</span><span class="n">Perturbation</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">    An abstract class that takes a sentence and perturbs it by replacing</span>
 <span class="sd">    some of its words.</span>
@@ -188,7 +188,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
     
 
-<div class="viewcode-block" id="WordSwap.perturb"><a class="viewcode-back" href="../../perturbations/word_swap.html#perturbations.word_swap.WordSwap.perturb">[docs]</a>    <span class="k">def</span> <span class="nf">perturb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">,</span> <span class="n">indices_to_replace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="WordSwap.perturb"><a class="viewcode-back" href="../../transformations/word_swap.html#perturbations.word_swap.WordSwap.perturb">[docs]</a>    <span class="k">def</span> <span class="nf">perturb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">,</span> <span class="n">indices_to_replace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Returns a list of all possible perturbations for `text`.</span>
 <span class="sd">            </span>

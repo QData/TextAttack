@@ -30,10 +30,10 @@ Welcome to TextAttack's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Perturbations Documentation:
+   :caption: Transformations Documentation:
 
-   perturbations/perturbation
-   perturbations/word_swap
+   transformations/perturbation
+   transformations/word_swap
 
 .. toctree::
    :maxdepth: 2

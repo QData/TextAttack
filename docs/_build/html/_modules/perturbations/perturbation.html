@@ -94,10 +94,10 @@
 <li class="toctree-l1"><a class="reference internal" href="../../models/bert.html">BERT</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../models/infer_sent.html">InferSent</a></li>
 </ul>
-<p class="caption"><span class="caption-text">Perturbations Documentation:</span></p>
+<p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../perturbations/perturbation.html">Perturbation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../perturbations/word_swap.html">Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
 <ul>
@@ -175,7 +175,7 @@
 <span class="kn">from</span> <span class="nn">textattack.constraints</span> <span class="k">import</span> <span class="n">Constraint</span>
 
 
-<div class="viewcode-block" id="Perturbation"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation">[docs]</a><span class="k">class</span> <span class="nc">Perturbation</span><span class="p">:</span>
+<div class="viewcode-block" id="Perturbation"><a class="viewcode-back" href="../../transformations/perturbation.html#perturbations.perturbation.Perturbation">[docs]</a><span class="k">class</span> <span class="nc">Perturbation</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract class for perturbing a string of text with the potential of</span>
 <span class="sd">    creating an adversial example. </span>
@@ -194,7 +194,7 @@
 <span class="sd">    An abstract class for perturbing a string of text to produce</span>
 <span class="sd">    a potential adversarial example. </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="Perturbation.perturb"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation.perturb">[docs]</a>    <span class="k">def</span> <span class="nf">perturb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
+<div class="viewcode-block" id="Perturbation.perturb"><a class="viewcode-back" href="../../transformations/perturbation.html#perturbations.perturbation.Perturbation.perturb">[docs]</a>    <span class="k">def</span> <span class="nf">perturb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list of all possible perturbations for `text`</span>
 <span class="sd">        that match provided constraints.</span>
@@ -226,7 +226,7 @@
             <span class="k">if</span> <span class="n">meets_constraints</span><span class="p">:</span> <span class="n">good_perturbations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">good_perturbations</span>
     
-<div class="viewcode-block" id="Perturbation.add_constraint"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation.add_constraint">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+<div class="viewcode-block" id="Perturbation.add_constraint"><a class="viewcode-back" href="../../transformations/perturbation.html#perturbations.perturbation.Perturbation.add_constraint">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add one constraint to the attack. </span>
 
@@ -236,7 +236,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="Perturbation.add_constraints"><a class="viewcode-back" href="../../perturbations/perturbation.html#perturbations.perturbation.Perturbation.add_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+<div class="viewcode-block" id="Perturbation.add_constraints"><a class="viewcode-back" href="../../transformations/perturbation.html#perturbations.perturbation.Perturbation.add_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Add multiple constraints to the attack.</span>
 

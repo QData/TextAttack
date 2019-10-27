@@ -5,6 +5,16 @@ from textattack import utils as utils
 from .word_swap import WordSwap
 
 class WordSwapCounterfit(WordSwap):
+    """
+    transformations 
+    A class that takes a sentence and transforms it by replacing some of its words. 
+
+    Args:
+        word_embedding_folder (str): 
+
+    Raises:
+
+    """
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/'
     
     def __init__(self, word_embedding_folder='paragram_300_sl999'):
