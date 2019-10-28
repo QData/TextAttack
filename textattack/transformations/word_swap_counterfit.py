@@ -40,10 +40,7 @@ class WordSwapCounterfit(WordSwap):
     
     def _get_replacement_words(self, word, max_candidates=10):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
-            or phrase. Based on nearest neighbors selected word embeddings.  
-            
-            @TODO abstract to WordSwap class where subclasses just override
-                _get_replacement_words.
+            or phrase. Based on nearest neighbors selected word embeddings.
         """
         try:
             word_id = self.word_embedding_word2index[word]

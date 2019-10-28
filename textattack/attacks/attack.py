@@ -151,7 +151,7 @@ class AttackResult:
         
         @TODO abstract to work for general paraphrase.
         """
-        #@TODO: Support printing to HTML in some cases.
+        # @TODO: Support printing to HTML in some cases.
         _color = utils.color_text_terminal
         t1 = self.original_text
         t2 = self.perturbed_text
