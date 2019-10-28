@@ -88,7 +88,10 @@ class TokenizedText:
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(self.model, final_sentence)
     
-    def __str__(self):
+    # def __str__(self):
+        # return self.text
+    
+    def __repr__(self):
         return self.text
 
 def raw_words(s):
