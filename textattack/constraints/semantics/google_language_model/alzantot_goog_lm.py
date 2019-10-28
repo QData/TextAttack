@@ -9,15 +9,16 @@ import numpy as np
 
 from google.protobuf import text_format
 
-import lm_utils
-import lm_data_utils
+import textattack.constraints.semantics.google_language_model.lm_utils as lm_utils 
+import textattack.constraints.semantics.google_language_model.lm_data_utils as lm_data_utils
 
+ROOT_FOLDER = '/p/qdata/jm8wx/research/text_attacks/textattack/textattack/constraints/semantics/google_language_model/data'
 
 class GoogLMHelper(object):
     def __init__(self):
-        self.PBTXT_PATH = 'goog_lm/graph-2016-09-10.pbtxt'
-        self.CKPT_PATH = 'goog_lm/ckpt-*'
-        self.VOCAB_PATH = 'goog_lm/vocab-2016-09-10.txt'
+        self.PBTXT_PATH = os.path.join(ROOT_FOLDER, 'graph-2016-09-10.pbtxt')
+        self.CKPT_PATH = os.path.join(ROOT_FOLDER, 'ckpt-*')
+        self.VOCAB_PATH = os.path.join(ROOT_FOLDER, 'vocab-2016-09-10.txt')
 
         self.BATCH_SIZE = 1
         self.NUM_TIMESTEPS = 1
@@ -30,8 +31,6 @@ class GoogLMHelper(object):
             self.sess = tf.compat.v1.Session(graph=self.graph)
         with self.graph.as_default():
             self.t = lm_utils.LoadModel(self.sess, self.graph, self.PBTXT_PATH, self.CKPT_PATH)
-
-
 
     def get_words_probs(self, prefix_words, list_words, suffix=None):
         targets = np.zeros([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.int32)
@@ -49,13 +48,15 @@ class GoogLMHelper(object):
         char_ids_samples = prefix_char_ids[:]
         inputs = [ [samples[-1]]]
         char_ids_inputs[0, 0, :] = char_ids_samples[-1]
-        softmax = self.sess.run(self.t['softmax_out'],
-        feed_dict={
-            self.t['char_inputs_in']: char_ids_inputs,
-            self.t['inputs_in']: inputs,
-            self.t['targets_in']: targets,
-            self.t['target_weights_in']: weights
-        })
+        softmax = self.sess.run(
+            self.t['softmax_out'],
+            feed_dict={
+                self.t['char_inputs_in']: char_ids_inputs,
+                self.t['inputs_in']: inputs,
+                self.t['targets_in']: targets,
+                self.t['target_weights_in']: weights
+            }
+        )
         # print(list_words)
         words_ids = [self.vocab.word_to_id(w) for w in list_words]
         word_probs =[softmax[0][w_id] for w_id in words_ids]

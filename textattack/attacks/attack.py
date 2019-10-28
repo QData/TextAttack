@@ -194,12 +194,14 @@ if __name__ == '__main__':
     
     transformation = WordSwapCounterfit()
     
-    # attack = attacks.GreedyWordSwap(model, transformation)
-    attack = attacks.GeneticAlgorithm(model, transformation)
+    attack = attacks.GreedyWordSwap(model, transformation)
+    # attack = attacks.GeneticAlgorithm(model, transformation)
     
-    attack.add_constraints((
+    attack.add_constraints(
+        (
+        constraints.semantics.GoogleLanguageModel(top_n=5),
         # constraints.syntax.LanguageTool(1),
-        constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
         )
     )
     
