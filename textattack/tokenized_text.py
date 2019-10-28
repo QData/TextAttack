@@ -17,8 +17,18 @@ class TokenizedText:
         return self.raw_words
     
     def first_word_diff(self, other_tokenized_text):
+        """ Returns the first word in self.raw_words() that differs from 
+            other_tokenized_text. Useful for word swap strategies. """
+        w1 = self.raw_words
+        w2 = other_tokenized_text.words()
+        for i in range(min(len(w1), len(w2))):
+            if w1[i] != w2[i]:
+                return w1
+        return None
+    
+    def first_word_diff_index(self, other_tokenized_text):
         """ Returns the index of the first word in self.raw_words() that differs
-            from other_words. Useful for word swap strategies. """
+            from other_tokenized_text. Useful for word swap strategies. """
         w1 = self.raw_words
         w2 = other_tokenized_text.words()
         for i in range(min(len(w1), len(w2))):
@@ -77,8 +87,8 @@ class TokenizedText:
             text = text[word_end:]
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(self.model, final_sentence)
-    
-    def __str__(self):
+        
+    def __repr__(self):
         return self.text
 
 def raw_words(s):

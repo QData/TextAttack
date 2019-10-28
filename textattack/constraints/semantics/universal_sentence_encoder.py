@@ -53,6 +53,11 @@ class UniversalSentenceEncoder(Constraint):
         return self.dist(dim=0)(original_embedding, perturbed_embedding)
     
     def score_list(self, x, x_adv_list):
+        # Return an empty tensor if x_adv_list is empty.
+        # This prevents us from calling .repeat(x, 0), which throws an
+        # error on machines with multiple GPUs (pytorch 1.2).
+        if len(x_adv_list) == 0: return torch.tensor([])
+        
         x_text = x.text
         x_adv_list_text = [x_adv.text for x_adv in x_adv_list]
         embeddings = self.model.encode([x_text] + x_adv_list_text, tokenize=True)
@@ -65,10 +70,10 @@ class UniversalSentenceEncoder(Constraint):
         
         return self.dist(dim=1)(original_embedding, perturbed_embedding)
     
-    def call_many(self, x, x_adv_list):
-            # @TODO can we rename this function `filter`?
+    def call_many(self, x, x_adv_list, original_text=None):
+        # @TODO can we rename this function `filter`? (It's a reserved keyword in python)
         scores = self.score_list(x, x_adv_list)
-        mask = ((scores - self.threshold) > 0)
+        mask = scores > self.threshold
         mask = mask.cpu().numpy()
         return x_adv_list[mask]
     

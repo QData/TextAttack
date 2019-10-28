@@ -5,6 +5,9 @@ from textattack import utils as utils
 from .word_swap import WordSwap
 
 class WordSwapCounterfit(WordSwap):
+    """ Transforms an input by replacing its words with synonyms in the counter-fitted
+        embedding space. """
+    
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/'
     
     def __init__(self, word_embedding_folder='paragram_300_sl999'):
@@ -37,16 +40,13 @@ class WordSwapCounterfit(WordSwap):
     
     def _get_replacement_words(self, word, max_candidates=10):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
-            or phrase. Based on nearest neighbors selected word embeddings.  
-            
-            @TODO abstract to WordSwap class where subclasses just override
-                _get_replacement_words.
+            or phrase. Based on nearest neighbors selected word embeddings.
         """
         try:
             word_id = self.word_embedding_word2index[word]
             nnids = self.nn[word_id][1:max_candidates+1]
             candidate_words = []
-            for i,wi in enumerate(nnids):
+            for i, wi in enumerate(nnids):
                 candidate_words.append(self.word_embedding_index2word[wi])
             return candidate_words
         except KeyError:

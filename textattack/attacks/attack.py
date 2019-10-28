@@ -14,15 +14,18 @@
 """
 
 import difflib
+import numpy as np
 import os
 import torch
 
 from textattack import utils as utils
+
+from textattack.constraints import Constraint
 from textattack.tokenized_text import TokenizedText
 
 class Attack:
     """ An attack generates adversarial examples on text. """
-    def __init__(self, model, perturbation):
+    def __init__(self, model, constraints=[]):
         """ Initialize an attack object.
         
         Attacks can be run multiple times
@@ -31,7 +34,10 @@ class Attack:
             we assume every model has a .tokenizer ?
         """
         self.model = model
-        self.perturbation = perturbation
+        # Transformation and corresponding constraints.
+        self.constraints = []
+        if constraints:
+            self.add_constraints(constraints)
         # List of files to output to.
         self.output_files = []
         self.output_to_terminal = True
@@ -45,6 +51,33 @@ class Attack:
                 os.makedirs(directory)
             file = open(file, 'w')
         self.output_files.append(file)
+        
+    def add_constraint(self, constraint):
+        """ Add constraint to attack. """
+        if not isinstance(constraint, Constraint):
+            raise ValueError('Cannot add constraint of type', type(constraint))
+        self.constraints.append(constraint)
+    
+    def add_constraints(self, constraints):
+        """ Add multiple constraints to attack. """
+        # Make sure constraints are iterable.
+        try:
+            iter(constraints)
+        except TypeError as te:
+            raise TypeError(f'Constraint list type {type(constraints)} is not iterable.')
+        # Store each constraint after validating its type.
+        for constraint in constraints:
+            self.add_constraint(constraint)
+    
+    def get_transformations(self, transformation, text, original_text=None, **kwargs):
+        """ Filters a list of transformations by self.constraints. """
+        transformations = np.array(transformation(text, **kwargs))
+        # print(f'before: {len(transformations)}')
+        for C in self.constraints:
+            # print('calling constraint')
+            transformations = C.call_many(text, transformations, original_text)
+        # print(f'after: {len(transformations)}')
+        return transformations
       
     def _attack_one(self, label, tokenized_text):
         """ Perturbs `text` to until `self.model` gives a different label
@@ -53,7 +86,7 @@ class Attack:
       
     def _call_model(self, tokenized_text_list):
         """ Returns model predictions for a list of TokenizedText objects. """
-        # @todo support models that take text instead of IDs.
+        # @TODO support models that take text instead of IDs.
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         return self.model(ids).squeeze()
@@ -118,7 +151,7 @@ class AttackResult:
         
         @TODO abstract to work for general paraphrase.
         """
-        #@TODO: Support printing to HTML in some cases.
+        # @TODO: Support printing to HTML in some cases.
         _color = utils.color_text_terminal
         t1 = self.original_text
         t2 = self.perturbed_text
@@ -153,21 +186,22 @@ if __name__ == '__main__':
     import textattack.constraints as constraints
     from textattack.datasets import YelpSentiment
     from textattack.models import BertForSentimentClassification
-    from textattack.perturbations import WordSwapCounterfit
+    from textattack.transformations import WordSwapCounterfit
     
     # @TODO: Running attack.py should parse args and run script-based attacks 
     #       (as opposed to code-based attacks)
     model = BertForSentimentClassification()
     
-    perturbation = WordSwapCounterfit()
+    transformation = WordSwapCounterfit()
     
-    perturbation.add_constraints((
+    # attack = attacks.GreedyWordSwap(model, transformation)
+    attack = attacks.GeneticAlgorithm(model, transformation)
+    
+    attack.add_constraints((
         # constraints.syntax.LanguageTool(1),
         constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
         )
     )
-    
-    attack = attacks.GeneticAlgorithm(model, perturbation)
     
     yelp_data = YelpSentiment(n=2)
     # yelp_data = [

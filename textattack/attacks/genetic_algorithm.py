@@ -5,12 +5,17 @@ github.com/nesl/nlp_adversarial_examples
 '''
 
 import numpy as np
+
 from textattack.attacks import Attack, AttackResult
+from textattack.transformations import WordSwap
 
 class GeneticAlgorithm(Attack):
-    def __init__(self, model, perturbation, pop_size=20, max_iters=100, n1=20):
-        super().__init__(model, perturbation)
+    def __init__(self, model, transformation, pop_size=20, max_iters=100, n1=20):
+        if not isinstance(transformation, WordSwap):
+            raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
+        super().__init__(model)
         self.model = model
+        self.transformation = transformation
         # self.batch_model = batch_model
         self.max_iters = max_iters
         self.pop_size = pop_size
@@ -19,7 +24,8 @@ class GeneticAlgorithm(Attack):
 
     def select_best_replacement(self, pos, x_cur, x_orig, target, replace_list):
         """ Select the most effective replacement to word at pos (pos)
-        in (x_cur) between the words in replace_list """
+            in (x_cur) between the words in replace_list.
+        """
         orig_words = x_orig.words()
         new_x_list = [x_cur.replace_word_at_index(
             pos, w) if orig_words[pos] != w and w != '0.0' else x_cur for w in replace_list]
@@ -29,7 +35,7 @@ class GeneticAlgorithm(Attack):
         orig_score = self._call_model([x_cur])[target]
         new_x_scores = new_x_scores - orig_score
 
-        # Eliminate not that close words
+        # Eliminate words that are not that close
         new_x_scores[self.top_n:] = -10000000
 
         '''
@@ -81,10 +87,10 @@ class GeneticAlgorithm(Attack):
         diff_set = x_cur.all_words_diff(x_orig)
         num_replaceable_words = np.sum(np.sign(w_select_probs))
         while len(diff_set) < num_replaceable_words and x_cur.ith_word_diff(x_orig, rand_idx):
-            # The conition above has a quick hack to prevent getting stuck in infinite loop while processing too short examples
-            # and all words `excluding articles` have been already replaced and still no-successful attack found.
-            # a more elegent way to handle this could be done in attack to abort early based on the status of all population members
-            # or to improve select_best_replacement by making it schocastic.
+            # The condition above has a quick hack to prevent getting stuck in infinite loop while processing too short 
+            # examples and all words (excluding articles) have been already replaced and still no successful attack is 
+            # found. A more elegent way to handle this could be implemented in Attack to abort early based on the status 
+            # of all population members or to improve select_best_replacement by making it stochastic.
             rand_idx = np.random.choice(x_len, 1, p=w_select_probs)[0]
 
         # src_word = x_cur[rand_idx]
@@ -108,14 +114,25 @@ class GeneticAlgorithm(Attack):
                 words_to_replace.append(x2_words[i])
         return x1.replace_words_at_indices(indices_to_replace, words_to_replace)
 
+    def _get_neighbors(self, tokenized_text, original_tokenized_text):
+        words = tokenized_text.words()
+        neighbors_list = []
+        for i in range(len(words)):
+            transformations = self.get_transformations(self.transformation,
+                                                       tokenized_text,
+                                                       original_text=original_tokenized_text,
+                                                       indices_to_replace=[i])
+            neighbors_list.append(np.array([t.words()[i] for t in transformations]))
+        neighbors_len = [len(x) for x in neighbors_list]
+        w_select_probs = neighbors_len / np.sum(neighbors_len)
+        return neighbors_list, w_select_probs 
+
     def _attack_one(self, original_label, tokenized_text):
-        # TODO: make code work for more than two classes
+        # @TODO: make code work for more than two classes
         target = 1 - original_label
         original_tokenized_text = tokenized_text
-        words = tokenized_text.words()
-        neighbors_list = [np.array(self.perturbation._get_replacement_words(word)) for word in words]
-        neighbors_len =[len(x) for x in neighbors_list]
-        w_select_probs = neighbors_len / np.sum(neighbors_len)
+        neighbors_list, w_select_probs = self._get_neighbors(
+            tokenized_text, original_tokenized_text)
         pop = self.generate_population(
             original_tokenized_text, neighbors_list, w_select_probs, target, self.pop_size)
         for i in range(self.max_iters):
@@ -126,9 +143,10 @@ class GeneticAlgorithm(Attack):
             top_attack = pop_scores.argmax()
 
             logits = (pop_scores / self.temp).exp()
-            select_probs = np.array(logits / logits.sum())
+            select_probs = (logits / logits.sum()).cpu().numpy()
             
-            if np.argmax(pop_preds[top_attack, :]) == target:
+            top_attack_probs = pop_preds[top_attack, :].cpu()
+            if np.argmax(top_attack_probs) == target:
                 return AttackResult(
                     original_tokenized_text,
                     pop[top_attack],
@@ -143,12 +161,18 @@ class GeneticAlgorithm(Attack):
             parent2_idx = np.random.choice(
                 self.pop_size, size=self.pop_size-1, p=select_probs)
 
-            childs = [self.crossover(pop[parent1_idx[i]],
+            initial_children = [self.crossover(pop[parent1_idx[i]],
                                      pop[parent2_idx[i]])
                       for i in range(self.pop_size-1)]
-            childs = [self.perturb(
-                x, original_tokenized_text, neighbors_list, w_select_probs, target) for x in childs]
-            pop = elite + childs
+            children = []
+
+            for child in initial_children:
+                neighbors_list, w_select_probs = self._get_neighbors(
+                    child, original_tokenized_text)
+                children.append(self.perturb(
+                    child, original_tokenized_text, neighbors_list, w_select_probs, target))
+
+            pop = elite + children
 
         return AttackResult(
             original_tokenized_text,
