@@ -69,13 +69,13 @@ class Attack:
         for constraint in constraints:
             self.add_constraint(constraint)
     
-    def get_transformations(self, transformation, original_text, **kwargs):
+    def get_transformations(self, transformation, text, original_text=None, **kwargs):
         """ Filters a list of transformations by self.constraints. """
-        transformations = np.array(transformation(original_text, **kwargs))
+        transformations = np.array(transformation(text, **kwargs))
         # print(f'before: {len(transformations)}')
         for C in self.constraints:
             # print('calling constraint')
-            transformations = C.call_many(original_text, transformations)
+            transformations = C.call_many(text, transformations, original_text)
         # print(f'after: {len(transformations)}')
         return transformations
       

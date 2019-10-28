@@ -70,8 +70,8 @@ class UniversalSentenceEncoder(Constraint):
         
         return self.dist(dim=1)(original_embedding, perturbed_embedding)
     
-    def call_many(self, x, x_adv_list):
-            # @TODO can we rename this function `filter`? (It's a reserved keyword in python)
+    def call_many(self, x, x_adv_list, original_text=None):
+        # @TODO can we rename this function `filter`? (It's a reserved keyword in python)
         scores = self.score_list(x, x_adv_list)
         mask = scores > self.threshold
         mask = mask.cpu().numpy()

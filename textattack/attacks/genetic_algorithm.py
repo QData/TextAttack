@@ -114,19 +114,25 @@ class GeneticAlgorithm(Attack):
                 words_to_replace.append(x2_words[i])
         return x1.replace_words_at_indices(indices_to_replace, words_to_replace)
 
-    def _attack_one(self, original_label, tokenized_text):
-        # TODO: make code work for more than two classes
-        target = 1 - original_label
-        original_tokenized_text = tokenized_text
+    def _get_neighbors(self, tokenized_text, original_tokenized_text):
         words = tokenized_text.words()
         neighbors_list = []
         for i in range(len(words)):
             transformations = self.get_transformations(self.transformation,
-                                                       original_tokenized_text,
+                                                       tokenized_text,
+                                                       original_text=original_tokenized_text,
                                                        indices_to_replace=[i])
             neighbors_list.append(np.array([t.words()[i] for t in transformations]))
-        neighbors_len =[len(x) for x in neighbors_list]
+        neighbors_len = [len(x) for x in neighbors_list]
         w_select_probs = neighbors_len / np.sum(neighbors_len)
+        return neighbors_list, w_select_probs 
+
+    def _attack_one(self, original_label, tokenized_text):
+        # @TODO: make code work for more than two classes
+        target = 1 - original_label
+        original_tokenized_text = tokenized_text
+        neighbors_list, w_select_probs = self._get_neighbors(
+            tokenized_text, original_tokenized_text)
         pop = self.generate_population(
             original_tokenized_text, neighbors_list, w_select_probs, target, self.pop_size)
         for i in range(self.max_iters):
@@ -155,12 +161,18 @@ class GeneticAlgorithm(Attack):
             parent2_idx = np.random.choice(
                 self.pop_size, size=self.pop_size-1, p=select_probs)
 
-            childs = [self.crossover(pop[parent1_idx[i]],
+            initial_children = [self.crossover(pop[parent1_idx[i]],
                                      pop[parent2_idx[i]])
                       for i in range(self.pop_size-1)]
-            childs = [self.perturb(
-                x, original_tokenized_text, neighbors_list, w_select_probs, target) for x in childs]
-            pop = elite + childs
+            children = []
+
+            for child in initial_children:
+                neighbors_list, w_select_probs = self._get_neighbors(
+                    child, original_tokenized_text)
+                children.append(self.perturb(
+                    child, original_tokenized_text, neighbors_list, w_select_probs, target))
+
+            pop = elite + children
 
         return AttackResult(
             original_tokenized_text,
