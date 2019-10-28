@@ -17,6 +17,7 @@ import difflib
 import numpy as np
 import os
 import torch
+import time
 
 from textattack import utils as utils
 
@@ -73,10 +74,12 @@ class Attack:
         """ Filters a list of transformations by self.constraints. """
         transformations = np.array(transformation(text, **kwargs))
         # print(f'before: {len(transformations)}')
+        # start = time.time()
         for C in self.constraints:
             # print('calling constraint')
             transformations = C.call_many(text, transformations, original_text)
         # print(f'after: {len(transformations)}')
+        # print(f'Checking constraints took {time.time()-start} seconds')
         return transformations
       
     def _attack_one(self, label, tokenized_text):
@@ -196,7 +199,7 @@ if __name__ == '__main__':
     
     # attack = attacks.GreedyWordSwap(model, transformation)
     attack = attacks.GeneticAlgorithm(model, transformation)
-    
+     
     attack.add_constraints((
         # constraints.syntax.LanguageTool(1),
         constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
