@@ -15,7 +15,7 @@ class GoogleLanguageModel(Constraint):
         @TODO this use of the language model only really makes sense for 
             adversarial examples based on word swaps
     """
-    def __init__(self, top_n=10, print_step=False):
+    def __init__(self, top_n=10, print_step=True):
         self.lm = GoogLMHelper()
         self.top_n = top_n
         self.print_step = print_step

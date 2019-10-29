@@ -70,6 +70,7 @@ class Attack:
         """ Returns model predictions for a list of TokenizedText objects. """
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
+        # import pdb; pdb.set_trace()
         return self.model(ids).squeeze()
       
     def attack(self, dataset, shuffle=False):
@@ -160,6 +161,12 @@ if __name__ == '__main__':
     from textattack.datasets import YelpSentiment
     from textattack.models import BertForSentimentClassification
     from textattack.transformations import WordSwapCounterfit
+    
+    import os
+    # Only use one GPU, if we have one.
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    # Disable tensorflow logs, except in the case of an error.
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     
     model = BertForSentimentClassification()
     
