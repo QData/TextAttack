@@ -111,10 +111,8 @@ class GeneticAlgorithm(Attack):
         transformations = self.get_transformations(self.transformation,
                                                    tokenized_text,
                                                    original_text=original_tokenized_text)
-        diff_idx = 0
         for transformed_text in transformations:
-            while not tokenized_text.ith_word_diff(transformed_text, diff_idx):
-                diff_idx += 1
+            diff_idx = tokenized_text.first_word_diff_index(transformed_text)
             neighbors_list[diff_idx].append(transformed_text.words()[diff_idx])
         neighbors_list = [np.array(x) for x in neighbors_list]
         neighbors_len = [len(x) for x in neighbors_list]

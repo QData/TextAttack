@@ -12,9 +12,32 @@ class TokenizedText:
     def words(self):
         """ Returns the distinct words from self.text. 
         
-            @TODO Should we consider case when substituting words?
+            @TODO Should we ever consider case when substituting words?
         """
         return self.raw_words
+    
+    def text_until_word_index(self, i):
+        """ Returns the text before the beginning of word at index `i`. """
+        pre_words = self.words()[:i+1]
+        lower_text = self.text.lower()
+        # Find all words until `i` in string.
+        look_after_index = 0
+        for word in pre_words:
+            look_after_index = lower_text.find(word, look_after_index)
+        return self.text[:look_after_index]
+    
+    def text_after_word_index(self, i):
+        """ Returns the text before the beginning of word at index `i`. """
+        word = self.words()[i]
+        pre_words = self.words()[:i+1]
+        lower_text = self.text.lower()
+        # Find all words until `i` in string.
+        look_after_index = 0
+        for word in pre_words:
+            look_after_index = lower_text.find(word, look_after_index)
+        # Jump to the end of word.
+        look_after_index += len(word)
+        return self.text[look_after_index:]
     
     def first_word_diff(self, other_tokenized_text):
         """ Returns the first word in self.raw_words() that differs from 

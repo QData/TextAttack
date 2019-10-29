@@ -161,17 +161,23 @@ if __name__ == '__main__':
     from textattack.models import BertForSentimentClassification
     from textattack.transformations import WordSwapCounterfit
     
+    import os
+    # Only use one GPU, if we have one.
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    # Disable tensorflow logs, except in the case of an error.
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    
     model = BertForSentimentClassification()
     
-    transformation = WordSwapCounterfit()
+    transformation = WordSwapCounterfit(max_candidates=5)
     
-    # attack = attacks.GreedyWordSwap(model, transformation)
     attack = attacks.GreedyWordSwapWIR(model, transformation)
-    # attack = attacks.GeneticAlgorithm(model, transformation)
     
-    attack.add_constraints((
+    attack.add_constraints(
+        (
+        constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
-        constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
         )
     )
     
