@@ -1,6 +1,8 @@
 import numpy as np
 import time
 
+from collections import defaultdict
+
 from textattack.constraints import Constraint
 from .alzantot_goog_lm import GoogLMHelper
 
@@ -15,9 +17,10 @@ class GoogleLanguageModel(Constraint):
         @TODO this use of the language model only really makes sense for 
             adversarial examples based on word swaps
     """
-    def __init__(self, top_n=10, print_step=False):
+    def __init__(self, top_n=10, top_n_per_index=3, print_step=False):
         self.lm = GoogLMHelper()
         self.top_n = top_n
+        self.top_n_per_index = top_n_per_index
         self.print_step = print_step
     
     def call_many(self, x, x_adv_list, original_text=None):
@@ -36,21 +39,24 @@ class GoogleLanguageModel(Constraint):
             probs = self.lm.get_words_probs(prefix, swapped_words, suffix)
             return probs
         
-        word_swap_index_map = {}
+        # This creates a dictionary where each new key is initialized to [].
+        word_swap_index_map = defaultdict(list)
         
         for idx, x_adv in enumerate(x_adv_list):
             word_swap_index = x.first_word_diff_index(x_adv)
-            if word_swap_index not in word_swap_index_map:
-                word_swap_index_map[word_swap_index] = []
             word_swap_index_map[word_swap_index].append((idx, x_adv))
         
         probs = []
-        import time
         for word_swap_index, item_list in word_swap_index_map.items():
             # zip(*some_list) is the inverse operator of zip!
             item_indices, this_x_adv_list = zip(*item_list)
             t1 = time.time()
-            probs.extend(list(zip(item_indices, get_probs(x, this_x_adv_list))))
+            probs_of_swaps_at_index = list(zip(item_indices, get_probs(x, this_x_adv_list)))
+            # Sort by probability in descending order and take the top n for this index.
+            probs_of_swaps_at_index.sort(key=lambda x: -x[1])
+            if self.top_n_per_index:
+                probs_of_swaps_at_index = probs_of_swaps_at_index[:self.top_n_per_index]
+            probs.extend(probs_of_swaps_at_index)
             t2 = time.time()
             if self.print_step:
                 print(f'LM {len(item_list)} items in {t2-t1}s')
