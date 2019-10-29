@@ -72,11 +72,8 @@ class Attack:
     def get_transformations(self, transformation, text, original_text=None, **kwargs):
         """ Filters a list of transformations by self.constraints. """
         transformations = np.array(transformation(text, **kwargs))
-        # print(f'before: {len(transformations)}')
         for C in self.constraints:
-            # print('calling constraint')
             transformations = C.call_many(text, transformations, original_text)
-        # print(f'after: {len(transformations)}')
         return transformations
       
     def _attack_one(self, label, tokenized_text):
