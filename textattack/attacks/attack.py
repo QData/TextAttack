@@ -15,6 +15,7 @@
 
 import difflib
 import torch
+import random
 
 from textattack import utils as utils
 from textattack.tokenized_text import TokenizedText
@@ -24,8 +25,8 @@ class Attack:
     An attack generates adversarial examples on text. 
 
     Args:
-        model: A PyTorch NLP model
-        perturbation: The type of perturbation
+        model: A PyTorch or TensorFlow model
+        transformation: The type of transformation
 
     """
 

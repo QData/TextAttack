@@ -90,5 +90,5 @@ class Perturbation:
         """ Filters a list of perturbations by self.constraints. """
         perturbations = np.array(perturbations)
         for C in self.constraints:
-            perturbations = C.call_many(original_text, perturbations)
+            perturbations = C.filter(original_text, perturbations)
         return perturbations
