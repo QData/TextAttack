@@ -1,11 +1,4 @@
-""" Abstract classes that represent constraints on text adversarial examples. 
-
-    @TODO: Smart ordering of constraints:
-        On each pass of call_many, time constraints and order them from fastest 
-        to slowest. That way, the fastest constraint does the most work, then 
-        subsequent constraints only have to examine perturbations that met 
-        previous constraints.
-
+""" Abstract classes represent constraints on text adversarial examples. 
 """
 
 

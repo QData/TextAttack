@@ -1,18 +1,3 @@
-# @TODO all files should have some copyright header or something
-
-"""" @TODOs:
-    - Example of using with Pytorch and Tensorflow model.
-    - sphinx documentation
-    - add recipes with state-of-the-art attacks
-    - add unit tests
-    - add pep8 standard
-    - upload sample models and datasets
-    - add logger... we should never call print()
-    - make it much quieter when we load pretrained BERT. It's so noisy right now :(
-    - try to refer to 'text' not 'sentences' (better terminology)
-    - make this into a pip package (not on pypi, just a local package)
-"""
-
 import difflib
 import numpy as np
 import os
@@ -86,7 +71,6 @@ class Attack:
       
     def _call_model(self, tokenized_text_list):
         """ Returns model predictions for a list of TokenizedText objects. """
-        # @TODO support models that take text instead of IDs.
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         return self.model(ids).squeeze()
@@ -105,8 +89,6 @@ class Attack:
             result = self._attack_one(label, tokenized_text)
             results.append(result)
         
-        # @TODO Support failed attacks. Right now they'll throw an error
-        
         if self.output_to_terminal:
             for i, result in enumerate(results):
                 print('-'*35, 'Result', str(i+1), '-'*35)
@@ -119,7 +101,6 @@ class Attack:
                     output_file.write(str(result) + '\n')
         
         if self.output_to_visdom:
-            # @TODO Support logging to Visdom.
             raise NotImplementedError()
         
         print('-'*80)
@@ -128,8 +109,6 @@ class Attack:
 
 class AttackResult:
     """ Result of an Attack run on a single (label, text_input) pair. 
-    
-        @TODO support attacks that fail (no perturbed label/text)
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
@@ -148,10 +127,7 @@ class AttackResult:
     
     def diff(self):
         """ Shows the difference between two strings in color.
-        
-        @TODO abstract to work for general paraphrase.
         """
-        # @TODO: Support printing to HTML in some cases.
         _color = utils.color_text_terminal
         t1 = self.original_text
         t2 = self.perturbed_text
@@ -188,8 +164,6 @@ if __name__ == '__main__':
     from textattack.models import BertForSentimentClassification
     from textattack.transformations import WordSwapCounterfit
     
-    # @TODO: Running attack.py should parse args and run script-based attacks 
-    #       (as opposed to code-based attacks)
     model = BertForSentimentClassification()
     
     transformation = WordSwapCounterfit()

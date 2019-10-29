@@ -50,7 +50,6 @@ class GreedyWordSwapWIR(Attack):
             best_index = scores[:, original_label].argmin()
             new_tokenized_text = transformed_text_candidates[best_index]
             # If we changed the label, break.
-            # @TODO If changed the label select successful one with highest semantic sim 
             new_text_label = scores[best_index].argmax().item()
             if new_text_label != original_label:
                 break
