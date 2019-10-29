@@ -20,7 +20,7 @@ def LoadModel(sess, graph, gd_file, ckpt_file):
   """
   with graph.as_default():
     sys.stderr.write('Recovering graph.\n')
-    with tf.compat.v1.gfile.FastGFile(gd_file, 'r') as f:
+    with tf.io.gfile.GFile(gd_file) as f:
       s = f.read()
       gd = tf.compat.v1.GraphDef()
       text_format.Merge(s, gd)

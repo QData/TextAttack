@@ -60,7 +60,6 @@ class GoogLMHelper(object):
                 self.t['target_weights_in']: weights
             }
         )
-        # print(list_words)
         words_ids = [self.vocab.word_to_id(w) for w in list_words]
         word_probs =[softmax[0][w_id] for w_id in words_ids]
         word_probs = np.array(word_probs)
@@ -71,7 +70,6 @@ class GoogLMHelper(object):
             suffix_id = self.vocab.word_to_id(suffix)
             suffix_probs = []
             for idx, w_id in enumerate(words_ids):
-                # print('..', list_words[idx])
                 inputs = [[w_id]]
                 w_char_ids = self.vocab.word_to_char_ids(list_words[idx])
                 char_ids_inputs[0, 0, :] = w_char_ids
@@ -84,7 +82,7 @@ class GoogLMHelper(object):
                                          })
                 suffix_probs.append(softmax[0][suffix_id])
             suffix_probs = np.array(suffix_probs)            
-        # print(word_probs, suffix_probs)
+        
         return suffix_probs * word_probs
 
 

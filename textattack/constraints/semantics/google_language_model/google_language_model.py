@@ -15,12 +15,12 @@ class GoogleLanguageModel(Constraint):
         @TODO this use of the language model only really makes sense for 
             adversarial examples based on word swaps
     """
-    def __init__(self, top_n=10, print_step=True):
+    def __init__(self, top_n=10, print_step=False):
         self.lm = GoogLMHelper()
         self.top_n = top_n
         self.print_step = print_step
     
-    def call_many(self, x, x_adv_list):
+    def call_many(self, x, x_adv_list, original_text=None):
         """ Returns the `top_n` of x_adv_list, as evaluated by the language 
             model. 
         """
@@ -60,11 +60,12 @@ class GoogleLanguageModel(Constraint):
         probs.sort(key=lambda x: x[0])
         
         # Now that they're in order, reduce to just a list of probabilities.
-        probs = list(map(lambda x:x[1], probs))
+        probs = np.array(list(map(lambda x:x[1], probs)))
         
         # Get the indices of the maximum elements.
         max_el_indices = np.argsort(-probs)[:self.top_n]
         
         return np.array(x_adv_list)[max_el_indices]
     
-    # def __call__(self, x, x_adv):
+    def __call__(self, x, x_adv):
+        raise NotImplementedError()

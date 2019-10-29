@@ -70,7 +70,6 @@ class Attack:
         """ Returns model predictions for a list of TokenizedText objects. """
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
-        # import pdb; pdb.set_trace()
         return self.model(ids).squeeze()
       
     def attack(self, dataset, shuffle=False):
