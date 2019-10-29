@@ -175,7 +175,7 @@ if __name__ == '__main__':
     
     attack.add_constraints(
         (
-        constraints.semantics.GoogleLanguageModel(top_n=5),
+        constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
         # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
         )
