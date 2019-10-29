@@ -39,7 +39,6 @@ class GeneticAlgorithm(Attack):
         new_x_scores[self.top_n:] = -10000000
 
         '''
-        TODO: Uncomment, update so LM constraint may be used
         if self.use_lm:
             prefix = ""
             suffix = None
@@ -79,22 +78,14 @@ class GeneticAlgorithm(Attack):
     def perturb(self, x_cur, x_orig, neighbors, w_select_probs, target):
         # Pick a word that is not modified and is not UNK
         x_len = w_select_probs.shape[0]
-        # to_modify = [idx  for idx in range(x_len) if (x_cur[idx] == x_orig[idx] and self.inv_dict[x_cur[idx]] != 'UNK' and
-        #                                             self.dist_mat[x_cur[idx]][x_cur[idx]] != 100000) and
-        #                     x_cur[idx] not in self.skip_list
-        #            ]
         rand_idx = np.random.choice(x_len, 1, p=w_select_probs)[0]
         diff_set = x_cur.all_words_diff(x_orig)
         num_replaceable_words = np.sum(np.sign(w_select_probs))
         while len(diff_set) < num_replaceable_words and x_cur.ith_word_diff(x_orig, rand_idx):
-            # The condition above has a quick hack to prevent getting stuck in infinite loop while processing too short 
-            # examples and all words (excluding articles) have been already replaced and still no successful attack is 
-            # found. A more elegent way to handle this could be implemented in Attack to abort early based on the status 
-            # of all population members or to improve select_best_replacement by making it stochastic.
+            ''' The condition above has a quick hack to prevent getting stuck in infinite loop while processing too short examples and all words (excluding articles) have been already replaced and still no successful attack is found. A more elegant way to handle this could be implemented in Attack to abort early based on the status of all population members or to improve select_best_replacement by making it stochastic.
+            '''
             rand_idx = np.random.choice(x_len, 1, p=w_select_probs)[0]
 
-        # src_word = x_cur[rand_idx]
-        # replace_list,_ =  glove_utils.pick_most_similar_words(src_word, self.dist_mat, self.top_n, 0.5)
         replace_list = neighbors[rand_idx]
         if len(replace_list) < self.top_n:
             replace_list = np.concatenate(
@@ -114,23 +105,30 @@ class GeneticAlgorithm(Attack):
                 words_to_replace.append(x2_words[i])
         return x1.replace_words_at_indices(indices_to_replace, words_to_replace)
 
+    def _get_neighbors(self, tokenized_text, original_tokenized_text):
+        words = tokenized_text.words()
+        neighbors_list = [[] for _ in range(len(words))]
+        transformations = self.get_transformations(self.transformation,
+                                                   tokenized_text,
+                                                   original_text=original_tokenized_text)
+        diff_idx = 0
+        for transformed_text in transformations:
+            while not tokenized_text.ith_word_diff(transformed_text, diff_idx):
+                diff_idx += 1
+            neighbors_list[diff_idx].append(transformed_text.words()[diff_idx])
+        neighbors_list = [np.array(x) for x in neighbors_list]
+        neighbors_len = [len(x) for x in neighbors_list]
+        w_select_probs = neighbors_len / np.sum(neighbors_len)
+        return neighbors_list, w_select_probs 
+
     def _attack_one(self, original_label, tokenized_text):
-        # TODO: make code work for more than two classes
         target = 1 - original_label
         original_tokenized_text = tokenized_text
-        words = tokenized_text.words()
-        neighbors_list = []
-        for i in range(len(words)):
-            transformations = self.get_transformations(self.transformation,
-                                                       original_tokenized_text,
-                                                       indices_to_replace=[i])
-            neighbors_list.append(np.array([t.words()[i] for t in transformations]))
-        neighbors_len =[len(x) for x in neighbors_list]
-        w_select_probs = neighbors_len / np.sum(neighbors_len)
+        neighbors_list, w_select_probs = self._get_neighbors(
+            tokenized_text, original_tokenized_text)
         pop = self.generate_population(
             original_tokenized_text, neighbors_list, w_select_probs, target, self.pop_size)
         for i in range(self.max_iters):
-            # print(i)
             pop_preds = self._call_model(pop)
             pop_scores = pop_preds[:, target]
             print('\t\t', i, ' -- ', pop_scores.max())
@@ -155,12 +153,18 @@ class GeneticAlgorithm(Attack):
             parent2_idx = np.random.choice(
                 self.pop_size, size=self.pop_size-1, p=select_probs)
 
-            childs = [self.crossover(pop[parent1_idx[i]],
+            initial_children = [self.crossover(pop[parent1_idx[i]],
                                      pop[parent2_idx[i]])
                       for i in range(self.pop_size-1)]
-            childs = [self.perturb(
-                x, original_tokenized_text, neighbors_list, w_select_probs, target) for x in childs]
-            pop = elite + childs
+            children = []
+
+            for child in initial_children:
+                neighbors_list, w_select_probs = self._get_neighbors(
+                    child, original_tokenized_text)
+                children.append(self.perturb(
+                    child, original_tokenized_text, neighbors_list, w_select_probs, target))
+
+            pop = elite + children
 
         return AttackResult(
             original_tokenized_text,
