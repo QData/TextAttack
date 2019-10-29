@@ -10,8 +10,8 @@ class WordSwapCounterfit(WordSwap):
     
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/'
     
-    def __init__(self, word_embedding_folder='paragram_300_sl999'):
-        super().__init__()
+    def __init__(self, replace_stopwords=False, word_embedding_folder='paragram_300_sl999'):
+        super().__init__(replace_stopwords)
         if word_embedding_folder == 'paragram_300_sl999':
             word_embeddings_file = 'paragram_300_sl999.npy'
             word_list_file = 'wordlist.pickle'

@@ -107,13 +107,16 @@ class GeneticAlgorithm(Attack):
 
     def _get_neighbors(self, tokenized_text, original_tokenized_text):
         words = tokenized_text.words()
-        neighbors_list = []
-        for i in range(len(words)):
-            transformations = self.get_transformations(self.transformation,
-                                                       tokenized_text,
-                                                       original_text=original_tokenized_text,
-                                                       indices_to_replace=[i])
-            neighbors_list.append(np.array([t.words()[i] for t in transformations]))
+        neighbors_list = [[] for _ in range(len(words))]
+        transformations = self.get_transformations(self.transformation,
+                                                   tokenized_text,
+                                                   original_text=original_tokenized_text)
+        diff_idx = 0
+        for transformed_text in transformations:
+            while not tokenized_text.ith_word_diff(transformed_text, diff_idx):
+                diff_idx += 1
+            neighbors_list[diff_idx].append(transformed_text.words()[diff_idx])
+        neighbors_list = [np.array(x) for x in neighbors_list]
         neighbors_len = [len(x) for x in neighbors_list]
         w_select_probs = neighbors_len / np.sum(neighbors_len)
         return neighbors_list, w_select_probs 
