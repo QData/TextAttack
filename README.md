@@ -11,6 +11,12 @@ conda activate text-attack
 pip install -r requirements.txt
 ```
 
+We use the list of stopwords from nltk. To download them run in Python shell:
+
+```
+import nltk
+nltk.download('stopwords')
+```
 
 ## Features
 

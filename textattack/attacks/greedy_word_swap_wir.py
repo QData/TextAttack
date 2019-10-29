@@ -42,6 +42,7 @@ class GreedyWordSwapWIR(Attack):
                 tokenized_text,
                 original_tokenized_text,
                 indices_to_replace=[index_order[i]])
+            i += 1
             if len(transformed_text_candidates) == 0:
                 continue
             num_words_changed += 1
@@ -55,11 +56,10 @@ class GreedyWordSwapWIR(Attack):
             if new_text_label != original_label:
                 break
             tokenized_text = new_tokenized_text
-            i += 1
             
-        return AttackResult(
-            original_tokenized_text,
-            new_tokenized_text,
+        return AttackResult( 
+            original_tokenized_text, 
+            new_tokenized_text, 
             original_label,
             new_text_label
         )
