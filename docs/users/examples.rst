@@ -9,13 +9,13 @@ BERT Example
 .. parsed-literal::
    model = BertForSentimentClassification()
 
-   perturbation = WordSwapCounterfit()
+   transformation = WordSwapCounterfit()
 
-   perturbation.add_constraints(
+   transformation.add_constraints(
       constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
    )
 
-   attack = attacks.GreedyWordSwap(model, perturbation)
+   attack = attacks.GreedyWordSwap(model, transformation)
 
    yelp_data = YelpSentiment(n=2)
 
