@@ -192,7 +192,7 @@ if __name__ == '__main__':
     #       (as opposed to code-based attacks)
     model = BertForSentimentClassification()
     
-    transformation = WordSwapCounterfit()
+    transformation = WordSwapCounterfit(max_candidates=5)
     
     attack = attacks.GreedyWordSwap(model, transformation)
     # attack = attacks.GeneticAlgorithm(model, transformation)

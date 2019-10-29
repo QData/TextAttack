@@ -6,6 +6,8 @@ import sys
 import tensorflow as tf
 from google.protobuf import text_format
 
+tf.get_logger().setLevel('INFO')
+
 def LoadModel(sess, graph, gd_file, ckpt_file):
   """Load the model from GraphDef and Checkpoint.
 

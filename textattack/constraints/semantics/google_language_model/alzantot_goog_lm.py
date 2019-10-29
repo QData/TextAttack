@@ -12,11 +12,15 @@ from google.protobuf import text_format
 import textattack.constraints.semantics.google_language_model.lm_utils as lm_utils 
 import textattack.constraints.semantics.google_language_model.lm_data_utils as lm_data_utils
 
+tf.get_logger().setLevel('INFO')
+
+# @TODO automatically choose between GPU and CPU.
+
 ROOT_FOLDER = '/p/qdata/jm8wx/research_OLD/nlp_adversarial_examples_new/goog_lm'
 
 class GoogLMHelper(object):
     def __init__(self):
-        self.PBTXT_PATH = os.path.join(ROOT_FOLDER, 'graph-2016-09-10.pbtxt')
+        self.PBTXT_PATH = os.path.join(ROOT_FOLDER, 'graph-2016-09-10-gpu.pbtxt')
         self.CKPT_PATH = os.path.join(ROOT_FOLDER, 'ckpt-*')
         self.VOCAB_PATH = os.path.join(ROOT_FOLDER, 'vocab-2016-09-10.txt')
 
@@ -25,7 +29,6 @@ class GoogLMHelper(object):
         self.MAX_WORD_LEN = 50
 
         self.vocab = lm_data_utils.CharsVocabulary(self.VOCAB_PATH, self.MAX_WORD_LEN)
-        print('LM vocab loading done')
         with tf.device("/gpu:1"):
             self.graph = tf.Graph()
             self.sess = tf.compat.v1.Session(graph=self.graph)

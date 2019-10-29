@@ -10,8 +10,9 @@ class WordSwapCounterfit(WordSwap):
     
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/'
     
-    def __init__(self, word_embedding_folder='paragram_300_sl999'):
+    def __init__(self, word_embedding_folder='paragram_300_sl999', max_candidates=None):
         super().__init__()
+        self.max_candidates = max_candidates
         if word_embedding_folder == 'paragram_300_sl999':
             word_embeddings_file = 'paragram_300_sl999.npy'
             word_list_file = 'wordlist.pickle'
@@ -42,6 +43,8 @@ class WordSwapCounterfit(WordSwap):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
             or phrase. Based on nearest neighbors selected word embeddings.
         """
+        if self.max_candidates:
+            max_candidates = min(max_candidates, self.max_candidates)
         try:
             word_id = self.word_embedding_word2index[word]
             nnids = self.nn[word_id][1:max_candidates+1]
