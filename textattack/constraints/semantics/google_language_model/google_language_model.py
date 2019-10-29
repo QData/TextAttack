@@ -18,6 +18,8 @@ class GoogleLanguageModel(Constraint):
             adversarial examples based on word swaps
     """
     def __init__(self, top_n=None, top_n_per_index=None, print_step=False):
+        if not (top_n or top_n_per_index): 
+            raise ValueError('Cannot instantiate GoogleLanguageModel without top_n or top_n_per_index')
         self.lm = GoogLMHelper()
         self.top_n = top_n
         self.top_n_per_index = top_n_per_index
