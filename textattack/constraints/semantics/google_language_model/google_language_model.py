@@ -16,6 +16,7 @@ class GoogleLanguageModel(Constraint):
     """
     def __init__(self, top_n=10):
         self.lm = GoogLMHelper()
+        self.top_n = top_n
     
     def call_many(self, x, x_adv_list):
         """ Returns the `top_n` of x_adv_list, as evaluated by the language 
@@ -26,15 +27,10 @@ class GoogleLanguageModel(Constraint):
         def get_probs(x, x_adv_list):
             word_swap_index = x.first_word_diff_index(x_adv_list[0])
             prefix = x.text_until_word_index(word_swap_index)
-            suffix = x.text_after_word_index(word_swap_index)
             swapped_words = np.array([t.words()[word_swap_index] for t in x_adv_list])
-            print(' self.lm.get_words_probs(')
-            print(prefix)
-            print(swapped_words)
-            print(suffix)
-            print(')')
+            suffix = x.text_after_word_index(word_swap_index)
+            print(prefix, swapped_words, suffix)
             probs = self.lm.get_words_probs(prefix, swapped_words, suffix)
-            import pdb; pdb.set_trace()
             return probs
         
         word_swap_index_map = {}
@@ -46,12 +42,13 @@ class GoogleLanguageModel(Constraint):
             word_swap_index_map[word_swap_index].append((idx, x_adv))
         
         probs = []
-        for word_swap_index, (idx, this_x_adv_list) in word_swap_index_map.items():
-            probs.append((idx, get_probs(x, this_x_adv_list)))
+        for word_swap_index, item_list in word_swap_index_map.items():
+            # zip(*some_list) is the inverse operator of zip!
+            item_indices, this_x_adv_list = zip(*item_list)
+            probs.extend(list(zip(item_indices, get_probs(x, this_x_adv_list))))
         
         # Probs is a list of (index, prob) where index is the corresponding 
         # position in x_adv_list.
-        print('probs:', probs)
         probs.sort(key=lambda x: x[0])
         
         # Now that they're in order, reduce to just a list of probabilities.

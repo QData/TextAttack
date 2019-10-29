@@ -12,7 +12,7 @@ from google.protobuf import text_format
 import textattack.constraints.semantics.google_language_model.lm_utils as lm_utils 
 import textattack.constraints.semantics.google_language_model.lm_data_utils as lm_data_utils
 
-ROOT_FOLDER = '/p/qdata/jm8wx/research/text_attacks/textattack/textattack/constraints/semantics/google_language_model/data'
+ROOT_FOLDER = '/p/qdata/jm8wx/research_OLD/nlp_adversarial_examples_new/goog_lm'
 
 class GoogLMHelper(object):
     def __init__(self):
