@@ -11,6 +11,7 @@ class BertForSentimentClassification:
     Args:
         max_seq_length(:obj:`int`, optional):  Maximum length of a sequence after tokenizing.
             Defaults to 32.
+            
     """
     
     MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'

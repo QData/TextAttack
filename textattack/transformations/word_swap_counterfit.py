@@ -5,22 +5,20 @@ from textattack import utils as utils
 from .word_swap import WordSwap
 
 class WordSwapCounterfit(WordSwap):
-<<<<<<< HEAD:textattack/perturbations/word_swap_counterfit.py
     """
-    transformations 
-    A class that takes a sentence and transforms it by replacing some of its words. 
+    Transforms an input by replacing its words with synonyms in the counter-fitted
+    embedding space. 
 
     Args:
-        word_embedding_folder (str): 
+        replace_stopwords (:obj:`bool`, optional): Whether to replace the stopwords in the text. Defaults to False. 
+        max_candidates (:obj:`int`, optional): The default number of words to replace. Defaults to None. 
+        word_embedding_folder (:obj:`str`, optional): The path to the word_embedding folder. Defaults to paragram_300_sl999
 
     Raises:
-
+        ValueError: If the word_embedding_folder is not found. 
+   
     """
-=======
-    """ Transforms an input by replacing its words with synonyms in the counter-fitted
-        embedding space. """
     
->>>>>>> master:textattack/transformations/word_swap_counterfit.py
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/'
     
     def __init__(self, replace_stopwords=False, max_candidates=None, word_embedding_folder='paragram_300_sl999'):
@@ -53,8 +51,11 @@ class WordSwapCounterfit(WordSwap):
         self.word_embedding_word2index = word_embedding_word2index
     
     def _get_replacement_words(self, word, max_candidates=10):
-        """ Returns a list of possible 'candidate words' to replace a word in a sentence 
-            or phrase. Based on nearest neighbors selected word embeddings.
+        """ 
+        Returns a list of possible 'candidate words' to replace a word in a sentence 
+        or phrase. 
+        
+        Based on nearest neighbors selected word embeddings.
         """
         if self.max_candidates:
             max_candidates = min(max_candidates, self.max_candidates)

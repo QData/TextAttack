@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Constraints" href="../constraints/constraint.html" />
-    <link rel="prev" title="Perturbation" href="perturbation.html" /> 
+    <link rel="prev" title="Transformation" href="transformation.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,6 +90,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -98,7 +99,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="transformation.html">Transformation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -109,6 +110,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -173,48 +175,39 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-perturbations.word_swap">
-<span id="word-swap"></span><h1>Word Swap<a class="headerlink" href="#module-perturbations.word_swap" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-transformations.word_swap">
+<span id="word-swap"></span><h1>Word Swap<a class="headerlink" href="#module-transformations.word_swap" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="perturbations.word_swap.WordSwap">
-<em class="property">class </em><code class="sig-prename descclassname">perturbations.word_swap.</code><code class="sig-name descname">WordSwap</code><span class="sig-paren">(</span><em class="sig-param">constraints=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/word_swap.html#WordSwap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.word_swap.WordSwap" title="Permalink to this definition">¶</a></dt>
-<dd><p>An abstract class that takes a sentence and perturbs it by replacing
+<dt id="transformations.word_swap.WordSwap">
+<em class="property">class </em><code class="sig-prename descclassname">transformations.word_swap.</code><code class="sig-name descname">WordSwap</code><span class="sig-paren">(</span><em class="sig-param">replace_stopwords=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/transformations/word_swap.html#WordSwap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#transformations.word_swap.WordSwap" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract class that takes a sentence and transforms it by replacing
 some of its words.</p>
 <p>Other classes can achieve this by inheriting from WordSwap and
 overriding self._get_replacement_words.</p>
-<dl class="method">
-<dt id="perturbations.word_swap.WordSwap.perturb">
-<code class="sig-name descname">perturb</code><span class="sig-paren">(</span><em class="sig-param">tokenized_text</em>, <em class="sig-param">indices_to_replace=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/word_swap.html#WordSwap.perturb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.word_swap.WordSwap.perturb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of all possible perturbations for <cite>text</cite>.</p>
-<p>If indices_to_replace is set, only replaces words at those
-indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>replace_stopwords</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to replace stopwords. Defaults to False.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-transformations.word_swap_counterfit"></span><dl class="class">
+<dt id="transformations.word_swap_counterfit.WordSwapCounterfit">
+<em class="property">class </em><code class="sig-prename descclassname">transformations.word_swap_counterfit.</code><code class="sig-name descname">WordSwapCounterfit</code><span class="sig-paren">(</span><em class="sig-param">replace_stopwords=False</em>, <em class="sig-param">max_candidates=None</em>, <em class="sig-param">word_embedding_folder='paragram_300_sl999'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/transformations/word_swap_counterfit.html#WordSwapCounterfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#transformations.word_swap_counterfit.WordSwapCounterfit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Transforms an input by replacing its words with synonyms in the counter-fitted
+embedding space.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>tokenized_text</strong> (<em>TODO Type</em>) – The tokenized test</p></li>
-<li><p><strong>indicies_to_replace</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – The indicies of the text
-to replace. Defaults to None so that all indicies may be replaced.</p></li>
+<li><p><strong>replace_stopwords</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">bool</span></code>, optional) – Whether to replace the stopwords in the text. Defaults to False.</p></li>
+<li><p><strong>max_candidates</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – The default number of words to replace. Defaults to None.</p></li>
+<li><p><strong>word_embedding_folder</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">str</span></code>, optional) – The path to the word_embedding folder. Defaults to paragram_300_sl999</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The perturbed text filtered to meet the contraints of the perturbation</p>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the word_embedding_folder is not found.</p>
 </dd>
 </dl>
-</dd></dl>
-
-</dd></dl>
-
-<span class="target" id="module-perturbations.word_swap_counterfit"></span><dl class="class">
-<dt id="perturbations.word_swap_counterfit.WordSwapCounterfit">
-<em class="property">class </em><code class="sig-prename descclassname">perturbations.word_swap_counterfit.</code><code class="sig-name descname">WordSwapCounterfit</code><span class="sig-paren">(</span><em class="sig-param">word_embedding_folder='paragram_300_sl999'</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/word_swap_counterfit.html#WordSwapCounterfit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.word_swap_counterfit.WordSwapCounterfit" title="Permalink to this definition">¶</a></dt>
-<dd><p>transformations
-A class that takes a sentence and transforms it by replacing some of its words.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>word_embedding_folder</strong> (<em>str</em>) – </p>
-</dd>
-</dl>
-<p>Raises:</p>
 </dd></dl>
 
 </div>
@@ -230,7 +223,7 @@ A class that takes a sentence and transforms it by replacing some of its words.<
         <a href="../constraints/constraint.html" class="btn btn-neutral float-right" title="Constraints" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="perturbation.html" class="btn btn-neutral float-left" title="Perturbation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="transformation.html" class="btn btn-neutral float-left" title="Transformation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

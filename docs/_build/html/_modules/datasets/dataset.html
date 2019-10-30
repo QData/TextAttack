@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>constraints.constraint &mdash; TextAttack 0.0.1 documentation</title>
+  <title>datasets.dataset &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>constraints.constraint</li>
+      <li>datasets.dataset</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -171,33 +171,46 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for constraints.constraint</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Abstract classes represent constraints on text adversarial examples. </span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
-<div class="viewcode-block" id="Constraint"><a class="viewcode-back" href="../../constraints/constraint.html#constraints.constraint.Constraint">[docs]</a><span class="k">class</span> <span class="nc">Constraint</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    An abstract class that represents constraints on adversial text examples. </span>
-<span class="sd">    A constraint evaluates if (x,x_adv) meets a certain constraint. </span>
-
+  <h1>Source code for datasets.dataset</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="TextAttackDataset"><a class="viewcode-back" href="../../datasets/user_defined_datasets.html#datasets.dataset.TextAttackDataset">[docs]</a><span></span><span class="k">class</span> <span class="nc">TextAttackDataset</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A dataset for text attacks.</span>
+<span class="sd">    </span>
+<span class="sd">    Any iterable of (label, text_input) pairs qualifies as </span>
+<span class="sd">    a TextAttackDataset.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-<div class="viewcode-block" id="Constraint.call_many"><a class="viewcode-back" href="../../constraints/constraint.html#constraints.constraint.Constraint.call_many">[docs]</a>    <span class="k">def</span> <span class="nf">call_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv_list</span><span class="p">,</span> <span class="n">original_text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Filters x_adv_list to x_adv where C(x,x_adv) is true.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            x:</span>
-<span class="sd">            x_adv_list:</span>
-<span class="sd">            original_text(:obj:`type`, optional): Defaults to None. </span>
-
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Loads a full dataset from disk. Typically stores tuples in</span>
+<span class="sd">            `self.examples`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
     
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns True if C(x,x_adv) is true. &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="fm">__iter__</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">__next__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">examples</span><span class="o">.</span><span class="fm">__next__</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_load_text_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text_file_name</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Loads (label, text) pairs from a text file. </span>
+<span class="sd">        </span>
+<span class="sd">            Format must look like:</span>
+<span class="sd">            </span>
+<span class="sd">                1 this is a great little ...</span>
+<span class="sd">                0 &quot;i love hot n juicy .  ...</span>
+<span class="sd">                0 &quot;\&quot;&quot;this world needs a ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">examples</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">raw_line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">text_file_name</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">readlines</span><span class="p">():</span>
+            <span class="n">tokens</span> <span class="o">=</span> <span class="n">raw_line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tokens</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+            <span class="n">examples</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">label</span><span class="p">,</span> <span class="n">text</span><span class="p">))</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">n</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">n</span><span class="p">:</span> <span class="k">break</span>
+        <span class="k">return</span> <span class="n">examples</span></div>
 </pre></div>
 
            </div>

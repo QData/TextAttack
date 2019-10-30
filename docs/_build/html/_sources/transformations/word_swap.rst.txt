@@ -3,8 +3,8 @@ Word Swap
 ==========
 
 
-.. automodule:: perturbations.word_swap
+.. automodule:: transformations.word_swap
    :members:
 
-.. automodule:: perturbations.word_swap_counterfit
+.. automodule:: transformations.word_swap_counterfit
    :members:

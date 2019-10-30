@@ -88,6 +88,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -96,7 +97,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -107,6 +108,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -170,38 +172,27 @@
            <div itemprop="articleBody">
             
   <h1>Source code for attacks.attack</h1><div class="highlight"><pre>
-<span></span><span class="c1"># @TODO all files should have some copyright header or something</span>
-
-<span class="sd">&quot;&quot;&quot;&quot; @TODOs:</span>
-<span class="sd">    - Example of using with Pytorch and Tensorflow model.</span>
-<span class="sd">    - sphinx documentation</span>
-<span class="sd">    - add recipes with state-of-the-art attacks</span>
-<span class="sd">    - add unit tests</span>
-<span class="sd">    - add pep8 standard</span>
-<span class="sd">    - upload sample models and datasets</span>
-<span class="sd">    - add logger... we should never call print()</span>
-<span class="sd">    - make it much quieter when we load pretrained BERT. It&#39;s so noisy right now :(</span>
-<span class="sd">    - try to refer to &#39;text&#39; not &#39;sentences&#39; (better terminology)</span>
-<span class="sd">    - make this into a pip package (not on pypi, just a local package)</span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-<span class="kn">import</span> <span class="nn">difflib</span>
+<span></span><span class="kn">import</span> <span class="nn">difflib</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">random</span>
 
 <span class="kn">from</span> <span class="nn">textattack</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">utils</span>
+
+<span class="kn">from</span> <span class="nn">textattack.constraints</span> <span class="k">import</span> <span class="n">Constraint</span>
 <span class="kn">from</span> <span class="nn">textattack.tokenized_text</span> <span class="k">import</span> <span class="n">TokenizedText</span>
 
 <div class="viewcode-block" id="Attack"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack">[docs]</a><span class="k">class</span> <span class="nc">Attack</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An attack generates adversarial examples on text. </span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model: A PyTorch NLP model</span>
-<span class="sd">        perturbation: The type of perturbation</span>
+<span class="sd">        model: A PyTorch or TensorFlow model to attack</span>
+<span class="sd">        constraints: A list of constraints to add to the attack</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">perturbation</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">constraints</span><span class="o">=</span><span class="p">[]):</span>
         <span class="sd">&quot;&quot;&quot; Initialize an attack object.</span>
 <span class="sd">        </span>
 <span class="sd">        Attacks can be run multiple times</span>
@@ -210,7 +201,10 @@
 <span class="sd">            we assume every model has a .tokenizer ?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">perturbation</span> <span class="o">=</span> <span class="n">perturbation</span>
+        <span class="c1"># Transformation and corresponding constraints.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
         <span class="c1"># List of files to output to.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_files</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_to_terminal</span> <span class="o">=</span> <span class="kc">True</span>
@@ -225,21 +219,83 @@
 <span class="sd">            </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">directory</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
             <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">file</span><span class="p">)</span></div>
+        
+<div class="viewcode-block" id="Attack.add_constraint"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.add_constraint">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Adds a constraint to the attack. </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            constraint: A constraint to add, see constraints</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If the constraint is not of type :obj:`Constraint`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="n">Constraint</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot add constraint of type&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">constraint</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span></div>
     
+<div class="viewcode-block" id="Attack.add_constraints"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.add_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">add_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constraints</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Adds multiple constraints to the attack. </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            constraints: An iterable of constraints to add, see constraints. </span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            TypeError: If the constraints are not iterable</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Make sure constraints are iterable.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">iter</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">te</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Constraint list type {type(constraints)} is not iterable.&#39;</span><span class="p">)</span>
+        <span class="c1"># Store each constraint after validating its type.</span>
+        <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_constraint</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="Attack.get_transformations"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.get_transformations">[docs]</a>    <span class="k">def</span> <span class="nf">get_transformations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transformation</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">original_text</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Filters a list of transformations by self.constraints. </span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            transformation:</span>
+<span class="sd">            text:</span>
+<span class="sd">            original text (:obj:`type`, optional): Defaults to None. </span>
+<span class="sd">            **kwargs:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A filtered list of transformations where each transformation matches the constraints</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">transformations</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">transformation</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">C</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints</span><span class="p">:</span>
+            <span class="n">transformations</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">call_many</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">transformations</span><span class="p">,</span> <span class="n">original_text</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">transformations</span></div>
+      
     <span class="k">def</span> <span class="nf">_attack_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Perturbs `text` to until `self.model` gives a different label</span>
-<span class="sd">            than `label`. &quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perturbs `text` to until `self.model` gives a different label</span>
+<span class="sd">        than `label`. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
-    
+      
     <span class="k">def</span> <span class="nf">_call_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text_list</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns model predictions for a list of TokenizedText objects. &quot;&quot;&quot;</span>
-        <span class="c1"># @todo support models that take text instead of IDs.</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns model predictions for a list of TokenizedText objects. </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">t</span><span class="o">.</span><span class="n">ids</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokenized_text_list</span><span class="p">])</span>
         <span class="n">ids</span> <span class="o">=</span> <span class="n">ids</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">get_device</span><span class="p">())</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span>
-    
+      
 <div class="viewcode-block" id="Attack.attack"><a class="viewcode-back" href="../../attacks/attack.html#attacks.attack.Attack.attack">[docs]</a>    <span class="k">def</span> <span class="nf">attack</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Runs an attack on the given dataset and outputs the results to the console and the output file.</span>
@@ -261,8 +317,6 @@
             <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_attack_one</span><span class="p">(</span><span class="n">label</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">)</span>
             <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
         
-        <span class="c1"># @TODO Support failed attacks. Right now they&#39;ll throw an error</span>
-        
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_to_terminal</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">results</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">35</span><span class="p">,</span> <span class="s1">&#39;Result&#39;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">35</span><span class="p">)</span>
@@ -275,7 +329,6 @@
                     <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
         
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">output_to_visdom</span><span class="p">:</span>
-            <span class="c1"># @TODO Support logging to Visdom.</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
         
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">80</span><span class="p">)</span>
@@ -314,9 +367,7 @@
         <span class="sd">&quot;&quot;&quot; </span>
 <span class="sd">        Highlights the difference between two texts using color.</span>
 <span class="sd">        </span>
-<span class="sd">        @TODO abstract to work for general paraphrase.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1">#@TODO: Support printing to HTML in some cases.</span>
         <span class="n">_color</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">color_text_terminal</span>
         <span class="n">t1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">original_text</span>
         <span class="n">t2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perturbed_text</span>
@@ -347,25 +398,31 @@
         <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diff</span><span class="p">()))</span></div>
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">attacks</span>
-    <span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">constraints</span>
-    <span class="kn">from</span> <span class="nn">.datasets</span> <span class="k">import</span> <span class="n">YelpSentiment</span>
-    <span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">BertForSentimentClassification</span>
-    <span class="kn">from</span> <span class="nn">.perturbations</span> <span class="k">import</span> <span class="n">WordSwapCounterfit</span>
+    <span class="kn">import</span> <span class="nn">textattack.attacks</span> <span class="k">as</span> <span class="nn">attacks</span>
+    <span class="kn">import</span> <span class="nn">textattack.constraints</span> <span class="k">as</span> <span class="nn">constraints</span>
+    <span class="kn">from</span> <span class="nn">textattack.datasets</span> <span class="k">import</span> <span class="n">YelpSentiment</span>
+    <span class="kn">from</span> <span class="nn">textattack.models</span> <span class="k">import</span> <span class="n">BertForSentimentClassification</span>
+    <span class="kn">from</span> <span class="nn">textattack.transformations</span> <span class="k">import</span> <span class="n">WordSwapCounterfit</span>
     
-    <span class="c1"># @TODO: Running attack.py should parse args and run script-based attacks </span>
-    <span class="c1">#       (as opposed to code-based attacks)</span>
+    <span class="kn">import</span> <span class="nn">os</span>
+    <span class="c1"># Only use one GPU, if we have one.</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CUDA_VISIBLE_DEVICES&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span>
+    <span class="c1"># Disable tensorflow logs, except in the case of an error.</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;TF_CPP_MIN_LOG_LEVEL&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;3&#39;</span>
+    
     <span class="n">model</span> <span class="o">=</span> <span class="n">BertForSentimentClassification</span><span class="p">()</span>
     
-    <span class="n">perturbation</span> <span class="o">=</span> <span class="n">WordSwapCounterfit</span><span class="p">()</span>
+    <span class="n">transformation</span> <span class="o">=</span> <span class="n">WordSwapCounterfit</span><span class="p">(</span><span class="n">max_candidates</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
     
-    <span class="n">perturbation</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">((</span>
+    <span class="n">attack</span> <span class="o">=</span> <span class="n">attacks</span><span class="o">.</span><span class="n">GreedyWordSwapWIR</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">transformation</span><span class="p">)</span>
+    
+    <span class="n">attack</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">(</span>
+        <span class="p">(</span>
+        <span class="n">constraints</span><span class="o">.</span><span class="n">semantics</span><span class="o">.</span><span class="n">GoogleLanguageModel</span><span class="p">(</span><span class="n">top_n</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span>
         <span class="c1"># constraints.syntax.LanguageTool(1),</span>
-        <span class="n">constraints</span><span class="o">.</span><span class="n">semantics</span><span class="o">.</span><span class="n">UniversalSentenceEncoder</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">),</span>
+        <span class="c1"># constraints.semantics.UniversalSentenceEncoder(0.9, metric=&#39;cosine&#39;),</span>
         <span class="p">)</span>
     <span class="p">)</span>
-    
-    <span class="n">attack</span> <span class="o">=</span> <span class="n">attacks</span><span class="o">.</span><span class="n">GreedyWordSwap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">perturbation</span><span class="p">)</span>
     
     <span class="n">yelp_data</span> <span class="o">=</span> <span class="n">YelpSentiment</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
     <span class="c1"># yelp_data = [</span>
@@ -374,9 +431,7 @@
     <span class="c1"># ]</span>
     
     <span class="c1"># attack.enable_visdom()</span>
-    <span class="n">attack</span><span class="o">.</span><span class="n">add_output_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/test.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
-    <span class="kn">import</span> <span class="nn">sys</span>
-    <span class="n">attack</span><span class="o">.</span><span class="n">add_output_file</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>
+    <span class="n">attack</span><span class="o">.</span><span class="n">add_output_file</span><span class="p">(</span><span class="s1">&#39;outputs/test.txt&#39;</span><span class="p">)</span>
     
     <span class="n">attack</span><span class="o">.</span><span class="n">attack</span><span class="p">(</span><span class="n">yelp_data</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>

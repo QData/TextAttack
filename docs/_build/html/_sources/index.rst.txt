@@ -20,6 +20,7 @@ Welcome to TextAttack's documentation!
 
    attacks/attack
    attacks/greedy_word_swap
+   attacks/genetic_algorithm
 
 .. toctree::
    :maxdepth: 2
@@ -32,7 +33,7 @@ Welcome to TextAttack's documentation!
    :maxdepth: 2
    :caption: Transformations Documentation:
 
-   transformations/perturbation
+   transformations/transformation
    transformations/word_swap
 
 .. toctree::
@@ -47,6 +48,7 @@ Welcome to TextAttack's documentation!
    :caption: Datasets:
 
    datasets/built-in_datasets
+   datasets/user_defined_datasets
 
 
 

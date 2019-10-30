@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Perturbation &mdash; TextAttack 0.0.1 documentation</title>
+  <title>User-Defined Datasets &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -35,8 +35,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Word Swap" href="word_swap.html" />
-    <link rel="prev" title="InferSent" href="../models/infer_sent.html" /> 
+    <link rel="prev" title="Built-in Datasets" href="built-in_datasets.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -90,6 +89,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -97,9 +97,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../models/infer_sent.html">InferSent</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Perturbation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="word_swap.html">Word Swap</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../transformations/transformation.html">Transformation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
 <ul>
@@ -107,8 +107,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../constraints/semantics/semantics.html">Semantics</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Datasets:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -154,13 +155,13 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Perturbation</li>
+      <li>User-Defined Datasets</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/transformations/perturbation.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/datasets/user_defined_datasets.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -173,58 +174,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="module-perturbations.perturbation">
-<span id="perturbation"></span><h1>Perturbation<a class="headerlink" href="#module-perturbations.perturbation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-datasets.dataset">
+<span id="user-defined-datasets"></span><h1>User-Defined Datasets<a class="headerlink" href="#module-datasets.dataset" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
-<dt id="perturbations.perturbation.Perturbation">
-<em class="property">class </em><code class="sig-prename descclassname">perturbations.perturbation.</code><code class="sig-name descname">Perturbation</code><span class="sig-paren">(</span><em class="sig-param">constraints=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Abstract class for perturbing a string of text with the potential of
-creating an adversial example.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>constraints</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">list</span></code>, optional) – A list of constraints. Defaults to None.</p>
-</dd>
-</dl>
-<dl class="method">
-<dt id="perturbations.perturbation.Perturbation.add_constraint">
-<code class="sig-name descname">add_constraint</code><span class="sig-paren">(</span><em class="sig-param">constraint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation.add_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation.add_constraint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add one constraint to the attack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>constraint</strong> – A constraint to add to the perturbation (see TODO)</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="perturbations.perturbation.Perturbation.add_constraints">
-<code class="sig-name descname">add_constraints</code><span class="sig-paren">(</span><em class="sig-param">constraints</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation.add_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation.add_constraints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Add multiple constraints to the attack.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>constraints</strong> – A list of constraints to add to the perturbation (see TODO)</p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>TypeError</strong> – If <code class="xref py py-obj docutils literal notranslate"><span class="pre">constraints</span></code> are not iterable.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="method">
-<dt id="perturbations.perturbation.Perturbation.perturb">
-<code class="sig-name descname">perturb</code><span class="sig-paren">(</span><em class="sig-param">tokenized_text</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/perturbations/perturbation.html#Perturbation.perturb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#perturbations.perturbation.Perturbation.perturb" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a list of all possible perturbations for <cite>text</cite>
-that match provided constraints.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>tokenized_test</strong> – </p>
-</dd>
-<dt class="field-even">Raises</dt>
-<dd class="field-even"><p><strong>NotImplementedError</strong> – </p>
-</dd>
-</dl>
-</dd></dl>
-
+<dt id="datasets.dataset.TextAttackDataset">
+<em class="property">class </em><code class="sig-prename descclassname">datasets.dataset.</code><code class="sig-name descname">TextAttackDataset</code><a class="reference internal" href="../_modules/datasets/dataset.html#TextAttackDataset"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#datasets.dataset.TextAttackDataset" title="Permalink to this definition">¶</a></dt>
+<dd><p>A dataset for text attacks.</p>
+<p>Any iterable of (label, text_input) pairs qualifies as
+a TextAttackDataset.</p>
 </dd></dl>
 
 </div>
@@ -237,10 +194,8 @@ that match provided constraints.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="word_swap.html" class="btn btn-neutral float-right" title="Word Swap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="../models/infer_sent.html" class="btn btn-neutral float-left" title="InferSent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="built-in_datasets.html" class="btn btn-neutral float-left" title="Built-in Datasets" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

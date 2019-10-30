@@ -90,6 +90,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -98,7 +99,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -112,6 +113,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -200,8 +202,8 @@ Defaults to cosine.</p></li>
 </dd>
 </dl>
 <dl class="method">
-<dt id="constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv_list</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/constraints/semantics/universal_sentence_encoder.html#UniversalSentenceEncoder.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.filter" title="Permalink to this definition">¶</a></dt>
+<dt id="constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.call_many">
+<code class="sig-name descname">call_many</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv_list</em>, <em class="sig-param">original_text=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/constraints/semantics/universal_sentence_encoder.html#UniversalSentenceEncoder.call_many"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.call_many" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filters the list of perturbed texts so that the similarity between the original text
 and the perturbed text is greater than the <code class="xref py py-obj docutils literal notranslate"><span class="pre">threshold</span></code>.</p>
 <dl class="field-list simple">
@@ -209,6 +211,7 @@ and the perturbed text is greater than the <code class="xref py py-obj docutils 
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>str</em>) – The original text</p></li>
 <li><p><strong>x_adv_list</strong> (<em>list</em><em>(</em><em>str</em><em>)</em>) – A list of perturbed texts</p></li>
+<li><p><strong>original_text</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>, optional) – Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -260,7 +263,8 @@ of perturbed text.</p>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list with the similarity between the original text and each perturbed text in <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_adv_list</span></code>.</p>
+<dd class="field-even"><p>A list with the similarity between the original text and each perturbed text in <code class="xref py py-obj docutils literal notranslate"><span class="pre">x_adv_list</span></code>.
+If x_adv_list is empty, an empty tensor is returned</p>
 </dd>
 </dl>
 </dd></dl>

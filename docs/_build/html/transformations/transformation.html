@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Examples &mdash; TextAttack 0.0.1 documentation</title>
+  <title>Transformation &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -35,8 +35,8 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Attack Documentation" href="../attacks/attack.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Word Swap" href="word_swap.html" />
+    <link rel="prev" title="InferSent" href="../models/infer_sent.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,13 +81,10 @@
             
             
               <p class="caption"><span class="caption-text">User Documentation</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">What is TextAttack?</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Examples</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#bert-example">BERT Example</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../users/introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../users/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../users/examples.html">Examples</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Attack Documentation:</span></p>
 <ul>
@@ -101,9 +98,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../models/infer_sent.html">InferSent</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../transformations/transformation.html">Transformation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../transformations/word_swap.html">Word Swap</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Transformation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
 <ul>
@@ -159,13 +156,13 @@
     
       <li><a href="../index.html">Docs</a> &raquo;</li>
         
-      <li>Examples</li>
+      <li>Transformation</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/users/examples.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/transformations/transformation.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -178,30 +175,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="examples">
-<h1>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="bert-example">
-<h2>BERT Example<a class="headerlink" href="#bert-example" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">BertForSentimentClassification</span><span class="p">()</span>
+  <div class="section" id="module-transformations.transformation">
+<span id="transformation"></span><h1>Transformation<a class="headerlink" href="#module-transformations.transformation" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="transformations.transformation.Transformation">
+<em class="property">class </em><code class="sig-prename descclassname">transformations.transformation.</code><code class="sig-name descname">Transformation</code><a class="reference internal" href="../_modules/transformations/transformation.html#Transformation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#transformations.transformation.Transformation" title="Permalink to this definition">¶</a></dt>
+<dd><p>An abstract class for transofrming a string of text to produce
+a potential adversarial example.</p>
+</dd></dl>
 
-<span class="n">transformation</span> <span class="o">=</span> <span class="n">WordSwapCounterfit</span><span class="p">()</span>
-
-<span class="n">attack</span> <span class="o">=</span> <span class="n">attacks</span><span class="o">.</span><span class="n">GreedyWordSwap</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">transformation</span><span class="p">)</span>
-
-<span class="n">attack</span><span class="o">.</span><span class="n">add_constraints</span><span class="p">(</span>
-   <span class="p">(</span>
-   <span class="n">constraints</span><span class="o">.</span><span class="n">semantics</span><span class="o">.</span><span class="n">UniversalSentenceEncoder</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;cosine&#39;</span><span class="p">),</span>
-   <span class="p">)</span>
-<span class="p">)</span>
-
-<span class="n">yelp_data</span> <span class="o">=</span> <span class="n">YelpSentiment</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-
-<span class="n">attack</span><span class="o">.</span><span class="n">add_output_file</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s1">&#39;outputs/test.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">))</span>
-
-<span class="n">attack</span><span class="o">.</span><span class="n">attack</span><span class="p">(</span><span class="n">yelp_data</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 </div>
 
 
@@ -212,10 +194,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../attacks/attack.html" class="btn btn-neutral float-right" title="Attack Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="word_swap.html" class="btn btn-neutral float-right" title="Word Swap" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="../models/infer_sent.html" class="btn btn-neutral float-left" title="InferSent" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

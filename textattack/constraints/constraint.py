@@ -10,7 +10,14 @@ class Constraint:
     """
     
     def call_many(self, x, x_adv_list, original_text=None):
-        """ Filters x_adv_list to x_adv where C(x,x_adv) is true.
+        """
+        Filters x_adv_list to x_adv where C(x,x_adv) is true.
+
+        Args:
+            x:
+            x_adv_list:
+            original_text(:obj:`type`, optional): Defaults to None. 
+
         """
         raise NotImplementedError()
     

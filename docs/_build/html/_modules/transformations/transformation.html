@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>constraints.constraint &mdash; TextAttack 0.0.1 documentation</title>
+  <title>transformations.transformation &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>constraints.constraint</li>
+      <li>transformations.transformation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -171,32 +171,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for constraints.constraint</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Abstract classes represent constraints on text adversarial examples. </span>
-<span class="sd">&quot;&quot;&quot;</span>
-
-
-<div class="viewcode-block" id="Constraint"><a class="viewcode-back" href="../../constraints/constraint.html#constraints.constraint.Constraint">[docs]</a><span class="k">class</span> <span class="nc">Constraint</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    An abstract class that represents constraints on adversial text examples. </span>
-<span class="sd">    A constraint evaluates if (x,x_adv) meets a certain constraint. </span>
-
+  <h1>Source code for transformations.transformation</h1><div class="highlight"><pre>
+<div class="viewcode-block" id="Transformation"><a class="viewcode-back" href="../../transformations/transformation.html#transformations.transformation.Transformation">[docs]</a><span></span><span class="k">class</span> <span class="nc">Transformation</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An abstract class for transofrming a string of text to produce</span>
+<span class="sd">    a potential adversarial example. </span>
+<span class="sd">        </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    
-<div class="viewcode-block" id="Constraint.call_many"><a class="viewcode-back" href="../../constraints/constraint.html#constraints.constraint.Constraint.call_many">[docs]</a>    <span class="k">def</span> <span class="nf">call_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv_list</span><span class="p">,</span> <span class="n">original_text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Filters x_adv_list to x_adv where C(x,x_adv) is true.</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            x:</span>
-<span class="sd">            x_adv_list:</span>
-<span class="sd">            original_text(:obj:`type`, optional): Defaults to None. </span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
-    
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns True if C(x,x_adv) is true. &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a list of all possible transformations for `text`.&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div>
 </pre></div>
 

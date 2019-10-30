@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>perturbations.word_swap_counterfit &mdash; TextAttack 0.0.1 documentation</title>
+  <title>transformations.word_swap_counterfit &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -88,6 +88,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -96,7 +97,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -107,6 +108,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -154,7 +156,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>perturbations.word_swap_counterfit</li>
+      <li>transformations.word_swap_counterfit</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -169,28 +171,33 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for perturbations.word_swap_counterfit</h1><div class="highlight"><pre>
+  <h1>Source code for transformations.word_swap_counterfit</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">from</span> <span class="nn">textattack</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">.word_swap</span> <span class="k">import</span> <span class="n">WordSwap</span>
 
-<div class="viewcode-block" id="WordSwapCounterfit"><a class="viewcode-back" href="../../transformations/word_swap.html#perturbations.word_swap_counterfit.WordSwapCounterfit">[docs]</a><span class="k">class</span> <span class="nc">WordSwapCounterfit</span><span class="p">(</span><span class="n">WordSwap</span><span class="p">):</span>
+<div class="viewcode-block" id="WordSwapCounterfit"><a class="viewcode-back" href="../../transformations/word_swap.html#transformations.word_swap_counterfit.WordSwapCounterfit">[docs]</a><span class="k">class</span> <span class="nc">WordSwapCounterfit</span><span class="p">(</span><span class="n">WordSwap</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    transformations </span>
-<span class="sd">    A class that takes a sentence and transforms it by replacing some of its words. </span>
+<span class="sd">    Transforms an input by replacing its words with synonyms in the counter-fitted</span>
+<span class="sd">    embedding space. </span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        word_embedding_folder (str): </span>
+<span class="sd">        replace_stopwords (:obj:`bool`, optional): Whether to replace the stopwords in the text. Defaults to False. </span>
+<span class="sd">        max_candidates (:obj:`int`, optional): The default number of words to replace. Defaults to None. </span>
+<span class="sd">        word_embedding_folder (:obj:`str`, optional): The path to the word_embedding folder. Defaults to paragram_300_sl999</span>
 
 <span class="sd">    Raises:</span>
-
+<span class="sd">        ValueError: If the word_embedding_folder is not found. </span>
+<span class="sd">   </span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    
     <span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/&#39;</span>
     
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word_embedding_folder</span><span class="o">=</span><span class="s1">&#39;paragram_300_sl999&#39;</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replace_stopwords</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_candidates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">word_embedding_folder</span><span class="o">=</span><span class="s1">&#39;paragram_300_sl999&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">replace_stopwords</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_candidates</span> <span class="o">=</span> <span class="n">max_candidates</span>
         <span class="k">if</span> <span class="n">word_embedding_folder</span> <span class="o">==</span> <span class="s1">&#39;paragram_300_sl999&#39;</span><span class="p">:</span>
             <span class="n">word_embeddings_file</span> <span class="o">=</span> <span class="s1">&#39;paragram_300_sl999.npy&#39;</span>
             <span class="n">word_list_file</span> <span class="o">=</span> <span class="s1">&#39;wordlist.pickle&#39;</span>
@@ -218,17 +225,19 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">word_embedding_word2index</span> <span class="o">=</span> <span class="n">word_embedding_word2index</span>
     
     <span class="k">def</span> <span class="nf">_get_replacement_words</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">max_candidates</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns a list of possible &#39;candidate words&#39; to replace a word in a sentence </span>
-<span class="sd">            or phrase. Based on nearest neighbors selected word embeddings.  </span>
-<span class="sd">            </span>
-<span class="sd">            @TODO abstract to WordSwap class where subclasses just override</span>
-<span class="sd">                _get_replacement_words.</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Returns a list of possible &#39;candidate words&#39; to replace a word in a sentence </span>
+<span class="sd">        or phrase. </span>
+<span class="sd">        </span>
+<span class="sd">        Based on nearest neighbors selected word embeddings.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_candidates</span><span class="p">:</span>
+            <span class="n">max_candidates</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_candidates</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_candidates</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">word_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">word_embedding_word2index</span><span class="p">[</span><span class="n">word</span><span class="p">]</span>
             <span class="n">nnids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nn</span><span class="p">[</span><span class="n">word_id</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="n">max_candidates</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
             <span class="n">candidate_words</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">wi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nnids</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wi</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">nnids</span><span class="p">):</span>
                 <span class="n">candidate_words</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">word_embedding_index2word</span><span class="p">[</span><span class="n">wi</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">candidate_words</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>

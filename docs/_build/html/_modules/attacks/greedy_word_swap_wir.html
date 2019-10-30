@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>attacks.greedy_word_swap &mdash; TextAttack 0.0.1 documentation</title>
+  <title>attacks.greedy_word_swap_wir &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -156,7 +156,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>attacks.greedy_word_swap</li>
+      <li>attacks.greedy_word_swap_wir</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -171,20 +171,26 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for attacks.greedy_word_swap</h1><div class="highlight"><pre>
+  <h1>Source code for attacks.greedy_word_swap_wir</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">textattack.attacks</span> <span class="k">import</span> <span class="n">Attack</span><span class="p">,</span> <span class="n">AttackResult</span>
+<span class="kn">import</span> <span class="nn">torch</span>
 
-<div class="viewcode-block" id="GreedyWordSwap"><a class="viewcode-back" href="../../attacks/greedy_word_swap.html#attacks.greedy_word_swap.GreedyWordSwap">[docs]</a><span class="k">class</span> <span class="nc">GreedyWordSwap</span><span class="p">(</span><span class="n">Attack</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
+<div class="viewcode-block" id="GreedyWordSwapWIR"><a class="viewcode-back" href="../../attacks/greedy_word_swap.html#attacks.greedy_word_swap_wir.GreedyWordSwapWIR">[docs]</a><span class="k">class</span> <span class="nc">GreedyWordSwapWIR</span><span class="p">(</span><span class="n">Attack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    An attack that greedily chooses from a list of possible </span>
-<span class="sd">    perturbations.</span>
+<span class="sd">    perturbations for each index, after ranking indices by importance.</span>
+<span class="sd">    Reimplementation of paper:</span>
+<span class="sd">    Is BERT Really Robust? A Strong Baseline for Natural Language Attack on </span>
+<span class="sd">    Text Classification and Entailment by Jin et. al, 2019</span>
+<span class="sd">    https://github.com/jind11/TextFooler </span>
 
-<span class="sd">    Args:</span>
+<span class="sd">     Args:</span>
 <span class="sd">        model: The PyTorch NLP model to attack.</span>
 <span class="sd">        transformation: The type of transformation.</span>
 <span class="sd">        max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. </span>
-<span class="sd">        </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">transformation</span><span class="p">,</span>  <span class="n">max_depth</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">transformation</span> <span class="o">=</span> <span class="n">transformation</span>
@@ -193,18 +199,34 @@
     <span class="k">def</span> <span class="nf">_attack_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_label</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
         <span class="n">original_tokenized_text</span> <span class="o">=</span> <span class="n">tokenized_text</span>
         <span class="n">num_words_changed</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">unswapped_word_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tokenized_text</span><span class="o">.</span><span class="n">words</span><span class="p">())))</span>
+       
+        <span class="c1"># Sort words by order of importance</span>
+        <span class="n">orig_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_model</span><span class="p">([</span><span class="n">tokenized_text</span><span class="p">])</span>
+        <span class="n">orig_prob</span> <span class="o">=</span> <span class="n">orig_probs</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">len_text</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tokenized_text</span><span class="o">.</span><span class="n">words</span><span class="p">())</span>
+        <span class="n">leave_one_texts</span> <span class="o">=</span> \
+            <span class="p">[</span><span class="n">tokenized_text</span><span class="o">.</span><span class="n">replace_word_at_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s1">&#39;[UNKNOWN]&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">len_text</span><span class="p">)]</span>
+        <span class="n">leave_one_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_model</span><span class="p">(</span><span class="n">leave_one_texts</span><span class="p">)</span>
+        <span class="n">leave_one_probs_argmax</span> <span class="o">=</span> <span class="n">leave_one_probs</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">importance_scores</span> <span class="o">=</span> <span class="p">(</span><span class="n">orig_prob</span> <span class="o">-</span> <span class="n">leave_one_probs</span><span class="p">[:,</span> <span class="n">original_label</span><span class="p">]</span> 
+            <span class="o">+</span> <span class="p">(</span><span class="n">leave_one_probs_argmax</span> <span class="o">!=</span> <span class="n">original_label</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">*</span>
+            <span class="p">(</span><span class="n">leave_one_probs</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="o">-</span> <span class="n">torch</span><span class="o">.</span><span class="n">index_select</span><span class="p">(</span><span class="n">orig_probs</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">leave_one_probs_argmax</span><span class="p">)))</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">index_order</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">importance_scores</span><span class="p">)</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+
         <span class="n">new_tokenized_text</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">new_text_label</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="k">while</span> <span class="n">num_words_changed</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">unswapped_word_indices</span><span class="p">):</span>
-            <span class="n">num_words_changed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="n">num_words_changed</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">index_order</span><span class="p">):</span>
             <span class="n">transformed_text_candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transformations</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">transformation</span><span class="p">,</span>
                 <span class="n">tokenized_text</span><span class="p">,</span>
-                <span class="n">indices_to_replace</span><span class="o">=</span><span class="n">unswapped_word_indices</span><span class="p">)</span>
+                <span class="n">original_tokenized_text</span><span class="p">,</span>
+                <span class="n">indices_to_replace</span><span class="o">=</span><span class="p">[</span><span class="n">index_order</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformed_text_candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="c1"># If we did not find any possible perturbations, give up.</span>
-                <span class="k">return</span> <span class="kc">None</span>
+                <span class="k">continue</span>
+            <span class="n">num_words_changed</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_model</span><span class="p">(</span><span class="n">transformed_text_candidates</span><span class="p">)</span>
             <span class="c1"># The best choice is the one that minimizes the original class label.</span>
             <span class="n">best_index</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[:,</span> <span class="n">original_label</span><span class="p">]</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
@@ -213,15 +235,11 @@
             <span class="n">new_text_label</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">best_index</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">new_text_label</span> <span class="o">!=</span> <span class="n">original_label</span><span class="p">:</span>
                 <span class="k">break</span>
-            <span class="c1"># Otherwise, remove this word from list of words to change and</span>
-            <span class="c1"># iterate.</span>
-            <span class="n">word_swap_loc</span> <span class="o">=</span> <span class="n">tokenized_text</span><span class="o">.</span><span class="n">first_word_diff_index</span><span class="p">(</span><span class="n">new_tokenized_text</span><span class="p">)</span>
             <span class="n">tokenized_text</span> <span class="o">=</span> <span class="n">new_tokenized_text</span>
-            <span class="n">unswapped_word_indices</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">word_swap_loc</span><span class="p">)</span>
             
-        <span class="k">return</span> <span class="n">AttackResult</span><span class="p">(</span>
-            <span class="n">original_tokenized_text</span><span class="p">,</span>
-            <span class="n">new_tokenized_text</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">AttackResult</span><span class="p">(</span> 
+            <span class="n">original_tokenized_text</span><span class="p">,</span> 
+            <span class="n">new_tokenized_text</span><span class="p">,</span> 
             <span class="n">original_label</span><span class="p">,</span>
             <span class="n">new_text_label</span>
         <span class="p">)</span></div>

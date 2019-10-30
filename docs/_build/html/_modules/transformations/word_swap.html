@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>perturbations.word_swap &mdash; TextAttack 0.0.1 documentation</title>
+  <title>transformations.word_swap &mdash; TextAttack 0.0.1 documentation</title>
   
 
   
@@ -88,6 +88,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -96,7 +97,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -107,6 +108,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -154,7 +156,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>perturbations.word_swap</li>
+      <li>transformations.word_swap</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -169,56 +171,57 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for perturbations.word_swap</h1><div class="highlight"><pre>
+  <h1>Source code for transformations.word_swap</h1><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">.perturbation</span> <span class="k">import</span> <span class="n">Perturbation</span>
+<span class="kn">from</span> <span class="nn">.transformation</span> <span class="k">import</span> <span class="n">Transformation</span>
+<span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="k">import</span> <span class="n">stopwords</span>
 
-<div class="viewcode-block" id="WordSwap"><a class="viewcode-back" href="../../transformations/word_swap.html#perturbations.word_swap.WordSwap">[docs]</a><span class="k">class</span> <span class="nc">WordSwap</span><span class="p">(</span><span class="n">Perturbation</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">    An abstract class that takes a sentence and perturbs it by replacing</span>
+<div class="viewcode-block" id="WordSwap"><a class="viewcode-back" href="../../transformations/word_swap.html#transformations.word_swap.WordSwap">[docs]</a><span class="k">class</span> <span class="nc">WordSwap</span><span class="p">(</span><span class="n">Transformation</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An abstract class that takes a sentence and transforms it by replacing</span>
 <span class="sd">    some of its words.</span>
-<span class="sd">        </span>
+
 <span class="sd">    Other classes can achieve this by inheriting from WordSwap and </span>
 <span class="sd">    overriding self._get_replacement_words.</span>
 
+<span class="sd">    Args:</span>
+<span class="sd">        replace_stopwords(:obj:`bool`, optional): Whether to replace stopwords. Defaults to False. </span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">replace_stopwords</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">replace_stopwords</span> <span class="o">=</span> <span class="n">replace_stopwords</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stopwords</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">stopwords</span><span class="o">.</span><span class="n">words</span><span class="p">(</span><span class="s1">&#39;english&#39;</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">_get_replacement_words</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">):</span>
     
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span>
     
-
-<div class="viewcode-block" id="WordSwap.perturb"><a class="viewcode-back" href="../../transformations/word_swap.html#perturbations.word_swap.WordSwap.perturb">[docs]</a>    <span class="k">def</span> <span class="nf">perturb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">,</span> <span class="n">indices_to_replace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; </span>
-<span class="sd">        Returns a list of all possible perturbations for `text`.</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">,</span> <span class="n">indices_to_replace</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list of all possible transformations for `text`.</span>
 <span class="sd">            </span>
-<span class="sd">        If indices_to_replace is set, only replaces words at those</span>
-<span class="sd">        indices.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            tokenized_text (TODO Type): The tokenized test</span>
-<span class="sd">            indicies_to_replace (:obj:`list`, optional): The indicies of the text</span>
-<span class="sd">                to replace. Defaults to None so that all indicies may be replaced. </span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The perturbed text filtered to meet the contraints of the perturbation </span>
-
+<span class="sd">        If indices_to_replace is set, only replaces words at those indices.</span>
+<span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        
         <span class="n">words</span> <span class="o">=</span> <span class="n">tokenized_text</span><span class="o">.</span><span class="n">words</span><span class="p">()</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">indices_to_replace</span><span class="p">:</span>
             <span class="n">indices_to_replace</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">)))</span>
         
-        <span class="n">perturbations</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">transformations</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">word_swaps</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices_to_replace</span><span class="p">:</span>
             <span class="n">word_to_replace</span> <span class="o">=</span> <span class="n">words</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_stopwords</span> <span class="ow">and</span> <span class="n">word_to_replace</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopwords</span><span class="p">:</span>
+                <span class="k">continue</span>
             <span class="n">replacement_words</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_replacement_words</span><span class="p">(</span><span class="n">word_to_replace</span><span class="p">)</span>
             <span class="n">new_tokenized_texts</span> <span class="o">=</span> <span class="p">[]</span>
             <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">replacement_words</span><span class="p">:</span>
                 <span class="n">new_tokenized_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tokenized_text</span><span class="o">.</span><span class="n">replace_word_at_index</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span>
-            <span class="n">perturbations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_tokenized_texts</span><span class="p">)</span>
+            <span class="n">transformations</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">new_tokenized_texts</span><span class="p">)</span>
         
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_perturbations</span><span class="p">(</span><span class="n">tokenized_text</span><span class="p">,</span> <span class="n">perturbations</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="n">transformations</span></div>
 </pre></div>
 
            </div>

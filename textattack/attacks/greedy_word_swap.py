@@ -6,12 +6,9 @@ class GreedyWordSwap(Attack):
     perturbations.
 
     Args:
-        model: The PyTorch NLP model to attack
-        perturbation: The type of perturbation
+        model: The PyTorch NLP model to attack.
+        transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
-
-    Returns:
-        The result of the attack
         
     """
     def __init__(self, model, transformation,  max_depth=32):

@@ -11,11 +11,13 @@ BERT Example
 
    transformation = WordSwapCounterfit()
 
-   transformation.add_constraints(
-      constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
-   )
-
    attack = attacks.GreedyWordSwap(model, transformation)
+
+   attack.add_constraints(
+      (
+      constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+      )
+   )
 
    yelp_data = YelpSentiment(n=2)
 

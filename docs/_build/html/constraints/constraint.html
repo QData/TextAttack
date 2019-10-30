@@ -90,6 +90,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -98,7 +99,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -109,6 +110,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -175,36 +177,23 @@
             
   <div class="section" id="module-constraints.constraint">
 <span id="constraints"></span><h1>Constraints<a class="headerlink" href="#module-constraints.constraint" title="Permalink to this headline">¶</a></h1>
-<p>Abstract classes that represent constraints on text adversarial examples.</p>
-<dl class="simple">
-<dt>&#64;TODO: Smart ordering of constraints:</dt><dd><p>On each pass of call_many, time constraints and order them from fastest
-to slowest. That way, the fastest constraint does the most work, then
-subsequent constraints only have to examine perturbations that met
-previous constraints.</p>
-</dd>
-</dl>
+<p>Abstract classes represent constraints on text adversarial examples.</p>
 <dl class="class">
 <dt id="constraints.constraint.Constraint">
 <em class="property">class </em><code class="sig-prename descclassname">constraints.constraint.</code><code class="sig-name descname">Constraint</code><a class="reference internal" href="../_modules/constraints/constraint.html#Constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.constraint.Constraint" title="Permalink to this definition">¶</a></dt>
 <dd><p>An abstract class that represents constraints on adversial text examples.
 A constraint evaluates if (x,x_adv) meets a certain constraint.</p>
 <dl class="method">
-<dt id="constraints.constraint.Constraint.filter">
-<code class="sig-name descname">filter</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv_list</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/constraints/constraint.html#Constraint.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.constraint.Constraint.filter" title="Permalink to this definition">¶</a></dt>
+<dt id="constraints.constraint.Constraint.call_many">
+<code class="sig-name descname">call_many</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">x_adv_list</em>, <em class="sig-param">original_text=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/constraints/constraint.html#Constraint.call_many"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#constraints.constraint.Constraint.call_many" title="Permalink to this definition">¶</a></dt>
 <dd><p>Filters x_adv_list to x_adv where C(x,x_adv) is true.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> – </p></li>
 <li><p><strong>x_adv_list</strong> – </p></li>
+<li><p><strong>original_text</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">type</span></code>, optional) – Defaults to None.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>TODO</p>
-</dd>
-</dl>
-<dl class="simple">
-<dt>&#64;TODO can we just call this <cite>filter</cite>? My syntax highlighter highlights</dt><dd><p>that so I’m inclined not to use that protected name…</p>
 </dd>
 </dl>
 </dd></dl>

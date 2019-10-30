@@ -88,6 +88,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../attacks/attack.html">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -96,7 +97,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -107,6 +108,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -261,8 +263,14 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A list with the similarity between the original text and each perturbed text in :obj:`x_adv_list`. </span>
+<span class="sd">            If x_adv_list is empty, an empty tensor is returned</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Return an empty tensor if x_adv_list is empty.</span>
+        <span class="c1"># This prevents us from calling .repeat(x, 0), which throws an</span>
+        <span class="c1"># error on machines with multiple GPUs (pytorch 1.2).</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">x_adv_list</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([])</span>
+        
         <span class="n">x_text</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">text</span>
         <span class="n">x_adv_list_text</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_adv</span><span class="o">.</span><span class="n">text</span> <span class="k">for</span> <span class="n">x_adv</span> <span class="ow">in</span> <span class="n">x_adv_list</span><span class="p">]</span>
         <span class="n">embeddings</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">encode</span><span class="p">([</span><span class="n">x_text</span><span class="p">]</span> <span class="o">+</span> <span class="n">x_adv_list_text</span><span class="p">,</span> <span class="n">tokenize</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -275,7 +283,7 @@
         
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="p">(</span><span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)(</span><span class="n">original_embedding</span><span class="p">,</span> <span class="n">perturbed_embedding</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="UniversalSentenceEncoder.filter"><a class="viewcode-back" href="../../../constraints/semantics/semantics.html#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv_list</span><span class="p">):</span>
+<div class="viewcode-block" id="UniversalSentenceEncoder.call_many"><a class="viewcode-back" href="../../../constraints/semantics/semantics.html#constraints.semantics.universal_sentence_encoder.UniversalSentenceEncoder.call_many">[docs]</a>    <span class="k">def</span> <span class="nf">call_many</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x_adv_list</span><span class="p">,</span> <span class="n">original_text</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Filters the list of perturbed texts so that the similarity between the original text</span>
 <span class="sd">        and the perturbed text is greater than the :obj:`threshold`. </span>
@@ -283,14 +291,15 @@
 <span class="sd">        Args:</span>
 <span class="sd">            x (str): The original text</span>
 <span class="sd">            x_adv_list (list(str)): A list of perturbed texts</span>
+<span class="sd">            original_text(:obj:`type`, optional): Defaults to None. </span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A filtered list of perturbed texts where each perturbed text meets the similarity threshold. </span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-            <span class="c1"># @TODO can we rename this function `filter`?</span>
+        <span class="c1"># @TODO can we rename this function `filter`? (It&#39;s a reserved keyword in python)</span>
         <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">score_list</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x_adv_list</span><span class="p">)</span>
-        <span class="n">mask</span> <span class="o">=</span> <span class="p">((</span><span class="n">scores</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">scores</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold</span>
         <span class="n">mask</span> <span class="o">=</span> <span class="n">mask</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">x_adv_list</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span></div>
     

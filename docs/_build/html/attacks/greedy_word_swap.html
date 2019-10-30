@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="BERT" href="../models/bert.html" />
+    <link rel="next" title="Genetic Algorithm" href="genetic_algorithm.html" />
     <link rel="prev" title="Attack Documentation" href="attack.html" /> 
 </head>
 
@@ -90,6 +90,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="attack.html">Attack Documentation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -98,7 +99,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -109,6 +110,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -177,21 +179,37 @@
 <span id="greedy-word-swap"></span><h1>Greedy Word Swap<a class="headerlink" href="#module-attacks.greedy_word_swap" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="attacks.greedy_word_swap.GreedyWordSwap">
-<em class="property">class </em><code class="sig-prename descclassname">attacks.greedy_word_swap.</code><code class="sig-name descname">GreedyWordSwap</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">perturbation</em>, <em class="sig-param">max_depth=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/greedy_word_swap.html#GreedyWordSwap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.greedy_word_swap.GreedyWordSwap" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">attacks.greedy_word_swap.</code><code class="sig-name descname">GreedyWordSwap</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">transformation</em>, <em class="sig-param">max_depth=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/greedy_word_swap.html#GreedyWordSwap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.greedy_word_swap.GreedyWordSwap" title="Permalink to this definition">¶</a></dt>
 <dd><p>An attack that greedily chooses from a list of possible
 perturbations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – The PyTorch NLP model to attack</p></li>
-<li><p><strong>perturbation</strong> – The type of perturbation</p></li>
+<li><p><strong>model</strong> – The PyTorch NLP model to attack.</p></li>
+<li><p><strong>transformation</strong> – The type of transformation.</p></li>
 <li><p><strong>max_depth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – The maximum number of words to change. Defaults to 32.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The result of the attack</p>
+</dl>
+</dd></dl>
+
+<span class="target" id="module-attacks.greedy_word_swap_wir"></span><dl class="class">
+<dt id="attacks.greedy_word_swap_wir.GreedyWordSwapWIR">
+<em class="property">class </em><code class="sig-prename descclassname">attacks.greedy_word_swap_wir.</code><code class="sig-name descname">GreedyWordSwapWIR</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">transformation</em>, <em class="sig-param">max_depth=32</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/greedy_word_swap_wir.html#GreedyWordSwapWIR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.greedy_word_swap_wir.GreedyWordSwapWIR" title="Permalink to this definition">¶</a></dt>
+<dd><p>An attack that greedily chooses from a list of possible
+perturbations for each index, after ranking indices by importance.
+Reimplementation of paper:
+Is BERT Really Robust? A Strong Baseline for Natural Language Attack on
+Text Classification and Entailment by Jin et. al, 2019
+<a class="reference external" href="https://github.com/jind11/TextFooler">https://github.com/jind11/TextFooler</a></p>
+<blockquote>
+<div><dl class="simple">
+<dt>Args:</dt><dd><p>model: The PyTorch NLP model to attack.
+transformation: The type of transformation.
+max_depth (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional): The maximum number of words to change. Defaults to 32.</p>
 </dd>
 </dl>
+</div></blockquote>
 </dd></dl>
 
 </div>
@@ -204,7 +222,7 @@ perturbations.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../models/bert.html" class="btn btn-neutral float-right" title="BERT" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="genetic_algorithm.html" class="btn btn-neutral float-right" title="Genetic Algorithm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="attack.html" class="btn btn-neutral float-left" title="Attack Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

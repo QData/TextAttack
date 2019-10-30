@@ -90,6 +90,7 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Attack Documentation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="genetic_algorithm.html">Genetic Algorithm</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Models Documentation:</span></p>
 <ul>
@@ -98,7 +99,7 @@
 </ul>
 <p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../transformations/perturbation.html">Perturbation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../transformations/transformation.html">Transformation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../transformations/word_swap.html">Word Swap</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
@@ -109,6 +110,7 @@
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
 </ul>
 
             
@@ -175,29 +177,46 @@
             
   <div class="section" id="module-attacks.attack">
 <span id="attack-documentation"></span><h1>Attack Documentation<a class="headerlink" href="#module-attacks.attack" title="Permalink to this headline">¶</a></h1>
-<p>” &#64;TODOs:
-- Example of using with Pytorch and Tensorflow model.
-- sphinx documentation
-- add recipes with state-of-the-art attacks
-- add unit tests
-- add pep8 standard
-- upload sample models and datasets
-- add logger… we should never call print()
-- make it much quieter when we load pretrained BERT. It’s so noisy right now :(
-- try to refer to ‘text’ not ‘sentences’ (better terminology)
-- make this into a pip package (not on pypi, just a local package)</p>
 <dl class="class">
 <dt id="attacks.attack.Attack">
-<em class="property">class </em><code class="sig-prename descclassname">attacks.attack.</code><code class="sig-name descname">Attack</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">perturbation</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">attacks.attack.</code><code class="sig-name descname">Attack</code><span class="sig-paren">(</span><em class="sig-param">model</em>, <em class="sig-param">constraints=[]</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack" title="Permalink to this definition">¶</a></dt>
 <dd><p>An attack generates adversarial examples on text.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> – A PyTorch NLP model</p></li>
-<li><p><strong>perturbation</strong> – The type of perturbation</p></li>
+<li><p><strong>model</strong> – A PyTorch or TensorFlow model to attack</p></li>
+<li><p><strong>constraints</strong> – A list of constraints to add to the attack</p></li>
 </ul>
 </dd>
 </dl>
+<dl class="method">
+<dt id="attacks.attack.Attack.add_constraint">
+<code class="sig-name descname">add_constraint</code><span class="sig-paren">(</span><em class="sig-param">constraint</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.add_constraint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.add_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a constraint to the attack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>constraint</strong> – A constraint to add, see constraints</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the constraint is not of type <code class="xref py py-obj docutils literal notranslate"><span class="pre">Constraint</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="attacks.attack.Attack.add_constraints">
+<code class="sig-name descname">add_constraints</code><span class="sig-paren">(</span><em class="sig-param">constraints</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.add_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.add_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds multiple constraints to the attack.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>constraints</strong> – An iterable of constraints to add, see constraints.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>TypeError</strong> – If the constraints are not iterable</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="method">
 <dt id="attacks.attack.Attack.add_output_file">
 <code class="sig-name descname">add_output_file</code><span class="sig-paren">(</span><em class="sig-param">file</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.add_output_file"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.add_output_file" title="Permalink to this definition">¶</a></dt>
@@ -226,6 +245,25 @@
 </dl>
 </dd></dl>
 
+<dl class="method">
+<dt id="attacks.attack.Attack.get_transformations">
+<code class="sig-name descname">get_transformations</code><span class="sig-paren">(</span><em class="sig-param">transformation</em>, <em class="sig-param">text</em>, <em class="sig-param">original_text=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#Attack.get_transformations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.Attack.get_transformations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Filters a list of transformations by self.constraints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>transformation</strong> – </p></li>
+<li><p><strong>text</strong> (<em>original</em>) – </p></li>
+<li><p><strong>text</strong> – Defaults to None.</p></li>
+<li><p><strong>**kwargs</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A filtered list of transformations where each transformation matches the constraints</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -247,7 +285,6 @@
 <dt id="attacks.attack.AttackResult.diff">
 <code class="sig-name descname">diff</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/attacks/attack.html#AttackResult.diff"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#attacks.attack.AttackResult.diff" title="Permalink to this definition">¶</a></dt>
 <dd><p>Highlights the difference between two texts using color.</p>
-<p>&#64;TODO abstract to work for general paraphrase.</p>
 </dd></dl>
 
 </dd></dl>
