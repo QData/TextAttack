@@ -53,5 +53,3 @@ class BertForSentimentClassification:
         with torch.no_grad():
             pred = self.model(text_ids)
         return pred[0]
-
-# Rewrite 'SimpleBertClassifier' from RobustNLP using new transformers package.

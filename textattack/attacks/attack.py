@@ -1,26 +1,16 @@
-# @TODO all files should have some copyright header or something
-
-"""" @TODOs:
-    - Example of using with Pytorch and Tensorflow model.
-    - sphinx documentation
-    - add recipes with state-of-the-art attacks
-    - add unit tests
-    - add pep8 standard
-    - upload sample models and datasets
-    - add logger... we should never call print()
-    - make it much quieter when we load pretrained BERT. It's so noisy right now :(
-    - try to refer to 'text' not 'sentences' (better terminology)
-    - make this into a pip package (not on pypi, just a local package)
-"""
-
 import difflib
+import numpy as np
+import os
 import torch
 import random
 
 from textattack import utils as utils
+
+from textattack.constraints import Constraint
 from textattack.tokenized_text import TokenizedText
 
 class Attack:
+<<<<<<< HEAD
     """ 
     An attack generates adversarial examples on text. 
 
@@ -31,6 +21,10 @@ class Attack:
     """
 
     def __init__(self, model, perturbation):
+=======
+    """ An attack generates adversarial examples on text. """
+    def __init__(self, model, constraints=[]):
+>>>>>>> master
         """ Initialize an attack object.
         
         Attacks can be run multiple times
@@ -39,7 +33,10 @@ class Attack:
             we assume every model has a .tokenizer ?
         """
         self.model = model
-        self.perturbation = perturbation
+        # Transformation and corresponding constraints.
+        self.constraints = []
+        if constraints:
+            self.add_constraints(constraints)
         # List of files to output to.
         self.output_files = []
         self.output_to_terminal = True
@@ -54,22 +51,49 @@ class Attack:
             
         """
         if isinstance(file, str):
+            directory = os.path.dirname(file)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             file = open(file, 'w')
         self.output_files.append(file)
+        
+    def add_constraint(self, constraint):
+        """ Add constraint to attack. """
+        if not isinstance(constraint, Constraint):
+            raise ValueError('Cannot add constraint of type', type(constraint))
+        self.constraints.append(constraint)
     
+    def add_constraints(self, constraints):
+        """ Add multiple constraints to attack. """
+        # Make sure constraints are iterable.
+        try:
+            iter(constraints)
+        except TypeError as te:
+            raise TypeError(f'Constraint list type {type(constraints)} is not iterable.')
+        # Store each constraint after validating its type.
+        for constraint in constraints:
+            self.add_constraint(constraint)
+    
+    def get_transformations(self, transformation, text, original_text=None, **kwargs):
+        """ Filters a list of transformations by self.constraints. """
+        transformations = np.array(transformation(text, **kwargs))
+        for C in self.constraints:
+            transformations = C.call_many(text, transformations, original_text)
+        return transformations
+      
     def _attack_one(self, label, tokenized_text):
         """ Perturbs `text` to until `self.model` gives a different label
             than `label`. """
         raise NotImplementedError()
-    
+      
     def _call_model(self, tokenized_text_list):
         """ Returns model predictions for a list of TokenizedText objects. """
-        # @todo support models that take text instead of IDs.
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         return self.model(ids).squeeze()
-    
+      
     def attack(self, dataset, shuffle=False):
+<<<<<<< HEAD
         """ 
         Runs an attack on the given dataset and outputs the results to the console and the output file.
 
@@ -80,6 +104,11 @@ class Attack:
         Returns:
             The results of the attack on the dataset
 
+=======
+        """ Runs an attack on some data and outputs results.
+          
+              - dataset: an iterable of (label, text) pairs
+>>>>>>> master
         """
         if shuffle:
             random.shuffle(dataset)
@@ -89,8 +118,6 @@ class Attack:
             tokenized_text = TokenizedText(self.model, text)
             result = self._attack_one(label, tokenized_text)
             results.append(result)
-        
-        # @TODO Support failed attacks. Right now they'll throw an error
         
         if self.output_to_terminal:
             for i, result in enumerate(results):
@@ -104,7 +131,6 @@ class Attack:
                     output_file.write(str(result) + '\n')
         
         if self.output_to_visdom:
-            # @TODO Support logging to Visdom.
             raise NotImplementedError()
         
         print('-'*80)
@@ -112,6 +138,7 @@ class Attack:
         return results
 
 class AttackResult:
+<<<<<<< HEAD
     """
     Result of an Attack run on a single (label, text_input) pair. 
 
@@ -123,6 +150,9 @@ class AttackResult:
 
     
     @TODO support attacks that fail (no perturbed label/text)
+=======
+    """ Result of an Attack run on a single (label, text_input) pair. 
+>>>>>>> master
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
@@ -140,12 +170,15 @@ class AttackResult:
         return '\n'.join(self.__data__())
     
     def diff(self):
+<<<<<<< HEAD
         """ 
         Highlights the difference between two texts using color.
         
         @TODO abstract to work for general paraphrase.
+=======
+        """ Shows the difference between two strings in color.
+>>>>>>> master
         """
-        #@TODO: Support printing to HTML in some cases.
         _color = utils.color_text_terminal
         t1 = self.original_text
         t2 = self.perturbed_text
@@ -176,25 +209,31 @@ class AttackResult:
         print('\n'.join(self.diff()))
 
 if __name__ == '__main__':
-    from . import attacks
-    from . import constraints
-    from .datasets import YelpSentiment
-    from .models import BertForSentimentClassification
-    from .perturbations import WordSwapCounterfit
+    import textattack.attacks as attacks
+    import textattack.constraints as constraints
+    from textattack.datasets import YelpSentiment
+    from textattack.models import BertForSentimentClassification
+    from textattack.transformations import WordSwapCounterfit
     
-    # @TODO: Running attack.py should parse args and run script-based attacks 
-    #       (as opposed to code-based attacks)
+    import os
+    # Only use one GPU, if we have one.
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    # Disable tensorflow logs, except in the case of an error.
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    
     model = BertForSentimentClassification()
     
-    perturbation = WordSwapCounterfit()
+    transformation = WordSwapCounterfit(max_candidates=5)
     
-    perturbation.add_constraints((
+    attack = attacks.GreedyWordSwapWIR(model, transformation)
+    
+    attack.add_constraints(
+        (
+        constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
-        constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
         )
     )
-    
-    attack = attacks.GreedyWordSwap(model, perturbation)
     
     yelp_data = YelpSentiment(n=2)
     # yelp_data = [
@@ -203,8 +242,6 @@ if __name__ == '__main__':
     # ]
     
     # attack.enable_visdom()
-    attack.add_output_file(open('outputs/test.txt', 'w'))
-    import sys
-    attack.add_output_file(sys.stdout)
+    attack.add_output_file('outputs/test.txt')
     
     attack.attack(yelp_data, shuffle=False)

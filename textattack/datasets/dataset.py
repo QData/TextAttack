@@ -1,7 +1,3 @@
-""" @TODO 
-    - support tensorflow_datasets, pytorch dataloader and other built-in datasets
-    - batch support
-"""
 class TextAttackDataset:
     """ A dataset for text attacks.
     

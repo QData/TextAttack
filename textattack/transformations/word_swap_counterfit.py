@@ -5,6 +5,7 @@ from textattack import utils as utils
 from .word_swap import WordSwap
 
 class WordSwapCounterfit(WordSwap):
+<<<<<<< HEAD:textattack/perturbations/word_swap_counterfit.py
     """
     transformations 
     A class that takes a sentence and transforms it by replacing some of its words. 
@@ -15,10 +16,16 @@ class WordSwapCounterfit(WordSwap):
     Raises:
 
     """
+=======
+    """ Transforms an input by replacing its words with synonyms in the counter-fitted
+        embedding space. """
+    
+>>>>>>> master:textattack/transformations/word_swap_counterfit.py
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings/'
     
-    def __init__(self, word_embedding_folder='paragram_300_sl999'):
-        super().__init__()
+    def __init__(self, replace_stopwords=False, max_candidates=None, word_embedding_folder='paragram_300_sl999'):
+        super().__init__(replace_stopwords)
+        self.max_candidates = max_candidates
         if word_embedding_folder == 'paragram_300_sl999':
             word_embeddings_file = 'paragram_300_sl999.npy'
             word_list_file = 'wordlist.pickle'
@@ -47,16 +54,15 @@ class WordSwapCounterfit(WordSwap):
     
     def _get_replacement_words(self, word, max_candidates=10):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
-            or phrase. Based on nearest neighbors selected word embeddings.  
-            
-            @TODO abstract to WordSwap class where subclasses just override
-                _get_replacement_words.
+            or phrase. Based on nearest neighbors selected word embeddings.
         """
+        if self.max_candidates:
+            max_candidates = min(max_candidates, self.max_candidates)
         try:
             word_id = self.word_embedding_word2index[word]
             nnids = self.nn[word_id][1:max_candidates+1]
             candidate_words = []
-            for i,wi in enumerate(nnids):
+            for i, wi in enumerate(nnids):
                 candidate_words.append(self.word_embedding_index2word[wi])
             return candidate_words
         except KeyError:
