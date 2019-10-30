@@ -42,6 +42,7 @@ Welcome to TextAttack's documentation!
 
    constraints/constraint
    constraints/semantics/semantics
+   constraints/semantics/google_language_model
 
 .. toctree::
    :maxdepth: 2

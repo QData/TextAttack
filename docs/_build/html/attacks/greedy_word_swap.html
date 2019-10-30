@@ -106,6 +106,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../constraints/constraint.html">Constraints</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../constraints/semantics/semantics.html">Semantics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constraints/semantics/google_language_model.html">Google Language Model</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Datasets:</span></p>
 <ul>
@@ -202,14 +203,15 @@ Reimplementation of paper:
 Is BERT Really Robust? A Strong Baseline for Natural Language Attack on
 Text Classification and Entailment by Jin et. al, 2019
 <a class="reference external" href="https://github.com/jind11/TextFooler">https://github.com/jind11/TextFooler</a></p>
-<blockquote>
-<div><dl class="simple">
-<dt>Args:</dt><dd><p>model: The PyTorch NLP model to attack.
-transformation: The type of transformation.
-max_depth (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional): The maximum number of words to change. Defaults to 32.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> – The PyTorch NLP model to attack.</p></li>
+<li><p><strong>transformation</strong> – The type of transformation.</p></li>
+<li><p><strong>max_depth</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">int</span></code>, optional) – The maximum number of words to change. Defaults to 32.</p></li>
+</ul>
 </dd>
 </dl>
-</div></blockquote>
 </dd></dl>
 
 </div>

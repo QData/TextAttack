@@ -19,6 +19,11 @@ tf.get_logger().setLevel('INFO')
 ROOT_FOLDER = '/p/qdata/jm8wx/research_OLD/nlp_adversarial_examples_new/goog_lm'
 
 class GoogLMHelper(object):
+    '''
+    An implementation of `<https://arxiv.org/abs/1804.07998>`_
+    adapted from `<https://github.com/nesl/nlp_adversarial_examples>`_. 
+
+    '''
     def __init__(self):
         self.PBTXT_PATH = os.path.join(ROOT_FOLDER, 'graph-2016-09-10-gpu.pbtxt')
         self.CKPT_PATH = os.path.join(ROOT_FOLDER, 'ckpt-*')
@@ -36,6 +41,15 @@ class GoogLMHelper(object):
             self.t = lm_utils.LoadModel(self.sess, self.graph, self.PBTXT_PATH, self.CKPT_PATH)
 
     def get_words_probs(self, prefix_words, list_words, suffix=None):
+        '''
+        Retrieves the probability of words.
+
+        Args:
+            prefix_words:
+            list_words:
+            suffix (:obj:`type`, optional): Defaults to None. 
+
+        '''
         targets = np.zeros([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.int32)
         weights = np.ones([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.float32)
 

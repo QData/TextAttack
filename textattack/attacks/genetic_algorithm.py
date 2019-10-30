@@ -1,7 +1,9 @@
 '''
 Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. al
-arxiv.org/abs/1804.07998
-github.com/nesl/nlp_adversarial_examples
+
+`<arxiv.org/abs/1804.07998>`_
+
+`<github.com/nesl/nlp_adversarial_examples>`_
 '''
 
 import numpy as np

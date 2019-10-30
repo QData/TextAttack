@@ -10,7 +10,7 @@ class GreedyWordSwapWIR(Attack):
     Text Classification and Entailment by Jin et. al, 2019
     https://github.com/jind11/TextFooler 
 
-     Args:
+    Args:
         model: The PyTorch NLP model to attack.
         transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 

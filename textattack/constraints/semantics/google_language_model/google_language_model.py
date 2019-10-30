@@ -7,15 +7,26 @@ from textattack.constraints import Constraint
 from .alzantot_goog_lm import GoogLMHelper
 
 class GoogleLanguageModel(Constraint):
-    """ Constraint that uses the Google 1 Billion Words Language Model to 
-        determine the difference in perplexity between x and x_adv. 
+    """
+    Constraint that uses the Google 1 Billion Words Language Model to 
+    determine the difference in perplexity between x and x_adv. 
+
+    Args:
+        top_n (int):
+        top_n_per_index (int):
+        print_step (:obj:`bool`, optional): Whether to print each step. Defaults to False. 
         
-        Returns the top_n sentences.
-        
-        @TODO allow user to set perplexity threshold; implement __call__.
-        
-        @TODO this use of the language model only really makes sense for 
-            adversarial examples based on word swaps
+    Returns:
+        The :obj:`top_n` sentences.
+
+    Raises:
+        ValueError: If :obj:`top_n` or :obj:`top_n_per_index` are not provided. 
+    
+    @TODO allow user to set perplexity threshold; implement __call__.
+    
+    @TODO this use of the language model only really makes sense for 
+        adversarial examples based on word swaps
+
     """
     def __init__(self, top_n=None, top_n_per_index=None, print_step=False):
         if not (top_n or top_n_per_index): 
@@ -26,8 +37,15 @@ class GoogleLanguageModel(Constraint):
         self.print_step = print_step
     
     def call_many(self, x, x_adv_list, original_text=None):
-        """ Returns the `top_n` of x_adv_list, as evaluated by the language 
-            model. 
+        """
+        Returns the `top_n` of x_adv_list, as evaluated by the language 
+        model. 
+
+        Args:
+            x:
+            X_adv_list:
+            original_text (:obj:`type`, optional): Defaults to None. 
+
         """
         if not len(x_adv_list): return []
         
