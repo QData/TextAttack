@@ -25,10 +25,12 @@ class Vocabulary(object):
   """Class that holds a vocabulary for the dataset."""
 
   def __init__(self, filename):
-    """Initialize vocabulary.
+    """
+    Initialize vocabulary.
 
     Args:
-      filename: Vocabulary file name.
+      filename (str): Vocabulary file name.
+
     """
 
     self._id_to_word = []
@@ -76,6 +78,16 @@ class Vocabulary(object):
     return self.unk
 
   def id_to_word(self, cur_id):
+    """
+    Converts an ID to the word it represents.
+
+    Args:
+      cur_id: The ID 
+
+    Returns:
+      The word that :obj:`cur_id` represents. 
+
+    """
     if cur_id < self.size:
       return self._id_to_word[cur_id]
     return 'ERROR'

@@ -1,8 +1,15 @@
 from textattack.attacks import Attack, AttackResult
 
 class GreedyWordSwap(Attack):
-    """ An attack that greedily chooses from a list of possible 
-        perturbations.
+    """ 
+    An attack that greedily chooses from a list of possible 
+    perturbations.
+
+    Args:
+        model: The PyTorch NLP model to attack.
+        transformation: The type of transformation.
+        max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
+        
     """
     def __init__(self, model, transformation,  max_depth=32):
         super().__init__(model)

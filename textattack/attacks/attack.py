@@ -2,6 +2,7 @@ import difflib
 import numpy as np
 import os
 import torch
+import random
 
 from textattack import utils as utils
 
@@ -9,7 +10,14 @@ from textattack.constraints import Constraint
 from textattack.tokenized_text import TokenizedText
 
 class Attack:
-    """ An attack generates adversarial examples on text. """
+    """
+    An attack generates adversarial examples on text. 
+
+    Args:
+        model: A PyTorch or TensorFlow model to attack
+        constraints: A list of constraints to add to the attack
+
+    """
     def __init__(self, model, constraints=[]):
         """ Initialize an attack object.
         
@@ -29,7 +37,13 @@ class Attack:
         self.output_to_visdom = False
     
     def add_output_file(self, file):
-        """ When attack runs, it will output to this file. """
+        """ 
+        When attack runs, it will output to this file. 
+
+        Args:
+            file (str): The path to the output file
+            
+        """
         if isinstance(file, str):
             directory = os.path.dirname(file)
             if not os.path.exists(directory):
@@ -38,13 +52,31 @@ class Attack:
         self.output_files.append(file)
         
     def add_constraint(self, constraint):
-        """ Add constraint to attack. """
+        """ 
+        Adds a constraint to the attack. 
+        
+        Args:
+            constraint: A constraint to add, see constraints
+
+        Raises:
+            ValueError: If the constraint is not of type :obj:`Constraint`
+
+        """
         if not isinstance(constraint, Constraint):
             raise ValueError('Cannot add constraint of type', type(constraint))
         self.constraints.append(constraint)
     
     def add_constraints(self, constraints):
-        """ Add multiple constraints to attack. """
+        """ 
+        Adds multiple constraints to the attack. 
+        
+        Args:
+            constraints: An iterable of constraints to add, see constraints. 
+
+        Raises:
+            TypeError: If the constraints are not iterable
+
+        """
         # Make sure constraints are iterable.
         try:
             iter(constraints)
@@ -55,27 +87,52 @@ class Attack:
             self.add_constraint(constraint)
     
     def get_transformations(self, transformation, text, original_text=None, **kwargs):
-        """ Filters a list of transformations by self.constraints. """
+        """
+        Filters a list of transformations by self.constraints. 
+        
+        Args:
+            transformation:
+            text:
+            original text (:obj:`type`, optional): Defaults to None. 
+            **kwargs:
+
+        Returns:
+            A filtered list of transformations where each transformation matches the constraints
+
+        """
         transformations = np.array(transformation(text, **kwargs))
         for C in self.constraints:
             transformations = C.call_many(text, transformations, original_text)
         return transformations
       
     def _attack_one(self, label, tokenized_text):
-        """ Perturbs `text` to until `self.model` gives a different label
-            than `label`. """
+        """
+        Perturbs `text` to until `self.model` gives a different label
+        than `label`. 
+
+        """
         raise NotImplementedError()
       
     def _call_model(self, tokenized_text_list):
-        """ Returns model predictions for a list of TokenizedText objects. """
+        """
+        Returns model predictions for a list of TokenizedText objects. 
+        
+        """
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         return self.model(ids).squeeze()
       
     def attack(self, dataset, shuffle=False):
-        """ Runs an attack on some data and outputs results.
-          
-              - dataset: an iterable of (label, text) pairs
+        """ 
+        Runs an attack on the given dataset and outputs the results to the console and the output file.
+
+        Args:
+            dataset: An iterable of (label, text) pairs
+            shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
+
+        Returns:
+            The results of the attack on the dataset
+
         """
         if shuffle:
             random.shuffle(dataset)
@@ -105,7 +162,17 @@ class Attack:
         return results
 
 class AttackResult:
-    """ Result of an Attack run on a single (label, text_input) pair. 
+    """
+    Result of an Attack run on a single (label, text_input) pair. 
+
+    Args:
+        original_text (str): The original text
+        perturbed_text (str): The perturbed text resulting from the attack
+        original_label (int): he classification label of the original text
+        perturbed_label (int): The classification label of the perturbed text
+
+    
+    @TODO support attacks that fail (no perturbed label/text)
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
@@ -123,7 +190,9 @@ class AttackResult:
         return '\n'.join(self.__data__())
     
     def diff(self):
-        """ Shows the difference between two strings in color.
+        """ 
+        Highlights the difference between two texts using color.
+        
         """
         _color = utils.color_text_terminal
         t1 = self.original_text
