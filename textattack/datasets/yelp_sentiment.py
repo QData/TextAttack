@@ -2,6 +2,13 @@ from textattack import utils as utils
 from .dataset import TextAttackDataset
 
 class YelpSentiment(TextAttackDataset):
+    """
+    Loads the Yelp Sentiment dataset
+
+    Args:
+        n (int): The number of examples to load
+    
+    """
     DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/yelp'
     def __init__(self, n=None):
         """ Loads a full dataset from disk. """

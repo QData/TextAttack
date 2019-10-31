@@ -8,7 +8,7 @@ optional but will greatly improve code speed.
 ```
 conda create -n text-attack python=3.7
 conda activate text-attack
-pip install -r requirements.txt
+pip install -e .
 ```
 
 We use the list of stopwords from nltk. To download them run in Python shell:
