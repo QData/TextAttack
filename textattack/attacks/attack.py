@@ -120,7 +120,7 @@ class Attack:
         """
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
-        return self.model(ids).squeeze()
+        return self.model(ids)
       
     def attack(self, dataset, shuffle=False):
         """ 
@@ -189,7 +189,7 @@ class AttackResult:
     def __str__(self):
         return '\n'.join(self.__data__())
     
-    def diff(self):
+    def diff_color(self):
         """ 
         Highlights the difference between two texts using color.
         
@@ -221,20 +221,33 @@ class AttackResult:
     
     def print_(self):
         print(str(self.original_label), '-->', str(self.perturbed_label))
-        print('\n'.join(self.diff()))
+        print('\n'.join(self.diff_color()))
+
+class FailedAttackResult(AttackResult):
+    def __init__(self, original_text, original_label):
+        super().__init__(original_text, None, original_label, None)
+    
+    def __data__(self):
+        data = (self.original_text, self.original_label)
+        return tuple(map(str, data))
+    
+    def print_(self):
+        _color = utils.color_text_terminal
+        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
+        print(self.original_text)
 
 if __name__ == '__main__':
-    import textattack.attacks as attacks
-    import textattack.constraints as constraints
-    from textattack.datasets import YelpSentiment
-    from textattack.models import BertForSentimentClassification
-    from textattack.transformations import WordSwapCounterfit
-    
     import os
     # Only use one GPU, if we have one.
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     # Disable tensorflow logs, except in the case of an error.
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    
+    import textattack.attacks as attacks
+    import textattack.constraints as constraints
+    from textattack.datasets import YelpSentiment
+    from textattack.models import BertForSentimentClassification
+    from textattack.transformations import WordSwapCounterfit
     
     model = BertForSentimentClassification()
     
@@ -244,9 +257,9 @@ if __name__ == '__main__':
     
     attack.add_constraints(
         (
-        constraints.semantics.GoogleLanguageModel(top_n=2),
+        # constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
-        # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        constraints.semantics.UniversalSentenceEncoder(0.99, metric='cosine'),
         )
     )
     
