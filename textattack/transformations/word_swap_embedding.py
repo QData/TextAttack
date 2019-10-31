@@ -12,12 +12,12 @@ class WordSwapEmbedding(WordSwap):
     
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings'
     
-    def __init__(self, replace_stopwords=False, word_embedding='paragram', similarity_threshold=None):
+    def __init__(self, replace_stopwords=False, word_embedding='paragramcf', similarity_threshold=None):
         super().__init__(replace_stopwords)
         
         self.similarity_threshold = similarity_threshold
         
-        if word_embedding == 'paragram':
+        if word_embedding == 'paragramcf':
             word_embeddings_folder = 'paragramcf'
             word_embeddings_file = 'paragram.npy'
             word_list_file = 'wordlist.pickle'
