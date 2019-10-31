@@ -70,7 +70,9 @@ class Attack:
         """ Returns model predictions for a list of TokenizedText objects. """
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
-        return self.model(ids).squeeze()
+        scores = self.model(ids)
+        return scores
+        
       
     def attack(self, dataset, shuffle=False):
         """ Runs an attack on some data and outputs results.
@@ -155,15 +157,20 @@ class AttackResult:
         print('\n'.join(self.diff()))
 
 if __name__ == '__main__':
+    import time
+    import socket
+    
     import textattack.attacks as attacks
     import textattack.constraints as constraints
     from textattack.datasets import YelpSentiment
     from textattack.models import BertForSentimentClassification
-    from textattack.transformations import WordSwapCounterfit
+    from textattack.transformations import WordSwapEmbedding
+    
+    start_time = time.time()
     
     model = BertForSentimentClassification()
     
-    transformation = WordSwapCounterfit()
+    transformation = WordSwapEmbedding(min_cos_sim=0.99)
     
     # attack = attacks.GreedyWordSwap(model, transformation)
     attack = attacks.GreedyWordSwapWIR(model, transformation)
@@ -184,4 +191,13 @@ if __name__ == '__main__':
     # attack.enable_visdom()
     attack.add_output_file('outputs/test.txt')
     
+    load_time = time.time()
+    
     attack.attack(yelp_data, shuffle=False)
+    
+    finish_time = time.time()
+    
+    hostname = utils.ANSI_ESCAPE_CODES.OKBLUE + socket.gethostname() + utils.ANSI_ESCAPE_CODES.STOP
+    print(f'[+] {hostname} Loaded in {load_time - start_time}s')
+    print(f'[+] {hostname} Ran attack in {finish_time - load_time}s')
+    print(f'[+] {hostname} TOTAL TIME: {finish_time - start_time}s')
