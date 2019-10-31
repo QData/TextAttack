@@ -1,4 +1,4 @@
-from textattack.attacks import Attack, AttackResult
+from textattack.attacks import Attack, AttackResult, FailedAttackResult
 import torch
 
 class GreedyWordSwapWIR(Attack):
@@ -9,12 +9,10 @@ class GreedyWordSwapWIR(Attack):
     Is BERT Really Robust? A Strong Baseline for Natural Language Attack on 
     Text Classification and Entailment by Jin et. al, 2019
     https://github.com/jind11/TextFooler 
-
     Args:
         model: The PyTorch NLP model to attack.
         transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
-
     """
 
     def __init__(self, model, transformation,  max_depth=32):
@@ -62,10 +60,13 @@ class GreedyWordSwapWIR(Attack):
             if new_text_label != original_label:
                 break
             tokenized_text = new_tokenized_text
-            
-        return AttackResult( 
-            original_tokenized_text, 
-            new_tokenized_text, 
-            original_label,
-            new_text_label
-        )
+        
+        if original_label == new_text_label:
+            return FailedAttackResult(original_tokenized_text, original_label)
+        else:
+            return AttackResult( 
+                original_tokenized_text, 
+                new_tokenized_text, 
+                original_label,
+                new_text_label
+            )
