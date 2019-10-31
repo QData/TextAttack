@@ -2,12 +2,17 @@ from textattack.attacks import Attack, AttackResult, FailedAttackResult
 import torch
 
 class GreedyWordSwapWIR(Attack):
-    """ An attack that greedily chooses from a list of possible 
-        perturbations for each index, after ranking indices by importance.
-        Reimplementation of paper:
-        Is BERT Really Robust? A Strong Baseline for Natural Language Attack on 
-        Text Classification and Entailment by Jin et. al, 2019
-        https://github.com/jind11/TextFooler 
+    """
+    An attack that greedily chooses from a list of possible 
+    perturbations for each index, after ranking indices by importance.
+    Reimplementation of paper:
+    Is BERT Really Robust? A Strong Baseline for Natural Language Attack on 
+    Text Classification and Entailment by Jin et. al, 2019
+    https://github.com/jind11/TextFooler 
+    Args:
+        model: The PyTorch NLP model to attack.
+        transformation: The type of transformation.
+        max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
     """
 
     def __init__(self, model, transformation,  max_depth=32):
