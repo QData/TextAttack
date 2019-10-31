@@ -86,14 +86,16 @@ class Attack:
         for constraint in constraints:
             self.add_constraint(constraint)
     
-    def get_transformations(self, transformation, text, original_text=None, **kwargs):
+    def get_transformations(self, transformation, text, original_text=None, 
+                            apply_constraints=True, **kwargs):
         """
         Filters a list of transformations by self.constraints. 
         
         Args:
-            transformation:
+            transformation: 
             text:
             original text (:obj:`type`, optional): Defaults to None. 
+            apply_constraints:
             **kwargs:
 
         Returns:
@@ -101,10 +103,15 @@ class Attack:
 
         """
         transformations = np.array(transformation(text, **kwargs))
+        if apply_constraints:
+            return self.filter_transformations(transformations, text, original_text)
+        return transformations
+     
+    def filter_transformations(self, transformations, text, original_text=None):
         for C in self.constraints:
             transformations = C.call_many(text, transformations, original_text)
-        return transformations
-      
+        return transformations 
+
     def _attack_one(self, label, tokenized_text):
         """
         Perturbs `text` to until `self.model` gives a different label
@@ -240,17 +247,17 @@ if __name__ == '__main__':
     
     transformation = WordSwapCounterfit(max_candidates=5)
     
-    attack = attacks.GreedyWordSwapWIR(model, transformation)
+    attack = attacks.GeneticAlgorithm(model, transformation)
     
     attack.add_constraints(
         (
-        constraints.semantics.GoogleLanguageModel(top_n=2),
+        # constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
         # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
         )
     )
     
-    yelp_data = YelpSentiment(n=2)
+    yelp_data = YelpSentiment(n=1)
     # yelp_data = [
     #     (1, 'I hate this Restaurant!'), 
     #     (0, "Texas Jack's has amazing food.")
