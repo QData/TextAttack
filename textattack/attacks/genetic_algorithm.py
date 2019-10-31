@@ -59,7 +59,7 @@ class GeneticAlgorithm(Attack):
         new_x_preds = self._call_model(new_x_list)
 
         new_x_scores = new_x_preds[:, target]
-        orig_score = self._call_model([x_cur])[target]
+        orig_score = self._call_model([x_cur]).squeeze()[target]
         new_x_scores = new_x_scores - orig_score
 
         # Eliminate words that are not that close

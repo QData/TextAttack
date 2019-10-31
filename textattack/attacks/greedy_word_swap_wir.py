@@ -27,7 +27,7 @@ class GreedyWordSwapWIR(Attack):
         num_words_changed = 0
        
         # Sort words by order of importance
-        orig_probs = self._call_model([tokenized_text])
+        orig_probs = self._call_model([tokenized_text]).squeeze()
         orig_prob = orig_probs.max()
         len_text = len(tokenized_text.words())
         leave_one_texts = \
