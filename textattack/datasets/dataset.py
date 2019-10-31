@@ -1,8 +1,10 @@
 class TextAttackDataset:
-    """ A dataset for text attacks.
+    """
+    A dataset for text attacks.
     
-        Any iterable of (label, text_input) pairs qualifies as 
-        a TextAttackDataset.
+    Any iterable of (label, text_input) pairs qualifies as 
+    a TextAttackDataset.
+    
     """
     def __init__(self):
         """ Loads a full dataset from disk. Typically stores tuples in

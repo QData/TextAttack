@@ -4,14 +4,19 @@ from nltk.corpus import stopwords
 import nltk
 
 class WordSwap(Transformation):
-    """ An abstract class that takes a sentence and transforms it by replacing
-        some of its words.
-        
-        Other classes can achieve this by inheriting from WordSwap and 
-        overriding self._get_replacement_words.
+    """
+    An abstract class that takes a sentence and transforms it by replacing
+    some of its words.
+
+    Other classes can achieve this by inheriting from WordSwap and 
+    overriding self._get_replacement_words.
+
+    Args:
+        replace_stopwords(:obj:`bool`, optional): Whether to replace stopwords. Defaults to False. 
+
     """
 
-    def __init__(self, replace_stopwords=False, check_pos=True, tagset='universal', 
+    def __init__(self, replace_stopwords=False, check_pos=False, tagset='universal', 
                  allow_verb_noun_swap=True):
         self.replace_stopwords = replace_stopwords
         self.stopwords = set(stopwords.words('english'))
@@ -20,6 +25,7 @@ class WordSwap(Transformation):
         self.allow_verb_noun_swap = allow_verb_noun_swap
 
     def _get_replacement_words(self, word):
+    
         raise NotImplementedError()
    
     def _can_replace_pos(self, pos_a, pos_b):
@@ -30,10 +36,11 @@ class WordSwap(Transformation):
         return pos_list[len(before_ctx)]
 
     def __call__(self, tokenized_text, indices_to_replace=None):
-        """ Returns a list of all possible transformations for `text`.
+        """
+        Returns a list of all possible transformations for `text`.
             
-            If indices_to_replace is set, only replaces words at those
-                indices.
+        If indices_to_replace is set, only replaces words at those indices.
+        
         """
 
         words = tokenized_text.words()
