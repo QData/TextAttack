@@ -22,8 +22,12 @@ class WordSwap(Transformation):
     def _get_replacement_words(self, word):
         raise NotImplementedError()
    
-    def _can_sub_pos(self, pos_a, pos_b):
+    def _can_replace_pos(self, pos_a, pos_b):
         return pos_a == pos_b or self.allow_verb_noun_swap and set([pos_a,pos_b]) <= set(['NOUN','VERB'])
+
+    def _get_pos(self, before_ctx, word, after_ctx):
+        _, pos_list = zip(*nltk.pos_tag(before_ctx + [word] + after_ctx, tagset=self.tagset))
+        return pos_list[len(before_ctx)]
 
     def __call__(self, tokenized_text, indices_to_replace=None):
         """ Returns a list of all possible transformations for `text`.
@@ -44,10 +48,15 @@ class WordSwap(Transformation):
                 continue
             replacement_words = self._get_replacement_words(word_to_replace)
             if self.check_pos:
-                _, pos_list = zip(*nltk.pos_tag([word_to_replace] + replacement_words,
-                                           tagset=self.tagset))
-                replacement_words = [word for idx, word  in enumerate(replacement_words)
-                                     if self._can_sub_pos(pos_list[0],pos_list[idx+1])]
+                before_ctx = words[max(i-4,0):i]
+                after_ctx = words[i+1:min(i+5,len(words))]
+                cur_pos = self._get_pos(before_ctx, word_to_replace, after_ctx)
+                replacement_words_filtered = []                
+                for word in replacement_words:
+                    replace_pos = self._get_pos(before_ctx, word, after_ctx)
+                    if self._can_replace_pos(cur_pos, replace_pos):
+                        replacement_words_filtered.append(word)
+                replacement_words = replacement_words_filtered
             new_tokenized_texts = []
             for r in replacement_words:
                 new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r))
