@@ -245,7 +245,7 @@ if __name__ == '__main__':
     
     model = BertForSentimentClassification()
     
-    transformation = WordSwapEmbedding(min_cos_sim=0.99)
+    transformation = WordSwapEmbedding(similarity_threshold=0.99)
     
     attack = attacks.GreedyWordSwapWIR(model, transformation)
     
