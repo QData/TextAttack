@@ -172,8 +172,6 @@ class AttackResult:
         original_label (int): he classification label of the original text
         perturbed_label (int): The classification label of the perturbed text
 
-    
-    @TODO support attacks that fail (no perturbed label/text)
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
@@ -228,6 +226,15 @@ class FailedAttackResult(AttackResult):
     def __init__(self, original_text, original_label):
         super().__init__(original_text, None, original_label, None)
 
+    def __data__(self):
+        data = (self.original_text, self.original_label)
+        return tuple(map(str, data))
+
+    def print_(self):
+        _color = utils.color_text_terminal
+        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
+        print(self.original_text)
+
 if __name__ == '__main__':
     import time
     import socket
@@ -260,11 +267,11 @@ if __name__ == '__main__':
     import textattack.constraints as constraints
     from textattack.datasets import YelpSentiment
     from textattack.models import BertForSentimentClassification
-    from textattack.transformations import WordSwapCounterfit
+    from textattack.transformations import WordSwapEmbedding
     
     model = BertForSentimentClassification()
     
-    transformation = WordSwapEmbedding(similarity_threshold=0.99)
+    transformation = WordSwapEmbedding(similarity_threshold=0.9)
     
     attack = attacks.GreedyWordSwapWIR(model, transformation)
     
