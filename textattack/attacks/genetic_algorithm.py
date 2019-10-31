@@ -1,7 +1,9 @@
 '''
 Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. al
-arxiv.org/abs/1804.07998
-github.com/nesl/nlp_adversarial_examples
+
+`<arxiv.org/abs/1804.07998>`_
+
+`<github.com/nesl/nlp_adversarial_examples>`_
 '''
 
 import numpy as np
@@ -10,21 +12,45 @@ from textattack.attacks import Attack, AttackResult, FailedAttackResult
 from textattack.transformations import WordSwap
 
 class GeneticAlgorithm(Attack):
+    '''
+    Attacks a model using a genetic algorithm. 
+
+    Args:
+        model: A PyTorch or TensorFlow model to attack.
+        transformation: The type of transformation to use. Should be a subclass of WordSwap. 
+        pop_size (:obj:`int`, optional): The population size. Defauls to 20. 
+        max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 100. 
+        n1 (:obj:`int`, optinal): The number of similar words. Defaults to 20. 
+
+    Raises:
+        ValueError: If the transformation is not a subclass of WordSwap. 
+
+    '''
     def __init__(self, model, transformation, pop_size=20, max_iters=100, n1=20):
         if not isinstance(transformation, WordSwap):
             raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
         super().__init__(model)
         self.model = model
         self.transformation = transformation
-        # self.batch_model = batch_model
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.top_n = n1  # similar words
         self.temp = 0.3
 
     def select_best_replacement(self, pos, x_cur, x_orig, target, replace_list):
-        """ Select the most effective replacement to word at pos (pos)
-            in (x_cur) between the words in replace_list.
+        """
+        Select the most effective replacement for word at position (pos)
+        in (x_cur) between the words in replace_list.
+
+        Args:
+            pos:
+            x_cur:
+            x_orig:
+            target:
+            replace_list:
+
+        Returns:
+
         """
         orig_words = x_orig.words()
         new_x_list = [x_cur.replace_word_at_index(
@@ -38,6 +64,38 @@ class GeneticAlgorithm(Attack):
         # Eliminate words that are not that close
         new_x_scores[self.top_n:] = -10000000
 
+        '''
+        if self.use_lm:
+            prefix = ""
+            suffix = None
+            if pos > 0:
+                prefix = self.dataset.inv_dict[x_cur[pos-1]]
+            #
+            orig_word = self.dataset.inv_dict[x_orig[pos]]
+            if self.use_suffix and pos < x_cur.shape[0]-1:
+                if (x_cur[pos+1] != 0):
+                    suffix = self.dataset.inv_dict[x_cur[pos+1]]
+            # print('** ', orig_word)
+            replace_words_and_orig = [
+                self.dataset.inv_dict[w] if w in self.dataset.inv_dict else 'UNK' for w in replace_list[:self.top_n]] + [orig_word]
+            # print(replace_words_and_orig)
+            replace_words_lm_scores = self.lm.get_words_probs(
+                prefix, replace_words_and_orig, suffix)
+            # print(replace_words_lm_scores)
+            # for i in range(len(replace_words_and_orig)):
+            #    print(replace_words_and_orig[i], ' -- ', replace_words_lm_scores[i])
+
+            # select words
+            new_words_lm_scores = np.array(replace_words_lm_scores[:-1])
+            # abs_diff_lm_scores = np.abs(new_words_lm_scores - replace_words_lm_scores[-1])
+            # rank_replaces_by_lm = np.argsort(abs_diff_lm_scores)
+            rank_replaces_by_lm = np.argsort(-new_words_lm_scores)
+
+            filtered_words_idx = rank_replaces_by_lm[self.top_n2:]
+            # print(filtered_words_idx)
+            new_x_scores[filtered_words_idx] = -10000000
+        '''
+
         if (new_x_scores.max() > 0):
             return new_x_list[new_x_scores.argmax()]
 
@@ -45,6 +103,19 @@ class GeneticAlgorithm(Attack):
 
     def perturb(self, x_cur, x_orig, neighbors, w_select_probs, target):
         # Pick a word that is not modified and is not UNK
+        '''
+        Replaces a word that has not been modifired. 
+
+        Args:
+            x_cur:
+            x_orig:
+            neighbors:
+            w_select_probs:
+            target:
+
+        Returns:
+
+        '''
         x_len = w_select_probs.shape[0]
         rand_idx = np.random.choice(x_len, 1, p=w_select_probs)[0]
         diff_set = x_cur.all_words_diff(x_orig)
@@ -61,9 +132,34 @@ class GeneticAlgorithm(Attack):
         return self.select_best_replacement(rand_idx, x_cur, x_orig, target, replace_list)
 
     def generate_population(self, x_orig, neigbhors_list, w_select_probs, target, pop_size):
+        '''
+        Generates the population of replacement words. 
+
+        Args:
+            x_orig:
+            neigbhors_list:
+            w_select_probs:
+            target:
+            pop_size:
+
+        Returns:
+            The population
+
+        '''
+
         return [self.perturb(x_orig, x_orig, neigbhors_list, w_select_probs, target) for _ in range(pop_size)]
 
     def crossover(self, x1, x2):
+        '''
+
+        Args:
+            x1:
+            x2:
+
+        Returns:
+
+        '''
+
         indices_to_replace = []
         words_to_replace = []
         x2_words = x2.words()
@@ -79,10 +175,8 @@ class GeneticAlgorithm(Attack):
         transformations = self.get_transformations(self.transformation,
                                                    tokenized_text,
                                                    original_text=original_tokenized_text)
-        diff_idx = 0
         for transformed_text in transformations:
-            while not tokenized_text.ith_word_diff(transformed_text, diff_idx):
-                diff_idx += 1
+            diff_idx = tokenized_text.first_word_diff_index(transformed_text)
             neighbors_list[diff_idx].append(transformed_text.words()[diff_idx])
         neighbors_list = [np.array(x) for x in neighbors_list]
         neighbors_len = [len(x) for x in neighbors_list]
