@@ -182,6 +182,14 @@ class AttackResult:
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
+        if original_text is None:
+            raise ValueError('Attack original text cannot be None')
+        if perturbed_text is None:
+            raise ValueError('Attack perturbed text cannot be None')
+        if original_label is None:
+            raise ValueError('Attack original label cannot be None')
+        if perturbed_label is None:
+            raise ValueError('Attack perturbed label cannot be None')
         self.original_text = original_text
         self.perturbed_text = perturbed_text
         self.original_label = original_label
@@ -231,7 +239,12 @@ class AttackResult:
 
 class FailedAttackResult(AttackResult):
     def __init__(self, original_text, original_label):
-        super().__init__(original_text, None, original_label, None)
+        if original_text is None:
+            raise ValueError('Attack original text cannot be None')
+        if original_label is None:
+            raise ValueError('Attack original label cannot be None')
+        self.original_text = original_text
+        self.original_label = original_label
 
     def __data__(self):
         data = (self.original_text, self.original_label)
@@ -287,6 +300,8 @@ if __name__ == '__main__':
         # constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
         constraints.semantics.UniversalSentenceEncoder(0.95, metric='cosine'),
+        constraints.syntax.LanguageTool(1),
+        # constraints.semantics.UniversalSentenceEncoder(0.99, metric='cosine'),
         )
     )
     
