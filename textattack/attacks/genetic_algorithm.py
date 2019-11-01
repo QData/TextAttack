@@ -194,10 +194,8 @@ class GeneticAlgorithm(Attack):
 
             children = [self._crossover(pop[parent1_idx[i]], pop[parent2_idx[i]])
                                 for i in range(self.pop_size-1)]
-            i=0
             for c in children:
                 self._perturb(c, original_label)
-                i+=1
 
             pop = elite + children
 
