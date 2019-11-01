@@ -8,7 +8,7 @@ Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. 
 
 import numpy as np
 
-from textattack.attacks import Attack, AttackResult
+from textattack.attacks import Attack, AttackResult, FailedAttackResult
 from textattack.transformations import WordSwap
 
 class GeneticAlgorithm(Attack):
@@ -32,7 +32,6 @@ class GeneticAlgorithm(Attack):
         super().__init__(model)
         self.model = model
         self.transformation = transformation
-        # self.batch_model = batch_model
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.top_n = n1  # similar words
@@ -59,7 +58,7 @@ class GeneticAlgorithm(Attack):
         new_x_preds = self._call_model(new_x_list)
 
         new_x_scores = new_x_preds[:, target]
-        orig_score = self._call_model([x_cur])[target]
+        orig_score = self._call_model([x_cur]).squeeze()[target]
         new_x_scores = new_x_scores - orig_score
 
         # Eliminate words that are not that close
@@ -229,11 +228,9 @@ class GeneticAlgorithm(Attack):
 
             pop = elite + children
 
-        return AttackResult(
+        return FailedAttackResult(
             original_tokenized_text,
-            pop[top_attack],
-            original_label,
-            target
+            original_label
         )
     
 

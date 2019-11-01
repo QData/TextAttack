@@ -127,7 +127,8 @@ class Attack:
         """
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
-        return self.model(ids).squeeze()
+        scores = self.model(ids)
+        return scores
       
     def attack(self, dataset, shuffle=False):
         """ 
@@ -178,8 +179,6 @@ class AttackResult:
         original_label (int): he classification label of the original text
         perturbed_label (int): The classification label of the perturbed text
 
-    
-    @TODO support attacks that fail (no perturbed label/text)
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
@@ -196,7 +195,7 @@ class AttackResult:
     def __str__(self):
         return '\n'.join(self.__data__())
     
-    def diff(self):
+    def diff_color(self):
         """ 
         Highlights the difference between two texts using color.
         
@@ -228,24 +227,58 @@ class AttackResult:
     
     def print_(self):
         print(str(self.original_label), '-->', str(self.perturbed_label))
-        print('\n'.join(self.diff()))
+        print('\n'.join(self.diff_color()))
+
+class FailedAttackResult(AttackResult):
+    def __init__(self, original_text, original_label):
+        super().__init__(original_text, None, original_label, None)
+
+    def __data__(self):
+        data = (self.original_text, self.original_label)
+        return tuple(map(str, data))
+
+    def print_(self):
+        _color = utils.color_text_terminal
+        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
+        print(self.original_text)
 
 if __name__ == '__main__':
+    import time
+    import socket
+    
     import textattack.attacks as attacks
     import textattack.constraints as constraints
     from textattack.datasets import YelpSentiment
     from textattack.models import BertForSentimentClassification
-    from textattack.transformations import WordSwapCounterfit
+    from textattack.transformations import WordSwapEmbedding
     
+    start_time = time.time()
+    
+    def __data__(self):
+        data = (self.original_text, self.original_label)
+        return tuple(map(str, data))
+    
+    def print_(self):
+        _color = utils.color_text_terminal
+        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
+        print(self.original_text)
+
+if __name__ == '__main__':
     import os
     # Only use one GPU, if we have one.
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     # Disable tensorflow logs, except in the case of an error.
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     
+    import textattack.attacks as attacks
+    import textattack.constraints as constraints
+    from textattack.datasets import YelpSentiment
+    from textattack.models import BertForSentimentClassification
+    from textattack.transformations import WordSwapEmbedding
+    
     model = BertForSentimentClassification()
     
-    transformation = WordSwapCounterfit(max_candidates=5)
+    transformation = WordSwapEmbedding(similarity_threshold=0.9)
     
     attack = attacks.GeneticAlgorithm(model, transformation)
     
@@ -253,7 +286,7 @@ if __name__ == '__main__':
         (
         # constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
-        # constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        constraints.semantics.UniversalSentenceEncoder(0.99, metric='cosine'),
         )
     )
     
@@ -266,4 +299,13 @@ if __name__ == '__main__':
     # attack.enable_visdom()
     attack.add_output_file('outputs/test.txt')
     
+    load_time = time.time()
+    
     attack.attack(yelp_data, shuffle=False)
+    
+    finish_time = time.time()
+    
+    hostname = utils.ANSI_ESCAPE_CODES.OKBLUE + socket.gethostname() + utils.ANSI_ESCAPE_CODES.STOP
+    print(f'[+] {hostname} Loaded in {load_time - start_time}s')
+    print(f'[+] {hostname} Ran attack in {finish_time - load_time}s')
+    print(f'[+] {hostname} TOTAL TIME: {finish_time - start_time}s')

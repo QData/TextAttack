@@ -1,4 +1,4 @@
-from textattack.attacks import Attack, AttackResult
+from textattack.attacks import Attack, AttackResult, FailedAttackResult
 import torch
 
 class GreedyWordSwapWIR(Attack):
@@ -9,12 +9,10 @@ class GreedyWordSwapWIR(Attack):
     Is BERT Really Robust? A Strong Baseline for Natural Language Attack on 
     Text Classification and Entailment by Jin et. al, 2019
     https://github.com/jind11/TextFooler 
-
     Args:
         model: The PyTorch NLP model to attack.
         transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
-
     """
 
     def __init__(self, model, transformation,  max_depth=32):
@@ -27,7 +25,7 @@ class GreedyWordSwapWIR(Attack):
         num_words_changed = 0
        
         # Sort words by order of importance
-        orig_probs = self._call_model([tokenized_text])
+        orig_probs = self._call_model([tokenized_text]).squeeze()
         orig_prob = orig_probs.max()
         len_text = len(tokenized_text.words())
         leave_one_texts = \
@@ -55,17 +53,20 @@ class GreedyWordSwapWIR(Attack):
             num_words_changed += 1
             scores = self._call_model(transformed_text_candidates)
             # The best choice is the one that minimizes the original class label.
-            best_index = scores[:, original_label].argmin()
+            best_index = scores[:, original_label].argmin() if len(transformed_text_candidates) > 1 else 0
             new_tokenized_text = transformed_text_candidates[best_index]
             # If we changed the label, break.
             new_text_label = scores[best_index].argmax().item()
             if new_text_label != original_label:
                 break
             tokenized_text = new_tokenized_text
-            
-        return AttackResult( 
-            original_tokenized_text, 
-            new_tokenized_text, 
-            original_label,
-            new_text_label
-        )
+        
+        if original_label == new_text_label:
+            return FailedAttackResult(original_tokenized_text, original_label)
+        else:
+            return AttackResult( 
+                original_tokenized_text, 
+                new_tokenized_text, 
+                original_label,
+                new_text_label
+            )

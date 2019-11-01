@@ -1,4 +1,4 @@
-from textattack.attacks import Attack, AttackResult
+from textattack.attacks import Attack, AttackResult, FailedAttackResult
 
 class GreedyWordSwap(Attack):
     """ 
@@ -44,10 +44,14 @@ class GreedyWordSwap(Attack):
             word_swap_loc = tokenized_text.first_word_diff_index(new_tokenized_text)
             tokenized_text = new_tokenized_text
             unswapped_word_indices.remove(word_swap_loc)
-            
-        return AttackResult(
-            original_tokenized_text,
-            new_tokenized_text,
-            original_label,
-            new_text_label
-        )
+           
+        
+        if original_label == new_text_label:
+            return FailedAttackResult(original_tokenized_text, original_label)
+        else:
+            return AttackResult( 
+                original_tokenized_text, 
+                new_tokenized_text, 
+                original_label,
+                new_text_label
+            )

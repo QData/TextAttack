@@ -6,6 +6,7 @@ textattack/utils.py
 textattack.egg-info/PKG-INFO
 textattack.egg-info/SOURCES.txt
 textattack.egg-info/dependency_links.txt
+textattack.egg-info/requires.txt
 textattack.egg-info/top_level.txt
 textattack/attacks/__init__.py
 textattack/attacks/attack.py
@@ -34,3 +35,4 @@ textattack/transformations/__init__.py
 textattack/transformations/transformation.py
 textattack/transformations/word_swap.py
 textattack/transformations/word_swap_counterfit.py
+textattack/transformations/word_swap_embedding.py
