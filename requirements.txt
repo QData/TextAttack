@@ -1,3 +1,4 @@
+language_check
 nltk
 numpy<1.17
 scipy

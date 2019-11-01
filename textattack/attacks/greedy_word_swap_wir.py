@@ -61,7 +61,7 @@ class GreedyWordSwapWIR(Attack):
                 break
             tokenized_text = new_tokenized_text
         
-        if original_label == new_text_label:
+        if not new_text_label or new_text_label == original_label:
             return FailedAttackResult(original_tokenized_text, original_label)
         else:
             return AttackResult( 
