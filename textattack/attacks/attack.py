@@ -104,10 +104,10 @@ class Attack:
         """
         transformations = np.array(transformation(text, **kwargs))
         if apply_constraints:
-            return self.filter_transformations(transformations, text, original_text)
+            return self._filter_transformations(transformations, text, original_text)
         return transformations
      
-    def filter_transformations(self, transformations, text, original_text=None):
+    def _filter_transformations(self, transformations, text, original_text=None):
         for C in self.constraints:
             transformations = C.call_many(text, transformations, original_text)
         return transformations 
@@ -278,7 +278,7 @@ if __name__ == '__main__':
     
     model = BertForSentimentClassification()
     
-    transformation = WordSwapEmbedding(similarity_threshold=0.9)
+    transformation = WordSwapEmbedding(similarity_threshold=0.75)
     
     attack = attacks.GeneticAlgorithm(model, transformation)
     
@@ -286,11 +286,11 @@ if __name__ == '__main__':
         (
         # constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
-        constraints.semantics.UniversalSentenceEncoder(0.99, metric='cosine'),
+        constraints.semantics.UniversalSentenceEncoder(0.95, metric='cosine'),
         )
     )
     
-    yelp_data = YelpSentiment(n=1)
+    yelp_data = YelpSentiment(n=2)
     # yelp_data = [
     #     (1, 'I hate this Restaurant!'), 
     #     (0, "Texas Jack's has amazing food.")
