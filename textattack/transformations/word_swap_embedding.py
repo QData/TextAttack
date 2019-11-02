@@ -45,7 +45,7 @@ class WordSwapEmbedding(WordSwap):
         for word, index in self.word_embedding_word2index.items():
             self.word_embedding_index2word[index] = word
     
-    def _get_replacement_words(self, word, max_candidates=5):
+    def _get_replacement_words(self, word, max_candidates=15):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
             or phrase. Based on nearest neighbors selected word embeddings.
         """
