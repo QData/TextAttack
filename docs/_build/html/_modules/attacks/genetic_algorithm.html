@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>attacks.genetic_algorithm &mdash; TextAttack 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> TextAttack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../users/introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/examples.html">Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Attack Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Models Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models/bert.html">BERT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/infer_sent.html">InferSent</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/transformation.html">Transformation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../constraints/constraint.html">Constraints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../constraints/semantics/semantics.html">Semantics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../constraints/semantics/google_language_model.html">Google Language Model</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TextAttack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>attacks.genetic_algorithm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for attacks.genetic_algorithm</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. al</span>
+
+<span class="sd">`&lt;arxiv.org/abs/1804.07998&gt;`_</span>
+
+<span class="sd">`&lt;github.com/nesl/nlp_adversarial_examples&gt;`_</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">textattack.attacks</span> <span class="k">import</span> <span class="n">Attack</span><span class="p">,</span> <span class="n">AttackResult</span>
+<span class="kn">from</span> <span class="nn">textattack.transformations</span> <span class="k">import</span> <span class="n">WordSwap</span>
+
+<div class="viewcode-block" id="GeneticAlgorithm"><a class="viewcode-back" href="../../attacks/genetic_algorithm.html#attacks.genetic_algorithm.GeneticAlgorithm">[docs]</a><span class="k">class</span> <span class="nc">GeneticAlgorithm</span><span class="p">(</span><span class="n">Attack</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Attacks a model using a genetic algorithm. </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: A PyTorch or TensorFlow model to attack.</span>
+<span class="sd">        transformation: The type of transformation to use. Should be a subclass of WordSwap. </span>
+<span class="sd">        pop_size (:obj:`int`, optional): The population size. Defauls to 20. </span>
+<span class="sd">        max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 100. </span>
+<span class="sd">        n1 (:obj:`int`, optinal): The number of similar words. Defaults to 20. </span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If the transformation is not a subclass of WordSwap. </span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">transformation</span><span class="p">,</span> <span class="n">pop_size</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">n1</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transformation</span><span class="p">,</span> <span class="n">WordSwap</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;Transformation is of type {type(transformation)}, should be a subclass of WordSwap&#39;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformation</span> <span class="o">=</span> <span class="n">transformation</span>
+        <span class="c1"># self.batch_model = batch_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span> <span class="o">=</span> <span class="n">max_iters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span> <span class="o">=</span> <span class="n">pop_size</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">top_n</span> <span class="o">=</span> <span class="n">n1</span>  <span class="c1"># similar words</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp</span> <span class="o">=</span> <span class="mf">0.3</span>
+
+<div class="viewcode-block" id="GeneticAlgorithm.select_best_replacement"><a class="viewcode-back" href="../../attacks/genetic_algorithm.html#attacks.genetic_algorithm.GeneticAlgorithm.select_best_replacement">[docs]</a>    <span class="k">def</span> <span class="nf">select_best_replacement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">x_cur</span><span class="p">,</span> <span class="n">x_orig</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">replace_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Select the most effective replacement for word at position (pos)</span>
+<span class="sd">        in (x_cur) between the words in replace_list.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pos:</span>
+<span class="sd">            x_cur:</span>
+<span class="sd">            x_orig:</span>
+<span class="sd">            target:</span>
+<span class="sd">            replace_list:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">orig_words</span> <span class="o">=</span> <span class="n">x_orig</span><span class="o">.</span><span class="n">words</span><span class="p">()</span>
+        <span class="n">new_x_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_cur</span><span class="o">.</span><span class="n">replace_word_at_index</span><span class="p">(</span>
+            <span class="n">pos</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span> <span class="k">if</span> <span class="n">orig_words</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">!=</span> <span class="n">w</span> <span class="ow">and</span> <span class="n">w</span> <span class="o">!=</span> <span class="s1">&#39;0.0&#39;</span> <span class="k">else</span> <span class="n">x_cur</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">replace_list</span><span class="p">]</span>
+        <span class="n">new_x_preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_model</span><span class="p">(</span><span class="n">new_x_list</span><span class="p">)</span>
+
+        <span class="n">new_x_scores</span> <span class="o">=</span> <span class="n">new_x_preds</span><span class="p">[:,</span> <span class="n">target</span><span class="p">]</span>
+        <span class="n">orig_score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_model</span><span class="p">([</span><span class="n">x_cur</span><span class="p">])[</span><span class="n">target</span><span class="p">]</span>
+        <span class="n">new_x_scores</span> <span class="o">=</span> <span class="n">new_x_scores</span> <span class="o">-</span> <span class="n">orig_score</span>
+
+        <span class="c1"># Eliminate words that are not that close</span>
+        <span class="n">new_x_scores</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">top_n</span><span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10000000</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        if self.use_lm:</span>
+<span class="sd">            prefix = &quot;&quot;</span>
+<span class="sd">            suffix = None</span>
+<span class="sd">            if pos &gt; 0:</span>
+<span class="sd">                prefix = self.dataset.inv_dict[x_cur[pos-1]]</span>
+<span class="sd">            #</span>
+<span class="sd">            orig_word = self.dataset.inv_dict[x_orig[pos]]</span>
+<span class="sd">            if self.use_suffix and pos &lt; x_cur.shape[0]-1:</span>
+<span class="sd">                if (x_cur[pos+1] != 0):</span>
+<span class="sd">                    suffix = self.dataset.inv_dict[x_cur[pos+1]]</span>
+<span class="sd">            # print(&#39;** &#39;, orig_word)</span>
+<span class="sd">            replace_words_and_orig = [</span>
+<span class="sd">                self.dataset.inv_dict[w] if w in self.dataset.inv_dict else &#39;UNK&#39; for w in replace_list[:self.top_n]] + [orig_word]</span>
+<span class="sd">            # print(replace_words_and_orig)</span>
+<span class="sd">            replace_words_lm_scores = self.lm.get_words_probs(</span>
+<span class="sd">                prefix, replace_words_and_orig, suffix)</span>
+<span class="sd">            # print(replace_words_lm_scores)</span>
+<span class="sd">            # for i in range(len(replace_words_and_orig)):</span>
+<span class="sd">            #    print(replace_words_and_orig[i], &#39; -- &#39;, replace_words_lm_scores[i])</span>
+
+<span class="sd">            # select words</span>
+<span class="sd">            new_words_lm_scores = np.array(replace_words_lm_scores[:-1])</span>
+<span class="sd">            # abs_diff_lm_scores = np.abs(new_words_lm_scores - replace_words_lm_scores[-1])</span>
+<span class="sd">            # rank_replaces_by_lm = np.argsort(abs_diff_lm_scores)</span>
+<span class="sd">            rank_replaces_by_lm = np.argsort(-new_words_lm_scores)</span>
+
+<span class="sd">            filtered_words_idx = rank_replaces_by_lm[self.top_n2:]</span>
+<span class="sd">            # print(filtered_words_idx)</span>
+<span class="sd">            new_x_scores[filtered_words_idx] = -10000000</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">new_x_scores</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">new_x_list</span><span class="p">[</span><span class="n">new_x_scores</span><span class="o">.</span><span class="n">argmax</span><span class="p">()]</span>
+
+        <span class="k">return</span> <span class="n">x_cur</span></div>
+
+<div class="viewcode-block" id="GeneticAlgorithm.perturb"><a class="viewcode-back" href="../../attacks/genetic_algorithm.html#attacks.genetic_algorithm.GeneticAlgorithm.perturb">[docs]</a>    <span class="k">def</span> <span class="nf">perturb</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_cur</span><span class="p">,</span> <span class="n">x_orig</span><span class="p">,</span> <span class="n">neighbors</span><span class="p">,</span> <span class="n">w_select_probs</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="c1"># Pick a word that is not modified and is not UNK</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Replaces a word that has not been modifired. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_cur:</span>
+<span class="sd">            x_orig:</span>
+<span class="sd">            neighbors:</span>
+<span class="sd">            w_select_probs:</span>
+<span class="sd">            target:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">x_len</span> <span class="o">=</span> <span class="n">w_select_probs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">rand_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">x_len</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">w_select_probs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">diff_set</span> <span class="o">=</span> <span class="n">x_cur</span><span class="o">.</span><span class="n">all_words_diff</span><span class="p">(</span><span class="n">x_orig</span><span class="p">)</span>
+        <span class="n">num_replaceable_words</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">w_select_probs</span><span class="p">))</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_set</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num_replaceable_words</span> <span class="ow">and</span> <span class="n">x_cur</span><span class="o">.</span><span class="n">ith_word_diff</span><span class="p">(</span><span class="n">x_orig</span><span class="p">,</span> <span class="n">rand_idx</span><span class="p">):</span>
+            <span class="sd">&#39;&#39;&#39; The condition above has a quick hack to prevent getting stuck in infinite loop while processing too short examples and all words (excluding articles) have been already replaced and still no successful attack is found. A more elegant way to handle this could be implemented in Attack to abort early based on the status of all population members or to improve select_best_replacement by making it stochastic.</span>
+<span class="sd">            &#39;&#39;&#39;</span>
+            <span class="n">rand_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">x_len</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">w_select_probs</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">replace_list</span> <span class="o">=</span> <span class="n">neighbors</span><span class="p">[</span><span class="n">rand_idx</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">replace_list</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">top_n</span><span class="p">:</span>
+            <span class="n">replace_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">replace_list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">top_n</span> <span class="o">-</span> <span class="n">replace_list</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_best_replacement</span><span class="p">(</span><span class="n">rand_idx</span><span class="p">,</span> <span class="n">x_cur</span><span class="p">,</span> <span class="n">x_orig</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">replace_list</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GeneticAlgorithm.generate_population"><a class="viewcode-back" href="../../attacks/genetic_algorithm.html#attacks.genetic_algorithm.GeneticAlgorithm.generate_population">[docs]</a>    <span class="k">def</span> <span class="nf">generate_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_orig</span><span class="p">,</span> <span class="n">neigbhors_list</span><span class="p">,</span> <span class="n">w_select_probs</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">pop_size</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Generates the population of replacement words. </span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x_orig:</span>
+<span class="sd">            neigbhors_list:</span>
+<span class="sd">            w_select_probs:</span>
+<span class="sd">            target:</span>
+<span class="sd">            pop_size:</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The population</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">perturb</span><span class="p">(</span><span class="n">x_orig</span><span class="p">,</span> <span class="n">x_orig</span><span class="p">,</span> <span class="n">neigbhors_list</span><span class="p">,</span> <span class="n">w_select_probs</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">pop_size</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="GeneticAlgorithm.crossover"><a class="viewcode-back" href="../../attacks/genetic_algorithm.html#attacks.genetic_algorithm.GeneticAlgorithm.crossover">[docs]</a>    <span class="k">def</span> <span class="nf">crossover</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x1:</span>
+<span class="sd">            x2:</span>
+
+<span class="sd">        Returns:</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">indices_to_replace</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">words_to_replace</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">x2_words</span> <span class="o">=</span> <span class="n">x2</span><span class="o">.</span><span class="n">words</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x1</span><span class="o">.</span><span class="n">words</span><span class="p">())):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+                <span class="n">indices_to_replace</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+                <span class="n">words_to_replace</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x2_words</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">x1</span><span class="o">.</span><span class="n">replace_words_at_indices</span><span class="p">(</span><span class="n">indices_to_replace</span><span class="p">,</span> <span class="n">words_to_replace</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">,</span> <span class="n">original_tokenized_text</span><span class="p">):</span>
+        <span class="n">words</span> <span class="o">=</span> <span class="n">tokenized_text</span><span class="o">.</span><span class="n">words</span><span class="p">()</span>
+        <span class="n">neighbors_list</span> <span class="o">=</span> <span class="p">[[]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">words</span><span class="p">))]</span>
+        <span class="n">transformations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transformations</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transformation</span><span class="p">,</span>
+                                                   <span class="n">tokenized_text</span><span class="p">,</span>
+                                                   <span class="n">original_text</span><span class="o">=</span><span class="n">original_tokenized_text</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">transformed_text</span> <span class="ow">in</span> <span class="n">transformations</span><span class="p">:</span>
+            <span class="n">diff_idx</span> <span class="o">=</span> <span class="n">tokenized_text</span><span class="o">.</span><span class="n">first_word_diff_index</span><span class="p">(</span><span class="n">transformed_text</span><span class="p">)</span>
+            <span class="n">neighbors_list</span><span class="p">[</span><span class="n">diff_idx</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">transformed_text</span><span class="o">.</span><span class="n">words</span><span class="p">()[</span><span class="n">diff_idx</span><span class="p">])</span>
+        <span class="n">neighbors_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">neighbors_list</span><span class="p">]</span>
+        <span class="n">neighbors_len</span> <span class="o">=</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">neighbors_list</span><span class="p">]</span>
+        <span class="n">w_select_probs</span> <span class="o">=</span> <span class="n">neighbors_len</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">neighbors_len</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">neighbors_list</span><span class="p">,</span> <span class="n">w_select_probs</span> 
+
+    <span class="k">def</span> <span class="nf">_attack_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_label</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">original_label</span>
+        <span class="n">original_tokenized_text</span> <span class="o">=</span> <span class="n">tokenized_text</span>
+        <span class="n">neighbors_list</span><span class="p">,</span> <span class="n">w_select_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_neighbors</span><span class="p">(</span>
+            <span class="n">tokenized_text</span><span class="p">,</span> <span class="n">original_tokenized_text</span><span class="p">)</span>
+        <span class="n">pop</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_population</span><span class="p">(</span>
+            <span class="n">original_tokenized_text</span><span class="p">,</span> <span class="n">neighbors_list</span><span class="p">,</span> <span class="n">w_select_probs</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_iters</span><span class="p">):</span>
+            <span class="n">pop_preds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_model</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
+            <span class="n">pop_scores</span> <span class="o">=</span> <span class="n">pop_preds</span><span class="p">[:,</span> <span class="n">target</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39; -- &#39;</span><span class="p">,</span> <span class="n">pop_scores</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+            <span class="n">top_attack</span> <span class="o">=</span> <span class="n">pop_scores</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
+
+            <span class="n">logits</span> <span class="o">=</span> <span class="p">(</span><span class="n">pop_scores</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp</span><span class="p">)</span><span class="o">.</span><span class="n">exp</span><span class="p">()</span>
+            <span class="n">select_probs</span> <span class="o">=</span> <span class="p">(</span><span class="n">logits</span> <span class="o">/</span> <span class="n">logits</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+            
+            <span class="n">top_attack_probs</span> <span class="o">=</span> <span class="n">pop_preds</span><span class="p">[</span><span class="n">top_attack</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">top_attack_probs</span><span class="p">)</span> <span class="o">==</span> <span class="n">target</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">AttackResult</span><span class="p">(</span>
+                    <span class="n">original_tokenized_text</span><span class="p">,</span>
+                    <span class="n">pop</span><span class="p">[</span><span class="n">top_attack</span><span class="p">],</span>
+                    <span class="n">original_label</span><span class="p">,</span>
+                    <span class="n">target</span>
+                <span class="p">)</span>
+
+            <span class="n">elite</span> <span class="o">=</span> <span class="p">[</span><span class="n">pop</span><span class="p">[</span><span class="n">top_attack</span><span class="p">]]</span>  <span class="c1"># elite</span>
+            <span class="c1"># print(select_probs.shape)</span>
+            <span class="n">parent1_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">select_probs</span><span class="p">)</span>
+            <span class="n">parent2_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">select_probs</span><span class="p">)</span>
+
+            <span class="n">initial_children</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">crossover</span><span class="p">(</span><span class="n">pop</span><span class="p">[</span><span class="n">parent1_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span>
+                                     <span class="n">pop</span><span class="p">[</span><span class="n">parent2_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span>
+                      <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pop_size</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+            <span class="n">children</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">initial_children</span><span class="p">:</span>
+                <span class="n">neighbors_list</span><span class="p">,</span> <span class="n">w_select_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_neighbors</span><span class="p">(</span>
+                    <span class="n">child</span><span class="p">,</span> <span class="n">original_tokenized_text</span><span class="p">)</span>
+                <span class="n">children</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">perturb</span><span class="p">(</span>
+                    <span class="n">child</span><span class="p">,</span> <span class="n">original_tokenized_text</span><span class="p">,</span> <span class="n">neighbors_list</span><span class="p">,</span> <span class="n">w_select_probs</span><span class="p">,</span> <span class="n">target</span><span class="p">))</span>
+
+            <span class="n">pop</span> <span class="o">=</span> <span class="n">elite</span> <span class="o">+</span> <span class="n">children</span>
+
+        <span class="k">return</span> <span class="n">AttackResult</span><span class="p">(</span>
+            <span class="n">original_tokenized_text</span><span class="p">,</span>
+            <span class="n">pop</span><span class="p">[</span><span class="n">top_attack</span><span class="p">],</span>
+            <span class="n">original_label</span><span class="p">,</span>
+            <span class="n">target</span>
+        <span class="p">)</span></div>
+    
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, UVA QData Lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

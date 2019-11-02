@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>attacks.greedy_word_swap &mdash; TextAttack 0.0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> TextAttack
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">User Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../users/introduction.html">What is TextAttack?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../users/examples.html">Examples</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Attack Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/attack.html">Attack Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/greedy_word_swap.html">Greedy Word Swap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../attacks/genetic_algorithm.html">Genetic Algorithm</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Models Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../models/bert.html">BERT</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/infer_sent.html">InferSent</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Transformations Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/transformation.html">Transformation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../transformations/word_swap.html">Word Swap</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Constraints Documentation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../constraints/constraint.html">Constraints</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../constraints/semantics/semantics.html">Semantics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../constraints/semantics/google_language_model.html">Google Language Model</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Datasets:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/built-in_datasets.html">Built-in Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../datasets/user_defined_datasets.html">User-Defined Datasets</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">TextAttack</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>attacks.greedy_word_swap</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for attacks.greedy_word_swap</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">textattack.attacks</span> <span class="k">import</span> <span class="n">Attack</span><span class="p">,</span> <span class="n">AttackResult</span>
+
+<div class="viewcode-block" id="GreedyWordSwap"><a class="viewcode-back" href="../../attacks/greedy_word_swap.html#attacks.greedy_word_swap.GreedyWordSwap">[docs]</a><span class="k">class</span> <span class="nc">GreedyWordSwap</span><span class="p">(</span><span class="n">Attack</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">    An attack that greedily chooses from a list of possible </span>
+<span class="sd">    perturbations.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model: The PyTorch NLP model to attack.</span>
+<span class="sd">        transformation: The type of transformation.</span>
+<span class="sd">        max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. </span>
+<span class="sd">        </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">transformation</span><span class="p">,</span>  <span class="n">max_depth</span><span class="o">=</span><span class="mi">32</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transformation</span> <span class="o">=</span> <span class="n">transformation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="o">=</span> <span class="n">max_depth</span>
+        
+    <span class="k">def</span> <span class="nf">_attack_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">original_label</span><span class="p">,</span> <span class="n">tokenized_text</span><span class="p">):</span>
+        <span class="n">original_tokenized_text</span> <span class="o">=</span> <span class="n">tokenized_text</span>
+        <span class="n">num_words_changed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">unswapped_word_indices</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tokenized_text</span><span class="o">.</span><span class="n">words</span><span class="p">())))</span>
+        <span class="n">new_tokenized_text</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">new_text_label</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">num_words_changed</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_depth</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">unswapped_word_indices</span><span class="p">):</span>
+            <span class="n">num_words_changed</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">transformed_text_candidates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_transformations</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">transformation</span><span class="p">,</span>
+                <span class="n">tokenized_text</span><span class="p">,</span>
+                <span class="n">indices_to_replace</span><span class="o">=</span><span class="n">unswapped_word_indices</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">transformed_text_candidates</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c1"># If we did not find any possible perturbations, give up.</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="n">scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_call_model</span><span class="p">(</span><span class="n">transformed_text_candidates</span><span class="p">)</span>
+            <span class="c1"># The best choice is the one that minimizes the original class label.</span>
+            <span class="n">best_index</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[:,</span> <span class="n">original_label</span><span class="p">]</span><span class="o">.</span><span class="n">argmin</span><span class="p">()</span>
+            <span class="n">new_tokenized_text</span> <span class="o">=</span> <span class="n">transformed_text_candidates</span><span class="p">[</span><span class="n">best_index</span><span class="p">]</span>
+            <span class="c1"># If we changed the label, break.</span>
+            <span class="n">new_text_label</span> <span class="o">=</span> <span class="n">scores</span><span class="p">[</span><span class="n">best_index</span><span class="p">]</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">new_text_label</span> <span class="o">!=</span> <span class="n">original_label</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="c1"># Otherwise, remove this word from list of words to change and</span>
+            <span class="c1"># iterate.</span>
+            <span class="n">word_swap_loc</span> <span class="o">=</span> <span class="n">tokenized_text</span><span class="o">.</span><span class="n">first_word_diff_index</span><span class="p">(</span><span class="n">new_tokenized_text</span><span class="p">)</span>
+            <span class="n">tokenized_text</span> <span class="o">=</span> <span class="n">new_tokenized_text</span>
+            <span class="n">unswapped_word_indices</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">word_swap_loc</span><span class="p">)</span>
+            
+        <span class="k">return</span> <span class="n">AttackResult</span><span class="p">(</span>
+            <span class="n">original_tokenized_text</span><span class="p">,</span>
+            <span class="n">new_tokenized_text</span><span class="p">,</span>
+            <span class="n">original_label</span><span class="p">,</span>
+            <span class="n">new_text_label</span>
+        <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, UVA QData Lab
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -5,7 +5,14 @@ import textattack.utils as utils
 import torch
 
 class BertForSentimentClassification:
-    """ BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification. """
+    """ 
+    BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification. 
+
+    Args:
+        max_seq_length(:obj:`int`, optional):  Maximum length of a sequence after tokenizing.
+            Defaults to 32.
+            
+    """
     
     MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
     
@@ -21,8 +28,17 @@ class BertForSentimentClassification:
         self.max_seq_length = max_seq_length
     
     def convert_text_to_ids(self, input_text):
-        """ Takes a string input, tokenizes, formats,
-            and returns a tensor with text IDs. """
+        """ 
+        Takes a string input, tokenizes, formats,
+        and returns a tensor with text IDs. 
+        
+        Args:
+            input_text (str): The text to tokenize
+
+        Returns:
+            The ID of the tokenized text
+        
+        """
         tokens = self.tokenizer.tokenize(input_text)
         while len(tokens) > self.max_seq_length:
             tokens.pop()
@@ -38,5 +54,3 @@ class BertForSentimentClassification:
         with torch.no_grad():
             pred = self.model(text_ids)
         return pred[0]
-
-# Rewrite 'SimpleBertClassifier' from RobustNLP using new transformers package.

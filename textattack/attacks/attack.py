@@ -1,22 +1,8 @@
-# @TODO all files should have some copyright header or something
-
-"""" @TODOs:
-    - Example of using with Pytorch and Tensorflow model.
-    - sphinx documentation
-    - add recipes with state-of-the-art attacks
-    - add unit tests
-    - add pep8 standard
-    - upload sample models and datasets
-    - add logger... we should never call print()
-    - make it much quieter when we load pretrained BERT. It's so noisy right now :(
-    - try to refer to 'text' not 'sentences' (better terminology)
-    - make this into a pip package (not on pypi, just a local package)
-"""
-
 import difflib
 import numpy as np
 import os
 import torch
+import random
 
 from textattack import utils as utils
 
@@ -24,7 +10,14 @@ from textattack.constraints import Constraint
 from textattack.tokenized_text import TokenizedText
 
 class Attack:
-    """ An attack generates adversarial examples on text. """
+    """
+    An attack generates adversarial examples on text. 
+
+    Args:
+        model: A PyTorch or TensorFlow model to attack
+        constraints: A list of constraints to add to the attack
+
+    """
     def __init__(self, model, constraints=[]):
         """ Initialize an attack object.
         
@@ -44,7 +37,13 @@ class Attack:
         self.output_to_visdom = False
     
     def add_output_file(self, file):
-        """ When attack runs, it will output to this file. """
+        """ 
+        When attack runs, it will output to this file. 
+
+        Args:
+            file (str): The path to the output file
+            
+        """
         if isinstance(file, str):
             directory = os.path.dirname(file)
             if not os.path.exists(directory):
@@ -53,13 +52,31 @@ class Attack:
         self.output_files.append(file)
         
     def add_constraint(self, constraint):
-        """ Add constraint to attack. """
+        """ 
+        Adds a constraint to the attack. 
+        
+        Args:
+            constraint: A constraint to add, see constraints
+
+        Raises:
+            ValueError: If the constraint is not of type :obj:`Constraint`
+
+        """
         if not isinstance(constraint, Constraint):
             raise ValueError('Cannot add constraint of type', type(constraint))
         self.constraints.append(constraint)
     
     def add_constraints(self, constraints):
-        """ Add multiple constraints to attack. """
+        """ 
+        Adds multiple constraints to the attack. 
+        
+        Args:
+            constraints: An iterable of constraints to add, see constraints. 
+
+        Raises:
+            TypeError: If the constraints are not iterable
+
+        """
         # Make sure constraints are iterable.
         try:
             iter(constraints)
@@ -69,32 +86,61 @@ class Attack:
         for constraint in constraints:
             self.add_constraint(constraint)
     
-    def get_transformations(self, transformation, text, original_text=None, **kwargs):
-        """ Filters a list of transformations by self.constraints. """
+    def get_transformations(self, transformation, text, original_text=None, 
+                            apply_constraints=True, **kwargs):
+        """
+        Filters a list of transformations by self.constraints. 
+        
+        Args:
+            transformation: 
+            text:
+            original text (:obj:`type`, optional): Defaults to None. 
+            apply_constraints:
+            **kwargs:
+
+        Returns:
+            A filtered list of transformations where each transformation matches the constraints
+
+        """
         transformations = np.array(transformation(text, **kwargs))
-        # print(f'before: {len(transformations)}')
-        for C in self.constraints:
-            # print('calling constraint')
-            transformations = C.call_many(text, transformations, original_text)
-        # print(f'after: {len(transformations)}')
+        if apply_constraints:
+            return self._filter_transformations(transformations, text, original_text)
         return transformations
-      
+     
+    def _filter_transformations(self, transformations, text, original_text=None):
+        for C in self.constraints:
+            transformations = C.call_many(text, transformations, original_text)
+        return transformations 
+
     def _attack_one(self, label, tokenized_text):
-        """ Perturbs `text` to until `self.model` gives a different label
-            than `label`. """
+        """
+        Perturbs `text` to until `self.model` gives a different label
+        than `label`. 
+
+        """
         raise NotImplementedError()
       
     def _call_model(self, tokenized_text_list):
-        """ Returns model predictions for a list of TokenizedText objects. """
-        # @TODO support models that take text instead of IDs.
+        """
+        Returns model predictions for a list of TokenizedText objects. 
+        
+        """
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
-        return self.model(ids).squeeze()
+        scores = self.model(ids)
+        return scores
       
     def attack(self, dataset, shuffle=False):
-        """ Runs an attack on some data and outputs results.
-          
-              - dataset: an iterable of (label, text) pairs
+        """ 
+        Runs an attack on the given dataset and outputs the results to the console and the output file.
+
+        Args:
+            dataset: An iterable of (label, text) pairs
+            shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
+
+        Returns:
+            The results of the attack on the dataset
+
         """
         if shuffle:
             random.shuffle(dataset)
@@ -104,8 +150,6 @@ class Attack:
             tokenized_text = TokenizedText(self.model, text)
             result = self._attack_one(label, tokenized_text)
             results.append(result)
-        
-        # @TODO Support failed attacks. Right now they'll throw an error
         
         if self.output_to_terminal:
             for i, result in enumerate(results):
@@ -119,7 +163,6 @@ class Attack:
                     output_file.write(str(result) + '\n')
         
         if self.output_to_visdom:
-            # @TODO Support logging to Visdom.
             raise NotImplementedError()
         
         print('-'*80)
@@ -127,12 +170,26 @@ class Attack:
         return results
 
 class AttackResult:
-    """ Result of an Attack run on a single (label, text_input) pair. 
-    
-        @TODO support attacks that fail (no perturbed label/text)
+    """
+    Result of an Attack run on a single (label, text_input) pair. 
+
+    Args:
+        original_text (str): The original text
+        perturbed_text (str): The perturbed text resulting from the attack
+        original_label (int): he classification label of the original text
+        perturbed_label (int): The classification label of the perturbed text
+
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
+        if original_text is None:
+            raise ValueError('Attack original text cannot be None')
+        if perturbed_text is None:
+            raise ValueError('Attack perturbed text cannot be None')
+        if original_label is None:
+            raise ValueError('Attack original label cannot be None')
+        if perturbed_label is None:
+            raise ValueError('Attack perturbed label cannot be None')
         self.original_text = original_text
         self.perturbed_text = perturbed_text
         self.original_label = original_label
@@ -146,12 +203,11 @@ class AttackResult:
     def __str__(self):
         return '\n'.join(self.__data__())
     
-    def diff(self):
-        """ Shows the difference between two strings in color.
+    def diff_color(self):
+        """ 
+        Highlights the difference between two texts using color.
         
-        @TODO abstract to work for general paraphrase.
         """
-        # @TODO: Support printing to HTML in some cases.
         _color = utils.color_text_terminal
         t1 = self.original_text
         t2 = self.perturbed_text
@@ -179,28 +235,73 @@ class AttackResult:
     
     def print_(self):
         print(str(self.original_label), '-->', str(self.perturbed_label))
-        print('\n'.join(self.diff()))
+        print('\n'.join(self.diff_color()))
+
+class FailedAttackResult(AttackResult):
+    def __init__(self, original_text, original_label):
+        if original_text is None:
+            raise ValueError('Attack original text cannot be None')
+        if original_label is None:
+            raise ValueError('Attack original label cannot be None')
+        self.original_text = original_text
+        self.original_label = original_label
+
+    def __data__(self):
+        data = (self.original_text, self.original_label)
+        return tuple(map(str, data))
+
+    def print_(self):
+        _color = utils.color_text_terminal
+        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
+        print(self.original_text)
 
 if __name__ == '__main__':
+    import time
+    import socket
+    
     import textattack.attacks as attacks
     import textattack.constraints as constraints
     from textattack.datasets import YelpSentiment
     from textattack.models import BertForSentimentClassification
-    from textattack.transformations import WordSwapCounterfit
+    from textattack.transformations import WordSwapEmbedding
     
-    # @TODO: Running attack.py should parse args and run script-based attacks 
-    #       (as opposed to code-based attacks)
+    start_time = time.time()
+    
+    def __data__(self):
+        data = (self.original_text, self.original_label)
+        return tuple(map(str, data))
+    
+    def print_(self):
+        _color = utils.color_text_terminal
+        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
+        print(self.original_text)
+
+if __name__ == '__main__':
+    import os
+    # Only use one GPU, if we have one.
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    # Disable tensorflow logs, except in the case of an error.
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    
+    import textattack.attacks as attacks
+    import textattack.constraints as constraints
+    from textattack.datasets import YelpSentiment
+    from textattack.models import BertForSentimentClassification
+    from textattack.transformations import WordSwapEmbedding
+    
     model = BertForSentimentClassification()
     
-    transformation = WordSwapCounterfit()
+    transformation = WordSwapEmbedding(similarity_threshold=0.75)
     
-    # attack = attacks.GreedyWordSwap(model, transformation)
-    attack = attacks.GreedyWordSwapWIR(model, transformation)
-    # attack = attacks.GeneticAlgorithm(model, transformation)
+    attack = attacks.GeneticAlgorithm(model, transformation)
     
-    attack.add_constraints((
+    attack.add_constraints(
+        (
+        # constraints.semantics.GoogleLanguageModel(top_n=2),
         # constraints.syntax.LanguageTool(1),
-        constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        constraints.semantics.UniversalSentenceEncoder(0.95, metric='cosine'),
+        constraints.syntax.LanguageTool(1),
+        # constraints.semantics.UniversalSentenceEncoder(0.99, metric='cosine'),
         )
     )
     
@@ -213,4 +314,13 @@ if __name__ == '__main__':
     # attack.enable_visdom()
     attack.add_output_file('outputs/test.txt')
     
+    load_time = time.time()
+    
     attack.attack(yelp_data, shuffle=False)
+    
+    finish_time = time.time()
+    
+    hostname = utils.ANSI_ESCAPE_CODES.OKBLUE + socket.gethostname() + utils.ANSI_ESCAPE_CODES.STOP
+    print(f'[+] {hostname} Loaded in {load_time - start_time}s')
+    print(f'[+] {hostname} Ran attack in {finish_time - load_time}s')
+    print(f'[+] {hostname} TOTAL TIME: {finish_time - start_time}s')
