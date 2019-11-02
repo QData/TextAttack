@@ -86,14 +86,16 @@ class Attack:
         for constraint in constraints:
             self.add_constraint(constraint)
     
-    def get_transformations(self, transformation, text, original_text=None, **kwargs):
+    def get_transformations(self, transformation, text, original_text=None, 
+                            apply_constraints=True, **kwargs):
         """
         Filters a list of transformations by self.constraints. 
         
         Args:
-            transformation:
+            transformation: 
             text:
             original text (:obj:`type`, optional): Defaults to None. 
+            apply_constraints:
             **kwargs:
 
         Returns:
@@ -101,10 +103,15 @@ class Attack:
 
         """
         transformations = np.array(transformation(text, **kwargs))
+        if apply_constraints:
+            return self._filter_transformations(transformations, text, original_text)
+        return transformations
+     
+    def _filter_transformations(self, transformations, text, original_text=None):
         for C in self.constraints:
             transformations = C.call_many(text, transformations, original_text)
-        return transformations
-      
+        return transformations 
+
     def _attack_one(self, label, tokenized_text):
         """
         Perturbs `text` to until `self.model` gives a different label
@@ -175,6 +182,14 @@ class AttackResult:
     """
     def __init__(self, original_text, perturbed_text, original_label,
         perturbed_label):
+        if original_text is None:
+            raise ValueError('Attack original text cannot be None')
+        if perturbed_text is None:
+            raise ValueError('Attack perturbed text cannot be None')
+        if original_label is None:
+            raise ValueError('Attack original label cannot be None')
+        if perturbed_label is None:
+            raise ValueError('Attack perturbed label cannot be None')
         self.original_text = original_text
         self.perturbed_text = perturbed_text
         self.original_label = original_label
@@ -224,7 +239,12 @@ class AttackResult:
 
 class FailedAttackResult(AttackResult):
     def __init__(self, original_text, original_label):
-        super().__init__(original_text, None, original_label, None)
+        if original_text is None:
+            raise ValueError('Attack original text cannot be None')
+        if original_label is None:
+            raise ValueError('Attack original label cannot be None')
+        self.original_text = original_text
+        self.original_label = original_label
 
     def __data__(self):
         data = (self.original_text, self.original_label)
@@ -271,9 +291,9 @@ if __name__ == '__main__':
     
     model = BertForSentimentClassification()
     
-    transformation = WordSwapEmbedding(similarity_threshold=0.9)
+    transformation = WordSwapEmbedding(similarity_threshold=0.75)
     
-    attack = attacks.GreedyWordSwapWIR(model, transformation)
+    attack = attacks.GeneticAlgorithm(model, transformation)
     
     attack.add_constraints(
         (
