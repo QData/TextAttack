@@ -297,11 +297,8 @@ if __name__ == '__main__':
     
     attack.add_constraints(
         (
-        # constraints.semantics.GoogleLanguageModel(top_n=2),
-        # constraints.syntax.LanguageTool(1),
-        constraints.semantics.UniversalSentenceEncoder(0.95, metric='cosine'),
-        constraints.syntax.LanguageTool(1),
-        # constraints.semantics.UniversalSentenceEncoder(0.99, metric='cosine'),
+        constraints.semantics.UniversalSentenceEncoder(0.99, metric='cosine'),
+        constraints.syntax.LanguageTool(5),
         )
     )
     

@@ -125,9 +125,8 @@ class UniversalSentenceEncoder(Constraint):
         """
         # @TODO can we rename this function `filter`? (It's a reserved keyword in python)
         scores = self.score_list(x, x_adv_list)
-        mask = scores > self.threshold
-        mask = mask.cpu().numpy()
-        return x_adv_list[mask]
+        mask = (scores > self.threshold)
+        return np.array(x_adv_list)[mask.cpu().numpy()]
     
     def __call__(self, x, x_adv):
         return self.score(x.text, x_adv.text) >= self.threshold 
