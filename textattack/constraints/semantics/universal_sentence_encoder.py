@@ -18,8 +18,9 @@ class UniversalSentenceEncoder(Constraint):
     def __init__(self, threshold=0.8, metric='cosine'):
         self.threshold = threshold
         self.model = self.get_infersent_model()
+        self.metric = metric
         
-        if metric=='cosine':
+        if self.metric=='cosine':
             self.dist = torch.nn.CosineSimilarity
         else:
             raise ValueError(f'Unsupported metric {metric}.')

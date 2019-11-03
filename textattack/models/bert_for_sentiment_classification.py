@@ -19,6 +19,7 @@ class BertForSentimentClassification:
         self.model.to(utils.get_device())
         self.model.eval()
         self.max_seq_length = max_seq_length
+        self.name = "BERT for Sentiment Classification"
     
     def convert_text_to_ids(self, input_text):
         """ Takes a string input, tokenizes, formats,

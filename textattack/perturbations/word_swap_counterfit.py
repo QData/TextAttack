@@ -34,6 +34,7 @@ class WordSwapCounterfit(WordSwap):
         self.nn = word_embedding_matrix
         self.word_embedding_index2word = word_embedding_index2word
         self.word_embedding_word2index = word_embedding_word2index
+        self.name = "Word Swap Counterfit"
     
     def _get_replacement_words(self, word, max_candidates=10):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
@@ -52,3 +53,4 @@ class WordSwapCounterfit(WordSwap):
         except KeyError:
             # This word is not in our word embedding database, so return an empty list.
             return []
+            

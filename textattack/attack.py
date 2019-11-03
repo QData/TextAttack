@@ -16,12 +16,15 @@
 import difflib
 import torch
 import utils
+import random
+import statistics
 
 from tokenized_text import TokenizedText
+from loggers import VisdomLogger
 
 class Attack:
     """ An attack generates adversarial examples on text. """
-    def __init__(self, model, perturbation):
+    def __init__(self, model, perturbation, attack_name):
         """ Initialize an attack object.
         
         Attacks can be run multiple times
@@ -31,10 +34,16 @@ class Attack:
         """
         self.model = model
         self.perturbation = perturbation
+        self.attack_name = attack_name
         # List of files to output to.
         self.output_files = []
         self.output_to_terminal = True
         self.output_to_visdom = False
+        self.visdom = VisdomLogger()
+        
+    def enable_visdom(self):
+        """ When attack runs, it will send statistics to Visdom """
+        self.output_to_visdom = True
     
     def add_output_file(self, file):
         """ When attack runs, it will output to this file. """
@@ -83,11 +92,83 @@ class Attack:
         
         if self.output_to_visdom:
             # @TODO Support logging to Visdom.
-            raise NotImplementedError()
-        
+            sample_rows = []
+            num_words_changed_until_success = [0] * (self.max_depth+5)
+            perturbed_word_percentages = []
+            input_text_tkns = result.original_text.text.split()
+            output_text_tkns = result.perturbed_text.text.split()
+            for result in results:
+                row = []
+                labelchange = str(result.original_label)+" -> "+str(result.perturbed_label)
+                row.append(labelchange)
+                text1, text2, num_words_changed = result.diff(html=True)
+                row.append(text1)
+                row.append(text2)
+                num_words_changed_until_success[num_words_changed-1]+=1
+                if num_words_changed > 0:
+                    perturbed_word_percentage = num_words_changed * 100.0 / len(input_text_tkns)
+                    perturbed_word_percentages.append(perturbed_word_percentage)
+                else:
+                    perturbed_word_percentage = 0
+                perturbed_word_percentage_str = str(round(perturbed_word_percentage, 2))
+                sample_rows.append(row)
+            self.log_samples(sample_rows)
+            
+            self.log_num_words_changed(num_words_changed_until_success)
+            
+            attack_detail_rows = [
+                ['Attack algorithm:', self.attack_name],
+                ['Model:', self.model.name],
+                ['Word suggester:', self.perturbation.name],
+                ['Content preservation method:', self.perturbation.constraints[0].metric],
+                ['Content preservation threshold:', self.perturbation.constraints[0].threshold],
+            ]
+            self.log_attack_details(attack_detail_rows)
+            
+            total_attacks = len(results)
+            num_failed_attacks = num_words_changed_until_success[-1]
+            num_successful_attacks = total_attacks - num_failed_attacks
+            num_already_misclassified_samples = num_words_changed_until_success[0]
+            # Original classifier success rate on these samples.
+            original_accuracy = (total_attacks - num_already_misclassified_samples) * 100.0 / total_attacks
+            original_accuracy = str(round(original_accuracy, 2)) + '%'
+            # New classifier success rate on these samples.
+            attack_accuracy = (total_attacks - num_successful_attacks - num_already_misclassified_samples) * 100.0 / total_attacks
+            attack_accuracy = str(round(attack_accuracy, 2)) + '%'
+            # Average % of words perturbed per sample.
+            average_perc_words_perturbed = statistics.mean(perturbed_word_percentages)
+            average_perc_words_perturbed = str(round(average_perc_words_perturbed, 2)) + '%'
+            summary_table_rows = [
+                ['Total number of attacks:', total_attacks],
+                ['Number of failed attacks:', num_failed_attacks],
+                ['Original accuracy:', original_accuracy],
+                ['Attack accuracy:', attack_accuracy],
+                ['Perturbed word percentage:', average_perc_words_perturbed],
+            ]
+            self.log_summary(summary_table_rows)
+            
         print('-'*80)
         
         return results
+    
+    def log_samples(self, rows):
+        self.visdom.table(rows, window_id="results", title="Attack Results")
+        
+    def log_attack_details(self, rows):
+        self.visdom.table(rows, title='Attack Details',
+                    window_id='attack_details')
+        
+    def log_summary(self, rows):
+        self.visdom.table(rows, title='Summary',
+                window_id='summary_table')
+
+    def log_num_words_changed(self, num_words_changed):
+        
+        numbins = len(num_words_changed)
+        #self.visdom.hist(num_words_changed,
+        #    numbins=numbins, title='Result', window_id='powers_hist')
+        self.visdom.bar(num_words_changed,
+            numbins=numbins, title='Result', window_id='powers_hist')
 
 class AttackResult:
     """ Result of an Attack run on a single (label, text_input) pair. 
@@ -109,40 +190,44 @@ class AttackResult:
     def __str__(self):
         return '\n'.join(self.__data__())
     
-    def diff(self):
+    def diff(self, html=False):
         """ Shows the difference between two strings in color.
         
         @TODO abstract to work for general paraphrase.
         """
         #@TODO: Support printing to HTML in some cases.
-        _color = utils.color_text_terminal
+        if html:
+            _color = utils.color_text_html
+        else:
+            _color = utils.color_text_terminal
+        _diff = utils.diff_indices
         t1 = self.original_text
         t2 = self.perturbed_text
-        
         words1 = t1.words()
         words2 = t2.words()
         
+        indices = _diff(words1,words2)
+        
         c1 = utils.color_from_label(self.original_label)
         c2 = utils.color_from_label(self.perturbed_label)
-        new_is = []
+        
         new_w1s = []
         new_w2s = []
-        for i in range(min(len(words1), len(words2))):
+        
+        for i in indices:
             w1 = words1[i]
             w2 = words2[i]
-            if w1 != w2:
-                new_is.append(i)
-                new_w1s.append(_color(w1, c1))
-                new_w2s.append(_color(w2, c2))
+            new_w1s.append(_color(w1, c1))
+            new_w2s.append(_color(w2, c2))
         
-        t1 = self.original_text.replace_words_at_indices(new_is, new_w1s)
-        t2 = self.original_text.replace_words_at_indices(new_is, new_w2s)
+        t1 = self.original_text.replace_words_at_indices(indices, new_w1s)
+        t2 = self.original_text.replace_words_at_indices(indices, new_w2s)
                 
-        return (str(t1), str(t2))
+        return (str(t1), str(t2), len(indices))
     
     def print_(self):
         print(str(self.original_label), '-->', str(self.perturbed_label))
-        print('\n'.join(self.diff()))
+        print('\n'.join(self.diff()[:2]))
 
 if __name__ == '__main__':
     import attacks
@@ -165,13 +250,13 @@ if __name__ == '__main__':
     
     attack = attacks.GreedyWordSwap(model, perturbation)
     
-    yelp_data = YelpSentiment(n=2)
+    yelp_data = YelpSentiment(n=4)
     # yelp_data = [
     #     (1, 'I hate this Restaurant!'), 
     #     (0, "Texas Jack's has amazing food.")
     # ]
     
-    # attack.enable_visdom()
+    attack.enable_visdom()
     attack.add_output_file(open('outputs/test.txt', 'w'))
     import sys
     attack.add_output_file(sys.stdout)

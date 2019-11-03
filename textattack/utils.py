@@ -72,6 +72,22 @@ def color_text_terminal(text, color=None):
         color = ANSI_ESCAPE_CODES.BOLD
     
     return color + text + ANSI_ESCAPE_CODES.STOP
+    
+def color_text_html(text, color=None):
+    if color is None:
+        color = 'black'
+    return "<font color='" + color + "'>" + text + "</font>" 
+    
+def diff_indices(words1, words2):
+    new_is = []
+    new_w1s = []
+    new_w2s = []
+    for i in range(min(len(words1), len(words2))):
+        w1 = words1[i]
+        w2 = words2[i]
+        if w1 != w2:
+            new_is.append(i)
+    return new_is
 
 class ANSI_ESCAPE_CODES:
     """ Escape codes for printing color to the terminal. """

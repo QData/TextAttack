@@ -5,7 +5,7 @@ class GreedyWordSwap(Attack):
         perturbations.
     """
     def __init__(self, model, perturbation,  max_depth=32):
-        super().__init__(model, perturbation)
+        super().__init__(model, perturbation, "Greedy Word Swap")
         self.max_depth = max_depth
         
     def _attack_one(self, original_label, tokenized_text):
