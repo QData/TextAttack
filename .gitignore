@@ -1,3 +1,8 @@
+# compiled python files
 __pycache__/
 
+# run logs
 outputs/
+
+# IDE files
+.c9*
