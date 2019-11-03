@@ -8,6 +8,8 @@ import argparse
 parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
+data_group = parser.add_mutually_exclusive_group(required=True)
+
 parser.add_argument('--attack', type=str, required=False, default='greedy-wir-counterfit',
     choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir-counterfit'], 
     help='The type of attack to run.')
@@ -20,17 +22,17 @@ parser.add_argument('--constraints', type=str, required=False, nargs='*',
     help=('Constraints to add to the attack. Usage: "--constraints use lang-tool:{threshold} ' 
     'goog-lm" to use the default use similarity of .9 and to choose the threshold'))
 
-parser.add_argument('--data', type=str, required=False,
-    choices=['yelp-sentiment'], help='The dataset to use.')
+parser.add_argument('--out_file', type=str, required=False,
+    help='The file to output the results to.')
 
-parser.add_argument('-n', type=int, required=False, 
+parser.add_argument('--num_examples', type=int, required=False, 
     help='The number of examples to attack.')
 
-parser.add_argument('--interactive', action='store_true', 
+data_group.add_argument('--interactive', action='store_true', 
     help='Whether to run attacks interactively.')
 
-parser.add_argument('--file', type=str, required=False,
-    help='The file to output the results to.')
+data_group.add_argument('--data', type=str,
+    choices=['yelp-sentiment'], help='The dataset to use.')
 
 args = parser.parse_args()
 
@@ -51,11 +53,6 @@ if __name__ == '__main__':
     os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
     start_time = time.time()
-
-    if (args.data is None and not args.interactive):
-        raise ValueError('You must have one of --data or --interactive')
-    elif (args.data is not None and args.interactive):
-        raise ValueError('You may only have one of --data or --interactive')
 
     #Models
     if args.model == 'bert-sentiment':
@@ -103,11 +100,11 @@ if __name__ == '__main__':
 
     #Data
     if args.data == 'yelp-sentiment':
-        data = datasets.YelpSentiment(args.n)
+        data = datasets.YelpSentiment(args.num_examples)
 
     #Output file
-    if args.file is not None:
-        attack.add_output_file(args.file)
+    if args.out_file is not None:
+        attack.add_output_file(args.out_file)
 
 
     load_time = time.time()
@@ -133,14 +130,10 @@ if __name__ == '__main__':
             if text == 'q':
                 break
 
-            #text_id = model.convert_text_to_ids(text)
-
-            #print(text_id)
-
             tokenized_text = TokenizedText(model, text)
 
             pred = attack._call_model([tokenized_text])
-            label = pred.argmax()
+            label = int(pred.argmax())
 
             print('Attacking...')
 
