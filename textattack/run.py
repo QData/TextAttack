@@ -25,6 +25,9 @@ parser.add_argument('-n', type=int, required=False, default=None,
 parser.add_argument('--interactive', action='store_true', 
     help='Whether to run attacks interactively')
 
+parser.add_argument('--file', type=str, required=False,
+    help='The file to output the results to')
+
 args = parser.parse_args()
 
 
@@ -35,11 +38,17 @@ if __name__ == '__main__':
     import transformations
     import datasets
     import time
+    import os
+
+    # Only use one GPU, if we have one.
+    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    # Disable tensorflow logs, except in the case of an error.
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
     start_time = time.time()
 
     if (args.data is None and not args.interactive):
-        raise ValueError("You most have one of --data or --interactive")
+        raise ValueError("You must have one of --data or --interactive")
 
     #Models
     if args.model == 'bert-sentiment':
@@ -92,6 +101,10 @@ if __name__ == '__main__':
     #Data
     if args.data == 'yelp-sentiment':
         data = datasets.YelpSentiment(args.n)
+
+    #Output file
+    if args.file is not None:
+        attack.add_output_file(args.file)
 
 
     load_time = time.time()
