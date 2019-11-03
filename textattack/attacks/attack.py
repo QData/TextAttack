@@ -314,7 +314,7 @@ class AttackResult:
     
     def print_(self):
         print(str(self.original_label), '-->', str(self.perturbed_label))
-        print('\n'.join(self.diff_color()))
+        print('\n'.join(self.diff()[:2]))
 
 class FailedAttackResult(AttackResult):
     def __init__(self, original_text, original_label):
