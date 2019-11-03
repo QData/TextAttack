@@ -5,28 +5,32 @@ A command line parser to run an attack
 
 import argparse
 
-parser = argparse.ArgumentParser(description='A commandline parser for TextAttack')
+parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-parser.add_argument('--attack', type=str, required=True, 
-    choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir'], help='The type of attack to run')
+parser.add_argument('--attack', type=str, required=False, default='greedy-wir-counterfit',
+    choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir-counterfit'], 
+    help='The type of attack to run.')
 
-parser.add_argument('--model', type=str, required=True, 
-    choices=['bert-sentiment', 'infer-sent'], help='The classification model to attack')
+parser.add_argument('--model', type=str, required=False, default='bert-sentiment',
+    choices=['bert-sentiment'], help='The classification model to attack.')
 
 parser.add_argument('--constraints', type=str, required=False, nargs='*',
-    help='A constraint to add to the attack')
+    default=['use', 'lang-tool'], 
+    help=('Constraints to add to the attack. Usage: "--constraints use lang-tool:{threshold} ' 
+    'goog-lm" to use the default use similarity of .9 and to choose the threshold'))
 
-parser.add_argument('--data', type=str, required=False, 
-    help='The dataset to use')
+parser.add_argument('--data', type=str, required=False,
+    choices=['yelp-sentiment'], help='The dataset to use.')
 
-parser.add_argument('-n', type=int, required=False, default=None, 
-    help='The number of examples to test on')
+parser.add_argument('-n', type=int, required=False, 
+    help='The number of examples to attack.')
 
 parser.add_argument('--interactive', action='store_true', 
-    help='Whether to run attacks interactively')
+    help='Whether to run attacks interactively.')
 
 parser.add_argument('--file', type=str, required=False,
-    help='The file to output the results to')
+    help='The file to output the results to.')
 
 args = parser.parse_args()
 
@@ -39,6 +43,7 @@ if __name__ == '__main__':
     import datasets
     import time
     import os
+    from tokenized_text import TokenizedText
 
     # Only use one GPU, if we have one.
     os.environ['CUDA_VISIBLE_DEVICES'] = '0'
@@ -48,15 +53,13 @@ if __name__ == '__main__':
     start_time = time.time()
 
     if (args.data is None and not args.interactive):
-        raise ValueError("You must have one of --data or --interactive")
+        raise ValueError('You must have one of --data or --interactive')
+    elif (args.data is not None and args.interactive):
+        raise ValueError('You may only have one of --data or --interactive')
 
     #Models
     if args.model == 'bert-sentiment':
         model = models.BertForSentimentClassification()
-    elif args.model == 'infer-sent':
-        #Doesn't work for now
-        raise NotImplementedError()
-        model = models.InferSent()
     
     #Transformation
     transformation = transformations.WordSwapEmbedding()
@@ -66,7 +69,7 @@ if __name__ == '__main__':
         attack = attacks.GreedyWordSwap(model, transformation)
     elif args.attack == 'ga-counterfit':
         attack = attacks.GeneticAlgorithm(model, transformation)
-    elif args.attack == 'greedy-wir':
+    elif args.attack == 'greedy-wir-counterfit':
         attack = attacks.GreedyWordSwapWIR(model, transformation)
 
     #Constraints
@@ -75,26 +78,26 @@ if __name__ == '__main__':
         defined_constraints = []
 
         for constraint in args.constraints:
-            if 'sim:' in constraint:
-                similarity = constraint.replace('sim:', '')
+            if 'use:' in constraint:
+                similarity = constraint.replace('use:', '')
+                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(float(similarity), metric='cosine'))
+            elif constraint == 'use':
+                #Default similarity to .90 if no similarity is given
+                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(.90, metric='cosine'))
 
-                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(float(similarity), metric='cosine'),)
-
-                # attack.add_constraints(
-                #     (
-                #     constraints.semantics.UniversalSentenceEncoder(float(similarity), metric='cosine'),
-                #     )
-                # )
-            elif 'lang-tool' in constraint:
+            elif 'lang-tool:' in constraint:
                 threshold = constraint.replace('lang-tool:', '')
+                defined_constraints.append(constraints.syntax.LanguageTool(float(threshold)))
+            elif constraint == 'lang-tool':
+                #Default threshold to 1 if no threshold is given
+                defined_constraints.append(constraints.syntax.LanguageTool(1))
 
-                defined_constraints.append(constraints.syntax.LanguageTool(float(threshold)),)
+            elif constraint == 'goog-lm':
+                defined_constraints.append(constraints.semantics.google_language_model.GoogleLanguageModel())
 
-                # attack.add_constraints(
-                #     (
-                #     constraints.syntax.LanguageTool(float(threshold)),
-                #     )
-                # )
+            else:
+                raise ValueError((f'{constraint} is not a valid constraint. ' 
+                    'Valid options are "use", "lang-tool", or "goog-lm". Use "-h" for help.'))
 
         attack.add_constraints(defined_constraints)
 
@@ -130,8 +133,14 @@ if __name__ == '__main__':
             if text == 'q':
                 break
 
-            print('Enter a label for the sentence (1: positive, 0: negative):')
-            label = int(input())
+            #text_id = model.convert_text_to_ids(text)
+
+            #print(text_id)
+
+            tokenized_text = TokenizedText(model, text)
+
+            pred = attack._call_model([tokenized_text])
+            label = pred.argmax()
 
             print('Attacking...')
 
