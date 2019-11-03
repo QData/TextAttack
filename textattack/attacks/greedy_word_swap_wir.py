@@ -53,7 +53,7 @@ class GreedyWordSwapWIR(Attack):
             num_words_changed += 1
             scores = self._call_model(transformed_text_candidates)
             # The best choice is the one that minimizes the original class label.
-            best_index = scores[:, original_label].argmin() if len(transformed_text_candidates) > 1 else 0
+            best_index = scores[:, original_label].argmin()
             new_tokenized_text = transformed_text_candidates[best_index]
             # If we changed the label, break.
             new_text_label = scores[best_index].argmax().item()
@@ -61,7 +61,7 @@ class GreedyWordSwapWIR(Attack):
                 break
             tokenized_text = new_tokenized_text
         
-        if not new_text_label or new_text_label == original_label:
+        if new_text_label is None or new_text_label == original_label:
             return FailedAttackResult(original_tokenized_text, original_label)
         else:
             return AttackResult( 
