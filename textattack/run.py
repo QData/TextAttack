@@ -16,11 +16,14 @@ parser.add_argument('--model', type=str, required=True,
 parser.add_argument('--constraints', type=str, required=False, nargs='*',
     help='A constraint to add to the attack')
 
-parser.add_argument('--data', type=str, required=True, 
+parser.add_argument('--data', type=str, required=False, 
     help='The dataset to use')
 
 parser.add_argument('-n', type=int, required=False, default=None, 
     help='The number of examples to test on')
+
+parser.add_argument('--interactive', action='store_true', 
+    help='Whether to run attacks interactively')
 
 args = parser.parse_args()
 
@@ -34,6 +37,9 @@ if __name__ == '__main__':
     import time
 
     start_time = time.time()
+
+    if (args.data is None and not args.interactive):
+        raise ValueError("You most have one of --data or --interactive")
 
     #Models
     if args.model == 'bert-sentiment':
@@ -90,12 +96,31 @@ if __name__ == '__main__':
 
     load_time = time.time()
 
-    attack.attack(data, shuffle=False)
+    if args.data is not None:
+        attack.attack(data, shuffle=False)
 
-    finish_time = time.time()
+        finish_time = time.time()
 
-    print(f'Loaded in {load_time - start_time}s')
-    print(f'Ran attack in {finish_time - load_time}s')
-    print(f'TOTAL TIME: {finish_time - start_time}s')
-        
+        print(f'Loaded in {load_time - start_time}s')
+        print(f'Ran attack in {finish_time - load_time}s')
+        print(f'TOTAL TIME: {finish_time - start_time}s')
+
+    
+    if args.interactive:
+        print('Running in interactive mode')
+        print('----------------------------')
+
+        while True:
+            print('Enter a sentence to attack or "q" to quit:')
+            text = input()
+
+            if text == 'q':
+                break
+
+            print('Enter a label for the sentence (1: positive, 0: negative):')
+            label = int(input())
+
+            print('Attacking...')
+
+            attack.attack([(label, text)])
 
