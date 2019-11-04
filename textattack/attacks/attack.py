@@ -381,7 +381,7 @@ if __name__ == '__main__':
         )
     )
     
-    yelp_data = YelpSentiment(n=1)
+    yelp_data = YelpSentiment(n=10)
     # yelp_data = [
     #     (1, 'I hate this Restaurant!'), 
     #     (0, "Texas Jack's has amazing food.")
