@@ -1,2 +1,3 @@
 from .dataset import TextAttackDataset 
-from .yelp_sentiment import YelpSentiment
+
+from .classification import *
