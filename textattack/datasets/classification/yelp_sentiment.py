@@ -1,9 +1,13 @@
 from textattack import utils as utils
-from .dataset import TextAttackDataset
+from textattack.datasets import TextAttackDataset
 
 class YelpSentiment(TextAttackDataset):
     """
-    Loads the Yelp Sentiment dataset
+    Loads the Yelp Sentiment dataset.
+    
+    Labels:
+        0 - Negative
+        1 - Positive
 
     Args:
         n (int): The number of examples to load
@@ -14,4 +18,4 @@ class YelpSentiment(TextAttackDataset):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(YelpSentiment.DATA_PATH)
         self.examples = self._load_text_file(YelpSentiment.DATA_PATH, n=n)
-        print('YelpSentiment loaded', len(self.examples), 'examples...')
+        print('YelpSentiment loaded', len(self.examples), 'examples.')
