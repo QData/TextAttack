@@ -17,6 +17,10 @@ parser.add_argument('--attack', type=str, required=False, default='greedy-wir-co
 parser.add_argument('--model', type=str, required=False, default='bert-sentiment',
     choices=['bert-sentiment'], help='The classification model to attack.')
 
+parser.add_argument('--transformation', type=str, required=False, default='word-swap-embedding',
+    choices=['word-swap-embedding', 'word-swap-homoglyph'],
+    help='The type of transformation to apply')
+
 parser.add_argument('--constraints', type=str, required=False, nargs='*',
     default=['use', 'lang-tool'], 
     help=('Constraints to add to the attack. Usage: "--constraints use lang-tool:{threshold} ' 
@@ -59,7 +63,10 @@ if __name__ == '__main__':
         model = models.BertForSentimentClassification()
     
     #Transformation
-    transformation = transformations.WordSwapEmbedding()
+    if args.transformation == 'word-swap-embedding':
+        transformation = transformations.WordSwapEmbedding()
+    elif args.transformation == 'word-swap-homoglyph':
+        transformation = transformations.WordSwapHomoglyph()
 
     #Attacks
     if args.attack == 'greedy-counterfit':
