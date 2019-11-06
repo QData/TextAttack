@@ -155,6 +155,8 @@ class Attack:
         for label, text in dataset:
             tokenized_text = TokenizedText(self.model, text)
             result = self._attack_one(label, tokenized_text)
+            # if isinstance(result,FailedAttackResult):
+            #     result.
             results.append(result)
         
         if self.output_to_terminal:
@@ -324,6 +326,8 @@ class FailedAttackResult(AttackResult):
             raise ValueError('Attack original label cannot be None')
         self.original_text = original_text
         self.original_label = original_label
+        self.perturbed_text = original_text
+        self.perturbed_label = original_label
 
     def __data__(self):
         data = (self.original_text, self.original_label)
