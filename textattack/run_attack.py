@@ -101,8 +101,8 @@ if __name__ == '__main__':
                 threshold = constraint.replace('lang-tool:', '')
                 defined_constraints.append(constraints.syntax.LanguageTool(float(threshold)))
             elif constraint == 'lang-tool':
-                # Default threshold to 1 if no threshold is given
-                defined_constraints.append(constraints.syntax.LanguageTool(1))
+                # Default threshold to 0 if no threshold is given
+                defined_constraints.append(constraints.syntax.LanguageTool(0))
 
             elif constraint == 'goog-lm':
                 defined_constraints.append(constraints.semantics.google_language_model.GoogleLanguageModel())
