@@ -125,9 +125,12 @@ class Attack:
         Returns model predictions for a list of TokenizedText objects. 
         
         """
+        # import pdb; pdb.set_trace()
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         scores = self.model(ids)
+        # @TODO unsqueeze squeeze outputd for single prediction
+        # @TODO assert correct dim
         return scores
       
     def attack(self, dataset, shuffle=False):

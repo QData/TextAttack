@@ -30,6 +30,13 @@ def download_if_needed(folder_path):
         file_path = os.path.join(folder_path, file_name)
         http_get(file_url, file_path)
         print(f'Saved {file_url} to {file_path}.')
+        
+def default_tokenize(text):
+    """ Tokenizes some text using the default TextAttack tokenizer. Right now, 
+        we just use the nltk tokenizer.
+    """
+    from nltk.tokenize import word_tokenize
+    return word_tokenize(text)
 
 def http_get(url, out_file, proxies=None):
     """ Get contents of a URL and save to a file.

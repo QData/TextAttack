@@ -4,7 +4,7 @@ from transformers.tokenization_bert import BertTokenizer
 import textattack.utils as utils
 import torch
 
-class BertForSentimentClassification:
+class BertForYelpSentimentClassification:
     """ 
     BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification. 
 
@@ -17,7 +17,7 @@ class BertForSentimentClassification:
     MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
     
     def __init__(self, max_seq_length=32):
-        utils.download_if_needed(BertForSentimentClassification.MODEL_PATH)
+        utils.download_if_needed(BertForYelpSentimentClassification.MODEL_PATH)
         self.model = BertForSequenceClassification.from_pretrained(
             BertForSentimentClassification.MODEL_PATH, 
             num_labels=2)

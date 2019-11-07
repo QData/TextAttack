@@ -3,8 +3,9 @@ import os
 import torch
 
 from textattack.constraints import Constraint
-from textattack.models import InferSent
 from textattack.utils import download_if_needed, get_device
+
+from .infer_sent import InferSent
 
 class UniversalSentenceEncoder(Constraint):
     """ 

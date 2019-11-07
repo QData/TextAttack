@@ -35,7 +35,7 @@ def get_args():
         help='The type of attack to run.')
     
     parser.add_argument('--model', type=str, required=False, default='bert-sentiment',
-        choices=['bert-sentiment'], help='The classification model to attack.')
+        choices=['bert-sentiment', 'lstm-yelp-sentiment', 'cnn-yelp-sentiment'], help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['use', 'lang-tool'], 
@@ -46,12 +46,12 @@ def get_args():
         help='The file to output the results to.')
     
     parser.add_argument('--num_examples', type=int, required=False, 
-        help='The number of examples to attack.')
+        default='5', help='The number of examples to attack.')
     
     data_group.add_argument('--interactive', action='store_true', 
         help='Whether to run attacks interactively.')
     
-    data_group.add_argument('--data', type=str,
+    data_group.add_argument('--data', type=str, default='yelp',
         choices=DATASET_CLASS_NAMES.keys(), help='The dataset to use.')
     
     args = parser.parse_args()
@@ -71,7 +71,11 @@ if __name__ == '__main__':
 
     # Models
     if args.model == 'bert-sentiment':
-        model = models.BertForSentimentClassification()
+        model = models.classification.BertForYelpSentimentClassification()
+    elif args.model == 'lstm-yelp-sentiment':
+        model = models.classification.LSTMForYelpSentimentClassification()
+    elif args.model == 'cnn-yelp-sentiment':
+        model = models.classification.cnn.CNNForYelpSentimentClassification()
     
     # Transformation
     transformation = transformations.WordSwapEmbedding()
