@@ -1,6 +1,7 @@
 README.md
 setup.py
 textattack/__init__.py
+textattack/run_attack.py
 textattack/tokenized_text.py
 textattack/utils.py
 textattack.egg-info/PKG-INFO
@@ -26,7 +27,12 @@ textattack/constraints/syntax/__init__.py
 textattack/constraints/syntax/language_tool.py
 textattack/datasets/__init__.py
 textattack/datasets/dataset.py
-textattack/datasets/yelp_sentiment.py
+textattack/datasets/classification/__init__.py
+textattack/datasets/classification/ag_news.py
+textattack/datasets/classification/imdb_sentiment.py
+textattack/datasets/classification/kaggle_fake_news.py
+textattack/datasets/classification/movie_review_sentiment.py
+textattack/datasets/classification/yelp_sentiment.py
 textattack/models/__init__.py
 textattack/models/bert_for_sentiment_classification.py
 textattack/models/infer_sent.py
@@ -34,5 +40,4 @@ textattack/models/lstm_for_sentiment_classification.py
 textattack/transformations/__init__.py
 textattack/transformations/transformation.py
 textattack/transformations/word_swap.py
-textattack/transformations/word_swap_counterfit.py
 textattack/transformations/word_swap_embedding.py

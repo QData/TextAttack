@@ -26,6 +26,14 @@ Description: # TextAttack
         nltk.download('stopwords')
         ```
         
+        ### Common Errors
+        
+        #### Errors regarding GCC
+        If you see an error that GCC is incompatible, make sure your system has an up-to-date version of the GCC compiler. On distributed systems with a `module` system, typing `module load gcc` may be sufficient.
+        
+        #### Errors regarding Java
+        Using the LanguageTool constraint relies on Java 8 internally (it's not ideal, we know). Please install Java 8 if you're interested in using the LanguageTool grammaticality constraint. If your system has the `module` command, try typing `module load java8`.
+        
         ## Features
         
         ### Models
