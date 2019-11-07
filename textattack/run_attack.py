@@ -36,6 +36,10 @@ def get_args():
     
     parser.add_argument('--model', type=str, required=False, default='bert-sentiment',
         choices=['bert-sentiment'], help='The classification model to attack.')
+
+    parser.add_argument('--transformation', type=str, required=False, default='word-swap-embedding',
+        choices=['word-swap-embedding', 'word-swap-homoglyph'],
+        help='The type of transformation to apply')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['use', 'lang-tool'], 
@@ -73,8 +77,11 @@ if __name__ == '__main__':
     if args.model == 'bert-sentiment':
         model = models.BertForSentimentClassification()
     
-    # Transformation
-    transformation = transformations.WordSwapEmbedding()
+    #Transformation
+    if args.transformation == 'word-swap-embedding':
+        transformation = transformations.WordSwapEmbedding()
+    elif args.transformation == 'word-swap-homoglyph':
+        transformation = transformations.WordSwapHomoglyph()
 
     # Attacks
     if args.attack == 'greedy-counterfit':
