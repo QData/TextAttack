@@ -15,13 +15,25 @@ import textattack.transformations as transformations
 
 from textattack.tokenized_text import TokenizedText
 
-
 DATASET_CLASS_NAMES = {
     'agnews':           datasets.classification.AGNews,
     'imdb':             datasets.classification.IMDBSentiment,
     'kaggle_fake_news': datasets.classification.KaggleFakeNews,
     'mr':               datasets.classification.MovieReviewSentiment,
     'yelp':             datasets.classification.YelpSentiment
+}
+
+MODEL_CLASS_NAMES = {
+    'bert-yelp-sentiment':  models.classification.bert.BertForYelpSentimentClassification,
+    'cnn-yelp-sentiment':   models.classification.cnn.CNNForYelpSentimentClassification,
+    'cnn-imdb':             models.classification.cnn.CNNForIMDBSentimentClassification,
+    'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
+    'lstm-imdb':            models.classification.lstm.LSTMForIMDBSentimentClassification,
+}
+
+MODELS_BY_DATASET = {
+    'imdb': ['cnn-imdb', 'lstm-imdb'],
+    'yelp': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
 def get_args():
@@ -35,7 +47,7 @@ def get_args():
         help='The type of attack to run.')
     
     parser.add_argument('--model', type=str, required=False, default='bert-sentiment',
-        choices=['bert-sentiment', 'lstm-yelp-sentiment', 'cnn-yelp-sentiment'], help='The classification model to attack.')
+        choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['use', 'lang-tool'], 
@@ -58,6 +70,17 @@ def get_args():
     
     return args
 
+def check_model_and_data_compatibility(data_name, model_name):
+    """
+        Prints a warning message if the user attacks a model using data different
+        than what it was trained on.
+    """
+    if not model_name or not data_name:
+        return
+    elif data_name not in MODELS_BY_DATASET:
+        print('Warning: No known models for this dataset.')
+    elif model_name not in MODELS_BY_DATASET[data_name]:
+        print(f'Warning: model {model_name} incompatible with dataset {data_name}.')
 
 if __name__ == '__main__':
     args = get_args()
@@ -70,12 +93,9 @@ if __name__ == '__main__':
     start_time = time.time()
 
     # Models
-    if args.model == 'bert-sentiment':
-        model = models.classification.BertForYelpSentimentClassification()
-    elif args.model == 'lstm-yelp-sentiment':
-        model = models.classification.LSTMForYelpSentimentClassification()
-    elif args.model == 'cnn-yelp-sentiment':
-        model = models.classification.cnn.CNNForYelpSentimentClassification()
+    if args.model not in MODEL_CLASS_NAMES:
+        raise ValueError(f'Error: unsupported model {args.model}')
+    model = MODEL_CLASS_NAMES[args.model]()
     
     # Transformation
     transformation = transformations.WordSwapEmbedding()
@@ -98,7 +118,7 @@ if __name__ == '__main__':
                 similarity = constraint.replace('use:', '')
                 defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(float(similarity), metric='cosine'))
             elif constraint == 'use':
-                # Default similarity to .90 if no similarity is given
+                # Default similarity to .9 if no similarity is given.
                 defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(.90, metric='cosine'))
 
             elif 'lang-tool:' in constraint:
@@ -116,7 +136,7 @@ if __name__ == '__main__':
                     'Valid options are "use", "lang-tool", or "goog-lm". Use "-h" for help.'))
 
         attack.add_constraints(defined_constraints)
-
+    
     # Data
     if args.data in DATASET_CLASS_NAMES:
         dataset_class = DATASET_CLASS_NAMES[args.data]
@@ -132,6 +152,8 @@ if __name__ == '__main__':
     load_time = time.time()
 
     if args.data is not None:
+        check_model_and_data_compatibility(args.data, args.model)
+        
         attack.attack(data, shuffle=False)
 
         finish_time = time.time()

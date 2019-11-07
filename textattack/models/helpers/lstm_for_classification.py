@@ -6,6 +6,11 @@ from textattack.models.helpers import GloveEmbeddingLayer
 
 
 class LSTMForClassification(nn.Module):
+    """ A long short-term memory neural network for text classification. 
+    
+        We use different versions of this network to pretrain models for text 
+        classification.
+    """
     def __init__(self, hidden_size=150, depth=1, dropout=0.3, nclasses=2,
         max_seq_length=128):
         super().__init__()

@@ -1,1 +1,2 @@
 from .cnn_for_yelp_sentiment_classification import CNNForYelpSentimentClassification
+from .cnn_for_imdb_sentiment_classification import CNNForIMDBSentimentClassification
