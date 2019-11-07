@@ -22,9 +22,8 @@ class CNNForClassification(nn.Module):
         d_out = 3*hidden_size
         self.out = nn.Linear(d_out, nclasses)
 
-    def forward(self, input):
-        input = input.t()
-        emb = self.emb_layer(input)
+    def forward(self, _input):
+        emb = self.emb_layer(_input)
         emb = self.drop(emb)
 
         output = self.encoder(emb)
@@ -63,6 +62,7 @@ class CNNForClassification(nn.Module):
         return torch.cat(outs, dim=0)
 
 class CNNTextLayer(nn.Module):
+    
     def __init__(self, n_in, widths=[3,4,5], filters=100):
         super().__init__()
         Ci = 1
