@@ -19,10 +19,10 @@ class BertForYelpSentimentClassification:
     def __init__(self, max_seq_length=32):
         utils.download_if_needed(BertForYelpSentimentClassification.MODEL_PATH)
         self.model = BertForSequenceClassification.from_pretrained(
-            BertForSentimentClassification.MODEL_PATH, 
+            BertForYelpSentimentClassification.MODEL_PATH, 
             num_labels=2)
         self.tokenizer = BertTokenizer.from_pretrained(
-            BertForSentimentClassification.MODEL_PATH)
+            BertForYelpSentimentClassification.MODEL_PATH)
         self.model.to(utils.get_device())
         self.model.eval()
         self.max_seq_length = max_seq_length
