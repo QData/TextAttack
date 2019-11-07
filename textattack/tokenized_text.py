@@ -1,16 +1,14 @@
 from utils import get_device
 
 class TokenizedText:
-    def __init__(self, model, text, modified_index=None):
+    def __init__(self, model, text, attack_attrs=dict()):
         """ Initializer stores text and tensor of tokenized text.
         """
         self.model = model
         self.text = text
         self.ids = model.convert_text_to_ids(text)
         self.raw_words = raw_words(text)
-        self.attack_attrs = dict()
-        if modified_index:
-            self.attack_attrs['modified_index'] = modified_index
+        self.attack_attrs = attack_attrs
     
     def words(self):
         """ Returns the distinct words from self.text. 
@@ -93,7 +91,7 @@ class TokenizedText:
             return True
         return w1[i] != w2[i]
 
-    def replace_words_at_indices(self, indices, words, modified_index=None):
+    def replace_words_at_indices(self, indices, words):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
         if len(indices) != len(words):
@@ -101,14 +99,15 @@ class TokenizedText:
         new_words = self.raw_words[:]
         for i, word in zip(indices, words):
             new_words[i] = word
-        return self.replace_new_words(new_words, modified_index=modified_index)
+        return self.replace_new_words(new_words)
     
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
-        return self.replace_words_at_indices([index], [new_word], index)
+        self.attack_attrs['modified_word_index'] = index
+        return self.replace_words_at_indices([index], [new_word])
     
-    def replace_new_words(self, new_words, modified_index=None):
+    def replace_new_words(self, new_words):
         """ This code returns a new TokenizedText object and replaces old list 
             of words with a new list of words, but preserves the punctuation 
             and spacing of the original message.
@@ -123,7 +122,7 @@ class TokenizedText:
             final_sentence += adv_word
             text = text[word_end:]
         final_sentence += text # Add all of the ending punctuation.
-        return TokenizedText(self.model, final_sentence, modified_index=modified_index)
+        return TokenizedText(self.model, final_sentence, attack_attrs=self.attack_attrs)
         
     def __repr__(self):
         return self.text

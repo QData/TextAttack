@@ -104,7 +104,7 @@ class UniversalSentenceEncoder(Constraint):
             x_list_text = []
             x_adv_list_text = []
             for x_adv in x_adv_list:
-                modified_index = x_adv.attack_attrs['modified_index']
+                modified_index = x_adv.attack_attrs['modified_word_index']
                 x_list_text.append(x.text_window_around_index(modified_index, self.window_size))
                 x_adv_list_text.append(x_adv.text_window_around_index(modified_index, self.window_size))
             embeddings = self.model.encode(x_list_text + x_adv_list_text, tokenize=True)
@@ -143,6 +143,7 @@ class UniversalSentenceEncoder(Constraint):
                 raise ValueError('Must provide original text when compare_with_original is true.')
         else:
             scores = self._score_list(x, x_adv_list)
+        # @TODO: Vectorize this
         for i, x_adv in enumerate(x_adv_list):
             x_adv.attack_attrs['similarity_score'] = scores[i]
         mask = (scores > self.threshold)
