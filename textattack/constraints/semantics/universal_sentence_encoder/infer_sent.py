@@ -134,13 +134,13 @@ class InferSent(nn.Module):
         assert hasattr(self, 'w2v_path'), 'w2v path not set'
         word_dict = self.get_word_dict(sentences, tokenize)
         self.word_vec = self.get_w2v(word_dict)
-        print('Vocab size : %s' % (len(self.word_vec)))
+        # print('Vocab size : %s' % (len(self.word_vec)))
 
     # build w2v vocab with k most frequent words
     def build_vocab_k_words(self, K):
         assert hasattr(self, 'w2v_path'), 'w2v path not set'
         self.word_vec = self.get_w2v_k(K)
-        print('Vocab size : %s' % (K))
+        # print('Vocab size : %s' % (K))
 
     def update_vocab(self, sentences, tokenize=True):
         assert hasattr(self, 'w2v_path'), 'warning : w2v path not set'
