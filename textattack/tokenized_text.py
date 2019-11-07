@@ -14,8 +14,6 @@ class TokenizedText:
     
     def words(self):
         """ Returns the distinct words from self.text. 
-        
-            @TODO Should we ever consider case when substituting words?
         """
         return self.raw_words
 
