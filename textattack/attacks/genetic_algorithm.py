@@ -38,12 +38,12 @@ class GeneticAlgorithm(Attack):
         ValueError: If the transformation is not a subclass of WordSwap. 
 
     '''
-    def __init__(self, model, transformation, pop_size=20, max_iters=50):
-        if not isinstance(transformation, WordSwap):
+    def __init__(self, model, transformations=[], pop_size=20, max_iters=50):
+        if not isinstance(transformations[0], WordSwap):
             raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
         super().__init__(model)
         self.model = model
-        self.transformation = transformation
+        self.transformation = transformations[0]
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.temp = 0.3
