@@ -27,6 +27,12 @@ class LSTMForClassification(nn.Module):
         )
         d_out = hidden_size
         self.out = nn.Linear(d_out, nclasses)
+    
+    def load_from_disk(self, model_path):
+        state_dict = torch.load(model_path, map_location=utils.get_device())
+        self.load_state_dict(state_dict)
+        self.to(utils.get_device())
+        self.eval()
 
     def forward(self, _input):
         emb = self.emb_layer(_input.t())

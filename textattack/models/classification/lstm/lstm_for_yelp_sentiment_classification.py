@@ -20,7 +20,4 @@ class LSTMForYelpSentimentClassification(LSTMForClassification):
     
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length)
-        state_dict = torch.load(LSTMForYelpSentimentClassification.MODEL_PATH)
-        self.load_state_dict(state_dict)
-        self.to(utils.get_device())
-        self.eval()
+        self.load_from_disk(LSTMForYelpSentimentClassification.MODEL_PATH)

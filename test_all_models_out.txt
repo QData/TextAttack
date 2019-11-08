@@ -1,0 +1,38 @@
+399999 pre-trained word embeddings loaded.
+
+EmbeddingLayer shape: torch.Size([400001, 200])
+Vocab size : 100000
+YelpSentiment loaded 2 examples.
+----------------------------------- Result 1 -----------------------------------
+1 --> 0
+this is a [92mgreat[0m [92mlittle[0m place to grab sushi for lunch . the [92mstaff[0m are [92mfriendly[0m and the [92mprices[0m are fair . a great alternative to the typical lunch fair .
+this is a [91mwhopping[0m [91mmeager[0m place to grab sushi for lunch . the [91magents[0m are [91mlovable[0m and the [91mcosting[0m are fair . a great alternative to the typical lunch fair .
+
+----------------------------------- Result 2 -----------------------------------
+0 --> 1
+"i love [91mhot[0m [91mn[0m juicy . but i 'm going to stick to the locations on spring mountain because the service at this [91mlocation[0m [91msucks[0m . \n\nour [91mserver[0m was a filipino guy and he was friendly and [91mupbeat[0m , but he [91mseemed[0m more [91minterested[0m in having conversations with his co workers behind the registers . he forgot our [91mrefills[0m so after 15 [91mmins[0m we had to get another [91mserver[0m 's attention . and she forgot too ! \nfood was good , but the service at this [91mlocation[0m is n't the same like the other locations . the girls and guys at the spring mountain locations are always [91mmoving[0m [91mfast[0m and [91mfriendly[0m . wo [91mn[0m't be [91mcoming[0m here again ."
+"i love [92mscorching[0m [92mnos[0m juicy . but i 'm going to stick to the locations on spring mountain because the service at this [92mvenue[0m [92msuckle[0m . \n\nour [92mretainers[0m was a filipino guy and he was friendly and [92mhappier[0m , but he [92marisen[0m more [92minteresting[0m in having conversations with his co workers behind the registers . he forgot our [92mreload[0m so after 15 [92mmoments[0m we had to get another [92mwench[0m 's attention . and she forgot too ! \nfood was good , but the service at this [92mvenue[0m is n't the same like the other locations . the girls and guys at the spring mountain locations are always [92mmove[0m [92mspeedy[0m and [92maffable[0m . wo [92mnth[0m't be [92marrives[0m here again ."
+
+--------------------------------------------------------------------------------
+Loaded in 79.6871235370636s
+Ran attack in 56.6315279006958s
+TOTAL TIME: 136.3186514377594s
+399999 pre-trained word embeddings loaded.
+
+EmbeddingLayer shape: torch.Size([400001, 200])
+Vocab size : 100000
+YelpSentiment loaded 2 examples.
+----------------------------------- Result 1 -----------------------------------
+1 --> 0
+this is a [92mgreat[0m little [92mplace[0m to grab sushi for lunch . the staff are [92mfriendly[0m and the prices are [92mfair[0m . a [92mgreat[0m [92malternative[0m to the typical lunch fair .
+this is a [91mwhopping[0m little [91mputting[0m to grab sushi for lunch . the staff are [91mlovable[0m and the prices are [91mdispassionate[0m . a [91mprodigious[0m [91mother[0m to the typical lunch fair .
+
+----------------------------------- Result 2 -----------------------------------
+0 --> 1
+"i love hot n juicy . but i 'm going to stick to the locations on spring mountain because the service at this location [91msucks[0m . \n\nour server was a filipino guy and he was friendly and upbeat , but he seemed more interested in having conversations with his co workers behind the registers . he forgot our refills so after 15 mins we had to get another server 's attention . and she forgot too ! \nfood was good , but the service at this location is n't the same like the other locations . the girls and guys at the spring mountain locations are always moving fast and friendly . [91mwo[0m [91mn[0m't be [91mcoming[0m here again ."
+"i love hot n juicy . but i 'm going to stick to the locations on spring mountain because the service at this location [92mjitters[0m . \n\nour server was a filipino guy and he was friendly and upbeat , but he seemed more interested in having conversations with his co workers behind the registers . he forgot our refills so after 15 mins we had to get another server 's attention . and she forgot too ! \nfood was good , but the service at this location is n't the same like the other locations . the girls and guys at the spring mountain locations are always moving fast and friendly . [92madj[0m [92mnth[0m't be [92mfuture[0m here again ."
+
+--------------------------------------------------------------------------------
+Loaded in 56.68346166610718s
+Ran attack in 20.144798040390015s
+TOTAL TIME: 76.82825970649719s

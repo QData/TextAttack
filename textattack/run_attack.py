@@ -46,7 +46,7 @@ def get_args():
         choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir-counterfit'], 
         help='The type of attack to run.')
     
-    parser.add_argument('--model', type=str, required=False, default='bert-sentiment',
+    parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
@@ -86,9 +86,11 @@ if __name__ == '__main__':
     args = get_args()
     
     # Only use one GPU, if we have one.
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    if 'CUDA_VISIBLE_DEVICES' not in os.environ:
+        os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     # Disable tensorflow logs, except in the case of an error.
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    if 'TF_CPP_MIN_LOG_LEVEL' not in os.environ:
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     
     start_time = time.time()
 
@@ -173,6 +175,9 @@ if __name__ == '__main__':
 
             if text == 'q':
                 break
+            
+            if not text:
+                continue
 
             tokenized_text = TokenizedText(model, text)
 
