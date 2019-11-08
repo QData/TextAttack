@@ -1,0 +1,2 @@
+from .word_cnn_for_imdb_sentiment_classification import WordCNNForIMDBSentimentClassification
+from .word_cnn_for_yelp_sentiment_classification import WordCNNForYelpSentimentClassification
