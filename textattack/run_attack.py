@@ -27,7 +27,8 @@ MODEL_CLASS_NAMES = {
     #
     # BERT models
     #
-    'bert-yelp-sentiment':  models.classification.bert.BertForYelpSentimentClassification,
+    'bert-mr':              models.classification.bert.BERTForMRSentimentClassification,
+    'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
     #
     # CNN models
     #
@@ -44,7 +45,7 @@ MODEL_CLASS_NAMES = {
 
 MODELS_BY_DATASET = {
     'imdb': ['cnn-imdb', 'lstm-imdb'],
-    'mr': ['cnn-mr', 'lstm-mr'],
+    'mr': ['bert-mr', 'cnn-mr', 'lstm-mr'],
     'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
@@ -174,6 +175,8 @@ if __name__ == '__main__':
 
     if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
+        
+        print(f'Model: {args.model} Dataset: {args.data}')
         
         attack.attack(data, shuffle=False)
 

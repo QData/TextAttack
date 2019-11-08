@@ -1,1 +1,2 @@
-from .bert_for_yelp_sentiment_classification import BertForYelpSentimentClassification
+from .bert_for_mr_sentiment_classification import BERTForMRSentimentClassification
+from .bert_for_yelp_sentiment_classification import BERTForYelpSentimentClassification
