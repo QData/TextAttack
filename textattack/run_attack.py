@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     load_time = time.time()
 
-    if args.data is not None:
+    if args.data is not None and not self.interactive:
         check_model_and_data_compatibility(args.data, args.model)
         
         attack.attack(data, shuffle=False)
