@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import textattack.utils as utils
 from textattack.models.helpers import GloveEmbeddingLayer
 
-class CNNForClassification(nn.Module):
+class WordCNNForClassification(nn.Module):
     """ A convolutional neural network for text classification. 
     
         We use different versions of this network to pretrain models for text 

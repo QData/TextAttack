@@ -36,7 +36,7 @@ class Attack:
         self.output_to_terminal = True
         self.output_to_visdom = False
         # Track the number of successful attacks.
-        self.attacks_completed = 0
+        self.examples_completed = 0
     
     def add_output_file(self, file):
         """ 
@@ -169,8 +169,8 @@ class Attack:
         
         if self.output_to_terminal:
             for result in results:
-                self.attacks_completed += 1
-                print('-'*35, 'Result', str(self.attacks_completed), '-'*35)
+                self.examples_completed += 1
+                print('-'*35, 'Result', str(self.examples_completed), '-'*35)
                 result.print_()
                 print()
         

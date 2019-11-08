@@ -18,22 +18,22 @@ from textattack.tokenized_text import TokenizedText
 DATASET_CLASS_NAMES = {
     'agnews':           datasets.classification.AGNews,
     'imdb':             datasets.classification.IMDBSentiment,
-    'kaggle_fake_news': datasets.classification.KaggleFakeNews,
+    'kaggle-fake-news': datasets.classification.KaggleFakeNews,
     'mr':               datasets.classification.MovieReviewSentiment,
-    'yelp':             datasets.classification.YelpSentiment
+    'yelp-sentiment':   datasets.classification.YelpSentiment
 }
 
 MODEL_CLASS_NAMES = {
     'bert-yelp-sentiment':  models.classification.bert.BertForYelpSentimentClassification,
-    'cnn-yelp-sentiment':   models.classification.cnn.CNNForYelpSentimentClassification,
-    'cnn-imdb':             models.classification.cnn.CNNForIMDBSentimentClassification,
+    'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
+    'cnn-imdb':             models.classification.cnn.WordCNNForIMDBSentimentClassification,
     'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
     'lstm-imdb':            models.classification.lstm.LSTMForIMDBSentimentClassification,
 }
 
 MODELS_BY_DATASET = {
     'imdb': ['cnn-imdb', 'lstm-imdb'],
-    'yelp': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
+    'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
 def get_args():
@@ -67,7 +67,7 @@ def get_args():
     data_group.add_argument('--interactive', action='store_true', 
         help='Whether to run attacks interactively.')
     
-    data_group.add_argument('--data', type=str, default='yelp',
+    data_group.add_argument('--data', type=str, default='yelp-sentiment',
         choices=DATASET_CLASS_NAMES.keys(), help='The dataset to use.')
     
     args = parser.parse_args()

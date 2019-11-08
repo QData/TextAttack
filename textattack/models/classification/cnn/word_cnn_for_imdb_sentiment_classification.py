@@ -1,8 +1,8 @@
 import torch
-from textattack.models.helpers import CNNForClassification
+from textattack.models.helpers import WordCNNForClassification
 import textattack.utils as utils
 
-class CNNForIMDBSentimentClassification(CNNForClassification):
+class WordCNNForIMDBSentimentClassification(WordCNNForClassification):
     """ 
     A convolutional neural network with reasonable default parameters, trained 
     on the IMDB Movie Review Sentiment dataset for sentiment classification. 
@@ -20,4 +20,4 @@ class CNNForIMDBSentimentClassification(CNNForClassification):
     
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length)
-        self.load_from_disk(CNNForIMDBSentimentClassification.MODEL_PATH)
+        self.load_from_disk(WordCNNForIMDBSentimentClassification.MODEL_PATH)
