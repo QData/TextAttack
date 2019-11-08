@@ -24,15 +24,27 @@ DATASET_CLASS_NAMES = {
 }
 
 MODEL_CLASS_NAMES = {
+    #
+    # BERT models
+    #
     'bert-yelp-sentiment':  models.classification.bert.BertForYelpSentimentClassification,
-    'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
+    #
+    # CNN models
+    #
     'cnn-imdb':             models.classification.cnn.WordCNNForIMDBSentimentClassification,
-    'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
+    'cnn-mr':               models.classification.cnn.WordCNNForMRSentimentClassification,
+    'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
+    #
+    # LSTM models
+    #
     'lstm-imdb':            models.classification.lstm.LSTMForIMDBSentimentClassification,
+    'lstm-mr':              models.classification.lstm.LSTMForMRSentimentClassification,
+    'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
 }
 
 MODELS_BY_DATASET = {
     'imdb': ['cnn-imdb', 'lstm-imdb'],
+    'mr': ['cnn-mr', 'lstm-mr'],
     'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
