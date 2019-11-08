@@ -45,7 +45,11 @@ def get_args():
     parser.add_argument('--attack', type=str, required=False, default='greedy-wir-counterfit',
         choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir-counterfit'], 
         help='The type of attack to run.')
-    
+
+    parser.add_argument('--transformation', type=str, required=False, default='word-swap-embedding',
+        choices=['word-swap-embedding', 'word-swap-homoglyph'],
+        help='The type of transformation to apply')
+        
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
@@ -99,8 +103,11 @@ if __name__ == '__main__':
         raise ValueError(f'Error: unsupported model {args.model}')
     model = MODEL_CLASS_NAMES[args.model]()
     
-    # Transformation
-    transformation = transformations.WordSwapEmbedding()
+    #Transformation
+    if args.transformation == 'word-swap-embedding':
+        transformation = transformations.WordSwapEmbedding()
+    elif args.transformation == 'word-swap-homoglyph':
+        transformation = transformations.WordSwapHomoglyph()
 
     # Attacks
     if args.attack == 'greedy-counterfit':
@@ -153,7 +160,7 @@ if __name__ == '__main__':
 
     load_time = time.time()
 
-    if args.data is not None and not self.interactive:
+    if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
         
         attack.attack(data, shuffle=False)

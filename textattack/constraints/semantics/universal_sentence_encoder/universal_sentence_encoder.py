@@ -26,7 +26,7 @@ class UniversalSentenceEncoder(Constraint):
     MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/infersent-encoder'
     WORD_EMBEDDING_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings'
     
-    def __init__(self, threshold=0.8, metric='cosine'):
+    def __init__(self, threshold=0.8, metric='cosine', compare_with_original=False, window_size=None):
         self.threshold = threshold
         self.model = self.get_infersent_model()
         
@@ -34,6 +34,9 @@ class UniversalSentenceEncoder(Constraint):
             self.dist = torch.nn.CosineSimilarity
         else:
             raise ValueError(f'Unsupported metric {metric}.')
+
+        self.compare_with_original = compare_with_original
+        self.window_size = window_size
     
     def get_infersent_model(self):
         """
@@ -79,7 +82,7 @@ class UniversalSentenceEncoder(Constraint):
         
         return self.dist(dim=0)(original_embedding, perturbed_embedding)
     
-    def score_list(self, x, x_adv_list):
+    def _score_list(self, x, x_adv_list):
         """
         Returns the metric similarity between the embedding of the text and a list
         of perturbed text. 
@@ -98,17 +101,27 @@ class UniversalSentenceEncoder(Constraint):
         # error on machines with multiple GPUs (pytorch 1.2).
         if len(x_adv_list) == 0: return torch.tensor([])
         
-        x_text = x.text
-        x_adv_list_text = [x_adv.text for x_adv in x_adv_list]
-        embeddings = self.model.encode([x_text] + x_adv_list_text, tokenize=True)
+        if self.window_size:
+            x_list_text = []
+            x_adv_list_text = []
+            for x_adv in x_adv_list:
+                modified_index = x_adv.attack_attrs['modified_word_index']
+                x_list_text.append(x.text_window_around_index(modified_index, self.window_size))
+                x_adv_list_text.append(x_adv.text_window_around_index(modified_index, self.window_size))
+            embeddings = self.model.encode(x_list_text + x_adv_list_text, tokenize=True)
+            original_embeddings = torch.tensor(embeddings[:len(x_adv_list)]).to(get_device())
+            perturbed_embeddings = torch.tensor(embeddings[len(x_adv_list):]).to(get_device())
+        else:
+            x_text = x.text
+            x_adv_list_text = [x_adv.text for x_adv in x_adv_list]
+            embeddings = self.model.encode([x_text] + x_adv_list_text, tokenize=True)
+            original_embedding = torch.tensor(embeddings[0]).to(get_device())
+            perturbed_embeddings = torch.tensor(embeddings[1:]).to(get_device())
         
-        original_embedding = torch.tensor(embeddings[0]).to(get_device())
-        perturbed_embedding = torch.tensor(embeddings[1:]).to(get_device())
+            # Repeat original embedding to size of perturbed embedding.
+            original_embeddings = original_embedding.unsqueeze(dim=0).repeat(len(perturbed_embeddings),1)
         
-        # Repeat original embedding to size of perturbed embedding.
-        original_embedding = original_embedding.unsqueeze(dim=0).repeat(len(perturbed_embedding),1)
-        
-        return self.dist(dim=1)(original_embedding, perturbed_embedding)
+        return self.dist(dim=1)(original_embeddings, perturbed_embeddings)
     
     def call_many(self, x, x_adv_list, original_text=None):
         """
@@ -116,16 +129,24 @@ class UniversalSentenceEncoder(Constraint):
         and the perturbed text is greater than the :obj:`threshold`. 
 
         Args:
-            x (str): The original text
-            x_adv_list (list(str)): A list of perturbed texts
-            original_text(:obj:`type`, optional): Defaults to None. 
+            x (TokenizedText): The original text
+            x_adv_list (list(TokenizedText)): A list of perturbed texts
+            original_text(:obj:TokenizedText, optional): Defaults to None. 
 
         Returns:
             A filtered list of perturbed texts where each perturbed text meets the similarity threshold. 
 
         """
-        # @TODO can we rename this function `filter`? (It's a reserved keyword in python)
-        scores = self.score_list(x, x_adv_list)
+        if self.compare_with_original:
+            if original_text:
+                scores = self._score_list(original_text, x_adv_list)
+            else:
+                raise ValueError('Must provide original text when compare_with_original is true.')
+        else:
+            scores = self._score_list(x, x_adv_list)
+        # @TODO: Vectorize this
+        for i, x_adv in enumerate(x_adv_list):
+            x_adv.attack_attrs['similarity_score'] = scores[i]
         mask = (scores > self.threshold)
         return np.array(x_adv_list)[mask.cpu().numpy()]
     
