@@ -24,15 +24,29 @@ DATASET_CLASS_NAMES = {
 }
 
 MODEL_CLASS_NAMES = {
-    'bert-yelp-sentiment':  models.classification.bert.BertForYelpSentimentClassification,
-    'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
+    #
+    # BERT models
+    #
+    'bert-imdb':              models.classification.bert.BERTForIMDBSentimentClassification,
+    'bert-mr':              models.classification.bert.BERTForMRSentimentClassification,
+    'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
+    #
+    # CNN models
+    #
     'cnn-imdb':             models.classification.cnn.WordCNNForIMDBSentimentClassification,
-    'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
+    'cnn-mr':               models.classification.cnn.WordCNNForMRSentimentClassification,
+    'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
+    #
+    # LSTM models
+    #
     'lstm-imdb':            models.classification.lstm.LSTMForIMDBSentimentClassification,
+    'lstm-mr':              models.classification.lstm.LSTMForMRSentimentClassification,
+    'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
 }
 
 MODELS_BY_DATASET = {
-    'imdb': ['cnn-imdb', 'lstm-imdb'],
+    'imdb': ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
+    'mr': ['bert-mr', 'cnn-mr', 'lstm-mr'],
     'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
@@ -162,6 +176,8 @@ if __name__ == '__main__':
 
     if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
+        
+        print(f'Model: {args.model} Dataset: {args.data}')
         
         attack.attack(data, shuffle=False)
 
