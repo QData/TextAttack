@@ -12,19 +12,22 @@ fi
 
 echo "Testing models on dataset $1."
 
-if [ $1 = "mr" ]; then
+if [ $1 = "mr" ] || [ $1 = "all" ]; then
+  echo "\nTesting models on dataset mr.";
   python textattack/run_attack.py --model bert-mr --data mr --num_examples=2
   python textattack/run_attack.py --model lstm-mr --data mr --num_example=2
   python textattack/run_attack.py --model cnn-mr --data mr --num_examples=2
 fi
 
-if [ $1 = "imdb" ]; then
-  # python textattack/run_attack.py --model bert-imdb --data imdb --num_examples=2
+if [ $1 = "imdb" ] || [ $1 = "all" ]; then
+  echo "\nTesting models on dataset imdb."
+  python textattack/run_attack.py --model bert-imdb --data imdb --num_examples=2
   python textattack/run_attack.py --model lstm-imdb --data imdb --num_example=2
   python textattack/run_attack.py --model cnn-imdb --data imdb --num_examples=2
 fi
 
-if [ $1 = "yelp" ]; then
+if [ $1 = "yelp" ] || [ $1 = "all" ]; then
+  echo "\nTesting models on dataset yelp."
   python textattack/run_attack.py --model bert-yelp-sentiment --data yelp-sentiment --num_examples=2
   python textattack/run_attack.py --model lstm-yelp-sentiment --data yelp-sentiment --num_example=2
   python textattack/run_attack.py --model cnn-yelp-sentiment --data yelp-sentiment --num_examples=2

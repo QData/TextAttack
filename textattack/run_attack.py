@@ -27,6 +27,7 @@ MODEL_CLASS_NAMES = {
     #
     # BERT models
     #
+    'bert-imdb':              models.classification.bert.BERTForIMDBSentimentClassification,
     'bert-mr':              models.classification.bert.BERTForMRSentimentClassification,
     'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
     #
@@ -44,7 +45,7 @@ MODEL_CLASS_NAMES = {
 }
 
 MODELS_BY_DATASET = {
-    'imdb': ['cnn-imdb', 'lstm-imdb'],
+    'imdb': ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
     'mr': ['bert-mr', 'cnn-mr', 'lstm-mr'],
     'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
