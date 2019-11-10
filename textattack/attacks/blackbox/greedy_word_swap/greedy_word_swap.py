@@ -1,4 +1,5 @@
-from textattack.attacks import Attack, AttackResult, FailedAttackResult
+from textattack.attacks import AttackResult, FailedAttackResult
+from textattack.attacks.blackbox import BlackBoxAttack
 
 class GreedyWordSwap(Attack):
     """ 

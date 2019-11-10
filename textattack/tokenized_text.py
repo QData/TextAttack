@@ -1,12 +1,18 @@
 from utils import get_device
 
 class TokenizedText:
-    def __init__(self, model, text, attack_attrs=dict()):
+    def __init__(self, text, text_to_ids_converter, attack_attrs=dict()):
         """ Initializer stores text and tensor of tokenized text.
+        
+        Args:
+            text (string): The string that this TokenizedText represents
+            text_to_ids_converter (func): a function that can take a string,
+                tokenize it, and return the list of IDs corresponding to the
+                strings' tokens
         """
-        self.model = model
         self.text = text
-        self.ids = model.convert_text_to_ids(text)
+        self.ids = text_to_ids_converter(text)
+        self.text_to_ids_converter = text_to_ids_converter
         self.raw_words = raw_words(text)
         self.attack_attrs = attack_attrs
     
@@ -122,7 +128,7 @@ class TokenizedText:
             final_sentence += adv_word
             text = text[word_end:]
         final_sentence += text # Add all of the ending punctuation.
-        return TokenizedText(self.model, final_sentence, attack_attrs=self.attack_attrs)
+        return TokenizedText(final_sentence, self.text_to_ids_converter, attack_attrs=self.attack_attrs)
         
     def __repr__(self):
         return self.text

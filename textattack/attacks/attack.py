@@ -18,7 +18,7 @@ class Attack:
         constraints: A list of constraints to add to the attack
 
     """
-    def __init__(self, model, constraints=[]):
+    def __init__(self, constraints=[]):
         """ Initialize an attack object.
         
         Attacks can be run multiple times
@@ -26,7 +26,10 @@ class Attack:
          @TODO should `tokenizer` be an additional parameter or should
             we assume every model has a .tokenizer ?
         """
-        self.model = model
+        if not self.model:
+            raise NameError('Cannot instantiate attack without self.model for prediction scores')
+        if not self.text_to_ids_converter:
+            raise NameError('Cannot instantiate attack without tokenizer')
         # Transformation and corresponding constraints.
         self.constraints = []
         if constraints:
@@ -121,6 +124,7 @@ class Attack:
 
         """
         raise NotImplementedError()
+        
     def _call_model(self, tokenized_text_list):
         """
         Returns model predictions for a list of TokenizedText objects. 
@@ -163,7 +167,7 @@ class Attack:
         
         results = []
         for label, text in dataset:
-            tokenized_text = TokenizedText(self.model, text)
+            tokenized_text = TokenizedText(text, self.text_to_ids_converter)
             result = self._attack_one(label, tokenized_text)
             results.append(result)
         

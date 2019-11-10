@@ -1,5 +1,7 @@
-from textattack.attacks import Attack, AttackResult, FailedAttackResult
 import torch
+
+from textattack.attacks import AttackResult, FailedAttackResult
+from textattack.attacks.blackbox import BlackBoxAttack
 
 class GreedyWordSwapWIR(Attack):
     """
