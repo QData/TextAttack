@@ -128,8 +128,6 @@ class Attack:
         """
         if not len(tokenized_text_list):
             return torch.tensor([])
-        # print('tokenized_text_list', tokenized_text_list)
-        # import pdb; pdb.set_trace()
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         scores = self.model(ids)
