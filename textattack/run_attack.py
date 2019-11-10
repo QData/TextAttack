@@ -27,7 +27,7 @@ MODEL_CLASS_NAMES = {
     #
     # BERT models
     #
-    'bert-imdb':              models.classification.bert.BERTForIMDBSentimentClassification,
+    'bert-imdb':            models.classification.bert.BERTForIMDBSentimentClassification,
     'bert-mr':              models.classification.bert.BERTForMRSentimentClassification,
     'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
     #
@@ -133,9 +133,7 @@ if __name__ == '__main__':
 
     # Constraints
     if args.constraints:
-
         defined_constraints = []
-
         for constraint in args.constraints:
             if 'use:' in constraint:
                 similarity = constraint.replace('use:', '')
@@ -143,21 +141,17 @@ if __name__ == '__main__':
             elif constraint == 'use':
                 # Default similarity to .9 if no similarity is given.
                 defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(.90, metric='cosine'))
-
             elif 'lang-tool:' in constraint:
                 threshold = constraint.replace('lang-tool:', '')
                 defined_constraints.append(constraints.syntax.LanguageTool(float(threshold)))
             elif constraint == 'lang-tool':
                 # Default threshold to 0 if no threshold is given
                 defined_constraints.append(constraints.syntax.LanguageTool(0))
-
             elif constraint == 'goog-lm':
                 defined_constraints.append(constraints.semantics.google_language_model.GoogleLanguageModel())
-
             else:
                 raise ValueError((f'{constraint} is not a valid constraint. ' 
                     'Valid options are "use", "lang-tool", or "goog-lm". Use "-h" for help.'))
-
         attack.add_constraints(defined_constraints)
     
     # Data
