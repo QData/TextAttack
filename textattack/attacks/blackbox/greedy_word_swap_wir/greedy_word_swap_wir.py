@@ -1,7 +1,9 @@
-from textattack.attacks import Attack, AttackResult, FailedAttackResult
 import torch
 
-class GreedyWordSwapWIR(Attack):
+from textattack.attacks import AttackResult, FailedAttackResult
+from textattack.attacks.blackbox import BlackBoxAttack
+
+class GreedyWordSwapWIR(BlackBoxAttack):
     """
     An attack that greedily chooses from a list of possible 
     perturbations for each index, after ranking indices by importance.

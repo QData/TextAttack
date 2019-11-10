@@ -125,11 +125,11 @@ if __name__ == '__main__':
 
     # Attacks
     if args.attack == 'greedy-counterfit':
-        attack = attacks.GreedyWordSwap(model, transformation)
+        attack = attacks.blackbox.GreedyWordSwap(model, transformation)
     elif args.attack == 'ga-counterfit':
-        attack = attacks.GeneticAlgorithm(model, transformation)
+        attack = attacks.blackbox.GeneticAlgorithm(model, transformation)
     elif args.attack == 'greedy-wir-counterfit':
-        attack = attacks.GreedyWordSwapWIR(model, transformation)
+        attack = attacks.blackbox.GreedyWordSwapWIR(model, transformation)
 
     # Constraints
     if args.constraints:
@@ -202,7 +202,7 @@ if __name__ == '__main__':
             if not text:
                 continue
 
-            tokenized_text = TokenizedText(model, text)
+            tokenized_text = TokenizedText(text, model.convert_text_to_ids)
 
             pred = attack._call_model([tokenized_text])
             label = int(pred.argmax())
