@@ -13,18 +13,6 @@ from textattack.attacks.blackbox import BlackBoxAttack
 from textattack.transformations import WordSwap
 from copy import deepcopy
 
-class PopulationMember:
-    '''
-    A member of the population during the course of the genetic algorithm.
-
-    Args:
-        tokenized_text: The tokenized text of the population member.
-        neighbors_len: A list of the number of candidate neighbors list for each word.
-    '''
-    def __init__(self, tokenized_text, neighbors_len):
-        self.tokenized_text = tokenized_text
-        self.neighbors_len = neighbors_len
-
 class GeneticAlgorithm(BlackBoxAttack):
     '''
     Attacks a model using a genetic algorithm. 
@@ -204,5 +192,15 @@ class GeneticAlgorithm(BlackBoxAttack):
             self.original_tokenized_text,
             original_label
         )
-    
 
+class PopulationMember:
+    '''
+    A member of the population during the course of the genetic algorithm.
+
+    Args:
+        tokenized_text: The tokenized text of the population member.
+        neighbors_len: A list of the number of candidate neighbors list for each word.
+    '''
+    def __init__(self, tokenized_text, neighbors_len):
+        self.tokenized_text = tokenized_text
+        self.neighbors_len = neighbors_len
