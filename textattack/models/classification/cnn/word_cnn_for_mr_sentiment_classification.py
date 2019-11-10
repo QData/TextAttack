@@ -5,7 +5,7 @@ import textattack.utils as utils
 class WordCNNForMRSentimentClassification(WordCNNForClassification):
     """ 
     A convolutional neural network with reasonable default parameters, trained 
-    on the IMDBMovie Review dataset for sentence-level sentiment classification. 
+    on the Movie Review dataset for sentence-level sentiment classification. 
     Base embeddings are GLOVE vectors of dimension 200.
     
     Movie Review Dataset (Pang and Lee, 2005):
