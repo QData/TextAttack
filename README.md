@@ -46,11 +46,16 @@ models in both Pytorch and Tensorflow.
 
 ### Attack Methods
 
-We support the following attack methods:
+
+#### Black-box attacks
 
 - Greedy selection over all input words
 - Greedy selection with Word Importance Ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))
 - Genetic algorithm (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))
+
+#### White-box attacks
+
+- HotFlip (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2018)](https://arxiv.org/abs/1712.06751) _(coming soon)_
 
 ### Transformations
 
