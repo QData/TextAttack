@@ -46,7 +46,7 @@ class EmbeddingLayer(nn.Module):
         if embs is not None:
             weight  = self.embedding.weight
             weight.data[:len(embwords)].copy_(torch.from_numpy(embvecs))
-            print(f"EmbeddingLayer shape: {weight.size()}")
+            logger.debug(f'EmbeddingLayer shape: {weight.size()}')
 
         if normalize:
             weight = self.embedding.weight

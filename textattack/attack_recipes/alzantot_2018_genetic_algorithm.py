@@ -13,7 +13,7 @@ from textattack.attacks.blackbox import GeneticAlgorithm
 from textattack.constraints.semantics import GoogleLanguageModel
 from textattack.transformations import WordSwapEmbedding
 
-def Alzantot2018GeneticAlgorithm():
+def Alzantot2018GeneticAlgorithm(model):
     #
     # Swap words with their embedding nearest-neighbors. 
     #
