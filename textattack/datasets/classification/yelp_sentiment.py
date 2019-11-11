@@ -13,7 +13,7 @@ class YelpSentiment(TextAttackDataset):
         n (int): The number of examples to load
     
     """
-    DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/yelp'
+    DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/yelp_polarity.txt'
     def __init__(self, n=None):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(YelpSentiment.DATA_PATH)

@@ -15,7 +15,7 @@ class MovieReviewSentiment(TextAttackDataset):
         n (int): The number of examples to load
     
     """
-    DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/mr'
+    DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/mr.txt'
     def __init__(self, n=None):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(MovieReviewSentiment.DATA_PATH)
