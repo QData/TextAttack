@@ -130,6 +130,8 @@ if __name__ == '__main__':
         attack = attacks.blackbox.GeneticAlgorithm(model, transformation)
     elif args.attack == 'greedy-wir-counterfit':
         attack = attacks.blackbox.GreedyWordSwapWIR(model, transformation)
+    elif args.attack == 'word-gradient':
+        attack = attacks.blackbox.GreedyWordSwapWIR(model)
 
     # Constraints
     if args.constraints:
