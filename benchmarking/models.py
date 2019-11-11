@@ -25,9 +25,6 @@ def test_all_models(num_examples=1000):
         dataset = textattack.run_attack.DATASET_CLASS_NAMES[dataset_name](num_examples)
         model_names = textattack.run_attack.MODELS_BY_DATASET[dataset_name]
         for model_name in model_names:
-            if dataset_name == 'imdb' and model_name == 'bert-imdb':
-                print('skipping backwards model')
-                continue
             model = textattack.run_attack.MODEL_CLASS_NAMES[model_name]()
             print(f'Testing {model_name} on {dataset_name}...')
             test_model_on_dataset(model, dataset)
