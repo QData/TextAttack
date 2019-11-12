@@ -8,6 +8,7 @@ from textattack import utils as utils
 
 from textattack.constraints import Constraint
 from textattack.tokenized_text import TokenizedText
+from textattack.attacks.attack_logger import AttackLogger
 
 class Attack:
     """
@@ -35,6 +36,7 @@ class Attack:
         self.output_files = []
         self.output_to_terminal = True
         self.output_to_visdom = False
+        self.logger = AttackLogger(self)
         # Track the number of successful attacks.
         self.examples_completed = 0
     
@@ -113,6 +115,9 @@ class Attack:
         for C in self.constraints:
             transformations = C.call_many(text, transformations, original_text)
         return transformations 
+        
+    def enable_visdom(self):
+        self.output_to_visdom = True
 
     def _attack_one(self, label, tokenized_text):
         """
@@ -180,7 +185,10 @@ class Attack:
                     output_file.write(str(result) + '\n')
         
         if self.output_to_visdom:
-            raise NotImplementedError()
+            self.logger.log_samples(results)
+            self.logger.log_num_words_changed()
+            self.logger.log_attack_details()
+            self.logger.log_summary()
         
         print('-'*80)
         
@@ -262,6 +270,8 @@ class FailedAttackResult(AttackResult):
             raise ValueError('Attack original label cannot be None')
         self.original_text = original_text
         self.original_label = original_label
+        self.perturbed_text = original_text
+        self.perturbed_label = original_label
 
     def __data__(self):
         data = (self.original_text, self.original_label)
@@ -279,7 +289,7 @@ if __name__ == '__main__':
     import textattack.attacks as attacks
     import textattack.constraints as constraints
     from textattack.datasets import YelpSentiment
-    from textattack.models import BertForSentimentClassification
+    from textattack.models.classification.bert import BertForYelpSentimentClassification
     from textattack.transformations import WordSwapEmbedding
     
     start_time = time.time()
@@ -292,3 +302,20 @@ if __name__ == '__main__':
         _color = utils.color_text_terminal
         print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
         print(self.original_text)
+        
+    model = BertForYelpSentimentClassification()
+    transformation = WordSwapEmbedding()
+    
+    attack = attacks.GreedyWordSwap(model, transformation)
+    attack.add_constraints((
+        # constraints.syntax.LanguageTool(1),
+        constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
+        )
+    )
+    yelp_data = YelpSentiment(n=1)
+    
+    attack.enable_visdom()
+    attack.add_output_file(open('outputs/test.txt', 'w'))
+    import sys
+    attack.add_output_file(sys.stdout)
+    attack.attack(yelp_data, shuffle=False)

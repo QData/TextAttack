@@ -23,3 +23,6 @@ class WordSwapHomoglyph(WordSwap):
                 candidate_words.append(candidate_word)
 
         return candidate_words
+        
+    def __str__(self):
+        return "Word Swap Homoglyph"

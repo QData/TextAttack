@@ -66,7 +66,10 @@ def color_from_label(label_num):
     """ Colors for labels (arbitrary). """
     label_num %= len(LABEL_COLORS)
     return LABEL_COLORS[label_num]
-
+    
+def color_text_html(text, color=None):
+    return "<font color = %s>%s</font>"%(color,text)
+    
 def color_text_terminal(text, color=None):
     if color == 'green':
         color = ANSI_ESCAPE_CODES.OKGREEN

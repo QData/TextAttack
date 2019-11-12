@@ -204,4 +204,5 @@ class GeneticAlgorithm(Attack):
             original_label
         )
     
-
+    def __str__(self):
+        return "Genetic Algorithm"

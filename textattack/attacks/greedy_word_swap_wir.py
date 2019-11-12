@@ -76,3 +76,6 @@ class GreedyWordSwapWIR(Attack):
             tokenized_text = transformed_text_candidates[best_index]
         
         return FailedAttackResult(original_tokenized_text, original_label)
+        
+    def __str__(self):
+        return "Greedy Word Swap WIR"

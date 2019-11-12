@@ -54,3 +54,6 @@ class BertForYelpSentimentClassification:
         with torch.no_grad():
             pred = self.model(text_ids)
         return pred[0]
+
+    def __str__(self):
+        return "BERT for Yelp Sentiment Classification"
