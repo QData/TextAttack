@@ -19,9 +19,9 @@ def Alzantot2018GeneticAlgorithm(model):
     #
     # Embedding: Counter-fitted Paragram Embeddings.
     #
-    # 50 nearest-neighbors with a cosine similarity of at least 0.7.
+    # "[We] fix the hyperparameter values to S = 60, N = 8, K = 4, and δ = 0.5"
     #
-    transformation = WordSwapEmbedding()
+    transformation = WordSwapEmbedding(8)
     #
     # Perform word substitution with a genetic algorithm.
     #
@@ -30,7 +30,7 @@ def Alzantot2018GeneticAlgorithm(model):
     # Language Model (TODO-- what threshold?)
     #
     attack.add_constraint(
-            GoogleLanguageModel()
+            GoogleLanguageModel(4)
     )
     
     return attack

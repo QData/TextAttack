@@ -20,4 +20,4 @@ class MovieReviewSentiment(TextAttackDataset):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(MovieReviewSentiment.DATA_PATH)
         self.examples = self._load_text_file(MovieReviewSentiment.DATA_PATH, n=n)
-        print('MovieReviewSentiment loaded', len(self.examples), 'examples...')
+        print('MovieReviewSentiment loaded', len(self.examples), 'examples.')

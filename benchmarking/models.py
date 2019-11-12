@@ -3,7 +3,9 @@ import torch
 import sys
 
 def _cb(s): return textattack.utils.color_text_terminal(s, color='blue')
+def _cg(s): return textattack.utils.color_text_terminal(s, color='green')
 def _cr(s): return textattack.utils.color_text_terminal(s, color='red')
+def _pb(): print(_cg('-' * 60))
 
 def test_model_on_dataset(model, dataset):
     # TODO do inference in batch.
@@ -21,8 +23,8 @@ def test_model_on_dataset(model, dataset):
     print(f'Successes {succ}/{succ+fail} ({_cb(perc)})')
     return perc
 
-
 def test_all_models(num_examples=1000):
+    _pb()
     for dataset_name in textattack.run_attack.MODELS_BY_DATASET:
         dataset = textattack.run_attack.DATASET_CLASS_NAMES[dataset_name](num_examples)
         model_names = textattack.run_attack.MODELS_BY_DATASET[dataset_name]
@@ -30,8 +32,7 @@ def test_all_models(num_examples=1000):
             model = textattack.run_attack.MODEL_CLASS_NAMES[model_name]()
             print(f'\nTesting {_cr(model_name)} on {_cr(dataset_name)}...')
             test_model_on_dataset(model, dataset)
-            print()
-        print('-' * 60)
+        _pb()
     # @TODO print the grid of models/dataset names with results in a nice table :)
 
 if __name__ == '__main__': 
