@@ -25,13 +25,13 @@ DATASET_CLASS_NAMES = {
 
 MODEL_CLASS_NAMES = {
     #
-    # BERT models - cased
+    # BERT models - uncased
     #
     'bert-imdb':                models.classification.bert.BERTForIMDBSentimentClassification,
     'bert-mr':                  models.classification.bert.BERTForMRSentimentClassification,
     'bert-yelp-sentiment':      models.classification.bert.BERTForYelpSentimentClassification,
     #
-    # BERT models - uncased
+    # BERT models - cased
     #
     'bert-imdb-cased':            models.classification.bert.BERTForIMDBSentimentClassification,
     'bert-mr-cased':              models.classification.bert.BERTForMRSentimentClassification,
