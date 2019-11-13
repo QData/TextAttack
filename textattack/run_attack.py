@@ -1,6 +1,5 @@
 '''
 A command line parser to run an attack
-
 '''
 
 import argparse
@@ -57,9 +56,9 @@ MODEL_DEFAULT_PARAMETERS = {
 }
 
 MODELS_BY_DATASET = {
-    'imdb': ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
-    'mr': ['bert-mr', 'cnn-mr', 'lstm-mr'],
-    'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
+    'imdb':             ['bert-imdb', 'bert-imdb-cased', 'cnn-imdb', 'lstm-imdb'],
+    'mr':               ['bert-mr', 'bert-mr-cased', 'cnn-mr', 'lstm-mr'],
+    'yelp-sentiment':   ['bert-yelp-sentiment', 'bert-yelp-sentiment-cased', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
 def get_args():
@@ -229,4 +228,3 @@ if __name__ == '__main__':
             print('Attacking...')
 
             attack.attack([(label, text)])
-
