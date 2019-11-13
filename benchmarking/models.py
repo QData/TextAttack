@@ -29,7 +29,12 @@ def test_all_models(num_examples=1000):
         dataset = textattack.run_attack.DATASET_CLASS_NAMES[dataset_name](num_examples)
         model_names = textattack.run_attack.MODELS_BY_DATASET[dataset_name]
         for model_name in model_names:
-            model = textattack.run_attack.MODEL_CLASS_NAMES[model_name]()
+            model_class = textattack.run_attack.MODEL_CLASS_NAMES[model_name]
+            if model_name in textattack.run_attack.MODEL_DEFAULT_PARAMETERS:
+                params = textattack.run_attack.MODEL_DEFAULT_PARAMETERS[model_name]
+                model = model_class(**params)
+            else:
+                model = model_class()
             print(f'\nTesting {_cr(model_name)} on {_cr(dataset_name)}...')
             test_model_on_dataset(model, dataset)
         _pb()

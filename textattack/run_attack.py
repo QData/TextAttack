@@ -26,11 +26,6 @@ MODEL_CLASS_NAMES = {
     #
     # BERT models - uncased
     #
-<<<<<<< HEAD
-    'bert-imdb':            models.classification.bert.BERTForIMDBSentimentClassification,
-    'bert-mr':              models.classification.bert.BERTForMRSentimentClassification,
-    'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
-=======
     'bert-imdb':                models.classification.bert.BERTForIMDBSentimentClassification,
     'bert-mr':                  models.classification.bert.BERTForMRSentimentClassification,
     'bert-yelp-sentiment':      models.classification.bert.BERTForYelpSentimentClassification,
@@ -40,7 +35,6 @@ MODEL_CLASS_NAMES = {
     'bert-imdb-cased':            models.classification.bert.BERTForIMDBSentimentClassification,
     'bert-mr-cased':              models.classification.bert.BERTForMRSentimentClassification,
     'bert-yelp-sentiment-cased':  models.classification.bert.BERTForYelpSentimentClassification,
->>>>>>> bert-cases
     #
     # CNN models
     #
@@ -62,9 +56,9 @@ MODEL_DEFAULT_PARAMETERS = {
 }
 
 MODELS_BY_DATASET = {
-    'imdb': ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
-    'mr': ['bert-mr', 'cnn-mr', 'lstm-mr'],
-    'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
+    'imdb': ['bert-imdb', 'bert-imdb-cased', 'cnn-imdb', 'lstm-imdb'],
+    'mr': ['bert-mr', 'bert-mr-cased', 'cnn-mr', 'lstm-mr'],
+    'yelp-sentiment': ['bert-yelp-sentiment', 'bert-yelp-sentiment-cased', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
 def get_args():
