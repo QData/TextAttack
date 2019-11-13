@@ -25,23 +25,35 @@ DATASET_CLASS_NAMES = {
 
 MODEL_CLASS_NAMES = {
     #
-    # BERT models
+    # BERT models - cased
     #
-    'bert-imdb':              models.classification.bert.BERTForIMDBSentimentClassification,
-    'bert-mr':              models.classification.bert.BERTForMRSentimentClassification,
-    'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
+    'bert-imdb':                models.classification.bert.BERTForIMDBSentimentClassification,
+    'bert-mr':                  models.classification.bert.BERTForMRSentimentClassification,
+    'bert-yelp-sentiment':      models.classification.bert.BERTForYelpSentimentClassification,
+    #
+    # BERT models - uncased
+    #
+    'bert-imdb-cased':            models.classification.bert.BERTForIMDBSentimentClassification,
+    'bert-mr-cased':              models.classification.bert.BERTForMRSentimentClassification,
+    'bert-yelp-sentiment-cased':  models.classification.bert.BERTForYelpSentimentClassification,
     #
     # CNN models
     #
-    'cnn-imdb':             models.classification.cnn.WordCNNForIMDBSentimentClassification,
-    'cnn-mr':               models.classification.cnn.WordCNNForMRSentimentClassification,
-    'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
+    'cnn-imdb':                 models.classification.cnn.WordCNNForIMDBSentimentClassification,
+    'cnn-mr':                   models.classification.cnn.WordCNNForMRSentimentClassification,
+    'cnn-yelp-sentiment':       models.classification.cnn.WordCNNForYelpSentimentClassification,
     #
     # LSTM models
     #
-    'lstm-imdb':            models.classification.lstm.LSTMForIMDBSentimentClassification,
-    'lstm-mr':              models.classification.lstm.LSTMForMRSentimentClassification,
-    'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
+    'lstm-imdb':                models.classification.lstm.LSTMForIMDBSentimentClassification,
+    'lstm-mr':                  models.classification.lstm.LSTMForMRSentimentClassification,
+    'lstm-yelp-sentiment':      models.classification.lstm.LSTMForYelpSentimentClassification,
+}
+
+MODEL_DEFAULT_PARAMETERS = {
+    'bert-imdb-cased':            { 'cased': True },
+    'bert-mr-cased':              { 'cased': True },
+    'bert-yelp-sentiment-cased':  { 'cased': True },
 }
 
 MODELS_BY_DATASET = {
@@ -115,9 +127,16 @@ if __name__ == '__main__':
     # Models
     if args.model not in MODEL_CLASS_NAMES:
         raise ValueError(f'Error: unsupported model {args.model}')
-    model = MODEL_CLASS_NAMES[args.model]()
     
-    #Transformation
+    model_class = MODEL_CLASS_NAMES[args.model]
+    # Pass the model some default parameters, if we have them.
+    if args.model in MODEL_DEFAULT_PARAMETERS:
+        model = model_class(**MODEL_DEFAULT_PARAMETERS[args.model])
+    # Otherwise, just initialize it normally.
+    else: 
+        model = model_class()
+    
+    # Transformation
     if args.transformation == 'word-swap-embedding':
         transformation = transformations.WordSwapEmbedding()
     elif args.transformation == 'word-swap-homoglyph':
@@ -177,7 +196,7 @@ if __name__ == '__main__':
     if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
         
-        print(f'Model: {args.model} Dataset: {args.data}')
+        print(f'Model: {args.model} / Dataset: {args.data}')
         
         attack.attack(data, shuffle=False)
 
