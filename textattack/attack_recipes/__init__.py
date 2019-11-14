@@ -1,0 +1,2 @@
+from .alzantot_2018_genetic_algorithm import Alzantot2018GeneticAlgorithm
+from .jin_2019_textfooler import Jin2019TextFooler

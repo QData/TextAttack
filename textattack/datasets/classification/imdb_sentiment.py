@@ -13,7 +13,7 @@ class IMDBSentiment(TextAttackDataset):
         n (int): The number of examples to load
     
     """
-    DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/imdb'
+    DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/imdb.txt'
     def __init__(self, n=None):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(IMDBSentiment.DATA_PATH)
