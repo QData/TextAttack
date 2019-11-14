@@ -168,6 +168,9 @@ class Attack:
         results = []
         for label, text in dataset:
             tokenized_text = TokenizedText(text, self.text_to_ids_converter)
+            predicted_label = self._call_model([tokenized_text])[0].argmax().item()
+            if predicted_label != label:
+                continue
             result = self._attack_one(label, tokenized_text)
             results.append(result)
         
