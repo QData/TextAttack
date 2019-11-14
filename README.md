@@ -20,6 +20,12 @@ import nltk
 nltk.download('stopwords')
 ```
 
+We use spaCy's English model. To download it, after installing spaCy type in terminal:
+
+```
+python -m spacy download en
+```
+
 ### Basic Usage
 
 We have a command-line interface for running different attacks on different datasets. Run it with default arguments with `python textattack/run_attack.py`. See help info and list of arguments with `python textattack/run_attack.py --help`.

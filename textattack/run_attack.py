@@ -112,11 +112,11 @@ if __name__ == '__main__':
 
     # Attacks
     if args.attack == 'greedy-counterfit':
-        attack = attacks.GreedyWordSwap(model, transformation)
+        attack = attacks.blackbox.GreedyWordSwap(model, transformation)
     elif args.attack == 'ga-counterfit':
-        attack = attacks.GeneticAlgorithm(model, transformation)
+        attack = attacks.blackbox.GeneticAlgorithm(model, transformation)
     elif args.attack == 'greedy-wir-counterfit':
-        attack = attacks.GreedyWordSwapWIR(model, transformation)
+        attack = attacks.blackbox.GreedyWordSwapWIR(model, transformation)
 
     # Constraints
     if args.constraints:
