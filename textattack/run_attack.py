@@ -1,6 +1,5 @@
 '''
 A command line parser to run an attack
-
 '''
 
 import argparse
@@ -25,29 +24,29 @@ DATASET_CLASS_NAMES = {
 
 MODEL_CLASS_NAMES = {
     #
-    # BERT models
+    # BERT models - default uncased
     #
-    'bert-imdb':              models.classification.bert.BERTForIMDBSentimentClassification,
-    'bert-mr':              models.classification.bert.BERTForMRSentimentClassification,
-    'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
+    'bert-imdb':                models.classification.bert.BERTForIMDBSentimentClassification,
+    'bert-mr':                  models.classification.bert.BERTForMRSentimentClassification,
+    'bert-yelp-sentiment':      models.classification.bert.BERTForYelpSentimentClassification,
     #
     # CNN models
     #
-    'cnn-imdb':             models.classification.cnn.WordCNNForIMDBSentimentClassification,
-    'cnn-mr':               models.classification.cnn.WordCNNForMRSentimentClassification,
-    'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
+    'cnn-imdb':                 models.classification.cnn.WordCNNForIMDBSentimentClassification,
+    'cnn-mr':                   models.classification.cnn.WordCNNForMRSentimentClassification,
+    'cnn-yelp-sentiment':       models.classification.cnn.WordCNNForYelpSentimentClassification,
     #
     # LSTM models
     #
-    'lstm-imdb':            models.classification.lstm.LSTMForIMDBSentimentClassification,
-    'lstm-mr':              models.classification.lstm.LSTMForMRSentimentClassification,
-    'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
+    'lstm-imdb':                models.classification.lstm.LSTMForIMDBSentimentClassification,
+    'lstm-mr':                  models.classification.lstm.LSTMForMRSentimentClassification,
+    'lstm-yelp-sentiment':      models.classification.lstm.LSTMForYelpSentimentClassification,
 }
 
 MODELS_BY_DATASET = {
-    'imdb': ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
-    'mr': ['bert-mr', 'cnn-mr', 'lstm-mr'],
-    'yelp-sentiment': ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
+    'imdb':             ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
+    'mr':               ['bert-mr', 'cnn-mr', 'lstm-mr'],
+    'yelp-sentiment':   ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
 def get_args():
@@ -115,9 +114,10 @@ if __name__ == '__main__':
     # Models
     if args.model not in MODEL_CLASS_NAMES:
         raise ValueError(f'Error: unsupported model {args.model}')
+    
     model = MODEL_CLASS_NAMES[args.model]()
     
-    #Transformation
+    # Transformation
     if args.transformation == 'word-swap-embedding':
         transformation = transformations.WordSwapEmbedding()
     elif args.transformation == 'word-swap-homoglyph':
@@ -177,7 +177,7 @@ if __name__ == '__main__':
     if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
         
-        print(f'Model: {args.model} Dataset: {args.data}')
+        print(f'Model: {args.model} / Dataset: {args.data}')
         
         attack.attack(data, shuffle=False)
 
@@ -210,4 +210,3 @@ if __name__ == '__main__':
             print('Attacking...')
 
             attack.attack([(label, text)])
-
