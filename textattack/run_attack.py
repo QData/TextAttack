@@ -57,7 +57,7 @@ def get_args():
     data_group = parser.add_mutually_exclusive_group(required=True)
     
     parser.add_argument('--attack', type=str, required=False, default='greedy-wir-counterfit',
-        choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir-counterfit'], 
+        choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir-counterfit','word-gradient'], 
         help='The type of attack to run.')
 
     parser.add_argument('--transformation', type=str, required=False, default='word-swap-embedding',
@@ -131,7 +131,8 @@ if __name__ == '__main__':
     elif args.attack == 'greedy-wir-counterfit':
         attack = attacks.blackbox.GreedyWordSwapWIR(model, transformation)
     elif args.attack == 'word-gradient':
-        attack = attacks.blackbox.GreedyWordSwapWIR(model)
+        attack = attacks.whitebox.GradientBasedWordSwap(model)
+
 
     # Constraints
     if args.constraints:

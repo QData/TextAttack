@@ -48,6 +48,5 @@ class BERTForClassification:
     def __call__(self, text_ids):
         if not isinstance(text_ids, torch.Tensor):
             raise ValueError(f'Object of type {type(text_ids)} must be of type torch.tensor')
-        with torch.no_grad():
-            pred = self.model(text_ids)
+        pred = self.model(text_ids)
         return pred[0]

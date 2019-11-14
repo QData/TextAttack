@@ -1,2 +1,3 @@
 from .word_swap import WordSwap
 from .word_swap_embedding import WordSwapEmbedding
+from .word_gradient_projection import WordGradientProjection

@@ -5,7 +5,8 @@ class WordGradientProjection:
         of the gradient.
     """
     def __init__(self):
-        # probably wanna do something here
+        # TODO: probably wanna do something here
+        pass
     
     def __call__(self, tokenize_text, gradient=None):
         if gradient is None:
