@@ -21,7 +21,7 @@ def Alzantot2018GeneticAlgorithm(model):
     #
     # "[We] fix the hyperparameter values to S = 60, N = 8, K = 4, and δ = 0.5"
     #
-    transformation = WordSwapEmbedding(max_candidates=8)
+    transformation = WordSwapEmbedding(max_candidates=8, max_mse_dist=0.5)
     #
     # Perform word substitution with a genetic algorithm.
     #
