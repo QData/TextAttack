@@ -101,9 +101,10 @@ if __name__ == '__main__':
     # Models
     if args.model not in MODEL_CLASS_NAMES:
         raise ValueError(f'Error: unsupported model {args.model}')
+    
     model = MODEL_CLASS_NAMES[args.model]()
     
-    #Transformation
+    # Transformation
     if args.transformation == 'word-swap-embedding':
         transformation = transformations.WordSwapEmbedding()
     elif args.transformation == 'word-swap-homoglyph':
@@ -162,7 +163,38 @@ if __name__ == '__main__':
 
     if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
-        
+        attack.enable_visdom()
+        print(f'Model: {args.model} / Dataset: {args.data}')
+        attack.attack(data, shuffle=False)
+
+        finish_time = time.time()
+
+        print(f'Loaded in {load_time - start_time}s')
+        print(f'Ran attack in {finish_time - load_time}s')
+        print(f'TOTAL TIME: {finish_time - start_time}s')
+
+    
+    if args.interactive:
+        print('Running in interactive mode')
+        print('----------------------------')
+
+        while True:
+            print('Enter a sentence to attack or "q" to quit:')
+            text = input()
+
+            if text == 'q':
+                break
+            
+            if not text:
+                continue
+
+            tokenized_text = TokenizedText(model, text)
+
+            pred = attack._call_model([tokenized_text])
+            label = int(pred.argmax())
+
+            print('Attacking...')
+
         attack.enable_visdom()
         attack.attack(data, shuffle=False)
 

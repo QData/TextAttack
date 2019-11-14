@@ -1,3 +1,3 @@
 from .dataset import TextAttackDataset 
 
-from .classification import *
+from . import classification

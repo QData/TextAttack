@@ -1,3 +1,3 @@
-from .bert import *
-from .cnn import *
-from .lstm import *
+from . import bert
+from . import cnn
+from . import lstm
