@@ -24,17 +24,11 @@ DATASET_CLASS_NAMES = {
 
 MODEL_CLASS_NAMES = {
     #
-    # BERT models - uncased
+    # BERT models - default uncased
     #
     'bert-imdb':                models.classification.bert.BERTForIMDBSentimentClassification,
     'bert-mr':                  models.classification.bert.BERTForMRSentimentClassification,
     'bert-yelp-sentiment':      models.classification.bert.BERTForYelpSentimentClassification,
-    #
-    # BERT models - cased
-    #
-    'bert-imdb-cased':            models.classification.bert.BERTForIMDBSentimentClassification,
-    'bert-mr-cased':              models.classification.bert.BERTForMRSentimentClassification,
-    'bert-yelp-sentiment-cased':  models.classification.bert.BERTForYelpSentimentClassification,
     #
     # CNN models
     #
@@ -49,16 +43,10 @@ MODEL_CLASS_NAMES = {
     'lstm-yelp-sentiment':      models.classification.lstm.LSTMForYelpSentimentClassification,
 }
 
-MODEL_DEFAULT_PARAMETERS = {
-    'bert-imdb-cased':            { 'cased': True },
-    'bert-mr-cased':              { 'cased': True },
-    'bert-yelp-sentiment-cased':  { 'cased': True },
-}
-
 MODELS_BY_DATASET = {
-    'imdb':             ['bert-imdb', 'bert-imdb-cased', 'cnn-imdb', 'lstm-imdb'],
-    'mr':               ['bert-mr', 'bert-mr-cased', 'cnn-mr', 'lstm-mr'],
-    'yelp-sentiment':   ['bert-yelp-sentiment', 'bert-yelp-sentiment-cased', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
+    'imdb':             ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
+    'mr':               ['bert-mr', 'cnn-mr', 'lstm-mr'],
+    'yelp-sentiment':   ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
 def get_args():
@@ -127,13 +115,7 @@ if __name__ == '__main__':
     if args.model not in MODEL_CLASS_NAMES:
         raise ValueError(f'Error: unsupported model {args.model}')
     
-    model_class = MODEL_CLASS_NAMES[args.model]
-    # Pass the model some default parameters, if we have them.
-    if args.model in MODEL_DEFAULT_PARAMETERS:
-        model = model_class(**MODEL_DEFAULT_PARAMETERS[args.model])
-    # Otherwise, just initialize it normally.
-    else: 
-        model = model_class()
+    model = MODEL_CLASS_NAMES[args.model]()
     
     # Transformation
     if args.transformation == 'word-swap-embedding':
