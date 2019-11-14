@@ -50,9 +50,11 @@ class GreedyWordSwapWIR(BlackBoxAttack):
                 original_tokenized_text,
                 indices_to_replace=[index_order[i]])
             i += 1
+            print('transformed_text_candidates:', transformed_text_candidates)
             if len(transformed_text_candidates) == 0:
                 continue
             num_words_changed += 1
+            print('scores:', scores)
             scores = self._call_model(transformed_text_candidates)
             # The best choice is the one that minimizes the original class label.
             best_index = scores[:, original_label].argmin()

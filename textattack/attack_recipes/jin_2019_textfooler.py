@@ -20,7 +20,7 @@ def Jin2019TextFooler(model):
     #
     # 50 nearest-neighbors with a cosine similarity of at least 0.7.
     #
-    transformation = WordSwapEmbedding(max_candidates=50, cos_similarity_threshold=0.9)
+    transformation = WordSwapEmbedding(max_candidates=50, min_cos_sim=0.7)
     #
     # Greedily swap words with "Word Importance Ranking".
     #
