@@ -196,4 +196,3 @@ if __name__ == '__main__':
 
             attack.enable_visdom()
             attack.attack([(label, text)])
-

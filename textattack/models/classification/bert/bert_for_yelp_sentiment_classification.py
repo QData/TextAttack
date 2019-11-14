@@ -1,20 +1,11 @@
-from transformers.modeling_bert import BertForSequenceClassification
-from transformers.tokenization_bert import BertTokenizer
+from textattack.models.helpers import BERTForClassification
 
-import textattack.utils as utils
-import torch
-
-class BertForYelpSentimentClassification:
+class BERTForYelpSentimentClassification(BERTForClassification):
     """ 
-    BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification. 
-
-    Args:
-        max_seq_length(:obj:`int`, optional):  Maximum length of a sequence after tokenizing.
-            Defaults to 32.
-            
+    BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification.
     """
     
-    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
+    #MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
     
     def __init__(self, max_seq_length=32):
         utils.download_if_needed(BertForYelpSentimentClassification.MODEL_PATH)
@@ -57,3 +48,7 @@ class BertForYelpSentimentClassification:
 
     def __str__(self):
         return "BERT for Yelp Sentiment Classification"
+        
+    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/BertClassifier/outputs/yelp-2019-11-08-18:16'
+    def __init__(self):
+        super().__init__(BERTForYelpSentimentClassification.MODEL_PATH)
