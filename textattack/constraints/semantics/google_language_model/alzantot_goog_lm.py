@@ -78,7 +78,7 @@ class GoogLMHelper(object):
         word_probs =[softmax[0][w_id] for w_id in words_ids]
         word_probs = np.array(word_probs)
 
-        if suffix == None:
+        if suffix is None:
             suffix_probs = np.ones(word_probs.shape)
         else:
             suffix_id = self.vocab.word_to_id(suffix)

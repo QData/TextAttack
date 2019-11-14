@@ -7,7 +7,7 @@ class BERTForMRSentimentClassification(BERTForClassification):
     
     MODEL_PATH_CASED = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/BertClassifier/outputs/mr-cased-2019-11-11-20:52'
     MODEL_PATH_UNCASED = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/BertClassifier/outputs/mr-uncased-2019-11-11-11:17'
-    def __init__(self):
+    def __init__(self, cased=False):
         if cased:
             path = BERTForMRSentimentClassification.MODEL_PATH_CASED
         else:

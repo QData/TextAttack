@@ -12,10 +12,12 @@ class WordSwapEmbedding(WordSwap):
     
     PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings'
     
-    def __init__(self, replace_stopwords=False, word_embedding='paragramcf', similarity_threshold=None):
-        super().__init__(replace_stopwords)
+    def __init__(self, max_candidates=15, replace_stopwords=False, 
+        word_embedding='paragramcf', cos_similarity_threshold=None, **kwargs):
+        super().__init__(**kwargs)
         
-        self.similarity_threshold = similarity_threshold
+        self.max_candidates = max_candidates
+        self.cos_similarity_threshold = cos_similarity_threshold
         
         if word_embedding == 'paragramcf':
             word_embeddings_folder = 'paragramcf'
@@ -45,16 +47,16 @@ class WordSwapEmbedding(WordSwap):
         for word, index in self.word_embedding_word2index.items():
             self.word_embedding_index2word[index] = word
     
-    def _get_replacement_words(self, word, max_candidates=15):
+    def _get_replacement_words(self, word):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
             or phrase. Based on nearest neighbors selected word embeddings.
         """
         try:
             word_id = self.word_embedding_word2index[word]
-            nnids = self.nn[word_id][1:max_candidates+1]
+            nnids = self.nn[word_id][1:self.max_candidates+1]
             candidate_words = []
             for i, nbr_id in enumerate(nnids):
-                if self.similarity_threshold:
+                if self.cos_similarity_threshold:
                     # Use precomputed cosine distances., if possible.
                     if self.cos_dist_matrix is not None:
                         cos_dist = self.cos_dist_matrix[word_id][i+1]
@@ -63,7 +65,7 @@ class WordSwapEmbedding(WordSwap):
                         e2 = self.word_embeddings[nbr_id]
                         cos_dist = scipy_cosine_dist(e1, e2)
                     cos_sim = 1-cos_dist
-                    if cos_sim < self.similarity_threshold:
+                    if cos_sim < self.cos_similarity_threshold:
                         continue
                 candidate_words.append(self.word_embedding_index2word[nbr_id])
             return candidate_words
