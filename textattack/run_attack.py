@@ -163,6 +163,7 @@ if __name__ == '__main__':
     if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
         
+        attack.enable_visdom()
         attack.attack(data, shuffle=False)
 
         finish_time = time.time()
@@ -193,5 +194,6 @@ if __name__ == '__main__':
 
             print('Attacking...')
 
+            attack.enable_visdom()
             attack.attack([(label, text)])
 

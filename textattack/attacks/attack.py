@@ -302,20 +302,3 @@ if __name__ == '__main__':
         _color = utils.color_text_terminal
         print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
         print(self.original_text)
-        
-    model = BertForYelpSentimentClassification()
-    transformation = WordSwapEmbedding()
-    
-    attack = attacks.GreedyWordSwap(model, transformation)
-    attack.add_constraints((
-        # constraints.syntax.LanguageTool(1),
-        constraints.semantics.UniversalSentenceEncoder(0.9, metric='cosine'),
-        )
-    )
-    yelp_data = YelpSentiment(n=1)
-    
-    attack.enable_visdom()
-    attack.add_output_file(open('outputs/test.txt', 'w'))
-    import sys
-    attack.add_output_file(sys.stdout)
-    attack.attack(yelp_data, shuffle=False)
