@@ -30,14 +30,22 @@ def test_all_recipes(recipes, model, datasets):
             print()
     print('-' * 60)
 
-def test_all_models(recipes):
+def test_model(recipes, args.n):
     model = models.classification.bert.BERTForIMDBSentimentClassification()
     
     datasets = (
         ('IMDBSentiment', textattack.datasets.classification.IMDBSentiment(5)),
     )
     
-    test_all_recipes(recipes, model, datasets)
+    test_all_recipes(recipes, model, datasets))
+
+def parse_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--recipe', '--r', default=None, type=str,
+        help="recipe to test (if you dont want to test them all)")
+    parser.add_argument('--n', type=int, default=100, 
+        help="number of examples to test on")
+    return parser.parse_args()
 
 if __name__ == '__main__':
     # Only use one GPU, if we have one.
@@ -47,15 +55,14 @@ if __name__ == '__main__':
     if 'TF_CPP_MIN_LOG_LEVEL' not in os.environ:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     
+    args = parse_args()
+    
     # Store global start time.
     global start_time
     start_time = time.time()
     
     # Get recipe name param.
-    try:
-        recipe_name = sys.argv[1].lower()
-    except IndexError:
-        raise ValueError('Please provide the name of a recipe, like `python recipes.py alzantot`')
+    recipe_name = args.recipe
     if recipe_name == 'all':
         recipes = [Alzantot2018GeneticAlgorithm, Jin2019TextFooler]
     elif recipe_name in ['alzantot', 'alzantot2018geneticalgorithm']:
@@ -65,4 +72,4 @@ if __name__ == '__main__':
     else:
         raise ValueErrorf('Invalid recipe_name {sys.argv[1]}')
     
-    test_all_models(recipes)
+    test_model(recipes, model)

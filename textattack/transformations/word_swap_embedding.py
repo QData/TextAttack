@@ -66,7 +66,7 @@ class WordSwapEmbedding(WordSwap):
                 e1 = torch.tensor(e1).to(utils.get_device())
                 e2 = torch.tensor(e2).to(utils.get_device())
                 cos_sim = torch.nn.CosineSimilarity(dim=0)(e1, e2)
-            print((word_id, nbr_id), 'cos_sim:', cos_sim)
+            # print((word_id, nbr_id), 'cos_sim:', cos_sim)
             if cos_sim < self.min_cos_sim:
                 return False
         # Check MSE distance.

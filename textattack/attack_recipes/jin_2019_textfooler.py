@@ -20,7 +20,8 @@ def Jin2019TextFooler(model):
     #
     # 50 nearest-neighbors with a cosine similarity of at least 0.7.
     #
-    transformation = WordSwapEmbedding(max_candidates=50, min_cos_sim=0.7)
+    transformation = WordSwapEmbedding(max_candidates=50, min_cos_sim=0.4, 
+        check_pos=True)
     #
     # Greedily swap words with "Word Importance Ranking".
     #
@@ -28,6 +29,7 @@ def Jin2019TextFooler(model):
     #
     # Universal Sentence Encoder with ε = 0.9
     #
-    attack.add_constraint(UniversalSentenceEncoder(0.9, metric='cosine'))
+    attack.add_constraint(UniversalSentenceEncoder(threshold=0.9, 
+        metric='cosine', compare_with_original=False, window_size=15))
     
     return attack
