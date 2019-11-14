@@ -16,7 +16,7 @@ class WordCNNForIMDBSentimentClassification(WordCNNForClassification):
             
     """
     
-    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/textfooler_lstm/outputs/cnn/imdb/model.bin'
+    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/text_classification/outputs/cnn/imdb/model.bin'
     
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length)

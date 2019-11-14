@@ -28,13 +28,15 @@ class GoogleLanguageModel(Constraint):
         adversarial examples based on word swaps
 
     """
-    def __init__(self, top_n=None, top_n_per_index=None, print_step=False):
+    def __init__(self, top_n=None, top_n_per_index=None, print_step=False,
+        use_suffix=False):
         if not (top_n or top_n_per_index): 
             raise ValueError('Cannot instantiate GoogleLanguageModel without top_n or top_n_per_index')
         self.lm = GoogLMHelper()
         self.top_n = top_n
         self.top_n_per_index = top_n_per_index
         self.print_step = print_step
+        self.use_suffix = use_suffix
     
     def call_many(self, x, x_adv_list, original_text=None):
         """
@@ -51,9 +53,9 @@ class GoogleLanguageModel(Constraint):
         
         def get_probs(x, x_adv_list):
             word_swap_index = x.first_word_diff_index(x_adv_list[0])
-            prefix = x.text_until_word_index(word_swap_index)
+            prefix = x.words()[word_swap_index-1]
             swapped_words = np.array([t.words()[word_swap_index] for t in x_adv_list])
-            suffix = x.text_after_word_index(word_swap_index)
+            suffix = x.words()[word_swap_index+1] if self.use_suffix else None
             if self.print_step:
                 print(prefix, swapped_words, suffix)
             probs = self.lm.get_words_probs(prefix, swapped_words, suffix)

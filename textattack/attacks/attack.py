@@ -119,8 +119,8 @@ class Attack:
 
     def _attack_one(self, label, tokenized_text):
         """
-        Perturbs `text` to until `self.model` gives a different label
-        than `label`. 
+        Perturbs `text` to until `self.model` gives a different label than 
+        `label`.
 
         """
         raise NotImplementedError()
