@@ -24,7 +24,7 @@ DATASET_CLASS_NAMES = {
 }
 
 MODEL_CLASS_NAMES = {
-    'bert-yelp-sentiment':  models.classification.bert.BertForYelpSentimentClassification,
+    'bert-yelp-sentiment':  models.classification.bert.BERTForYelpSentimentClassification,
     'cnn-yelp-sentiment':   models.classification.cnn.WordCNNForYelpSentimentClassification,
     'cnn-imdb':             models.classification.cnn.WordCNNForIMDBSentimentClassification,
     'lstm-yelp-sentiment':  models.classification.lstm.LSTMForYelpSentimentClassification,
