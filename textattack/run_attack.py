@@ -61,9 +61,9 @@ CONSTRAINT_CLASS_NAMES = {
 }
 
 ATTACK_CLASS_NAMES = {
-    'greedy-counterfit':        attacks.blackbox.GreedyWordSwap,
-    'ga-counterfit':            attacks.blackbox.GeneticAlgorithm,
-    'greedy-wir-counterfit':    attacks.blackbox.GreedyWordSwapWIR,
+    'greedy-word':        'attacks.blackbox.GreedyWordSwap',
+    'ga-word':            'attacks.blackbox.GeneticAlgorithm',
+    'greedy-word-wir':    'attacks.blackbox.GreedyWordSwapWIR',
 }
 
 
@@ -73,7 +73,7 @@ def get_args():
     
     data_group = parser.add_mutually_exclusive_group(required=True)
     
-    parser.add_argument('--attack', type=str, required=False, default='greedy-wir-counterfit', 
+    parser.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
         help='The type of attack to run.')
 
     parser.add_argument('--transformation', type=str, required=False, nargs='*',
@@ -156,18 +156,13 @@ if __name__ == '__main__':
             raise ValueError(f'Error: unsupported transformation {transformation}')
 
     # Attacks
-    # if ':' in args.attack:
-    #     attack_name, params = args.attack.split(':')
-    #     if attack_name not in ATTACK_CLASS_NAMES:
-    #         raise ValueError(f'Error: unsupported attack {attack_name}')
-    #     attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}({model}, {defined_transformations}, {params})')
-    # elif args.attack in ATTACK_CLASS_NAMES:
-    #     attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}({model}, {defined_transformations})')
-    # else:
-    #      raise ValueError(f'Error: unsupported attack {args.attack}')
-
-    if args.attack in ATTACK_CLASS_NAMES:
-        attack = ATTACK_CLASS_NAMES[args.attack](model, defined_transformations)
+    if ':' in args.attack:
+        attack_name, params = args.attack.split(':')
+        if attack_name not in ATTACK_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported attack {attack_name}')
+        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, defined_transformations, {params})')
+    elif args.attack in ATTACK_CLASS_NAMES:
+        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, defined_transformations)')
     else:
         raise ValueError(f'Error: unsupported attack {args.attack}')
 
