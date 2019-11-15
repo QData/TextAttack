@@ -4,25 +4,23 @@ from transformers.tokenization_bert import BertTokenizer
 import textattack.utils as utils
 import torch
 
-class BertForSentimentClassification:
+class BERTForClassification:
     """ 
-    BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification. 
+    BERT fine-tuned for sentiment classification. 
 
     Args:
+        max_seq_length(:obj:`string`): Path to the pre-trained model.
+        max_seq_length(:obj:`int`, optional):  Number of class labels for 
+            prediction, if different than 2.
         max_seq_length(:obj:`int`, optional):  Maximum length of a sequence after tokenizing.
             Defaults to 32.
             
     """
-    
-    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/models/bert/models/bert-vanilla'
-    
-    def __init__(self, max_seq_length=32):
-        utils.download_if_needed(BertForSentimentClassification.MODEL_PATH)
+    def __init__(self, model_path, num_labels=2, max_seq_length=64):
+        utils.download_if_needed(model_path)
         self.model = BertForSequenceClassification.from_pretrained(
-            BertForSentimentClassification.MODEL_PATH, 
-            num_labels=2)
-        self.tokenizer = BertTokenizer.from_pretrained(
-            BertForSentimentClassification.MODEL_PATH)
+            model_path, num_labels=num_labels)
+        self.tokenizer = BertTokenizer.from_pretrained(model_path)
         self.model.to(utils.get_device())
         self.model.eval()
         self.max_seq_length = max_seq_length
@@ -37,15 +35,14 @@ class BertForSentimentClassification:
 
         Returns:
             The ID of the tokenized text
-        
         """
         tokens = self.tokenizer.tokenize(input_text)
         while len(tokens) > self.max_seq_length:
             tokens.pop()
         tokens = ["[CLS]"] + tokens + ["[SEP]"]
+        pad_tokens_to_add = self.max_seq_length + 2 - len(tokens)
+        tokens += [self.tokenizer.pad_token] * pad_tokens_to_add
         ids = self.tokenizer.convert_tokens_to_ids(tokens)
-        while len(ids) < self.max_seq_length + 2:
-            ids = ids + [0] # @TODO Is it correct to just pad with zeros?
         return ids
     
     def __call__(self, text_ids):

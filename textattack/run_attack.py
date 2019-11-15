@@ -1,6 +1,5 @@
 '''
 A command line parser to run an attack
-
 '''
 
 import argparse
@@ -18,13 +17,39 @@ import textattack.transformations as transformations
 
 from textattack.tokenized_text import TokenizedText
 
-
 DATASET_CLASS_NAMES = {
     'agnews':           datasets.classification.AGNews,
     'imdb':             datasets.classification.IMDBSentiment,
-    'kaggle_fake_news': datasets.classification.KaggleFakeNews,
+    'kaggle-fake-news': datasets.classification.KaggleFakeNews,
     'mr':               datasets.classification.MovieReviewSentiment,
-    'yelp':             datasets.classification.YelpSentiment
+    'yelp-sentiment':   datasets.classification.YelpSentiment
+}
+
+MODEL_CLASS_NAMES = {
+    #
+    # BERT models - default uncased
+    #
+    'bert-imdb':                models.classification.bert.BERTForIMDBSentimentClassification,
+    'bert-mr':                  models.classification.bert.BERTForMRSentimentClassification,
+    'bert-yelp-sentiment':      models.classification.bert.BERTForYelpSentimentClassification,
+    #
+    # CNN models
+    #
+    'cnn-imdb':                 models.classification.cnn.WordCNNForIMDBSentimentClassification,
+    'cnn-mr':                   models.classification.cnn.WordCNNForMRSentimentClassification,
+    'cnn-yelp-sentiment':       models.classification.cnn.WordCNNForYelpSentimentClassification,
+    #
+    # LSTM models
+    #
+    'lstm-imdb':                models.classification.lstm.LSTMForIMDBSentimentClassification,
+    'lstm-mr':                  models.classification.lstm.LSTMForMRSentimentClassification,
+    'lstm-yelp-sentiment':      models.classification.lstm.LSTMForYelpSentimentClassification,
+}
+
+MODELS_BY_DATASET = {
+    'imdb':             ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
+    'mr':               ['bert-mr', 'cnn-mr', 'lstm-mr'],
+    'yelp-sentiment':   ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
 
@@ -36,12 +61,13 @@ def get_args():
     
     parser.add_argument('--attack', type=str, required=False, default='greedy-wir-counterfit', 
         help='The type of attack to run.')
-    
-    parser.add_argument('--model', type=str, required=False, default='bert-sentiment',
-        help='The classification model to attack.')
 
-    parser.add_argument('--transformations', type=str, required=False, nargs='*',
-        default=['word-swap-embedding'], help='Transformation(s) to add to the attack')
+    parser.add_argument('--transformation', type=str, required=False, default='word-swap-embedding',
+        choices=['word-swap-embedding', 'word-swap-homoglyph'],
+        help='The type of transformation to apply')
+        
+    parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
+        choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['use'], 
@@ -52,18 +78,29 @@ def get_args():
         help='The file to output the results to.')
     
     parser.add_argument('--num_examples', type=int, required=False, 
-        help='The number of examples to attack.')
+        default='5', help='The number of examples to attack.')
     
     data_group.add_argument('--interactive', action='store_true', 
         help='Whether to run attacks interactively.')
     
-    data_group.add_argument('--data', type=str,
+    data_group.add_argument('--data', type=str, default='yelp-sentiment',
         choices=DATASET_CLASS_NAMES.keys(), help='The dataset to use.')
     
     args = parser.parse_args()
     
     return args
 
+def check_model_and_data_compatibility(data_name, model_name):
+    """
+        Prints a warning message if the user attacks a model using data different
+        than what it was trained on.
+    """
+    if not model_name or not data_name:
+        return
+    elif data_name not in MODELS_BY_DATASET:
+        print('Warning: No known models for this dataset.')
+    elif model_name not in MODELS_BY_DATASET[data_name]:
+        print(f'Warning: model {model_name} incompatible with dataset {data_name}.')
 
 def get_params(func_callable, function_params):
 
@@ -90,67 +127,33 @@ if __name__ == '__main__':
     args = get_args()
     
     # Only use one GPU, if we have one.
-    os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    if 'CUDA_VISIBLE_DEVICES' not in os.environ:
+        os.environ['CUDA_VISIBLE_DEVICES'] = '0'
     # Disable tensorflow logs, except in the case of an error.
-    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    if 'TF_CPP_MIN_LOG_LEVEL' not in os.environ:
+        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     
     start_time = time.time()
 
     # Models
-    if 'bert-sentiment' in args.model:
-        params = get_params(models.BertForSentimentClassification, args.model)
-        model = models.BertForSentimentClassification(max_seq_length=float(params['max_seq_length']))
-
-    else:
-        raise ValueError('Model must be bert-sentiment')
+    if args.model not in MODEL_CLASS_NAMES:
+        raise ValueError(f'Error: unsupported model {args.model}')
     
-    # Transformations
-    if args.transformations:
-
-        added_transformations = []
-
-        for transformation in args.transformations:
-
-            if 'word-swap-embedding' in transformation:
-                params = get_params(transformations.WordSwapEmbedding, transformation)
-                added_transformations.append(transformations.WordSwapEmbedding(
-                    replace_stopwords = ast.literal_eval(params['replace_stopwords']),
-                    word_embedding = params['word_embedding'].replace("'", ''),
-                    similarity_threshold = ast.literal_eval(params['similarity_threshold'])
-                ))
-
-            else:
-                raise ValueError((f'{transformation} is not a valid transformation type. '
-                'Valid transformations are word-swap-embedding'))
+    model = MODEL_CLASS_NAMES[args.model]()
+    
+    # Transformation
+    if args.transformation == 'word-swap-embedding':
+        transformation = transformations.WordSwapEmbedding()
+    elif args.transformation == 'word-swap-homoglyph':
+        transformation = transformations.WordSwapHomoglyph()
 
     # Attacks
-    if 'greedy-counterfit' in args.attack:
-        params = get_params(attacks.GreedyWordSwap, args.attack)
-        attack = attacks.GreedyWordSwap(
-            model, 
-            added_transformations, 
-            max_depth=float(params['max_depth']
-        ))
-
-    elif 'ga-counterfit' in args.attack:
-        params = get_params(attacks.GeneticAlgorithm, args.attack)
-        attack = attacks.GeneticAlgorithm(
-            model, 
-            added_transformations, 
-            pop_size=int(params['pop_size']),
-            max_iters=int(params['max_iters'])
-            )
-
-    elif 'greedy-wir-counterfit' in args.attack:
-        params = get_params(attacks.GreedyWordSwapWIR, args.attack)
-        attack = attacks.GreedyWordSwapWIR(
-            model, 
-            added_transformations, 
-            max_depth=float(params['max_depth']
-        ))
-
-    else:
-        raise ValueError(f'{args.attack} is not a valid attack')
+    if args.attack == 'greedy-counterfit':
+        attack = attacks.blackbox.GreedyWordSwap(model, transformation)
+    elif args.attack == 'ga-counterfit':
+        attack = attacks.blackbox.GeneticAlgorithm(model, transformation)
+    elif args.attack == 'greedy-wir-counterfit':
+        attack = attacks.blackbox.GreedyWordSwapWIR(model, transformation)
 
     # Constraints
     if args.constraints:
@@ -158,34 +161,29 @@ if __name__ == '__main__':
         defined_constraints = []
 
         for constraint in args.constraints:
+            if 'use:' in constraint:
+                similarity = constraint.replace('use:', '')
+                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(float(similarity), metric='cosine'))
+            elif constraint == 'use':
+                # Default similarity to .9 if no similarity is given.
+                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(.90, metric='cosine'))
 
-            if 'use' in constraint:
-                params = get_params(constraints.semantics.UniversalSentenceEncoder, constraint)
-                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(
-                    threshold=float(params['threshold']), 
-                    metric=params['metric'].replace("'", '')
-                    ))
+            elif 'lang-tool:' in constraint:
+                threshold = constraint.replace('lang-tool:', '')
+                defined_constraints.append(constraints.syntax.LanguageTool(float(threshold)))
+            elif constraint == 'lang-tool':
+                # Default threshold to 0 if no threshold is given
+                defined_constraints.append(constraints.syntax.LanguageTool(0))
 
-            elif 'lang-tool' in constraint:
-                params = get_params(constraints.syntax.LanguageTool, constraint)
-                defined_constraints.append(constraints.syntax.LanguageTool(
-                    threshold=float(params['threshold'])
-                    ))
-
-            elif 'goog-lm' in constraint:
-                params = get_params(constraints.semantics.google_language_model.GoogleLanguageModel, constraint)
-                defined_constraints.append(constraints.semantics.google_language_model.GoogleLanguageModel(
-                    top_n = ast.literal_eval(params['top_n']),
-                    top_n_per_index = ast.literal_eval(params['top_n_per_index']),
-                    print_step = ast.literal_eval(params['print_step'])
-                ))
+            elif constraint == 'goog-lm':
+                defined_constraints.append(constraints.semantics.google_language_model.GoogleLanguageModel())
 
             else:
                 raise ValueError((f'{constraint} is not a valid constraint. ' 
                     'Valid options are "use", "lang-tool", or "goog-lm". Use "-h" for help.'))
 
         attack.add_constraints(defined_constraints)
-
+    
     # Data
     if args.data in DATASET_CLASS_NAMES:
         dataset_class = DATASET_CLASS_NAMES[args.data]
@@ -198,7 +196,11 @@ if __name__ == '__main__':
 
     load_time = time.time()
 
-    if args.data is not None:
+    if args.data is not None and not args.interactive:
+        check_model_and_data_compatibility(args.data, args.model)
+        
+        print(f'Model: {args.model} / Dataset: {args.data}')
+        
         attack.attack(data, shuffle=False)
 
         finish_time = time.time()
@@ -218,8 +220,11 @@ if __name__ == '__main__':
 
             if text == 'q':
                 break
+            
+            if not text:
+                continue
 
-            tokenized_text = TokenizedText(model, text)
+            tokenized_text = TokenizedText(text, model.convert_text_to_ids)
 
             pred = attack._call_model([tokenized_text])
             label = int(pred.argmax())
@@ -227,4 +232,3 @@ if __name__ == '__main__':
             print('Attacking...')
 
             attack.attack([(label, text)])
-

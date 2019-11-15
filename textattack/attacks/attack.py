@@ -18,7 +18,7 @@ class Attack:
         constraints: A list of constraints to add to the attack
 
     """
-    def __init__(self, model, constraints=[]):
+    def __init__(self, constraints=[]):
         """ Initialize an attack object.
         
         Attacks can be run multiple times
@@ -26,15 +26,20 @@ class Attack:
          @TODO should `tokenizer` be an additional parameter or should
             we assume every model has a .tokenizer ?
         """
-        self.model = model
+        if not self.model:
+            raise NameError('Cannot instantiate attack without self.model for prediction scores')
+        if not self.text_to_ids_converter:
+            raise NameError('Cannot instantiate attack without tokenizer')
         # Transformation and corresponding constraints.
         self.constraints = []
         if constraints:
             self.add_constraints(constraints)
-        # List of files to output to.
+        # Output settings.
         self.output_files = []
         self.output_to_terminal = True
         self.output_to_visdom = False
+        # Track the number of successful attacks.
+        self.examples_completed = 0
     
     def add_output_file(self, file):
         """ 
@@ -114,20 +119,35 @@ class Attack:
 
     def _attack_one(self, label, tokenized_text):
         """
-        Perturbs `text` to until `self.model` gives a different label
-        than `label`. 
+        Perturbs `text` to until `self.model` gives a different label than 
+        `label`.
 
         """
         raise NotImplementedError()
-      
+        
     def _call_model(self, tokenized_text_list):
         """
         Returns model predictions for a list of TokenizedText objects. 
         
         """
+        if not len(tokenized_text_list):
+            return torch.tensor([])
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         ids = ids.to(utils.get_device())
         scores = self.model(ids)
+        # Validation check on model score dimensions
+        if scores.ndim == 1:
+            # Unsqueeze prediction, if it's been squeezed by the model.
+            if len(tokenized_text_list == 1):
+                scores = scores.unsqueeze(dim=0)
+            else:
+                raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
+        elif scores.ndim != 2:
+            # If model somehow returns too may dimensions, throw an error.
+            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
+        elif scores.shape[0] != len(tokenized_text_list):
+            # If model returns an incorrect number of scores, throw an error.
+            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
         return scores
       
     def attack(self, dataset, shuffle=False):
@@ -147,13 +167,17 @@ class Attack:
         
         results = []
         for label, text in dataset:
-            tokenized_text = TokenizedText(self.model, text)
+            tokenized_text = TokenizedText(text, self.text_to_ids_converter)
+            predicted_label = self._call_model([tokenized_text])[0].argmax().item()
+            if predicted_label != label:
+                continue
             result = self._attack_one(label, tokenized_text)
             results.append(result)
         
         if self.output_to_terminal:
-            for i, result in enumerate(results):
-                print('-'*35, 'Result', str(i+1), '-'*35)
+            for result in results:
+                self.examples_completed += 1
+                print('-'*35, 'Result', str(self.examples_completed), '-'*35)
                 result.print_()
                 print()
         

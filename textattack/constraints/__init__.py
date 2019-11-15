@@ -1,4 +1,4 @@
 from .constraint import Constraint
 
-from .semantics import *
-from .syntax import *
+from . import semantics
+from . import syntax

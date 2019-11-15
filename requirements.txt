@@ -5,5 +5,7 @@ scipy
 torch==1.3.0
 transformers==2.0.0
 tensorflow-gpu
+scikit-learn
+spacy
 
 # visdom
