@@ -142,9 +142,7 @@ if __name__ == '__main__':
     
     # Transformations
     defined_transformations = []    
-
     for transformation in args.transformation:
-
         if ':' in transformation:
             transformation_name, params = transformation.split(':')
             if transformation_name not in TRANSFORMATION_CLASS_NAMES:
@@ -168,9 +166,7 @@ if __name__ == '__main__':
 
     # Constraints
     if args.constraints:
-
         defined_constraints = []
-
         for constraint in args.constraints:
             if ':' in constraint:
                 constraint_name, params = constraint.split(':')
