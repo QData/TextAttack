@@ -17,9 +17,9 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
     """
 
-    def __init__(self, model, transformation,  max_depth=32):
+    def __init__(self, model, transformations=[],  max_depth=32):
         super().__init__(model)
-        self.transformation = transformation
+        self.transformation = transformations[0]
         self.max_depth = max_depth
         
     def _attack_one(self, original_label, tokenized_text):
