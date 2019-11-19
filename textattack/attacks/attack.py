@@ -148,6 +148,12 @@ class Attack:
         elif scores.shape[0] != len(tokenized_text_list):
             # If model returns an incorrect number of scores, throw an error.
             raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
+        elif not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
+            # Values in each row should sum up to 1. The model should return a 
+            # set of numbers corresponding to probabilities, which should add
+            # up to 1. Since they are `torch.float` values, allow a small
+            # error in the summation.
+            raise ValueError('Model scores do not add up to 1.')
         return scores
       
     def attack(self, dataset, shuffle=False):
