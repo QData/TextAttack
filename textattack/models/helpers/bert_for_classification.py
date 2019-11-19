@@ -16,7 +16,7 @@ class BERTForClassification:
             Defaults to 32.
             
     """
-    def __init__(self, model_path, num_labels=2, max_seq_length=128):
+    def __init__(self, model_path, num_labels=2, max_seq_length=256):
         utils.download_if_needed(model_path)
         print('TextAttack BERTForClassification Loading from path ', model_path)
         self.model = BertForSequenceClassification.from_pretrained(
