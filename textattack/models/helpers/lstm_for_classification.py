@@ -46,8 +46,9 @@ class LSTMForClassification(nn.Module):
         output = torch.max(output, dim=0)[0]
 
         output = self.drop(output)
-        return self.out(output)
-    
+        pred = self.out(output)
+        return nn.functional.softmax(pred, dim=-1)
+        
     def convert_text_to_ids(self, input_text):
         input_tokens = utils.default_tokenize(input_text)
         input_tokens = input_tokens[:self.max_seq_length]
@@ -60,20 +61,3 @@ class LSTMForClassification(nn.Module):
         zeros_to_add = self.max_seq_length - len(output_ids)
         output_ids += [self.emb_layer.padid] * zeros_to_add
         return output_ids
-
-    def text_pred(self, text, batch_size=32):
-        batches_x = dataloader.create_batches_x(
-            text,
-            batch_size,
-            self.word2id
-        )
-        outs = []
-        with torch.no_grad():
-            for x in batches_x:
-                x = Variable(x)
-                emb = self.emb_layer(x)
-                output, hidden = self.encoder(emb)
-                output = torch.max(output, dim=0)[0]
-                outs.append(F.softmax(self.out(output), dim=-1))
-
-        return torch.cat(outs, dim=0)
