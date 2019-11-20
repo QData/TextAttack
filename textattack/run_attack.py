@@ -52,6 +52,7 @@ MODELS_BY_DATASET = {
 TRANSFORMATION_CLASS_NAMES = {
     'word-swap-embedding':  'transformations.WordSwapEmbedding',
     'word-swap-homoglyph':  'transformations.WordSwapHomoglyph',
+    'word-swap-neighboring-char-swap': 'transformations.WordSwapNeighboringCharacterSwap',
 }
 
 CONSTRAINT_CLASS_NAMES = {
