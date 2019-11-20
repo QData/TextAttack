@@ -1,11 +1,14 @@
-# TextAttack
+# TextAttack 🐙
+
+## About
+
+TextAttack is research library built for finding adversarial examples in NLP models. TextAttack includes implementations of state-of-the-art attacks on NLP models, both black-box and white-box. It ships with pre-trained models and datasets for various tasks.
 
 ## Getting Started
 
 ### Installation
 
-You must be running Python 3.6+ to use this package. A CUDA-compatible GPU is 
-optional but will greatly improve code speed.
+You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is optional but will greatly improve code speed. After cloning this git repository, run the following commands to install the `textattack` page a `conda` environment:
 
 ```
 conda create -n text-attack python=3.7
@@ -30,17 +33,13 @@ We have a command-line interface for running different attacks on different data
 If you see an error that GCC is incompatible, make sure your system has an up-to-date version of the GCC compiler. On distributed systems with a `module` system, typing `module load gcc` may be sufficient.
 
 #### Errors regarding Java
-Using the LanguageTool constraint relies on Java 8 internally (it's not ideal, we know). Please install Java 8 if you're interested in using the LanguageTool grammaticality constraint. If your system has the `module` command, try typing `module load java8`.
+Using the LanguageTool constraint relies on Java 8 internally (it's not ideal, we know). Please install Java 8 if you're interested in using the LanguageTool grammaticality constraint. If your system supports the `module` command, try typing `module load java8`.
 
 ## Features
 
 ### Models
 
-We've also included a few pre-trained models for common
-tasks that you can download and run out-of-the-box. However,
-anything that overrides __call__, takes in tokenized text, and 
-outputs probabilities works for us. This includes your favorite
-models in both Pytorch and Tensorflow.
+We've also included a few pre-trained models for common tasks that you can download and run out-of-the-box. However, TextAttack is *model_agnostic*! Anything that overrides __call__, takes in tokenized text, and outputs probabilities works for us. This includes your favorite models in both Pytorch and Tensorflow.
 
 @TODO show examples of each in `examples/`.
 
@@ -55,7 +54,7 @@ models in both Pytorch and Tensorflow.
 
 #### White-box attacks
 
-- HotFlip (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2018)](https://arxiv.org/abs/1712.06751) _(coming soon)_
+- HotFlip (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2018)](https://arxiv.org/abs/1712.06751)
 
 ### Transformations
 
@@ -76,7 +75,7 @@ Text input perturbations are only valid if they meet the constraints of the atta
 - Google 1-billion words language model
 
 #### Syntax
-- Grammatical errors induced, measured with [LanguageTool](https://languagetool.org/)
+- Grammatical errors measured with [LanguageTool](https://languagetool.org/)
 
 ### Datasets
 

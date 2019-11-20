@@ -6,8 +6,8 @@ import argparse
 import time
 import os
 
-import textattack.attacks as attacks
 import textattack.datasets as datasets
+import textattack.attacks as attacks
 import textattack.models as models
 import textattack.constraints as constraints
 import textattack.transformations as transformations
@@ -19,28 +19,28 @@ DATASET_CLASS_NAMES = {
     'imdb':             datasets.classification.IMDBSentiment,
     'kaggle-fake-news': datasets.classification.KaggleFakeNews,
     'mr':               datasets.classification.MovieReviewSentiment,
-    'yelp-sentiment':   datasets.classification.YelpSentiment
+    'yelp-sentiment':   datasets.classification.YelpSentiment,
 }
 
 MODEL_CLASS_NAMES = {
     #
     # BERT models - default uncased
     #
-    'bert-imdb':                models.classification.bert.BERTForIMDBSentimentClassification,
-    'bert-mr':                  models.classification.bert.BERTForMRSentimentClassification,
-    'bert-yelp-sentiment':      models.classification.bert.BERTForYelpSentimentClassification,
+    'bert-imdb':                'models.classification.bert.BERTForIMDBSentimentClassification',
+    'bert-mr':                  'models.classification.bert.BERTForMRSentimentClassification',
+    'bert-yelp-sentiment':      'models.classification.bert.BERTForYelpSentimentClassification',
     #
     # CNN models
     #
-    'cnn-imdb':                 models.classification.cnn.WordCNNForIMDBSentimentClassification,
-    'cnn-mr':                   models.classification.cnn.WordCNNForMRSentimentClassification,
-    'cnn-yelp-sentiment':       models.classification.cnn.WordCNNForYelpSentimentClassification,
+    'cnn-imdb':                 'models.classification.cnn.WordCNNForIMDBSentimentClassification',
+    'cnn-mr':                   'models.classification.cnn.WordCNNForMRSentimentClassification',
+    'cnn-yelp-sentiment':       'models.classification.cnn.WordCNNForYelpSentimentClassification',
     #
     # LSTM models
     #
-    'lstm-imdb':                models.classification.lstm.LSTMForIMDBSentimentClassification,
-    'lstm-mr':                  models.classification.lstm.LSTMForMRSentimentClassification,
-    'lstm-yelp-sentiment':      models.classification.lstm.LSTMForYelpSentimentClassification,
+    'lstm-imdb':                'models.classification.lstm.LSTMForIMDBSentimentClassification',
+    'lstm-mr':                  'models.classification.lstm.LSTMForMRSentimentClassification',
+    'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
 }
 
 MODELS_BY_DATASET = {
@@ -49,27 +49,44 @@ MODELS_BY_DATASET = {
     'yelp-sentiment':   ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
 }
 
+TRANSFORMATION_CLASS_NAMES = {
+    'word-swap-embedding':  'transformations.WordSwapEmbedding',
+    'word-swap-homoglyph':  'transformations.WordSwapHomoglyph',
+}
+
+CONSTRAINT_CLASS_NAMES = {
+    'use':          'constraints.semantics.UniversalSentenceEncoder',
+    'lang-tool':    'constraints.syntax.LanguageTool', 
+    'goog-lm':      'constraints.semantics.google_language_model.GoogleLanguageModel',
+}
+
+ATTACK_CLASS_NAMES = {
+    'greedy-word':        'attacks.blackbox.GreedyWordSwap',
+    'ga-word':            'attacks.blackbox.GeneticAlgorithm',
+    'greedy-word-wir':    'attacks.blackbox.GreedyWordSwapWIR',
+}
+
+
 def get_args():
     parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     
     data_group = parser.add_mutually_exclusive_group(required=True)
     
-    parser.add_argument('--attack', type=str, required=False, default='greedy-wir-counterfit',
-        choices=['greedy-counterfit', 'ga-counterfit', 'greedy-wir-counterfit'], 
+    parser.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
         help='The type of attack to run.')
 
-    parser.add_argument('--transformation', type=str, required=False, default='word-swap-embedding',
-        choices=['word-swap-embedding', 'word-swap-homoglyph'],
+    parser.add_argument('--transformation', type=str, required=False, nargs='*',
+        default=['word-swap-embedding'],
         help='The type of transformation to apply')
         
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
-        default=['use', 'lang-tool'], 
-        help=('Constraints to add to the attack. Usage: "--constraints use lang-tool:{threshold} ' 
-        'goog-lm" to use the default use similarity of .9 and to choose the threshold'))
+        default=['use'], 
+        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}' 
+        ' Options are use, lang-tool, and goog-lm'))
     
     parser.add_argument('--out_file', type=str, required=False,
         help='The file to output the results to.')
@@ -99,6 +116,7 @@ def check_model_and_data_compatibility(data_name, model_name):
     elif model_name not in MODELS_BY_DATASET[data_name]:
         print(f'Warning: model {model_name} incompatible with dataset {data_name}.')
 
+
 if __name__ == '__main__':
     args = get_args()
     
@@ -112,51 +130,53 @@ if __name__ == '__main__':
     start_time = time.time()
 
     # Models
-    if args.model not in MODEL_CLASS_NAMES:
+    if ':' in args.model:
+        model_name, params = args.model.split(':')
+        if model_name not in MODEL_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported model {model_name}')
+        model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
+    elif args.model in MODEL_CLASS_NAMES:
+        model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
+    else: 
         raise ValueError(f'Error: unsupported model {args.model}')
     
-    model = MODEL_CLASS_NAMES[args.model]()
-    
-    # Transformation
-    if args.transformation == 'word-swap-embedding':
-        transformation = transformations.WordSwapEmbedding()
-    elif args.transformation == 'word-swap-homoglyph':
-        transformation = transformations.WordSwapHomoglyph()
+    # Transformations
+    defined_transformations = []    
+    for transformation in args.transformation:
+        if ':' in transformation:
+            transformation_name, params = transformation.split(':')
+            if transformation_name not in TRANSFORMATION_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported transformation {transformation_name}')
+            defined_transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
+        elif transformation in TRANSFORMATION_CLASS_NAMES:
+            defined_transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
+        else:
+            raise ValueError(f'Error: unsupported transformation {transformation}')
 
     # Attacks
-    if args.attack == 'greedy-counterfit':
-        attack = attacks.blackbox.GreedyWordSwap(model, transformation)
-    elif args.attack == 'ga-counterfit':
-        attack = attacks.blackbox.GeneticAlgorithm(model, transformation)
-    elif args.attack == 'greedy-wir-counterfit':
-        attack = attacks.blackbox.GreedyWordSwapWIR(model, transformation)
+    if ':' in args.attack:
+        attack_name, params = args.attack.split(':')
+        if attack_name not in ATTACK_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported attack {attack_name}')
+        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, defined_transformations, {params})')
+    elif args.attack in ATTACK_CLASS_NAMES:
+        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, defined_transformations)')
+    else:
+        raise ValueError(f'Error: unsupported attack {args.attack}')
 
     # Constraints
     if args.constraints:
-
         defined_constraints = []
-
         for constraint in args.constraints:
-            if 'use:' in constraint:
-                similarity = constraint.replace('use:', '')
-                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(float(similarity), metric='cosine'))
-            elif constraint == 'use':
-                # Default similarity to .9 if no similarity is given.
-                defined_constraints.append(constraints.semantics.UniversalSentenceEncoder(.90, metric='cosine'))
-
-            elif 'lang-tool:' in constraint:
-                threshold = constraint.replace('lang-tool:', '')
-                defined_constraints.append(constraints.syntax.LanguageTool(float(threshold)))
-            elif constraint == 'lang-tool':
-                # Default threshold to 0 if no threshold is given
-                defined_constraints.append(constraints.syntax.LanguageTool(0))
-
-            elif constraint == 'goog-lm':
-                defined_constraints.append(constraints.semantics.google_language_model.GoogleLanguageModel())
-
+            if ':' in constraint:
+                constraint_name, params = constraint.split(':')
+                if constraint_name not in CONSTRAINT_CLASS_NAMES:
+                    raise ValueError(f'Error: unsupported constraint {constraint_name}')
+                defined_constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint_name]}({params})'))
+            elif constraint in CONSTRAINT_CLASS_NAMES:
+                defined_constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint]}()'))
             else:
-                raise ValueError((f'{constraint} is not a valid constraint. ' 
-                    'Valid options are "use", "lang-tool", or "goog-lm". Use "-h" for help.'))
+                raise ValueError(f'Error: unsupported constraint {constraint}')
 
         attack.add_constraints(defined_constraints)
     
@@ -164,8 +184,6 @@ if __name__ == '__main__':
     if args.data in DATASET_CLASS_NAMES:
         dataset_class = DATASET_CLASS_NAMES[args.data]
         data = dataset_class(args.num_examples)
-    else:
-        raise ValueError(f'Unknown dataset {args.data}')
 
     # Output file
     if args.out_file is not None:

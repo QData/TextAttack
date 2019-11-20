@@ -8,7 +8,9 @@ Author-email: jm8wx@virginia.edu
 License: UNKNOWN
 Description: # TextAttack
         
-        ## Installation
+        ## Getting Started
+        
+        ### Installation
         
         You must be running Python 3.6+ to use this package. A CUDA-compatible GPU is 
         optional but will greatly improve code speed.
@@ -25,6 +27,10 @@ Description: # TextAttack
         import nltk
         nltk.download('stopwords')
         ```
+        
+        ### Basic Usage
+        
+        We have a command-line interface for running different attacks on different datasets. Run it with default arguments with `python textattack/run_attack.py`. See help info and list of arguments with `python textattack/run_attack.py --help`.
         
         ### Common Errors
         
@@ -48,19 +54,24 @@ Description: # TextAttack
         
         ### Attack Methods
         
-        We support the following attack methods:
+        
+        #### Black-box attacks
         
         - Greedy selection over all input words
         - Greedy selection with Word Importance Ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))
         - Genetic algorithm (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))
         
-        ### Perturbations
+        #### White-box attacks
         
-        An attack method selects the best possible perturbation from a set of potential perturbations. We support perturbations on the sentence, word, and character level.
+        - HotFlip (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2018)](https://arxiv.org/abs/1712.06751) _(coming soon)_
         
+        ### Transformations
         
-        #### Word Perturbations
+        A black-box attack method selects the best possible transformation from a set of all transformations.
         
+        We support the following transformations:
+        
+        - Homoglyph swap
         - Counterfit synonym swap
         
         ### Constraints
@@ -69,19 +80,23 @@ Description: # TextAttack
         
         #### Semantics
         - Word embedding nearest-neighbor distance
+        - Universal Sentence Encoder
+        - Google 1-billion words language model
         
         #### Syntax
         - Grammatical errors induced, measured with [LanguageTool](https://languagetool.org/)
-        
-        #### Morphology
         
         ### Datasets
         
         We include a few popular datasets to get you started.
         
-        #### Yelp Sentiment Analysis
+        - The [Yelp Sentiment Analysis dataset](https://www.yelp.com/dataset/challenge) includes inputs from yelp reviews manually labeled as positive (1) or negative (0).
+        - IMDB Movie Review Sentiment
+        - Movie Review Sentiment
+        - Kaggle Fake News
         
-        The [Yelp Sentiment Analysis dataset](https://www.yelp.com/dataset/challenge) includes inputs from yelp reviews manually labeled as positive (1) or negative (0).
+        ### Models 
+        Out of the box, textattack comes with several pretrained models for each dataset.
         
 Platform: UNKNOWN
 Classifier: Programming Language :: Python :: 3

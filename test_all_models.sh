@@ -10,8 +10,6 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-echo "Testing models on dataset $1."
-
 if [ $1 = "mr" ] || [ $1 = "all" ]; then
   echo "";
   echo "Testing models on dataset mr.";
