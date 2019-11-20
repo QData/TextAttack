@@ -1,2 +1,4 @@
 from .word_swap import WordSwap
 from .word_swap_embedding import WordSwapEmbedding
+from .word_swap_homoglyph import WordSwapHomoglyph
+from .word_swap_neighboring_character_swap import WordSwapNeighboringCharacterSwap
