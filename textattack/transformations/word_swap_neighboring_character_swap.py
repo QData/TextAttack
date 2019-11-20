@@ -11,7 +11,7 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
     def __init__(self, replace_stopwords=False):
         super().__init__(replace_stopwords)
 
-    def _get_replacement_words(self, word, random=False, max_candidates=15):
+    def _get_replacement_words(self, word, random=False):
         """ If random, returns a list with a single candidate word where 1 pair of neighboring characters is swapped
         If not random, returns a list containing all possible words with 1 pair of neighboring characters swapped
         """
@@ -28,7 +28,5 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
             for i in range(len(word)-1):
                 candidate_word = word[:i]+word[i+1]+word[i]+word[i+2:]
                 candidate_words.append(candidate_word)
-                if len(candidate_words) > max_candidates:
-                    break
 
         return candidate_words
