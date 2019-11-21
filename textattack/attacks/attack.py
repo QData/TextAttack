@@ -1,4 +1,5 @@
 import difflib
+import math
 import numpy as np
 import os
 import torch
@@ -125,7 +126,7 @@ class Attack:
         """
         raise NotImplementedError()
         
-    def _call_model(self, tokenized_text_list):
+    def _call_model(self, tokenized_text_list, batch_size=64):
         """
         Returns model predictions for a list of TokenizedText objects. 
         
@@ -133,8 +134,16 @@ class Attack:
         if not len(tokenized_text_list):
             return torch.tensor([])
         ids = torch.tensor([t.ids for t in tokenized_text_list])
-        ids = ids.to(utils.get_device())
-        scores = self.model(ids)
+        num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
+        scores = []
+        for batch_i in range(num_batches):
+            batch_start = batch_i * batch_size
+            batch_stop  = (batch_i + 1) * batch_size
+            batch_ids = ids[batch_start:batch_stop, :].to(utils.get_device())
+            scores.append(self.model(batch_ids))
+            del batch_ids
+        del ids
+        scores = torch.cat(scores, dim=0)
         # Validation check on model score dimensions
         if scores.ndim == 1:
             # Unsqueeze prediction, if it's been squeezed by the model.
