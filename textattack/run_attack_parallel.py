@@ -33,7 +33,7 @@ for i in range(num_devices):
     p = subprocess.Popen(full_args, env=new_env, stdout=out_file)
     arg_str = ' '.join(full_args)
     print(f'Started process {i} from args:', arg_str)
-    arg_file.write(arg_str + '\n')
+    arg_file.write(f'Started process {i} from args: ' + arg_str + '\n')
 
 arg_file.write('Attack started at ')
 arg_file.write(today.strftime('%d/%m/%Y at %H:%M:%S'))
