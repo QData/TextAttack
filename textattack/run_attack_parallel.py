@@ -40,25 +40,29 @@ def main():
         new_env = os.environ.copy()
         new_env['CUDA_VISIBLE_DEVICES'] = str(i)
         args = ['python', run_attack_path]
-        # Change number of examples in argument list.
+        
         command_line_args_list = sys.argv[1:]
+        
+        # Change number of examples in argument list.
+        examples_at_i = str(num_examples_per_device)
         if '--num_examples' in command_line_args_list:
             _x = command_line_args_list.index('--num_examples')
-            command_line_args_list[_x+1] = str(num_examples_per_device)
+            command_line_args_list[_x+1] = examples_at_i
         elif '--n' in command_line_args_list:
             _x = command_line_args_list.index('--n')
-            command_line_args_list[__x+1] = str(num_examples_per_device)
+            command_line_args_list[_x+1] = examples_at_i
         else:
-            command_line_args_list.extend(['--n', str(num_examples_per_device)])
+            command_line_args_list.extend(['--n', examples_at_i])
         # Change offset in argument list.
-        if '--offset' in command_line_args_list:
-            _x = command_line_args_list.index('--offset')
-            command_line_args_list[_x+1] = str(num_examples_per_device * i)
+        offset_at_i = str(input_args.num_examples_offset + num_examples_per_device * i)
+        if '--num_examples_offset' in command_line_args_list:
+            _x = command_line_args_list.index('--num_examples_offset')
+            command_line_args_list[_x+1] = offset_at_i
         elif '--o' in command_line_args_list:
             _x = command_line_args_list.index('--o')
-            command_line_args_list[__x+1] = str(num_examples_per_device * i)
+            command_line_args_list[_x+1] = offset_at_i
         else:
-            command_line_args_list.extend(['--o', str(num_examples_per_device*i)])
+            command_line_args_list.extend(['--o', offset_at_i])
         # Format and run command.
         full_args = args + command_line_args_list
         out_file.flush()
