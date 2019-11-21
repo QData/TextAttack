@@ -102,7 +102,7 @@ def get_args():
     parser.add_argument('--shuffle', action='store_true', required=False, 
         default=False, help='Randomly shuffle the data before attacking')
     
-    data_group = parser.add_mutually_exclusive_group(required=True)
+    data_group = parser.add_mutually_exclusive_group(required=False)
     
     data_group.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')

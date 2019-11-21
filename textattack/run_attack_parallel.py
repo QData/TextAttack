@@ -39,6 +39,7 @@ def main():
         # Create unique environment for this thread.
         new_env = os.environ.copy()
         new_env['CUDA_VISIBLE_DEVICES'] = str(i)
+        new_env['PYTHONUNBUFFERED'] = '1'
         args = ['python', run_attack_path]
         
         command_line_args_list = sys.argv[1:]
