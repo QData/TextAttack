@@ -1,6 +1,6 @@
-'''
-A command line parser to run an attack
-'''
+"""
+A command line parser to run an attack from user specifications.
+"""
 
 import argparse
 import time
@@ -97,7 +97,7 @@ def get_args():
         default='5', help='The number of examples to attack.')
     
     parser.add_argument('--num_examples_offset', '--o', type=int, required=False, 
-        default='5', help='The offset to start at in the dataset.')
+        default=0, help='The offset to start at in the dataset.')
     
     parser.add_argument('--shuffle', action='store_true', required=False, 
         default=False, help='Randomly shuffle the data before attacking')
