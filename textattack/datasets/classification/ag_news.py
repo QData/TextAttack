@@ -29,12 +29,12 @@ class AGNews(TextAttackDataset):
 
     Args:
         n (int): The number of examples to load
+        offset (int): line to start reading from
     
     """
     DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/ag'
-    def __init__(self, *args):
+    def __init__(self, n=None, offset=None):
         """ Loads a full dataset from disk. """
-        super().__init__(*args)
         utils.download_if_needed(AGNews.DATA_PATH)
-        self.examples = self._load_text_file(AGNews.DATA_PATH, n=n)
+        self.examples = self._load_text_file(AGNews.DATA_PATH, n=n, offset=offset)
         print('AGNews loaded', len(self.examples), 'examples.')

@@ -5,6 +5,7 @@
 __pycache__/
 
 # run logs
+output*/
 outputs/
 
 # IDE files

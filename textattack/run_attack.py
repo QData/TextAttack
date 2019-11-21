@@ -99,15 +99,15 @@ def get_args():
     parser.add_argument('--num_examples_offset', '--o', type=int, required=False, 
         default='5', help='The offset to start at in the dataset.')
     
-    parser.add_argument('--shuffle', type='store_true', required=False, 
+    parser.add_argument('--shuffle', action='store_true', required=False, 
         default=False, help='Randomly shuffle the data before attacking')
     
     data_group = parser.add_mutually_exclusive_group(required=True)
     
-    data_group.add_argument('--interactive', action='store_true', 
+    data_group.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
     
-    data_group.add_argument('--data', type=str, default='yelp-sentiment',
+    data_group.add_argument('--data', type=str, default=None,
         choices=DATASET_CLASS_NAMES.keys(), help='The dataset to use.')
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
@@ -119,6 +119,9 @@ def get_args():
         help='full attack recipe (overrides provided transformation & constraints)')
     
     args = parser.parse_args()
+    
+    # Default to interactive mode if no dataset specified.
+    if not args.data: args.interactive = True
     
     return args
 
@@ -136,37 +139,37 @@ def check_model_and_data_compatibility(data_name, model_name):
 
 def parse_transformation_from_args():
     # Transformations
-    transformations = []    
+    _transformations = []    
     for transformation in args.transformation:
         if ':' in transformation:
             transformation_name, params = transformation.split(':')
             if transformation_name not in TRANSFORMATION_CLASS_NAMES:
                 raise ValueError(f'Error: unsupported transformation {transformation_name}')
-            transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
+            _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
         elif transformation in TRANSFORMATION_CLASS_NAMES:
-            transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
+            _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
         else:
             raise ValueError(f'Error: unsupported transformation {transformation}')
-    return transformations
+    return _transformations
 
 def parse_constraints_from_args():
     # Constraints
     if not args.constraints: 
         return []
     
-    constraints = []
+    _constraints = []
     for constraint in args.constraints:
         if ':' in constraint:
             constraint_name, params = constraint.split(':')
             if constraint_name not in CONSTRAINT_CLASS_NAMES:
                 raise ValueError(f'Error: unsupported constraint {constraint_name}')
-            constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint_name]}({params})'))
+            _constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint_name]}({params})'))
         elif constraint in CONSTRAINT_CLASS_NAMES:
-            constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint]}()'))
+            _constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint]}()'))
         else:
             raise ValueError(f'Error: unsupported constraint {constraint}')
     
-    return constraints
+    return _constraints
 
 def parse_recipe_from_args():
     try:
@@ -180,9 +183,9 @@ def parse_attack_from_args():
         attack_name, params = args.attack.split(':')
         if attack_name not in ATTACK_CLASS_NAMES:
             raise ValueError(f'Error: unsupported attack {attack_name}')
-        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, transformations, {params})')
+        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, _transformations, {params})')
     elif args.attack in ATTACK_CLASS_NAMES:
-        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, transformations)')
+        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, _transformations)')
     else:
         raise ValueError(f'Error: unsupported attack {args.attack}')
     return attack
@@ -218,10 +221,9 @@ if __name__ == '__main__':
         attack = parse_recipe_from_args()
     else:
         # Transformations
-        transformations = parse_transformation_from_args()
+        _transformations = parse_transformation_from_args()
         # Attack
         attack = parse_attack_from_args()
-        print('constraints:', parse_constraints_from_args())
         attack.add_constraints(parse_constraints_from_args())
 
     # Output file
@@ -235,7 +237,7 @@ if __name__ == '__main__':
         
         # Data
         dataset_class = DATASET_CLASS_NAMES[args.data]
-        data = dataset_class(args.num_examples)
+        data = dataset_class(n=args.num_examples, offset=args.num_examples_offset)
         
         print(f'Model: {args.model} / Dataset: {args.data}')
         
