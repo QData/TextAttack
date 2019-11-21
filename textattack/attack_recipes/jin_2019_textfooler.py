@@ -18,18 +18,20 @@ def Jin2019TextFooler(model):
     #
     # Embedding: Counter-fitted Paragram Embeddings.
     #
-    # 50 nearest-neighbors with a cosine similarity of at least 0.7.
+    # 50 nearest-neighbors with a cosine similarity of at least 0.5.
+    # (The paper cites 0.7, but analysis of the code and some empirical
+    # results show that it's definitely 0.5.)
     #
-    transformation = WordSwapEmbedding(max_candidates=50, min_cos_sim=0.4, 
+    transformation = WordSwapEmbedding(max_candidates=50, min_cos_sim=0.5, 
         check_pos=True)
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(model, transformation)
+    attack = GreedyWordSwapWIR(model, transformations=[transformation])
     #
-    # Universal Sentence Encoder with ε = 0.9
+    # Universal Sentence Encoder with ε = 0.7.
     #
-    attack.add_constraint(UniversalSentenceEncoder(threshold=0.9, 
+    attack.add_constraint(UniversalSentenceEncoder(threshold=0.7, 
         metric='cosine', compare_with_original=False, window_size=15))
     
     return attack

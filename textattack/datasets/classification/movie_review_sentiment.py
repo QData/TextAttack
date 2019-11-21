@@ -16,8 +16,9 @@ class MovieReviewSentiment(TextAttackDataset):
     
     """
     DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/mr.txt'
-    def __init__(self, n=None):
+    def __init__(self, *args):
         """ Loads a full dataset from disk. """
+        super().__init__(*args)
         utils.download_if_needed(MovieReviewSentiment.DATA_PATH)
         self.examples = self._load_text_file(MovieReviewSentiment.DATA_PATH, n=n)
         print('MovieReviewSentiment loaded', len(self.examples), 'examples.')

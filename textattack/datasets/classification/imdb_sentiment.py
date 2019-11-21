@@ -14,8 +14,9 @@ class IMDBSentiment(TextAttackDataset):
     
     """
     DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/imdb.txt'
-    def __init__(self, n=None):
+    def __init__(self, *args):
         """ Loads a full dataset from disk. """
+        super().__init__(*args)
         utils.download_if_needed(IMDBSentiment.DATA_PATH)
         self.examples = self._load_text_file(IMDBSentiment.DATA_PATH, n=n)
         print('IMDBSentiment loaded', len(self.examples), 'examples.')

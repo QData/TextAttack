@@ -6,10 +6,11 @@ import argparse
 import time
 import os
 
-import textattack.datasets as datasets
+import textattack.attack_recipes as attack_recipes
 import textattack.attacks as attacks
-import textattack.models as models
 import textattack.constraints as constraints
+import textattack.datasets as datasets
+import textattack.models as models
 import textattack.transformations as transformations
 
 from textattack.tokenized_text import TokenizedText
@@ -20,6 +21,11 @@ DATASET_CLASS_NAMES = {
     'kaggle-fake-news': datasets.classification.KaggleFakeNews,
     'mr':               datasets.classification.MovieReviewSentiment,
     'yelp-sentiment':   datasets.classification.YelpSentiment,
+}
+
+RECIPE_NAMES = {
+    'alzantot':     attack_recipes.Alzantot2018GeneticAlgorithm,
+    'textfooler':   attack_recipes.Jin2019TextFooler
 }
 
 MODEL_CLASS_NAMES = {
@@ -50,8 +56,8 @@ MODELS_BY_DATASET = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-    'word-swap-embedding':  'transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':  'transformations.WordSwapHomoglyph',
+    'word-swap-embedding':             'transformations.WordSwapEmbedding',
+    'word-swap-homoglyph':             'transformations.WordSwapHomoglyph',
     'word-swap-neighboring-char-swap': 'transformations.WordSwapNeighboringCharacterSwap',
 }
 
@@ -71,11 +77,6 @@ ATTACK_CLASS_NAMES = {
 def get_args():
     parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    
-    data_group = parser.add_mutually_exclusive_group(required=True)
-    
-    parser.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
-        help='The type of attack to run.')
 
     parser.add_argument('--transformation', type=str, required=False, nargs='*',
         default=['word-swap-embedding'],
@@ -92,14 +93,30 @@ def get_args():
     parser.add_argument('--out_file', type=str, required=False,
         help='The file to output the results to.')
     
-    parser.add_argument('--num_examples', type=int, required=False, 
+    parser.add_argument('--num_examples', '--n', type=int, required=False, 
         default='5', help='The number of examples to attack.')
+    
+    parser.add_argument('--num_examples_offset', '--o', type=int, required=False, 
+        default='5', help='The offset to start at in the dataset.')
+    
+    parser.add_argument('--shuffle', type='store_true', required=False, 
+        default=False, help='Randomly shuffle the data before attacking')
+    
+    data_group = parser.add_mutually_exclusive_group(required=True)
     
     data_group.add_argument('--interactive', action='store_true', 
         help='Whether to run attacks interactively.')
     
     data_group.add_argument('--data', type=str, default='yelp-sentiment',
         choices=DATASET_CLASS_NAMES.keys(), help='The dataset to use.')
+    
+    attack_group = parser.add_mutually_exclusive_group(required=False)
+    
+    attack_group.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
+        help='The type of attack to run.')
+    
+    attack_group.add_argument('--recipe', type=str, required=False, default=None, 
+        help='full attack recipe (overrides provided transformation & constraints)')
     
     args = parser.parse_args()
     
@@ -117,6 +134,70 @@ def check_model_and_data_compatibility(data_name, model_name):
     elif model_name not in MODELS_BY_DATASET[data_name]:
         print(f'Warning: model {model_name} incompatible with dataset {data_name}.')
 
+def parse_transformation_from_args():
+    # Transformations
+    transformations = []    
+    for transformation in args.transformation:
+        if ':' in transformation:
+            transformation_name, params = transformation.split(':')
+            if transformation_name not in TRANSFORMATION_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported transformation {transformation_name}')
+            transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
+        elif transformation in TRANSFORMATION_CLASS_NAMES:
+            transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
+        else:
+            raise ValueError(f'Error: unsupported transformation {transformation}')
+    return transformations
+
+def parse_constraints_from_args():
+    # Constraints
+    if not args.constraints: 
+        return []
+    
+    constraints = []
+    for constraint in args.constraints:
+        if ':' in constraint:
+            constraint_name, params = constraint.split(':')
+            if constraint_name not in CONSTRAINT_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported constraint {constraint_name}')
+            constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint_name]}({params})'))
+        elif constraint in CONSTRAINT_CLASS_NAMES:
+            constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint]}()'))
+        else:
+            raise ValueError(f'Error: unsupported constraint {constraint}')
+    
+    return constraints
+
+def parse_recipe_from_args():
+    try:
+        recipe = RECIPE_NAMES[args.recipe](model)
+    except KeyError:
+        raise Error('Invalid recipe {args.recipe}')
+    return recipe
+
+def parse_attack_from_args():
+    if ':' in args.attack:
+        attack_name, params = args.attack.split(':')
+        if attack_name not in ATTACK_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported attack {attack_name}')
+        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, transformations, {params})')
+    elif args.attack in ATTACK_CLASS_NAMES:
+        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, transformations)')
+    else:
+        raise ValueError(f'Error: unsupported attack {args.attack}')
+    return attack
+
+def parse_model_from_args():
+    if ':' in args.model:
+        model_name, params = args.model.split(':')
+        if model_name not in MODEL_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported model {model_name}')
+        model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
+    elif args.model in MODEL_CLASS_NAMES:
+        model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
+    else: 
+        raise ValueError(f'Error: unsupported model {args.model}')
+    return model
 
 if __name__ == '__main__':
     args = get_args()
@@ -131,74 +212,34 @@ if __name__ == '__main__':
     start_time = time.time()
 
     # Models
-    if ':' in args.model:
-        model_name, params = args.model.split(':')
-        if model_name not in MODEL_CLASS_NAMES:
-            raise ValueError(f'Error: unsupported model {model_name}')
-        model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
-    elif args.model in MODEL_CLASS_NAMES:
-        model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
-    else: 
-        raise ValueError(f'Error: unsupported model {args.model}')
+    model = parse_model_from_args()
     
-    # Transformations
-    defined_transformations = []    
-    for transformation in args.transformation:
-        if ':' in transformation:
-            transformation_name, params = transformation.split(':')
-            if transformation_name not in TRANSFORMATION_CLASS_NAMES:
-                raise ValueError(f'Error: unsupported transformation {transformation_name}')
-            defined_transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
-        elif transformation in TRANSFORMATION_CLASS_NAMES:
-            defined_transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
-        else:
-            raise ValueError(f'Error: unsupported transformation {transformation}')
-
-    # Attacks
-    if ':' in args.attack:
-        attack_name, params = args.attack.split(':')
-        if attack_name not in ATTACK_CLASS_NAMES:
-            raise ValueError(f'Error: unsupported attack {attack_name}')
-        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, defined_transformations, {params})')
-    elif args.attack in ATTACK_CLASS_NAMES:
-        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, defined_transformations)')
+    if args.recipe:
+        attack = parse_recipe_from_args()
     else:
-        raise ValueError(f'Error: unsupported attack {args.attack}')
-
-    # Constraints
-    if args.constraints:
-        defined_constraints = []
-        for constraint in args.constraints:
-            if ':' in constraint:
-                constraint_name, params = constraint.split(':')
-                if constraint_name not in CONSTRAINT_CLASS_NAMES:
-                    raise ValueError(f'Error: unsupported constraint {constraint_name}')
-                defined_constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint_name]}({params})'))
-            elif constraint in CONSTRAINT_CLASS_NAMES:
-                defined_constraints.append(eval(f'{CONSTRAINT_CLASS_NAMES[constraint]}()'))
-            else:
-                raise ValueError(f'Error: unsupported constraint {constraint}')
-
-        attack.add_constraints(defined_constraints)
-    
-    # Data
-    if args.data in DATASET_CLASS_NAMES:
-        dataset_class = DATASET_CLASS_NAMES[args.data]
-        data = dataset_class(args.num_examples)
+        # Transformations
+        transformations = parse_transformation_from_args()
+        # Attack
+        attack = parse_attack_from_args()
+        print('constraints:', parse_constraints_from_args())
+        attack.add_constraints(parse_constraints_from_args())
 
     # Output file
     if args.out_file is not None:
         attack.add_output_file(args.out_file)
-
 
     load_time = time.time()
 
     if args.data is not None and not args.interactive:
         check_model_and_data_compatibility(args.data, args.model)
         
+        # Data
+        dataset_class = DATASET_CLASS_NAMES[args.data]
+        data = dataset_class(args.num_examples)
+        
         print(f'Model: {args.model} / Dataset: {args.data}')
         
-        attack.attack(data, shuffle=False)
+        attack.attack(data, shuffle=args.shuffle)
 
         finish_time = time.time()
 
