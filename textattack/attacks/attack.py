@@ -181,12 +181,21 @@ class Attack:
             random.shuffle(dataset)
         
         results = []
+        skipped_attacks = 0
+        failed_attacks = 0
+        successful_attacks = 0
         for label, text in dataset:
             tokenized_text = TokenizedText(text, self.text_to_ids_converter)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
+                skipped_attacks += 1
                 continue
             result = self._attack_one(label, tokenized_text)
+            if isinstance(result, FailedAttackResult):
+                failed_attacks += 1
+            else:
+                successful_attacks += 1
+
             results.append(result)
         
         if self.output_to_terminal:
@@ -205,6 +214,10 @@ class Attack:
             raise NotImplementedError()
         
         print('-'*80)
+
+        print(f'Number of successful attacks: {successful_attacks}')
+        print(f'Number of failed attacks: {failed_attacks}')
+        print(f'Number of skipped attacks: {skipped_attacks}')
         
         return results
 
