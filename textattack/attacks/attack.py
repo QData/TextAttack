@@ -41,6 +41,9 @@ class Attack:
         self.output_to_visdom = False
         # Track the number of successful attacks.
         self.examples_completed = 0
+        self.skipped_attacks = 0
+        self.failed_attacks = 0
+        self.successful_attacks = 0
     
     def add_output_file(self, file):
         """ 
@@ -185,8 +188,14 @@ class Attack:
             tokenized_text = TokenizedText(text, self.text_to_ids_converter)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
+                self.skipped_attacks += 1
                 continue
             result = self._attack_one(label, tokenized_text)
+            if isinstance(result, FailedAttackResult):
+                self.failed_attacks += 1
+            else:
+                self.successful_attacks += 1
+
             results.append(result)
         
         if self.output_to_terminal:
@@ -205,6 +214,10 @@ class Attack:
             raise NotImplementedError()
         
         print('-'*80)
+
+        print(f'Number of successful attacks: {self.successful_attacks}')
+        print(f'Number of failed attacks: {self.failed_attacks}')
+        print(f'Number of skipped attacks: {self.skipped_attacks}')
         
         return results
 

@@ -35,7 +35,7 @@ class TextAttackDataset:
         text_file = open(text_file_name, 'r')
         i = 0
         for j, raw_line in enumerate(text_file.readlines()):
-            if j < offset: 
+            if offset is not None and j < offset: 
                 continue
             tokens = raw_line.strip().split()
             label = int(tokens[0])

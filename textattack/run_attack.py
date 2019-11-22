@@ -15,13 +15,6 @@ import textattack.transformations as transformations
 
 from textattack.tokenized_text import TokenizedText
 
-DATASET_CLASS_NAMES = {
-    'agnews':           datasets.classification.AGNews,
-    'imdb':             datasets.classification.IMDBSentiment,
-    'kaggle-fake-news': datasets.classification.KaggleFakeNews,
-    'mr':               datasets.classification.MovieReviewSentiment,
-    'yelp-sentiment':   datasets.classification.YelpSentiment,
-}
 
 RECIPE_NAMES = {
     'alzantot':     attack_recipes.Alzantot2018GeneticAlgorithm,
@@ -49,10 +42,25 @@ MODEL_CLASS_NAMES = {
     'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
 }
 
-MODELS_BY_DATASET = {
-    'imdb':             ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
-    'mr':               ['bert-mr', 'cnn-mr', 'lstm-mr'],
-    'yelp-sentiment':   ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
+DATASET_BY_MODEL = {
+    #
+    # IMDB models 
+    #
+    'bert-imdb':                datasets.classification.IMDBSentiment,
+    'cnn-imdb':                 datasets.classification.IMDBSentiment,
+    'lstm-imdb':                datasets.classification.IMDBSentiment,
+    #
+    # MR models
+    #
+    'bert-mr':                  datasets.classification.MovieReviewSentiment,
+    'cnn-mr':                   datasets.classification.MovieReviewSentiment,
+    'lstm-mr':                  datasets.classification.MovieReviewSentiment,
+    #
+    # Yelp models
+    #
+    'bert-yelp-sentiment':      datasets.classification.YelpSentiment,
+    'cnn-yelp-sentiment':       datasets.classification.YelpSentiment,
+    'lstm-yelp-sentiment':      datasets.classification.YelpSentiment,
 }
 
 TRANSFORMATION_CLASS_NAMES = {
@@ -102,13 +110,8 @@ def get_args():
     parser.add_argument('--shuffle', action='store_true', required=False, 
         default=False, help='Randomly shuffle the data before attacking')
     
-    data_group = parser.add_mutually_exclusive_group(required=False)
-    
-    data_group.add_argument('--interactive', action='store_true', default=False,
+    parser.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
-    
-    data_group.add_argument('--data', type=str, default=None,
-        choices=DATASET_CLASS_NAMES.keys(), help='The dataset to use.')
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
@@ -120,22 +123,7 @@ def get_args():
     
     args = parser.parse_args()
     
-    # Default to interactive mode if no dataset specified.
-    if not args.data: args.interactive = True
-    
     return args
-
-def check_model_and_data_compatibility(data_name, model_name):
-    """
-        Prints a warning message if the user attacks a model using data different
-        than what it was trained on.
-    """
-    if not model_name or not data_name:
-        return
-    elif data_name not in MODELS_BY_DATASET:
-        print('Warning: No known models for this dataset.')
-    elif model_name not in MODELS_BY_DATASET[data_name]:
-        print(f'Warning: model {model_name} incompatible with dataset {data_name}.')
 
 def parse_transformation_from_args():
     # Transformations
@@ -233,24 +221,6 @@ if __name__ == '__main__':
 
     load_time = time.time()
 
-    if args.data is not None and not args.interactive:
-        check_model_and_data_compatibility(args.data, args.model)
-        
-        # Data
-        dataset_class = DATASET_CLASS_NAMES[args.data]
-        data = dataset_class(n=args.num_examples, offset=args.num_examples_offset)
-        
-        print(f'Model: {args.model} / Dataset: {args.data}')
-        
-        attack.attack(data, shuffle=args.shuffle)
-
-        finish_time = time.time()
-
-        print(f'Loaded in {load_time - start_time}s')
-        print(f'Ran attack in {finish_time - load_time}s')
-        print(f'TOTAL TIME: {finish_time - start_time}s')
-
-    
     if args.interactive:
         print('Running in interactive mode')
         print('----------------------------')
@@ -273,3 +243,21 @@ if __name__ == '__main__':
             print('Attacking...')
 
             attack.attack([(label, text)])
+    
+    else:
+        # Not interactive? Use default dataset.
+        if args.model in DATASET_BY_MODEL:
+            data = DATASET_BY_MODEL[args.model](n=args.num_examples)
+        else:
+            raise ValueError(f'Error: unsupported model {args.model}')
+            
+        data_name = args.model.split('-', 1)[1]
+        print(f'Model: {args.model} / Dataset: {data_name}')
+        
+        attack.attack(data, shuffle=args.shuffle)
+
+        finish_time = time.time()
+
+        print(f'Loaded in {load_time - start_time}s')
+        print(f'Ran attack in {finish_time - load_time}s')
+        print(f'TOTAL TIME: {finish_time - start_time}s')
