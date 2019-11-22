@@ -92,7 +92,7 @@ def main():
     arg_file.write('\n')
     arg_file.close()
     
-    print('Printing results for {} attacks to folder {}'.format(_cg(num_devices), 
+    print('Printing results for {} attack threads to folder {}'.format(_cg(num_devices), 
         _cb(folder_name)))
     
     # Wait for attacks to run and aggregate results.
