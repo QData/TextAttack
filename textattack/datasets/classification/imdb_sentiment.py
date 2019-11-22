@@ -3,7 +3,7 @@ from textattack.datasets import TextAttackDataset
 
 class IMDBSentiment(TextAttackDataset):
     """
-    Loads the IMDB Movie Review Sentiment dataset.
+    Loads samples from the IMDB Movie Review Sentiment dataset.
     
     Labels:
         0 - Negative

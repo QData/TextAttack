@@ -3,7 +3,7 @@ from textattack.datasets import TextAttackDataset
 
 class AGNews(TextAttackDataset):
     """
-    Loads the AG News Dataset.
+    Loads samples from the AG News Dataset.
     
     AG is a collection of more than 1 million news articles. News articles have 
     been gathered from more than 2000  news sources by ComeToMyHead in more than 

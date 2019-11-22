@@ -12,6 +12,7 @@ from textattack.utils import color_text_terminal
 
 
 def _cb(s): return color_text_terminal(str(s), color='blue')
+def _cg(s): return color_text_terminal(str(s), color='green')
 def _cr(s): return color_text_terminal(str(s), color='red')
 
 result_regex = '----------------------------------- Result [0-9]* -----------------------------------'
@@ -37,7 +38,8 @@ def main():
     run_attack_path = os.path.join(current_working_dir, 'run_attack.py')
     
     today = datetime.datetime.now()
-    folder_name = os.path.join(current_working_dir, 'outputs', 'attack-' + today.strftime('%Y-%m-%d-%H--%H:%M:%S'))
+    out_dir = input_args.out_dir or 'outputs'
+    folder_name = os.path.join(current_working_dir, out_dir, 'attack-' + today.strftime('%Y-%m-%d-%H--%H:%M:%S'))
     os.makedirs(folder_name)
     
     arg_file = open(os.path.join(folder_name, 'args.txt'), 'w')
@@ -90,7 +92,7 @@ def main():
     arg_file.write('\n')
     arg_file.close()
     
-    print('Printing results for {} attacks to folder {}'.format(_cb(num_devices), 
+    print('Printing results for {} attacks to folder {}'.format(_cg(num_devices), 
         _cb(folder_name)))
     
     # Wait for attacks to run and aggregate results.

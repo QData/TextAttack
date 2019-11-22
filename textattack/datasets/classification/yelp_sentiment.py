@@ -3,7 +3,7 @@ from textattack.datasets import TextAttackDataset
 
 class YelpSentiment(TextAttackDataset):
     """
-    Loads the Yelp Sentiment dataset.
+    Loads samples from the Yelp Sentiment dataset.
     
     Labels:
         0 - Negative

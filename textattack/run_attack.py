@@ -90,8 +90,8 @@ def get_args():
         help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}' 
         ' Options are use, lang-tool, and goog-lm'))
     
-    parser.add_argument('--out_file', type=str, required=False,
-        help='The file to output the results to.')
+    parser.add_argument('--out_dir', type=str, required=False, default=None,
+        help='A directory to output results to.')
     
     parser.add_argument('--num_examples', '--n', type=int, required=False, 
         default='5', help='The number of examples to attack.')
@@ -227,8 +227,9 @@ if __name__ == '__main__':
         attack.add_constraints(parse_constraints_from_args())
 
     # Output file
-    if args.out_file is not None:
-        attack.add_output_file(args.out_file)
+    if args.out_dir is not None:
+        outfile_name = 'attack-{}.txt'.format(int(time.time()))
+        attack.add_output_file(os.path.join(args.out_dir, outfile_name))
 
     load_time = time.time()
 

@@ -3,7 +3,7 @@ from textattack.datasets import TextAttackDataset
 
 class KaggleFakeNews(TextAttackDataset):
     """
-    Loads the Kaggle Fake News dataset. https://www.kaggle.com/mrisdal/fake-news
+    Loads samples from the Kaggle Fake News dataset. https://www.kaggle.com/mrisdal/fake-news
     
     Labels:
         0 - Real Article
@@ -15,7 +15,7 @@ class KaggleFakeNews(TextAttackDataset):
     
     """
     DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/fake'
-    def __init__(self):
+    def __init__(self, n=None, offset=None):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(KaggleFakeNews.DATA_PATH)
         self.examples = self._load_text_file(KaggleFakeNews.DATA_PATH, n=n, offset=offset)
