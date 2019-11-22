@@ -3,7 +3,7 @@ import os
 import torch
 
 from textattack.constraints import Constraint
-from textattack.utils import download_if_needed, get_device
+import textattack.utils as utils
 
 from .infer_sent import InferSent
 
@@ -29,6 +29,7 @@ class UniversalSentenceEncoder(Constraint):
     def __init__(self, threshold=0.8, metric='cosine', compare_with_original=False, window_size=None):
         self.threshold = threshold
         self.model = self.get_infersent_model()
+        self.model.to(utils.get_device())
         
         if metric=='cosine':
             self.dist = torch.nn.CosineSimilarity
@@ -48,14 +49,14 @@ class UniversalSentenceEncoder(Constraint):
         """
         infersent_version = 2
         model_path = os.path.join(UniversalSentenceEncoder.MODEL_PATH, f'infersent{infersent_version}.pkl')
-        download_if_needed(model_path)
+        utils.download_if_needed(model_path)
         params_model = {'bsize': 64, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
                 'pool_type': 'max', 'dpout_model': 0.0, 'version': infersent_version}
         infersent = InferSent(params_model)
         infersent.load_state_dict(torch.load(model_path))
         W2V_PATH = os.path.join(UniversalSentenceEncoder.WORD_EMBEDDING_PATH, 
             'fastText', 'crawl-300d-2M.vec')
-        download_if_needed(W2V_PATH)
+        utils.download_if_needed(W2V_PATH)
         infersent.set_w2v_path(W2V_PATH)
         infersent.build_vocab_k_words(K=100000)
         return infersent
@@ -77,8 +78,8 @@ class UniversalSentenceEncoder(Constraint):
         """
         original_embedding, perturbed_embedding = self.model.encode([x, x_adv], tokenize = True)
         
-        original_embedding = torch.tensor(original_embedding).to(get_device())
-        perturbed_embedding = torch.tensor(perturbed_embedding).to(get_device())
+        original_embedding = torch.tensor(original_embedding).to(utils.get_device())
+        perturbed_embedding = torch.tensor(perturbed_embedding).to(utils.get_device())
         
         return self.dist(dim=0)(original_embedding, perturbed_embedding)
     
@@ -109,14 +110,14 @@ class UniversalSentenceEncoder(Constraint):
                 x_list_text.append(x.text_window_around_index(modified_index, self.window_size))
                 x_adv_list_text.append(x_adv.text_window_around_index(modified_index, self.window_size))
             embeddings = self.model.encode(x_list_text + x_adv_list_text, tokenize=True)
-            original_embeddings = torch.tensor(embeddings[:len(x_adv_list)]).to(get_device())
-            perturbed_embeddings = torch.tensor(embeddings[len(x_adv_list):]).to(get_device())
+            original_embeddings = torch.tensor(embeddings[:len(x_adv_list)]).to(utils.get_device())
+            perturbed_embeddings = torch.tensor(embeddings[len(x_adv_list):]).to(utils.get_device())
         else:
             x_text = x.text
             x_adv_list_text = [x_adv.text for x_adv in x_adv_list]
             embeddings = self.model.encode([x_text] + x_adv_list_text, tokenize=True)
-            original_embedding = torch.tensor(embeddings[0]).to(get_device())
-            perturbed_embeddings = torch.tensor(embeddings[1:]).to(get_device())
+            original_embedding = torch.tensor(embeddings[0]).to(utils.get_device())
+            perturbed_embeddings = torch.tensor(embeddings[1:]).to(utils.get_device())
         
             # Repeat original embedding to size of perturbed embedding.
             original_embeddings = original_embedding.unsqueeze(dim=0).repeat(len(perturbed_embeddings),1)
