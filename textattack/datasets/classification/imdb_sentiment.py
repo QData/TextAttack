@@ -3,7 +3,7 @@ from textattack.datasets import TextAttackDataset
 
 class IMDBSentiment(TextAttackDataset):
     """
-    Loads the IMDB Movie Review Sentiment dataset.
+    Loads samples from the IMDB Movie Review Sentiment dataset.
     
     Labels:
         0 - Negative
@@ -11,11 +11,13 @@ class IMDBSentiment(TextAttackDataset):
 
     Args:
         n (int): The number of examples to load
+        offset (int): line to start reading from
     
     """
-    DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/imdb'
-    def __init__(self, n=None):
+    DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/imdb.txt'
+    def __init__(self, n=None, offset=None):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(IMDBSentiment.DATA_PATH)
-        self.examples = self._load_text_file(IMDBSentiment.DATA_PATH, n=n)
+        self.examples = self._load_text_file(IMDBSentiment.DATA_PATH, n=n, 
+            offset=offset)
         print('IMDBSentiment loaded', len(self.examples), 'examples.')

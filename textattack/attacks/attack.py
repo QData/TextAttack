@@ -1,4 +1,5 @@
 import difflib
+import math
 import numpy as np
 import os
 import torch
@@ -119,13 +120,13 @@ class Attack:
 
     def _attack_one(self, label, tokenized_text):
         """
-        Perturbs `text` to until `self.model` gives a different label
-        than `label`. 
+        Perturbs `text` to until `self.model` gives a different label than 
+        `label`.
 
         """
         raise NotImplementedError()
         
-    def _call_model(self, tokenized_text_list):
+    def _call_model(self, tokenized_text_list, batch_size=64):
         """
         Returns model predictions for a list of TokenizedText objects. 
         
@@ -133,8 +134,16 @@ class Attack:
         if not len(tokenized_text_list):
             return torch.tensor([])
         ids = torch.tensor([t.ids for t in tokenized_text_list])
-        ids = ids.to(utils.get_device())
-        scores = self.model(ids)
+        num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
+        scores = []
+        for batch_i in range(num_batches):
+            batch_start = batch_i * batch_size
+            batch_stop  = (batch_i + 1) * batch_size
+            batch_ids = ids[batch_start:batch_stop, :].to(utils.get_device())
+            scores.append(self.model(batch_ids))
+            del batch_ids
+        del ids
+        scores = torch.cat(scores, dim=0)
         # Validation check on model score dimensions
         if scores.ndim == 1:
             # Unsqueeze prediction, if it's been squeezed by the model.
@@ -148,6 +157,12 @@ class Attack:
         elif scores.shape[0] != len(tokenized_text_list):
             # If model returns an incorrect number of scores, throw an error.
             raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
+        elif not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
+            # Values in each row should sum up to 1. The model should return a 
+            # set of numbers corresponding to probabilities, which should add
+            # up to 1. Since they are `torch.float` values, allow a small
+            # error in the summation.
+            raise ValueError('Model scores do not add up to 1.')
         return scores
       
     def attack(self, dataset, shuffle=False):
@@ -168,6 +183,9 @@ class Attack:
         results = []
         for label, text in dataset:
             tokenized_text = TokenizedText(text, self.text_to_ids_converter)
+            predicted_label = self._call_model([tokenized_text])[0].argmax().item()
+            if predicted_label != label:
+                continue
             result = self._attack_one(label, tokenized_text)
             results.append(result)
         

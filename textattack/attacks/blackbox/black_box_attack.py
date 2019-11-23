@@ -1,3 +1,5 @@
+import torch
+
 from textattack.attacks import Attack
 
 import torch
@@ -23,6 +25,6 @@ class BlackBoxAttack(Attack):
         self.text_to_ids_converter = model.convert_text_to_ids
         super().__init__(constraints=constraints)
         
-    def _call_model(self, tokenized_text_list):
+    def _call_model(self, *args, **kwargs):
         with torch.no_grad():
-            super()._call_model(tokenized_text_list)
+            return super()._call_model(*args, **kwargs)

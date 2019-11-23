@@ -1,3 +1,6 @@
+# cache for test output
+.cache
+
 # compiled python files
 __pycache__/
 

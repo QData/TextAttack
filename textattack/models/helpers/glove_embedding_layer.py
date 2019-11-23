@@ -5,6 +5,8 @@ import torch.nn as nn
 
 import textattack.utils as utils
 
+logger = utils.get_logger()
+
 class EmbeddingLayer(nn.Module):
     """
         A layer of a model that replaces word IDs with their embeddings. 
@@ -24,7 +26,7 @@ class EmbeddingLayer(nn.Module):
                 assert word not in word2id, "Duplicate words in pre-trained embeddings"
                 word2id[word] = len(word2id)
 
-            print(f'{len(word2id)} pre-trained word embeddings loaded.\n')
+            logger.debug(f'{len(word2id)} pre-trained word embeddings loaded.\n')
             
             n_d = len(embvecs[0])
 
@@ -44,7 +46,7 @@ class EmbeddingLayer(nn.Module):
         if embs is not None:
             weight  = self.embedding.weight
             weight.data[:len(embwords)].copy_(torch.from_numpy(embvecs))
-            print(f"EmbeddingLayer shape: {weight.size()}")
+            logger.debug(f'EmbeddingLayer shape: {weight.size()}')
 
         if normalize:
             weight = self.embedding.weight

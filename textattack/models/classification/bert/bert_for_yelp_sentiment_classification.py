@@ -5,6 +5,11 @@ class BERTForYelpSentimentClassification(BERTForClassification):
     BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification.
     """
     
-    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/BertClassifier/outputs/yelp-2019-11-08-18:16'
-    def __init__(self):
-        super().__init__(BERTForYelpSentimentClassification.MODEL_PATH)
+    MODEL_PATH_CASED ='/p/qdata/jm8wx/research/text_attacks/trained_bert_models/yelp-cased'
+    MODEL_PATH_UNCASED = '/p/qdata/jm8wx/research/text_attacks/trained_bert_models/yelp-uncased'
+    def __init__(self, cased=False):
+        if cased:
+            path = BERTForYelpSentimentClassification.MODEL_PATH_CASED
+        else:
+            path = BERTForYelpSentimentClassification.MODEL_PATH_UNCASED
+        super().__init__(path)

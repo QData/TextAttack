@@ -131,7 +131,7 @@ class TokenizedText:
         return TokenizedText(final_sentence, self.text_to_ids_converter, attack_attrs=self.attack_attrs)
         
     def __repr__(self):
-        return self.text
+        return f'<TokenizedText "{self.text}">'
 
 def raw_words(s):
     """ Lowercases a string, removes all non-alphanumeric characters,
