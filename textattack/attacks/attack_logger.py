@@ -19,32 +19,31 @@ class AttackLogger:
         self.results = None
         self.num_words_changed_until_success = []
         self.perturbed_word_percentages = []
+        self.max_words_changed = 0
+        self.max_seq_length = 10000
 
     def log_samples(self, results):
         self.results = results
         sample_rows = []
-        self.num_words_changed_until_success = [0] * (self.attack.max_depth+5)
+        self.num_words_changed_until_success = [0] * self.max_seq_length
         self.perturbed_word_percentages = []
         for result in self.results:
-            input_text_tkns = result.original_text.text.split()
-            output_text_tkns = result.perturbed_text.text.split()
+            num_words = len(result.original_text.words())
             row = []
             labelchange = str(result.original_label)+" -> "+str(result.perturbed_label)
             row.append(labelchange)
             text1, text2, num_words_changed = self.diff(result, html=True)
             row.append(text1)
             row.append(text2)
-            self.num_words_changed_until_success[num_words_changed]+=1
+            self.num_words_changed_until_success[num_words_changed-1]+=1
+            self.max_words_changed = max(self.max_words_changed,num_words_changed)
             if num_words_changed > 0:
-                if num_words_changed > len(input_text_tkns):
-                    num_words_changed = len(input_text_tkns)
-                perturbed_word_percentage = num_words_changed * 100.0 / len(input_text_tkns)
+                perturbed_word_percentage = num_words_changed * 100.0 / num_words
             else:
                 perturbed_word_percentage = 0
             self.perturbed_word_percentages.append(perturbed_word_percentage)
-            perturbed_word_percentage_str = str(round(perturbed_word_percentage, 2))
             sample_rows.append(row)
-            self.visdom.table(sample_rows, window_id="results", title="Attack Results")
+        self.visdom.table(sample_rows, window_id="results", title="Attack Results")
             
     def diff(self, result, html=False):
         """ Shows the difference between two strings in color.
@@ -65,9 +64,6 @@ class AttackLogger:
         
         indices = self.diff_indices(words1,words2)
         
-        if indices == []:
-            indices = range(self.attack.max_depth+4)
-        
         c1 = utils.color_from_label(result.original_label)
         c2 = utils.color_from_label(result.perturbed_label)
         
@@ -86,7 +82,7 @@ class AttackLogger:
         t1 = result.original_text.replace_words_at_indices(r_indices, new_w1s)
         t2 = result.original_text.replace_words_at_indices(r_indices, new_w2s)
                 
-        return (str(t1), str(t2), len(indices))
+        return (t1.text, t2.text, len(indices))
         
     def diff_indices(self, words1, words2):
         indices = []
@@ -98,14 +94,9 @@ class AttackLogger:
         return indices
             
     def log_num_words_changed(self):        
-        numbins = len(self.num_words_changed_until_success)
-        hist = [0] * (self.attack.max_depth+5)
-        for i in range(len(self.num_words_changed_until_success)):
-            if i == 0:
-                continue
-            hist[i-1] = self.num_words_changed_until_success[i]
+        numbins = max(self.max_words_changed,10)
             
-        self.visdom.bar(hist,
+        self.visdom.bar(self.num_words_changed_until_success[:numbins],
             numbins=numbins, title='Result', window_id='powers_hist')
             
     def log_attack_details(self):
