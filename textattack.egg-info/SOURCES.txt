@@ -2,6 +2,7 @@ README.md
 setup.py
 textattack/__init__.py
 textattack/run_attack.py
+textattack/run_attack_parallel.py
 textattack/tokenized_text.py
 textattack/utils.py
 textattack.egg-info/PKG-INFO
@@ -72,3 +73,4 @@ textattack/transformations/transformation.py
 textattack/transformations/word_swap.py
 textattack/transformations/word_swap_embedding.py
 textattack/transformations/word_swap_homoglyph.py
+textattack/transformations/word_swap_neighboring_character_swap.py

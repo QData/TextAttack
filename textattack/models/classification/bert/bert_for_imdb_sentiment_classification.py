@@ -5,8 +5,8 @@ class BERTForIMDBSentimentClassification(BERTForClassification):
     BERT fine-tuned on the IMDb Sentiment dataset for sentiment classification.
     """
     
-    MODEL_PATH_CASED = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/BertClassifier/outputs/imdb-cased-2019-11-12-05:04'
-    MODEL_PATH_UNCASED = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/BertClassifier/outputs/imdb-uncased-2019-11-11-19:57'
+    MODEL_PATH_CASED = '/p/qdata/jm8wx/research/text_attacks/trained_bert_models/imdb-cased'
+    MODEL_PATH_UNCASED = '/p/qdata/jm8wx/research/text_attacks/trained_bert_models/imdb-uncased'
     def __init__(self, cased=False):
         if cased:
             path = BERTForIMDBSentimentClassification.MODEL_PATH_CASED

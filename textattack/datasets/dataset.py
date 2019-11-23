@@ -18,7 +18,7 @@ class TextAttackDataset:
     def __next__(self):
         return self.examples.__next__()
     
-    def _load_text_file(self, text_file_name, n=None):
+    def _load_text_file(self, text_file_name, n=None, offset=0):
         """ Loads (label, text) pairs from a text file. 
         
             Format must look like:
@@ -26,10 +26,17 @@ class TextAttackDataset:
                 1 this is a great little ...
                 0 "i love hot n juicy .  ...
                 0 "\""this world needs a ...
+            
+            Arguments:
+                n (int): number of samples to return
+                offset (int): line to start reading from
         """
         examples = []
+        text_file = open(text_file_name, 'r')
         i = 0
-        for raw_line in open(text_file_name, 'r').readlines():
+        for j, raw_line in enumerate(text_file.readlines()):
+            if offset is not None and j < offset: 
+                continue
             tokens = raw_line.strip().split()
             label = int(tokens[0])
             text = ' '.join(tokens[1:])

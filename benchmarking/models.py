@@ -3,9 +3,11 @@ import textattack
 import torch
 import sys
 
-def _cb(s): return textattack.utils.color_text_terminal(s, color='blue')
-def _cg(s): return textattack.utils.color_text_terminal(s, color='green')
-def _cr(s): return textattack.utils.color_text_terminal(s, color='red')
+import textattack.models as models
+
+def _cb(s): return textattack.utils.color_text_terminal(str(s), color='blue')
+def _cg(s): return textattack.utils.color_text_terminal(str(s), color='green')
+def _cr(s): return textattack.utils.color_text_terminal(str(s), color='red')
 def _pb(): print(_cg('-' * 60))
 
 def test_model_on_dataset(model, dataset):
@@ -26,13 +28,11 @@ def test_model_on_dataset(model, dataset):
 
 def test_all_models(num_examples):
     _pb()
-    for dataset_name in textattack.run_attack.MODELS_BY_DATASET:
-        dataset = textattack.run_attack.DATASET_CLASS_NAMES[dataset_name](num_examples)
-        model_names = textattack.run_attack.MODELS_BY_DATASET[dataset_name]
-        for model_name in model_names:
-            model = textattack.run_attack.MODEL_CLASS_NAMES[model_name]()
-            print(f'\nTesting {_cr(model_name)} on {_cr(dataset_name)}...')
-            test_model_on_dataset(model, dataset)
+    for model_name in textattack.run_attack.MODEL_CLASS_NAMES:
+        model = eval(textattack.run_attack.MODEL_CLASS_NAMES[model_name])()
+        dataset = textattack.run_attack.DATASET_BY_MODEL[model_name]()
+        print(f'\nTesting {_cr(model_name)} on {_cr(type(dataset))}...')
+        test_model_on_dataset(model, dataset)
         _pb()
     # @TODO print the grid of models/dataset names with results in a nice table :)
 

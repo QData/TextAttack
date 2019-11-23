@@ -7,3 +7,4 @@ transformers==2.0.0
 tensorflow-gpu
 scikit-learn
 visdom
+spacy

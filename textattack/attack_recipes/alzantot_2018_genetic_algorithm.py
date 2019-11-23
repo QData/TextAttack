@@ -25,7 +25,8 @@ def Alzantot2018GeneticAlgorithm(model):
     #
     # Perform word substitution with a genetic algorithm.
     #
-    attack = GeneticAlgorithm(model, transformation, pop_size=60, max_iters=50)
+    attack = GeneticAlgorithm(model, transformations=[transformation], 
+        pop_size=60, max_iters=50)
     #
     # Language Model
     #

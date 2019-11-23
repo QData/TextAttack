@@ -118,7 +118,6 @@ class AttackLogger:
                     window_id='attack_details')
     
     def log_summary(self):
-        print(self.num_words_changed_until_success)
         total_attacks = len(self.results)
         num_failed_attacks = self.num_words_changed_until_success[-1]
         num_successful_attacks = total_attacks - num_failed_attacks
