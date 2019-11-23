@@ -65,7 +65,10 @@ class GreedyWordSwapWIR(BlackBoxAttack):
                 for i in range(len(transformed_text_candidates)):
                     if scores[i].argmax().item() == new_text_label:
                         candidate = transformed_text_candidates[i]
-                        similarity_score = candidate.attack_attrs['similarity_score']
+                        try:
+                            similarity_score = candidate.attack_attrs['similarity_score']
+                        except KeyError:
+                            similarity_score = 0
                         if similarity_score > max_similarity:
                             max_similarity = similarity_score
                             new_tokenized_text = candidate
