@@ -149,7 +149,7 @@ class TokenizedText:
     def replace_token_at_index(self, index, new_token):
         """ Replaces token at index `index` with `new_token`. """
         self.attack_attrs['modified_token_index'] = index
-        print('replacing:', self.tokens[index], 'with:', new_token)
+        # print('replacing:', self.tokens[index], 'with:', new_token)
         return self.replace_tokens_at_indices([index], [new_token])
     
     def _replace_with_new_tokens(self, new_tokens):
@@ -159,23 +159,22 @@ class TokenizedText:
         """
         final_sentence = ''
         text = self.text
-        # print("replacing tokens:", self.tokens)
-        # print("with tokens:", new_tokens)
         for input_token, new_token in zip(self.tokens, new_tokens):
-            # print('input_token', input_token)
-            # print('new_token', new_token)
             if is_invisible_token(input_token) or is_invisible_token(new_token):
                 continue
             input_token = clean_token_str(input_token)
             new_token = clean_token_str(new_token)
-            # print('\t[2]input_token', input_token)
-            # print('\t[2]new_token', new_token)
             token_start = text.lower().index(input_token)
             token_end = token_start + len(input_token)
             final_sentence += text[:token_start]
-            final_sentence += new_token
-            text = text[token_end:]
+            if input_token == new_token:
+                text = text[token_start:]
+            else:
+                final_sentence += new_token
+                text = text[token_end:]
         final_sentence += text # Add all of the ending punctuation.
+        print('text', self.text)
+        print('newtext', final_sentence)
         return TokenizedText(final_sentence, self.text_to_tokens_converter, 
             self.tokens_to_ids_converter, attack_attrs=self.attack_attrs)
         

@@ -37,6 +37,8 @@ class GradientBasedWordSwap(WhiteBoxAttack):
     def __init__(self, model, max_swaps=32):
         if not hasattr(model, 'word_embeddings'):
             raise ValueError('Model needs word embedding matrix for gradient-based word swap')
+        if not hasattr(model, 'lookup_table'):
+            raise ValueError('Model needs lookup table for gradient-based word swap')
         if not hasattr(model, 'zero_grad'):
             raise ValueError('Model needs `zero_grad()` for gradient-based word swap')
         if not hasattr(model, 'convert_id_to_word'):
@@ -46,6 +48,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
         # @TODO optionally take other loss functions as a param.
         self.loss = torch.nn.CrossEntropyLoss()
         # @TODO move projection into its own class
+        # @TODO call self.get_transformations() so constraints are applied
         # @TODO make recipe file for hotflip
         # self.projection = WordGradientProjection()
         
@@ -66,7 +69,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
                 torch.Tensor(text.ids).nonzero()]
     
             # Word Embedding Lookup Table (Vxd tensor)
-            lookup_table = self.model.word_embeddings.weight.data
+            lookup_table = self.model.lookup_table
     
             # set backward hook on the word embeddings for input x
             emb_hook = Hook(self.model.word_embeddings, backward=True)
@@ -77,6 +80,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
             loss.backward()
     
             # grad w.r.t to word embeddings
+            import pdb; pdb.set_trace()
             emb_grad = emb_hook.output[0].squeeze()
     
             # grad differences between all flips and original word (eq. 1 from paper)
@@ -98,9 +102,6 @@ class GradientBasedWordSwap(WhiteBoxAttack):
     
             max_word_idx = max_word_idx.item() # the index of the word we should flip from x_tensor
             max_word_flip = max_word_flip.item() # the word to flip max_word_idx to 
-            
-            print('max_word_idx:', max_word_idx)
-            print('max_word_flip:', max_word_flip)
             
             new_token = self.model.convert_id_to_word(max_word_flip)
             

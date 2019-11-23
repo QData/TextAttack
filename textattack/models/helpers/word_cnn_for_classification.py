@@ -15,11 +15,10 @@ class WordCNNForClassification(nn.Module):
         super().__init__()
         self.max_seq_length = max_seq_length
         self.drop = nn.Dropout(dropout)
-        self.word_embeddings = GloveEmbeddingLayer()
-        self.word2id = self.word_embeddings.word2id
+        self.emb_layer = GloveEmbeddingLayer()
 
         self.encoder = CNNTextLayer(
-            self.word_embeddings.n_d,
+            self.emb_layer.n_d,
             widths = [3,4,5],
             filters=hidden_size
         )
@@ -29,6 +28,8 @@ class WordCNNForClassification(nn.Module):
     def load_from_disk(self, model_path):
         state_dict = torch.load(model_path, map_location=utils.get_device())
         self.load_state_dict(state_dict)
+        self.word_embeddings = self.emb_layer
+        self.lookup_table = self.word_embeddings.embedding
         self.to(utils.get_device())
         self.eval()
 
@@ -42,18 +43,27 @@ class WordCNNForClassification(nn.Module):
         pred = self.out(output)
         return nn.functional.softmax(pred, dim=-1)
     
-    def convert_text_to_ids(self, input_text):
-        input_tokens = utils.default_tokenize(input_text)
-        input_tokens = input_tokens[:self.max_seq_length]
+    def convert_text_to_tokens(self, input_text):
+        tokens = utils.default_tokenize(input_text)
+        tokens = tokens[:self.max_seq_length]
+        pad_tokens_to_add = self.max_seq_length - len(tokens)
+        tokens += [self.word_embeddings.padid] * pad_tokens_to_add
+        return tokens
+        
+    def convert_tokens_to_ids(self, tokens):
         output_ids = []
-        for word in input_tokens:
-            if word in self.word2id:
-                output_ids.append(self.word2id[word])
+        for token in tokens:
+            if token in self.emb_layer.word2id:
+                output_ids.append(self.emb_layer.word2id[token])
             else:
-                output_ids.append(self.word_embeddings.oovid)
+                output_ids.append(self.emb_layer.oovid)
         zeros_to_add = self.max_seq_length - len(output_ids)
-        output_ids += [self.word_embeddings.padid] * zeros_to_add
+        output_ids += [0] * zeros_to_add
         return output_ids
+    
+    def convert_id_to_word(self, text):
+        return self.word_embeddings.id2word[text]
+        
 
 class CNNTextLayer(nn.Module):
     

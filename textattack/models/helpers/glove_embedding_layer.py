@@ -37,6 +37,8 @@ class EmbeddingLayer(nn.Module):
             word2id[pad] = len(word2id)
 
         self.word2id = word2id
+        self.id2word = {v: k for k, v in word2id.items()}
+        
         self.n_V, self.n_d = len(word2id), n_d
         self.oovid = word2id[oov]
         self.padid = word2id[pad]

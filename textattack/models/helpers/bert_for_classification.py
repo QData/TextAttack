@@ -25,6 +25,7 @@ class BERTForClassification:
         self.model.to(utils.get_device())
         self.model.eval()
         self.word_embeddings = self.model.bert.embeddings.word_embeddings
+        self.lookup_table = self.word_embeddings.weight.data
         self.max_seq_length = max_seq_length
     
     def convert_text_to_tokens(self, input_text):
