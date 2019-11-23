@@ -9,8 +9,12 @@ textattack.egg-info/SOURCES.txt
 textattack.egg-info/dependency_links.txt
 textattack.egg-info/requires.txt
 textattack.egg-info/top_level.txt
+textattack/attack_recipes/__init__.py
+textattack/attack_recipes/alzantot_2018_genetic_algorithm.py
+textattack/attack_recipes/jin_2019_textfooler.py
 textattack/attacks/__init__.py
 textattack/attacks/attack.py
+textattack/attacks/attack_logger.py
 textattack/attacks/blackbox/__init__.py
 textattack/attacks/blackbox/black_box_attack.py
 textattack/attacks/blackbox/genetic_algorithm/__init__.py
@@ -42,6 +46,8 @@ textattack/datasets/classification/imdb_sentiment.py
 textattack/datasets/classification/kaggle_fake_news.py
 textattack/datasets/classification/movie_review_sentiment.py
 textattack/datasets/classification/yelp_sentiment.py
+textattack/loggers/__init__.py
+textattack/loggers/visdom_logger.py
 textattack/models/__init__.py
 textattack/models/classification/__init__.py
 textattack/models/classification/bert/__init__.py
