@@ -186,9 +186,15 @@ def parse_attack_from_args():
         attack_name, params = args.attack.split(':')
         if attack_name not in ATTACK_CLASS_NAMES:
             raise ValueError(f'Error: unsupported attack {attack_name}')
-        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, _transformations, {params})')
+        try:
+            attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, transformations=_transformations, {params})')
+        except TypeError:
+            attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, {params})')
     elif args.attack in ATTACK_CLASS_NAMES:
-        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, _transformations)')
+        try:
+            attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, transformations=_transformations)')
+        except TypeError:
+            attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model)')
     else:
         raise ValueError(f'Error: unsupported attack {args.attack}')
     return attack
@@ -260,9 +266,9 @@ if __name__ == '__main__':
 
         while True:
             print('Enter a sentence to attack or "q" to quit:')
-            text = input()
+            text = input().strip()
 
-            if text == 'q':
+            if text in ['q', 'quit', 'exit']:
                 break
             
             if not text:

@@ -20,10 +20,10 @@ class LSTMForClassification(nn.Module):
             dropout = 0
         self.max_seq_length = max_seq_length
         self.drop = nn.Dropout(dropout)
-        self.emb_layer = GloveEmbeddingLayer()
-        self.word2id = self.emb_layer.word2id
+        self.word_embeddings = GloveEmbeddingLayer()
+        self.word2id = self.word_embeddings.word2id
         self.encoder = nn.LSTM(
-            input_size=self.emb_layer.n_d,
+            input_size=self.word_embeddings.n_d,
             hidden_size=hidden_size//2,
             num_layers=depth,
             dropout=dropout,
@@ -39,7 +39,7 @@ class LSTMForClassification(nn.Module):
         self.eval()
 
     def forward(self, _input):
-        emb = self.emb_layer(_input.t())
+        emb = self.word_embeddings(_input.t())
         emb = self.drop(emb)
         
         output, hidden = self.encoder(emb)
@@ -57,7 +57,7 @@ class LSTMForClassification(nn.Module):
             if word in self.word2id:
                 output_ids.append(self.word2id[word])
             else:
-                output_ids.append(self.emb_layer.oovid)
+                output_ids.append(self.word_embeddings.oovid)
         zeros_to_add = self.max_seq_length - len(output_ids)
-        output_ids += [self.emb_layer.padid] * zeros_to_add
+        output_ids += [self.word_embeddings.padid] * zeros_to_add
         return output_ids

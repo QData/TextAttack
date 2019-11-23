@@ -29,7 +29,7 @@ class Attack:
         """
         if not self.model:
             raise NameError('Cannot instantiate attack without self.model for prediction scores')
-        if not self.text_to_ids_converter:
+        if (not self.text_to_tokens_converter) or (not self.tokens_to_ids_converter):
             raise NameError('Cannot instantiate attack without tokenizer')
         # Transformation and corresponding constraints.
         self.constraints = []
@@ -131,6 +131,10 @@ class Attack:
         Returns model predictions for a list of TokenizedText objects. 
         
         """
+        # If the user passes in a single TokenizedText object instead of a list,
+        # automatically turn it into an iterable.
+        if isinstance(tokenized_text_list, TokenizedText):
+            tokenized_text_list = [tokenized_text_list]
         if not len(tokenized_text_list):
             return torch.tensor([])
         ids = torch.tensor([t.ids for t in tokenized_text_list])
@@ -182,7 +186,8 @@ class Attack:
         
         results = []
         for label, text in dataset:
-            tokenized_text = TokenizedText(text, self.text_to_ids_converter)
+            tokenized_text = TokenizedText(text, self.text_to_tokens_converter, 
+                self.tokens_to_ids_converter)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
                 continue

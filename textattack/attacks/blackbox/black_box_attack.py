@@ -22,7 +22,8 @@ class BlackBoxAttack(Attack):
     """
     def __init__(self, model, constraints=[]):
         self.model = model.__call__
-        self.text_to_ids_converter = model.convert_text_to_ids
+        self.text_to_tokens_converter = model.convert_text_to_tokens
+        self.tokens_to_ids_converter = model.convert_tokens_to_ids
         super().__init__(constraints=constraints)
         
     def _call_model(self, *args, **kwargs):

@@ -15,11 +15,11 @@ class WordCNNForClassification(nn.Module):
         super().__init__()
         self.max_seq_length = max_seq_length
         self.drop = nn.Dropout(dropout)
-        self.emb_layer = GloveEmbeddingLayer()
-        self.word2id = self.emb_layer.word2id
+        self.word_embeddings = GloveEmbeddingLayer()
+        self.word2id = self.word_embeddings.word2id
 
         self.encoder = CNNTextLayer(
-            self.emb_layer.n_d,
+            self.word_embeddings.n_d,
             widths = [3,4,5],
             filters=hidden_size
         )
@@ -33,7 +33,7 @@ class WordCNNForClassification(nn.Module):
         self.eval()
 
     def forward(self, _input):
-        emb = self.emb_layer(_input)
+        emb = self.word_embeddings(_input)
         emb = self.drop(emb)
 
         output = self.encoder(emb)
@@ -50,9 +50,9 @@ class WordCNNForClassification(nn.Module):
             if word in self.word2id:
                 output_ids.append(self.word2id[word])
             else:
-                output_ids.append(self.emb_layer.oovid)
+                output_ids.append(self.word_embeddings.oovid)
         zeros_to_add = self.max_seq_length - len(output_ids)
-        output_ids += [self.emb_layer.padid] * zeros_to_add
+        output_ids += [self.word_embeddings.padid] * zeros_to_add
         return output_ids
 
 class CNNTextLayer(nn.Module):
