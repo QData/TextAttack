@@ -23,11 +23,6 @@ DATASET_CLASS_NAMES = {
     'yelp-sentiment':   datasets.classification.YelpSentiment,
 }
 
-RECIPE_NAMES = {
-    'alzantot':     attack_recipes.Alzantot2018GeneticAlgorithm,
-    'textfooler':   attack_recipes.Jin2019TextFooler
-}
-
 MODEL_CLASS_NAMES = {
     #
     # BERT models - default uncased
@@ -74,6 +69,11 @@ ATTACK_CLASS_NAMES = {
     'word-gradient':      'attacks.whitebox.GradientBasedWordSwap'
 }
 
+ATTACK_RECIPE_NAMES = {
+    'alzantot':     attack_recipes.Alzantot2018GeneticAlgorithm,
+    'textfooler':   attack_recipes.Jin2019TextFooler
+}
+
 
 def get_args():
     parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
@@ -115,9 +115,10 @@ def get_args():
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     attack_group.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
-        help='The type of attack to run.')
+        choices=ATTACK_CLASS_NAMES.keys(), help='The type of attack to run.')
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None, 
+        choices=ATTACK_RECIPE_NAMES.keys(),
         help='full attack recipe (overrides provided transformation & constraints)')
     
     args = parser.parse_args()
@@ -175,7 +176,7 @@ def parse_constraints_from_args():
 
 def parse_recipe_from_args():
     try:
-        recipe = RECIPE_NAMES[args.recipe](model)
+        recipe = ATTACK_RECIPE_NAMES[args.recipe](model)
     except KeyError:
         raise Error('Invalid recipe {args.recipe}')
     return recipe

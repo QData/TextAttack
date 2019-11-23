@@ -24,6 +24,7 @@ class BERTForClassification:
         self.tokenizer = BertTokenizer.from_pretrained(model_path)
         self.model.to(utils.get_device())
         self.model.eval()
+        self.word_embeddings = self.model.bert.embeddings.word_embeddings
         self.max_seq_length = max_seq_length
     
     def convert_text_to_ids(self, input_text):
@@ -44,6 +45,13 @@ class BERTForClassification:
         tokens += [self.tokenizer.pad_token] * pad_tokens_to_add
         ids = self.tokenizer.convert_tokens_to_ids(tokens)
         return ids
+    
+    def convert_id_to_word(self, _id):
+        """
+        Takes an integer input and returns the corresponding word from the 
+        vocabulary.
+        """
+        return self.ids_to_tokens[_id]
     
     def __call__(self, text_ids):
         if not isinstance(text_ids, torch.Tensor):
