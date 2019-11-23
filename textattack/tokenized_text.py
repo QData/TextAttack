@@ -135,19 +135,21 @@ class TokenizedText:
         return TokenizedText(final_sentence, self.text_to_tokens_converter, 
             self.tokens_to_ids_converter, attack_attrs=self.attack_attrs)
     
-    def replace_tokens_at_indices(self, indices, new_tokens):
+    def replace_tokens_at_indices(self, indices, tokens_to_replace):
         """ This code returns a new TokenizedText object where the tokens at 
             `index` is replaced with a new word."""
-        if len(indices) != len(new_tokens):
+        if len(indices) != len(tokens_to_replace):
             raise ValueError(f'Cannot replace {len(words)} words at {len(indices)} indices.')
+        # import pdb; pdb.set_trace()
         new_tokens = self.tokens[:]
-        for i, token in zip(indices, new_tokens):
+        for i, token in zip(indices, tokens_to_replace):
             new_tokens[i] = token
         return self._replace_with_new_tokens(new_tokens)
     
     def replace_token_at_index(self, index, new_token):
         """ Replaces token at index `index` with `new_token`. """
         self.attack_attrs['modified_token_index'] = index
+        print('replacing:', self.tokens[index], 'with:', new_token)
         return self.replace_tokens_at_indices([index], [new_token])
     
     def _replace_with_new_tokens(self, new_tokens):

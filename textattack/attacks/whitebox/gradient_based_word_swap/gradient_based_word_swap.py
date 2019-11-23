@@ -99,6 +99,9 @@ class GradientBasedWordSwap(WhiteBoxAttack):
             max_word_idx = max_word_idx.item() # the index of the word we should flip from x_tensor
             max_word_flip = max_word_flip.item() # the word to flip max_word_idx to 
             
+            print('max_word_idx:', max_word_idx)
+            print('max_word_flip:', max_word_flip)
+            
             new_token = self.model.convert_id_to_word(max_word_flip)
             
             try:
@@ -106,7 +109,9 @@ class GradientBasedWordSwap(WhiteBoxAttack):
             except IndexError:
                 import pdb; pdb.set_trace()
             
-            new_text_label = self._call_model(text).squeeze().argmax().item()
+            scores = self._call_model(text).squeeze()
+            print('\t scores:', scores)
+            new_text_label = scores.argmax().item()
             # print('new_text:', new_text, 'new_text_label:', new_text_label)
             if new_text_label != original_label:
                 print('hotflip succeeded after', swaps, 'swaps')
@@ -117,40 +122,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
                     original_label,
                     new_text_label
                 )
-
-        # diff_max_idx_flat = diffs.view(1, -1).argmax(1)
-        # diff_max_idx = torch.cat(((diff_max_idx_flat/diffs.size(1)).view(-1, 1),
-        #                 (diff_max_idx_flat % diffs.size(1)).view(-1, 1)),dim=1)[0]
-
-        # new_text_options = self.get_transformations(self.projection, 
-        #     new_tokenized_text, gradient=gradient)
-        # # If we couldn't find any next sentence that meets the constraints,
-        # # break cuz we failed
-        # if not len(transformations):
-        #     break
-        # #
-        # # "We choose the vector with biggest increase in loss:"
-        # #   -- do something like this to pick the best one
-        # # 
-        # scores = self.model(new_text_options)
-        # best_index = scores[:, original_label].argmin()
-        # new_tokenized_text = new_text_options[best_index]
-        # #
-        # # check if the label changed -- if we did, stop and return
-        # # successful result
-        # #
-        # new_text_label = scores[best_index].argmax().item()
-        # if new_text_label != original_label:
-        #     return AttackResult( 
-        #         original_tokenized_text, 
-        #         new_tokenized_text, 
-        #         original_label,
-        #         new_text_label
-        #     )
-        # 
-        # if it didnt change yet, increase # swaps and keep trying
-        #
-        # swaps += 1
-        # if we get here, we failed cuz swaps == self.max_swaps
-        print('Failed with changed text:', text, 'and score:', self._call_model(text).squeeze())
+                
+        print('Failed with changed text:', text, 'and score:', 
+            self._call_model(text).squeeze())
         return FailedAttackResult(original_tokenized_text, original_label)
