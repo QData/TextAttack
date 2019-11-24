@@ -16,6 +16,7 @@ class AttackLogger:
         from textattack.attacks import Attack, AttackResult, FailedAttackResult
         self.visdom = VisdomLogger()
         self.attack = attack
+        self.attack_type = 'White Box' if self.attack.model_description == str(self.attack.model) else 'Black Box'
         self.results = None
         self.num_words_changed_until_success = []
         self.perturbed_word_percentages = []
@@ -104,6 +105,8 @@ class AttackLogger:
     def log_attack_details(self):
         attack_detail_rows = [
             ['Attack algorithm:', str(self.attack)],
+            ['Attack type:', self.attack_type],
+            ['Model:', self.attack.model_description],
         ]
         self.visdom.table(attack_detail_rows, title='Attack Details',
                     window_id='attack_details')
@@ -123,12 +126,17 @@ class AttackLogger:
         average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
         average_perc_words_perturbed = str(round(average_perc_words_perturbed, 2)) + '%'
         summary_table_rows = [
-            ['Total number of attacks:', total_attacks],
+            ['Number of samples attacked:', total_attacks],
             ['Number of failed attacks:', self.attack.failed_attacks],
             ['Original accuracy:', original_accuracy],
-            ['Accuracy Under Attack:', accuracy_under_attack],
-            ['Attack Success Rate:', attack_success_rate],
-            ['Average Perturbed Word %:', average_perc_words_perturbed],
+            ['Accuracy ander attack:', accuracy_under_attack],
+            ['Attack ruccess rate:', attack_success_rate],
+            ['Average perturbed word %:', average_perc_words_perturbed],
         ]
+        if self.attack_type == 'Black Box':
+            num_queries = [r.num_queries for r in self.results]
+            avg_num_queries = statistics.mean(num_queries)
+            avg_num_queries = str(round(avg_num_queries, 2))
+            summary_table_rows.append(['Avg num queries:', avg_num_queries])
         self.visdom.table(summary_table_rows, title='Summary',
                 window_id='summary_table')

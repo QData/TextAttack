@@ -141,6 +141,7 @@ class Attack:
         """
         if not len(tokenized_text_list):
             return torch.tensor([])
+        self.num_queries += len(tokenized_text_list)
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
         scores = []
@@ -190,12 +191,14 @@ class Attack:
         
         results = []
         for label, text in dataset:
+            self.num_queries = 0
             tokenized_text = TokenizedText(text, self.text_to_ids_converter)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
                 self.skipped_attacks += 1
                 continue
             result = self._attack_one(label, tokenized_text)
+            result.num_queries = self.num_queries
             if isinstance(result, FailedAttackResult):
                 self.failed_attacks += 1
             else:
@@ -254,6 +257,7 @@ class AttackResult:
         self.perturbed_text = perturbed_text
         self.original_label = original_label
         self.perturbed_label = perturbed_label
+        self.num_queries = 0
     
     def __data__(self):
         data = (self.original_text, self.original_label, self.perturbed_text,
@@ -299,14 +303,7 @@ class AttackResult:
 
 class FailedAttackResult(AttackResult):
     def __init__(self, original_text, original_label):
-        if original_text is None:
-            raise ValueError('Attack original text cannot be None')
-        if original_label is None:
-            raise ValueError('Attack original label cannot be None')
-        self.original_text = original_text
-        self.original_label = original_label
-        self.perturbed_text = original_text
-        self.perturbed_label = original_label
+        super().__init__(original_text, original_text, original_label, original_label)
 
     def __data__(self):
         data = (self.original_text, self.original_label)

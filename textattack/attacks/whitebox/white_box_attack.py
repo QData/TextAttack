@@ -14,6 +14,7 @@ class WhiteBoxAttack(Attack):
     
     """
     def __init__(self, model, constraints=[]):
+        self.model_description = str(model)
         self.model = model
         self.text_to_ids_converter = model.convert_text_to_ids
         super().__init__(constraints=constraints)
