@@ -28,6 +28,8 @@ class AttackLogger:
         self.num_words_changed_until_success = [0] * self.max_seq_length
         self.perturbed_word_percentages = []
         for result in self.results:
+            if result.original_text.text == result.perturbed_text.text:
+                continue
             num_words = len(result.original_text.words())
             row = []
             labelchange = str(result.original_label)+" -> "+str(result.perturbed_label)
@@ -97,37 +99,36 @@ class AttackLogger:
         numbins = max(self.max_words_changed,10)
             
         self.visdom.bar(self.num_words_changed_until_success[:numbins],
-            numbins=numbins, title='Result', window_id='powers_hist')
+            numbins=numbins, title='Num Words Perturbed', window_id='powers_hist')
             
     def log_attack_details(self):
         attack_detail_rows = [
             ['Attack algorithm:', str(self.attack)],
-            ['Model:', str(self.attack.model)],
-            ['Word suggester:', str(self.attack.transformation)],
         ]
         self.visdom.table(attack_detail_rows, title='Attack Details',
                     window_id='attack_details')
     
     def log_summary(self):
         total_attacks = len(self.results)
-        num_failed_attacks = self.num_words_changed_until_success[-1]
-        num_successful_attacks = total_attacks - num_failed_attacks
-        num_already_misclassified_samples = self.num_words_changed_until_success[0]
         # Original classifier success rate on these samples.
-        original_accuracy = (total_attacks - num_already_misclassified_samples) * 100.0 / total_attacks
+        original_accuracy = total_attacks * 100.0 / (total_attacks + self.attack.skipped_attacks) 
         original_accuracy = str(round(original_accuracy, 2)) + '%'
         # New classifier success rate on these samples.
-        attack_accuracy = (total_attacks - num_successful_attacks - num_already_misclassified_samples) * 100.0 / total_attacks
-        attack_accuracy = str(round(attack_accuracy, 2)) + '%'
+        accuracy_under_attack = (total_attacks - self.attack.successful_attacks) * 100.0 / (total_attacks + self.attack.skipped_attacks)
+        accuracy_under_attack = str(round(accuracy_under_attack, 2)) + '%'
+        # Attack success rate
+        attack_success_rate = self.attack.successful_attacks * 100.0 / (self.attack.successful_attacks + self.attack.failed_attacks) 
+        attack_success_rate = str(round(attack_success_rate, 2)) + '%'
         # Average % of words perturbed per sample.
         average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
         average_perc_words_perturbed = str(round(average_perc_words_perturbed, 2)) + '%'
         summary_table_rows = [
             ['Total number of attacks:', total_attacks],
-            ['Number of failed attacks:', num_failed_attacks],
+            ['Number of failed attacks:', self.attack.failed_attacks],
             ['Original accuracy:', original_accuracy],
-            ['Attack accuracy:', attack_accuracy],
-            ['Perturbed word percentage:', average_perc_words_perturbed],
+            ['Accuracy Under Attack:', accuracy_under_attack],
+            ['Attack Success Rate:', attack_success_rate],
+            ['Average Perturbed Word %:', average_perc_words_perturbed],
         ]
         self.visdom.table(summary_table_rows, title='Summary',
                 window_id='summary_table')
