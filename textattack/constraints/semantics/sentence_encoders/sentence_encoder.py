@@ -1,67 +1,47 @@
+import math
 import numpy as np
 import os
 import torch
 
 from textattack.constraints import Constraint
+
 import textattack.utils as utils
 
-from .infer_sent import InferSent
 
-class UniversalSentenceEncoder(Constraint):
+class SentenceEncoder(Constraint):
     """ 
-    Constraint using cosine similarity between Universal Sentence Encodings
-    of x and x_adv where the text embeddings are created using InferSent.
+    Constraint using cosine similarity between sentence encodings of x and 
+        x_adv.
         
     Args:
-        threshold (:obj:`float`, optional): The threshold for the constraint to bet met.
+        threshold (:obj:`float`, optional): The threshold for the constraint to be met.
             Defaults to 0.8
-        metric (:obj:`str`, optional): The metric function to use. Must be one of TODO. 
-            Defaults to cosine. 
-
-    Raises:
-        ValueError: If :obj:`metric` is not supported
-
+        metric (:obj:`str`, optional): The similarity metric to use. Defaults to 
+            cosine. 
+                Options: ['cosine, 'angular']
+        compare_with_original (bool): Whether to compare `x_adv` to the previous `x_adv`
+            or the original `x`.
+        window_size (int): The number of words to use in the similarity 
+            comparison.
     """
-    
-    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/infersent-encoder'
-    WORD_EMBEDDING_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings'
     
     def __init__(self, threshold=0.8, metric='cosine', compare_with_original=False, window_size=None):
         self.threshold = threshold
-        self.model = self.get_infersent_model()
-        self.model.to(utils.get_device())
-        
-        if metric=='cosine':
-            self.dist = torch.nn.CosineSimilarity
-        else:
-            raise ValueError(f'Unsupported metric {metric}.')
-
         self.compare_with_original = compare_with_original
         self.window_size = window_size
+             
+        if metric=='cosine':
+            self.sim_metric = torch.nn.CosineSimilarity(dim=1)
+        elif metric == 'angular':
+            self.sim_metric = get_angular_sim
+        else:
+            raise ValueError(f'Unsupported metric {metric}.')
     
-    def get_infersent_model(self):
-        """
-        Retrieves the InferSent model. 
-
-        Returns:
-            The pretrained InferSent model. 
-
-        """
-        infersent_version = 2
-        model_path = os.path.join(UniversalSentenceEncoder.MODEL_PATH, f'infersent{infersent_version}.pkl')
-        utils.download_if_needed(model_path)
-        params_model = {'bsize': 64, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
-                'pool_type': 'max', 'dpout_model': 0.0, 'version': infersent_version}
-        infersent = InferSent(params_model)
-        infersent.load_state_dict(torch.load(model_path))
-        W2V_PATH = os.path.join(UniversalSentenceEncoder.WORD_EMBEDDING_PATH, 
-            'fastText', 'crawl-300d-2M.vec')
-        utils.download_if_needed(W2V_PATH)
-        infersent.set_w2v_path(W2V_PATH)
-        infersent.build_vocab_k_words(K=100000)
-        return infersent
+    def encode(self, sentences):
+        """ Encodes a list of sentences. To be implemented by subclasses. """
+        raise NotImplementedError()
     
-    def score(self, x, x_adv):
+    def sim_score(self, x, x_adv):
         """ 
         Returns the metric similarity between embeddings of the text and 
         the perturbed text. 
@@ -73,15 +53,16 @@ class UniversalSentenceEncoder(Constraint):
         Returns:
             The similarity between the original and perturbed text using the metric. 
 
-        @TODO should this support multiple sentences for x_adv?
-
         """
-        original_embedding, perturbed_embedding = self.model.encode([x, x_adv], tokenize = True)
+        original_embedding, perturbed_embedding = self.model([x, x_adv])
         
         original_embedding = torch.tensor(original_embedding).to(utils.get_device())
         perturbed_embedding = torch.tensor(perturbed_embedding).to(utils.get_device())
         
-        return self.dist(dim=0)(original_embedding, perturbed_embedding)
+        original_embedding = torch.unsqueeze(original_embedding, dim=0)
+        perturbed_embedding = torch.unsqueeze(perturbed_embedding, dim=0) 
+        
+        return self.sim_metric(original_embedding, perturbed_embedding)
     
     def _score_list(self, x, x_adv_list):
         """
@@ -109,20 +90,20 @@ class UniversalSentenceEncoder(Constraint):
                 modified_index = x_adv.attack_attrs['modified_word_index']
                 x_list_text.append(x.text_window_around_index(modified_index, self.window_size))
                 x_adv_list_text.append(x_adv.text_window_around_index(modified_index, self.window_size))
-            embeddings = self.model.encode(x_list_text + x_adv_list_text, tokenize=True)
+            embeddings = self.encode(x_list_text + x_adv_list_text)
             original_embeddings = torch.tensor(embeddings[:len(x_adv_list)]).to(utils.get_device())
             perturbed_embeddings = torch.tensor(embeddings[len(x_adv_list):]).to(utils.get_device())
         else:
             x_text = x.text
             x_adv_list_text = [x_adv.text for x_adv in x_adv_list]
-            embeddings = self.model.encode([x_text] + x_adv_list_text, tokenize=True)
+            embeddings = self.encode([x_text] + x_adv_list_text)
             original_embedding = torch.tensor(embeddings[0]).to(utils.get_device())
             perturbed_embeddings = torch.tensor(embeddings[1:]).to(utils.get_device())
         
             # Repeat original embedding to size of perturbed embedding.
             original_embeddings = original_embedding.unsqueeze(dim=0).repeat(len(perturbed_embeddings),1)
         
-        return self.dist(dim=1)(original_embeddings, perturbed_embeddings)
+        return self.sim_metric(original_embeddings, perturbed_embeddings)
     
     def call_many(self, x, x_adv_list, original_text=None):
         """
@@ -148,8 +129,14 @@ class UniversalSentenceEncoder(Constraint):
         # @TODO: Vectorize this
         for i, x_adv in enumerate(x_adv_list):
             x_adv.attack_attrs['similarity_score'] = scores[i]
-        mask = (scores > self.threshold)
+        mask = (scores >= self.threshold)
         return np.array(x_adv_list)[mask.cpu().numpy()]
     
     def __call__(self, x, x_adv):
-        return self.score(x.text, x_adv.text) >= self.threshold 
+        return self.sim_score(x.text, x_adv.text) >= self.threshold 
+
+
+def get_angular_sim(emb1, emb2):
+    """ Returns the _angular_ similarity between two vectors. """
+    cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
+    return 1 - (torch.acos(cos_sim) / math.pi)

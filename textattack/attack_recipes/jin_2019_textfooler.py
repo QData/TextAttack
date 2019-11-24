@@ -9,7 +9,7 @@
 '''
 
 from textattack.attacks.blackbox import GreedyWordSwapWIR
-from textattack.constraints.semantics import UniversalSentenceEncoder
+from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.transformations import WordSwapEmbedding
 
 def Jin2019TextFooler(model):
@@ -31,7 +31,7 @@ def Jin2019TextFooler(model):
     #
     # Universal Sentence Encoder with ε = 0.7.
     #
-    attack.add_constraint(UniversalSentenceEncoder(threshold=0.7, 
-        metric='cosine', compare_with_original=False, window_size=15))
+    attack.add_constraint(UniversalSentenceEncoder(threshold=0.3, 
+        metric='angular', compare_with_original=False, window_size=15))
     
     return attack
