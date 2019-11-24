@@ -25,10 +25,12 @@ class SentenceEncoder(Constraint):
             comparison.
     """
     
-    def __init__(self, threshold=0.8, metric='cosine', compare_with_original=False, window_size=None):
+    def __init__(self, threshold=0.8, metric='cosine', compare_with_original=False, window_size=None,
+        skip_text_shorter_than_window=False):
         self.threshold = threshold
         self.compare_with_original = compare_with_original
         self.window_size = window_size
+        self.skip_text_shorter_than_window = skip_text_shorter_than_window
              
         if metric=='cosine':
             self.sim_metric = torch.nn.CosineSimilarity(dim=1)
@@ -126,8 +128,11 @@ class SentenceEncoder(Constraint):
                 raise ValueError('Must provide original text when compare_with_original is true.')
         else:
             scores = self._score_list(x, x_adv_list)
-        # @TODO: Vectorize this
         for i, x_adv in enumerate(x_adv_list):
+            # Optionally ignore similarity score for sentences shorter than the 
+            # window size.
+            if self.skip_text_shorter_than_window and len(x_adv.words()) < self.window_size: 
+                scores[i] = 1
             x_adv.attack_attrs['similarity_score'] = scores[i]
         mask = (scores >= self.threshold)
         return np.array(x_adv_list)[mask.cpu().numpy()]

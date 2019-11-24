@@ -61,7 +61,7 @@ class WordSwapEmbedding(WordSwap):
         # Check cosine distance.
         if self.min_cos_sim:
             # Use precomputed cosine distances, if possible.
-            if self.cos_dist_matrix is not None:
+            if self.cos_dist_matrix is not None and word_id in self.cos_dist_matrix:
                 cos_sim = 1 - self.cos_dist_matrix[word_id][nbr_nn_pos]
             else:
                 e1 = torch.tensor(e1).to(utils.get_device())

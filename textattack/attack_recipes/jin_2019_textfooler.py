@@ -29,8 +29,14 @@ def Jin2019TextFooler(model):
     attack = GreedyWordSwapWIR(model, transformations=[transformation])
     #
     # Universal Sentence Encoder with ε = 0.7.
+    # 
+    # In the TextFooler code, they forget to divide the angular similarity
+    # by pi. So if the original threshold was that 1 - sim >= 0.7, the new
+    # threshold is 1 - (0.3) / pi = 0.904458599.
     #
-    attack.add_constraint(UniversalSentenceEncoder(threshold=0.7, 
-        metric='angular', compare_with_original=False, window_size=15))
+    use_constraint = UniversalSentenceEncoder(threshold=0.904458599, 
+        metric='angular', compare_with_original=False, window_size=15,
+        skip_text_shorter_than_window=True)
+    attack.add_constraint(use_constraint)
     
     return attack
