@@ -95,9 +95,8 @@ def get_args():
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
-        default=['use'], 
-        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}' 
-        ' Options are use, lang-tool, and goog-lm'))
+        default=[], choices=CONSTRAINT_CLASS_NAMES.keys(),
+        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}"'))
     
     parser.add_argument('--out_dir', type=str, required=False, default=None,
         help='A directory to output results to.')
