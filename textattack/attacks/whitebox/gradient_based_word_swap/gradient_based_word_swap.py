@@ -129,4 +129,4 @@ class GradientBasedWordSwap(WhiteBoxAttack):
                 
         print('Failed with changed text:', text, 'and score:', 
             self._call_model(text).squeeze())
-        re
+        return FailedAttackResult(original_tokenized_text, original_label)
