@@ -21,14 +21,15 @@ class TokenizedText:
         """
         return self.raw_words
 
-    def text_window_around_index(self, index, size):
+    def text_window_around_index(self, index, window_size):
+        """ The text window of `window_size` words centered around `index`. """
         length = len(self.raw_words)
-        half_size = (size - 1) // 2
+        half_size = (window_size - 1) // 2
         if index - half_size < 0:
             start = 0
-            end = min(size, length-1)
+            end = min(window_size, length-1)
         elif index + half_size > length - 1:
-            start = max(0, length - size)
+            start = max(0, length - window_size)
             end = length - 1
         else:
             start = index - half_size
@@ -38,12 +39,13 @@ class TokenizedText:
         return self.text[text_idx_start:text_idx_end]
          
     def _text_index_of_word_index(self, i):
+        """ Returns the index of word `i` in self.text. """
         pre_words = self.raw_words[:i+1]
         lower_text = self.text.lower()
         # Find all words until `i` in string.
         look_after_index = 0
         for word in pre_words:
-            look_after_index = lower_text.find(word, look_after_index)
+            look_after_index = lower_text.find(word.lower(), look_after_index)
         return look_after_index 
 
     def text_until_word_index(self, i):
