@@ -70,6 +70,3 @@ class WordSwap(Transformation):
             transformations.extend(new_tokenized_texts)
         
         return transformations
-
-    def __str__(self):
-        return "Word Swap"

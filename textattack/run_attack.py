@@ -101,6 +101,9 @@ def get_args():
     parser.add_argument('--out_dir', type=str, required=False, default=None,
         help='A directory to output results to.')
     
+    parser.add_argument('--enable_visdom', action='store_true', default=False,
+        help='Enable logging to visdom.')
+    
     parser.add_argument('--num_examples', '--n', type=int, required=False, 
         default='5', help='The number of examples to attack.')
     
@@ -219,6 +222,10 @@ if __name__ == '__main__':
         outfile_name = 'attack-{}.txt'.format(int(time.time()))
         attack.add_output_file(os.path.join(args.out_dir, outfile_name))
 
+    # Visdom
+    if args.enable_visdom:
+        attack.enable_visdom()
+
     load_time = time.time()
 
     if args.interactive:
@@ -242,7 +249,6 @@ if __name__ == '__main__':
 
             print('Attacking...')
 
-            attack.enable_visdom()
             attack.attack([(label, text)])
     
     else:
@@ -255,7 +261,6 @@ if __name__ == '__main__':
         data_name = args.model.split('-', 1)[1]
         print(f'Model: {args.model} / Dataset: {data_name}')
         
-        attack.enable_visdom()
         attack.attack(data, shuffle=args.shuffle)
 
         finish_time = time.time()

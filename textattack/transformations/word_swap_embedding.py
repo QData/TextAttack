@@ -94,6 +94,3 @@ class WordSwapEmbedding(WordSwap):
         except KeyError:
             # This word is not in our word embedding database, so return an empty list.
             return []
-        
-    def __str__(self):
-        return "Word Swap Embedding"

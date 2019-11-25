@@ -13,6 +13,3 @@ class BERTForMRSentimentClassification(BERTForClassification):
         else:
             path = BERTForMRSentimentClassification.MODEL_PATH_UNCASED
         super().__init__(path)
-        
-    def __str__(self):
-        return "BERT for MR Sentiment Classification"

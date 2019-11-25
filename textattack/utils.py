@@ -78,7 +78,7 @@ def color_from_label(label_num):
     return LABEL_COLORS[label_num]
     
 def color_text_html(text, color=None):
-    return "<font color = %s>%s</font>"%(color,text)
+    return f'<font color = {color}>{text}</font>'
     
 def color_text_terminal(text, color=None):
     if color == 'green':

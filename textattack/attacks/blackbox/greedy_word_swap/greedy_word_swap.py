@@ -56,6 +56,3 @@ class GreedyWordSwap(BlackBoxAttack):
                 original_label,
                 new_text_label
             )
-    
-    def __str__(self):
-        return "Greedy Word Swap"

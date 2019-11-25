@@ -13,6 +13,3 @@ class BERTForYelpSentimentClassification(BERTForClassification):
         else:
             path = BERTForYelpSentimentClassification.MODEL_PATH_UNCASED
         super().__init__(path)
-
-    def __str__(self):
-        return "BERT for Yelp Sentiment Classification"

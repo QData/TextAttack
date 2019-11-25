@@ -13,6 +13,8 @@ from textattack.loggers import VisdomLogger
 
 class AttackLogger:
     def __init__(self, attack):
+        """ Logs the results of an attack
+        """
         from textattack.attacks import Attack, AttackResult, FailedAttackResult
         self.attack = attack
         self.attack_type = 'White Box' if self.attack.model_description == str(self.attack.model) else 'Black Box'
@@ -127,7 +129,7 @@ class AttackLogger:
             
     def log_attack_details(self):
         attack_detail_rows = [
-            ['Attack algorithm:', str(self.attack)],
+            ['Attack algorithm:', self.attack.__class__.__name__],
             ['Attack type:', self.attack_type],
             ['Model:', self.attack.model_description],
         ]

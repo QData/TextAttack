@@ -193,9 +193,6 @@ class GeneticAlgorithm(BlackBoxAttack):
             original_label
         )
     
-    def __str__(self):
-        return "Genetic Algorithm"
-
 class PopulationMember:
     '''
     A member of the population during the course of the genetic algorithm.
