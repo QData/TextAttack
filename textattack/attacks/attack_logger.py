@@ -14,16 +14,36 @@ from textattack.loggers import VisdomLogger
 class AttackLogger:
     def __init__(self, attack):
         from textattack.attacks import Attack, AttackResult, FailedAttackResult
-        self.visdom = VisdomLogger()
         self.attack = attack
         self.attack_type = 'White Box' if self.attack.model_description == str(self.attack.model) else 'Black Box'
         self.results = None
         self.num_words_changed_until_success = []
         self.perturbed_word_percentages = []
         self.max_words_changed = 0
+        self.examples_completed = 0
         self.max_seq_length = 10000
 
+    def enable_visdom(self):
+        self.visdom = VisdomLogger()
+
+    def log_result(self, result):
+        self.examples_completed += 1
+        if self.attack.output_to_stdout:
+            print('-'*35, 'Result', str(self.examples_completed), '-'*35)
+            result.print_()
+            print()
+
+    def _log_rows_to_files_and_visdom(self, rows, title, window_id):
+        for output_file in self.attack.output_files:
+            for row in rows:
+                output_file.write(row[0] + ' ' + row[1] + '\n')
+        if self.attack.output_to_visdom:
+            self.visdom.table(rows, title=title, window_id=window_id)
+
     def log_samples(self, results):
+        for output_file in self.attack.output_files:
+            for result in results:
+                output_file.write(str(result) + '\n')
         self.results = results
         sample_rows = []
         self.num_words_changed_until_success = [0] * self.max_seq_length
@@ -46,7 +66,8 @@ class AttackLogger:
                 perturbed_word_percentage = 0
             self.perturbed_word_percentages.append(perturbed_word_percentage)
             sample_rows.append(row)
-        self.visdom.table(sample_rows, window_id="results", title="Attack Results")
+        if self.attack.output_to_visdom:
+            self.visdom.table(sample_rows, window_id="results", title="Attack Results")
             
     def diff(self, result, html=False):
         """ Shows the difference between two strings in color.
@@ -97,6 +118,8 @@ class AttackLogger:
         return indices
             
     def log_num_words_changed(self):        
+        if not self.attack.output_to_visdom:
+            return
         numbins = max(self.max_words_changed,10)
             
         self.visdom.bar(self.num_words_changed_until_success[:numbins],
@@ -108,8 +131,7 @@ class AttackLogger:
             ['Attack type:', self.attack_type],
             ['Model:', self.attack.model_description],
         ]
-        self.visdom.table(attack_detail_rows, title='Attack Details',
-                    window_id='attack_details')
+        self._log_rows_to_files_and_visdom(attack_detail_rows, 'Attack Details', 'attack_details')
     
     def log_summary(self):
         total_attacks = len(self.results)
@@ -126,11 +148,11 @@ class AttackLogger:
         average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
         average_perc_words_perturbed = str(round(average_perc_words_perturbed, 2)) + '%'
         summary_table_rows = [
-            ['Number of samples attacked:', total_attacks],
-            ['Number of failed attacks:', self.attack.failed_attacks],
+            ['Number of samples attacked:', str(total_attacks)],
+            ['Number of failed attacks:', str(self.attack.failed_attacks)],
             ['Original accuracy:', original_accuracy],
-            ['Accuracy ander attack:', accuracy_under_attack],
-            ['Attack ruccess rate:', attack_success_rate],
+            ['Accuracy under attack:', accuracy_under_attack],
+            ['Attack success rate:', attack_success_rate],
             ['Average perturbed word %:', average_perc_words_perturbed],
         ]
         if self.attack_type == 'Black Box':
@@ -138,5 +160,4 @@ class AttackLogger:
             avg_num_queries = statistics.mean(num_queries)
             avg_num_queries = str(round(avg_num_queries, 2))
             summary_table_rows.append(['Avg num queries:', avg_num_queries])
-        self.visdom.table(summary_table_rows, title='Summary',
-                window_id='summary_table')
+        self._log_rows_to_files_and_visdom(summary_table_rows, 'Summary', 'summary_table')

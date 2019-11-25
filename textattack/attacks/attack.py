@@ -38,7 +38,7 @@ class Attack:
             self.add_constraints(constraints)
         # Output settings.
         self.output_files = []
-        self.output_to_terminal = True
+        self.output_to_stdout = True
         self.output_to_visdom = False
         self.logger = AttackLogger(self)
         # Track the number of successful attacks.
@@ -125,6 +125,7 @@ class Attack:
         
     def enable_visdom(self):
         self.output_to_visdom = True
+        self.logger.enable_visdom()
 
     def _attack_one(self, label, tokenized_text):
         """
@@ -203,25 +204,14 @@ class Attack:
                 self.failed_attacks += 1
             else:
                 self.successful_attacks += 1
-
+            
+            self.logger.log_result(result)
             results.append(result)
         
-        if self.output_to_terminal:
-            for result in results:
-                self.examples_completed += 1
-                print('-'*35, 'Result', str(self.examples_completed), '-'*35)
-                result.print_()
-                print()
-        
-        if self.output_files:
-            for output_file in self.output_files:
-                for result in results:
-                    output_file.write(str(result) + '\n')
-        
-        if self.output_to_visdom and len(results):
+        if len(results):
+            self.logger.log_attack_details()
             self.logger.log_samples(results)
             self.logger.log_num_words_changed()
-            self.logger.log_attack_details()
             self.logger.log_summary()
         
         print('-'*80)
