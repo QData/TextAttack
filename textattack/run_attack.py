@@ -104,6 +104,9 @@ def get_args():
     parser.add_argument('--enable_visdom', action='store_true', default=False,
         help='Enable logging to visdom.')
     
+    parser.add_argument('--disable_stdout', action='store_true', default=False,
+        help='Disable logging to stdout')
+    
     parser.add_argument('--num_examples', '--n', type=int, required=False, 
         default='5', help='The number of examples to attack.')
     
@@ -226,7 +229,12 @@ if __name__ == '__main__':
     if args.enable_visdom:
         attack.enable_visdom()
 
+    # Stdout
+    if not args.disable_stdout:
+        attack.enable_stdout()
+
     load_time = time.time()
+    print(f'Loaded in {load_time - start_time}s')
 
     if args.interactive:
         print('Running in interactive mode')
@@ -258,13 +266,8 @@ if __name__ == '__main__':
         else:
             raise ValueError(f'Error: unsupported model {args.model}')
             
-        data_name = args.model.split('-', 1)[1]
-        print(f'Model: {args.model} / Dataset: {data_name}')
-        
         attack.attack(data, shuffle=args.shuffle)
 
         finish_time = time.time()
 
-        print(f'Loaded in {load_time - start_time}s')
-        print(f'Ran attack in {finish_time - load_time}s')
-        print(f'TOTAL TIME: {finish_time - start_time}s')
+        print(f'Total time: {finish_time - start_time}s')

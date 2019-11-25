@@ -1,5 +1,6 @@
 import socket
 from visdom import Visdom
+from textattack.loggers import Logger
 
 def style_from_dict(style_dict):
     """ Turns
@@ -19,12 +20,27 @@ def port_is_open(port_num, hostname='127.0.0.1'):
   if result == 0: return True
   return False
   
-class VisdomLogger:
+class VisdomLogger(Logger):
     def __init__(self, env='main', port=8097, hostname='localhost'):
         if not port_is_open(port, hostname=hostname):
             raise socket.error(f'Visdom not running on {hostname}:{port}')
         self.vis = Visdom(port=port, server=hostname, env=env)
         self.windows = {}
+        self.sample_rows = []
+
+    def log_attack_result(self, result, examples_completed):
+        text_a, text_b = result.diff_color(color_method='html')
+        result_str = result.result_str(color_method='html')
+        self.sample_rows.append([result_str,text_a,text_b])
+
+    def log_rows(self, rows, title, window_id):
+        self.table(rows, title=title, window_id=window_id)
+
+    def flush(self):
+        self.table(self.sample_rows, title='Sample-Level Results', window_id='sample_level_results')
+
+    def log_hist(self, arr, numbins, title, window_id):
+        self.bar(arr, numbins=numbins, title=title, window_id=window_id)
 
     def text(self, text_data, title=None, window_id='default'):
         if window_id and window_id in self.windows:
@@ -119,3 +135,4 @@ class VisdomLogger:
             )
             if window_id:
                 self.windows[window_id] = new_window
+

@@ -4,12 +4,13 @@ import numpy as np
 import os
 import torch
 import random
+import time
 
 from textattack import utils as utils
-
 from textattack.constraints import Constraint
 from textattack.tokenized_text import TokenizedText
 from textattack.attacks.attack_logger import AttackLogger
+from textattack.attacks import AttackResult, FailedAttackResult
 
 class Attack:
     """
@@ -20,7 +21,7 @@ class Attack:
         constraints: A list of constraints to add to the attack
 
     """
-    def __init__(self, constraints=[]):
+    def __init__(self, constraints=[], is_black_box=True):
         """ Initialize an attack object.
         
         Attacks can be run multiple times
@@ -36,18 +37,11 @@ class Attack:
         self.constraints = []
         if constraints:
             self.add_constraints(constraints)
-        # Output settings.
-        self.output_files = []
-        self.output_to_stdout = True
-        self.output_to_visdom = False
-        self.logger = AttackLogger(self)
-        # Track the number of successful attacks.
-        self.examples_completed = 0
-        self.skipped_attacks = 0
-        self.failed_attacks = 0
-        self.successful_attacks = 0
+        # Logger
+        self.logger = AttackLogger()
+        self.is_black_box = is_black_box
     
-    def add_output_file(self, file):
+    def add_output_file(self, filename):
         """ 
         When attack runs, it will output to this file. 
 
@@ -55,12 +49,7 @@ class Attack:
             file (str): The path to the output file
             
         """
-        if isinstance(file, str):
-            directory = os.path.dirname(file)
-            if not os.path.exists(directory):
-                os.makedirs(directory)
-            file = open(file, 'w')
-        self.output_files.append(file)
+        self.logger.add_output_file(filename)
         
     def add_constraint(self, constraint):
         """ 
@@ -124,8 +113,10 @@ class Attack:
         return transformations 
         
     def enable_visdom(self):
-        self.output_to_visdom = True
         self.logger.enable_visdom()
+
+    def enable_stdout(self):
+        self.logger.enable_stdout()
 
     def _attack_one(self, label, tokenized_text):
         """
@@ -182,145 +173,27 @@ class Attack:
         Args:
             dataset: An iterable of (label, text) pairs
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
-
-        Returns:
-            The results of the attack on the dataset
-
         """
+    
+        self.logger.start_time = time.time()
+        self.logger.log_attack_details(self.__class__.__name__, 
+                                       self.is_black_box,    
+                                       self.model_description)
+        
         if shuffle:
             random.shuffle(dataset)
         
-        results = []
         for label, text in dataset:
             self.num_queries = 0
             tokenized_text = TokenizedText(text, self.text_to_ids_converter)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
-                self.skipped_attacks += 1
+                self.logger.log_skipped(tokenized_text)
                 continue
             result = self._attack_one(label, tokenized_text)
             result.num_queries = self.num_queries
-            if isinstance(result, FailedAttackResult):
-                self.failed_attacks += 1
-            else:
-                self.successful_attacks += 1
-            
             self.logger.log_result(result)
-            results.append(result)
         
-        if len(results):
-            self.logger.log_attack_details()
-            self.logger.log_samples(results)
-            self.logger.log_num_words_changed()
-            self.logger.log_summary()
-        
-        print('-'*80)
-
-        print(f'Number of successful attacks: {self.successful_attacks}')
-        print(f'Number of failed attacks: {self.failed_attacks}')
-        print(f'Number of skipped attacks: {self.skipped_attacks}')
-        
-        return results
-
-class AttackResult:
-    """
-    Result of an Attack run on a single (label, text_input) pair. 
-
-    Args:
-        original_text (str): The original text
-        perturbed_text (str): The perturbed text resulting from the attack
-        original_label (int): he classification label of the original text
-        perturbed_label (int): The classification label of the perturbed text
-
-    """
-    def __init__(self, original_text, perturbed_text, original_label,
-        perturbed_label):
-        if original_text is None:
-            raise ValueError('Attack original text cannot be None')
-        if perturbed_text is None:
-            raise ValueError('Attack perturbed text cannot be None')
-        if original_label is None:
-            raise ValueError('Attack original label cannot be None')
-        if perturbed_label is None:
-            raise ValueError('Attack perturbed label cannot be None')
-        self.original_text = original_text
-        self.perturbed_text = perturbed_text
-        self.original_label = original_label
-        self.perturbed_label = perturbed_label
-        self.num_queries = 0
-    
-    def __data__(self):
-        data = (self.original_text, self.original_label, self.perturbed_text,
-                self.perturbed_label)
-        return tuple(map(str, data))
-    
-    def __str__(self):
-        return '\n'.join(self.__data__())
-    
-    def diff_color(self):
-        """ 
-        Highlights the difference between two texts using color.
-        
-        """
-        _color = utils.color_text_terminal
-        t1 = self.original_text
-        t2 = self.perturbed_text
-        
-        words1 = t1.words()
-        words2 = t2.words()
-        
-        c1 = utils.color_from_label(self.original_label)
-        c2 = utils.color_from_label(self.perturbed_label)
-        new_is = []
-        new_w1s = []
-        new_w2s = []
-        for i in range(min(len(words1), len(words2))):
-            w1 = words1[i]
-            w2 = words2[i]
-            if w1 != w2:
-                new_is.append(i)
-                new_w1s.append(_color(w1, c1))
-                new_w2s.append(_color(w2, c2))
-        
-        t1 = self.original_text.replace_words_at_indices(new_is, new_w1s)
-        t2 = self.original_text.replace_words_at_indices(new_is, new_w2s)
-                
-        return (str(t1), str(t2))
-    
-    def print_(self):
-        print(str(self.original_label), '-->', str(self.perturbed_label))
-        print('\n'.join(self.diff_color()))
-
-class FailedAttackResult(AttackResult):
-    def __init__(self, original_text, original_label):
-        super().__init__(original_text, original_text, original_label, original_label)
-
-    def __data__(self):
-        data = (self.original_text, self.original_label)
-        return tuple(map(str, data))
-
-    def print_(self):
-        _color = utils.color_text_terminal
-        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
-        print(self.original_text)
-
-if __name__ == '__main__':
-    import time
-    import socket
-    
-    import textattack.attacks as attacks
-    import textattack.constraints as constraints
-    from textattack.datasets import YelpSentiment
-    from textattack.models.classification.bert import BertForYelpSentimentClassification
-    from textattack.transformations import WordSwapEmbedding
-    
-    start_time = time.time()
-    
-    def __data__(self):
-        data = (self.original_text, self.original_label)
-        return tuple(map(str, data))
-    
-    def print_(self):
-        _color = utils.color_text_terminal
-        print(str(self.original_label), '-->', _color('[FAILED]', 'red'))
-        print(self.original_text)
+        self.logger.log_sep()
+        self.logger.log_summary(self.is_black_box)
+        self.logger.flush()

@@ -17,4 +17,4 @@ class WhiteBoxAttack(Attack):
         self.model_description = model.__class__.__name__
         self.model = model
         self.text_to_ids_converter = model.convert_text_to_ids
-        super().__init__(constraints=constraints)
+        super().__init__(constraints=constraints, is_black_box=False)
