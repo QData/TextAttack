@@ -19,6 +19,7 @@ class Hook():
         self.hook.remove()
 
 
+
 class GradientBasedWordSwap(WhiteBoxAttack):
     """ Uses the model's gradient to iteratively replace words until
         a model's prediction score changes. 
@@ -40,6 +41,8 @@ class GradientBasedWordSwap(WhiteBoxAttack):
         self.max_swaps = max_swaps
         self.loss = torch.nn.CrossEntropyLoss()
         self.projection = WordGradientProjection()
+        self.mode_type = 'lstm'
+        self.pad_index = 400000
 
         
     def _attack_one(self, original_label, original_tokenized_text):
@@ -47,28 +50,33 @@ class GradientBasedWordSwap(WhiteBoxAttack):
         # d = word embedding dimension
         # L = sentence length
 
-        y_true = torch.Tensor(original_label).long()
+        y_true = torch.Tensor([original_label]).long()
         x_tensor = torch.Tensor(original_tokenized_text.ids).view(1,-1).long()
 
-
         # get nonzero word indices, since x is padded with zeros
-        nonzero_word_idxs = [word_id.item() for word_id in 
-            torch.Tensor(original_tokenized_text.ids).nonzero()]
-        nonzero_word_idxs = nonzero_word_idxs[1:-1] #remove BOS and EOS
+        token_ids_tensor = torch.Tensor(original_tokenized_text.ids)
+        nonzero_word_idxs = (token_ids_tensor != self.pad_index).nonzero().view(-1)
+        
+        if self.mode_type == 'bert':
+            #remove BOS and EOS
+            nonzero_word_idxs = nonzero_word_idxs[1:-1]
+        
         
         # Word Embedding Lookup Table (Vxd tensor)
-        lookup_table = self.model.model.bert.embeddings.word_embeddings.weight.data
+        lookup_table = self.model.emb_layer.embedding.weight.data
+        self.model.emb_layer.embedding.weight.requires_grad = True
+
 
         swapped_indices = []
         swaps = 0
         while swaps < self.max_swaps:
             # set backward hook on the word embeddings for input x
-            emb_hook = Hook(self.model.model.bert.embeddings.word_embeddings,backward=True)
+            emb_hook = Hook(self.model.emb_layer.embedding,backward=True)
 
-            self.model.model.zero_grad()
-            predictions = self.model.model(x_tensor)
+            self.model.zero_grad()
+            predictions = self.model(x_tensor)
 
-            loss = self.loss(predictions[0],y_true.repeat(predictions[0].size(0)))
+            loss = self.loss(predictions,y_true)
             loss.backward()
 
             # grad w.r.t to word embeddings
@@ -79,7 +87,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
 
             for word_idx in nonzero_word_idxs:
                 # get the grad w.r.t the one-hot index of the word
-                b_grads = emb_grads[0][word_idx].view(1,-1).mm(lookup_table.transpose(0,1)).squeeze()
+                b_grads = emb_grads[word_idx].view(1,-1).mm(lookup_table.transpose(0,1)).squeeze()
                 a_grad = b_grads[original_tokenized_text.ids[word_idx]]
                 diffs[word_idx] = b_grads-a_grad
 
@@ -97,6 +105,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
 
 
             swaps += 1
+        stop()
 
         return FailedAttackResult(original_tokenized_text, original_label)
 
@@ -139,16 +148,16 @@ class GradientBasedWordSwapBeam(WhiteBoxAttack):
             torch.Tensor(original_tokenized_text.ids).nonzero()]
         
         # Word Embedding Lookup Table (Vxd tensor)
-        lookup_table = self.model.model.bert.embeddings.word_embeddings.weight.data
+        lookup_table = self.model.emb_layer.embedding.word_embeddings.weight.data
 
         swapped_indices = []
         swaps = 0
         while swaps < self.max_swaps:
             # set backward hook on the word embeddings for input x
-            emb_hook = Hook(self.model.model.bert.embeddings.word_embeddings,backward=True)
+            emb_hook = Hook(self.model.emb_layer.embedding.word_embeddings,backward=True)
 
-            self.model.model.zero_grad()
-            predictions = self.model.model(x_tensor)
+            self.model.zero_grad()
+            predictions = self.model(x_tensor)
 
             loss = self.loss(predictions[0],y_true.repeat(predictions[0].size(0)))
             loss.backward()
