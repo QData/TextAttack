@@ -105,7 +105,6 @@ class GradientBasedWordSwap(WhiteBoxAttack):
 
 
             swaps += 1
-        stop()
 
         return FailedAttackResult(original_tokenized_text, original_label)
 
