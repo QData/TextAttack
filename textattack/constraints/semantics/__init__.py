@@ -1,2 +1,2 @@
-from .google_language_model import GoogleLanguageModel
-from .universal_sentence_encoder import UniversalSentenceEncoder
+from . import language_models
+from . import sentence_encoders

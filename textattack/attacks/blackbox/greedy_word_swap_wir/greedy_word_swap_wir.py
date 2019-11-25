@@ -68,7 +68,12 @@ class GreedyWordSwapWIR(BlackBoxAttack):
                         try:
                             similarity_score = candidate.attack_attrs['similarity_score']
                         except KeyError:
-                            similarity_score = 0
+                            # If the attack was run without any similarity metrics, 
+                            # candidates won't have a similarity score. In this
+                            # case, break and return the candidate that changed
+                            # the original score the most.
+                            new_tokenized_text = transformed_text_candidates[best_index]
+                            break
                         if similarity_score > max_similarity:
                             max_similarity = similarity_score
                             new_tokenized_text = candidate

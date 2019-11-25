@@ -126,7 +126,7 @@ class Attack:
         """
         raise NotImplementedError()
         
-    def _call_model(self, tokenized_text_list, batch_size=64):
+    def _call_model(self, tokenized_text_list, batch_size=16):
         """
         Returns model predictions for a list of TokenizedText objects. 
         

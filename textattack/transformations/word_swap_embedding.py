@@ -44,6 +44,7 @@ class WordSwapEmbedding(WordSwap):
         self.word_embeddings = np.load(word_embeddings_file)
         self.word_embedding_word2index = np.load(word_list_file, allow_pickle=True)
         self.nn = np.load(nn_matrix_file)
+        # @TODO don't load this file if it doesn't exist on disk.
         self.cos_dist_matrix = np.load(cos_dist_matrix_file)
         self.mse_dist_matrix = np.load(mse_dist_matrix_file)
         
@@ -60,8 +61,8 @@ class WordSwapEmbedding(WordSwap):
         # Check cosine distance.
         if self.min_cos_sim:
             # Use precomputed cosine distances, if possible.
-            if self.cos_dist_matrix is not None:
-                cos_sim = self.cos_dist_matrix[word_id][nbr_nn_pos]
+            if self.cos_dist_matrix is not None and word_id in self.cos_dist_matrix:
+                cos_sim = 1 - self.cos_dist_matrix[word_id][nbr_nn_pos]
             else:
                 e1 = torch.tensor(e1).to(utils.get_device())
                 e2 = torch.tensor(e2).to(utils.get_device())
@@ -84,9 +85,10 @@ class WordSwapEmbedding(WordSwap):
             or phrase. Based on nearest neighbors selected word embeddings.
         """
         try:
-            word_id = self.word_embedding_word2index[word]
+            word_id = self.word_embedding_word2index[word.lower()]
             nnids = self.nn[word_id][1:self.max_candidates+1]
             candidate_words = []
+            # @TODO vectorize.
             for i, nbr_id in enumerate(nnids):
                 if self._vectors_meet_thresholds(word_id, nbr_id, i+1):
                     candidate_words.append(self.word_embedding_index2word[nbr_id])
