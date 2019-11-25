@@ -2,7 +2,6 @@ from textattack.attacks import AttackResult, FailedAttackResult
 from textattack.attacks.whitebox import WhiteBoxAttack
 from textattack.transformations import WordGradientProjection
 import torch
-# !import code; code.interact(local=vars())
 from textattack.utils import get_device
 
 class Hook():
@@ -11,9 +10,11 @@ class Hook():
             self.hook = module.register_forward_hook(self.hook_fn)
         else:
             self.hook = module.register_backward_hook(self.hook_fn)
-    def hook_fn(self, module, sinput, output):
+            
+    def hook_fn(self, module, input, output):
         self.input = input
         self.output = output
+        
     def close(self):
         self.hook.remove()
 
@@ -49,6 +50,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
         self.loss = torch.nn.CrossEntropyLoss()
         # @TODO move projection into its own class
         # @TODO call self.get_transformations() so constraints are applied
+        # @TODO add word-embedding-distance constraint for hotflip
         # @TODO make recipe file for hotflip
         # self.projection = WordGradientProjection()
         
@@ -62,12 +64,13 @@ class GradientBasedWordSwap(WhiteBoxAttack):
         y_true = torch.Tensor([original_label]).long().to(get_device())
         swapped_idxs = []
         swaps = 0
+        import pdb; pdb.set_trace()
         while swaps < self.max_swaps:
             swaps += 1
             # get nonzero word indices, since x is padded with zeros
             nonzero_word_idxs = [word_id.item() for word_id in 
                 torch.Tensor(text.ids).nonzero()]
-    
+            
             # Word Embedding Lookup Table (Vxd tensor)
             lookup_table = self.model.lookup_table
     
@@ -81,7 +84,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
     
             # grad w.r.t to word embeddings
             import pdb; pdb.set_trace()
-            emb_grad = emb_hook.output[0].squeeze()
+            emb_grad = emb_hook.output[0].to(get_device()).squeeze()
     
             # grad differences between all flips and original word (eq. 1 from paper)
             diffs = torch.zeros(len(nonzero_word_idxs),lookup_table.size(0))
@@ -126,4 +129,4 @@ class GradientBasedWordSwap(WhiteBoxAttack):
                 
         print('Failed with changed text:', text, 'and score:', 
             self._call_model(text).squeeze())
-        return FailedAttackResult(original_tokenized_text, original_label)
+        re

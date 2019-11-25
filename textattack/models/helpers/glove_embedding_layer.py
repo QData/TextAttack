@@ -17,7 +17,7 @@ class EmbeddingLayer(nn.Module):
         
         Requires some pre-trained embedding with associated word IDs.
     """
-    def __init__(self, n_d=100, embs=None, fix_emb=True, oov='<oov>', pad='<pad>', normalize=True):
+    def __init__(self, n_d=100, embs=None, fix_emb=False, oov='<oov>', pad='<pad>', normalize=True):
         super(EmbeddingLayer, self).__init__()
         word2id = {}
         if embs is not None:
@@ -76,6 +76,9 @@ class GloveEmbeddingLayer(EmbeddingLayer):
         
         GloVe: Global Vectors for Word Representation. (Jeffrey Pennington, 
             Richard Socher, and Christopher D. Manning. 2014.)
+            
+            @TODO this should not parse the embedding from text, it should read 
+                in a binary file (hopefully much faster).
     """
     EMBEDDING_PATH = '/net/bigtemp/jg6yd/treeattack/glove/glove.6B.200d.txt'
     def __init__(self):

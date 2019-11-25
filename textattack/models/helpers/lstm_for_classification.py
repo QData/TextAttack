@@ -34,8 +34,8 @@ class LSTMForClassification(nn.Module):
     def load_from_disk(self, model_path):
         state_dict = torch.load(model_path, map_location=utils.get_device())
         self.load_state_dict(state_dict)
-        self.word_embeddings = self.emb_layer
-        self.lookup_table = self.word_embeddings.embedding
+        self.word_embeddings = self.emb_layer.embedding
+        self.lookup_table = self.emb_layer.embedding.weight.data
         self.to(utils.get_device())
 
     def forward(self, _input):
@@ -53,7 +53,7 @@ class LSTMForClassification(nn.Module):
         tokens = utils.default_tokenize(input_text)
         tokens = tokens[:self.max_seq_length]
         pad_tokens_to_add = self.max_seq_length - len(tokens)
-        tokens += [self.word_embeddings.padid] * pad_tokens_to_add
+        tokens += [self.emb_layer.padid] * pad_tokens_to_add
         return tokens
         
     def convert_tokens_to_ids(self, tokens):
@@ -68,4 +68,4 @@ class LSTMForClassification(nn.Module):
         return output_ids
     
     def convert_id_to_word(self, text):
-        return self.word_embeddings.id2word[text]
+        return self.emb_layer.id2word[text]
