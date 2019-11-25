@@ -41,7 +41,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
         self.max_swaps = max_swaps
         self.loss = torch.nn.CrossEntropyLoss()
         self.projection = WordGradientProjection()
-        self.mode_type = 'lstm'
+        self.model_type = 'lstm'
         self.pad_index = 400000
 
         
@@ -57,7 +57,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
         token_ids_tensor = torch.Tensor(original_tokenized_text.ids)
         nonzero_word_idxs = (token_ids_tensor != self.pad_index).nonzero().view(-1)
         
-        if self.mode_type == 'bert':
+        if self.model_type == 'bert':
             #remove BOS and EOS
             nonzero_word_idxs = nonzero_word_idxs[1:-1]
         
