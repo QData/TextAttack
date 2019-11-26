@@ -36,6 +36,7 @@ class LSTMForClassification(nn.Module):
         self.load_state_dict(state_dict)
         self.word_embeddings = self.emb_layer.embedding
         self.lookup_table = self.emb_layer.embedding.weight.data
+        self.pad_token_id = self.emb_layer.padid
         self.to(utils.get_device())
 
     def forward(self, _input):
@@ -52,8 +53,6 @@ class LSTMForClassification(nn.Module):
     def convert_text_to_tokens(self, input_text):
         tokens = utils.default_tokenize(input_text)
         tokens = tokens[:self.max_seq_length]
-        pad_tokens_to_add = self.max_seq_length - len(tokens)
-        tokens += [self.emb_layer.padid] * pad_tokens_to_add
         return tokens
         
     def convert_tokens_to_ids(self, tokens):

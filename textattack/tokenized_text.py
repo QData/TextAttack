@@ -12,6 +12,8 @@ class TokenizedText:
             text_to_tokens_converter (func): takes a list of tokens and returns
                 a list of corresponding IDs
         """
+         # @TODO just pass a reference to the model since this is getting
+         # unwieldy-- also add to README about the methods models need now
         self.text = text
         self.tokens = text_to_tokens_converter(text)
         self.ids = tokens_to_ids_converter(self.tokens)
@@ -140,7 +142,8 @@ class TokenizedText:
             `index` is replaced with a new word."""
         if len(indices) != len(tokens_to_replace):
             raise ValueError(f'Cannot replace {len(words)} words at {len(indices)} indices.')
-        # import pdb; pdb.set_trace()
+        print('replace_tokens_at_indices/',indices,'/', tokens_to_replace)
+        print('\tself.tokens:',self.tokens)
         new_tokens = self.tokens[:]
         for i, token in zip(indices, tokens_to_replace):
             new_tokens[i] = token
@@ -149,7 +152,6 @@ class TokenizedText:
     def replace_token_at_index(self, index, new_token):
         """ Replaces token at index `index` with `new_token`. """
         self.attack_attrs['modified_token_index'] = index
-        # print('replacing:', self.tokens[index], 'with:', new_token)
         return self.replace_tokens_at_indices([index], [new_token])
     
     def _replace_with_new_tokens(self, new_tokens):
@@ -164,7 +166,9 @@ class TokenizedText:
                 continue
             input_token = clean_token_str(input_token)
             new_token = clean_token_str(new_token)
-            token_start = text.lower().index(input_token)
+            if input_token != new_token:
+                print('old_token', input_token, 'new_token', new_token)
+            token_start = text.lower().index(input_token.lower())
             token_end = token_start + len(input_token)
             final_sentence += text[:token_start]
             if input_token == new_token:

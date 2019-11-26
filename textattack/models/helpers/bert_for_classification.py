@@ -18,10 +18,11 @@ class BERTForClassification:
     """
     def __init__(self, model_path, num_labels=2, max_seq_length=256):
         utils.download_if_needed(model_path)
-        print('TextAttack BERTForClassification Loading from path ', model_path)
+        print('TextAttack BERTForClassification Loading from path', model_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_path, num_labels=num_labels)
         self.tokenizer = BertTokenizer.from_pretrained(model_path)
+        self.pad_token_id = self.tokenizer.pad_token
         self.model.to(utils.get_device())
         self.model.eval()
         self.word_embeddings = self.model.bert.embeddings.word_embeddings
@@ -49,6 +50,9 @@ class BERTForClassification:
     def convert_tokens_to_ids(self, tokens):
         ids = self.tokenizer.convert_tokens_to_ids(tokens)
         return ids
+    
+    def convert_text_to_ids(self, text):
+        return self.convert_tokens_to_ids(self.convert_text_to_tokens(text))
     
     def zero_grad(self): 
         self.model.zero_grad()
