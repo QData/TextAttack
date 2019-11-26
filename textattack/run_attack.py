@@ -250,7 +250,7 @@ if __name__ == '__main__':
             if not text:
                 continue
 
-            tokenized_text = TokenizedText(model, text)
+            tokenized_text = TokenizedText(text, model.convert_text_to_ids)
 
             pred = attack._call_model([tokenized_text])
             label = int(pred.argmax())

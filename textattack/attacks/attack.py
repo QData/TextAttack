@@ -22,12 +22,7 @@ class Attack:
 
     """
     def __init__(self, constraints=[], is_black_box=True):
-        """ Initialize an attack object.
-        
-        Attacks can be run multiple times
-        
-         @TODO should `tokenizer` be an additional parameter or should
-            we assume every model has a .tokenizer ?
+        """ Initialize an attack object. Attacks can be run multiple times.
         """
         if not self.model:
             raise NameError('Cannot instantiate attack without self.model for prediction scores')
@@ -133,7 +128,13 @@ class Attack:
         """
         if not len(tokenized_text_list):
             return torch.tensor([])
-        self.num_queries += len(tokenized_text_list)
+        try:
+            self.num_queries += len(tokenized_text_list)
+        except AttributeError:
+            # If some outside class is just using the attack for its `call_model`
+            # function, then `self.num_queries` will not have been initialized.
+            # In this case, just continue.
+            pass
         ids = torch.tensor([t.ids for t in tokenized_text_list])
         num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
         scores = []
