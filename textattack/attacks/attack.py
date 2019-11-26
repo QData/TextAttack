@@ -166,8 +166,29 @@ class Attack:
             # error in the summation.
             raise ValueError('Model scores do not add up to 1.')
         return scores
-      
-    def attack(self, dataset, shuffle=False):
+ 
+    def _get_examples(self, dataset, num_examples=None, attack_n=False, shuffle=False):
+        examples = []
+        i = 0
+        n = 0
+        for label, text in dataset:
+            i += 1
+            tokenized_text = TokenizedText(text, self.text_to_ids_converter)
+            predicted_label = self._call_model([tokenized_text])[0].argmax().item()
+            if predicted_label != label:
+                self.logger.log_skipped(tokenized_text)
+            else:
+                n += 1
+                examples.append((label, tokenized_text))
+            if num_examples is not None and (n >= num_examples or i >= num_examples and not attack_n):
+                break
+
+        if shuffle:
+            random.shuffle(examples)
+    
+        return examples
+
+    def attack(self, dataset, num_examples=None, attack_n=False, shuffle=False):
         """ 
         Runs an attack on the given dataset and outputs the results to the console and the output file.
 
@@ -180,17 +201,12 @@ class Attack:
         self.logger.log_attack_details(self.__class__.__name__, 
                                        self.is_black_box,    
                                        self.model_description)
-        
-        if shuffle:
-            random.shuffle(dataset)
-        
-        for label, text in dataset:
-            self.num_queries = 0
-            tokenized_text = TokenizedText(text, self.text_to_ids_converter)
-            predicted_label = self._call_model([tokenized_text])[0].argmax().item()
-            if predicted_label != label:
-                self.logger.log_skipped(tokenized_text)
-                continue
+      
+        examples = self._get_examples(dataset, num_examples, attack_n, shuffle)
+
+        for label, tokenized_text in examples:
+            # Start at 1 since we called once to determine that prediction was correct
+            self.num_queries = 1
             result = self._attack_one(label, tokenized_text)
             result.num_queries = self.num_queries
             self.logger.log_result(result)
