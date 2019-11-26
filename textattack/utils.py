@@ -72,24 +72,38 @@ LABEL_COLORS = [
     'gray', 'brown'
 ]
 
+def color_label(label, c=None, method=None):
+    if method == 'file':
+        method = None
+    if c is None:
+        c = color_from_label(label)
+    return color(str(label), c, method)
+
 def color_from_label(label_num):
     """ Colors for labels (arbitrary). """
     label_num %= len(LABEL_COLORS)
     return LABEL_COLORS[label_num]
-
-def color_text_terminal(text, color=None):
-    if color == 'green':
-        color = ANSI_ESCAPE_CODES.OKGREEN
-    elif color == 'red':
-        color = ANSI_ESCAPE_CODES.FAIL
-    elif color == 'blue':
-        color = ANSI_ESCAPE_CODES.OKBLUE
-    elif color == 'gray':
-        color = ANSI_ESCAPE_CODES.GRAY
-    else: 
-        color = ANSI_ESCAPE_CODES.BOLD
     
-    return color + text + ANSI_ESCAPE_CODES.STOP
+def color(text, color=None, method=None):
+    if method is None:
+        return text
+    if method == 'html':
+        return f'<font color = {color}>{text}</font>'
+    elif method == 'stdout':
+        if color == 'green':
+            color = ANSI_ESCAPE_CODES.OKGREEN
+        elif color == 'red':
+            color = ANSI_ESCAPE_CODES.FAIL
+        elif color == 'blue':
+            color = ANSI_ESCAPE_CODES.OKBLUE
+        elif color == 'gray':
+            color = ANSI_ESCAPE_CODES.GRAY
+        else: 
+            color = ANSI_ESCAPE_CODES.BOLD
+        
+        return color + text + ANSI_ESCAPE_CODES.STOP
+    elif method == 'file':
+        return '[[' + text + ']]'
 
 class ANSI_ESCAPE_CODES:
     """ Escape codes for printing color to the terminal. """

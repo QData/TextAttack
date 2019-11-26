@@ -2,7 +2,7 @@ from textattack.models.helpers import BERTForClassification
 
 class BERTForIMDBSentimentClassification(BERTForClassification):
     """ 
-    BERT fine-tuned on the Yelp Sentiment dataset for sentiment classification.
+    BERT fine-tuned on the IMDb Sentiment dataset for sentiment classification.
     """
     
     MODEL_PATH_CASED = '/p/qdata/jm8wx/research/text_attacks/trained_bert_models/imdb-cased'

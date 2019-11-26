@@ -192,7 +192,7 @@ class GeneticAlgorithm(BlackBoxAttack):
             self.original_tokenized_text,
             original_label
         )
-
+    
 class PopulationMember:
     '''
     A member of the population during the course of the genetic algorithm.
