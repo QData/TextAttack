@@ -87,9 +87,9 @@ def get_args():
     parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--transformation', type=str, required=False, nargs='*',
-        default=['word-swap-embedding'],
-        help='The type of transformation to apply')
+    parser.add_argument('--transformations', type=str, required=False, nargs='*',
+        default=['word-swap-embedding'], choices=TRANSFORMATION_CLASS_NAMES.keys(),
+        help='The transformations to apply.')
         
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
@@ -101,18 +101,21 @@ def get_args():
     parser.add_argument('--out_dir', type=str, required=False, default=None,
         help='A directory to output results to.')
     
-    parser.add_argument('--enable_visdom', action='store_true', default=False,
+    parser.add_argument('--enable_visdom', action='store_true',
         help='Enable logging to visdom.')
     
-    parser.add_argument('--disable_stdout', action='store_true', default=False,
+    parser.add_argument('--disable_stdout', action='store_true',
         help='Disable logging to stdout')
     
-    parser.add_argument('--num_examples', '--n', type=int, required=False, 
-        default='5', help='The number of examples to attack.')
+    parser.add_argument('--num_examples', '-n', type=int, required=False, 
+        default='5', help='The number of examples to process.')
     
-    parser.add_argument('--num_examples_offset', '--o', type=int, required=False, 
+    parser.add_argument('--num_examples_offset', '-o', type=int, required=False, 
         default=0, help='The offset to start at in the dataset.')
-    
+  
+    parser.add_argument('--attack_n', action='store_true',
+        help='Attack n examples, not counting examples where the model is initially wrong.')
+
     parser.add_argument('--shuffle', action='store_true', required=False, 
         default=False, help='Randomly shuffle the data before attacking')
     
@@ -134,7 +137,7 @@ def get_args():
 def parse_transformation_from_args():
     # Transformations
     _transformations = []    
-    for transformation in args.transformation:
+    for transformation in args.transformations:
         if ':' in transformation:
             transformation_name, params = transformation.split(':')
             if transformation_name not in TRANSFORMATION_CLASS_NAMES:
@@ -262,11 +265,12 @@ if __name__ == '__main__':
     else:
         # Not interactive? Use default dataset.
         if args.model in DATASET_BY_MODEL:
-            data = DATASET_BY_MODEL[args.model](n=args.num_examples)
+            data = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
         else:
             raise ValueError(f'Error: unsupported model {args.model}')
             
-        attack.attack(data, shuffle=args.shuffle)
+        attack.attack(data, num_examples=args.num_examples,
+                      attack_n=args.attack_n, shuffle=args.shuffle)
 
         finish_time = time.time()
 
