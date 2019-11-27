@@ -70,10 +70,11 @@ TRANSFORMATION_CLASS_NAMES = {
 }
 
 CONSTRAINT_CLASS_NAMES = {
+    'embedding':    'constraints.semantics.WordEmbeddingDistance',
+    'goog-lm':      'constraints.semantics.language_models.GoogleLanguageModel',
     'infer-sent':   'constraints.semantics.sentence_encoders.InferSent',
     'use':          'constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
     'lang-tool':    'constraints.syntax.LanguageTool', 
-    'goog-lm':      'constraints.semantics.language_models.GoogleLanguageModel',
 }
 
 ATTACK_CLASS_NAMES = {
