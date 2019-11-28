@@ -56,7 +56,7 @@ class SentenceEncoder(Constraint):
             The similarity between the original and perturbed text using the metric. 
 
         """
-        original_embedding, perturbed_embedding = self.model([x, x_adv])
+        original_embedding, perturbed_embedding = self.model.encode([x, x_adv])
         
         original_embedding = torch.tensor(original_embedding).to(utils.get_device())
         perturbed_embedding = torch.tensor(perturbed_embedding).to(utils.get_device())
