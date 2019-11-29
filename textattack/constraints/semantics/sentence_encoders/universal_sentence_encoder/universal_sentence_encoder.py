@@ -9,10 +9,10 @@ class UniversalSentenceEncoder(SentenceEncoder):
     Constraint using similarity between sentence encodings of x and x_adv where 
     the text embeddings are created using the Universal Sentence Encoder.
     """
-    def __init__(self, use_version=3, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, use_version=3, threshold=0.8, metric='cosine'):
         if use_version not in [3,4]:
             raise ValueError(f'Unsupported UniversalSentenceEncoder version {use_version}')
+        super().__init__(threshold=threshold, metric=metric)
         self.model = hub.load(f'https://tfhub.dev/google/universal-sentence-encoder/{use_version}')
     
     def encode(self, sentences):

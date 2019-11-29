@@ -1,6 +1,7 @@
 language_check
 nltk
 numpy<1.17
+sentence_transformers
 scipy
 torch
 transformers==2.0.0
