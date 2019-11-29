@@ -142,4 +142,4 @@ class SentenceEncoder(Constraint):
 def get_angular_sim(emb1, emb2):
     """ Returns the _angular_ similarity between two vectors. """
     cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
-    return 1 - (torch.acos(cos_sim)) / math.pi)
+    return 1 - (torch.acos(cos_sim) / math.pi)
