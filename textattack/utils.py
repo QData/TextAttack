@@ -6,7 +6,6 @@ import torch
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config_path = os.path.join(dir_path, 'config.json')
 CONFIG = json.load(open(config_path, 'r'))
-english_tokenizer = None
 
 def get_logger():
     return logging.getLogger(__name__)
@@ -35,18 +34,6 @@ def download_if_needed(folder_path):
         file_path = os.path.join(folder_path, file_name)
         http_get(file_url, file_path)
         print(f'Saved {file_url} to {file_path}.')
-        
-def default_tokenize(text):
-    """ Tokenizes some text using the default TextAttack tokenizer. Right now, 
-        we just use the nltk tokenizer.
-    """
-    global english_tokenizer
-    if not english_tokenizer:
-        import spacy
-        spacy = spacy.load('en')
-        english_tokenizer = spacy.tokenizer
-    spacy_tokens = english_tokenizer(text)
-    return [t.text for t in spacy_tokens]
 
 def http_get(url, out_file, proxies=None):
     """ Get contents of a URL and save to a file.

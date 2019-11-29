@@ -1,29 +1,24 @@
 from textattack.utils import get_device
 
 class TokenizedText:
-    def __init__(self, text, text_to_ids_converter, attack_attrs=dict()):
+    def __init__(self, text, tokenizer, attack_attrs=dict()):
         """ Initializer stores text and tensor of tokenized text.
         
         Args:
             text (string): The string that this TokenizedText represents
-            text_to_ids_converter (func): a function that can take a string,
-                tokenize it, and return the list of IDs corresponding to the
-                strings' tokens
+            tokenizer (Tokenizer): an object that can convert text to tokens
+                and convert tokens to IDs
         """
         self.text = text
-        self.ids = text_to_ids_converter(text)
-        self.text_to_ids_converter = text_to_ids_converter
-        self.raw_words = raw_words(text)
+        self.tokenizer = tokenizer
+        self.tokens = tokenizer.convert_text_to_tokens(text)
+        self.ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        self.words = raw_words(text)
         self.attack_attrs = attack_attrs
-    
-    def words(self):
-        """ Returns the distinct words from self.text. 
-        """
-        return self.raw_words
 
     def text_window_around_index(self, index, window_size):
         """ The text window of `window_size` words centered around `index`. """
-        length = len(self.raw_words)
+        length = len(self.words)
         half_size = (window_size - 1) // 2
         if index - half_size < 0:
             start = 0
@@ -35,12 +30,12 @@ class TokenizedText:
             start = index - half_size
             end = index + half_size
         text_idx_start = self._text_index_of_word_index(start)
-        text_idx_end = self._text_index_of_word_index(end) + len(self.raw_words[end])
+        text_idx_end = self._text_index_of_word_index(end) + len(self.words[end])
         return self.text[text_idx_start:text_idx_end]
          
     def _text_index_of_word_index(self, i):
         """ Returns the index of word `i` in self.text. """
-        pre_words = self.raw_words[:i+1]
+        pre_words = self.words[:i+1]
         lower_text = self.text.lower()
         # Find all words until `i` in string.
         look_after_index = 0
@@ -62,7 +57,7 @@ class TokenizedText:
     def first_word_diff(self, other_tokenized_text):
         """ Returns the first word in self.raw_words() that differs from 
             other_tokenized_text. Useful for word swap strategies. """
-        w1 = self.raw_words
+        w1 = self.words
         w2 = other_tokenized_text.words()
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
@@ -72,7 +67,7 @@ class TokenizedText:
     def first_word_diff_index(self, other_tokenized_text):
         """ Returns the index of the first word in self.raw_words() that differs
             from other_tokenized_text. Useful for word swap strategies. """
-        w1 = self.raw_words
+        w1 = self.words
         w2 = other_tokenized_text.words()
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
@@ -83,7 +78,7 @@ class TokenizedText:
         """ Returns the set of indices for which this and other_tokenized_text
         have different words. """
         indices = set()
-        w1 = self.raw_words
+        w1 = self.words
         w2 = other_tokenized_text.words()
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
@@ -93,20 +88,20 @@ class TokenizedText:
     def ith_word_diff(self, other_tokenized_text, i):
         """ Returns whether the word at index i differs from other_tokenized_text
         """
-        w1 = self.raw_words
+        w1 = self.words
         w2 = other_tokenized_text.words()
         if len(w1) - 1 < i or len(w2) - 1 < i:
             return True
         return w1[i] != w2[i]
 
-    def replace_words_at_indices(self, indices, words):
+    def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
-        if len(indices) != len(words):
-            raise ValueError(f'Cannot replace {len(words)} words at {len(indices)} indices.')
-        new_words = self.raw_words[:]
-        for i, word in zip(indices, words):
-            new_words[i] = word
+        if len(indices) != len(new_words):
+            raise ValueError(f'Cannot replace {len(new_words)} words at {len(indices)} indices.')
+        words = self.words[:]
+        for i, new_word in zip(indices, new_words):
+            words[i] = new_word
         return self.replace_new_words(new_words)
     
     def replace_word_at_index(self, index, new_word):
@@ -130,7 +125,8 @@ class TokenizedText:
             final_sentence += adv_word
             text = text[word_end:]
         final_sentence += text # Add all of the ending punctuation.
-        return TokenizedText(final_sentence, self.text_to_ids_converter, attack_attrs=self.attack_attrs)
+        return TokenizedText(final_sentence, self.tokenizer, 
+            attack_attrs=self.attack_attrs)
         
     def __repr__(self):
         return f'<TokenizedText "{self.text}">'
