@@ -26,8 +26,11 @@ class Attack:
         """
         if not self.model:
             raise NameError('Cannot instantiate attack without self.model for prediction scores')
-        if not self.text_to_ids_converter:
-            raise NameError('Cannot instantiate attack without tokenizer')
+        if not self.tokenizer:
+            if hasattr(self.model, tokenizer):
+                self.tokenizer = self.model.tokenizer
+            else:
+                raise NameError('Cannot instantiate attack without tokenizer')
         # Transformation and corresponding constraints.
         self.constraints = []
         if constraints:
@@ -104,6 +107,7 @@ class Attack:
      
     def _filter_transformations(self, transformations, text, original_text=None):
         for C in self.constraints:
+            if len(transformations) == 0: break
             transformations = C.call_many(text, transformations, original_text)
         return transformations 
         
@@ -173,7 +177,7 @@ class Attack:
         n = 0
         for label, text in dataset:
             i += 1
-            tokenized_text = TokenizedText(text, self.text_to_ids_converter)
+            tokenized_text = TokenizedText(text, self.tokenizer)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
                 self.logger.log_skipped(tokenized_text)

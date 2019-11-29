@@ -42,7 +42,7 @@ class WordSwap(Transformation):
         If indices_to_replace is set, only replaces words at those indices.
         
         """
-        words = tokenized_text.words()
+        words = tokenized_text.words
         if not indices_to_replace:
             indices_to_replace = list(range(len(words)))
         

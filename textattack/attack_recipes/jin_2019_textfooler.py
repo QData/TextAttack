@@ -17,7 +17,7 @@ def Jin2019TextFooler(model):
     #
     # Swap words with their embedding nearest-neighbors. 
     #
-    # Embedding: Counter-fitted Paragram Embeddings.
+    # Embedding: Counter-fitted PARAGRAM-SL999 vectors.
     #
     # 50 nearest-neighbors with a cosine similarity of at least 0.5.
     # (The paper claims 0.7, but analysis of the code and some empirical
@@ -41,7 +41,7 @@ def Jin2019TextFooler(model):
     # embeddings by pi. So if the original threshold was that 1 - sim >= 0.7, the 
     # new threshold is 1 - (0.3) / pi = 0.90445
     #
-    use_constraint = UniversalSentenceEncoder(threshold=0.904458599, 
+    use_constraint = UniversalSentenceEncoder(threshold=0.904458599,
         metric='angular', compare_with_original=False, window_size=15,
         skip_text_shorter_than_window=True)
     attack.add_constraint(use_constraint)

@@ -104,8 +104,8 @@ class WordEmbeddingDistance(Constraint):
         
         try:
             i = x_adv.attack_attrs['modified_word_index']
-            x = x.words()[i]
-            x_adv = x_adv.words()[i]
+            x = x.words[i]
+            x_adv = x_adv.words[i]
         except AttributeError:
             raise AttributeError('Cannot apply word embedding distance constraint without `modified_word_index`')
             
