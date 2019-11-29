@@ -52,12 +52,12 @@ class WordEmbeddingDistance(Constraint):
         self.word_embedding_word2index = np.load(word_list_file, allow_pickle=True)
         # Precomputed distance matrices store distances at mat[x][y], where
         # x and y are word IDs and x < y.
-        if os.path.exists(mse_dist_file):
+        if self.max_mse_dist is not None and os.path.exists(mse_dist_file):
             self.mse_dist_mat = pickle.load(open(mse_dist_file, 'rb'))
             print('loaded', len(self.mse_dist_mat),'ids')
         else:
             self.mse_dist_mat = {}
-        if os.path.exists(cos_sim_file):
+        if self.min_cos_sim is not None and os.path.exists(cos_sim_file):
             self.cos_sim_mat = pickle.load(open(cos_sim_file, 'rb'))
         else:
             self.cos_sim_mat = {}
