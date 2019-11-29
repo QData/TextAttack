@@ -9,8 +9,8 @@ class BERT(SentenceEncoder):
     the text embeddings are created using BERT, trained on NLI data, and fine-
     tuned on the STS benchmark dataset.
     """
-    def __init__(self, use_version=3, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, threshold=0.7, metric='cosine'):
+        super().__init__(threshold=threshold, metric=metric)
         self.model = SentenceTransformer('bert-base-nli-mean-tokens')
         self.model.to(get_device())
     
