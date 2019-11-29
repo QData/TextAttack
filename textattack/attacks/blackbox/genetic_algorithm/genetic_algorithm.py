@@ -120,9 +120,9 @@ class GeneticAlgorithm(BlackBoxAttack):
         indices_to_replace = []
         words_to_replace = []
         x1_text = pop_member1.tokenized_text
-        x2_words = pop_member2.tokenized_text.words()
+        x2_words = pop_member2.tokenized_text.words
         new_neighbors_len = deepcopy(pop_member1.neighbors_len)
-        for i in range(len(x1_text.words())):
+        for i in range(len(x1_text.words)):
             if np.random.uniform() < 0.5:
                 indices_to_replace.append(i)
                 words_to_replace.append(x2_words[i])
@@ -140,7 +140,7 @@ class GeneticAlgorithm(BlackBoxAttack):
         Returns:
             A list of number of candidate neighbors for each word
         '''
-        words = tokenized_text.words()
+        words = tokenized_text.words
         neighbors_list = [[] for _ in range(len(words))]
         transformations = self.get_transformations(self.transformation,
                                                    tokenized_text,
@@ -148,7 +148,7 @@ class GeneticAlgorithm(BlackBoxAttack):
                                                    apply_constraints=False)
         for transformed_text in transformations:
             diff_idx = tokenized_text.first_word_diff_index(transformed_text)
-            neighbors_list[diff_idx].append(transformed_text.words()[diff_idx])
+            neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
         neighbors_list = [np.array(x) for x in neighbors_list]
         neighbors_len = np.array([len(x) for x in neighbors_list])
         return neighbors_len
@@ -192,7 +192,7 @@ class GeneticAlgorithm(BlackBoxAttack):
             self.original_tokenized_text,
             original_label
         )
-
+    
 class PopulationMember:
     '''
     A member of the population during the course of the genetic algorithm.

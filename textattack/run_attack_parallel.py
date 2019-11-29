@@ -8,14 +8,15 @@ import sys
 import torch
 
 from textattack.run_attack import get_args
-from textattack.utils import color_text_terminal
+from textattack.utils import color
 
 
-def _cb(s): return color_text_terminal(str(s), color='blue')
-def _cg(s): return color_text_terminal(str(s), color='green')
-def _cr(s): return color_text_terminal(str(s), color='red')
+def _cb(s): return color(str(s), color='blue', method='stdout')
+def _cg(s): return color(str(s), color='green', method='stdout')
+def _cr(s): return color(str(s), color='red', method='stdout')
 
 result_regex = '----------------------------------- Result [0-9]* -----------------------------------'
+arg_eq_regex = '^--[A-Za-z0-9_-]*\=[A-Za-z0-9_-]*$'
 
 def validate_args(args):
     """ Some arguments from `run_attack` may not be valid to run in parallel.
@@ -24,6 +25,19 @@ def validate_args(args):
         raise Error('Cannot run attack in parallel with --interactive set.')
     if not args.num_examples:
         raise Error('Cannot run attack with --num_examples set.')
+
+def get_command_line_args():
+    """ Splits args like `--arg=4` into `--arg 4`. We can't use the argparser
+        for this because we need to parse the args back into a string to pass to
+        run_attack. """
+    raw_args = sys.argv[1:]
+    args = []
+    for arg in raw_args:
+        if re.match(arg_eq_regex, arg):
+            args.extend(arg.split('='))
+        else:
+            args.append(arg)
+    return args
 
 def main():
     input_args = get_args()
@@ -56,24 +70,18 @@ def main():
         new_env['CUDA_VISIBLE_DEVICES'] = str(i)
         new_env['PYTHONUNBUFFERED'] = '1'
         args = ['python', run_attack_path]
-        command_line_args_list = sys.argv[1:]
+        command_line_args_list = get_command_line_args()
         # Change number of examples in argument list.
         examples_at_i = str(num_examples_per_device)
         if '--num_examples' in command_line_args_list:
             _x = command_line_args_list.index('--num_examples')
             command_line_args_list[_x+1] = examples_at_i
-        elif '--n' in command_line_args_list:
-            _x = command_line_args_list.index('--n')
-            command_line_args_list[_x+1] = examples_at_i
         else:
-            command_line_args_list.extend(['--n', examples_at_i])
+            command_line_args_list.extend(['--num_examples', examples_at_i])
         # Change offset in argument list.
         offset_at_i = str(input_args.num_examples_offset + num_examples_per_device * i)
         if '--num_examples_offset' in command_line_args_list:
             _x = command_line_args_list.index('--num_examples_offset')
-            command_line_args_list[_x+1] = offset_at_i
-        elif '--o' in command_line_args_list:
-            _x = command_line_args_list.index('--o')
             command_line_args_list[_x+1] = offset_at_i
         else:
             command_line_args_list.extend(['--num_examples_offset', offset_at_i])
@@ -110,7 +118,11 @@ def main():
                 line_j_tokens[2] = str(i)
                 lines[j] = ' '.join(line_j_tokens) + '\n'
                 i += 1
-                for _ in range(4):
+                if 'FAILED' in lines[j+1]:
+                    n=3
+                else:
+                    n=4
+                for _ in range(n):
                     final_out_file.write(lines[j])
                     j += 1
             else: j += 1

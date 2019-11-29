@@ -20,7 +20,7 @@ class GreedyWordSwap(BlackBoxAttack):
     def _attack_one(self, original_label, tokenized_text):
         original_tokenized_text = tokenized_text
         num_words_changed = 0
-        unswapped_word_indices = list(range(len(tokenized_text.words())))
+        unswapped_word_indices = list(range(len(tokenized_text.words)))
         new_tokenized_text = None
         new_text_label = None
         while num_words_changed <= self.max_depth and len(unswapped_word_indices):

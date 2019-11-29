@@ -1,8 +1,19 @@
-# TextAttack 🐙
+<h1 align="center">TextAttack 🐙</h1>
+
+<p align="center">generating adversarial examples for NLP models</p>
+
+<p align="center">
+  <a href="#about">About</a> •
+  <a href="#getting-started">Getting Started</a> •
+  <a href="#features">Features</a> •
+  
+</p>
+
+![TextAttack Demo GIF](https://github.com/UVA-MachineLearningBioinformatics/TextAttack/blob/master/text_attack_demo.gif?raw=true)
 
 ## About
 
-TextAttack is research library built for finding adversarial examples in NLP models. TextAttack includes implementations of state-of-the-art attacks on NLP models, both black-box and white-box. It ships with pre-trained models and datasets for various tasks.
+TextAttack is research library built for finding adversarial examples in NLP. TextAttack includes implementations of state-of-the-art attacks on NLP models, both black-box and white-box. It ships with pre-trained models and datasets for various tasks.
 
 ## Getting Started
 
@@ -21,6 +32,12 @@ We use the list of stopwords from nltk. To download them run in Python shell:
 ```
 import nltk
 nltk.download('stopwords')
+```
+
+We use spaCy's English model. To download it, after installing spaCy type in terminal:
+
+```
+python -m spacy download en
 ```
 
 ### Basic Usage

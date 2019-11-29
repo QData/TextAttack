@@ -29,7 +29,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         # Sort words by order of importance
         orig_probs = self._call_model([tokenized_text]).squeeze()
         orig_prob = orig_probs.max()
-        len_text = len(tokenized_text.words())
+        len_text = len(tokenized_text.words)
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,'[UNKNOWN]') for i in range(len_text)]
         leave_one_probs = self._call_model(leave_one_texts)
@@ -65,7 +65,15 @@ class GreedyWordSwapWIR(BlackBoxAttack):
                 for i in range(len(transformed_text_candidates)):
                     if scores[i].argmax().item() == new_text_label:
                         candidate = transformed_text_candidates[i]
-                        similarity_score = candidate.attack_attrs['similarity_score']
+                        try:
+                            similarity_score = candidate.attack_attrs['similarity_score']
+                        except KeyError:
+                            # If the attack was run without any similarity metrics, 
+                            # candidates won't have a similarity score. In this
+                            # case, break and return the candidate that changed
+                            # the original score the most.
+                            new_tokenized_text = transformed_text_candidates[best_index]
+                            break
                         if similarity_score > max_similarity:
                             max_similarity = similarity_score
                             new_tokenized_text = candidate

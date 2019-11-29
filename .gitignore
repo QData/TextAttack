@@ -9,3 +9,12 @@ outputs/
 
 # IDE files
 .c9*
+
+# Sphinx documentation
+docs/_build/
+
+# Packaging
+*.egg-info/
+
+# Files from IDES
+.*.py

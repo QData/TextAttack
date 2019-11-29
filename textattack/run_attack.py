@@ -15,13 +15,6 @@ import textattack.transformations as transformations
 
 from textattack.tokenized_text import TokenizedText
 
-DATASET_CLASS_NAMES = {
-    'agnews':           datasets.classification.AGNews,
-    'imdb':             datasets.classification.IMDBSentiment,
-    'kaggle-fake-news': datasets.classification.KaggleFakeNews,
-    'mr':               datasets.classification.MovieReviewSentiment,
-    'yelp-sentiment':   datasets.classification.YelpSentiment,
-}
 
 MODEL_CLASS_NAMES = {
     #
@@ -44,10 +37,25 @@ MODEL_CLASS_NAMES = {
     'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
 }
 
-MODELS_BY_DATASET = {
-    'imdb':             ['bert-imdb', 'cnn-imdb', 'lstm-imdb'],
-    'mr':               ['bert-mr', 'cnn-mr', 'lstm-mr'],
-    'yelp-sentiment':   ['bert-yelp-sentiment', 'cnn-yelp-sentiment', 'lstm-yelp-sentiment']
+DATASET_BY_MODEL = {
+    #
+    # IMDB models 
+    #
+    'bert-imdb':                datasets.classification.IMDBSentiment,
+    'cnn-imdb':                 datasets.classification.IMDBSentiment,
+    'lstm-imdb':                datasets.classification.IMDBSentiment,
+    #
+    # MR models
+    #
+    'bert-mr':                  datasets.classification.MovieReviewSentiment,
+    'cnn-mr':                   datasets.classification.MovieReviewSentiment,
+    'lstm-mr':                  datasets.classification.MovieReviewSentiment,
+    #
+    # Yelp models
+    #
+    'bert-yelp-sentiment':      datasets.classification.YelpSentiment,
+    'cnn-yelp-sentiment':       datasets.classification.YelpSentiment,
+    'lstm-yelp-sentiment':      datasets.classification.YelpSentiment,
 }
 
 TRANSFORMATION_CLASS_NAMES = {
@@ -57,9 +65,12 @@ TRANSFORMATION_CLASS_NAMES = {
 }
 
 CONSTRAINT_CLASS_NAMES = {
-    'use':          'constraints.semantics.UniversalSentenceEncoder',
+    'embedding':    'constraints.semantics.WordEmbeddingDistance',
+    'goog-lm':      'constraints.semantics.language_models.GoogleLanguageModel',
+    'bert':         'constraints.semantics.sentence_encoders.BERT',
+    'infer-sent':   'constraints.semantics.sentence_encoders.InferSent',
+    'use':          'constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
     'lang-tool':    'constraints.syntax.LanguageTool', 
-    'goog-lm':      'constraints.semantics.google_language_model.GoogleLanguageModel',
 }
 
 ATTACK_CLASS_NAMES = {
@@ -79,38 +90,40 @@ def get_args():
     parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-
-    parser.add_argument('--transformation', type=str, required=False, nargs='*',
-        default=['word-swap-embedding'],
-        help='The type of transformation to apply')
+    parser.add_argument('--transformations', type=str, required=False, nargs='*',
+        default=['word-swap-embedding'], choices=TRANSFORMATION_CLASS_NAMES.keys(),
+        help='The transformations to apply.')
         
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
-        default=['use'], 
-        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}' 
-        ' Options are use, lang-tool, and goog-lm'))
+        default=[], choices=CONSTRAINT_CLASS_NAMES.keys(),
+        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}"'))
     
     parser.add_argument('--out_dir', type=str, required=False, default=None,
         help='A directory to output results to.')
     
-    parser.add_argument('--num_examples', '--n', type=int, required=False, 
-        default='5', help='The number of examples to attack.')
+    parser.add_argument('--enable_visdom', action='store_true',
+        help='Enable logging to visdom.')
     
-    parser.add_argument('--num_examples_offset', '--o', type=int, required=False, 
+    parser.add_argument('--disable_stdout', action='store_true',
+        help='Disable logging to stdout')
+    
+    parser.add_argument('--num_examples', '-n', type=int, required=False, 
+        default='5', help='The number of examples to process.')
+    
+    parser.add_argument('--num_examples_offset', '-o', type=int, required=False, 
         default=0, help='The offset to start at in the dataset.')
-    
+  
+    parser.add_argument('--attack_n', action='store_true',
+        help='Attack n examples, not counting examples where the model is initially wrong.')
+
     parser.add_argument('--shuffle', action='store_true', required=False, 
         default=False, help='Randomly shuffle the data before attacking')
     
-    data_group = parser.add_mutually_exclusive_group(required=False)
-    
-    data_group.add_argument('--interactive', action='store_true', default=False,
+    parser.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
-    
-    data_group.add_argument('--data', type=str, default=None,
-        choices=DATASET_CLASS_NAMES.keys(), help='The dataset to use.')
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
@@ -123,27 +136,12 @@ def get_args():
     
     args = parser.parse_args()
     
-    # Default to interactive mode if no dataset specified.
-    if not args.data: args.interactive = True
-    
     return args
-
-def check_model_and_data_compatibility(data_name, model_name):
-    """
-        Prints a warning message if the user attacks a model using data different
-        than what it was trained on.
-    """
-    if not model_name or not data_name:
-        return
-    elif data_name not in MODELS_BY_DATASET:
-        print('Warning: No known models for this dataset.')
-    elif model_name not in MODELS_BY_DATASET[data_name]:
-        print(f'Warning: model {model_name} incompatible with dataset {data_name}.')
 
 def parse_transformation_from_args():
     # Transformations
     _transformations = []    
-    for transformation in args.transformation:
+    for transformation in args.transformations:
         if ':' in transformation:
             transformation_name, params = transformation.split(':')
             if transformation_name not in TRANSFORMATION_CLASS_NAMES:
@@ -240,26 +238,17 @@ if __name__ == '__main__':
         outfile_name = 'attack-{}.txt'.format(int(time.time()))
         attack.add_output_file(os.path.join(args.out_dir, outfile_name))
 
+    # Visdom
+    if args.enable_visdom:
+        attack.enable_visdom()
+
+    # Stdout
+    if not args.disable_stdout:
+        attack.enable_stdout()
+
     load_time = time.time()
+    print(f'Loaded in {load_time - start_time}s')
 
-    if args.data is not None and not args.interactive:
-        check_model_and_data_compatibility(args.data, args.model)
-        
-        # Data
-        dataset_class = DATASET_CLASS_NAMES[args.data]
-        data = dataset_class(n=args.num_examples, offset=args.num_examples_offset)
-        
-        print(f'Model: {args.model} / Dataset: {args.data}')
-        
-        attack.attack(data, shuffle=args.shuffle)
-
-        finish_time = time.time()
-
-        print(f'Loaded in {load_time - start_time}s')
-        print(f'Ran attack in {finish_time - load_time}s')
-        print(f'TOTAL TIME: {finish_time - start_time}s')
-
-    
     if args.interactive:
         print('Running in interactive mode')
         print('----------------------------')
@@ -274,8 +263,7 @@ if __name__ == '__main__':
             if not text:
                 continue
 
-            tokenized_text = TokenizedText(text, model.convert_text_to_tokens, 
-                model.convert_tokens_to_ids)
+            tokenized_text = TokenizedText(text, model.tokenizer)
 
             pred = attack._call_model([tokenized_text])
             label = int(pred.argmax())
@@ -283,3 +271,17 @@ if __name__ == '__main__':
             print('Attacking...')
 
             attack.attack([(label, text)])
+    
+    else:
+        # Not interactive? Use default dataset.
+        if args.model in DATASET_BY_MODEL:
+            data = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+        else:
+            raise ValueError(f'Error: unsupported model {args.model}')
+            
+        attack.attack(data, num_examples=args.num_examples,
+                      attack_n=args.attack_n, shuffle=args.shuffle)
+
+        finish_time = time.time()
+
+        print(f'Total time: {finish_time - start_time}s')

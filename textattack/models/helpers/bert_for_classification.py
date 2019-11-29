@@ -1,8 +1,9 @@
-from transformers.modeling_bert import BertForSequenceClassification
-from transformers.tokenization_bert import BertTokenizer
-
 import textattack.utils as utils
 import torch
+
+from textattack.tokenizers import BERTTokenizer
+from transformers.modeling_bert import BertForSequenceClassification
+
 
 class BERTForClassification:
     """ 
@@ -16,53 +17,19 @@ class BERTForClassification:
             Defaults to 32.
             
     """
-    def __init__(self, model_path, num_labels=2, max_seq_length=256):
+    def __init__(self, model_path, num_labels=2):
         utils.download_if_needed(model_path)
         print('TextAttack BERTForClassification Loading from path', model_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_path, num_labels=num_labels)
-        self.tokenizer = BertTokenizer.from_pretrained(model_path)
-        self.pad_token_id = self.tokenizer.pad_token
         self.model.to(utils.get_device())
         self.model.eval()
+        self.tokenizer = BERTTokenizer(model_path)
         self.word_embeddings = self.model.bert.embeddings.word_embeddings
         self.lookup_table = self.word_embeddings.weight.data
-        self.max_seq_length = max_seq_length
-    
-    def convert_text_to_tokens(self, input_text):
-        """ 
-        Takes a string input, tokenizes, formats, and returns a tensor with text 
-        IDs. 
-        
-        Args:
-            input_text (str): The text to tokenize
-
-        Returns:
-            The ID of the tokenized text
-        """
-        tokens = self.tokenizer.tokenize(input_text)
-        tokens = tokens[:self.max_seq_length-2]
-        tokens = ["[CLS]"] + tokens + ["[SEP]"]
-        pad_tokens_to_add = self.max_seq_length - len(tokens)
-        tokens += [self.tokenizer.pad_token] * pad_tokens_to_add
-        return tokens
-    
-    def convert_tokens_to_ids(self, tokens):
-        ids = self.tokenizer.convert_tokens_to_ids(tokens)
-        return ids
-    
-    def convert_text_to_ids(self, text):
-        return self.convert_tokens_to_ids(self.convert_text_to_tokens(text))
     
     def zero_grad(self): 
         self.model.zero_grad()
-    
-    def convert_id_to_word(self, _id):
-        """
-        Takes an integer input and returns the corresponding word from the 
-        vocabulary.
-        """
-        return self.tokenizer.ids_to_tokens[_id]
     
     def __call__(self, text_ids):
         if not isinstance(text_ids, torch.Tensor):

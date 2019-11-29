@@ -15,9 +15,12 @@ class YelpSentiment(TextAttackDataset):
     
     """
     DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/yelp_polarity.txt'
-    def __init__(self, n=None, offset=None):
+    def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(YelpSentiment.DATA_PATH)
-        self.examples = self._load_text_file(YelpSentiment.DATA_PATH, n=n,
-            offset=offset)
-        print('YelpSentiment loaded', len(self.examples), 'examples.')
+        self._load_text_file(YelpSentiment.DATA_PATH, offset=offset)
+
+    def _clean_example(self, ex):
+        # Removes \\n and \" from the Yelp dataset.
+        return ex.replace('\\n','').replace('\\"','')
+        

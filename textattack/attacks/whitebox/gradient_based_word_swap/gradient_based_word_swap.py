@@ -43,10 +43,10 @@ class GradientBasedWordSwap(WhiteBoxAttack):
             raise ValueError('Model needs lookup table for gradient-based word swap')
         if not hasattr(model, 'zero_grad'):
             raise ValueError('Model needs `zero_grad()` for gradient-based word swap')
-        if not hasattr(model, 'convert_id_to_word'):
-            raise ValueError('Model needs `convert_id_to_word()` for gradient-based word swap')
-        if not hasattr(model, 'pad_token_id'):
-            raise ValueError('Model needs `pad_token_id` for gradient-based word swap')
+        if not hasattr(model.tokenizer, 'convert_id_to_word'):
+            raise ValueError('Tokenizer needs `convert_id_to_word()` for gradient-based word swap')
+        if not hasattr(model.tokenizer, 'pad_token_id'):
+            raise ValueError('Tokenizer needs `pad_token_id` for gradient-based word swap')
         super().__init__(model)
         self.max_swaps = max_swaps
         # @TODO optionally take other loss functions as a param.
@@ -77,7 +77,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
             swaps += 1
             # get nonzero word indices, since x is padded with zeros
             nonzero_word_idxs = [i for i, word_id in enumerate(text.ids) 
-                if word_id != self.model.pad_token_id]
+                if word_id != self.model.tokenizer.pad_token_id]
                 # @TODO use pad ID
     
             # set backward hook on the word embeddings for input x
@@ -111,7 +111,7 @@ class GradientBasedWordSwap(WhiteBoxAttack):
             max_word_idx = max_word_idx.item() # the index of the word we should flip from x_tensor
             max_word_flip = max_word_flip.item() # the word to flip max_word_idx to 
             
-            new_token = self.model.convert_id_to_word(max_word_flip)
+            new_token = self.model.tokenizer.convert_id_to_word(max_word_flip)
             
             print('replacing:', text.tokens[max_word_idx],'with', new_token)
             text = text.replace_token_at_index(max_word_idx, new_token)
