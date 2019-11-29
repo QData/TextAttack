@@ -29,7 +29,7 @@ class SentenceEncoder(Constraint):
         self.compare_with_original = compare_with_original
         self.window_size = window_size
         self.skip_text_shorter_than_window = skip_text_shorter_than_window
-             
+        
         if metric=='cosine':
             self.sim_metric = torch.nn.CosineSimilarity(dim=1)
         elif metric == 'angular':
@@ -142,4 +142,4 @@ class SentenceEncoder(Constraint):
 def get_angular_sim(emb1, emb2):
     """ Returns the _angular_ similarity between two vectors. """
     cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
-    return 1 - (torch.acos(cos_sim) / math.pi)
+    return 1 - (torch.acos(cos_sim))# / math.pi)

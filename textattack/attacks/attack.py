@@ -104,7 +104,10 @@ class Attack:
      
     def _filter_transformations(self, transformations, text, original_text=None):
         for C in self.constraints:
+            if len(transformations) == 0: break
+            n = len(transformations)
             transformations = C.call_many(text, transformations, original_text)
+            print('constraint', C, 'filtered', n, 'to ', len(transformations), 'transformations')
         return transformations 
         
     def enable_visdom(self):
