@@ -9,7 +9,7 @@
   
 </p>
 
-![TextAttack Demo GIF](https://github.com/UVA-MachineLearningBioinformatics/TextAttack/blob/readme_gif/text_attack_demo.gif?raw=true)
+![TextAttack Demo GIF](https://github.com/UVA-MachineLearningBioinformatics/TextAttack/blob/master/text_attack_demo.gif?raw=true)
 
 ## About
 
