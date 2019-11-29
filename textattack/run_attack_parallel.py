@@ -8,12 +8,12 @@ import sys
 import torch
 
 from textattack.run_attack import get_args
-from textattack.utils import color_text_terminal
+from textattack.utils import color
 
 
-def _cb(s): return color_text_terminal(str(s), color='blue')
-def _cg(s): return color_text_terminal(str(s), color='green')
-def _cr(s): return color_text_terminal(str(s), color='red')
+def _cb(s): return color(str(s), color='blue', method='stdout')
+def _cg(s): return color(str(s), color='green', method='stdout')
+def _cr(s): return color(str(s), color='red', method='stdout')
 
 result_regex = '----------------------------------- Result [0-9]* -----------------------------------'
 
@@ -62,11 +62,8 @@ def main():
         if '--num_examples' in command_line_args_list:
             _x = command_line_args_list.index('--num_examples')
             command_line_args_list[_x+1] = examples_at_i
-        elif '--n' in command_line_args_list:
-            _x = command_line_args_list.index('--n')
-            command_line_args_list[_x+1] = examples_at_i
         else:
-            command_line_args_list.extend(['--n', examples_at_i])
+            command_line_args_list.extend(['--num_examples', examples_at_i])
         # Change offset in argument list.
         offset_at_i = str(input_args.num_examples_offset + num_examples_per_device * i)
         if '--num_examples_offset' in command_line_args_list:

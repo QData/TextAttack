@@ -38,5 +38,11 @@ class TextAttackDataset:
                 offset (int): line to start reading from
         """
         text_file = open(text_file_name, 'r')
-        self.raw_lines = text_file.readlines()[offset:]
+        raw_lines = text_file.readlines()[offset:]
+        self.raw_lines = [self._clean_example(ex) for ex in raw_lines]
         self.i = 0
+    
+    def _clean_example(self, ex):
+        """ Optionally pre-processes an input string before some tokenization.
+            Only necessary for some datasets. """
+        return ex

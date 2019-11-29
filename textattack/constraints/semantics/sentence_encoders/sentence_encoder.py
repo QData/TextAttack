@@ -4,9 +4,7 @@ import os
 import torch
 
 from textattack.constraints import Constraint
-
 import textattack.utils as utils
-
 
 class SentenceEncoder(Constraint):
     """ 

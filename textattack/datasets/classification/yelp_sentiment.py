@@ -18,4 +18,9 @@ class YelpSentiment(TextAttackDataset):
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(YelpSentiment.DATA_PATH)
-        self.examples = self._load_text_file(YelpSentiment.DATA_PATH, offset=offset)
+        self._load_text_file(YelpSentiment.DATA_PATH, offset=offset)
+
+    def _clean_example(self, ex):
+        # Removes \\n and \" from the Yelp dataset.
+        return ex.replace('\\n','').replace('\\"','')
+        
