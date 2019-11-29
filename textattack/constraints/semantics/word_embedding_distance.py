@@ -43,7 +43,6 @@ class WordEmbeddingDistance(Constraint):
         # Concatenate folder names to create full path to files.
         word_embeddings_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, word_embeddings_file)
         word_list_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, word_list_file)
-        cos_sim_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, cos_sim_file)
         mse_dist_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, mse_dist_file)
         cos_sim_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, cos_sim_file)
         
