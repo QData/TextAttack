@@ -53,9 +53,9 @@ class GoogleLanguageModel(Constraint):
         
         def get_probs(x, x_adv_list):
             word_swap_index = x.first_word_diff_index(x_adv_list[0])
-            prefix = x.words()[word_swap_index-1]
-            swapped_words = np.array([t.words()[word_swap_index] for t in x_adv_list])
-            suffix = x.words()[word_swap_index+1] if self.use_suffix else None
+            prefix = x.words[word_swap_index-1]
+            swapped_words = np.array([t.words[word_swap_index] for t in x_adv_list])
+            suffix = x.words[word_swap_index+1] if self.use_suffix else None
             if self.print_step:
                 print(prefix, swapped_words, suffix)
             probs = self.lm.get_words_probs(prefix, swapped_words, suffix)

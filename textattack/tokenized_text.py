@@ -51,24 +51,24 @@ class TokenizedText:
     def text_after_word_index(self, i):
         """ Returns the text after the end of word at index `i`. """
         # Get index of beginning of word then jump to end of word.
-        look_after_index = self._text_index_of_word_index(i) + len(self.raw_words[i])
+        look_after_index = self._text_index_of_word_index(i) + len(self.words[i])
         return self.text[look_after_index:]
     
     def first_word_diff(self, other_tokenized_text):
-        """ Returns the first word in self.raw_words() that differs from 
+        """ Returns the first word in self.words that differs from 
             other_tokenized_text. Useful for word swap strategies. """
         w1 = self.words
-        w2 = other_tokenized_text.words()
+        w2 = other_tokenized_text.words
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
                 return w1
         return None
     
     def first_word_diff_index(self, other_tokenized_text):
-        """ Returns the index of the first word in self.raw_words() that differs
+        """ Returns the index of the first word in self.words that differs
             from other_tokenized_text. Useful for word swap strategies. """
         w1 = self.words
-        w2 = other_tokenized_text.words()
+        w2 = other_tokenized_text.words
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
                 return i
@@ -79,7 +79,7 @@ class TokenizedText:
         have different words. """
         indices = set()
         w1 = self.words
-        w2 = other_tokenized_text.words()
+        w2 = other_tokenized_text.words
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
                 indices.add(i)
@@ -89,7 +89,7 @@ class TokenizedText:
         """ Returns whether the word at index i differs from other_tokenized_text
         """
         w1 = self.words
-        w2 = other_tokenized_text.words()
+        w2 = other_tokenized_text.words
         if len(w1) - 1 < i or len(w2) - 1 < i:
             return True
         return w1[i] != w2[i]
@@ -117,7 +117,7 @@ class TokenizedText:
         """
         final_sentence = ''
         text = self.text
-        for input_word, adv_word in zip(self.raw_words, new_words):
+        for input_word, adv_word in zip(self.words, new_words):
             if input_word == '[UNKNOWN]': continue
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)

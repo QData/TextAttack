@@ -129,7 +129,7 @@ class SentenceEncoder(Constraint):
         for i, x_adv in enumerate(x_adv_list):
             # Optionally ignore similarity score for sentences shorter than the 
             # window size.
-            if self.skip_text_shorter_than_window and len(x_adv.words()) < self.window_size: 
+            if self.skip_text_shorter_than_window and len(x_adv.words) < self.window_size: 
                 scores[i] = 1
             x_adv.attack_attrs['similarity_score'] = scores[i]
         mask = (scores >= self.threshold)

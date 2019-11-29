@@ -54,8 +54,8 @@ class AttackResult:
         if color_method is None:
             return t1.text, t2.text
 
-        words1 = t1.words()
-        words2 = t2.words()
+        words1 = t1.words
+        words2 = t2.words
         
         c1 = utils.color_from_label(self.original_label)
         c2 = utils.color_from_label(self.perturbed_label)

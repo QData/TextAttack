@@ -49,7 +49,7 @@ class AttackLogger:
         self.num_words_changed_until_success[num_words_changed-1]+=1
         self.max_words_changed = max(self.max_words_changed,num_words_changed)
         if num_words_changed > 0:
-            perturbed_word_percentage = num_words_changed * 100.0 / len(result.original_text.words())
+            perturbed_word_percentage = num_words_changed * 100.0 / len(result.original_text.words)
         else:
             perturbed_word_percentage = 0
         self.perturbed_word_percentages.append(perturbed_word_percentage)
@@ -93,7 +93,10 @@ class AttackLogger:
         attack_success_rate = self.successful_attacks * 100.0 / (self.successful_attacks + self.failed_attacks) 
         attack_success_rate = str(round(attack_success_rate, 2)) + '%'
         # Average % of words perturbed per sample.
-        average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
+        if len(self.perturbed_word_percentages):
+            average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
+        else:
+            average_perc_words_perturbed = 0
         average_perc_words_perturbed = str(round(average_perc_words_perturbed, 2)) + '%'
         summary_table_rows = [
             ['Number of successful attacks:', str(self.successful_attacks)],

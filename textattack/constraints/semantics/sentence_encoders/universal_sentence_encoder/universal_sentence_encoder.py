@@ -16,7 +16,6 @@ class UniversalSentenceEncoder(SentenceEncoder):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
         tfhub_url = 'https://tfhub.dev/google/universal-sentence-encoder{}/{}'.format(
             '-large' if large else '', use_version)
-        print('loading model from', tfhub_url)
         self.model = hub.load(tfhub_url)
     
     def encode(self, sentences):

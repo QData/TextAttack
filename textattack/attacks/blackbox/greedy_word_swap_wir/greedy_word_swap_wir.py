@@ -29,7 +29,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         # Sort words by order of importance
         orig_probs = self._call_model([tokenized_text]).squeeze()
         orig_prob = orig_probs.max()
-        len_text = len(tokenized_text.words())
+        len_text = len(tokenized_text.words)
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,'[UNKNOWN]') for i in range(len_text)]
         leave_one_probs = self._call_model(leave_one_texts)

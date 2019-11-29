@@ -1,7 +1,9 @@
-from transformers.modeling_bert import BertForSequenceClassification
-
 import textattack.utils as utils
 import torch
+
+from textattack.tokenizers import BERTTokenizer
+from transformers.modeling_bert import BertForSequenceClassification
+
 
 class BERTForClassification:
     """ 
@@ -22,7 +24,6 @@ class BERTForClassification:
             model_path, num_labels=num_labels)
         self.model.to(utils.get_device())
         self.model.eval()
-        self.max_seq_length = max_seq_length
         self.tokenizer = BERTTokenizer(model_path)
     
     def __call__(self, text_ids):
