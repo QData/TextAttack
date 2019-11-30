@@ -82,6 +82,7 @@ ATTACK_CLASS_NAMES = {
     'greedy-word':        'attacks.blackbox.GreedyWordSwap',
     'ga-word':            'attacks.blackbox.GeneticAlgorithm',
     'greedy-word-wir':    'attacks.blackbox.GreedyWordSwapWIR',
+    'mcts':               'attacks.blackbox.MCTS',
 }
 
 

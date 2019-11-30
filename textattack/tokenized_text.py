@@ -102,7 +102,7 @@ class TokenizedText:
         words = self.words[:]
         for i, new_word in zip(indices, new_words):
             words[i] = new_word
-        return self.replace_new_words(new_words)
+        return self.replace_new_words(words)
     
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
