@@ -36,6 +36,12 @@ def Jin2019TextFooler(model):
             WordEmbeddingDistance(min_cos_sim=0.5)
     )
     #
+    # Only replace words with the same part of speech (or nouns with verbs)
+    #
+    attack.add_constraint(
+            PartOfSpeech(allow_verb_noun_swap=True)
+    )
+    #
     # Universal Sentence Encoder with a minimum angular similarity of ε = 0.7.
     #
     # In the TextFooler code, they forget to divide the angle between the two
