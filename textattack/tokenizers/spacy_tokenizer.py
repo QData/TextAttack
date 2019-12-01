@@ -28,8 +28,3 @@ class SpacyTokenizer:
             else:
                 ids.append(self.oovid)
         return ids
-        
-    def encode(text):
-        """ Converts text directly to IDs. """
-        tokens = self.convert_text_to_tokens(text)
-        return self.convert_tokens_to_ids(tokens)
