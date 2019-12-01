@@ -21,6 +21,7 @@ class LSTMForClassification(nn.Module):
             dropout = 0
         self.drop = nn.Dropout(dropout)
         self.emb_layer = GloveEmbeddingLayer()
+        self.word2id = self.emb_layer.word2id
         self.encoder = nn.LSTM(
             input_size=self.emb_layer.n_d,
             hidden_size=hidden_size//2,
@@ -38,7 +39,6 @@ class LSTMForClassification(nn.Module):
         self.load_state_dict(state_dict)
         self.word_embeddings = self.emb_layer.embedding
         self.lookup_table = self.emb_layer.embedding.weight.data
-        self.pad_token_id = self.emb_layer.padid
         self.to(utils.get_device())
 
     def forward(self, _input):

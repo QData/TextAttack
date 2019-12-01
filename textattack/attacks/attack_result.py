@@ -54,8 +54,8 @@ class AttackResult:
         if color_method is None:
             return t1.text, t2.text
 
-        words1 = t1.words
-        words2 = t2.words
+        words1 = t1.tokens
+        words2 = t2.tokens
         
         c1 = utils.color_from_label(self.original_label)
         c2 = utils.color_from_label(self.perturbed_label)
@@ -70,7 +70,7 @@ class AttackResult:
                 new_w1s.append(utils.color(w1, c1, color_method))
                 new_w2s.append(utils.color(w2, c2, color_method))
         
-        t1 = self.original_text.replace_words_at_indices(new_is, new_w1s)
-        t2 = self.original_text.replace_words_at_indices(new_is, new_w2s)
+        t1 = self.original_text.replace_tokens_at_indices(new_is, new_w1s)
+        t2 = self.original_text.replace_tokens_at_indices(new_is, new_w2s)
                 
         return t1.text, t2.text

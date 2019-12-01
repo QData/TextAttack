@@ -99,6 +99,8 @@ class TokenizedText:
     def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
+        print('replacing /',indices)
+        print('\tat/', new_words)
         if len(indices) != len(new_words):
             raise ValueError(f'Cannot replace {len(new_words)} words at {len(indices)} indices.')
         words = self.words[:]
@@ -153,10 +155,6 @@ class TokenizedText:
         final_sentence = ''
         text = self.text
         for input_token, new_token in zip(self.tokens, new_tokens):
-            if is_invisible_token(input_token) or is_invisible_token(new_token):
-                continue
-            input_token = clean_token_str(input_token)
-            new_token = clean_token_str(new_token)
             if input_token != new_token:
                 print('old_token', input_token, 'new_token', new_token)
             token_start = text.lower().index(input_token.lower())
@@ -187,12 +185,3 @@ def raw_words(s):
             word = ''
     if word: words.append(word)
     return words
-
-def is_invisible_token(token_str):
-    """ Returns true if this token does not appear in the actual string,
-        like '<oov>' or '[CLS]'. """
-    return token_str in ['<oov>', '[PAD]', '[CLS]', '[SEP]']
-
-def clean_token_str(token_str):
-    """ Converts a sub-word token to how it would actually appear in a string. """
-    return token_str.replace('##', '')
