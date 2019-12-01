@@ -43,7 +43,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         new_tokenized_text = None
         new_text_label = None
         i = 0
-        while num_words_changed <= self.max_depth and i < len(index_order):
+        while ((self.max_depth is None) or num_words_changed <= self.max_depth) and i < len(index_order):
             transformed_text_candidates = self.get_transformations(
                 self.transformation,
                 tokenized_text,
