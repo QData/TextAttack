@@ -1,6 +1,7 @@
 from transformers.tokenization_bert import BertTokenizer
+from textattack.tokenizers import Tokenizer
 
-class BERTTokenizer:
+class BERTTokenizer(Tokenizer):
     """ A generic class that convert text to tokens and tokens to IDs. Supports
         any type of tokenization, be it word, wordpiece, or character-based.
     """

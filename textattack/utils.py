@@ -29,7 +29,7 @@ def download_if_needed(folder_path):
     folder_path = os.path.join(CONFIG['CACHE_DIR'], folder_path)
     if os.path.exists(folder_path):
         return
-    raise NotImplementedError('Sorry, we haven\'t uploaded our models to the Internet yet.')
+    raise NotImplementedError(f'Sorry, we haven\'t uploaded our models to the Internet yet. Can\'t find {folder_path}.')
     for file_name, file_url in DATA_URLS[folder_path]:
         file_path = os.path.join(folder_path, file_name)
         http_get(file_url, file_path)
