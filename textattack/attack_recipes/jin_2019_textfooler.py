@@ -11,6 +11,7 @@
 from textattack.attacks.blackbox import GreedyWordSwapWIR
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
+from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations import WordSwapEmbedding
 
 def Jin2019TextFooler(model):
@@ -23,7 +24,7 @@ def Jin2019TextFooler(model):
     # (The paper claims 0.7, but analysis of the code and some empirical
     # results show that it's definitely 0.5.)
     #
-    transformation = WordSwapEmbedding(max_candidates=50, check_pos=True)
+    transformation = WordSwapEmbedding(max_candidates=50)
     #
     # Greedily swap words with "Word Importance Ranking".
     #
