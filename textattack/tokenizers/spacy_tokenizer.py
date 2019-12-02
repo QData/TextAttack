@@ -18,16 +18,16 @@ class SpacyTokenizer(Tokenizer):
     
     def convert_text_to_tokens(self, text):
         spacy_tokens = [t.text for t in self.tokenizer(text)]
-        spacy_tokens = spacy_tokens[:self.max_seq_length]
-        pad_tokens_to_add = [self.padid] * (self.max_seq_length - len(spacy_tokens))
-        spacy_tokens += pad_tokens_to_add
-        return spacy_tokens
+        return spacy_tokens[:self.max_seq_length]
         
     def convert_tokens_to_ids(self, tokens):
         ids = []
-        for token in tokens:
+        for raw_token in tokens:
+            token = raw_token.lower()
             if token in self.word2id:
                 ids.append(self.word2id[token])
             else:
                 ids.append(self.oovid)
+        pad_ids_to_add = [self.padid] * (self.max_seq_length - len(ids))
+        ids += pad_ids_to_add
         return ids
