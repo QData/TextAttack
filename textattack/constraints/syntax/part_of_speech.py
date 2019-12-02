@@ -29,7 +29,7 @@ class PartOfSpeech(Constraint):
             x_word = x.words[i]
             x_adv_word = x_adv.words[i]
         except AttributeError:
-            raise AttributeError('Cannot apply word embedding distance constraint without `modified_word_index`')
+            raise AttributeError('Cannot apply part-of-speech constraint without `modified_word_index`')
         
         before_ctx = x.words[max(i-4,0):i]
         after_ctx = x.words[i+1:min(i+5,len(x.words))]
