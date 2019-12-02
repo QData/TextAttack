@@ -19,7 +19,7 @@ class BERTForClassification:
     """
     def __init__(self, model_path, num_labels=2):
         utils.download_if_needed(model_path)
-        print('TextAttack BERTForClassification Loading from path ', model_path)
+        print('TextAttack BERTForClassification Loading from path', model_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_path, num_labels=num_labels)
         self.model.to(utils.get_device())

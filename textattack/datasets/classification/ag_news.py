@@ -13,9 +13,9 @@ class AGNews(TextAttackDataset):
     etc), information retrieval (ranking, search, etc), xml, data compression, 
     data streaming, and any other non-commercial activity. For more information, 
     please refer to the link 
-    http://www.di.unipi.it/~gulli/AG_corpus_of_news_articles.html .
+    http://www.di.unipi.it/~gulli/AG_corpus_of_news_articles.html.
 
-    The AG's news topic classification dataset is constructed by Xiang Zhang 
+    The AG's news topic classification dataset was constructed by Xiang Zhang 
     (xiang.zhang@nyu.edu) from the dataset above. It is used as a text 
     classification benchmark in the following paper: Xiang Zhang, Junbo Zhao, 
     Yann LeCun. Character-level Convolutional Networks for Text Classification. 
@@ -32,7 +32,7 @@ class AGNews(TextAttackDataset):
         offset (int): line to start reading from
     
     """
-    DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/ag'
+    DATA_PATH = '/p/qdata/jm8wx/research/text_attacks/textattack_data/ag_news.txt'
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
         utils.download_if_needed(AGNews.DATA_PATH)

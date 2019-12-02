@@ -25,24 +25,33 @@ MODEL_CLASS_NAMES = {
     #
     # BERT models - default uncased
     #
+    'bert-ag-news':             'models.classification.bert.BERTForAGNewsClassification',
     'bert-imdb':                'models.classification.bert.BERTForIMDBSentimentClassification',
     'bert-mr':                  'models.classification.bert.BERTForMRSentimentClassification',
     'bert-yelp-sentiment':      'models.classification.bert.BERTForYelpSentimentClassification',
     #
     # CNN models
     #
+    'cnn-ag-news':              'models.classification.cnn.WordCNNForAGNewsClassification',
     'cnn-imdb':                 'models.classification.cnn.WordCNNForIMDBSentimentClassification',
     'cnn-mr':                   'models.classification.cnn.WordCNNForMRSentimentClassification',
     'cnn-yelp-sentiment':       'models.classification.cnn.WordCNNForYelpSentimentClassification',
     #
     # LSTM models
     #
+    'lstm-ag-news':             'models.classification.lstm.LSTMForAGNewsClassification',
     'lstm-imdb':                'models.classification.lstm.LSTMForIMDBSentimentClassification',
     'lstm-mr':                  'models.classification.lstm.LSTMForMRSentimentClassification',
     'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
 }
 
 DATASET_BY_MODEL = {
+    #
+    # AG News models
+    #
+    'bert-ag-news':             datasets.classification.AGNews,
+    'cnn-ag-news':              datasets.classification.AGNews,
+    'lstm-ag-news':             datasets.classification.AGNews,
     #
     # IMDB models 
     #

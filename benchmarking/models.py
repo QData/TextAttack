@@ -5,9 +5,9 @@ import sys
 
 import textattack.models as models
 
-def _cb(s): return textattack.utils.color_text_terminal(str(s), color='blue')
-def _cg(s): return textattack.utils.color_text_terminal(str(s), color='green')
-def _cr(s): return textattack.utils.color_text_terminal(str(s), color='red')
+def _cb(s): return textattack.utils.color(str(s), color='blue', method='stdout')
+def _cg(s): return textattack.utils.color(str(s), color='green', method='stdout')
+def _cr(s): return textattack.utils.color(str(s), color='red', method='stdout')
 def _pb(): print(_cg('-' * 60))
 
 def test_model_on_dataset(model, dataset):
@@ -15,7 +15,7 @@ def test_model_on_dataset(model, dataset):
     succ = 0
     fail = 0
     for label, text in dataset:
-        ids = model.convert_text_to_ids(text)
+        ids = model.tokenizer.encode(text)
         ids = torch.tensor([ids]).to(textattack.utils.get_device())
         pred_score = model(ids).squeeze()
         pred_label = pred_score.argmax().item()
