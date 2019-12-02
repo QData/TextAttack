@@ -22,7 +22,8 @@ class SpacyTokenizer(Tokenizer):
         
     def convert_tokens_to_ids(self, tokens):
         ids = []
-        for token in tokens:
+        for raw_token in tokens:
+            token = raw_token.lower()
             if token in self.word2id:
                 ids.append(self.word2id[token])
             else:
