@@ -61,7 +61,7 @@ def recover_word_case(word, reference_word):
         lowercase, UPPERCASE, and Capitalized. """
     if reference_word.islower():
         return word.lower()
-    elif reference_word.isupper():
+    elif reference_word.isupper() and len(reference_word) > 1:
         return word.upper()
     elif reference_word[0].isupper() and reference_word[1:].islower():
         return word.capitalize()

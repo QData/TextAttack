@@ -22,5 +22,5 @@ class YelpSentiment(TextAttackDataset):
 
     def _clean_example(self, ex):
         # Removes \\n and \" from the Yelp dataset.
-        return ex.replace('\\n','').replace('\\"','')
+        return ex.replace('\\n',' ').replace('\\"','"')
         

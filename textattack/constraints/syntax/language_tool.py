@@ -27,10 +27,6 @@ class LanguageTool(Constraint):
         else:
             return len(self.lang_tool.check(text))
     
-    def call_many(self, x, x_adv_list, original_text=None):
-        return [x_adv for x_adv in x_adv_list 
-                if self.__call__(x, x_adv, original_text=original_text)]
-    
     def __call__(self, x, x_adv, original_text=None):
         original_num_errors = self.get_errors(original_text, use_cache=True)
         errors_added = self.get_errors(x_adv) - original_num_errors
