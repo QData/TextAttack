@@ -20,7 +20,6 @@ def main():
                 if word.lower() in swap.stopwords:
                     continue
                 cand_words.append(word)
-    # cand_words = list(cand_words)
     random.shuffle(cand_words)
     df = pd.DataFrame()
     dist_calc = WordEmbeddingDistance()
