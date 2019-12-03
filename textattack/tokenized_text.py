@@ -12,7 +12,10 @@ class TokenizedText:
         self.text = text
         self.tokenizer = tokenizer
         self.tokens = tokenizer.convert_text_to_tokens(text)
-        self.ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        if not isinstance(ids, tuple):
+            ids = (ids,)
+        self.ids = ids
         self.words = raw_words(text)
         self.attack_attrs = attack_attrs
 

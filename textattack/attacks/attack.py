@@ -139,14 +139,20 @@ class Attack:
             # function, then `self.num_queries` will not have been initialized.
             # In this case, just continue.
             pass
-        ids = torch.tensor([t.ids for t in tokenized_text_list])
+        """ NEED TO CHANGE THIS TO WORK FOR TUPLES"""
+        ids = [t.ids for t in tokenized_text_list]
+        #
+        # todo: type explanation of wtf is going on here lol!
+        #
+        ids = tuple(map(torch.tensor, zip(*ids)))
+        # todo todo: probably distill this into a DataLoader or somethin?
         num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
         scores = []
         for batch_i in range(num_batches):
             batch_start = batch_i * batch_size
             batch_stop  = (batch_i + 1) * batch_size
-            batch_ids = ids[batch_start:batch_stop, :].to(utils.get_device())
-            scores.append(self.model(batch_ids))
+            batch_ids = tuple(x[batch_start:batch_stop, :].to(utils.get_device()) for x in ids)
+            scores.append(self.model(*batch_ids))
             del batch_ids
         del ids
         scores = torch.cat(scores, dim=0)
@@ -179,6 +185,7 @@ class Attack:
             i += 1
             tokenized_text = TokenizedText(text, self.tokenizer)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
+            print('label:',label,type(label),'predicted_label:',predicted_label,type(predicted_label))
             if predicted_label != label:
                 self.logger.log_skipped(tokenized_text)
             else:

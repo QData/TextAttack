@@ -23,53 +23,59 @@ RECIPE_NAMES = {
 
 MODEL_CLASS_NAMES = {
     #
+    # Text classification models
+    #
+    
     # BERT models - default uncased
-    #
-    'bert-ag-news':             'models.classification.bert.BERTForAGNewsClassification',
-    'bert-imdb':                'models.classification.bert.BERTForIMDBSentimentClassification',
-    'bert-mr':                  'models.classification.bert.BERTForMRSentimentClassification',
-    'bert-yelp-sentiment':      'models.classification.bert.BERTForYelpSentimentClassification',
-    #
+    # 'bert-ag-news':             'models.classification.bert.BERTForAGNewsClassification',
+    # 'bert-imdb':                'models.classification.bert.BERTForIMDBSentimentClassification',
+    # 'bert-mr':                  'models.classification.bert.BERTForMRSentimentClassification',
+    # 'bert-yelp-sentiment':      'models.classification.bert.BERTForYelpSentimentClassification',
     # CNN models
-    #
-    'cnn-ag-news':              'models.classification.cnn.WordCNNForAGNewsClassification',
-    'cnn-imdb':                 'models.classification.cnn.WordCNNForIMDBSentimentClassification',
-    'cnn-mr':                   'models.classification.cnn.WordCNNForMRSentimentClassification',
-    'cnn-yelp-sentiment':       'models.classification.cnn.WordCNNForYelpSentimentClassification',
-    #
+    # 'cnn-ag-news':              'models.classification.cnn.WordCNNForAGNewsClassification',
+    # 'cnn-imdb':                 'models.classification.cnn.WordCNNForIMDBSentimentClassification',
+    # 'cnn-mr':                   'models.classification.cnn.WordCNNForMRSentimentClassification',
+    # 'cnn-yelp-sentiment':       'models.classification.cnn.WordCNNForYelpSentimentClassification',
     # LSTM models
+    # 'lstm-ag-news':             'models.classification.lstm.LSTMForAGNewsClassification',
+    # 'lstm-imdb':                'models.classification.lstm.LSTMForIMDBSentimentClassification',
+    # 'lstm-mr':                  'models.classification.lstm.LSTMForMRSentimentClassification',
+    # 'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
+    
     #
-    'lstm-ag-news':             'models.classification.lstm.LSTMForAGNewsClassification',
-    'lstm-imdb':                'models.classification.lstm.LSTMForIMDBSentimentClassification',
-    'lstm-mr':                  'models.classification.lstm.LSTMForMRSentimentClassification',
-    'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
+    # Textual entailment models
+    #
+    
+    # BERT models
+    'bert-mnli':                'models.entailment.bert.BERTForMNLI',
 }
 
 DATASET_BY_MODEL = {
     #
-    # AG News models
+    # Text classification datasets
     #
+    
+    # AG News
     'bert-ag-news':             datasets.classification.AGNews,
     'cnn-ag-news':              datasets.classification.AGNews,
     'lstm-ag-news':             datasets.classification.AGNews,
-    #
-    # IMDB models 
-    #
+    # IMDB 
     'bert-imdb':                datasets.classification.IMDBSentiment,
     'cnn-imdb':                 datasets.classification.IMDBSentiment,
     'lstm-imdb':                datasets.classification.IMDBSentiment,
-    #
-    # MR models
-    #
+    # MR
     'bert-mr':                  datasets.classification.MovieReviewSentiment,
     'cnn-mr':                   datasets.classification.MovieReviewSentiment,
     'lstm-mr':                  datasets.classification.MovieReviewSentiment,
-    #
-    # Yelp models
-    #
+    # Yelp
     'bert-yelp-sentiment':      datasets.classification.YelpSentiment,
     'cnn-yelp-sentiment':       datasets.classification.YelpSentiment,
     'lstm-yelp-sentiment':      datasets.classification.YelpSentiment,
+    
+    #
+    # Textual entailment datasets
+    #
+    'bert-mnli':                datasets.entailment.MNLI,
 }
 
 TRANSFORMATION_CLASS_NAMES = {

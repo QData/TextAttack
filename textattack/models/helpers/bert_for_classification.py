@@ -1,7 +1,7 @@
 import textattack.utils as utils
 import torch
 
-from textattack.tokenizers import BERTTokenizer
+from textattack.tokenizers import BERTTokenizer, BERTEntailmentTokenizer
 from transformers.modeling_bert import BertForSequenceClassification
 
 
@@ -17,18 +17,20 @@ class BERTForClassification:
             Defaults to 32.
             
     """
-    def __init__(self, model_path, num_labels=2):
+    def __init__(self, model_path, num_labels=2, entailment=False):
         utils.download_if_needed(model_path)
         print('TextAttack BERTForClassification Loading from path', model_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_path, num_labels=num_labels)
         self.model.to(utils.get_device())
         self.model.eval()
-        self.tokenizer = BERTTokenizer(model_path)
+        if entailment:
+            # @TODO: Use custom tokenizer after we train our own models.
+            self.tokenizer = BERTEntailmentTokenizer()
+        else:
+            self.tokenizer = BERTTokenizer(model_path)
     
-    def __call__(self, text_ids):
-        if not isinstance(text_ids, torch.Tensor):
-            raise TypeError(f'Object of type {type(text_ids)} must be of type torch.tensor')
+    def __call__(self, *params):
         with torch.no_grad():
-            pred = self.model(text_ids)[0]
+            pred = self.model(*params)[0]
         return torch.nn.functional.softmax(pred, dim=-1)
