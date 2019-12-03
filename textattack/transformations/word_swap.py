@@ -18,7 +18,7 @@ class WordSwap(Transformation):
 
     def __init__(self, replace_stopwords=False):
         self.replace_stopwords = replace_stopwords
-        if replace_stopwords: 
+        if not replace_stopwords: 
             self.stopwords = set(stopwords.words('english'))
         else:
             self.stopwords = set()
@@ -41,7 +41,7 @@ class WordSwap(Transformation):
         word_swaps = []
         for i in indices_to_replace:
             word_to_replace = words[i]
-            if not self.replace_stopwords and word_to_replace in self.stopwords:
+            if not self.replace_stopwords and word_to_replace.lower() in self.stopwords:
                 continue
             replacement_words = self._get_replacement_words(word_to_replace)
             new_tokenized_texts = []
