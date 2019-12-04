@@ -117,7 +117,10 @@ def get_args():
     
     parser.add_argument('--disable_stdout', action='store_true',
         help='Disable logging to stdout')
-    
+   
+    parser.add_argument('--enable_csv', nargs='?', default=None, const='fancy', type=str,
+        help='Enable logging to csv. Use --enable_csv plain to remove [[]] around words.')
+
     parser.add_argument('--num_examples', '-n', type=int, required=False, 
         default='5', help='The number of examples to process.')
     
@@ -234,10 +237,17 @@ if __name__ == '__main__':
         attack = parse_attack_from_args()
         attack.add_constraints(parse_constraints_from_args())
 
-    # Output file
+    out_time = int(time.time()) # Output file
     if args.out_dir is not None:
-        outfile_name = 'attack-{}.txt'.format(int(time.time()))
+        outfile_name = 'attack-{}.txt'.format(out_time)
         attack.add_output_file(os.path.join(args.out_dir, outfile_name))
+
+    # csv
+    if args.enable_csv:
+        out_dir = args.out_dir if args.out_dir else 'outputs'
+        outfile_name = 'attack-{}.csv'.format(out_time)
+        plain = args.enable_csv == 'plain'
+        attack.add_output_csv(os.path.join(out_dir, outfile_name), plain)
 
     # Visdom
     if args.enable_visdom:
