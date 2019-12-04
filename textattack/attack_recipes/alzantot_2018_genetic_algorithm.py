@@ -27,7 +27,7 @@ def Alzantot2018GeneticAlgorithm(model):
     # Perform word substitution with a genetic algorithm.
     #
     attack = GeneticAlgorithm(model, transformations=[transformation], 
-        pop_size=60, max_iters=50)
+        pop_size=60, max_iters=20)
     #
     # Maximum word embedding euclidean distance of 0.5.
     #
