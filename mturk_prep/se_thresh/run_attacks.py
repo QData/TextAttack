@@ -16,11 +16,10 @@ def main():
                     args.extend(['--model',model+'-'+dataset])
                     args.extend(['--recipe',recipe+':'+se_thresh])
                     args.extend(['--enable_csv','plain'])
-                    args.extend(['--num_examples','10'])
+                    args.extend(['--num_examples','1000'])
                     p = subprocess.Popen(args)
                     if p.wait() != 0:
                         print('Error running attack')
-                    break
 
 if __name__ == '__main__':
     main()

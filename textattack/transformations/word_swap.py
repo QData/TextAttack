@@ -16,7 +16,7 @@ class WordSwap(Transformation):
 
     """
 
-    def __init__(self, replace_stopwords=False, textfooler_stopwords=True):
+    def __init__(self, replace_stopwords=False, textfooler_stopwords=False):
         self.replace_stopwords = replace_stopwords
         if not replace_stopwords: 
             self.stopwords = set(stopwords.words('english'))

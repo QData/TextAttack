@@ -59,6 +59,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
             # If we changed the label, return the index with best similarity.
             new_text_label = scores[best_index].argmax().item()
             if new_text_label != original_label:
+                new_score = scores[best_index].max()
                 # @TODO: Use vectorwise operations
                 new_tokenized_text = None
                 max_similarity = -float('inf')
@@ -77,11 +78,14 @@ class GreedyWordSwapWIR(BlackBoxAttack):
                         if similarity_score > max_similarity:
                             max_similarity = similarity_score
                             new_tokenized_text = candidate
+                            new_score = scores[i].max()
                 return AttackResult( 
                     original_tokenized_text, 
                     new_tokenized_text, 
                     original_label,
-                    new_text_label
+                    new_text_label,
+                    float(orig_prob),
+                    float(new_score)
                 )
             tokenized_text = transformed_text_candidates[best_index]
         

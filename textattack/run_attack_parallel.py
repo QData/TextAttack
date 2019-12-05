@@ -168,24 +168,31 @@ def main():
     avg_queries = 0
     total_succ_samples = 0
     total_att_samples = 0
+    att_succ_rate = 0
+    acc = 0
+    orig_acc = 0
     for num_succ_samples, num_att_samples, pert_perc, queries in zip(all_succ_samples, all_att_samples, all_pert_percs, all_queries):
         total_succ_samples += num_succ_samples
         total_att_samples += num_att_samples
         avg_pert_perc += (pert_perc * num_succ_samples)
         avg_queries += (queries * num_att_samples)
 
-    avg_pert_perc /= float(total_succ_samples)
-    avg_queries /= float(total_att_samples)
-    acc = all_failed / (all_success + all_failed + all_skipped)
-    orig_acc = (all_success + all_failed) / (all_success + all_failed + all_skipped)
-    att_succ_rate = all_success / (all_success + all_failed)
+    if avg_pert_perc:
+        avg_pert_perc /= float(total_succ_samples)
+    if avg_queries:
+        avg_queries /= float(total_att_samples)
+    if all_success + all_failed + all_skipped > 0:
+        acc = all_failed / (all_success + all_failed + all_skipped)
+        orig_acc = (all_success + all_failed) / (all_success + all_failed + all_skipped)
+    if all_success + all_failed > 0:
+        att_succ_rate = all_success / (all_success + all_failed)
 
-    final_out_file.write('Original accuracy: ' + str(orig_acc) + '\n')
-    final_out_file.write('Accuracy under attack: ' + str(acc) + '\n')
-    final_out_file.write('Attack succ rate: ' + str(att_succ_rate) + '\n')
-    final_out_file.write('Number of successful attacks: ' + str(total_samples) + '\n')
-    final_out_file.write('Average perturbed word %: ' + str(avg_pert_perc) + '\n')
-    final_out_file.write('Avg num queries: ' + str(avg_queries))
+    final_out_file.write('Original accuracy: ' + str(round(orig_acc*100,2)) + '%\n')
+    final_out_file.write('Accuracy under attack: ' + str(round(acc*100,2)) + '%\n')
+    final_out_file.write('Attack succ rate: ' + str(round(att_succ_rate*100,2)) + '%\n')
+    final_out_file.write('Number of successful attacks: ' + str(total_succ_samples) + '\n')
+    final_out_file.write('Average perturbed word %: ' + str(round(avg_pert_perc,2)) + '\n')
+    final_out_file.write('Avg num queries: ' + str(round(avg_queries,2)))
     final_out_file.close()
 
 if __name__ == '__main__': main()

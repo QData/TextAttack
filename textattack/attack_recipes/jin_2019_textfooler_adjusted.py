@@ -24,7 +24,7 @@ def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95):
     # (The paper claims 0.7, but analysis of the code and some empirical
     # results show that it's definitely 0.5.)
     #
-    transformation = WordSwapEmbedding(max_candidates=50)
+    transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
     #
     # Greedily swap words with "Word Importance Ranking".
     #

@@ -140,7 +140,7 @@ def get_args():
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     attack_group.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
-        help='The type of attack to run.')
+        help='The type of attack to run.', choices=ATTACK_CLASS_NAMES.keys())
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None, 
         help='full attack recipe (overrides provided transformation & constraints)')
@@ -190,7 +190,7 @@ def parse_recipe_from_args():
             raise ValueError(f'Error: unsupported recipe {recipe_name}')
         recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model, {params})')
     elif args.recipe in RECIPE_NAMES:
-        recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model)')
+        recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
     else:
         raise Error('Invalid recipe {args.recipe}')
     return recipe
