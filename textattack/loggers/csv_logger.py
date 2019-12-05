@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import csv
 from textattack.loggers import Logger
+from textattack.attacks import FailedAttackResult
 
 class CSVLogger(Logger):
     def __init__(self, filename='results.csv', plain=False):
@@ -11,6 +12,8 @@ class CSVLogger(Logger):
         self.df = pd.DataFrame()
 
     def log_attack_result(self, result, examples_completed):
+        if isinstance(result, FailedAttackResult):
+            return
         color_method = None if self.plain else 'file'
         s1, s2 = result.diff_color(color_method)
         row = {'passage_1': s1, 'passage_2': s2} 

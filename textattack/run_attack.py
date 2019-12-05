@@ -17,8 +17,9 @@ from textattack.tokenized_text import TokenizedText
 
 
 RECIPE_NAMES = {
-    'alzantot':     attack_recipes.Alzantot2018GeneticAlgorithm,
-    'textfooler':   attack_recipes.Jin2019TextFooler
+    'alzantot':     'attack_recipes.Alzantot2018GeneticAlgorithm',
+    'textfooler':   'attack_recipes.Jin2019TextFooler',
+    'tf-adjusted':  'attack_recipes.Jin2019TextFoolerAdjusted',
 }
 
 MODEL_CLASS_NAMES = {
@@ -183,9 +184,14 @@ def parse_constraints_from_args():
     return _constraints
 
 def parse_recipe_from_args():
-    try:
-        recipe = RECIPE_NAMES[args.recipe](model)
-    except KeyError:
+    if ':' in args.recipe:
+        recipe_name, params = args.recipe.split(':')
+        if recipe_name not in RECIPE_NAMES:
+            raise ValueError(f'Error: unsupported recipe {recipe_name}')
+        recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model, {params})')
+    elif args.recipe in RECIPE_NAMES:
+        recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model)')
+    else:
         raise Error('Invalid recipe {args.recipe}')
     return recipe
 
@@ -237,7 +243,7 @@ if __name__ == '__main__':
         attack = parse_attack_from_args()
         attack.add_constraints(parse_constraints_from_args())
 
-    out_time = int(time.time()) # Output file
+    out_time = int(time.time()*1000) # Output file
     if args.out_dir is not None:
         outfile_name = 'attack-{}.txt'.format(out_time)
         attack.add_output_file(os.path.join(args.out_dir, outfile_name))

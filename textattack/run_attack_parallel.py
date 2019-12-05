@@ -24,7 +24,7 @@ def validate_args(args):
     if args.interactive:
         raise Error('Cannot run attack in parallel with --interactive set.')
     if not args.num_examples:
-        raise Error('Cannot run attack with --num_examples set.')
+        raise Error('Cannot run attack without --num_examples set.')
 
 def get_command_line_args():
     """ Splits args like `--arg=4` into `--arg 4`. We can't use the argparser
@@ -85,6 +85,8 @@ def main():
             command_line_args_list[_x+1] = offset_at_i
         else:
             command_line_args_list.extend(['--num_examples_offset', offset_at_i])
+
+        command_line_args_list.extend(['--out_dir', folder_name])
         
         # Format and run command.
         full_args = args + command_line_args_list
@@ -109,21 +111,30 @@ def main():
             print('Error running process ', p)
     final_out_file = open(os.path.join(folder_name, 'final.txt'), 'w')
     i = 1
-    all_samples = []
-    all_accs = []
+    all_succ_samples = []
+    all_att_samples = []
+    all_success = 0
+    all_failed = 0
+    all_skipped = 0
     all_pert_percs = []
     all_queries = []
     for out_file in out_file_names:
         lines = open(out_file, 'r').readlines()
         j = 0
-        samples = 0
+        success = 0
+        failed = 0
+        skipped = 0
         acc = 0
         pertperc = 0
         queries = 0
         while j < len(lines):
             line = lines[j].strip()
             if line.startswith('Number of successful attacks:'):
-                samples = int(line.split()[-1])
+                success = int(line.split()[-1])
+            if line.startswith('Number of failed attacks:'):
+                failed = int(line.split()[-1])
+            if line.startswith('Number of skipped attacks:'):
+                skipped = int(line.split()[-1])
             if line.startswith('Accuracy under attack:'):
                 acc = float(line.split()[-1][:-1])
             if line.startswith('Average perturbed word %:'):
@@ -144,28 +155,35 @@ def main():
                     j += 1
             else: j += 1
         
-        all_samples.append(samples)
-        all_accs.append(acc)
+        all_success += success
+        all_failed += failed
+        all_skipped += skipped
+        all_succ_samples.append(success)
+        all_att_samples.append(success+failed)
         all_pert_percs.append(pertperc)
         all_queries.append(queries)
 
 
-    avg_acc = 0
     avg_pert_perc = 0
     avg_queries = 0
-    total_samples = 0
-    for num_samples, acc, pert_perc, queries in zip(all_samples, all_accs, all_pert_percs, all_queries):
-        total_samples += num_samples
-        avg_acc += (acc * num_samples)
-        avg_pert_perc += (pert_perc * num_samples)
-        avg_queries += (queries * num_samples)
+    total_succ_samples = 0
+    total_att_samples = 0
+    for num_succ_samples, num_att_samples, pert_perc, queries in zip(all_succ_samples, all_att_samples, all_pert_percs, all_queries):
+        total_succ_samples += num_succ_samples
+        total_att_samples += num_att_samples
+        avg_pert_perc += (pert_perc * num_succ_samples)
+        avg_queries += (queries * num_att_samples)
 
-    avg_acc /= float(total_samples)
-    avg_pert_perc /= float(total_samples)
-    avg_queries /= float(total_samples)
+    avg_pert_perc /= float(total_succ_samples)
+    avg_queries /= float(total_att_samples)
+    acc = all_failed / (all_success + all_failed + all_skipped)
+    orig_acc = (all_success + all_failed) / (all_success + all_failed + all_skipped)
+    att_succ_rate = all_success / (all_success + all_failed)
 
+    final_out_file.write('Original accuracy: ' + str(orig_acc) + '\n')
+    final_out_file.write('Accuracy under attack: ' + str(acc) + '\n')
+    final_out_file.write('Attack succ rate: ' + str(att_succ_rate) + '\n')
     final_out_file.write('Number of successful attacks: ' + str(total_samples) + '\n')
-    final_out_file.write('Accuracy under attack: ' + str(avg_acc) + '\n')
     final_out_file.write('Average perturbed word %: ' + str(avg_pert_perc) + '\n')
     final_out_file.write('Avg num queries: ' + str(avg_queries))
     final_out_file.close()
