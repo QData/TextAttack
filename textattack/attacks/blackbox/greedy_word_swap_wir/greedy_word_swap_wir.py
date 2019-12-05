@@ -31,7 +31,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         orig_prob = orig_probs.max()
         len_text = len(tokenized_text.words)
         leave_one_texts = \
-            [tokenized_text.replace_word_at_index(i,'[UNKNOWN]') for i in range(len_text)]
+            [tokenized_text.replace_word_at_index(i,'[UNK]') for i in range(len_text)]
         leave_one_probs = self._call_model(leave_one_texts)
         leave_one_probs_argmax = leave_one_probs.argmax(dim=-1)
         importance_scores = (orig_prob - leave_one_probs[:, original_label] 

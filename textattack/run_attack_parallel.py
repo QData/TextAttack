@@ -53,7 +53,7 @@ def main():
     
     today = datetime.datetime.now()
     out_dir = input_args.out_dir or 'outputs'
-    folder_name = os.path.join(current_working_dir, out_dir, 'attack-' + today.strftime('%Y-%m-%d-%H--%H:%M:%S'))
+    folder_name = os.path.join(current_working_dir, out_dir, 'attack-' + today.strftime('%Y-%m-%d--%H:%M:%S'))
     os.makedirs(folder_name)
     
     arg_file = open(os.path.join(folder_name, 'args.txt'), 'w')
@@ -109,10 +109,27 @@ def main():
             print('Error running process ', p)
     final_out_file = open(os.path.join(folder_name, 'final.txt'), 'w')
     i = 1
+    all_samples = []
+    all_accs = []
+    all_pert_percs = []
+    all_queries = []
     for out_file in out_file_names:
         lines = open(out_file, 'r').readlines()
         j = 0
+        samples = 0
+        acc = 0
+        pertperc = 0
+        queries = 0
         while j < len(lines):
+            line = lines[j].strip()
+            if line.startswith('Number of successful attacks:'):
+                samples = int(line.split()[-1])
+            if line.startswith('Accuracy under attack:'):
+                acc = float(line.split()[-1][:-1])
+            if line.startswith('Average perturbed word %:'):
+                pertperc = float(line.split()[-1][:-1])
+            if line.startswith('Avg num queries:'):
+                queries = float(line.split()[-1])
             if re.match(result_regex, lines[j]):
                 line_j_tokens = lines[j].split()
                 line_j_tokens[2] = str(i)
@@ -126,6 +143,31 @@ def main():
                     final_out_file.write(lines[j])
                     j += 1
             else: j += 1
+        
+        all_samples.append(samples)
+        all_accs.append(acc)
+        all_pert_percs.append(pertperc)
+        all_queries.append(queries)
+
+
+    avg_acc = 0
+    avg_pert_perc = 0
+    avg_queries = 0
+    total_samples = 0
+    for num_samples, acc, pert_perc, queries in zip(all_samples, all_accs, all_pert_percs, all_queries):
+        total_samples += num_samples
+        avg_acc += (acc * num_samples)
+        avg_pert_perc += (pert_perc * num_samples)
+        avg_queries += (queries * num_samples)
+
+    avg_acc /= float(total_samples)
+    avg_pert_perc /= float(total_samples)
+    avg_queries /= float(total_samples)
+
+    final_out_file.write('Number of successful attacks: ' + str(total_samples) + '\n')
+    final_out_file.write('Accuracy under attack: ' + str(avg_acc) + '\n')
+    final_out_file.write('Average perturbed word %: ' + str(avg_pert_perc) + '\n')
+    final_out_file.write('Avg num queries: ' + str(avg_queries))
     final_out_file.close()
 
 if __name__ == '__main__': main()
