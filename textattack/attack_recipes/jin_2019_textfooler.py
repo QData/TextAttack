@@ -51,7 +51,7 @@ def Jin2019TextFooler(model):
     #
     use_constraint = UniversalSentenceEncoder(threshold=0.904458599,
         metric='angular', compare_with_original=False, window_size=15,
-        skip_text_shorter_than_window=True, use_version=3)
+        skip_text_shorter_than_window=True)
     attack.add_constraint(use_constraint)
     
     return attack

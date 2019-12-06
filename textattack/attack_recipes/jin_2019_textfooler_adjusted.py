@@ -14,7 +14,7 @@ from textattack.constraints.semantics.sentence_encoders import UniversalSentence
 from textattack.constraints.syntax import PartOfSpeech, LanguageTool
 from textattack.transformations import WordSwapEmbedding
 
-def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95):
+def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95, sentence_encoder='bert'):
     #
     # Swap words with their embedding nearest-neighbors. 
     #
@@ -49,9 +49,14 @@ def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95):
     # embeddings by pi. So if the original threshold was that 1 - sim >= 0.7, the 
     # new threshold is 1 - (0.3) / pi = 0.90445
     #
-    se_constraint = BERT(threshold=SE_thresh,
-        metric='cosine', compare_with_original=False, window_size=15,
-        skip_text_shorter_than_window=False)
+    if sentence_encoder == 'bert':
+        se_constraint = BERT(threshold=SE_thresh,
+            metric='cosine', compare_with_original=False, window_size=15,
+            skip_text_shorter_than_window=False)
+    else:
+        se_constraint = UniversalSentenceEncoder(threshold=SE_thresh,
+            metric='cosine', compare_with_original=False, window_size=15,
+            skip_text_shorter_than_window=False)
     attack.add_constraint(se_constraint)
     
     return attack
