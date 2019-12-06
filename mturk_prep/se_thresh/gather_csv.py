@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import csv
 
 input_path = '../../textattack/outputs/'
 output_path = 'examples.csv'
@@ -24,10 +25,11 @@ def main():
             if f.find('.csv') == -1:
                 continue
             add_df = pd.read_csv(os.path.join(run_path,f), index_col=0)
-            add_df['SE_Thresh'] = se_thresh
+            add_df['SE_Thresh'] = float(se_thresh)
             add_df['dataset'] = dataset
+            add_df['SE_Model'] = 'BERT'
             df = df.append(add_df)
-    df.to_csv(output_path)
+    df.to_csv(output_path, quoting=csv.QUOTE_NONNUMERIC)
 
 if __name__ == '__main__':
     main()
