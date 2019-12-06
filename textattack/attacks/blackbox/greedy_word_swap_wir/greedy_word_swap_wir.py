@@ -29,6 +29,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         # Sort words by order of importance
         orig_probs = self._call_model([tokenized_text]).squeeze()
         orig_prob = orig_probs.max()
+        cur_score = orig_prob
         len_text = len(tokenized_text.words)
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,'[UNK]') for i in range(len_text)]
@@ -56,10 +57,14 @@ class GreedyWordSwapWIR(BlackBoxAttack):
             scores = self._call_model(transformed_text_candidates)
             # The best choice is the one that minimizes the original class label.
             best_index = scores[:, original_label].argmin()
+            # Skip swaps which don't improve the score
+            if scores[best_index, original_label] < cur_score:
+                cur_score = scores[best_index, original_label]
+            else:
+                continue
             # If we changed the label, return the index with best similarity.
             new_text_label = scores[best_index].argmax().item()
             if new_text_label != original_label:
-                new_score = scores[best_index].max()
                 # @TODO: Use vectorwise operations
                 new_tokenized_text = None
                 max_similarity = -float('inf')
@@ -78,14 +83,14 @@ class GreedyWordSwapWIR(BlackBoxAttack):
                         if similarity_score > max_similarity:
                             max_similarity = similarity_score
                             new_tokenized_text = candidate
-                            new_score = scores[i].max()
+                            cur_score = scores[i].max()
                 return AttackResult( 
                     original_tokenized_text, 
                     new_tokenized_text, 
                     original_label,
                     new_text_label,
                     float(orig_prob),
-                    float(new_score)
+                    float(cur_score)
                 )
             tokenized_text = transformed_text_candidates[best_index]
         
