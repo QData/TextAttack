@@ -14,7 +14,7 @@ from textattack.constraints.semantics.sentence_encoders import UniversalSentence
 from textattack.constraints.syntax import PartOfSpeech, LanguageTool
 from textattack.transformations import WordSwapEmbedding
 
-def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95, sentence_encoder='bert'):
+def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95, sentence_encoder='use'):
     #
     # Swap words with their embedding nearest-neighbors. 
     #

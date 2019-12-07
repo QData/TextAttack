@@ -1,0 +1,4 @@
+hi there
+<module 'torch' from '/u/jm8wx/.conda/envs/torch/lib/python3.7/site-packages/torch/__init__.py'>
+<module 'textattack' from '/p/qdata/jm8wx/research/text_attacks/textattack/textattack/__init__.py'>
+it worked lolz
