@@ -17,9 +17,10 @@ from textattack.tokenized_text import TokenizedText
 
 
 RECIPE_NAMES = {
-    'alzantot':     'attack_recipes.Alzantot2018GeneticAlgorithm',
-    'textfooler':   'attack_recipes.Jin2019TextFooler',
-    'tf-adjusted':  'attack_recipes.Jin2019TextFoolerAdjusted',
+    'alzantot':      'attack_recipes.Alzantot2018GeneticAlgorithm',
+    'alz-adjusted':  'attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
+    'textfooler':    'attack_recipes.Jin2019TextFooler',
+    'tf-adjusted':   'attack_recipes.Jin2019TextFoolerAdjusted',
 }
 
 MODEL_CLASS_NAMES = {

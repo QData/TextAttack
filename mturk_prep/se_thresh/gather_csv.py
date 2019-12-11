@@ -13,8 +13,9 @@ def main():
             continue
         args_path = os.path.join(run_path,'args.txt')
         args_lines = open(args_path, 'r').readlines()
-        se_thresh_idx = args_lines[0].find('tf-adjusted') + 12
-        se_thresh = args_lines[0][se_thresh_idx:se_thresh_idx+3]
+        se_thresh_idx = args_lines[0].find('tf-adjusted') + len('tf-adjusted:')
+        se_thresh = args_lines[0][se_thresh_idx:]
+        se_thresh = se_thresh[:se_thresh.index(' ')]
         words = args_lines[0].split()
         dataset = ''
         for word in words:

@@ -1,35 +1,34 @@
 """
-    Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019). 
+    Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, 
+        K. (2018). 
     
-    Is BERT Really Robust? Natural Language Attack on Text Classification and 
-        Entailment. 
+    Generating Natural Language Adversarial Examples. 
     
-    ArXiv, abs/1907.11932.
+    EMNLP. 
     
+    ArXiv, abs/1801.00554.
 """
 
-from textattack.attacks.blackbox import GreedyWordSwapWIR
+from textattack.attacks.blackbox import GeneticAlgorithm
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
 from textattack.constraints.syntax import PartOfSpeech, LanguageTool
 from textattack.transformations import WordSwapEmbedding
 
-def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95, sentence_encoder='use'):
+def Alzantot2018GeneticAlgorithmAdjusted(model, SE_thresh=0.95, sentence_encoder='bert'):
     #
     # Swap words with their embedding nearest-neighbors. 
     #
     # Embedding: Counter-fitted PARAGRAM-SL999 vectors.
     #
-    # 50 nearest-neighbors with a cosine similarity of at least 0.5.
-    # (The paper claims 0.7, but analysis of the code and some empirical
-    # results show that it's definitely 0.5.)
+    # "[We] fix the hyperparameter values to S = 60, N = 8, K = 4, and δ = 0.5"
     #
     transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(model, transformations=[transformation],
-        max_depth=None)
+    attack = GeneticAlgorithm(model, transformations=[transformation], 
+        pop_size=60, max_iters=20)
     #
     # Minimum word embedding cosine similarity of 0.9.
     #
@@ -52,6 +51,7 @@ def Jin2019TextFoolerAdjusted(model, SE_thresh=0.95, sentence_encoder='use'):
             metric='cosine', compare_with_original=False, window_size=15,
             skip_text_shorter_than_window=False)
     attack.add_constraint(se_constraint)
+    
     #
     # Do grammar checking
     #

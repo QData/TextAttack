@@ -44,6 +44,8 @@ def main():
     validate_args(input_args)
     
     num_devices = torch.cuda.device_count()
+    if num_devices == 0:
+        raise RuntimeError('Cannot start attack: cuda.device_count() is 0')
     num_examples_per_device = int(math.ceil(input_args.num_examples / float(num_devices)))
     
     input_args.num_examples = num_examples_per_device
@@ -52,8 +54,9 @@ def main():
     run_attack_path = os.path.join(current_working_dir, 'run_attack.py')
     
     today = datetime.datetime.now()
+    print('today:', today, '/', today.strftime('%Y-%m-%d-%H:%M:%S-%f'))
     out_dir = input_args.out_dir or 'outputs'
-    folder_name = os.path.join(current_working_dir, out_dir, 'attack-' + today.strftime('%Y-%m-%d--%H:%M:%S'))
+    folder_name = os.path.join(current_working_dir, out_dir, 'attack-' + today.strftime('%Y-%m-%d-%H:%M:%S-%f'))
     os.makedirs(folder_name)
     
     arg_file = open(os.path.join(folder_name, 'args.txt'), 'w')
