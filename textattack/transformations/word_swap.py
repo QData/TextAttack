@@ -16,24 +16,17 @@ class WordSwap(Transformation):
 
     """
 
-    def __init__(self, replace_stopwords=False, check_pos=False, tagset='universal', 
-                 allow_verb_noun_swap=True):
+    def __init__(self, replace_stopwords=False, textfooler_stopwords=False):
         self.replace_stopwords = replace_stopwords
-        self.stopwords = set(stopwords.words('english'))
-        self.check_pos = check_pos
-        self.tagset = tagset
-        self.allow_verb_noun_swap = allow_verb_noun_swap
+        if not replace_stopwords: 
+            self.stopwords = set(stopwords.words('english'))
+            if textfooler_stopwords:
+                self.stopwords = set(['a', 'about', 'above', 'across', 'after', 'afterwards', 'again', 'against', 'ain', 'all', 'almost', 'alone', 'along', 'already', 'also', 'although', 'am', 'among', 'amongst', 'an', 'and', 'another', 'any', 'anyhow', 'anyone', 'anything', 'anyway', 'anywhere', 'are', 'aren', "aren't", 'around', 'as', 'at', 'back', 'been', 'before', 'beforehand', 'behind', 'being', 'below', 'beside', 'besides', 'between', 'beyond', 'both',  'but', 'by', 'can', 'cannot', 'could', 'couldn', "couldn't", 'd', 'didn', "didn't", 'doesn', "doesn't", 'don', "don't", 'down', 'due', 'during', 'either', 'else', 'elsewhere', 'empty', 'enough', 'even', 'ever', 'everyone', 'everything', 'everywhere', 'except',  'first', 'for', 'former', 'formerly', 'from', 'hadn', "hadn't",  'hasn', "hasn't",  'haven', "haven't", 'he', 'hence', 'her', 'here', 'hereafter', 'hereby', 'herein', 'hereupon', 'hers', 'herself', 'him', 'himself', 'his', 'how', 'however', 'hundred', 'i', 'if', 'in', 'indeed', 'into', 'is', 'isn', "isn't", 'it', "it's", 'its', 'itself', 'just', 'latter', 'latterly', 'least', 'll', 'may', 'me', 'meanwhile', 'mightn', "mightn't", 'mine', 'more', 'moreover', 'most', 'mostly',  'must', 'mustn', "mustn't", 'my', 'myself', 'namely', 'needn', "needn't", 'neither', 'never', 'nevertheless', 'next', 'no', 'nobody', 'none', 'noone', 'nor', 'not', 'nothing', 'now', 'nowhere', 'o', 'of', 'off', 'on', 'once', 'one', 'only', 'onto', 'or', 'other', 'others', 'otherwise', 'our', 'ours', 'ourselves', 'out', 'over', 'per', 'please','s', 'same', 'shan', "shan't", 'she', "she's", "should've", 'shouldn', "shouldn't", 'somehow', 'something', 'sometime', 'somewhere', 'such', 't', 'than', 'that', "that'll", 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'thence', 'there', 'thereafter', 'thereby', 'therefore', 'therein', 'thereupon', 'these', 'they','this', 'those', 'through', 'throughout', 'thru', 'thus', 'to', 'too','toward', 'towards', 'under', 'unless', 'until', 'up', 'upon', 'used',  've', 'was', 'wasn', "wasn't", 'we',  'were', 'weren', "weren't", 'what', 'whatever', 'when', 'whence', 'whenever', 'where', 'whereafter', 'whereas', 'whereby', 'wherein', 'whereupon', 'wherever', 'whether', 'which', 'while', 'whither', 'who', 'whoever', 'whole', 'whom', 'whose', 'why', 'with', 'within', 'without', 'won', "won't", 'would', 'wouldn', "wouldn't", 'y', 'yet', 'you', "you'd", "you'll", "you're", "you've", 'your', 'yours', 'yourself', 'yourselves'])
+        else:
+            self.stopwords = set()
 
     def _get_replacement_words(self, word):
-    
         raise NotImplementedError()
-   
-    def _can_replace_pos(self, pos_a, pos_b):
-        return pos_a == pos_b or self.allow_verb_noun_swap and set([pos_a,pos_b]) <= set(['NOUN','VERB'])
-
-    def _get_pos(self, before_ctx, word, after_ctx):
-        _, pos_list = zip(*nltk.pos_tag(before_ctx + [word] + after_ctx, tagset=self.tagset))
-        return pos_list[len(before_ctx)]
 
     def __call__(self, tokenized_text, indices_to_replace=None):
         """
@@ -50,19 +43,9 @@ class WordSwap(Transformation):
         word_swaps = []
         for i in indices_to_replace:
             word_to_replace = words[i]
-            if not self.replace_stopwords and word_to_replace in self.stopwords:
+            if not self.replace_stopwords and word_to_replace.lower() in self.stopwords:
                 continue
             replacement_words = self._get_replacement_words(word_to_replace)
-            if self.check_pos:
-                before_ctx = words[max(i-4,0):i]
-                after_ctx = words[i+1:min(i+5,len(words))]
-                cur_pos = self._get_pos(before_ctx, word_to_replace, after_ctx)
-                replacement_words_filtered = []                
-                for word in replacement_words:
-                    replace_pos = self._get_pos(before_ctx, word, after_ctx)
-                    if self._can_replace_pos(cur_pos, replace_pos):
-                        replacement_words_filtered.append(word)
-                replacement_words = replacement_words_filtered
             new_tokenized_texts = []
             for r in replacement_words:
                 new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r))

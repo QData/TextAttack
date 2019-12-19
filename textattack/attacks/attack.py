@@ -49,6 +49,16 @@ class Attack:
         """
         self.logger.add_output_file(filename)
         
+    def add_output_csv(self, filename, plain):
+        """ 
+        When attack runs, it will output to this csv. 
+
+        Args:
+            file (str): The path to the output file
+            
+        """
+        self.logger.add_output_csv(filename, plain)
+        
     def add_constraint(self, constraint):
         """ 
         Adds a constraint to the attack. 

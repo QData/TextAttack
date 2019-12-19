@@ -12,7 +12,7 @@ class AttackResult:
 
     """
     def __init__(self, original_text, perturbed_text, original_label,
-        perturbed_label):
+        perturbed_label, orig_score=None, perturbed_score=None):
         if original_text is None:
             raise ValueError('Attack original text cannot be None')
         if perturbed_text is None:
@@ -25,6 +25,8 @@ class AttackResult:
         self.perturbed_text = perturbed_text
         self.original_label = original_label
         self.perturbed_label = perturbed_label
+        self.orig_score = orig_score
+        self.perturbed_score = perturbed_score
         self.num_queries = 0
 
     def __data__(self, color_method=None):

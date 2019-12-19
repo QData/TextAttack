@@ -29,9 +29,10 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         # Sort words by order of importance
         orig_probs = self._call_model([tokenized_text]).squeeze()
         orig_prob = orig_probs.max()
+        cur_score = orig_prob
         len_text = len(tokenized_text.words)
         leave_one_texts = \
-            [tokenized_text.replace_word_at_index(i,'[UNKNOWN]') for i in range(len_text)]
+            [tokenized_text.replace_word_at_index(i,'[UNK]') for i in range(len_text)]
         leave_one_probs = self._call_model(leave_one_texts)
         leave_one_probs_argmax = leave_one_probs.argmax(dim=-1)
         importance_scores = (orig_prob - leave_one_probs[:, original_label] 
@@ -43,7 +44,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         new_tokenized_text = None
         new_text_label = None
         i = 0
-        while num_words_changed <= self.max_depth and i < len(index_order):
+        while ((self.max_depth is None) or num_words_changed <= self.max_depth) and i < len(index_order):
             transformed_text_candidates = self.get_transformations(
                 self.transformation,
                 tokenized_text,
@@ -56,6 +57,11 @@ class GreedyWordSwapWIR(BlackBoxAttack):
             scores = self._call_model(transformed_text_candidates)
             # The best choice is the one that minimizes the original class label.
             best_index = scores[:, original_label].argmin()
+            # Skip swaps which don't improve the score
+            if scores[best_index, original_label] < cur_score:
+                cur_score = scores[best_index, original_label]
+            else:
+                continue
             # If we changed the label, return the index with best similarity.
             new_text_label = scores[best_index].argmax().item()
             if new_text_label != original_label:
@@ -77,11 +83,14 @@ class GreedyWordSwapWIR(BlackBoxAttack):
                         if similarity_score > max_similarity:
                             max_similarity = similarity_score
                             new_tokenized_text = candidate
+                            cur_score = scores[i].max()
                 return AttackResult( 
                     original_tokenized_text, 
                     new_tokenized_text, 
                     original_label,
-                    new_text_label
+                    new_text_label,
+                    float(orig_prob),
+                    float(cur_score)
                 )
             tokenized_text = transformed_text_candidates[best_index]
         

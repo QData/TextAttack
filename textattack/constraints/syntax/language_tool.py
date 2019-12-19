@@ -5,7 +5,7 @@ from textattack.constraints import Constraint
 class LanguageTool(Constraint):
     """ 
         Uses languagetool to determine if two sentences have the same
-        number of typos. 
+        number of grammatical erors. 
         (https://languagetool.org/)
         
         Args:
@@ -26,10 +26,6 @@ class LanguageTool(Constraint):
             return self.grammar_error_cache[text]
         else:
             return len(self.lang_tool.check(text))
-    
-    def call_many(self, x, x_adv_list, original_text=None):
-        return [x_adv for x_adv in x_adv_list 
-                if self.__call__(x, x_adv, original_text=original_text)]
     
     def __call__(self, x, x_adv, original_text=None):
         original_num_errors = self.get_errors(original_text, use_cache=True)

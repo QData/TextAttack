@@ -33,6 +33,9 @@ class AttackLogger:
     def add_output_file(self, filename):
         self.loggers.append(FileLogger(filename=filename))
 
+    def add_output_csv(self, filename, plain):
+        self.loggers.append(CSVLogger(filename=filename, plain=plain))
+
     def log_skipped(self, tokenized_text):
         self.skipped_attacks += 1
 

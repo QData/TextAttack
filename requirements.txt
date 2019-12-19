@@ -1,6 +1,7 @@
 language_check
 nltk
 numpy<1.17
+pandas
 sentence_transformers
 scipy
 torch
