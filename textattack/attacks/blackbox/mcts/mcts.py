@@ -50,7 +50,7 @@ class MCTS(BlackBoxAttack):
     """ Uses Monte Carlo Tree Search (MCTS) to attempt to find the most important words in an input,
     params: targeted (bool, unimplemented!), valuefunction (str), power (int), nplayout (int)
     """
-    def __init__(self, model, transformations=[], rewardvalue='combined', numiter=4000, words_to_change=10):
+    def __init__(self, model, transformations=[], rewardvalue='combined', numiter=4000, max_words_changed=10):
         super().__init__(model)
         self.transformation = transformations[0]
         self.params = dotdict({})
@@ -66,7 +66,7 @@ class MCTS(BlackBoxAttack):
         self.bestfeature = []
         self.rewardvalue = rewardvalue
         self.numiter = numiter
-        self.words_to_change = words_to_change
+        self.max_words_changed = max_words_changed
 
     def update_Node(self, node, fi, reward_V):
         """ Updates the node's scores based on how its feature set performed against the model"""
@@ -227,7 +227,7 @@ class MCTS(BlackBoxAttack):
 
         orig_input = tokenized_text
         
-        self.runmcts(policyvaluefunc, self.words_to_change, self.numiter, len(tokenized_text.words))
+        self.runmcts(policyvaluefunc, self.max_words_changed, self.numiter, len(tokenized_text.words))
 
         new_tokenized_text = tokenized_text
 
