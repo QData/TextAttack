@@ -15,7 +15,7 @@ from textattack.constraints.semantics.sentence_encoders import UniversalSentence
 from textattack.constraints.syntax import PartOfSpeech, LanguageTool
 from textattack.transformations import WordSwapEmbedding
 
-def Alzantot2018GeneticAlgorithmAdjusted(model, SE_thresh=0.95, sentence_encoder='bert'):
+def Alzantot2018GeneticAlgorithmAdjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     # Swap words with their embedding nearest-neighbors. 
     #
