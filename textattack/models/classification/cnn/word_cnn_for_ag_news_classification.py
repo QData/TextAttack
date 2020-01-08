@@ -16,7 +16,7 @@ class WordCNNForAGNewsClassification(WordCNNForClassification):
             
     """
     
-    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/text_classification/outputs/cnn/ag_news/model.bin'
+    MODEL_PATH = 'models/cnn/ag_news'
     
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length, nclasses=4)

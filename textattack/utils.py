@@ -1,7 +1,9 @@
 import json
 import logging
 import os
+import pathlib
 import requests
+import tempfile
 import torch
 import tqdm
 import zipfile
@@ -17,6 +19,8 @@ def get_device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def path_in_cache(file_path):
+    if not os.path.exists(CONFIG['CACHE_DIR']):
+        os.makedirs(CONFIG['CACHE_DIR'])
     return os.path.join(CONFIG['CACHE_DIR'], file_path)
 
 def s3_url(uri):
@@ -24,35 +28,45 @@ def s3_url(uri):
 
 def download_if_needed(folder_name):
     """ Folder name will be saved as `.cache/textattack/[folder name]`. If it
-        doesn't exist, the zip file will be downloaded and extracted. """
-    cached_folder_path = path_in_cache(folder_name)
-    if os.path.exists(cached_folder_path):
-        return
+        doesn't exist, the zip file will be downloaded and extracted. 
+        
+        @TODO: Prevent parallel downloads of the same file with a lock.
+    """
+    # Check if already downloaded.
+    cache_path = path_in_cache(folder_name)
+    if os.path.exists(cache_path):
+        return cache_path
     # If the file isn't found yet, download the zip file to the cache.
     folder_s3_url = s3_url(folder_name)
-    tmp_zip_file = cached_folder_path + '.zip'
-    print(f'Downloading {folder_s3_url} to {tmp_zip_file}.')
+    print(f'Downloading {folder_s3_url}.')
+    tmp_zip_file = tempfile.NamedTemporaryFile(
+        dir=CONFIG['CACHE_DIR'], 
+        suffix='.zip', delete=False)
     http_get(folder_s3_url, tmp_zip_file)
     # Unzip the file.
-    unzip_file(tmp_zip_file, cached_folder_path)
+    tmp_zip_file.close()
+    unzip_file(tmp_zip_file.name, cache_path)
     # Remove the temporary file.
-    os.remove(tmp_zip_file)
+    os.remove(tmp_zip_file.name)
     print(f'Successfully saved {folder_name} to cache.')
+    return cache_path
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
     """ Unzips a .zip file to folder path. """
+    print('Unzipping file', path_to_zip_file, 'to', unzipped_folder_path + '.')
+    enclosing_unzipped_path = pathlib.Path(unzipped_folder_path).parent
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
-        zip_ref.extractall(unzipped_folder_path)
+        zip_ref.extractall(enclosing_unzipped_path)
 
 def http_get(url, out_file, proxies=None):
     """ Get contents of a URL and save to a file.
     
-        https://github.com/huggingface/transformers/blob/master/transformers/file_utils.py
+        https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
     """
     req = requests.get(url, stream=True, proxies=proxies)
     content_length = req.headers.get('Content-Length')
     total = int(content_length) if content_length is not None else None
-    progress = tqdm.tqdm(unit="B", total=total)
+    progress = tqdm.tqdm(unit="B", unit_scale=True, total=total)
     for chunk in req.iter_content(chunk_size=1024):
         if chunk: # filter out keep-alive new chunks
             progress.update(len(chunk))

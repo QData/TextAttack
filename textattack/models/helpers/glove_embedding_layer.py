@@ -1,3 +1,4 @@
+import os
 import torch
 
 import numpy as np
@@ -75,10 +76,11 @@ class GloveEmbeddingLayer(EmbeddingLayer):
         GloVe: Global Vectors for Word Representation. (Jeffrey Pennington, 
             Richard Socher, and Christopher D. Manning. 2014.)
     """
-    EMBEDDING_PATH = '/net/bigtemp/jg6yd/treeattack/glove/glove.6B.200d.txt'
+    EMBEDDING_PATH = 'word_embeddings/glove'
     def __init__(self):
-        utils.download_if_needed(GloveEmbeddingLayer.EMBEDDING_PATH)
-        super().__init__(embs=load_embedding(GloveEmbeddingLayer.EMBEDDING_PATH))
+        glove_path = utils.download_if_needed(GloveEmbeddingLayer.EMBEDDING_PATH)
+        glove_path = os.path.join(glove_path, 'glove.6B.200d.txt')
+        super().__init__(embs=load_embedding(glove_path))
 
 def load_embedding_npz(path):
     """ Loads a word embedding from a numpy binary file. """

@@ -1,3 +1,4 @@
+import os
 import textattack
 import torch
 import torch.nn as nn
@@ -34,7 +35,9 @@ class LSTMForClassification(nn.Module):
         self.tokenizer = textattack.tokenizers.SpacyTokenizer(self.word2id,
             self.emb_layer.oovid, self.emb_layer.padid, max_seq_length)
     
-    def load_from_disk(self, model_path):
+    def load_from_disk(self, model_folder_path):
+        model_folder_path = utils.download_if_needed(model_folder_path)
+        model_path = os.path.join(model_folder_path, 'model.bin')
         state_dict = torch.load(model_path, map_location=utils.get_device())
         self.load_state_dict(state_dict)
         self.to(utils.get_device())
