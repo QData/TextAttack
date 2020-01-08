@@ -1,7 +1,10 @@
 import json
 import logging
 import os
+import requests
 import torch
+import tqdm
+import zipfile
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config_path = os.path.join(dir_path, 'config.json')
@@ -13,27 +16,33 @@ def get_logger():
 def get_device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-DATA_URLS = {
-    'infersent': {
-        
-    },
-    'bert_for_sentiment_classification': {
-        'config.json': 'URL?'
-    }
-}
-
-def cache_path(file_path):
+def path_in_cache(file_path):
     return os.path.join(CONFIG['CACHE_DIR'], file_path)
 
-def download_if_needed(folder_path):
-    folder_path = os.path.join(CONFIG['CACHE_DIR'], folder_path)
-    if os.path.exists(folder_path):
+def s3_url(uri):
+    return 'https://textattack.s3.amazonaws.com/' + uri
+
+def download_if_needed(folder_name):
+    """ Folder name will be saved as `.cache/textattack/[folder name]`. If it
+        doesn't exist, the zip file will be downloaded and extracted. """
+    cached_folder_path = path_in_cache(folder_name)
+    if os.path.exists(cached_folder_path):
         return
-    raise NotImplementedError(f'Sorry, we haven\'t uploaded our models to the Internet yet. Can\'t find {folder_path}.')
-    for file_name, file_url in DATA_URLS[folder_path]:
-        file_path = os.path.join(folder_path, file_name)
-        http_get(file_url, file_path)
-        print(f'Saved {file_url} to {file_path}.')
+    # If the file isn't found yet, download the zip file to the cache.
+    folder_s3_url = s3_url(folder_name)
+    tmp_zip_file = cached_folder_path + '.zip'
+    print(f'Downloading {folder_s3_url} to {tmp_zip_file}.')
+    http_get(folder_s3_url, tmp_zip_file)
+    # Unzip the file.
+    unzip_file(tmp_zip_file, cached_folder_path)
+    # Remove the temporary file.
+    os.remove(tmp_zip_file)
+    print(f'Successfully saved {folder_name} to cache.')
+
+def unzip_file(path_to_zip_file, unzipped_folder_path):
+    """ Unzips a .zip file to folder path. """
+    with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
+        zip_ref.extractall(unzipped_folder_path)
 
 def http_get(url, out_file, proxies=None):
     """ Get contents of a URL and save to a file.
@@ -43,7 +52,7 @@ def http_get(url, out_file, proxies=None):
     req = requests.get(url, stream=True, proxies=proxies)
     content_length = req.headers.get('Content-Length')
     total = int(content_length) if content_length is not None else None
-    progress = tqdm(unit="B", total=total)
+    progress = tqdm.tqdm(unit="B", total=total)
     for chunk in req.iter_content(chunk_size=1024):
         if chunk: # filter out keep-alive new chunks
             progress.update(len(chunk))
