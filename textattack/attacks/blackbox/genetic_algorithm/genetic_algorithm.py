@@ -155,12 +155,13 @@ class GeneticAlgorithm(BlackBoxAttack):
 
     def _attack_one(self, original_label, tokenized_text):
         self.original_tokenized_text = tokenized_text
+        original_prob = self._call_model([tokenized_text]).squeeze().max()
         neighbors_len = self._get_neighbors_len(tokenized_text)
         pop = self._generate_population(neighbors_len, original_label)
         for i in range(self.max_iters):
             pop_preds = self._call_model([pm.tokenized_text for pm in pop])
             pop_scores = pop_preds[:, original_label]
-            print('\t\t', i, ' -- ', pop_scores.min())
+            print('\t\t', i, ' -- ', float(pop_scores.min()))
             top_attack = pop_scores.argmin()
 
             logits = ((-pop_scores) / self.temp).exp()
@@ -172,7 +173,9 @@ class GeneticAlgorithm(BlackBoxAttack):
                     self.original_tokenized_text,
                     pop[top_attack].tokenized_text,
                     original_label,
-                    np.argmax(top_attack_probs)
+                    int(np.argmax(top_attack_probs)),
+                    float(original_prob),
+                    1 - float(pop_scores.min()),
                 )
 
             elite = [pop[top_attack]]  # elite

@@ -17,8 +17,10 @@ from textattack.tokenized_text import TokenizedText
 
 
 RECIPE_NAMES = {
-    'alzantot':     attack_recipes.Alzantot2018GeneticAlgorithm,
-    'textfooler':   attack_recipes.Jin2019TextFooler
+    'alzantot':      'attack_recipes.Alzantot2018GeneticAlgorithm',
+    'alz-adjusted':  'attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
+    'textfooler':    'attack_recipes.Jin2019TextFooler',
+    'tf-adjusted':   'attack_recipes.Jin2019TextFoolerAdjusted',
 }
 
 MODEL_CLASS_NAMES = {
@@ -123,7 +125,10 @@ def get_args():
     
     parser.add_argument('--disable_stdout', action='store_true',
         help='Disable logging to stdout')
-    
+   
+    parser.add_argument('--enable_csv', nargs='?', default=None, const='fancy', type=str,
+        help='Enable logging to csv. Use --enable_csv plain to remove [[]] around words.')
+
     parser.add_argument('--num_examples', '-n', type=int, required=False, 
         default='5', help='The number of examples to process.')
     
@@ -142,7 +147,7 @@ def get_args():
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     attack_group.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
-        help='The type of attack to run.')
+        help='The type of attack to run.', choices=ATTACK_CLASS_NAMES.keys())
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None, 
         help='full attack recipe (overrides provided transformation & constraints)')
@@ -186,9 +191,14 @@ def parse_constraints_from_args():
     return _constraints
 
 def parse_recipe_from_args():
-    try:
-        recipe = RECIPE_NAMES[args.recipe](model)
-    except KeyError:
+    if ':' in args.recipe:
+        recipe_name, params = args.recipe.split(':')
+        if recipe_name not in RECIPE_NAMES:
+            raise ValueError(f'Error: unsupported recipe {recipe_name}')
+        recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model, {params})')
+    elif args.recipe in RECIPE_NAMES:
+        recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
+    else:
         raise Error('Invalid recipe {args.recipe}')
     return recipe
 
@@ -225,6 +235,9 @@ if __name__ == '__main__':
     # Disable tensorflow logs, except in the case of an error.
     if 'TF_CPP_MIN_LOG_LEVEL' not in os.environ:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+    # Cache TensorFlow Hub models here, if not otherwise specified.
+    if 'TFHUB_CACHE_DIR' not in os.environ:
+        os.environ['TFHUB_CACHE_DIR'] = './tensorflow-hub'
     
     start_time = time.time()
 
@@ -240,10 +253,17 @@ if __name__ == '__main__':
         attack = parse_attack_from_args()
         attack.add_constraints(parse_constraints_from_args())
 
-    # Output file
+    out_time = int(time.time()*1000) # Output file
     if args.out_dir is not None:
-        outfile_name = 'attack-{}.txt'.format(int(time.time()))
+        outfile_name = 'attack-{}.txt'.format(out_time)
         attack.add_output_file(os.path.join(args.out_dir, outfile_name))
+
+    # csv
+    if args.enable_csv:
+        out_dir = args.out_dir if args.out_dir else 'outputs'
+        outfile_name = 'attack-{}.csv'.format(out_time)
+        plain = args.enable_csv == 'plain'
+        attack.add_output_csv(os.path.join(out_dir, outfile_name), plain)
 
     # Visdom
     if args.enable_visdom:

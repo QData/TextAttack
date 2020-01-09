@@ -8,7 +8,7 @@ class WordSwapEmbedding(WordSwap):
     """ Transforms an input by replacing its words with synonyms in the word
         embedding space. """
     
-    PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings'
+    PATH = 'word_embeddings'
     
     def __init__(self, max_candidates=15, word_embedding='paragramcf', 
         replace_stopwords=False, **kwargs):
@@ -24,11 +24,12 @@ class WordSwapEmbedding(WordSwap):
             raise ValueError(f'Could not find word embedding {word_embedding}')
         
         # Download embeddings if they're not cached.
-        utils.download_if_needed(WordSwapEmbedding.PATH)
+        cache_path = utils.download_if_needed('{}/{}'.format(
+            WordSwapEmbedding.PATH, word_embedding))
         # Concatenate folder names to create full path to files.
-        word_embeddings_file = os.path.join(WordSwapEmbedding.PATH, word_embeddings_folder, word_embeddings_file)
-        word_list_file = os.path.join(WordSwapEmbedding.PATH, word_embeddings_folder, word_list_file)
-        nn_matrix_file = os.path.join(WordSwapEmbedding.PATH, word_embeddings_folder, nn_matrix_file)
+        word_embeddings_file = os.path.join(cache_path, word_embeddings_file)
+        word_list_file = os.path.join(cache_path, word_list_file)
+        nn_matrix_file = os.path.join(cache_path, nn_matrix_file)
         
         # Actually load the files from disk.
         self.word_embeddings = np.load(word_embeddings_file)

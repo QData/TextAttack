@@ -17,11 +17,11 @@ class BERTForClassification:
             Defaults to 32.
             
     """
-    def __init__(self, model_path, num_labels=2, entailment=False):
-        utils.download_if_needed(model_path)
-        print('TextAttack BERTForClassification Loading from path', model_path)
+    def __init__(self, model_relative_path, num_labels=2):
+        model_file_path = utils.download_if_needed(model_relative_path)
+        print('TextAttack BERTForClassification Loading from path', model_file_path)
         self.model = BertForSequenceClassification.from_pretrained(
-            model_path, num_labels=num_labels)
+            model_file_path, num_labels=num_labels)
         self.model.to(utils.get_device())
         self.model.eval()
         if entailment:

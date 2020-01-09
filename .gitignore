@@ -21,3 +21,6 @@ docs/_build/
 
 # CSVs to upload to MTurk
 *.csv
+
+# TF Hub modules
+tensorflow-hub

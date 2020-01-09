@@ -5,7 +5,7 @@ from textattack.constraints import Constraint
 class LanguageTool(Constraint):
     """ 
         Uses languagetool to determine if two sentences have the same
-        number of typos. 
+        number of grammatical erors. 
         (https://languagetool.org/)
         
         Args:
