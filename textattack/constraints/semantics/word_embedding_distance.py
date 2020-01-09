@@ -20,7 +20,7 @@ class WordEmbeddingDistance(Constraint):
         embedding_cased (bool): whether embedding supports uppercase & lowercase
             (defaults to False, or just lowercase)
     """
-    PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings'
+    PATH = 'word_embeddings'
     def __init__(self, word_embedding='paragramcf', include_unknown_words=True,
         min_cos_sim=None, max_mse_dist=None, embedding_cased=False):
         self.include_unknown_words = include_unknown_words
@@ -38,13 +38,14 @@ class WordEmbeddingDistance(Constraint):
             raise ValueError(f'Could not find word embedding {word_embedding}')
 
         # Download embeddings if they're not cached.
-        utils.download_if_needed(WordEmbeddingDistance.PATH)
+        word_embeddings_path = utils.download_if_needed(WordEmbeddingDistance.PATH)
+        word_embeddings_folder = os.path.join(word_embeddings_path, word_embeddings_folder)
         
         # Concatenate folder names to create full path to files.
-        word_embeddings_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, word_embeddings_file)
-        word_list_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, word_list_file)
-        mse_dist_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, mse_dist_file)
-        cos_sim_file = os.path.join(WordEmbeddingDistance.PATH, word_embeddings_folder, cos_sim_file)
+        word_embeddings_file = os.path.join(word_embeddings_folder, word_embeddings_file)
+        word_list_file = os.path.join(word_embeddings_folder, word_list_file)
+        mse_dist_file = os.path.join(word_embeddings_folder, mse_dist_file)
+        cos_sim_file = os.path.join(word_embeddings_folder, cos_sim_file)
         
         # Actually load the files from disk.
         self.word_embeddings = np.load(word_embeddings_file)

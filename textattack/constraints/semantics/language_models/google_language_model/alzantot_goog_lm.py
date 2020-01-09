@@ -7,6 +7,8 @@ import tensorflow as tf
 import sys
 import numpy as np
 
+import textattack.utils as utils
+
 from google.protobuf import text_format
 
 from . import lm_utils 
@@ -16,18 +18,19 @@ tf.get_logger().setLevel('INFO')
 
 # @TODO automatically choose between GPU and CPU.
 
-ROOT_FOLDER = '/p/qdata/jm8wx/research_OLD/nlp_adversarial_examples_new/goog_lm'
-
 class GoogLMHelper(object):
     '''
     An implementation of `<https://arxiv.org/abs/1804.07998>`_
     adapted from `<https://github.com/nesl/nlp_adversarial_examples>`_. 
 
     '''
+    CACHE_PATH = 'constraints/semantics/language-models/alzantot-goog-lm'
+    
     def __init__(self):
-        self.PBTXT_PATH = os.path.join(ROOT_FOLDER, 'graph-2016-09-10-gpu.pbtxt')
-        self.CKPT_PATH = os.path.join(ROOT_FOLDER, 'ckpt-*')
-        self.VOCAB_PATH = os.path.join(ROOT_FOLDER, 'vocab-2016-09-10.txt')
+        lm_folder = 
+        self.PBTXT_PATH = os.path.join(lm_folder, 'graph-2016-09-10-gpu.pbtxt')
+        self.CKPT_PATH = os.path.join(lm_folder, 'ckpt-*')
+        self.VOCAB_PATH = os.path.join(lm_folder, 'vocab-2016-09-10.txt')
 
         self.BATCH_SIZE = 1
         self.NUM_TIMESTEPS = 1

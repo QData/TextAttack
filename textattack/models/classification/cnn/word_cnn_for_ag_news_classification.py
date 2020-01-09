@@ -16,7 +16,7 @@ class WordCNNForAGNewsClassification(WordCNNForClassification):
             
     """
     
-    MODEL_PATH = 'models/cnn/ag_news'
+    MODEL_PATH = 'models/classification/cnn/ag_news'
     
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length, nclasses=4)
