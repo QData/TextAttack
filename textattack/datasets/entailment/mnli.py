@@ -1,10 +1,11 @@
-from textattack import utils as utils
-from textattack.datasets import TextAttackDataset
-from textattack.tokenized_text import TokenizedText
+from .entailment_dataset import TextAttackEntailmentDataset
 
-class MNLI(TextAttackDataset):
+class MNLI(TextAttackEntailmentDataset):
     """
-    Loads samples from the MNLI dataset.
+    Loads samples from the MNLI dataset. The *mismatched* examples come from a 
+    distribution different from the one seen at training time.
+    
+    See https://www.nyu.edu/projects/bowman/multinli/paper.pdf for more details.
     
     Labels:
         0 - Entailment
@@ -13,19 +14,11 @@ class MNLI(TextAttackDataset):
 
     Args:
         offset (int): line to start reading from
-    
+        mismatched (bool): whether to use mismatched dataset. Defaults to false.
     """
-    DATA_PATH = '/p/qdata/jm8wx/research_OLD/textfooler/data/mnli'
-    def __init__(self, offset=0):
+    MATCHED_DATA_PATH = 'datasets/entailment/mnli_matched'
+    MISMATCHED_DATA_PATH = 'datasets/entailment/mnli_mismatched'
+    def __init__(self, offset=0, mismatched=False):
         """ Loads a full dataset from disk. """
-        self._load_text_file(MNLI.DATA_PATH, offset=offset)
-    
-    def __next__(self):
-        if self.i >= len(self.raw_lines):
-            raise StopIteration
-        line = self.raw_lines[self.i].strip()
-        label, premise, hypothesis = line.split('\t')
-        label = int(label)
-        text = TokenizedText.SPLIT_TOKEN.join([premise, hypothesis])
-        self.i += 1
-        return (label, text)
+        path = MNLI.MISMATCHED_DATA_PATH if mismatched else MNLI.MATCHED_DATA_PATH
+        self._load_text_file(path, offset=offset)

@@ -13,7 +13,6 @@ def _pb(): print(_cg('-' * 60))
 from collections import Counter
 
 def get_num_successes(model, ids, true_labels):
-    # import pdb; pdb.set_trace()
     ids = map(torch.tensor, zip(*ids))
     ids = (x.to(textattack.utils.get_device()) for x in ids)
     true_labels = torch.tensor(true_labels).to(textattack.utils.get_device())
@@ -23,7 +22,6 @@ def get_num_successes(model, ids, true_labels):
     return successes, true_labels, guess_labels
 
 def test_model_on_dataset(model, dataset, batch_size=16):
-    # TODO do inference in batch.
     succ = 0
     fail = 0
     batch_ids = []
@@ -43,7 +41,6 @@ def test_model_on_dataset(model, dataset, batch_size=16):
             batch_labels = []
             all_true_labels.extend(true_labels.tolist())
             all_guess_labels.extend(guess_labels.tolist())
-    # predict remainder batch
     if len(batch_ids) > 0:
         batch_succ, true_labels, guess_labels = get_num_successes(model, batch_ids, batch_labels)
         batch_fail = len(batch_ids) - batch_succ

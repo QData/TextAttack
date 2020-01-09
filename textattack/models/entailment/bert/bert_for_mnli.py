@@ -3,7 +3,7 @@ from textattack.models.helpers import BERTForClassification
 
 class BERTForMNLI(BERTForClassification):
     """ BERT fine-tuned on the MNLI dataset for textual entailment. """
-    MODEL_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/mnli-uncased/'
+    MODEL_PATH = 'models/entailment/bert/mnli-uncased'
     
     def __init__(self):
         path = BERTForMNLI.MODEL_PATH

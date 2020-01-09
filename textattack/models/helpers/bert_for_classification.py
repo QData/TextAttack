@@ -24,9 +24,10 @@ class BERTForClassification:
         self.model.eval()
         if entailment:
             # @TODO: Use custom tokenizer after we train our own models.
-            self.tokenizer = BERTEntailmentTokenizer()
+            self.tokenizer = BERTEntailmentTokenizer(model_file_path)
         else:
-            self.tokenizer = BERTTokenizer(model_path)
+            print('initializing tokenizer from', model_path)
+            self.tokenizer = BERTTokenizer(model_file_path)
     
     def __call__(self, *params):
         with torch.no_grad():

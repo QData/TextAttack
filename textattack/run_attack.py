@@ -29,20 +29,20 @@ MODEL_CLASS_NAMES = {
     #
     
     # BERT models - default uncased
-    # 'bert-ag-news':             'models.classification.bert.BERTForAGNewsClassification',
-    # 'bert-imdb':                'models.classification.bert.BERTForIMDBSentimentClassification',
-    # 'bert-mr':                  'models.classification.bert.BERTForMRSentimentClassification',
-    # 'bert-yelp-sentiment':      'models.classification.bert.BERTForYelpSentimentClassification',
+    'bert-ag-news':             'models.classification.bert.BERTForAGNewsClassification',
+    'bert-imdb':                'models.classification.bert.BERTForIMDBSentimentClassification',
+    'bert-mr':                  'models.classification.bert.BERTForMRSentimentClassification',
+    'bert-yelp-sentiment':      'models.classification.bert.BERTForYelpSentimentClassification',
     # CNN models
-    # 'cnn-ag-news':              'models.classification.cnn.WordCNNForAGNewsClassification',
-    # 'cnn-imdb':                 'models.classification.cnn.WordCNNForIMDBSentimentClassification',
-    # 'cnn-mr':                   'models.classification.cnn.WordCNNForMRSentimentClassification',
-    # 'cnn-yelp-sentiment':       'models.classification.cnn.WordCNNForYelpSentimentClassification',
+    'cnn-ag-news':              'models.classification.cnn.WordCNNForAGNewsClassification',
+    'cnn-imdb':                 'models.classification.cnn.WordCNNForIMDBSentimentClassification',
+    'cnn-mr':                   'models.classification.cnn.WordCNNForMRSentimentClassification',
+    'cnn-yelp-sentiment':       'models.classification.cnn.WordCNNForYelpSentimentClassification',
     # LSTM models
-    # 'lstm-ag-news':             'models.classification.lstm.LSTMForAGNewsClassification',
-    # 'lstm-imdb':                'models.classification.lstm.LSTMForIMDBSentimentClassification',
-    # 'lstm-mr':                  'models.classification.lstm.LSTMForMRSentimentClassification',
-    # 'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
+    'lstm-ag-news':             'models.classification.lstm.LSTMForAGNewsClassification',
+    'lstm-imdb':                'models.classification.lstm.LSTMForIMDBSentimentClassification',
+    'lstm-mr':                  'models.classification.lstm.LSTMForMRSentimentClassification',
+    'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
     
     #
     # Textual entailment models
@@ -50,6 +50,7 @@ MODEL_CLASS_NAMES = {
     
     # BERT models
     'bert-mnli':                'models.entailment.bert.BERTForMNLI',
+    'bert-snli':                'models.entailment.bert.BERTForSNLI',
 }
 
 DATASET_BY_MODEL = {
@@ -78,6 +79,7 @@ DATASET_BY_MODEL = {
     # Textual entailment datasets
     #
     'bert-mnli':                datasets.entailment.MNLI,
+    'bert-snli':                datasets.entailment.SNLI,
 }
 
 TRANSFORMATION_CLASS_NAMES = {

@@ -38,12 +38,10 @@ def download_if_needed(folder_name):
     if os.path.exists(cache_dest_path):
         return cache_dest_path
     # If the file isn't found yet, download the zip file to the cache.
-    folder_s3_url = s3_url(folder_name)
-    print(f'Downloading {folder_s3_url}.')
     downloaded_file = tempfile.NamedTemporaryFile(
         dir=CONFIG['CACHE_DIR'], 
         suffix='.zip', delete=False)
-    http_get(folder_s3_url, downloaded_file)
+    http_get(folder_name, downloaded_file)
     # Move or unzip the file.
     downloaded_file.close()
     if zipfile.is_zipfile(downloaded_file.name):
@@ -64,14 +62,18 @@ def unzip_file(path_to_zip_file, unzipped_folder_path):
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
         zip_ref.extractall(enclosing_unzipped_path)
 
-def http_get(url, out_file, proxies=None):
+def http_get(folder_name, out_file, proxies=None):
     """ Get contents of a URL and save to a file.
     
         https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
     """
-    req = requests.get(url, stream=True, proxies=proxies)
+    folder_s3_url = s3_url(folder_name)
+    print(f'Downloading {folder_s3_url}.')
+    req = requests.get(folder_s3_url, stream=True, proxies=proxies)
     content_length = req.headers.get('Content-Length')
     total = int(content_length) if content_length is not None else None
+    if req.status_code == 403: # Not found on AWS
+        raise Exception(f'Could not find {folder_name} on server.')
     progress = tqdm.tqdm(unit="B", unit_scale=True, total=total)
     for chunk in req.iter_content(chunk_size=1024):
         if chunk: # filter out keep-alive new chunks
