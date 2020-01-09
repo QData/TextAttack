@@ -1,4 +1,3 @@
-from textattack import utils as utils
 from textattack.datasets import TextAttackDataset
 
 class KaggleFakeNews(TextAttackDataset):
@@ -14,8 +13,7 @@ class KaggleFakeNews(TextAttackDataset):
         offset (int): line to start reading from
     
     """
-    DATA_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/data/fake'
+    DATA_PATH = 'datasets/classification/fake'
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
-        utils.download_if_needed(KaggleFakeNews.DATA_PATH)
-        self.examples = self._load_text_file(KaggleFakeNews.DATA_PATH, offset=offset)
+        self._load_text_file(KaggleFakeNews.DATA_PATH, offset=offset)

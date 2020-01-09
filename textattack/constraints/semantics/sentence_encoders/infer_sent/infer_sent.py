@@ -15,8 +15,8 @@ class InferSent(SentenceEncoder):
     the text embeddings are created using InferSent.
     """
     
-    MODEL_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/infersent-encoder'
-    WORD_EMBEDDING_PATH = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/AttackGeneration/word_embeddings'
+    MODEL_PATH = 'constraints/semantics/sentence-encoders/infersent-encoder'
+    WORD_EMBEDDING_PATH = 'word_embeddings'
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -32,16 +32,16 @@ class InferSent(SentenceEncoder):
 
         """
         infersent_version = 2
-        model_path = os.path.join(InferSent.MODEL_PATH, f'infersent{infersent_version}.pkl')
-        utils.download_if_needed(model_path)
+        model_folder_path = utils.download_if_needed(InferSent.MODEL_PATH)
+        model_path = os.path.join(model_folder_path, f'infersent{infersent_version}.pkl')
         params_model = {'bsize': 64, 'word_emb_dim': 300, 'enc_lstm_dim': 2048,
                 'pool_type': 'max', 'dpout_model': 0.0, 'version': infersent_version}
         infersent = InferSentModel(params_model)
         infersent.load_state_dict(torch.load(model_path))
-        W2V_PATH = os.path.join(InferSent.WORD_EMBEDDING_PATH, 'fastText', 
+        word_embedding_path = utils.download_if_needed(InferSent.WORD_EMBEDDING_PATH)
+        w2v_path = os.path.join(word_embedding_path, 'fastText', 
             'crawl-300d-2M.vec')
-        utils.download_if_needed(W2V_PATH)
-        infersent.set_w2v_path(W2V_PATH)
+        infersent.set_w2v_path(w2v_path)
         infersent.build_vocab_k_words(K=100000)
         return infersent
     

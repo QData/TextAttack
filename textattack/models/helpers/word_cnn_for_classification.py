@@ -5,6 +5,7 @@ import torch.nn.functional as F
 
 import textattack.utils as utils
 from textattack.models.helpers import GloveEmbeddingLayer
+from textattack.models.helpers.helper_utils import load_cached_state_dict
 
 class WordCNNForClassification(nn.Module):
     """ A convolutional neural network for text classification. 
@@ -27,9 +28,8 @@ class WordCNNForClassification(nn.Module):
         self.tokenizer = textattack.tokenizers.SpacyTokenizer(self.word2id,
             self.emb_layer.oovid, self.emb_layer.padid, max_seq_length)
     
-    def load_from_disk(self, model_path):
-        state_dict = torch.load(model_path, map_location=utils.get_device())
-        self.load_state_dict(state_dict)
+    def load_from_disk(self, model_folder_path):
+        self.load_state_dict(load_cached_state_dict(model_folder_path))
         self.to(utils.get_device())
         self.eval()
 
