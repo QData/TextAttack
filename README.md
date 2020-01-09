@@ -39,6 +39,9 @@ We use spaCy's English model. To download it, after installing spaCy type in ter
 python -m spacy download en
 ```
 
+### Cache
+TextAttack provides pretrained models and datasets for user convenience. By default, all this stuff is downloaded to `~/.cache`. You can change this location by editing the `CACHE_DIR` field in `textattack/config.json`.
+
 ### Common Errors
 
 #### Errors regarding GCC
