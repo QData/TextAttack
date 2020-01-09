@@ -1,6 +1,13 @@
 from textattack.utils import get_device
 
 class TokenizedText:
+    """ A helper class that represents a string that can be attacked. """
+    
+    """ Models that take multiple sentences as input separate them by `SPLIT_TOKEN`. Attacks "see" the entire 
+        input, joined into one string, without the split token. 
+    """
+    SPLIT_TOKEN = '||||'
+    
     def __init__(self, text, tokenizer, attack_attrs=dict()):
         """ Initializer stores text and tensor of tokenized text.
         
@@ -9,6 +16,7 @@ class TokenizedText:
             tokenizer (Tokenizer): an object that can convert text to tokens
                 and convert tokens to IDs
         """
+        text = text.strip()
         self.text = text
         self.tokenizer = tokenizer
         self.tokens = tokenizer.convert_text_to_tokens(text)
@@ -130,7 +138,13 @@ class TokenizedText:
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
             attack_attrs=self.attack_attrs)
-        
+    
+    def printable(self):
+        """ Represents self in a printable format. Joins text with multiple
+            inputs separated by `TokenizedText.SPLIT_TOKEN` with a line break.
+        """
+        return self.text.replace(TokenizedText.SPLIT_TOKEN, '\n\n')
+    
     def __repr__(self):
         return f'<TokenizedText "{self.text}">'
 
@@ -143,7 +157,7 @@ def raw_words(s):
         if c.isalpha():
             word += c
         elif word:
-            words.append(word)
+            if word is not TokenizedText.SPLIT_TOKEN: words.append(word)
             word = ''
-    if word: words.append(word)
+    if len(word) and (word is not TokenizedText.SPLIT_TOKEN): words.append(word)
     return words

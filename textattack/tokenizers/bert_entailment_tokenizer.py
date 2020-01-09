@@ -1,3 +1,4 @@
+from textattack.tokenized_text import TokenizedText
 from textattack.tokenizers import BERTTokenizer
 
 class BERTEntailmentTokenizer(BERTTokenizer):
@@ -5,11 +6,14 @@ class BERTEntailmentTokenizer(BERTTokenizer):
     def __init__(self): super().__init__()
         
     def _truncate_seq_pair(self, tokens_a, tokens_b):
-        """ Truncates a sequence pair in place to the maximum length."""
-        # This is a simple heuristic which will always truncate the longer sequence
-        # one token at a time. This makes more sense than truncating an equal percent
-        # of tokens from each, since if one sequence is very short then each token
-        # that's truncated likely contains more information than a longer sequence.
+        """ Truncates a sequence pair in place to the maximum length.
+
+        This is a simple heuristic which will always truncate the longer 
+        sequenceone token at a time. This makes more sense than truncating an
+        equal percent of tokens from each, since if one sequence is very short
+        then each token that's truncated likely contains more information than 
+        a longer sequence.
+        """
         max_length = self.max_seq_length - 3 # Subtract 3 for 'CLS' and 2 'SEP' tokens
         while True:
             total_length = len(tokens_a) + len(tokens_b)
@@ -33,7 +37,7 @@ class BERTEntailmentTokenizer(BERTTokenizer):
             A list of text tokens.
         """
         # Get tokenized premise and hypothesis.
-        premise, hypothesis = entailment_input.split('|')
+        premise, hypothesis = entailment_input.split(TokenizedText.SPLIT_TOKEN)
         tokens_a = self.tokenizer.tokenize(premise)
         tokens_b = self.tokenizer.tokenize(hypothesis)
         # Ensure they will fit in self.max_seq_length.

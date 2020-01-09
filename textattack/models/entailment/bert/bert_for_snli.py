@@ -1,12 +1,12 @@
 from textattack import utils as utils
 from textattack.models.helpers import BERTForClassification
 
-class BERTForMNLI(BERTForClassification):
-    """ BERT fine-tuned on the MNLI dataset for textual entailment. """
-    MODEL_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/mnli-uncased/'
+class BERTForSNLI(BERTForClassification):
+    """ BERT fine-tuned on the SNLI dataset for textual entailment. """
+    MODEL_PATH = '/p/qdata/jm8wx/research_OLD/TextFooler/snli-uncased/'
     
     def __init__(self):
-        path = BERTForMNLI.MODEL_PATH
+        path = BERTForSNLI.MODEL_PATH
         utils.download_if_needed(path)
         super().__init__(path, entailment=True, num_labels=3)
     
