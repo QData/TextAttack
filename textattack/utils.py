@@ -3,6 +3,7 @@ import logging
 import os
 import pathlib
 import requests
+import shutil
 import tempfile
 import torch
 import tqdm
@@ -33,23 +34,28 @@ def download_if_needed(folder_name):
         @TODO: Prevent parallel downloads of the same file with a lock.
     """
     # Check if already downloaded.
-    cache_path = path_in_cache(folder_name)
-    if os.path.exists(cache_path):
-        return cache_path
+    cache_dest_path = path_in_cache(folder_name)
+    if os.path.exists(cache_dest_path):
+        return cache_dest_path
     # If the file isn't found yet, download the zip file to the cache.
     folder_s3_url = s3_url(folder_name)
     print(f'Downloading {folder_s3_url}.')
-    tmp_zip_file = tempfile.NamedTemporaryFile(
+    downloaded_file = tempfile.NamedTemporaryFile(
         dir=CONFIG['CACHE_DIR'], 
         suffix='.zip', delete=False)
-    http_get(folder_s3_url, tmp_zip_file)
-    # Unzip the file.
-    tmp_zip_file.close()
-    unzip_file(tmp_zip_file.name, cache_path)
+    http_get(folder_s3_url, downloaded_file)
+    # Move or unzip the file.
+    downloaded_file.close()
+    if zipfile.is_zipfile(downloaded_file.name):
+        unzip_file(downloaded_file.name, cache_dest_path)
+    else:
+        print('Copying', downloaded_file.name, 'to', cache_dest_path + '.')
+        os.makedirs(os.path.dirname(cache_dest_path), exist_ok=True)
+        shutil.copyfile(downloaded_file.name, cache_dest_path)
     # Remove the temporary file.
-    os.remove(tmp_zip_file.name)
+    os.remove(downloaded_file.name)
     print(f'Successfully saved {folder_name} to cache.')
-    return cache_path
+    return cache_dest_path
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
     """ Unzips a .zip file to folder path. """

@@ -1,3 +1,5 @@
+import textattack.utils as utils
+
 class TextAttackDataset:
     """
     A dataset for text attacks.
@@ -7,9 +9,7 @@ class TextAttackDataset:
     
     """
     def __init__(self):
-        """ Loads a full dataset from disk. Typically stores tuples in
-            `self.examples`.
-        """
+        """ Loads a full dataset from disk. """
         raise NotImplementedError()
     
     def __iter__(self):
@@ -37,7 +37,8 @@ class TextAttackDataset:
                 n (int): number of samples to return
                 offset (int): line to start reading from
         """
-        text_file = open(text_file_name, 'r')
+        text_file_path = utils.download_if_needed(text_file_name)
+        text_file = open(text_file_path, 'r')
         raw_lines = text_file.readlines()[offset:]
         self.raw_lines = [self._clean_example(ex) for ex in raw_lines]
         self.i = 0
