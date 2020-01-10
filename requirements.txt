@@ -5,8 +5,9 @@ pandas
 sentence_transformers
 scipy
 torch
-transformers==2.0.0
+transformers>=2.0.0
 tensorflow-gpu
+tensorflow_hub
 scikit-learn
 visdom
 spacy
