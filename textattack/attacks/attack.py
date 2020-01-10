@@ -198,7 +198,6 @@ class Attack:
             i += 1
             tokenized_text = TokenizedText(text, self.tokenizer)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
-            print('label:',label,type(label),'predicted_label:',predicted_label,type(predicted_label))
             if predicted_label != label:
                 self.logger.log_skipped(tokenized_text)
             else:

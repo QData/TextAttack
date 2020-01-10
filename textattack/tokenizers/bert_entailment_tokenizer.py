@@ -4,7 +4,6 @@ from textattack.tokenizers import BERTTokenizer
 class BERTEntailmentTokenizer(BERTTokenizer):
     """ Tokenizes an input for entailment. """
     def __init__(self, model_path='bert-base-uncased'): 
-        print('initializing tokenizer:', model_path)
         super().__init__(model_path=model_path)
         
     def _truncate_seq_pair(self, tokens_a, tokens_b):
