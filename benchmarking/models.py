@@ -13,22 +13,32 @@ def _pb(): print(_cg('-' * 60))
 from collections import Counter
 
 def get_num_successes(model, ids, true_labels):
-    ids = map(torch.tensor, zip(*ids))
-    ids = (x.to(textattack.utils.get_device()) for x in ids)
+    id_dim = torch.tensor(ids).ndim
+    if id_dim == 2:
+        # For models where the input is a single vector.
+        ids = torch.tensor(ids).to(textattack.utils.get_device())
+        preds = model(ids)
+    elif id_dim == 3:
+        # For models that take multiple vectors per input.
+        ids = map(torch.tensor, zip(*ids))
+        ids = (x.to(textattack.utils.get_device()) for x in ids)
+        preds = model(*ids)
+    else:
+        raise TypeError(f'Error: malformed id_dim ({id_dim})')
     true_labels = torch.tensor(true_labels).to(textattack.utils.get_device())
-    preds = model(*ids)
     guess_labels = preds.argmax(dim=1)
     successes = (guess_labels == true_labels).sum().item()
     return successes, true_labels, guess_labels
 
-def test_model_on_dataset(model, dataset, batch_size=16):
+def test_model_on_dataset(model, dataset, batch_size=16, num_examples=100):
     succ = 0
     fail = 0
     batch_ids = []
     batch_labels = []
     all_true_labels = []
     all_guess_labels = []
-    for label, text in dataset:
+    for i, (label, text) in enumerate(dataset):
+        if i >= num_examples: break
         ids = model.tokenizer.encode(text)
         batch_ids.append(ids)
         batch_labels.append(label)
@@ -48,9 +58,6 @@ def test_model_on_dataset(model, dataset, batch_size=16):
         fail += batch_fail
         all_true_labels.extend(true_labels.tolist())
         all_guess_labels.extend(guess_labels.tolist())
-    
-    print('true_labels:', Counter(all_true_labels))
-    print('guess_labels:', Counter(all_guess_labels))
     
     perc = float(succ)/(succ+fail)*100.0
     perc = '{:.2f}%'.format(perc)

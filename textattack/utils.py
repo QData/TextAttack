@@ -12,6 +12,7 @@ import zipfile
 dir_path = os.path.dirname(os.path.realpath(__file__))
 config_path = os.path.join(dir_path, 'config.json')
 CONFIG = json.load(open(config_path, 'r'))
+CONFIG['CACHE_DIR'] = os.path.expanduser(CONFIG['CACHE_DIR'])
 
 def get_logger():
     return logging.getLogger(__name__)

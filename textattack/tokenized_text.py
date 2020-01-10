@@ -22,6 +22,9 @@ class TokenizedText:
         self.tokens = tokenizer.convert_text_to_tokens(text)
         ids = tokenizer.convert_tokens_to_ids(self.tokens)
         if not isinstance(ids, tuple):
+            # Some tokenizers may tokenize text to a single vector.
+            # In this case, wrap the vector in a tuple to mirror the 
+            # format of other tokenizers.
             ids = (ids,)
         self.ids = ids
         self.words = raw_words(text)
