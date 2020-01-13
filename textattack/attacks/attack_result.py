@@ -75,4 +75,4 @@ class AttackResult:
         t1 = self.original_text.replace_words_at_indices(new_is, new_w1s)
         t2 = self.original_text.replace_words_at_indices(new_is, new_w2s)
                 
-        return t1.printable(), t2.printable()
+        return t1.clean_text(), t2.clean_text()

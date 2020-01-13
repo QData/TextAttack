@@ -6,7 +6,7 @@ class TokenizedText:
     """ Models that take multiple sentences as input separate them by `SPLIT_TOKEN`. Attacks "see" the entire 
         input, joined into one string, without the split token. 
     """
-    SPLIT_TOKEN = '||||'
+    SPLIT_TOKEN = '>>>>'
     
     def __init__(self, text, tokenizer, attack_attrs=dict()):
         """ Initializer stores text and tensor of tokenized text.
@@ -17,7 +17,6 @@ class TokenizedText:
                 and convert tokens to IDs
         """
         text = text.strip()
-        self.text = text
         self.tokenizer = tokenizer
         self.tokens = tokenizer.convert_text_to_tokens(text)
         ids = tokenizer.convert_tokens_to_ids(self.tokens)
@@ -28,6 +27,7 @@ class TokenizedText:
             ids = (ids,)
         self.ids = ids
         self.words = raw_words(text)
+        self.text = text
         self.attack_attrs = attack_attrs
 
     def text_window_around_index(self, index, window_size):
@@ -142,8 +142,8 @@ class TokenizedText:
         return TokenizedText(final_sentence, self.tokenizer, 
             attack_attrs=self.attack_attrs)
     
-    def printable(self):
-        """ Represents self in a printable format. Joins text with multiple
+    def clean_text(self):
+        """ Represents self in a clean, printable format. Joins text with multiple
             inputs separated by `TokenizedText.SPLIT_TOKEN` with a line break.
         """
         return self.text.replace(TokenizedText.SPLIT_TOKEN, '\n\n')

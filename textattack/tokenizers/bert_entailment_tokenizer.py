@@ -10,7 +10,7 @@ class BERTEntailmentTokenizer(BERTTokenizer):
         """ Truncates a sequence pair in place to the maximum length.
 
         This is a simple heuristic which will always truncate the longer 
-        sequenceone token at a time. This makes more sense than truncating an
+        sequence one token at a time. This makes more sense than truncating an
         equal percent of tokens from each, since if one sequence is very short
         then each token that's truncated likely contains more information than 
         a longer sequence.

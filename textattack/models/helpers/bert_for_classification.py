@@ -28,6 +28,5 @@ class BERTForClassification:
             self.tokenizer = BERTTokenizer(model_file_path)
     
     def __call__(self, *params):
-        with torch.no_grad():
-            pred = self.model(*params)[0]
+        pred = self.model(*params)[0]
         return torch.nn.functional.softmax(pred, dim=-1)

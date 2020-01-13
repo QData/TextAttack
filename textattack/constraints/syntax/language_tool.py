@@ -19,7 +19,7 @@ class LanguageTool(Constraint):
         self.grammar_error_cache = {}
     
     def get_errors(self, tokenized_text, use_cache=False):
-        text = tokenized_text.text
+        text = tokenized_text.clean_text()
         if use_cache:
             if text not in self.grammar_error_cache:
                 self.grammar_error_cache[text] = len(self.lang_tool.check(text))
