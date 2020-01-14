@@ -12,7 +12,7 @@
 
 ## About
 
-TextAttack is a library for running adversarial attacks against NLP models. These may be useful for evaluating attack methods and evaluating model robustness. TextAttack is designed in order to be easily extensible to new NLP tasks, models, attack methods, and attack constraints. The separation between these aspects of an adversarial attack and standardization of constraint evaluation allows for easier ablation studies. Currently, TextAttack supports only attacks on classification, with entailment coming soon.
+TextAttack is a library for running adversarial attacks against NLP models. These may be useful for evaluating attack methods and evaluating model robustness. TextAttack is designed in order to be easily extensible to new NLP tasks, models, attack methods, and attack constraints. The separation between these aspects of an adversarial attack and standardization of constraint evaluation allows for easier ablation studies. TextAttack supports attacks on models trained for classification and entailment.
 
 ## Setup
 
@@ -61,7 +61,7 @@ We have a command-line interface for running different attacks on different data
 ### Attack Recipes
 
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python textattack/run_attack.py --recipe [recipe_name]`
-Currently, we include four recipes, each for synonym substitution-based classification attacks:
+Currently, we include four recipes, each for synonym substitution-based classification and entailment attacks:
 - textfooler: Reproduction of TextFooler's greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))
 - alzantot: Reproduction of genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))
 - tf-adjusted: TextFooler with constraint thresholds adjusted based on human evaluation and grammaticality enforced.
@@ -79,7 +79,7 @@ To allow for word replacement after a sequence has been tokenized, we include a 
 
 ### Models and Datasets
 
-We've included a few models trained on classification datasets that you can download and run out-of-the-box. However, TextAttack is model agnostic! Anything that overrides \_\_call\_\_, takes in tokenized text, and outputs probabilities works. 
+We've included a few pretrained models that you can download and run out-of-the-box. However, TextAttack is model agnostic! Anything that overrides \_\_call\_\_, takes in tokenized text, and outputs probabilities works. 
 
 ### Attacks
 
