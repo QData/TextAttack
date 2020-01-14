@@ -10,39 +10,55 @@ def _cg(s): return textattack.utils.color(str(s), color='green', method='stdout'
 def _cr(s): return textattack.utils.color(str(s), color='red', method='stdout')
 def _pb(): print(_cg('-' * 60))
 
+from collections import Counter
 
 def get_num_successes(model, ids, true_labels):
-    ids = torch.stack(ids)
+    id_dim = torch.tensor(ids).ndim
+    if id_dim == 2:
+        # For models where the input is a single vector.
+        ids = torch.tensor(ids).to(textattack.utils.get_device())
+        preds = model(ids)
+    elif id_dim == 3:
+        # For models that take multiple vectors per input.
+        ids = map(torch.tensor, zip(*ids))
+        ids = (x.to(textattack.utils.get_device()) for x in ids)
+        preds = model(*ids)
+    else:
+        raise TypeError(f'Error: malformed id_dim ({id_dim})')
     true_labels = torch.tensor(true_labels).to(textattack.utils.get_device())
-    preds = model(ids)
     guess_labels = preds.argmax(dim=1)
     successes = (guess_labels == true_labels).sum().item()
-    return successes
+    return successes, true_labels, guess_labels
 
-def test_model_on_dataset(model, dataset, batch_size=256):
-    # TODO do inference in batch.
+def test_model_on_dataset(model, dataset, batch_size=16, num_examples=100):
     succ = 0
     fail = 0
     batch_ids = []
     batch_labels = []
-    for label, text in dataset:
+    all_true_labels = []
+    all_guess_labels = []
+    for i, (label, text) in enumerate(dataset):
+        if i >= num_examples: break
         ids = model.tokenizer.encode(text)
-        ids = torch.tensor(ids).to(textattack.utils.get_device())
         batch_ids.append(ids)
         batch_labels.append(label)
         if len(batch_ids) == batch_size:
-            batch_succ = get_num_successes(model, batch_ids, batch_labels)
+            batch_succ, true_labels, guess_labels = get_num_successes(model, batch_ids, batch_labels)
             batch_fail = batch_size - batch_succ
             succ += batch_succ
             fail += batch_fail
             batch_ids = []
             batch_labels = []
-    # predict remainder batch
+            all_true_labels.extend(true_labels.tolist())
+            all_guess_labels.extend(guess_labels.tolist())
     if len(batch_ids) > 0:
-        batch_succ = get_num_successes(model, batch_ids, batch_labels)
+        batch_succ, true_labels, guess_labels = get_num_successes(model, batch_ids, batch_labels)
         batch_fail = len(batch_ids) - batch_succ
         succ += batch_succ
         fail += batch_fail
+        all_true_labels.extend(true_labels.tolist())
+        all_guess_labels.extend(guess_labels.tolist())
+    
     perc = float(succ)/(succ+fail)*100.0
     perc = '{:.2f}%'.format(perc)
     print(f'Successes {succ}/{succ+fail} ({_cb(perc)})')

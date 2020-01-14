@@ -1,6 +1,13 @@
 from textattack.utils import get_device
 
 class TokenizedText:
+    """ A helper class that represents a string that can be attacked. """
+    
+    """ Models that take multiple sentences as input separate them by `SPLIT_TOKEN`. Attacks "see" the entire 
+        input, joined into one string, without the split token. 
+    """
+    SPLIT_TOKEN = '>>>>'
+    
     def __init__(self, text, tokenizer, attack_attrs=dict()):
         """ Initializer stores text and tensor of tokenized text.
         
@@ -9,11 +16,18 @@ class TokenizedText:
             tokenizer (Tokenizer): an object that can convert text to tokens
                 and convert tokens to IDs
         """
-        self.text = text
+        text = text.strip()
         self.tokenizer = tokenizer
         self.tokens = tokenizer.convert_text_to_tokens(text)
-        self.ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        if not isinstance(ids, tuple):
+            # Some tokenizers may tokenize text to a single vector.
+            # In this case, wrap the vector in a tuple to mirror the 
+            # format of other tokenizers.
+            ids = (ids,)
+        self.ids = ids
         self.words = raw_words(text)
+        self.text = text
         self.attack_attrs = attack_attrs
 
     def text_window_around_index(self, index, window_size):
@@ -127,7 +141,13 @@ class TokenizedText:
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
             attack_attrs=self.attack_attrs)
-        
+    
+    def clean_text(self):
+        """ Represents self in a clean, printable format. Joins text with multiple
+            inputs separated by `TokenizedText.SPLIT_TOKEN` with a line break.
+        """
+        return self.text.replace(TokenizedText.SPLIT_TOKEN, '\n\n')
+    
     def __repr__(self):
         return f'<TokenizedText "{self.text}">'
 
@@ -140,7 +160,7 @@ def raw_words(s):
         if c.isalpha():
             word += c
         elif word:
-            words.append(word)
+            if word is not TokenizedText.SPLIT_TOKEN: words.append(word)
             word = ''
-    if word: words.append(word)
+    if len(word) and (word is not TokenizedText.SPLIT_TOKEN): words.append(word)
     return words

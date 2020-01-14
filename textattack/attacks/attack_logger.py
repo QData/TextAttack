@@ -93,14 +93,17 @@ class AttackLogger:
         accuracy_under_attack = (total_attacks - self.successful_attacks) * 100.0 / (total_attacks + self.skipped_attacks)
         accuracy_under_attack = str(round(accuracy_under_attack, 2)) + '%'
         # Attack success rate
-        attack_success_rate = self.successful_attacks * 100.0 / (self.successful_attacks + self.failed_attacks) 
-        attack_success_rate = str(round(attack_success_rate, 2)) + '%'
-        # Average % of words perturbed per sample.
-        if len(self.perturbed_word_percentages):
-            average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
-        else:
+        if self.successful_attacks + self.failed_attacks == 0:
+            attack_success_rate = 0
             average_perc_words_perturbed = 0
+        
+        else:
+            attack_success_rate = self.successful_attacks * 100.0 / (self.successful_attacks + self.failed_attacks) 
+            average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
+            
+        attack_success_rate = str(round(attack_success_rate, 2)) + '%'
         average_perc_words_perturbed = str(round(average_perc_words_perturbed, 2)) + '%'
+        
         summary_table_rows = [
             ['Number of successful attacks:', str(self.successful_attacks)],
             ['Number of failed attacks:', str(self.failed_attacks)],
@@ -110,9 +113,10 @@ class AttackLogger:
             ['Attack success rate:', attack_success_rate],
             ['Average perturbed word %:', average_perc_words_perturbed],
         ]
+        
         if is_black_box:
             num_queries = [r.num_queries for r in self.results]
-            avg_num_queries = statistics.mean(num_queries)
+            avg_num_queries = statistics.mean(num_queries) if len(num_queries) else 0
             avg_num_queries = str(round(avg_num_queries, 2))
             summary_table_rows.append(['Avg num queries:', avg_num_queries])
         summary_table_rows.append(['Time to run attack:', f'{time.time() - self.start_time}s'])

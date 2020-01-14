@@ -149,16 +149,25 @@ class Attack:
             # function, then `self.num_queries` will not have been initialized.
             # In this case, just continue.
             pass
-        ids = torch.tensor([t.ids for t in tokenized_text_list])
+        ids = [t.ids for t in tokenized_text_list]
+        ids = torch.tensor(ids).to(utils.get_device()) 
+        #
+        # shape of `ids` is (n, m, d)
+        #   - n: number of elements in `tokenized_text_list`
+        #   - m: number of vectors per element
+        #           ex: most classification models take a single vector, so m=1
+        #           ex: some entailment models take three vectors, so m=3
+        #   - d: dimensionality of each vector
+        #           (a typical model might set d=128 or d=256)
+        num_fields = ids.shape[1]
         num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
         scores = []
         for batch_i in range(num_batches):
             batch_start = batch_i * batch_size
             batch_stop  = (batch_i + 1) * batch_size
-            batch_ids = ids[batch_start:batch_stop, :].to(utils.get_device())
-            scores.append(self.model(batch_ids))
-            del batch_ids
-        del ids
+            batch_ids = ids[batch_start:batch_stop]
+            batch = [batch_ids[:, x, :] for x in range(num_fields)]
+            scores.append(self.model(*batch))
         scores = torch.cat(scores, dim=0)
         # Validation check on model score dimensions
         if scores.ndim == 1:

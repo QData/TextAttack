@@ -5,7 +5,7 @@ import textattack.utils as utils
 class WordCNNForYelpSentimentClassification(WordCNNForClassification):
     """ 
     A convolutional neural network with reasonable default parameters, trained 
-    on the Yelp Sentiment dataset for sentiment classification. Base embeddings 
+    on the Yelp Sentiment dataset for sentiment classification. Base embeddings
     are GLOVE vectors of dimension 200.
     
     Base model in `textattack.models.helpers.cnn_for_classification`.
@@ -16,7 +16,7 @@ class WordCNNForYelpSentimentClassification(WordCNNForClassification):
             
     """
     
-    MODEL_PATH = 'models/classification/cnn/yelp'
+    MODEL_PATH = 'models/classification/cnn/yelp_polarity'
     
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length)
