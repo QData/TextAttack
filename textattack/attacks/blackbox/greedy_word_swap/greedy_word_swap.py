@@ -17,7 +17,7 @@ class GreedyWordSwap(BlackBoxAttack):
         self.transformation = transformations[0]
         self.max_depth = max_depth
         
-    def _attack_one(self, original_label, tokenized_text):
+    def attack_one(self, original_label, tokenized_text):
         original_tokenized_text = tokenized_text
         original_prob = self._call_model([tokenized_text]).squeeze().max()
         num_words_changed = 0

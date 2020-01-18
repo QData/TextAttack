@@ -22,7 +22,7 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         self.transformation = transformations[0]
         self.max_depth = max_depth
         
-    def _attack_one(self, original_label, tokenized_text):
+    def attack_one(self, original_label, tokenized_text):
         original_tokenized_text = tokenized_text
         num_words_changed = 0
        

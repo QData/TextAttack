@@ -2,12 +2,13 @@ language_check
 nltk
 numpy<1.17
 pandas
-sentence_transformers
+scikit-learn
 scipy
+sentence_transformers
+spacy
 torch
 transformers>=2.0.0
-tensorflow-gpu
+tensorflow-gpu==2
 tensorflow_hub
-scikit-learn
+tqdm
 visdom
-spacy

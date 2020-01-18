@@ -127,7 +127,7 @@ class Attack:
     def enable_stdout(self):
         self.logger.enable_stdout()
 
-    def _attack_one(self, label, tokenized_text):
+    def attack_one(self, label, tokenized_text):
         """
         Perturbs `text` to until `self.model` gives a different label than 
         `label`.
@@ -190,7 +190,7 @@ class Attack:
             raise ValueError('Model scores do not add up to 1.')
         return scores
  
-    def _get_examples(self, dataset, num_examples=None, attack_n=False, shuffle=False):
+    def _get_examples(self, dataset, num_examples=None, shuffle=False):
         examples = []
         i = 0
         n = 0
@@ -203,15 +203,29 @@ class Attack:
             else:
                 n += 1
                 examples.append((label, tokenized_text))
-            if num_examples is not None and (n >= num_examples or i >= num_examples and not attack_n):
+            if num_examples is not None and (n >= num_examples):
                 break
 
         if shuffle:
             random.shuffle(examples)
     
         return examples
+    
+    def start_attack(self):
+        """ Initializes logging at the start of an attack. """
+        self.logger.start_time = time.time()
+        self.logger.log_attack_details(self.__class__.__name__, 
+                                       self.is_black_box,    
+                                       self.model_description)
+   
+    def end_attack(self):
+        """ Logs summary at the end of an attack. """
+        self.logger.log_sep()
+        self.logger.log_summary(self.is_black_box)
+        self.logger.flush()
 
-    def attack(self, dataset, num_examples=None, attack_n=False, shuffle=False):
+
+    def attack(self, dataset, num_examples=None, shuffle=False):
         """ 
         Runs an attack on the given dataset and outputs the results to the console and the output file.
 
@@ -219,21 +233,20 @@ class Attack:
             dataset: An iterable of (label, text) pairs
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
         """
-    
-        self.logger.start_time = time.time()
-        self.logger.log_attack_details(self.__class__.__name__, 
-                                       self.is_black_box,    
-                                       self.model_description)
+        
+        self.start_attack()
       
-        examples = self._get_examples(dataset, num_examples, attack_n, shuffle)
+        examples = self._get_examples(dataset, num_examples, shuffle)
+        results = []
 
         for label, tokenized_text in examples:
             # Start at 1 since we called once to determine that prediction was correct
             self.num_queries = 1
-            result = self._attack_one(label, tokenized_text)
+            result = self.attack_one(label, tokenized_text)
             result.num_queries = self.num_queries
+            results.append(result)
             self.logger.log_result(result)
         
-        self.logger.log_sep()
-        self.logger.log_summary(self.is_black_box)
-        self.logger.flush()
+        self.end_attack()
+        
+        return results

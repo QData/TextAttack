@@ -153,7 +153,7 @@ class GeneticAlgorithm(BlackBoxAttack):
         neighbors_len = np.array([len(x) for x in neighbors_list])
         return neighbors_len
 
-    def _attack_one(self, original_label, tokenized_text):
+    def attack_one(self, original_label, tokenized_text):
         self.original_tokenized_text = tokenized_text
         original_prob = self._call_model([tokenized_text]).squeeze().max()
         neighbors_len = self._get_neighbors_len(tokenized_text)

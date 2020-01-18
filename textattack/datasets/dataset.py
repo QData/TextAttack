@@ -42,6 +42,7 @@ class TextAttackDataset:
         raw_lines = text_file.readlines()[offset:]
         self.raw_lines = [self._clean_example(ex) for ex in raw_lines]
         self.i = 0
+        text_file.close()
     
     def _clean_example(self, ex):
         """ Optionally pre-processes an input string before some tokenization.
