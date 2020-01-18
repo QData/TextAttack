@@ -1,9 +1,9 @@
 name = "textattack"
 
-from .attacks import *
-from .datasets import TextAttackDataset
+from .shared import *
 
 from . import attack_recipes
+from . import attack_results
 from . import attacks
 from . import constraints
 from . import datasets

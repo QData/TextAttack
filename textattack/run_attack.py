@@ -101,9 +101,9 @@ CONSTRAINT_CLASS_NAMES = {
 }
 
 ATTACK_CLASS_NAMES = {
-    'greedy-word':        'attacks.blackbox.GreedyWordSwap',
-    'ga-word':            'attacks.blackbox.GeneticAlgorithm',
-    'greedy-word-wir':    'attacks.blackbox.GreedyWordSwapWIR',
+    'greedy-word':        'search.GreedyWordSwap',
+    'ga-word':            'search.GeneticAlgorithm',
+    'greedy-word-wir':    'search.GreedyWordSwapWIR',
 }
 
 
@@ -291,7 +291,7 @@ def main(args):
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     # Cache TensorFlow Hub models here, if not otherwise specified.
     if 'TFHUB_CACHE_DIR' not in os.environ:
-        os.environ['TFHUB_CACHE_DIR'] = './tensorflow-hub'
+        os.environ['TFHUB_CACHE_DIR'] = '~/.cache/tensorflow-hub'
     
     start_time = time.time()
     

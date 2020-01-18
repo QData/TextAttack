@@ -1,9 +1,11 @@
 import torch
 
+from .search import Search
+
 from textattack.attacks import AttackResult, FailedAttackResult
 from textattack.attacks.blackbox import BlackBoxAttack
 
-class GreedyWordSwapWIR(BlackBoxAttack):
+class GreedyWordSwapWIR(Search):
     """
     An attack that greedily chooses from a list of possible 
     perturbations for each index, after ranking indices by importance.
@@ -17,12 +19,12 @@ class GreedyWordSwapWIR(BlackBoxAttack):
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
     """
 
-    def __init__(self, model, transformations=[],  max_depth=32):
+    def __init__(self, get_transformations,  max_depth=32):
         super().__init__(model)
-        self.transformation = transformations[0]
+        self.get_transformations = get_transformations
         self.max_depth = max_depth
         
-    def attack_one(self, original_label, tokenized_text):
+    def __call__(self, original_label, tokenized_text):
         original_tokenized_text = tokenized_text
         num_words_changed = 0
        

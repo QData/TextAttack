@@ -1,7 +1,9 @@
-from textattack.attacks import AttackResult, FailedAttackResult
-from textattack.attacks.blackbox import BlackBoxAttack
+from .search import Search
 
-class GreedyWordSwap(BlackBoxAttack):
+from textattack.attacks import AttackResult, FailedAttackResult
+from textattack.search import BlackBoxAttack
+
+class GreedyWordSwap(Search):
     """ 
     An attack that greedily chooses from a list of possible 
     perturbations.
@@ -12,12 +14,11 @@ class GreedyWordSwap(BlackBoxAttack):
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
         
     """
-    def __init__(self, model, transformations=[],  max_depth=32):
-        super().__init__(model)
-        self.transformation = transformations[0]
+    def __init__(self, get_transformations, max_depth=32):
+        self.get_transformations = get_transformations
         self.max_depth = max_depth
         
-    def attack_one(self, original_label, tokenized_text):
+    def __call__(self, original_label, tokenized_text):
         original_tokenized_text = tokenized_text
         original_prob = self._call_model([tokenized_text]).squeeze().max()
         num_words_changed = 0
@@ -27,9 +28,7 @@ class GreedyWordSwap(BlackBoxAttack):
         while num_words_changed <= self.max_depth and len(unswapped_word_indices):
             num_words_changed += 1
             transformed_text_candidates = self.get_transformations(
-                self.transformation,
-                tokenized_text,
-                indices_to_replace=unswapped_word_indices)
+                tokenized_text, indices_to_replace=unswapped_word_indices)
             if len(transformed_text_candidates) == 0:
                 # If we did not find any possible perturbations, give up.
                 break

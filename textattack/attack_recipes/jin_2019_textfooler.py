@@ -8,7 +8,7 @@
     
 """
 
-from textattack.attacks.blackbox import GreedyWordSwapWIR
+from textattack.search import GreedyWordSwapWIR
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.constraints.syntax import PartOfSpeech

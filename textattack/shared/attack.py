@@ -8,9 +8,9 @@ import time
 
 from textattack import utils as utils
 from textattack.constraints import Constraint
+from textattack.loggers.attack_logger import AttackLogger
 from textattack.tokenized_text import TokenizedText
-from textattack.attacks.attack_logger import AttackLogger
-from textattack.attacks import AttackResult, FailedAttackResult
+from textattack.attack_results import AttackResult, FailedAttackResult
 
 class Attack:
     """
@@ -21,7 +21,7 @@ class Attack:
         constraints: A list of constraints to add to the attack
 
     """
-    def __init__(self, constraints=[], is_black_box=True):
+    def __init__(self, search, transformation, constraints=[], is_black_box=True):
         """ Initialize an attack object. Attacks can be run multiple times.
         """
         if not self.model:
@@ -32,9 +32,10 @@ class Attack:
             else:
                 raise NameError('Cannot instantiate attack without tokenizer')
         # Transformation and corresponding constraints.
+        self.search = search
+        self.transformation = transformation
         self.constraints = []
-        if constraints:
-            self.add_constraints(constraints)
+        self.add_constraints(constraints)
         # Logger
         self.logger = AttackLogger()
         self.is_black_box = is_black_box
@@ -94,7 +95,7 @@ class Attack:
         for constraint in constraints:
             self.add_constraint(constraint)
     
-    def get_transformations(self, transformation, text, original_text=None, 
+    def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
         """
         Filters a list of transformations by self.constraints. 
@@ -110,6 +111,8 @@ class Attack:
             A filtered list of transformations where each transformation matches the constraints
 
         """
+        if not self.transformation:
+            raise RuntimeError('Cannot call `get_transformations` without a transformation set.')
         transformations = np.array(transformation(text, **kwargs))
         if apply_constraints:
             return self._filter_transformations(transformations, text, original_text)
@@ -133,7 +136,7 @@ class Attack:
         `label`.
 
         """
-        raise NotImplementedError()
+        return self.search(label, tokenized_text)
         
     def _call_model(self, tokenized_text_list, batch_size=8):
         """

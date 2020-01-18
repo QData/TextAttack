@@ -8,12 +8,14 @@ Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. 
 
 import numpy as np
 
+from .search import Search
+
 from textattack.attacks import AttackResult, FailedAttackResult
-from textattack.attacks.blackbox import BlackBoxAttack
+from textattack.search import BlackBoxAttack
 from textattack.transformations import WordSwap
 from copy import deepcopy
 
-class GeneticAlgorithm(BlackBoxAttack):
+class GeneticAlgorithm(Search):
     '''
     Attacks a model using a genetic algorithm. 
 
@@ -27,12 +29,11 @@ class GeneticAlgorithm(BlackBoxAttack):
         ValueError: If the transformation is not a subclass of WordSwap. 
 
     '''
-    def __init__(self, model, transformations=[], pop_size=20, max_iters=50, temp=0.3):
+    def __init__(self, get_transformations, pop_size=20, max_iters=50, temp=0.3):
         if not isinstance(transformations[0], WordSwap):
             raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
-        super().__init__(model)
+        self.get_transformations = get_transformations
         self.model = model
-        self.transformation = transformations[0]
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.temp = temp
@@ -50,8 +51,7 @@ class GeneticAlgorithm(BlackBoxAttack):
         Returns:
             Whether a replacement which decreased the score was found.
         """
-        transformations = self.get_transformations(self.transformation,
-                                                   pop_member.tokenized_text,
+        transformations = self.get_transformations(pop_member.tokenized_text,
                                                    original_text=self.original_tokenized_text,
                                                    indices_to_replace=[idx])
         if not len(transformations):
@@ -142,8 +142,7 @@ class GeneticAlgorithm(BlackBoxAttack):
         '''
         words = tokenized_text.words
         neighbors_list = [[] for _ in range(len(words))]
-        transformations = self.get_transformations(self.transformation,
-                                                   tokenized_text,
+        transformations = self.get_transformations(tokenized_text,
                                                    original_text=self.original_tokenized_text,
                                                    apply_constraints=False)
         for transformed_text in transformations:
@@ -153,7 +152,7 @@ class GeneticAlgorithm(BlackBoxAttack):
         neighbors_len = np.array([len(x) for x in neighbors_list])
         return neighbors_len
 
-    def attack_one(self, original_label, tokenized_text):
+    def __call__(self, original_label, tokenized_text):
         self.original_tokenized_text = tokenized_text
         original_prob = self._call_model([tokenized_text]).squeeze().max()
         neighbors_len = self._get_neighbors_len(tokenized_text)

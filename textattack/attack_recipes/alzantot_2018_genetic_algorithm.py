@@ -9,7 +9,7 @@
     ArXiv, abs/1801.00554.
 """
 
-from textattack.attacks.blackbox import GeneticAlgorithm
+from textattack.search import GeneticAlgorithm
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.language_models import GoogleLanguageModel
 from textattack.transformations import WordSwapEmbedding
