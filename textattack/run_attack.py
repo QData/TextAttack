@@ -209,7 +209,7 @@ def parse_recipe_from_args(args):
         raise Error('Invalid recipe {args.recipe}')
     return recipe
 
-def parse_attack_from_args(args):
+def parse_attack_from_args(model, _transformations, args):
     if ':' in args.attack:
         attack_name, params = args.attack.split(':')
         if attack_name not in ATTACK_CLASS_NAMES:
@@ -221,7 +221,7 @@ def parse_attack_from_args(args):
         raise ValueError(f'Error: unsupported attack {args.attack}')
     return attack
 
-def parse_model_from_args():
+def parse_model_from_args(args):
     if ':' in args.model:
         model_name, params = args.model.split(':')
         if model_name not in MODEL_CLASS_NAMES:
@@ -234,21 +234,19 @@ def parse_model_from_args():
     return model
 
 @functools.lru_cache(maxsize=None)
-def initialize_model_and_attack(args, worker_id):
-    print('initializing model for worker_id:', worker_id)
+def get_model_and_attack(worker_id):
     model = parse_model_from_args(args)
     
-    # Use the GPU id corresponding to the worker.
+    # Distribute workload across GPUs.
     num_gpus_available = max(torch.cuda.device_count(), 1)
-    gpu_id = worker_id % num_gpus_available
-    if 'CUDA_VISIBLE_DEVICES' not in os.environ:
-        os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+    gpu_id = num_gpus_available % worker_id
+    os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
         
     if args.recipe:
         attack = parse_recipe_from_args(args)
     else:
         _transformations = parse_transformation_from_args(args)
-        attack = parse_attack_from_args(args)
+        attack = parse_attack_from_args(model, _transformations, args)
         attack.add_constraints(parse_constraints_from_args(args))
     
     # System time provides a identifier for the output file.
@@ -272,21 +270,22 @@ def initialize_model_and_attack(args, worker_id):
     if not args.disable_stdout:
         attack.enable_stdout()
     
-    attack.start_attack()
-    
     return model, attack
 
-def attack_sample(args, original_label, text):
-    pid = torch.multiprocessing.current_process() # `._identity` ? 
-    model, attack = get_model_and_attack(args, pid)
-    results = attack.attack(dataset, num_examples=1)
-    args.pbar_value += 1
-    args.pbar.update(args.pbar_value)
-    return results
+def initialize_attack(worker_id):
+    worker_id = torch.multiprocessing.current_process()._identity[0]
+    model, attack = get_model_and_attack(worker_id)
+    return
 
-def main():
-    args = get_args()
-    
+def attack_sample(original_label, text):
+    worker_id = torch.multiprocessing.current_process()._identity[0]
+    model, attack = get_model_and_attack(worker_id)
+    tokenized_text = TokenizedText(text, attack.tokenizer)
+    predicted_label = attack._call_model([tokenized_text])[0].argmax().item()
+    # @TODO return SkippedAttackResult, if predicted != original
+    return attack.attack_one(predicted_label, tokenized_text)
+
+def main(args):
     # Disable tensorflow logs, except in the case of an error.
     if 'TF_CPP_MIN_LOG_LEVEL' not in os.environ:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -297,7 +296,26 @@ def main():
     start_time = time.time()
     
     load_time = time.time()
-    print(f'Loaded in {load_time - start_time}s')
+
+    # Use default dataset for chosen model.
+    if args.model in DATASET_BY_MODEL:
+        dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+    else:
+        raise ValueError(f'Error: no default dataset for model {args.model}')
+    
+    # Initialize workers across `args.num_threads`. Interactive mode uses just 1 thread.
+    if args.num_threads > 1:
+        print(f'Running attack with {args.num_threads} threads.')
+    
+    # Initialize attacker pool - one attack per thread.
+    attacker_pool = torch.multiprocessing.Pool(processes=args.num_threads)
+    dummy_args = list((x,) for x in range(args.num_threads))
+    attacker_pool.starmap(initialize_attack, dummy_args)
+    # attacker_pool.close()
+    # attacker_pool.join()
+    
+    # Get first attack to use as a logger.
+    model, attack = get_model_and_attack(2)
     
     if args.interactive:
         print('Running in interactive mode')
@@ -321,27 +339,36 @@ def main():
             print('Attacking...')
 
             attack.attack([(label, text)])
-    
+            
     else:
-        # Use default dataset for chosen model.
-        if args.model in DATASET_BY_MODEL:
-            dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
-        else:
-            raise ValueError(f'Error: no default dataset for model {args.model}')
+        attack.log_attack_start()
         
-        # Initialize workers across `args.num_threads`. Default uses just 1 thread.
-        args.pbar = tqdm.tqdm(total=args.num_examples)
-        args.pbar_value = 0
+        # Feed the dataset to the attacker pool.
+        pbar = tqdm.tqdm(total=args.num_examples)
+        def _update_tqdm(*_):
+            pbar.update()
         
-        attacker_pool = torch.multiprocessing.Pool(processes=args.num_threads)
+        results = []
+        for args in range(args.num_examples): # @TODO support `attack_n`
+            args = next(dataset)
+            result = attacker_pool.apply_async(attack_sample, args=args, callback=_update_tqdm)
+            results.append(result)
+        attacker_pool.close()
+        attacker_pool.join()
+        pbar.close()
         
-        worker_args = ((args, original_label, text) for original_label, text in dataset)
-        attacker_pool.starmap(attack_sample, worker_args)
+        # Log results using the first attack logger.
+        for result in results:
+            attack.logger.log_result(result.get())
+        attack.log_attack_end()
         
-        finish_time = time.time()
+    finish_time = time.time()
 
-        print(f'Total time: {finish_time - start_time}s')
+    print(f'Total time: {finish_time - start_time}s')
 
 
 if __name__ == '__main__':
-    main()
+    args = torch.multiprocessing.Manager().Namespace(
+        **vars(get_args())
+    )
+    main(args)

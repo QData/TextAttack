@@ -86,6 +86,8 @@ class AttackLogger:
     
     def log_summary(self, is_black_box):
         total_attacks = len(self.results)
+        if total_attacks == 0:
+            return
         # Original classifier success rate on these samples.
         original_accuracy = total_attacks * 100.0 / (total_attacks + self.skipped_attacks) 
         original_accuracy = str(round(original_accuracy, 2)) + '%'

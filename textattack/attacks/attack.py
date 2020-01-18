@@ -199,6 +199,7 @@ class Attack:
             tokenized_text = TokenizedText(text, self.tokenizer)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
+                # @TODO return SkippedAttackResult
                 self.logger.log_skipped(tokenized_text)
             else:
                 n += 1
@@ -211,14 +212,14 @@ class Attack:
     
         return examples
     
-    def start_attack(self):
+    def log_attack_start(self):
         """ Initializes logging at the start of an attack. """
         self.logger.start_time = time.time()
         self.logger.log_attack_details(self.__class__.__name__, 
                                        self.is_black_box,    
                                        self.model_description)
    
-    def end_attack(self):
+    def log_attack_end(self):
         """ Logs summary at the end of an attack. """
         self.logger.log_sep()
         self.logger.log_summary(self.is_black_box)
@@ -234,7 +235,7 @@ class Attack:
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
         """
         
-        self.start_attack()
+        self.log_attack_start()
       
         examples = self._get_examples(dataset, num_examples, shuffle)
         results = []
@@ -247,6 +248,6 @@ class Attack:
             results.append(result)
             self.logger.log_result(result)
         
-        self.end_attack()
+        self.log_attack_end()
         
         return results
