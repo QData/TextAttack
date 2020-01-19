@@ -28,7 +28,7 @@ def Jin2019TextFoolerAdjusted(model, SE_thresh=0.98, sentence_encoder='use'):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(model, transformations=[transformation],
+    attack = GreedyWordSwapWIR(model, transformations=transformation,
         max_depth=None)
     #
     # Minimum word embedding cosine similarity of 0.9.

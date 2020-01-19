@@ -27,7 +27,7 @@ def Alzantot2018GeneticAlgorithmAdjusted(model, SE_thresh=0.98, sentence_encoder
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GeneticAlgorithm(model, transformations=[transformation], 
+    attack = GeneticAlgorithm(model, transformation=transformation, 
         pop_size=60, max_iters=20)
     #
     # Minimum word embedding cosine similarity of 0.9.

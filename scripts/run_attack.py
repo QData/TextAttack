@@ -197,7 +197,7 @@ def parse_constraints_from_args(args):
     
     return _constraints
 
-def parse_recipe_from_args(args):
+def parse_recipe_from_args(model, args):
     if ':' in args.recipe:
         recipe_name, params = args.recipe.split(':')
         if recipe_name not in RECIPE_NAMES:
@@ -239,11 +239,12 @@ def get_model_and_attack(worker_id):
     
     # Distribute workload across GPUs.
     num_gpus_available = max(torch.cuda.device_count(), 1)
-    gpu_id = num_gpus_available % worker_id
+    gpu_id = worker_id % num_gpus_available
     os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
+    print(f'Thread {worker_id} using GPU {gpu_id}.')
         
     if args.recipe:
-        attack = parse_recipe_from_args(args)
+        attack = parse_recipe_from_args(model, args)
     else:
         _transformation = parse_transformation_from_args(args)
         attack = parse_attack_from_args(model, _transformation, args)
@@ -273,7 +274,8 @@ def get_model_and_attack(worker_id):
     return model, attack
 
 def initialize_attack(worker_id):
-    worker_id = torch.multiprocessing.current_process()._identity[0]
+    # The main process has ID 1, so subtract 1 from the ID.
+    worker_id = torch.multiprocessing.current_process()._identity[0] - 1
     model, attack = get_model_and_attack(worker_id)
     return
 
@@ -307,15 +309,15 @@ def main(args):
     if args.num_threads > 1:
         print(f'Running attack with {args.num_threads} threads.')
     
+    # Get first attack to use as a logger.
+    model, attack = get_model_and_attack(1)
+    
     # Initialize attacker pool - one attack per thread.
     attacker_pool = torch.multiprocessing.Pool(processes=args.num_threads)
     dummy_args = list((x,) for x in range(args.num_threads))
     attacker_pool.starmap(initialize_attack, dummy_args)
-    # attacker_pool.close()
-    # attacker_pool.join()
-    
-    # Get first attack to use as a logger.
-    model, attack = get_model_and_attack(2)
+    attacker_pool.close()
+    attacker_pool.join()
     
     if args.interactive:
         print('Running in interactive mode')
