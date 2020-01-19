@@ -17,10 +17,10 @@ from textattack.tokenized_text import TokenizedText
 
 
 RECIPE_NAMES = {
-    'alzantot':      'attack_recipes.Alzantot2018GeneticAlgorithm',
-    'alz-adjusted':  'attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
-    'textfooler':    'attack_recipes.Jin2019TextFooler',
-    'tf-adjusted':   'attack_recipes.Jin2019TextFoolerAdjusted',
+    'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
+    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
+    'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
+    'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
 }
 
 MODEL_CLASS_NAMES = {
@@ -29,28 +29,28 @@ MODEL_CLASS_NAMES = {
     #
     
     # BERT models - default uncased
-    'bert-ag-news':             'models.classification.bert.BERTForAGNewsClassification',
-    'bert-imdb':                'models.classification.bert.BERTForIMDBSentimentClassification',
-    'bert-mr':                  'models.classification.bert.BERTForMRSentimentClassification',
-    'bert-yelp-sentiment':      'models.classification.bert.BERTForYelpSentimentClassification',
+    'bert-ag-news':             'textattack.models.classification.bert.BERTForAGNewsClassification',
+    'bert-imdb':                'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
+    'bert-mr':                  'textattack.models.classification.bert.BERTForMRSentimentClassification',
+    'bert-yelp-sentiment':      'textattack.models.classification.bert.BERTForYelpSentimentClassification',
     # CNN models
-    'cnn-ag-news':              'models.classification.cnn.WordCNNForAGNewsClassification',
-    'cnn-imdb':                 'models.classification.cnn.WordCNNForIMDBSentimentClassification',
-    'cnn-mr':                   'models.classification.cnn.WordCNNForMRSentimentClassification',
-    'cnn-yelp-sentiment':       'models.classification.cnn.WordCNNForYelpSentimentClassification',
+    'cnn-ag-news':              'textattack.models.classification.cnn.WordCNNForAGNewsClassification',
+    'cnn-imdb':                 'textattack.models.classification.cnn.WordCNNForIMDBSentimentClassification',
+    'cnn-mr':                   'textattack.models.classification.cnn.WordCNNForMRSentimentClassification',
+    'cnn-yelp-sentiment':       'textattack.models.classification.cnn.WordCNNForYelpSentimentClassification',
     # LSTM models
-    'lstm-ag-news':             'models.classification.lstm.LSTMForAGNewsClassification',
-    'lstm-imdb':                'models.classification.lstm.LSTMForIMDBSentimentClassification',
-    'lstm-mr':                  'models.classification.lstm.LSTMForMRSentimentClassification',
-    'lstm-yelp-sentiment':      'models.classification.lstm.LSTMForYelpSentimentClassification',
+    'lstm-ag-news':             'textattack.models.classification.lstm.LSTMForAGNewsClassification',
+    'lstm-imdb':                'textattack.models.classification.lstm.LSTMForIMDBSentimentClassification',
+    'lstm-mr':                  'textattack.models.classification.lstm.LSTMForMRSentimentClassification',
+    'lstm-yelp-sentiment':      'textattack.models.classification.lstm.LSTMForYelpSentimentClassification',
     
     #
     # Textual entailment models
     #
     
     # BERT models
-    'bert-mnli':                'models.entailment.bert.BERTForMNLI',
-    'bert-snli':                'models.entailment.bert.BERTForSNLI',
+    'bert-mnli':                'textattack.models.entailment.bert.BERTForMNLI',
+    'bert-snli':                'textattack.models.entailment.bert.BERTForSNLI',
 }
 
 DATASET_BY_MODEL = {
@@ -59,48 +59,48 @@ DATASET_BY_MODEL = {
     #
     
     # AG News
-    'bert-ag-news':             datasets.classification.AGNews,
-    'cnn-ag-news':              datasets.classification.AGNews,
-    'lstm-ag-news':             datasets.classification.AGNews,
+    'bert-ag-news':             textattack.datasets.classification.AGNews,
+    'cnn-ag-news':              textattack.datasets.classification.AGNews,
+    'lstm-ag-news':             textattack.datasets.classification.AGNews,
     # IMDB 
-    'bert-imdb':                datasets.classification.IMDBSentiment,
-    'cnn-imdb':                 datasets.classification.IMDBSentiment,
-    'lstm-imdb':                datasets.classification.IMDBSentiment,
+    'bert-imdb':                textattack.datasets.classification.IMDBSentiment,
+    'cnn-imdb':                 textattack.datasets.classification.IMDBSentiment,
+    'lstm-imdb':                textattack.datasets.classification.IMDBSentiment,
     # MR
-    'bert-mr':                  datasets.classification.MovieReviewSentiment,
-    'cnn-mr':                   datasets.classification.MovieReviewSentiment,
-    'lstm-mr':                  datasets.classification.MovieReviewSentiment,
+    'bert-mr':                  textattack.datasets.classification.MovieReviewSentiment,
+    'cnn-mr':                   textattack.datasets.classification.MovieReviewSentiment,
+    'lstm-mr':                  textattack.datasets.classification.MovieReviewSentiment,
     # Yelp
-    'bert-yelp-sentiment':      datasets.classification.YelpSentiment,
-    'cnn-yelp-sentiment':       datasets.classification.YelpSentiment,
-    'lstm-yelp-sentiment':      datasets.classification.YelpSentiment,
+    'bert-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
+    'cnn-yelp-sentiment':       textattack.datasets.classification.YelpSentiment,
+    'lstm-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
     
     #
     # Textual entailment datasets
     #
-    'bert-mnli':                datasets.entailment.MNLI,
-    'bert-snli':                datasets.entailment.SNLI,
+    'bert-mnli':                textattack.datasets.entailment.MNLI,
+    'bert-snli':                textattack.datasets.entailment.SNLI,
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-    'word-swap-embedding':             'transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':             'transformations.WordSwapHomoglyph',
-    'word-swap-neighboring-char-swap': 'transformations.WordSwapNeighboringCharacterSwap',
+    'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
+    'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
+    'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
 }
 
 CONSTRAINT_CLASS_NAMES = {
-    'embedding':    'constraints.semantics.WordEmbeddingDistance',
-    'goog-lm':      'constraints.semantics.language_models.GoogleLanguageModel',
-    'bert':         'constraints.semantics.sentence_encoders.BERT',
-    'infer-sent':   'constraints.semantics.sentence_encoders.InferSent',
-    'use':          'constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
-    'lang-tool':    'constraints.syntax.LanguageTool', 
+    'embedding':    'textattack.constraints.semantics.WordEmbeddingDistance',
+    'goog-lm':      'textattack.constraints.semantics.language_models.GoogleLanguageModel',
+    'bert':         'textattack.constraints.semantics.sentence_encoders.BERT',
+    'infer-sent':   'textattack.constraints.semantics.sentence_encoders.InferSent',
+    'use':          'textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
+    'lang-tool':    'textattack.constraints.syntax.LanguageTool', 
 }
 
 ATTACK_CLASS_NAMES = {
-    'greedy-word':        'attacks.blackbox.GreedyWordSwap',
-    'ga-word':            'attacks.blackbox.GeneticAlgorithm',
-    'greedy-word-wir':    'attacks.blackbox.GreedyWordSwapWIR',
+    'greedy-word':        'textattack.attacks.blackbox.GreedyWordSwap',
+    'ga-word':            'textattack.attacks.blackbox.GeneticAlgorithm',
+    'greedy-word-wir':    'textattack.attacks.blackbox.GreedyWordSwapWIR',
 }
 
 
