@@ -6,6 +6,7 @@ import argparse
 import time
 import os
 
+import textattack
 import textattack.attack_recipes as attack_recipes
 import textattack.attacks as attacks
 import textattack.constraints as constraints
