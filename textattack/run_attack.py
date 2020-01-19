@@ -59,27 +59,27 @@ DATASET_BY_MODEL = {
     #
     
     # AG News
-    'bert-ag-news':             textattack.datasets.classification.AGNews,
-    'cnn-ag-news':              textattack.datasets.classification.AGNews,
-    'lstm-ag-news':             textattack.datasets.classification.AGNews,
+    'bert-ag-news':             datasets.classification.AGNews,
+    'cnn-ag-news':              datasets.classification.AGNews,
+    'lstm-ag-news':             datasets.classification.AGNews,
     # IMDB 
-    'bert-imdb':                textattack.datasets.classification.IMDBSentiment,
-    'cnn-imdb':                 textattack.datasets.classification.IMDBSentiment,
-    'lstm-imdb':                textattack.datasets.classification.IMDBSentiment,
+    'bert-imdb':                datasets.classification.IMDBSentiment,
+    'cnn-imdb':                 datasets.classification.IMDBSentiment,
+    'lstm-imdb':                datasets.classification.IMDBSentiment,
     # MR
-    'bert-mr':                  textattack.datasets.classification.MovieReviewSentiment,
-    'cnn-mr':                   textattack.datasets.classification.MovieReviewSentiment,
-    'lstm-mr':                  textattack.datasets.classification.MovieReviewSentiment,
+    'bert-mr':                  datasets.classification.MovieReviewSentiment,
+    'cnn-mr':                   datasets.classification.MovieReviewSentiment,
+    'lstm-mr':                  datasets.classification.MovieReviewSentiment,
     # Yelp
-    'bert-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
-    'cnn-yelp-sentiment':       textattack.datasets.classification.YelpSentiment,
-    'lstm-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
+    'bert-yelp-sentiment':      datasets.classification.YelpSentiment,
+    'cnn-yelp-sentiment':       datasets.classification.YelpSentiment,
+    'lstm-yelp-sentiment':      datasets.classification.YelpSentiment,
     
     #
     # Textual entailment datasets
     #
-    'bert-mnli':                textattack.datasets.entailment.MNLI,
-    'bert-snli':                textattack.datasets.entailment.SNLI,
+    'bert-mnli':                datasets.entailment.MNLI,
+    'bert-snli':                datasets.entailment.SNLI,
 }
 
 TRANSFORMATION_CLASS_NAMES = {
