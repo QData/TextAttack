@@ -1,4 +1,4 @@
-import textattack.utils as utils
+from textattack.shared import utils
 
 class TextAttackDataset:
     """

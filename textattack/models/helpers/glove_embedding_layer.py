@@ -4,7 +4,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 
-import textattack.utils as utils
+from textattack.shared import utils
 
 logger = utils.get_logger()
 

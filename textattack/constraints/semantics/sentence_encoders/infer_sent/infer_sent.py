@@ -5,7 +5,7 @@ import torch
 from textattack.constraints import Constraint
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 
-import textattack.utils as utils
+from textattack.shared import utils
 
 from .infer_sent_model import InferSentModel
 

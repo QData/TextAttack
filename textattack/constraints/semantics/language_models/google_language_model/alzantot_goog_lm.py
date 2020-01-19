@@ -7,7 +7,7 @@ import tensorflow as tf
 import sys
 import numpy as np
 
-import textattack.utils as utils
+from textattack.shared import utils
 
 from google.protobuf import text_format
 

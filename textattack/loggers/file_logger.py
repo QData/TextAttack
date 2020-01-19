@@ -1,6 +1,7 @@
 import sys
 import os
-from textattack.loggers import Logger
+
+from .logger import Logger
 
 class FileLogger(Logger):
     def __init__(self, filename='', stdout=False):

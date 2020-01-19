@@ -1,7 +1,7 @@
 import os
 import torch
 
-import textattack.utils as utils
+from textattack.shared import utils
 
 def load_cached_state_dict(model_folder_path):
     model_folder_path = utils.download_if_needed(model_folder_path)

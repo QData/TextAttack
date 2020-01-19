@@ -6,8 +6,9 @@ import random
 import statistics
 import time
 
-from textattack.attacks import AttackResult, FailedAttackResult
-from textattack.loggers import *
+from textattack.attack_results import AttackResult, FailedAttackResult
+
+from . import CSVLogger, FileLogger, VisdomLogger
 
 class AttackLogger:
     def __init__(self):

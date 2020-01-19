@@ -1,6 +1,6 @@
 import torch
 from textattack.models.helpers import WordCNNForClassification
-import textattack.utils as utils
+from textattack.shared import utils
 
 class WordCNNForAGNewsClassification(WordCNNForClassification):
     """ 

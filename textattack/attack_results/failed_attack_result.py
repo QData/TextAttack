@@ -1,5 +1,5 @@
-from textattack.attacks import AttackResult
-from textattack import utils as utils
+from textattack.attack_results import AttackResult
+from textattack.shared import utils
 
 class FailedAttackResult(AttackResult):
     def __init__(self, original_text, original_label):

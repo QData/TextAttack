@@ -3,7 +3,7 @@ import tensorflow as tf
 import tensorflow_hub as hub
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
-from textattack.utils import get_device
+from textattack.shared.utils import get_device
 
 class UniversalSentenceEncoder(SentenceEncoder):
     """ 

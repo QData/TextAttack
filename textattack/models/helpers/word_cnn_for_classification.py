@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import textattack.utils as utils
+from textattack.shared import utils
 from textattack.models.helpers import GloveEmbeddingLayer
 from textattack.models.helpers.helper_utils import load_cached_state_dict
 

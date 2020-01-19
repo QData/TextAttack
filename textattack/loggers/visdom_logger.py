@@ -1,6 +1,7 @@
 import socket
 from visdom import Visdom
-from textattack.loggers import Logger
+
+from .logger import Logger
 
 def style_from_dict(style_dict):
     """ Turns

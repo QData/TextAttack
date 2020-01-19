@@ -10,13 +10,13 @@ import torch
 import tqdm
 
 import textattack.attack_recipes as attack_recipes
-import textattack.attacks as attacks
+import textattack.attack_methods as attack_methods
 import textattack.constraints as constraints
 import textattack.datasets as datasets
 import textattack.models as models
 import textattack.transformations as transformations
 
-from textattack.tokenized_text import TokenizedText
+from textattack.shared.tokenized_text import TokenizedText
 
 
 RECIPE_NAMES = {
@@ -101,9 +101,9 @@ CONSTRAINT_CLASS_NAMES = {
 }
 
 ATTACK_CLASS_NAMES = {
-    'greedy-word':        'search.GreedyWordSwap',
-    'ga-word':            'search.GeneticAlgorithm',
-    'greedy-word-wir':    'search.GreedyWordSwapWIR',
+    'greedy-word':        'attack_methods.GreedyWordSwap',
+    'ga-word':            'attack_methods.GeneticAlgorithm',
+    'greedy-word-wir':    'attack_methods.GreedyWordSwapWIR',
 }
 
 
@@ -111,9 +111,9 @@ def get_args():
     parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--transformations', type=str, required=False, nargs='*',
-        default=['word-swap-embedding'], choices=TRANSFORMATION_CLASS_NAMES.keys(),
-        help='The transformations to apply.')
+    parser.add_argument('--transformation', type=str, required=False,
+        default='word-swap-embedding', choices=TRANSFORMATION_CLASS_NAMES.keys(),
+        help='The transformation to apply.')
         
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
@@ -166,17 +166,17 @@ def get_args():
 def parse_transformation_from_args(args):
     # Transformations
     _transformations = []    
-    for transformation in args.transformations:
-        if ':' in transformation:
-            transformation_name, params = transformation.split(':')
-            if transformation_name not in TRANSFORMATION_CLASS_NAMES:
-                raise ValueError(f'Error: unsupported transformation {transformation_name}')
-            _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
-        elif transformation in TRANSFORMATION_CLASS_NAMES:
-            _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
-        else:
-            raise ValueError(f'Error: unsupported transformation {transformation}')
-    return _transformations
+    transformation = args.transformation
+    if ':' in transformation:
+        transformation_name, params = transformation.split(':')
+        if transformation_name not in TRANSFORMATION_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported transformation {transformation_name}')
+        _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
+    elif transformation in TRANSFORMATION_CLASS_NAMES:
+        _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
+    else:
+        raise ValueError(f'Error: unsupported transformation {transformation}')
+    return _transformations[0]
 
 def parse_constraints_from_args(args):
     # Constraints
@@ -209,14 +209,14 @@ def parse_recipe_from_args(args):
         raise Error('Invalid recipe {args.recipe}')
     return recipe
 
-def parse_attack_from_args(model, _transformations, args):
+def parse_attack_from_args(model, _transformation, args):
     if ':' in args.attack:
         attack_name, params = args.attack.split(':')
         if attack_name not in ATTACK_CLASS_NAMES:
             raise ValueError(f'Error: unsupported attack {attack_name}')
-        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, _transformations, {params})')
+        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, _transformation, {params})')
     elif args.attack in ATTACK_CLASS_NAMES:
-        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, _transformations)')
+        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, _transformation)')
     else:
         raise ValueError(f'Error: unsupported attack {args.attack}')
     return attack
@@ -245,8 +245,8 @@ def get_model_and_attack(worker_id):
     if args.recipe:
         attack = parse_recipe_from_args(args)
     else:
-        _transformations = parse_transformation_from_args(args)
-        attack = parse_attack_from_args(model, _transformations, args)
+        _transformation = parse_transformation_from_args(args)
+        attack = parse_attack_from_args(model, _transformation, args)
         attack.add_constraints(parse_constraints_from_args(args))
     
     # System time provides a identifier for the output file.

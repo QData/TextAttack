@@ -1,7 +1,7 @@
 import nltk
 
 from textattack.constraints import Constraint
-from textattack.tokenized_text import TokenizedText
+from textattack.shared.tokenized_text import TokenizedText
 
 class PartOfSpeech(Constraint):
     """ Constraints word swaps to only swap words with the same part of speech.

@@ -1,30 +1,30 @@
 import torch
 
-from .search import Search
+from .attack import Attack
+from textattack.attack_results import AttackResult, FailedAttackResult
 
-from textattack.attacks import AttackResult, FailedAttackResult
-from textattack.attacks.blackbox import BlackBoxAttack
-
-class GreedyWordSwapWIR(Search):
+class GreedyWordSwapWIR(Attack):
     """
-    An attack that greedily chooses from a list of possible 
-    perturbations for each index, after ranking indices by importance.
+    An attack that greedily chooses from a list of possible perturbations in 
+    order of index, after ranking indices by importance.
+    
     Reimplementation of paper:
-    Is BERT Really Robust? A Strong Baseline for Natural Language Attack on 
-    Text Classification and Entailment by Jin et. al, 2019
-    https://github.com/jind11/TextFooler 
+        Is BERT Really Robust? A Strong Baseline for Natural Language Attack on 
+        Text Classification and Entailment by Jin et. al, 2019
+        
+        https://github.com/jind11/TextFooler 
+        
     Args:
         model: The PyTorch NLP model to attack.
         transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
     """
 
-    def __init__(self, get_transformations,  max_depth=32):
-        super().__init__(model)
-        self.get_transformations = get_transformations
+    def __init__(self, model, transformation, max_depth=32):
+        super().__init__(model, transformation)
         self.max_depth = max_depth
         
-    def __call__(self, original_label, tokenized_text):
+    def attack_one(self, original_label, tokenized_text):
         original_tokenized_text = tokenized_text
         num_words_changed = 0
        
@@ -48,7 +48,6 @@ class GreedyWordSwapWIR(Search):
         i = 0
         while ((self.max_depth is None) or num_words_changed <= self.max_depth) and i < len(index_order):
             transformed_text_candidates = self.get_transformations(
-                self.transformation,
                 tokenized_text,
                 original_tokenized_text,
                 indices_to_replace=[index_order[i]])

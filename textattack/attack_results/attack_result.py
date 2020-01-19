@@ -1,4 +1,4 @@
-from textattack import utils as utils
+from textattack.shared import utils
 
 class AttackResult:
     """

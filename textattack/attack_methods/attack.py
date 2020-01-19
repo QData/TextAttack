@@ -1,4 +1,3 @@
-import difflib
 import math
 import numpy as np
 import os
@@ -6,37 +5,41 @@ import torch
 import random
 import time
 
-from textattack import utils as utils
+from textattack.shared import utils
 from textattack.constraints import Constraint
 from textattack.loggers.attack_logger import AttackLogger
-from textattack.tokenized_text import TokenizedText
+from textattack.shared.tokenized_text import TokenizedText
 from textattack.attack_results import AttackResult, FailedAttackResult
 
 class Attack:
     """
     An attack generates adversarial examples on text. 
+    
+    This is an abstract class that contains main helper functionality for 
+    attacks. An attack is comprised of a search method and a transformation, as 
+    well asone or more linguistic constraints that examples must pass to be 
+    considered successfully fooling the model.
 
     Args:
         model: A PyTorch or TensorFlow model to attack
         constraints: A list of constraints to add to the attack
 
     """
-    def __init__(self, search, transformation, constraints=[], is_black_box=True):
+    def __init__(self, model, transformation, constraints=[], is_black_box=True):
         """ Initialize an attack object. Attacks can be run multiple times.
         """
+        self.model = model
+        self.model_description = model.__class__.__name__
         if not self.model:
             raise NameError('Cannot instantiate attack without self.model for prediction scores')
-        if not self.tokenizer:
-            if hasattr(self.model, tokenizer):
+        if not hasattr(self, 'tokenizer'):
+            if hasattr(self.model, 'tokenizer'):
                 self.tokenizer = self.model.tokenizer
             else:
                 raise NameError('Cannot instantiate attack without tokenizer')
-        # Transformation and corresponding constraints.
-        self.search = search
         self.transformation = transformation
         self.constraints = []
         self.add_constraints(constraints)
-        # Logger
         self.logger = AttackLogger()
         self.is_black_box = is_black_box
     
@@ -112,8 +115,8 @@ class Attack:
 
         """
         if not self.transformation:
-            raise RuntimeError('Cannot call `get_transformations` without a transformation set.')
-        transformations = np.array(transformation(text, **kwargs))
+            raise RuntimeError('Cannot call `get_transformations` without a transformation.')
+        transformations = np.array(self.transformation(text, **kwargs))
         if apply_constraints:
             return self._filter_transformations(transformations, text, original_text)
         return transformations
@@ -136,7 +139,7 @@ class Attack:
         `label`.
 
         """
-        return self.search(label, tokenized_text)
+        raise NotImplementedError()
         
     def _call_model(self, tokenized_text_list, batch_size=8):
         """

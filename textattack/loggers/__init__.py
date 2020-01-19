@@ -1,4 +1,8 @@
+from .csv_logger import CSVLogger
+from .file_logger import FileLogger
 from .logger import Logger
 from .visdom_logger import VisdomLogger
-from .file_logger import FileLogger
-from .csv_logger import CSVLogger
+
+# The AttackLogger must be imported last,
+# since it imports the other loggers.
+from .attack_logger import AttackLogger
