@@ -7,13 +7,7 @@ import time
 import os
 
 import textattack
-import textattack.attack_recipes as attack_recipes
-import textattack.attacks as attacks
-import textattack.constraints as constraints
 import textattack.datasets as datasets
-import textattack.models as models
-import textattack.transformations as transformations
-
 from textattack.tokenized_text import TokenizedText
 
 
