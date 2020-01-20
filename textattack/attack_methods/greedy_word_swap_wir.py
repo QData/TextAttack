@@ -20,8 +20,8 @@ class GreedyWordSwapWIR(Attack):
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
     """
 
-    def __init__(self, model, transformation, max_depth=32):
-        super().__init__(model, transformation)
+    def __init__(self, model, transformation, constraints=[], max_depth=32):
+        super().__init__(model, transformation, constraints=constraints)
         self.max_depth = max_depth
         
     def attack_one(self, original_label, tokenized_text):

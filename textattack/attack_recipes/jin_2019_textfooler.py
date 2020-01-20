@@ -26,20 +26,16 @@ def Jin2019TextFooler(model):
     #
     transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
     #
-    # Greedily swap words with "Word Importance Ranking".
-    #
-    attack = GreedyWordSwapWIR(model, transformation=transformation,
-        max_depth=None)
-    #
     # Minimum word embedding cosine similarity of 0.5.
     #
-    attack.add_constraint(
+    constraints = []
+    constraints.append(
             WordEmbeddingDistance(min_cos_sim=0.5)
     )
     #
     # Only replace words with the same part of speech (or nouns with verbs)
     #
-    attack.add_constraint(
+    constraints.append(
             PartOfSpeech(allow_verb_noun_swap=True)
     )
     #
@@ -52,6 +48,11 @@ def Jin2019TextFooler(model):
     use_constraint = UniversalSentenceEncoder(threshold=0.904458599,
         metric='angular', compare_with_original=False, window_size=15,
         skip_text_shorter_than_window=True)
-    attack.add_constraint(use_constraint)
+    constraints.append(use_constraint)
+    #
+    # Greedily swap words with "Word Importance Ranking".
+    #
+    attack = GreedyWordSwapWIR(model, transformation=transformation,
+        constraints=constraints, max_depth=None)
     
     return attack

@@ -6,7 +6,7 @@ import random
 import statistics
 import time
 
-from textattack.attack_results import AttackResult, FailedAttackResult
+from textattack.attack_results import AttackResult, FailedAttackResult, SkippedAttackResult
 
 from . import CSVLogger, FileLogger, VisdomLogger
 
@@ -37,9 +37,6 @@ class AttackLogger:
     def add_output_csv(self, filename, plain):
         self.loggers.append(CSVLogger(filename=filename, plain=plain))
 
-    def log_skipped(self, tokenized_text):
-        self.skipped_attacks += 1
-
     def log_result(self, result):
         self.results.append(result)
         self.examples_completed += 1
@@ -48,15 +45,23 @@ class AttackLogger:
         if isinstance(result, FailedAttackResult):
             self.failed_attacks += 1
             return
+        if isinstance(result, SkippedAttackResult):
+            self.skipped_attacks += 1
+            return
         self.successful_attacks += 1
         num_words_changed =  len(result.original_text.all_words_diff(result.perturbed_text))
-        self.num_words_changed_until_success[num_words_changed-1]+=1
+        self.num_words_changed_until_success[num_words_changed-1] += 1
         self.max_words_changed = max(self.max_words_changed,num_words_changed)
         if num_words_changed > 0:
             perturbed_word_percentage = num_words_changed * 100.0 / len(result.original_text.words)
         else:
             perturbed_word_percentage = 0
         self.perturbed_word_percentages.append(perturbed_word_percentage)
+    
+    def log_results(self, results):
+        for result in results:
+            self.log_result(result)
+        self.log_summary()
 
     def _log_rows(self, rows, title, window_id):
         for logger in self.loggers:
@@ -70,11 +75,9 @@ class AttackLogger:
         for logger in self.loggers:
             logger.flush()
 
-    def log_attack_details(self, attack_name, is_black_box, model_name):
-        attack_type = 'Black Box' if is_black_box else 'White Box'
+    def log_attack_details(self, attack_name, model_name):
         attack_detail_rows = [
             ['Attack algorithm:', attack_name],
-            ['Attack type:', attack_type],
             ['Model:', model_name],
         ]
         self._log_rows(attack_detail_rows, 'Attack Details', 'attack_details')
@@ -85,7 +88,7 @@ class AttackLogger:
             logger.log_hist(self.num_words_changed_until_success[:numbins],
                 numbins=numbins, title='Num Words Perturbed', window_id='num_words_perturbed')
     
-    def log_summary(self, is_black_box):
+    def log_summary(self):
         total_attacks = len(self.results)
         if total_attacks == 0:
             return
@@ -117,11 +120,9 @@ class AttackLogger:
             ['Average perturbed word %:', average_perc_words_perturbed],
         ]
         
-        if is_black_box:
-            num_queries = [r.num_queries for r in self.results]
-            avg_num_queries = statistics.mean(num_queries) if len(num_queries) else 0
-            avg_num_queries = str(round(avg_num_queries, 2))
-            summary_table_rows.append(['Avg num queries:', avg_num_queries])
-        summary_table_rows.append(['Time to run attack:', f'{time.time() - self.start_time}s'])
+        num_queries = [r.num_queries for r in self.results]
+        avg_num_queries = statistics.mean(num_queries) if len(num_queries) else 0
+        avg_num_queries = str(round(avg_num_queries, 2))
+        summary_table_rows.append(['Avg num queries:', avg_num_queries])
         self._log_rows(summary_table_rows, 'Attack Results Summary', 'attack_results_summary')
         self._log_num_words_changed()

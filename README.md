@@ -56,11 +56,11 @@ Using the LanguageTool constraint relies on Java 8 internally (it's not ideal, w
 
 ![TextAttack Demo GIF](https://github.com/UVA-MachineLearningBioinformatics/TextAttack/blob/master/text_attack_demo.gif?raw=true)
 
-We have a command-line interface for running different attacks on different datasets. Run it with default arguments with `python textattack/run_attack.py`. See help info and list of arguments with `python textattack/run_attack.py --help`.
+We have a command-line interface for running different attacks on different datasets. Run it with default arguments with `python scripts/run_attack.py`. See help info and list of arguments with `python scripts/run_attack.py --help`.
 
 ### Attack Recipes
 
-We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python textattack/run_attack.py --recipe [recipe_name]`
+We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python scripts/run_attack.py --recipe [recipe_name]`
 Currently, we include four recipes, each for synonym substitution-based classification and entailment attacks:
 - textfooler: Reproduction of TextFooler's greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))
 - alzantot: Reproduction of genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))
