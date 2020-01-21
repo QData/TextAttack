@@ -292,7 +292,7 @@ if __name__ == '__main__':
 
             print('Attacking...')
 
-            result = attack.attack_dataset([(label, text)])[0]
+            result = next(attack.attack_dataset([(label, text)]))
             print(result.__str__(color_method='stdout'))
     
     else:
