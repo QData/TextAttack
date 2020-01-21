@@ -140,8 +140,6 @@ def get_args():
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
-    attack_group = parser.add_mutually_exclusive_group(required=False)
-    
     attack_group.add_argument('--attack', '--attack_method', type=str, required=False, default='greedy-word-wir', 
         help='The type of attack to run.', choices=ATTACK_CLASS_NAMES.keys())
     
@@ -307,13 +305,14 @@ if __name__ == '__main__':
         for result in attack.attack_dataset(data, 
             num_examples=args.num_examples, shuffle=args.shuffle):
             attack_logger.log_result(result)
+            print('\n')
             if isinstance(result, textattack.attack_results.SkippedAttackResult):
                 continue
             else:
                 pbar.update(1)
         pbar.close()
+        print()
         attack_logger.log_summary()
-
+        print()
         finish_time = time.time()
-
         print(f'Attack time: {time.time() - load_time}s')
