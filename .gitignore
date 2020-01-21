@@ -24,3 +24,6 @@ docs/_build/
 
 # TF Hub modules
 tensorflow-hub
+
+# for Macs
+.DS_Store

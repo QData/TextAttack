@@ -9,6 +9,7 @@ import tqdm
 import os
 
 
+
 RECIPE_NAMES = {
     'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
     'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
