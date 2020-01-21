@@ -5,6 +5,7 @@ A command line parser to run an attack from user specifications.
 import argparse
 import textattack
 import time
+import tqdm
 import os
 
 
@@ -152,18 +153,18 @@ def get_args():
 
 def parse_transformation_from_args():
     # Transformations
-    _transformations = []    
+    _transformation = []    
     transformation = args.transformation
     if ':' in transformation:
         transformation_name, params = transformation.split(':')
         if transformation_name not in TRANSFORMATION_CLASS_NAMES:
             raise ValueError(f'Error: unsupported transformation {transformation_name}')
-        _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
+        transformation = eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})')
     elif transformation in TRANSFORMATION_CLASS_NAMES:
-        _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
+        transformation = eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()')
     else:
         raise ValueError(f'Error: unsupported transformation {transformation}')
-    return _transformations[0]
+    return transformation
 
 def parse_constraints_from_args():
     # Constraints
@@ -196,7 +197,8 @@ def parse_recipe_from_args():
         raise Error('Invalid recipe {args.recipe}')
     return recipe
 
-def parse_attack_from_args(transformation):
+def parse_attack_from_args():
+    transformation = parse_transformation_from_args()
     constraints = parse_constraints_from_args()
     if ':' in args.attack:
         attack_name, params = args.attack.split(':')
@@ -242,10 +244,8 @@ if __name__ == '__main__':
     if args.recipe:
         attack = parse_recipe_from_args()
     else:
-        # Transformations
-        _transformation = parse_transformation_from_args()
         # Attack
-        attack = parse_attack_from_args(_transformation)
+        attack = parse_attack_from_args()
 
     out_time = int(time.time()*1000) # Output file
     if args.out_dir is not None:
@@ -269,7 +269,7 @@ if __name__ == '__main__':
         attack_logger.enable_stdout()
 
     load_time = time.time()
-    print(f'Loaded in {load_time - start_time}s')
+    print(f'Load time: {load_time - start_time}s')
 
     if args.interactive:
         print('Running in interactive mode')
@@ -301,12 +301,18 @@ if __name__ == '__main__':
             data = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
         else:
             raise ValueError(f'Error: unsupported model {args.model}')
-            
-        results = attack.attack_dataset(data, num_examples=args.num_examples, 
-            shuffle=args.shuffle)
         
-        attack_logger.log_results(results)
+        pbar = tqdm.tqdm(total=args.num_examples)
+        for result in attack.attack_dataset(data, 
+            num_examples=args.num_examples, shuffle=args.shuffle):
+            attack_logger.log_result(result)
+            if isinstance(result, textattack.attack_results.SkippedAttackResult):
+                continue
+            else:
+                pbar.update(1)
+        pbar.close()
+        attack_logger.log_summary()
 
         finish_time = time.time()
 
-        print(f'Attack time: {load_time - start_time}s')
+        print(f'Attack time: {time.time() - load_time}s')

@@ -173,17 +173,15 @@ class Attack:
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
         """
       
-        examples = self._get_examples_from_dataset(dataset, num_examples, shuffle)
-        results = []
+        examples = self._get_examples_from_dataset(dataset, num_examples, 
+            shuffle)
 
         for label, tokenized_text, was_skipped in examples:
             if was_skipped:
-                results.append(SkippedAttackResult(tokenized_text, label))
+                yield SkippedAttackResult(tokenized_text, label)
                 continue
             # Start at 1 since we called once to determine that prediction was correct
             self.num_queries = 1
             result = self.attack_one(label, tokenized_text)
             result.num_queries = self.num_queries
-            results.append(result)
-        
-        return results
+            yield result
