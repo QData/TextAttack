@@ -1,23 +1,22 @@
-from textattack.attacks import AttackResult, FailedAttackResult
-from textattack.attacks.blackbox import BlackBoxAttack
+from .attack import Attack
+from textattack.attack_results import AttackResult, FailedAttackResult
 
-class GreedyWordSwap(BlackBoxAttack):
+class GreedyWordSwap(Attack):
     """ 
     An attack that greedily chooses from a list of possible 
     perturbations.
-
     Args:
-        model: The PyTorch NLP model to attack.
+        model: The model to attack.
         transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
         
     """
-    def __init__(self, model, transformations=[],  max_depth=32):
-        super().__init__(model)
+    def __init__(self, model, transformation, constraints=[], max_depth=32):
+        super().__init__(model, transformation, constraints=constraints)
         self.transformation = transformations[0]
         self.max_depth = max_depth
         
-    def _attack_one(self, original_label, tokenized_text):
+    def attack_one(self, original_label, tokenized_text):
         original_tokenized_text = tokenized_text
         original_prob = self._call_model([tokenized_text]).squeeze().max()
         num_words_changed = 0
@@ -27,7 +26,6 @@ class GreedyWordSwap(BlackBoxAttack):
         while num_words_changed <= self.max_depth and len(unswapped_word_indices):
             num_words_changed += 1
             transformed_text_candidates = self.get_transformations(
-                self.transformation,
                 tokenized_text,
                 indices_to_replace=unswapped_word_indices)
             if len(transformed_text_candidates) == 0:

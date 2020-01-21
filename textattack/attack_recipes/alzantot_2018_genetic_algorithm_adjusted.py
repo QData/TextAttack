@@ -9,7 +9,7 @@
     ArXiv, abs/1801.00554.
 """
 
-from textattack.attacks.blackbox import GeneticAlgorithm
+from textattack.attack_methods import GeneticAlgorithm
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
 from textattack.constraints.syntax import PartOfSpeech, LanguageTool
@@ -25,14 +25,10 @@ def Alzantot2018GeneticAlgorithmAdjusted(model, SE_thresh=0.98, sentence_encoder
     #
     transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
     #
-    # Greedily swap words with "Word Importance Ranking".
-    #
-    attack = GeneticAlgorithm(model, transformations=[transformation], 
-        pop_size=60, max_iters=20)
-    #
     # Minimum word embedding cosine similarity of 0.9.
     #
-    attack.add_constraint(
+    constraints = []
+    constraints.append(
             WordEmbeddingDistance(min_cos_sim=0.9)
     )
     #
@@ -50,13 +46,17 @@ def Alzantot2018GeneticAlgorithmAdjusted(model, SE_thresh=0.98, sentence_encoder
         se_constraint = UniversalSentenceEncoder(threshold=SE_thresh,
             metric='cosine', compare_with_original=False, window_size=15,
             skip_text_shorter_than_window=False)
-    attack.add_constraint(se_constraint)
-    
+    constraints.append(se_constraint)
     #
     # Do grammar checking
     #
-    attack.add_constraint(
+    constraints.append(
             LanguageTool(0)
     )
     
+    #
+    # Greedily swap words with "Word Importance Ranking".
+    #
+    attack = GeneticAlgorithm(model, transformation=transformation, 
+        constraints=constraints, pop_size=60, max_iters=20)
     return attack

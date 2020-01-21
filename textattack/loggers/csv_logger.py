@@ -2,8 +2,9 @@ import sys
 import os
 import pandas as pd
 import csv
-from textattack.loggers import Logger
-from textattack.attacks import FailedAttackResult
+
+from textattack.attack_results import FailedAttackResult
+from .logger import Logger
 
 class CSVLogger(Logger):
     def __init__(self, filename='results.csv', plain=False):

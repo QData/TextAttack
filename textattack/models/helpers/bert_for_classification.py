@@ -1,4 +1,4 @@
-import textattack.utils as utils
+from textattack.shared import utils
 import torch
 
 from textattack.tokenizers import BERTTokenizer, BERTEntailmentTokenizer
@@ -17,7 +17,6 @@ class BERTForClassification:
     """
     def __init__(self, model_path, num_labels=2, entailment=False):
         model_file_path = utils.download_if_needed(model_path)
-        print('TextAttack BERTForClassification loading from path', model_file_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_file_path, num_labels=num_labels)
         self.model.to(utils.get_device())

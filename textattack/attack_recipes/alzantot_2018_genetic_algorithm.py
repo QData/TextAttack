@@ -9,7 +9,7 @@
     ArXiv, abs/1801.00554.
 """
 
-from textattack.attacks.blackbox import GeneticAlgorithm
+from textattack.attack_methods import GeneticAlgorithm
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.language_models import GoogleLanguageModel
 from textattack.transformations import WordSwapEmbedding
@@ -24,21 +24,22 @@ def Alzantot2018GeneticAlgorithm(model):
     #
     transformation = WordSwapEmbedding(max_candidates=8)
     #
-    # Perform word substitution with a genetic algorithm.
-    #
-    attack = GeneticAlgorithm(model, transformations=[transformation], 
-        pop_size=60, max_iters=20)
-    #
     # Maximum word embedding euclidean distance of 0.5.
     #
-    attack.add_constraint(
+    constraints = []
+    constraints.append(
             WordEmbeddingDistance(max_mse_dist=0.5)
     )
     #
     # Language Model
     #
-    attack.add_constraint(
+    constraints.append(
             GoogleLanguageModel(top_n_per_index=4)
     )
+    #
+    # Perform word substitution with a genetic algorithm.
+    #
+    attack = GeneticAlgorithm(model, constraints=constraints,
+        transformation=transformation, pop_size=60, max_iters=20)
     
     return attack

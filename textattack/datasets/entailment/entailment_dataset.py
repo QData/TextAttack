@@ -1,5 +1,5 @@
 from textattack.datasets import TextAttackDataset
-from textattack.tokenized_text import TokenizedText
+from textattack.shared.tokenized_text import TokenizedText
 
 class TextAttackEntailmentDataset(TextAttackDataset):
     """ A generic class for loading entailment data. 

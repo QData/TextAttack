@@ -1,5 +1,5 @@
 import torch
-import textattack.utils as utils
+from textattack.shared import utils
 
 from textattack.models.helpers import LSTMForClassification
 

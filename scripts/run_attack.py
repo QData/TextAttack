@@ -3,12 +3,11 @@ A command line parser to run an attack from user specifications.
 """
 
 import argparse
+import textattack
 import time
+import tqdm
 import os
 
-import textattack
-import textattack.datasets as datasets
-from textattack.tokenized_text import TokenizedText
 
 
 RECIPE_NAMES = {
@@ -54,27 +53,27 @@ DATASET_BY_MODEL = {
     #
     
     # AG News
-    'bert-ag-news':             datasets.classification.AGNews,
-    'cnn-ag-news':              datasets.classification.AGNews,
-    'lstm-ag-news':             datasets.classification.AGNews,
+    'bert-ag-news':             textattack.datasets.classification.AGNews,
+    'cnn-ag-news':              textattack.datasets.classification.AGNews,
+    'lstm-ag-news':             textattack.datasets.classification.AGNews,
     # IMDB 
-    'bert-imdb':                datasets.classification.IMDBSentiment,
-    'cnn-imdb':                 datasets.classification.IMDBSentiment,
-    'lstm-imdb':                datasets.classification.IMDBSentiment,
+    'bert-imdb':                textattack.datasets.classification.IMDBSentiment,
+    'cnn-imdb':                 textattack.datasets.classification.IMDBSentiment,
+    'lstm-imdb':                textattack.datasets.classification.IMDBSentiment,
     # MR
-    'bert-mr':                  datasets.classification.MovieReviewSentiment,
-    'cnn-mr':                   datasets.classification.MovieReviewSentiment,
-    'lstm-mr':                  datasets.classification.MovieReviewSentiment,
+    'bert-mr':                  textattack.datasets.classification.MovieReviewSentiment,
+    'cnn-mr':                   textattack.datasets.classification.MovieReviewSentiment,
+    'lstm-mr':                  textattack.datasets.classification.MovieReviewSentiment,
     # Yelp
-    'bert-yelp-sentiment':      datasets.classification.YelpSentiment,
-    'cnn-yelp-sentiment':       datasets.classification.YelpSentiment,
-    'lstm-yelp-sentiment':      datasets.classification.YelpSentiment,
+    'bert-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
+    'cnn-yelp-sentiment':       textattack.datasets.classification.YelpSentiment,
+    'lstm-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
     
     #
     # Textual entailment datasets
     #
-    'bert-mnli':                datasets.entailment.MNLI,
-    'bert-snli':                datasets.entailment.SNLI,
+    'bert-mnli':                textattack.datasets.entailment.MNLI,
+    'bert-snli':                textattack.datasets.entailment.SNLI,
 }
 
 TRANSFORMATION_CLASS_NAMES = {
@@ -93,18 +92,19 @@ CONSTRAINT_CLASS_NAMES = {
 }
 
 ATTACK_CLASS_NAMES = {
-    'greedy-word':        'textattack.attacks.blackbox.GreedyWordSwap',
-    'ga-word':            'textattack.attacks.blackbox.GeneticAlgorithm',
-    'greedy-word-wir':    'textattack.attacks.blackbox.GreedyWordSwapWIR',
+    'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
+    'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
+    'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
 }
 
 
 def get_args():
-    parser = argparse.ArgumentParser(description='A commandline parser for TextAttack', 
+    parser = argparse.ArgumentParser(
+        description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('--transformations', type=str, required=False, nargs='*',
-        default=['word-swap-embedding'], choices=TRANSFORMATION_CLASS_NAMES.keys(),
+    parser.add_argument('--transformation', type=str, required=False,
+        default='word-swap-embedding', choices=TRANSFORMATION_CLASS_NAMES.keys(),
         help='The transformations to apply.')
         
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
@@ -131,9 +131,6 @@ def get_args():
     
     parser.add_argument('--num_examples_offset', '-o', type=int, required=False, 
         default=0, help='The offset to start at in the dataset.')
-  
-    parser.add_argument('--attack_n', action='store_true',
-        help='Attack n examples, not counting examples where the model is initially wrong.')
 
     parser.add_argument('--shuffle', action='store_true', required=False, 
         default=False, help='Randomly shuffle the data before attacking')
@@ -143,7 +140,7 @@ def get_args():
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
-    attack_group.add_argument('--attack', type=str, required=False, default='greedy-word-wir', 
+    attack_group.add_argument('--attack', '--attack_method', type=str, required=False, default='greedy-word-wir', 
         help='The type of attack to run.', choices=ATTACK_CLASS_NAMES.keys())
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None, 
@@ -155,18 +152,18 @@ def get_args():
 
 def parse_transformation_from_args():
     # Transformations
-    _transformations = []    
-    for transformation in args.transformations:
-        if ':' in transformation:
-            transformation_name, params = transformation.split(':')
-            if transformation_name not in TRANSFORMATION_CLASS_NAMES:
-                raise ValueError(f'Error: unsupported transformation {transformation_name}')
-            _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})'))
-        elif transformation in TRANSFORMATION_CLASS_NAMES:
-            _transformations.append(eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()'))
-        else:
-            raise ValueError(f'Error: unsupported transformation {transformation}')
-    return _transformations
+    _transformation = []    
+    transformation = args.transformation
+    if ':' in transformation:
+        transformation_name, params = transformation.split(':')
+        if transformation_name not in TRANSFORMATION_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported transformation {transformation_name}')
+        transformation = eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})')
+    elif transformation in TRANSFORMATION_CLASS_NAMES:
+        transformation = eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()')
+    else:
+        raise ValueError(f'Error: unsupported transformation {transformation}')
+    return transformation
 
 def parse_constraints_from_args():
     # Constraints
@@ -200,13 +197,15 @@ def parse_recipe_from_args():
     return recipe
 
 def parse_attack_from_args():
+    transformation = parse_transformation_from_args()
+    constraints = parse_constraints_from_args()
     if ':' in args.attack:
         attack_name, params = args.attack.split(':')
         if attack_name not in ATTACK_CLASS_NAMES:
             raise ValueError(f'Error: unsupported attack {attack_name}')
-        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, _transformations, {params})')
+        attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, transformation, constraints=constraints, {params})')
     elif args.attack in ATTACK_CLASS_NAMES:
-        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, _transformations)')
+        attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, transformation, constraints=constraints)')
     else:
         raise ValueError(f'Error: unsupported attack {args.attack}')
     return attack
@@ -234,7 +233,7 @@ if __name__ == '__main__':
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     # Cache TensorFlow Hub models here, if not otherwise specified.
     if 'TFHUB_CACHE_DIR' not in os.environ:
-        os.environ['TFHUB_CACHE_DIR'] = './tensorflow-hub'
+        os.environ['TFHUB_CACHE_DIR'] = os.path.expanduser('~/.cache/tensorflow-hub')
     
     start_time = time.time()
 
@@ -244,11 +243,8 @@ if __name__ == '__main__':
     if args.recipe:
         attack = parse_recipe_from_args()
     else:
-        # Transformations
-        _transformations = parse_transformation_from_args()
         # Attack
         attack = parse_attack_from_args()
-        attack.add_constraints(parse_constraints_from_args())
 
     out_time = int(time.time()*1000) # Output file
     if args.out_dir is not None:
@@ -256,22 +252,23 @@ if __name__ == '__main__':
         attack.add_output_file(os.path.join(args.out_dir, outfile_name))
 
     # csv
+    attack_logger = textattack.loggers.AttackLogger()
     if args.enable_csv:
         out_dir = args.out_dir if args.out_dir else 'outputs'
         outfile_name = 'attack-{}.csv'.format(out_time)
         plain = args.enable_csv == 'plain'
-        attack.add_output_csv(os.path.join(out_dir, outfile_name), plain)
+        attack_logger.add_output_csv(os.path.join(out_dir, outfile_name), plain)
 
     # Visdom
     if args.enable_visdom:
-        attack.enable_visdom()
+        attack_logger.enable_visdom()
 
     # Stdout
     if not args.disable_stdout:
-        attack.enable_stdout()
+        attack_logger.enable_stdout()
 
     load_time = time.time()
-    print(f'Loaded in {load_time - start_time}s')
+    print(f'Load time: {load_time - start_time}s')
 
     if args.interactive:
         print('Running in interactive mode')
@@ -287,14 +284,15 @@ if __name__ == '__main__':
             if not text:
                 continue
 
-            tokenized_text = TokenizedText(text, model.tokenizer)
-
+            tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, model.tokenizer)
+            
             pred = attack._call_model([tokenized_text])
             label = int(pred.argmax())
 
             print('Attacking...')
 
-            attack.attack([(label, text)])
+            result = next(attack.attack_dataset([(label, text)]))
+            print(result.__str__(color_method='stdout'))
     
     else:
         # Not interactive? Use default dataset.
@@ -302,10 +300,19 @@ if __name__ == '__main__':
             data = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
         else:
             raise ValueError(f'Error: unsupported model {args.model}')
-            
-        attack.attack(data, num_examples=args.num_examples,
-                      attack_n=args.attack_n, shuffle=args.shuffle)
-
+        
+        pbar = tqdm.tqdm(total=args.num_examples)
+        for result in attack.attack_dataset(data, 
+            num_examples=args.num_examples, shuffle=args.shuffle):
+            attack_logger.log_result(result)
+            print('\n')
+            if isinstance(result, textattack.attack_results.SkippedAttackResult):
+                continue
+            else:
+                pbar.update(1)
+        pbar.close()
+        print()
+        attack_logger.log_summary()
+        print()
         finish_time = time.time()
-
-        print(f'Total time: {finish_time - start_time}s')
+        print(f'Attack time: {time.time() - load_time}s')

@@ -1,7 +1,7 @@
 import numpy as np
 import os
 
-from textattack import utils as utils
+from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 class WordSwapEmbedding(WordSwap):

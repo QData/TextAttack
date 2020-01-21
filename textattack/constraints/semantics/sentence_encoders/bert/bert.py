@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
-from textattack.utils import get_device
+import textattack.shared.utils as utils
 
 class BERT(SentenceEncoder):
     """ 
@@ -12,7 +12,7 @@ class BERT(SentenceEncoder):
     def __init__(self, threshold=0.7, metric='cosine', **kwargs):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
         self.model = SentenceTransformer('bert-base-nli-stsb-mean-tokens')
-        self.model.to(get_device())
+        self.model.to(utils.get_device())
     
     def encode(self, sentences):
         return self.model.encode(sentences)

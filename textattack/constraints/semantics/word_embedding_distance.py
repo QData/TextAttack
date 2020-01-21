@@ -3,9 +3,9 @@ import os
 import pickle
 import torch
 
-from textattack import utils as utils
+from textattack.shared import utils
 from textattack.constraints import Constraint
-from textattack.tokenized_text import TokenizedText
+from textattack.shared.tokenized_text import TokenizedText
 
 class WordEmbeddingDistance(Constraint):
     """

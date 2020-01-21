@@ -1,7 +1,7 @@
-from textattack.attacks import AttackResult
-from textattack import utils as utils
+from textattack.attack_results import AttackResult
+from textattack.shared import utils
 
-class FailedAttackResult(AttackResult):
+class SkippedAttackResult(AttackResult):
     def __init__(self, original_text, original_label):
         super().__init__(original_text, original_text, original_label, original_label)
 
@@ -10,5 +10,5 @@ class FailedAttackResult(AttackResult):
         return tuple(map(str, data))
 
     def result_str(self, color_method=None):
-        failed_str = utils.color_label('[FAILED]', 'red', color_method)
+        failed_str = utils.color_label('[SKIPPED]', 'gray', color_method)
         return utils.color_label(self.original_label, method=color_method) + '-->' + failed_str 

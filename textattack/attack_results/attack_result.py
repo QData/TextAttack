@@ -1,4 +1,4 @@
-from textattack import utils as utils
+from textattack.shared import utils
 
 class AttackResult:
     """
@@ -41,6 +41,7 @@ class AttackResult:
         return '\n'.join(self.__data__(color_method=color_method))
    
     def result_str(self, color_method=None):
+        # @TODO add comment to distinguish this from __str__
         orig_colored = utils.color_label(self.original_label, method=color_method)
         pert_colored = utils.color_label(self.perturbed_label, method=color_method)
         return orig_colored + '-->' + pert_colored

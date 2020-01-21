@@ -1,4 +1,4 @@
-from textattack.utils import get_device
+from .utils import get_device
 
 class TokenizedText:
     """ A helper class that represents a string that can be attacked. """
