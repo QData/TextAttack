@@ -54,7 +54,7 @@ Using the LanguageTool constraint relies on Java 8 internally (it's not ideal, w
 
 ### Basic Usage
 
-![TextAttack Demo GIF](https://github.com/UVA-MachineLearningBioinformatics/TextAttack/blob/master/text_attack_demo.gif?raw=true)
+![TextAttack Demo GIF](https://i.imgur.com/hOCDhQf.gif)
 
 We have a command-line interface for running different attacks on different datasets. Run it with default arguments with `python scripts/run_attack.py`. See help info and list of arguments with `python scripts/run_attack.py --help`.
 
