@@ -29,8 +29,6 @@ def get_model_and_attack(args):
     return model, attack
 
 def attack_from_queue(args, in_queue, out_queue):
-    # @TODO make this work with something like:
-    # `CUDA_VISIBLE_DEVICES=2,3`.
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
     print('using GPU #' + str(gpu_id))
     set_env_variables(gpu_id)
@@ -46,11 +44,11 @@ def attack_from_queue(args, in_queue, out_queue):
             # done!
             return
 
-# @TODO make this work with `attack_n`
 def main():
-
     pytorch_multiprocessing_workaround()
-    # This makes `args` a namespace that's sharable between 
+    # This makes `args` a namespace that's sharable between processes.
+    # We could do the same thing with the model, but it's actually faster
+    # to let each thread have their own copy of the model.
     args = torch.multiprocessing.Manager().Namespace(
         **vars(get_args())
     )
@@ -67,11 +65,6 @@ def main():
     if args.interactive:
         raise RuntimeException('Cannot run in parallel if --interactive set')
     
-    pbar = tqdm.tqdm(total=args.num_examples)
-    def update_pbar(*_):
-        print('UPDATE PBAR?')
-        pbar.update(1)
-    
     in_queue = torch.multiprocessing.Queue()
     out_queue =  torch.multiprocessing.Queue()
     # Add stuff to queue.
@@ -84,8 +77,9 @@ def main():
         attack_from_queue, 
         (args, in_queue, out_queue)
     )
-    # Log results asynchronously.
+    # Log results asynchronously and update progress bar.
     num_results = 0
+    pbar = tqdm.tqdm(total=args.num_examples)
     while num_results < args.num_examples:
         result = out_queue.get(block=True)
         attack_logger.log_result(result)
@@ -107,6 +101,5 @@ def pytorch_multiprocessing_workaround():
         torch.multiprocessing.set_start_method('spawn')
     except RuntimeError:
         pass
-
 
 if __name__ == '__main__': main()
