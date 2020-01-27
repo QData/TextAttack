@@ -29,7 +29,7 @@ def get_model_and_attack(args):
     return model, attack
 
 def attack_from_queue(args, in_queue, out_queue):
-    gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
+    gpu_id = torch.multiprocessing.current_process()._identity[0] - 1
     print('using GPU #' + str(gpu_id))
     set_env_variables(gpu_id)
     model, attack = get_model_and_attack(args)
@@ -56,7 +56,8 @@ def main():
     
     attack_logger = parse_logger_from_args(args)
     
-    num_gpus = torch.cuda.device_count()
+    # We reserve the first GPU for coordinating workers.
+    num_gpus = torch.cuda.device_count() - 1
     dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
     
     print(f'Running on {num_gpus} GPUs')
@@ -87,10 +88,10 @@ def main():
         num_results += 1
     pbar.close()
     print()
-    # Enable summary stdout
-    attack_logger.enable_stdout()
-    print()
-    attack_logger.log_summary()
+    # Enable summary stdout.
+    if args.disable_stdout:
+        attack_logger.enable_stdout()
+        attack_logger.log_summary()
     print()
     finish_time = time.time()
     print(f'Attack time: {time.time() - load_time}s')
