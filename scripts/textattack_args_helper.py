@@ -204,13 +204,6 @@ def parse_attack_from_args(model, args):
             attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, transformation, constraints=constraints)')
         else:
             raise ValueError(f'Error: unsupported attack {args.attack}')
-        
-    # Add output file.
-    out_time = int(time.time()*1000) # Output file
-    if args.out_dir is not None:
-        outfile_name = 'attack-{}.txt'.format(out_time)
-        attack.add_output_file(os.path.join(args.out_dir, outfile_name))
-        
     return attack
 
 def parse_model_from_args(args):
@@ -227,6 +220,13 @@ def parse_model_from_args(args):
 
 def parse_logger_from_args(args):# Create logger
     attack_logger = textattack.loggers.AttackLogger()
+        
+    # Output file.
+    out_time = int(time.time()*1000) # Output file
+    if args.out_dir is not None:
+        outfile_name = 'attack-{}.txt'.format(out_time)
+        attack.add_output_file(os.path.join(args.out_dir, outfile_name))
+        
     # CSV
     if args.enable_csv:
         out_dir = args.out_dir if args.out_dir else 'outputs'
