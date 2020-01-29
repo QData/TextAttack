@@ -236,8 +236,8 @@ def parse_logger_from_args(args):# Create logger
         outfile_name = 'attack-{}.csv'.format(out_time)
         plain = args.enable_csv == 'plain'
         csv_path = os.path.join(args.out_dir, outfile_name)
-        print('Logging to CSV at path {}.'.format(csv_path))
         attack_logger.add_output_csv(csv_path, plain)
+        print('Logging to CSV at path {}.'.format(csv_path))
 
     # Visdom
     if args.enable_visdom:

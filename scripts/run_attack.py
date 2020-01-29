@@ -73,8 +73,6 @@ def main():
             attack_logger.log_result(result)
             if not args.disable_stdout:
                 print('\n')
-            if isinstance(result, textattack.attack_results.SkippedAttackResult):
-                continue
             else:
                 pbar.update(1)
         pbar.close()
@@ -83,6 +81,7 @@ def main():
         if args.disable_stdout:
             attack_logger.enable_stdout()
         attack_logger.log_summary()
+        attack_logger.flush()
         print()
         finish_time = time.time()
         print(f'Attack time: {time.time() - load_time}s')
