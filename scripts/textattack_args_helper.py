@@ -220,19 +220,24 @@ def parse_model_from_args(args):
 
 def parse_logger_from_args(args):# Create logger
     attack_logger = textattack.loggers.AttackLogger()
+    # Set default output directory to `textattack/outputs`.
+    if not args.out_dir:
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        outputs_dir = os.path.join(current_dir, os.pardir, 'outputs')
+        args.out_dir = outputs_dir
         
     # Output file.
     out_time = int(time.time()*1000) # Output file
-    if args.out_dir is not None:
-        outfile_name = 'attack-{}.txt'.format(out_time)
-        attack.add_output_file(os.path.join(args.out_dir, outfile_name))
+    outfile_name = 'attack-{}.txt'.format(out_time)
+    attack_logger.add_output_file(os.path.join(args.out_dir, outfile_name))
         
     # CSV
     if args.enable_csv:
-        out_dir = args.out_dir if args.out_dir else 'outputs'
         outfile_name = 'attack-{}.csv'.format(out_time)
         plain = args.enable_csv == 'plain'
-        attack_logger.add_output_csv(os.path.join(out_dir, outfile_name), plain)
+        csv_path = os.path.join(args.out_dir, outfile_name)
+        print('Logging to CSV at path {}.'.format(csv_path))
+        attack_logger.add_output_csv(csv_path, plain)
 
     # Visdom
     if args.enable_visdom:
