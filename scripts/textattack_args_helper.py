@@ -186,7 +186,7 @@ def parse_recipe_from_args(model, args):
     elif args.recipe in RECIPE_NAMES:
         recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
     else:
-        raise Error('Invalid recipe {args.recipe}')
+        raise ValueError('Invalid recipe {args.recipe}')
     return recipe
 
 def parse_attack_from_args(model, args):
