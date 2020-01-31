@@ -95,6 +95,7 @@ ATTACK_CLASS_NAMES = {
     'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
     'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
     'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
+    'mcts-old':           'textattack.attack_methods.MCTSOLD'
 }
 
 
