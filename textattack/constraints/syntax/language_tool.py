@@ -14,7 +14,7 @@ class LanguageTool(Constraint):
     """
     
     def __init__(self, threshold=0):
-        self.lang_tool = start_language_tool()
+        self.lang_tool = language_check.LanguageTool("en-US")
         self.threshold = threshold
         self.grammar_error_cache = {}
     
@@ -31,8 +31,3 @@ class LanguageTool(Constraint):
         original_num_errors = self.get_errors(original_text, use_cache=True)
         errors_added = self.get_errors(x_adv) - original_num_errors
         return errors_added <= self.threshold
-
-LANGUAGE_TOOL_MIN_PORT = 8081
-LANGUAGE_TOOL_MIN_PORT = 8181
-def start_language_tool():
-    port = LANGUAGE_TOOL_MIN_PORT

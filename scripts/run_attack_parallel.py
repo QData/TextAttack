@@ -31,7 +31,6 @@ def attack_from_queue(args, in_queue, out_queue):
             label, text = in_queue.get()
             results_gen = attack.attack_dataset([(label, text)], num_examples=1)
             result = next(results_gen)
-            print('puttingon Q:', result)
             out_queue.put(result)
         except Exception as e:
             print('Process on GPU', gpu_id, 'got exception:', e)
