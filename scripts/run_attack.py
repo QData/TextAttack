@@ -23,12 +23,9 @@ def main():
         os.environ['TFHUB_CACHE_DIR'] = os.path.expanduser('~/.cache/tensorflow-hub')
     
     start_time = time.time()
-
-    # Models
-    model = parse_model_from_args(args)
     
-    # Attack
-    attack = parse_attack_from_args(model, args)
+    # Models and Attack
+    model, attack = parse_model_and_attack_from_args(args)
     
     # Logger
     attack_logger = parse_logger_from_args(args)

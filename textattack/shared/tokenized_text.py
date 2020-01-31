@@ -1,3 +1,4 @@
+import torch
 from .utils import get_device
 
 class TokenizedText:
@@ -29,6 +30,15 @@ class TokenizedText:
         self.words = raw_words(text)
         self.text = text
         self.attack_attrs = attack_attrs
+    
+    def delete_tensors(self):
+        """ Delete tensors to clear up GPU space. Only should be called
+            once the TokenizedText is only needed to display.
+        """
+        self.ids = None
+        for key in self.attack_attrs:
+            if isinstance(self.attack_attrs[key], torch.Tensor):
+                del self.attack_attrs[key]
 
     def text_window_around_index(self, index, window_size):
         """ The text window of `window_size` words centered around `index`. """

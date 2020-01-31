@@ -133,11 +133,13 @@ def get_args():
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
-    attack_group.add_argument('--attack', '--attack_method', type=str, required=False, default='greedy-word-wir', 
+    attack_group.add_argument('--attack', '--attack_method', type=str, 
+        required=False, default='greedy-word-wir', 
         help='The type of attack to run.', choices=ATTACK_CLASS_NAMES.keys())
     
-    attack_group.add_argument('--recipe', type=str, required=False, default=None, 
-        help='full attack recipe (overrides provided transformation & constraints)')
+    attack_group.add_argument('--recipe', type=str, required=False, default=None,
+        help='full attack recipe (overrides provided transformation & constraints)',
+        choices=RECIPE_NAMES.keys())
     
     args = parser.parse_args()
     
@@ -189,7 +191,16 @@ def parse_recipe_from_args(model, args):
         raise ValueError('Invalid recipe {args.recipe}')
     return recipe
 
-def parse_attack_from_args(model, args):
+def parse_model_and_attack_from_args(args):
+    if ':' in args.model:
+        model_name, params = args.model.split(':')
+        if model_name not in MODEL_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported model {model_name}')
+        model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
+    elif args.model in MODEL_CLASS_NAMES:
+        model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
+    else: 
+        raise ValueError(f'Error: unsupported model {args.model}')
     if args.recipe:
         attack = parse_recipe_from_args(model, args)
     else:
@@ -204,19 +215,7 @@ def parse_attack_from_args(model, args):
             attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, transformation, constraints=constraints)')
         else:
             raise ValueError(f'Error: unsupported attack {args.attack}')
-    return attack
-
-def parse_model_from_args(args):
-    if ':' in args.model:
-        model_name, params = args.model.split(':')
-        if model_name not in MODEL_CLASS_NAMES:
-            raise ValueError(f'Error: unsupported model {model_name}')
-        model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
-    elif args.model in MODEL_CLASS_NAMES:
-        model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
-    else: 
-        raise ValueError(f'Error: unsupported model {args.model}')
-    return model
+    return model, attack
 
 def parse_logger_from_args(args):# Create logger
     attack_logger = textattack.loggers.AttackLogger()

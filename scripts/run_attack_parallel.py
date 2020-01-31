@@ -21,28 +21,21 @@ def set_env_variables(gpu_id):
     if 'TFHUB_CACHE_DIR' not in os.environ:
         os.environ['TFHUB_CACHE_DIR'] = os.path.expanduser('~/.cache/tensorflow-hub')
 
-def get_model_and_attack(args):
-    # Models
-    model = parse_model_from_args(args)
-    # Attack
-    attack = parse_attack_from_args(model, args)
-    return model, attack
-
 def attack_from_queue(args, in_queue, out_queue):
-    gpu_id = torch.multiprocessing.current_process()._identity[0] - 1
-    print('using GPU #' + str(gpu_id))
+    gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
+    print('Using GPU #' + str(gpu_id))
     set_env_variables(gpu_id)
-    model, attack = get_model_and_attack(args)
+    model, attack = parse_model_and_attack_from_args(args)
     while not in_queue.empty():
         try: 
             label, text = in_queue.get()
             results_gen = attack.attack_dataset([(label, text)], num_examples=1)
             result = next(results_gen)
+            print('puttingon Q:', result)
             out_queue.put(result)
         except Exception as e:
-            print('process on GPU', gpu_id, 'got exception:', e)
-            # done!
-            return
+            print('Process on GPU', gpu_id, 'got exception:', e)
+            raise e
 
 def main():
     pytorch_multiprocessing_workaround()
@@ -57,7 +50,7 @@ def main():
     attack_logger = parse_logger_from_args(args)
     
     # We reserve the first GPU for coordinating workers.
-    num_gpus = torch.cuda.device_count() - 1
+    num_gpus = torch.cuda.device_count()
     dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
     
     print(f'Running on {num_gpus} GPUs')
@@ -91,7 +84,8 @@ def main():
     # Enable summary stdout.
     if args.disable_stdout:
         attack_logger.enable_stdout()
-        attack_logger.log_summary()
+    attack_logger.log_summary()
+    attack_logger.flush()
     print()
     finish_time = time.time()
     print(f'Attack time: {time.time() - load_time}s')
