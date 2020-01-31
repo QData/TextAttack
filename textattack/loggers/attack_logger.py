@@ -101,10 +101,11 @@ class AttackLogger:
         # Attack success rate
         if self.successful_attacks + self.failed_attacks == 0:
             attack_success_rate = 0
-            average_perc_words_perturbed = 0
-        
         else:
             attack_success_rate = self.successful_attacks * 100.0 / (self.successful_attacks + self.failed_attacks) 
+        if not len(self.perturbed_word_percentages):
+            average_perc_words_perturbed = 0
+        else:
             average_perc_words_perturbed = statistics.mean(self.perturbed_word_percentages)
             
         attack_success_rate = str(round(attack_success_rate, 2)) + '%'

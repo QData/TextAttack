@@ -28,6 +28,12 @@ class AttackResult:
         self.orig_score = orig_score
         self.perturbed_score = perturbed_score
         self.num_queries = 0
+        
+        # We don't want the TokenizedText `ids` sticking around clogging up 
+        # space on our devices. Delete them here, if they're still present,
+        # because we won't need them anymore anyway.
+        self.original_text.delete_tensors()
+        self.perturbed_text.delete_tensors()
 
     def __data__(self, color_method=None):
         data = [self.result_str(color_method=color_method), 

@@ -57,7 +57,7 @@ def Jin2019TextFoolerAdjusted(model, SE_thresh=0.98, sentence_encoder='use'):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(model, transformations=transformation,
+    attack = GreedyWordSwapWIR(model, transformation=transformation,
         constraints=constraints, max_depth=None)
     
     return attack

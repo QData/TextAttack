@@ -131,7 +131,7 @@ class SentenceEncoder(Constraint):
             # window size.
             if self.skip_text_shorter_than_window and len(x_adv.words) < self.window_size: 
                 scores[i] = 1
-            x_adv.attack_attrs['similarity_score'] = scores[i]
+            x_adv.attack_attrs['similarity_score'] = scores[i].item()
         mask = (scores >= self.threshold)
         return np.array(x_adv_list)[mask.cpu().numpy()]
     
