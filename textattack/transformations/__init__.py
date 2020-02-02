@@ -1,3 +1,4 @@
+from .composite_transformation import CompositeTransformation
 from .word_swap import WordSwap
 from .word_swap_embedding import WordSwapEmbedding
 from .word_swap_homoglyph import WordSwapHomoglyph
