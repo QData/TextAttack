@@ -12,3 +12,4 @@ tensorflow-gpu==2
 tensorflow_hub
 tqdm
 visdom
+pytest
