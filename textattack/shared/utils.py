@@ -1,3 +1,4 @@
+import filelock
 import json
 import logging
 import os
@@ -34,9 +35,14 @@ def download_if_needed(folder_name):
         
         @TODO: Prevent parallel downloads of the same file with a lock.
     """
-    # Check if already downloaded.
     cache_dest_path = path_in_cache(folder_name)
+    # Use a lock to prevent concurrent downloads.
+    cache_dest_lock_path = cache_dest_path + '.lock'
+    cache_file_lock = filelock.FileLock(cache_dest_lock_path)
+    cache_file_lock.acquire()
+    # Check if already downloaded.
     if os.path.exists(cache_dest_path):
+        cache_file_lock.release()
         return cache_dest_path
     # If the file isn't found yet, download the zip file to the cache.
     downloaded_file = tempfile.NamedTemporaryFile(
@@ -54,6 +60,7 @@ def download_if_needed(folder_name):
     # Remove the temporary file.
     os.remove(downloaded_file.name)
     print(f'Successfully saved {folder_name} to cache.')
+    cache_file_lock.release()
     return cache_dest_path
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
