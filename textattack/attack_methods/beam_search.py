@@ -20,9 +20,7 @@ class BeamSearch(Attack):
         original_tokenized_text = tokenized_text
         original_prob = self._call_model([tokenized_text]).squeeze().max()
         num_words_changed = 0
-        unswapped_word_indices = list(range(len(tokenized_text.words)))
-        new_tokenized_text = None
-        new_text_label = None
+        default_unswapped_word_indices = list(range(len(tokenized_text.words)))
         beam = [(tokenized_text, unswapped_word_indices)]
         self.max_words_changed = min(self.max_words_changed, len(tokenized_text.words))
         while (self.max_words_changed is not None) and num_words_changed < self.max_words_changed:
