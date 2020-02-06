@@ -134,9 +134,10 @@ def get_args():
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
+    attack_choices = ','.join(ATTACK_CLASS_NAMES.keys())
     attack_group.add_argument('--attack', '--attack_method', type=str, 
         required=False, default='greedy-word-wir', 
-        help='The type of attack to run.', choices=ATTACK_CLASS_NAMES.keys())
+        help=f'The type of attack to run. choices: {attack_choices}')
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None,
         help='full attack recipe (overrides provided transformation & constraints)',

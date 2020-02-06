@@ -56,7 +56,7 @@ def main():
     load_time = time.time()
 
     if args.interactive:
-        raise RuntimeException('Cannot run in parallel if --interactive set')
+        raise RuntimeError('Cannot run in parallel if --interactive set')
     
     in_queue = torch.multiprocessing.Queue()
     out_queue =  torch.multiprocessing.Queue()
