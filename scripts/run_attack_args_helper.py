@@ -85,6 +85,7 @@ CONSTRAINT_CLASS_NAMES = {
 }
 
 ATTACK_CLASS_NAMES = {
+    'beam-search':        'textattack.attack_methods.BeamSearch',
     'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
     'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
     'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
