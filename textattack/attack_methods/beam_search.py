@@ -34,10 +34,7 @@ class BeamSearch(Attack):
                 )
                 for next_text in transformations:
                     new_unswapped_word_indices = unswapped_word_indices[:]
-                    try:
-                        new_unswapped_word_indices.remove(next_text.attack_attrs['modified_word_index'])
-                    except:
-                        import pdb; pdb.set_trace()
+                    new_unswapped_word_indices.remove(next_text.attack_attrs['modified_word_index'])
                     potential_next_beam.append((next_text, new_unswapped_word_indices))
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
