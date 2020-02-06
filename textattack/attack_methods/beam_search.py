@@ -6,24 +6,30 @@ class BeamSearch(Attack):
     An attack that greedily chooses from a list of possible 
     perturbations.
     Args:
-        model: The model to attack.
-        transformation: The type of transformation.
-        max_words_changed (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
+        model (nn.Module): The model to attack.
+        transformation (Transformation): The type of transformation.
+        beam_width (int): the number of candidates to retain at each step
+        max_words_changed (:obj:`int`, optional): The maximum number of words 
+            to change.
         
     """
-    def __init__(self, model, transformation, constraints=[], beam_width=8, max_words_changed=32):
+    def __init__(self, model, transformation, constraints=[], beam_width=8, 
+            max_words_changed=32):
         super().__init__(model, transformation, constraints=constraints)
         self.beam_width = beam_width
         self.max_words_changed = max_words_changed
         
-    def attack_one(self, original_label, tokenized_text):
-        original_tokenized_text = tokenized_text
-        original_prob = self._call_model([tokenized_text]).squeeze().max()
+    def attack_one(self, original_label, original_tokenized_text):
+        max_words_changed = min(
+            self.max_words_changed, 
+            len(original_tokenized_text.words)
+        )
+        original_prob = self._call_model([original_tokenized_text]).max()
+        default_unswapped_word_indices = list(range(len(original_tokenized_text.words)))
+        beam = [(original_tokenized_text, default_unswapped_word_indices)]
         num_words_changed = 0
-        default_unswapped_word_indices = list(range(len(tokenized_text.words)))
-        beam = [(tokenized_text, unswapped_word_indices)]
-        self.max_words_changed = min(self.max_words_changed, len(tokenized_text.words))
-        while (self.max_words_changed is not None) and num_words_changed < self.max_words_changed:
+        new_text_label = original_label
+        while num_words_changed < max_words_changed:
             num_words_changed += 1
             potential_next_beam = []
             for text, unswapped_word_indices in beam:
@@ -31,8 +37,9 @@ class BeamSearch(Attack):
                         text, indices_to_replace=unswapped_word_indices
                 )
                 for next_text in transformations:
-                    new_unswapped_word_indices = unswapped_word_indices[:]
-                    new_unswapped_word_indices.remove(next_text.attack_attrs['modified_word_index'])
+                    new_unswapped_word_indices = unswapped_word_indices.copy()
+                    modified_word_index = next_text.attack_attrs['modified_word_index']
+                    new_unswapped_word_indices.remove(modified_word_index)
                     potential_next_beam.append((next_text, new_unswapped_word_indices))
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
@@ -47,9 +54,10 @@ class BeamSearch(Attack):
             if new_text_label != original_label:
                 new_prob = scores[best_index].max()
                 break
-            # Otherwise, remove this word from list of words to change, fill beam,
-            # and iterate.
-            best_indices = scores.argmax(dim=0)[:self.beam_width]
+            # Otherwise, refill the beam. This works by sorting the scores from
+            # the original label in ascending order and filling the beam from
+            # there.
+            best_indices = scores[:, original_label].argsort()[:self.beam_width]
             beam = [potential_next_beam[i] for i in best_indices]
            
         
