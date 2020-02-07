@@ -71,7 +71,8 @@ def main():
             if not args.disable_stdout:
                 print('\n')
             else:
-                pbar.update(1)
+                if not isinstance(result, textattack.attack_results.SkippedAttackResult):
+                    pbar.update(1)
         pbar.close()
         print()
         # Enable summary stdout

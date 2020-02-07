@@ -8,7 +8,8 @@ sentence_transformers
 spacy
 torch
 transformers>=2.0.0
-tensorflow-gpu==2
+tensorflow-gpu>=2
 tensorflow_hub
+terminaltables
 tqdm
 visdom
