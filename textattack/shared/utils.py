@@ -57,10 +57,10 @@ def download_if_needed(folder_name):
         print('Copying', downloaded_file.name, 'to', cache_dest_path + '.')
         os.makedirs(os.path.dirname(cache_dest_path), exist_ok=True)
         shutil.copyfile(downloaded_file.name, cache_dest_path)
+    cache_file_lock.release()
     # Remove the temporary file.
     os.remove(downloaded_file.name)
     print(f'Successfully saved {folder_name} to cache.')
-    cache_file_lock.release()
     return cache_dest_path
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
