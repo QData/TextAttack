@@ -79,7 +79,7 @@ def main():
         if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
             pbar.update()
             num_results += 1
-        elif isinstance(result, textattack.attack_results.SkippedAttackResult):
+        else:
             label, text = next(dataset)
             in_queue.put((label, text))
     pbar.close()
