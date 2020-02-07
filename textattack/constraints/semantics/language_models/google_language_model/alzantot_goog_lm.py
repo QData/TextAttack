@@ -18,7 +18,7 @@ tf.get_logger().setLevel('INFO')
 
 # @TODO automatically choose between GPU and CPU.
 
-class GoogLMHelper(object):
+class GoogLMHelper:
     '''
     An implementation of `<https://arxiv.org/abs/1804.07998>`_
     adapted from `<https://github.com/nesl/nlp_adversarial_examples>`_. 
@@ -42,17 +42,10 @@ class GoogLMHelper(object):
             self.sess = tf.compat.v1.Session(graph=self.graph)
         with self.graph.as_default():
             self.t = lm_utils.LoadModel(self.sess, self.graph, self.PBTXT_PATH, self.CKPT_PATH)
-
-    def get_words_probs(self, prefix_words, list_words, suffix=None):
-        '''
-        Retrieves the probability of words.
-
-        Args:
-            prefix_words:
-            list_words:
-            suffix (:obj:`type`, optional): Defaults to None. 
-
-        '''
+        
+        self.lm_cache = {}
+    
+    def get_words_probs_uncached(self, prefix_words, list_words):
         targets = np.zeros([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.int32)
         weights = np.ones([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.float32)
 
@@ -78,36 +71,24 @@ class GoogLMHelper(object):
             }
         )
         words_ids = [self.vocab.word_to_id(w) for w in list_words]
-        word_probs =[softmax[0][w_id] for w_id in words_ids]
-        word_probs = np.array(word_probs)
-
-        if suffix is None:
-            suffix_probs = np.ones(word_probs.shape)
-        else:
-            suffix_id = self.vocab.word_to_id(suffix)
-            suffix_probs = []
-            for idx, w_id in enumerate(words_ids):
-                inputs = [[w_id]]
-                w_char_ids = self.vocab.word_to_char_ids(list_words[idx])
-                char_ids_inputs[0, 0, :] = w_char_ids
-                softmax = self.sess.run(self.t['softmax_out'],
-                                         feed_dict={
-                                             self.t['char_inputs_in']: char_ids_inputs,
-                                             self.t['inputs_in']: inputs,
-                                             self.t['targets_in']: targets,
-                                             self.t['target_weights_in']: weights
-                                         })
-                suffix_probs.append(softmax[0][suffix_id])
-            suffix_probs = np.array(suffix_probs)            
+        word_probs = [softmax[0][w_id] for w_id in words_ids]
+        return np.array(word_probs)
         
-        return suffix_probs * word_probs
+    def get_words_probs(self, prefix, list_words):
+        """
+        Retrieves the probability of words.
 
-
-if __name__ == '__main__':
-   my_lm = LM() 
-   list_words = 'play will playing played afternoon'.split()
-   prefix = 'i'
-   suffix = 'yesterday'
-   probs = (my_lm.get_words_probs(prefix, list_words, suffix))
-   for i, w in enumerate(list_words):
-       print(w, ' - ', probs[i])
+        Args:
+            prefix_words
+            list_words
+        """
+        uncached_words = []
+        for word in list_words:
+            if (prefix, word) not in self.lm_cache:
+                if word not in uncached_words:
+                    uncached_words.append(word)
+        probs = self.get_words_probs_uncached(prefix, uncached_words)
+        for word, prob in zip(uncached_words, probs):
+            self.lm_cache[prefix, word] = prob
+        return [self.lm_cache[prefix, word] for word in list_words]
+        

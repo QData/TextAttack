@@ -1,7 +1,10 @@
 import argparse
+import numpy as np
 import os
+import random
 import textattack
 import time
+import torch
 
 RECIPE_NAMES = {
     'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
@@ -91,6 +94,10 @@ ATTACK_CLASS_NAMES = {
     'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
 }
 
+def set_seed(random_seed):
+    random.seed(random_seed)
+    np.random.seed(random_seed)
+    torch.manual_seed(random_seed)
 
 def get_args():
     parser = argparse.ArgumentParser(
@@ -135,6 +142,9 @@ def get_args():
     parser.add_argument('--attack_n', action='store_true', default=False,
         help='Whether to run attack until `n` examples have been attacked (not skipped).')
     
+def str_to_int(s): return sum((ord(c) for c in s))
+    parser.add_argument('--random_seed', default=str_to_int('TEXTATTACK'))
+    
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     attack_choices = ','.join(ATTACK_CLASS_NAMES.keys())
@@ -147,6 +157,8 @@ def get_args():
         choices=RECIPE_NAMES.keys())
     
     args = parser.parse_args()
+    
+    set_seed(args.random_seed)
     
     return args
 
