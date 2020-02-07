@@ -10,10 +10,10 @@ class CompositeTransformation(Transformation):
         self.transformations = transformations
     
     def __call__(self, *args, **kwargs):
-        new_tokenized_texts = []
+        new_tokenized_texts = set()
         for transformation in self.transformations:
-            new_tokenized_texts.extend(
+            new_tokenized_texts.update(
                 transformation(*args, **kwargs)
             )
-        return list(set(new_tokenized_texts))
+        return list(new_tokenized_texts)
         
