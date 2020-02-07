@@ -33,14 +33,14 @@ import nltk
 nltk.download('stopwords')
 ```
 
-We use spaCy's English model. To download it, after installing spaCy type in terminal:
+We use spaCy's English model. To download it, after installing spaCy run:
 
 ```
 python -m spacy download en
 ```
 
 ### Cache
-TextAttack provides pretrained models and datasets for user convenience. By default, all this stuff is downloaded to `~/.cache`. You can change this location by editing the `CACHE_DIR` field in `textattack/config.json`.
+TextAttack provides pretrained models and datasets for user convenience. By default, all this stuff is downloaded to `~/.cache`. You can change this location by editing the `CACHE_DIR` field in `config.json`.
 
 ### Common Errors
 
@@ -83,7 +83,7 @@ We've included a few pretrained models that you can download and run out-of-the-
 
 ### Attacks
 
-Attacks are take as input a TokenizedText, and output either an AttackResult if it succeeds or a FailedAttackResult if it fails. We split attacks into black box, which only have access to the model’s call function, and white box, which have access to the whole model. For standardization and ease of ablation, we formulate an attack as a series of transformations in a search space, subject to certain constraints. An attack may call get\_transformations for a given transformation to get a list of possible transformations filtered by meeting all of the attack’s constraints.
+Attacks all take as input a TokenizedText, and output either an AttackResult if it succeeds or a FailedAttackResult if it fails. We split attacks into black box, which only have access to the model’s call function, and white box, which have access to the whole model. For standardization and ease of ablation, we formulate an attack as a series of transformations in a search space, subject to certain constraints. An attack may call get\_transformations for a given transformation to get a list of possible transformations filtered by meeting all of the attack’s constraints.
 
 ### Transformations
 
