@@ -30,6 +30,12 @@ class TokenizedText:
         self.words = raw_words(text)
         self.text = text
         self.attack_attrs = attack_attrs
+
+    def __eq__(self, other):
+        return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
+    
+    def __hash__(self):
+        return hash(self.text)
     
     def delete_tensors(self):
         """ Delete tensors to clear up GPU space. Only should be called

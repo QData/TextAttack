@@ -15,5 +15,5 @@ class CompositeTransformation(Transformation):
             new_tokenized_texts.extend(
                 transformation(*args, **kwargs)
             )
-        return new_tokenized_texts
+        return list(set(new_tokenized_texts))
         
