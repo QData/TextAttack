@@ -95,7 +95,8 @@ ATTACK_CLASS_NAMES = {
     'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
     'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
     'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
-    'mha':                'textattack.attack_methods.MetropolisHastingsSampling'
+    'mha':                'textattack.attack_methods.MetropolisHastingsSampling',
+    'mcts':               'textattack.attack_methods.MonteCarloTreeSearch'
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {
