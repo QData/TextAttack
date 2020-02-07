@@ -1,4 +1,5 @@
 import torch
+from copy import deepcopy
 from .utils import get_device
 
 class TokenizedText:
@@ -150,7 +151,7 @@ class TokenizedText:
             text = text[word_end:]
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
-            attack_attrs=self.attack_attrs)
+            attack_attrs=deepcopy(self.attack_attrs))
     
     def clean_text(self):
         """ Represents self in a clean, printable format. Joins text with multiple
