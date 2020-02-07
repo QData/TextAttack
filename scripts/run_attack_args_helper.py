@@ -142,7 +142,7 @@ def get_args():
     parser.add_argument('--attack_n', action='store_true', default=False,
         help='Whether to run attack until `n` examples have been attacked (not skipped).')
     
-def str_to_int(s): return sum((ord(c) for c in s))
+    def str_to_int(s): return sum((ord(c) for c in s))
     parser.add_argument('--random_seed', default=str_to_int('TEXTATTACK'))
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
