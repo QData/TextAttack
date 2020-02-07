@@ -76,8 +76,12 @@ def main():
     while num_results < args.num_examples:
         result = out_queue.get(block=True)
         attack_logger.log_result(result)
-        pbar.update()
-        num_results += 1
+        if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
+            pbar.update()
+            num_results += 1
+        elif isinstance(result, textattack.attack_results.SkippedAttackResult):
+            label, text = next(dataset)
+            in_queue.put((label, text))
     pbar.close()
     print()
     # Enable summary stdout.

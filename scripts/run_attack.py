@@ -71,7 +71,7 @@ def main():
             if not args.disable_stdout:
                 print('\n')
             else:
-                if not isinstance(result, textattack.attack_results.SkippedAttackResult):
+                if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
                     pbar.update(1)
         pbar.close()
         print()
