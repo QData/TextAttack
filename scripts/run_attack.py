@@ -7,7 +7,7 @@ import time
 import tqdm
 import os
 
-from textattack_args_helper import *
+from run_attack_args_helper import *
 
 def main():
     args = get_args()

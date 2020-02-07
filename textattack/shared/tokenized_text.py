@@ -1,4 +1,5 @@
 import torch
+from copy import deepcopy
 from .utils import get_device
 
 class TokenizedText:
@@ -30,6 +31,12 @@ class TokenizedText:
         self.words = raw_words(text)
         self.text = text
         self.attack_attrs = attack_attrs
+
+    def __eq__(self, other):
+        return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
+    
+    def __hash__(self):
+        return hash(self.text)
     
     def delete_tensors(self):
         """ Delete tensors to clear up GPU space. Only should be called
@@ -150,7 +157,7 @@ class TokenizedText:
             text = text[word_end:]
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
-            attack_attrs=self.attack_attrs)
+            attack_attrs=deepcopy(self.attack_attrs))
     
     def clean_text(self):
         """ Represents self in a clean, printable format. Joins text with multiple
