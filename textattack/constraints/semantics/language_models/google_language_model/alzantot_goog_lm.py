@@ -2,7 +2,6 @@
     Author: Moustafa Alzantot (malzantot@ucla.edu)
     All rights reserved.
 """
-import functools
 import os
 import tensorflow as tf
 import sys
@@ -19,7 +18,7 @@ tf.get_logger().setLevel('INFO')
 
 # @TODO automatically choose between GPU and CPU.
 
-class GoogLMHelper(object):
+class GoogLMHelper:
     '''
     An implementation of `<https://arxiv.org/abs/1804.07998>`_
     adapted from `<https://github.com/nesl/nlp_adversarial_examples>`_. 
@@ -43,10 +42,10 @@ class GoogLMHelper(object):
             self.sess = tf.compat.v1.Session(graph=self.graph)
         with self.graph.as_default():
             self.t = lm_utils.LoadModel(self.sess, self.graph, self.PBTXT_PATH, self.CKPT_PATH)
+        
+        self.lm_cache = {}
     
-    @functools.lru_cache(maxsize=2**12)
-    def get_words_probs_cached(self, prefix_words, list_words_joined):
-        list_words = list_words_joined.split()
+    def get_words_probs_uncached(self, prefix_words, list_words):
         targets = np.zeros([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.int32)
         weights = np.ones([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.float32)
 
@@ -75,7 +74,7 @@ class GoogLMHelper(object):
         word_probs = [softmax[0][w_id] for w_id in words_ids]
         return np.array(word_probs)
         
-    def get_words_probs(self, prefix_words, list_words):
+    def get_words_probs(self, prefix, list_words):
         """
         Retrieves the probability of words.
 
@@ -83,5 +82,12 @@ class GoogLMHelper(object):
             prefix_words
             list_words
         """
-        list_words_joined = ' '.join(list_words)
-        return self.get_words_probs_cached(prefix_words, list_words_joined)
+        uncached_words = []
+        for word in list_words:
+            if (prefix, word) not in self.lm_cache:
+                uncached_words.append(word)
+        probs = self.get_words_probs_uncached(prefix, uncached_words)
+        for word, prob in zip(uncached_words, probs):
+            self.lm_cache[prefix, word] = prob
+        return [self.lm_cache[prefix, word] for word in list_words]
+        
