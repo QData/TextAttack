@@ -1,5 +1,6 @@
-import sys
 import os
+import sys
+import terminaltables
 
 from .logger import Logger
 
@@ -23,8 +24,13 @@ class FileLogger(Logger):
         self.fout.write('\n')
 
     def log_rows(self, rows, title, window_id):
-        for row in rows:
-            self.fout.write(f'{row[0]} {row[1]}\n')
+        if self.stdout:
+            table_rows = [[title, '']] + rows
+            table = terminaltables.SingleTable(table_rows)
+            self.fout.write(table.table)
+        else:
+            for row in rows:
+                self.fout.write(f'{row[0]} {row[1]}\n')
 
     def log_sep(self):
         self.fout.write('-' * 90 + '\n')

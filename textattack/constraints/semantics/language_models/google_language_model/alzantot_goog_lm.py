@@ -85,7 +85,8 @@ class GoogLMHelper:
         uncached_words = []
         for word in list_words:
             if (prefix, word) not in self.lm_cache:
-                uncached_words.append(word)
+                if word not in uncached_words:
+                    uncached_words.append(word)
         probs = self.get_words_probs_uncached(prefix, uncached_words)
         for word, prob in zip(uncached_words, probs):
             self.lm_cache[prefix, word] = prob

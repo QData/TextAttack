@@ -54,7 +54,6 @@ class WordEmbeddingDistance(Constraint):
         # x and y are word IDs and x < y.
         if self.max_mse_dist is not None and os.path.exists(mse_dist_file):
             self.mse_dist_mat = pickle.load(open(mse_dist_file, 'rb'))
-            print('loaded', len(self.mse_dist_mat),'ids')
         else:
             self.mse_dist_mat = {}
         if self.min_cos_sim is not None and os.path.exists(cos_sim_file):
