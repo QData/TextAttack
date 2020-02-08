@@ -1,3 +1,4 @@
+import lru
 import math
 import numpy as np
 import os
@@ -39,6 +40,7 @@ class Attack:
         self.transformation = transformation
         self.constraints = constraints
         self.is_black_box = is_black_box
+        self._call_model_cache = lru.LRU(2**12)
     
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
@@ -86,7 +88,7 @@ class Attack:
         """
         raise NotImplementedError()
         
-    def _call_model(self, tokenized_text_list, batch_size=8):
+    def _call_model_uncached(self, tokenized_text_list, batch_size=8):
         """
         Returns model predictions for a list of TokenizedText objects. 
         
@@ -142,6 +144,14 @@ class Attack:
             # error in the summation.
             raise ValueError('Model scores do not add up to 1.')
         return scores
+    
+    def _call_model(self, tokenized_text_list):
+        uncached_list = [text for text in tokenized_text_list if text not in self._call_model_cache]
+        scores = self._call_model_uncached(uncached_list)
+        for text, score in zip(uncached_list, scores):
+            self._call_model_cache[text] = score.cpu()
+        final_scores = [self._call_model_cache[text].to(utils.get_device()) for text in tokenized_text_list]
+        return torch.stack(final_scores)
  
     def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False):
         examples = []
