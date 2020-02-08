@@ -22,6 +22,6 @@ class Constraint:
         return [x_adv for x_adv in x_adv_list 
                 if self.__call__(x, x_adv, original_text=original_text)]
     
-    def __call__(self, x, x_adv):
+    def __call__(self, x, x_adv, original_text=None):
         """ Returns True if C(x,x_adv) is true. """
         raise NotImplementedError()
