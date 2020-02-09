@@ -8,6 +8,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 
+DEBUG = True
+
 class Node:
 
     def __init__(self, depth, parent):
@@ -34,6 +36,7 @@ class SearchTree:
         self.terminate = False
 
     def reset_tree(self):
+        self.unchanged_words = set(range(len(original_text.words)))
         self.game_value = 0.0
         self.terminate = False
 
@@ -51,7 +54,7 @@ class MonteCarloTreeSearch(Attack):
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
     def __init__(self, model, transformation, constraints=[], 
-        reward_type="prob_diff", max_iter=4000, max_words_changed=10
+        reward_type="prob_diff", max_iter=50, max_words_changed=5
     ):
         super().__init__(model, transformation, constraints=constraints)
         self.reward_type = reward_type
@@ -64,22 +67,24 @@ class MonteCarloTreeSearch(Attack):
     def choose_random_action(self):
         return random.choice(tuple(self.tree.unchanged_words))
 
-    def play_action(self, current_text, action):
-        """
-        Randomly generate a transformation for the chosen word of current text
 
-        Args:
-            action: index of the word to transform
+    # def play_action(self, current_text, action):
+    #     """
+    #     Generate transformation for the chosen word of current text and choose the best one.
 
-        Returns: TokenizedText object
-        """
+    #     Args:
+    #         action: index of the word to transform
 
-        transformations = self.get_transformations(current_text, indices_to_replace=[action])
-        if len(transformations) != 0:
-            random_index = random.randint(0, len(transformations)-1)
-            return transformations[random_index]
-        else:
-            return current_text
+    #     Returns: TokenizedText object, list of scores
+    #     """
+
+    #     transformations = self.get_transformations(current_text, indices_to_replace=[action])
+    #     if len(transformations) != 0:
+    #         scores = self._call_model(transformations)
+    #         best_index = scores[:, self.tree.original_label].argmin()
+    #         return transformations[best_index], scores[best_index]
+    #     else:
+    #         return current_text, None
 
     def evaluate_transformation(self, transformed_text):
         prob_scores = self._call_model([transformed_text])[0]
@@ -87,6 +92,22 @@ class MonteCarloTreeSearch(Attack):
         value = self.tree.orignal_score - prob_scores[self.tree.original_label]
 
         return new_label, value
+    
+    def evaluate_action(self, current_text, action):
+        transformations = self.get_transformations(current_text, indices_to_replace=[action])
+        if len(transformations) != 0:
+            prob_scores = self._call_model(transformations)
+            best_index = prob_scores[:, self.tree.original_label].argmin()
+            orig_label_removed_scores = torch.cat((prob_scores[best_index][:self.tree.original_label], 
+                                            prob_scores[best_index][self.tree.original_label+1:])
+                                        )
+
+            value = orig_label_removed_scores.max().item() - prob_scores[best_index][self.tree.original_label].item()
+            new_label = prob_scores[best_index].argmax().item()
+
+            return transformations[best_index], new_label, value
+        else:
+            return current_text, self.tree.original_label, -1
 
     def backprop(self, current_node):
         while current_node is not None:
@@ -99,8 +120,7 @@ class MonteCarloTreeSearch(Attack):
 
         while not self.tree.terminate:
             action = self.choose_random_action()
-            current_text = self.play_action(current_text, action)
-            new_label, value = self.evaluate_transformation(current_text)
+            current_text, new_label, value = self.evaluate_action(current_text, action)
 
             if new_label != self.tree.original_label:
                 self.tree.terminate = True
@@ -116,8 +136,7 @@ class MonteCarloTreeSearch(Attack):
             current_node = current_node.children[action]
             self.tree.unchanged_words.remove(action)
 
-            current_text = self.play_action(current_text, action)
-            new_label, value = self.evaluate_transformation(current_text)
+            current_text, new_label, value = self.evaluate_action(current_text, action)
 
             if new_label != self.tree.original_label:
                 self.tree.terminate = True
@@ -154,8 +173,8 @@ class MonteCarloTreeSearch(Attack):
             current_node = best_next_node
 
             # Visiting the current node
-            current_text = self.play_action(current_text, best_action)
-            new_label, value = self.evaluate_transformation(current_text)
+            current_text, new_label, value = self.evaluate_action(current_text, best_action)
+            self.tree.unchanged_words.remove(best_action)
 
             if new_label != self.tree.original_label:
                 self.tree.terminate = True
@@ -163,9 +182,7 @@ class MonteCarloTreeSearch(Attack):
 
         return current_node, current_text
 
-    def run_mcts(self, original_label, tokenized_text):
-        original_prob = self._call_model([tokenized_text]).squeeze()
-        original_score = original_prob[original_label]
+    def run_mcts(self, original_label, original_score, tokenized_text):
 
         self.tree = SearchTree(tokenized_text, original_label, original_score, self.max_words_changed)
 
@@ -195,14 +212,14 @@ class MonteCarloTreeSearch(Attack):
     def attack_one(self, original_label, tokenized_text):
 
         original_tokenized_text = tokenized_text
+        original_prob = self._call_model([original_tokenized_text]).squeeze()
+        original_score = original_prob[original_label]
         max_words_changed = min(self.max_words_changed, len(tokenized_text.words))
 
         for i in range(max_words_changed):
-            best_next_action = self.run_mcts(original_label, tokenized_text)
+            best_next_action = self.run_mcts(original_label, original_score, tokenized_text)
 
-            tokenized_text = self.play_action(tokenized_text, best_next_action)
-
-            new_label, _ = self.evaluate_transformation(tokenized_text)
+            tokenized_text, new_label, _ = self.evaluate_action(tokenized_text, best_next_action)
 
             if new_label != original_label:
                 break
