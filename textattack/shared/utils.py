@@ -32,10 +32,9 @@ def s3_url(uri):
 def download_if_needed(folder_name):
     """ Folder name will be saved as `.cache/textattack/[folder name]`. If it
         doesn't exist, the zip file will be downloaded and extracted. 
-        
-        @TODO: Prevent parallel downloads of the same file with a lock.
     """
     cache_dest_path = path_in_cache(folder_name)
+    os.makedirs(os.path.dirname(cache_dest_path), exist_ok=True)
     # Use a lock to prevent concurrent downloads.
     cache_dest_lock_path = cache_dest_path + '.lock'
     cache_file_lock = filelock.FileLock(cache_dest_lock_path)
@@ -55,7 +54,6 @@ def download_if_needed(folder_name):
         unzip_file(downloaded_file.name, cache_dest_path)
     else:
         print('Copying', downloaded_file.name, 'to', cache_dest_path + '.')
-        os.makedirs(os.path.dirname(cache_dest_path), exist_ok=True)
         shutil.copyfile(downloaded_file.name, cache_dest_path)
     cache_file_lock.release()
     # Remove the temporary file.

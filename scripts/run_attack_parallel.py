@@ -33,8 +33,8 @@ def attack_from_queue(args, in_queue, out_queue):
             result = next(results_gen)
             out_queue.put(result)
         except Exception as e:
-            print('Process on GPU', gpu_id, 'got exception:', e)
-            raise e
+            out_queue.put(e)
+            exit()
 
 def main():
     pytorch_multiprocessing_workaround()
@@ -75,6 +75,8 @@ def main():
     pbar = tqdm.tqdm(total=args.num_examples)
     while num_results < args.num_examples:
         result = out_queue.get(block=True)
+        if isinstance(result, Exception):
+            raise result
         attack_logger.log_result(result)
         if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
             pbar.update()
