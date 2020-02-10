@@ -169,7 +169,6 @@ class Attack:
             results (List[Tuple[Int, TokenizedText, Boolean]]): a list of
                 objects containing (label, text, was_skipped)
         """
-        print('attack_n:', attack_n)
         examples = []
         n = 0
         for label, text in dataset:
