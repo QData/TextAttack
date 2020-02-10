@@ -10,9 +10,9 @@
 """
 
 from textattack.attack_methods import GeneticAlgorithm
+from textattack.constraints.overlap import WordsPerturbedPercentage
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.language_models import GoogleLanguageModel
-from textattack.constraints.overlap import MaximumWordsPerturbedPercentage
 from textattack.transformations import WordSwapEmbedding
 
 def Alzantot2018GeneticAlgorithm(model):
@@ -29,7 +29,7 @@ def Alzantot2018GeneticAlgorithm(model):
     # Maximum words perturbed percentage of 20%
     #
     constraints.append(
-            MaximumWordsPerturbedPercentage(max_percent=20)
+            WordsPerturbedPercentage(max_percent=20)
     )
     #
     # Maximum word embedding euclidean distance of 0.5.

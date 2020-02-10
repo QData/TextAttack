@@ -37,9 +37,6 @@ class TokenizedText:
     
     def __hash__(self):
         return hash(self.text)
-
-    def __len__(self):
-        return len(self.words)
     
     def delete_tensors(self):
         """ Delete tensors to clear up GPU space. Only should be called

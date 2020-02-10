@@ -34,10 +34,6 @@ def Alzantot2018GeneticAlgorithmAdjusted(model, SE_thresh=0.98, sentence_encoder
     #
     # Universal Sentence Encoder with a minimum angular similarity of ε = 0.7.
     #
-    # In the TextFooler code, they forget to divide the angle between the two
-    # embeddings by pi. So if the original threshold was that 1 - sim >= 0.7, the 
-    # new threshold is 1 - (0.3) / pi = 0.90445
-    #
     if sentence_encoder == 'bert':
         se_constraint = BERT(threshold=SE_thresh,
             metric='cosine', compare_with_original=False, window_size=15,

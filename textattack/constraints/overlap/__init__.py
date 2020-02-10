@@ -1,1 +1,1 @@
-from .max_words_perturbed_percentage import MaximumWordsPerturbedPercentage
+from .words_perturbed_percentage import WordsPerturbedPercentage
