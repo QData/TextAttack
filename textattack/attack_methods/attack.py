@@ -40,7 +40,7 @@ class Attack:
         self.transformation = transformation
         self.constraints = constraints
         self.is_black_box = is_black_box
-        self._call_model_cache = lru.LRU(2**14)
+        self._call_model_cache = lru.LRU(2**18)
     
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
