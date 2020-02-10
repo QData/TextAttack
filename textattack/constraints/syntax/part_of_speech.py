@@ -11,7 +11,7 @@ class PartOfSpeech(Constraint):
     def __init__(self, tagset='universal', allow_verb_noun_swap=True):
         self.tagset = tagset
         self.allow_verb_noun_swap = allow_verb_noun_swap
-        self._pos_tag_cache = lru.LRU(2**12)
+        self._pos_tag_cache = lru.LRU(2**14)
    
     def _can_replace_pos(self, pos_a, pos_b):
         return (pos_a == pos_b) or (self.allow_verb_noun_swap and set([pos_a,pos_b]) <= set(['NOUN','VERB']))

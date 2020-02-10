@@ -34,15 +34,15 @@ def attack_from_queue(args, in_queue, out_queue):
             out_queue.put(result)
         except Exception as e:
             out_queue.put(e)
-            exit()
+            raise e
 
-def main():
+def run(args):
     pytorch_multiprocessing_workaround()
     # This makes `args` a namespace that's sharable between processes.
     # We could do the same thing with the model, but it's actually faster
     # to let each thread have their own copy of the model.
     args = torch.multiprocessing.Manager().Namespace(
-        **vars(get_args())
+        **vars(args)
     )
     start_time = time.time()
     
@@ -72,7 +72,7 @@ def main():
     )
     # Log results asynchronously and update progress bar.
     num_results = 0
-    pbar = tqdm.tqdm(total=args.num_examples)
+    pbar = tqdm.tqdm(total=args.num_examples, smoothing=0)
     while num_results < args.num_examples:
         result = out_queue.get(block=True)
         if isinstance(result, Exception):
@@ -102,4 +102,5 @@ def pytorch_multiprocessing_workaround():
     except RuntimeError:
         pass
 
-if __name__ == '__main__': main()
+if __name__ == '__main__': 
+    run(get_args())
