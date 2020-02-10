@@ -2,6 +2,7 @@
     Author: Moustafa Alzantot (malzantot@ucla.edu)
     All rights reserved.
 """
+import lru
 import os
 import tensorflow as tf
 import sys
@@ -43,7 +44,7 @@ class GoogLMHelper:
         with self.graph.as_default():
             self.t = lm_utils.LoadModel(self.sess, self.graph, self.PBTXT_PATH, self.CKPT_PATH)
         
-        self.lm_cache = {}
+        self.lm_cache = lru.LRU(2**18)
     
     def get_words_probs_uncached(self, prefix_words, list_words):
         targets = np.zeros([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.int32)

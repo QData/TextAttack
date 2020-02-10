@@ -123,7 +123,7 @@ class AttackLogger:
             ['Accuracy under attack:', accuracy_under_attack],
             ['Attack success rate:', attack_success_rate],
             ['Average perturbed word %:', average_perc_words_perturbed],
-            ['Average num. words per input', average_num_words],
+            ['Average num. words per input:', average_num_words],
         ]
         
         num_queries = [r.num_queries for r in self.results]

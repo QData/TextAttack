@@ -40,7 +40,7 @@ class Attack:
         self.transformation = transformation
         self.constraints = constraints
         self.is_black_box = is_black_box
-        self._call_model_cache = lru.LRU(2**12)
+        self._call_model_cache = lru.LRU(2**14)
     
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
@@ -153,15 +153,30 @@ class Attack:
         final_scores = [self._call_model_cache[text].to(utils.get_device()) for text in tokenized_text_list]
         return torch.stack(final_scores)
  
-    def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False):
+    def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False,
+            attack_n=False):
+        """ 
+        Gets examples from a dataset and tokenizes them.
+
+        Args:
+            dataset: An iterable of (label, text) pairs
+            num_examples (int): the number of examples to return
+            shuffle (:obj:`bool`, optional): Whether to shuffle the data
+            attack_n (bool): If true, returns `num_examples` non-skipped
+                examples. If false, returns `num_examples` total examples.
+        
+        Returns:
+            results (List[Tuple[Int, TokenizedText, Boolean]]): a list of
+                objects containing (label, text, was_skipped)
+        """
         examples = []
-        i = 0
         n = 0
         for label, text in dataset:
-            i += 1
             tokenized_text = TokenizedText(text, self.tokenizer)
             predicted_label = self._call_model([tokenized_text])[0].argmax().item()
             if predicted_label != label:
+                if not attack_n: 
+                    n += 1
                 examples.append((label, tokenized_text, True))
             else:
                 n += 1
@@ -174,7 +189,7 @@ class Attack:
     
         return examples
 
-    def attack_dataset(self, dataset, num_examples=None, shuffle=False):
+    def attack_dataset(self, dataset, num_examples=None, shuffle=False, attack_n=False):
         """ 
         Runs an attack on the given dataset and outputs the results to the console and the output file.
 
@@ -183,8 +198,8 @@ class Attack:
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
         """
       
-        examples = self._get_examples_from_dataset(dataset, num_examples, 
-            shuffle)
+        examples = self._get_examples_from_dataset(dataset, 
+            num_examples=num_examples, shuffle=shuffle, attack_n=attack_n)
 
         for label, tokenized_text, was_skipped in examples:
             if was_skipped:
