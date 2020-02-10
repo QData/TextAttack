@@ -1,3 +1,4 @@
+import lru
 import nltk
 
 from textattack.constraints import Constraint
@@ -10,13 +11,18 @@ class PartOfSpeech(Constraint):
     def __init__(self, tagset='universal', allow_verb_noun_swap=True):
         self.tagset = tagset
         self.allow_verb_noun_swap = allow_verb_noun_swap
+        self._pos_tag_cache = lru.LRU(2**12)
    
     def _can_replace_pos(self, pos_a, pos_b):
         return (pos_a == pos_b) or (self.allow_verb_noun_swap and set([pos_a,pos_b]) <= set(['NOUN','VERB']))
 
     def _get_pos(self, before_ctx, word, after_ctx):
-        _, pos_list = zip(*nltk.pos_tag(before_ctx + [word] + after_ctx, tagset=self.tagset))
-        return pos_list[len(before_ctx)]
+        context_words = before_ctx + [word] + after_ctx
+        context_key = ' '.join(context_words)
+        if context_key not in self._pos_tag_cache:
+            _, pos_list = zip(*nltk.pos_tag(context_words, tagset=self.tagset))
+            self._pos_tag_cache[context_key] = pos_list
+        return self._pos_tag_cache[context_key]
         
     def __call__(self, x, x_adv, original_text=None):
         if not isinstance(x, TokenizedText):
