@@ -14,10 +14,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 
-NODE_ID = 0
-
 DEBUG = True
-
+'''
 
 class TransformationCache:
 
@@ -50,6 +48,7 @@ class TransformationCache:
 
     def store_transformation(word, transformations):
         self.cache[word] = transformations
+'''
 
 
 class Node:
@@ -57,7 +56,7 @@ class Node:
     """
         Represents a node in search tree
         Members:
-            state (TokenizedText) : Current version of TokenizedText
+            text (TokenizedText) : Current version of TokenizedText
             action_seq : list of actions that led to current state
             depth : Current depth in search tree
             parent : Parent node
@@ -66,14 +65,13 @@ class Node:
     """
 
     def __init__(self, text, depth, parent):
-        self.id = NODE_ID
-        NODE_ID += 1
-        self.state = text
+        self.text = text
         self.depth = depth
         self.parent = parent
         self.num_visits = 0
         self.value = 0.0
-        self.local_rave_values = {}  # Maps action (int, str) --> value (int)
+        # Maps action (int, str) --> value (int)
+        self.local_rave_values = {}
         self.value_history = []
         self.variance = 0.0
         self.children = {}
@@ -82,7 +80,8 @@ class Node:
         return not bool(self.children)
 
     def calc_variance(self):
-        self.variance = statistics.variance(self.value_history, self.value)
+        if len(self.value_history) >= 2:
+            self.variance = statistics.variance(self.value_history, self.value)
 
 
 class SearchTree:
@@ -94,18 +93,21 @@ class SearchTree:
         self.root = Node(original_text, 0, None)
         self.original_text = original_text
         self.original_label = original_label
-        self.orignal_confidence = original_confidence
+        self.original_confidence = original_confidence
         self.max_depth = max_depth
 
-        self.available_words_to_replace = set(range(len(original_text.words)))
+        self.available_words_to_replace = set(
+            range(len(self.original_text.words)))
         self.words_to_skip = set()
         self.action_history = []
         self.iteration = 0
 
-        self.global_rave_values = {}  # Maps action (int, str) --> value (int)
+        # Maps action (int, str) --> (value (int), number_values (int))
+        self.global_rave_values = {}
 
     def reset_tree(self):
-        self.available_words_to_replace = set(range(len(original_text.words)))
+        self.available_words_to_replace = set(
+            range(len(self.original_text.words)))
         self.action_history = []
 
 
@@ -121,7 +123,7 @@ class MonteCarloTreeSearch(Attack):
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
 
-    def __init__(self, model, transformation, constraints=[], num_iter=1000, max_words_changed=5):
+    def __init__(self, model, transformation, constraints=[], num_iter=10000, max_words_changed=5):
         super().__init__(model, transformation, constraints=constraints)
 
         # MCTS Hyper-parameters
@@ -131,7 +133,7 @@ class MonteCarloTreeSearch(Attack):
 
         self.word_embedding_distance = 0
 
-    def evaluate(current_node):
+    def evaluate(self, current_node):
         """
             Evaluates the final (or current) transformation
         """
@@ -140,11 +142,10 @@ class MonteCarloTreeSearch(Attack):
 
         value = (new_label != self.tree.original_label) + \
             self.tree.original_confidence - \
-            prob_scores[self.tree.original_label]
+            prob_scores[self.tree.original_label].item()
 
-        constraint_scores = current_node.text.attack_attrs['constraint_scores']
-        for key in constraints_scores.keys():
-            value += constraints_scores[key]
+        value += sum(
+            current_node.text.attack_attrs['constraint_scores'].values())
 
         return value, new_label
 
@@ -157,31 +158,40 @@ class MonteCarloTreeSearch(Attack):
 
         # Update global RAVE values
         for action in self.tree.action_history:
-            self.tree.global_rave_values[action] = (
-                self.tree.global_rave_values[action] + search_value) / self.tree.iteration
+            if action in self.tree.global_rave_values:
+                old_rave = self.tree.global_rave_values[action]
+                new_value = (old_rave[0] * old_rave[1] + search_value) / old_rave[1] + 1
+
+                self.tree.global_rave_values[action] = (new_value, old_rave[1] + 1)
+            else:
+                self.tree.global_rave_values[action] = (search_value, 1)
+                
 
         while current_node is not None:
+            n = current_node.num_visits
             current_node.num_visits += 1
-            current_node.value = (current_node.value +
-                                  search_value) / current_node.num_visits
+            current_node.value = (current_node.value * n + search_value) / (n + 1)
             current_node.value_history.append(search_value)
             current_node.calc_variance()
 
             # Update local RAVE values
             for action in self.tree.action_history:
-                current_node.local_rave_values[action] = (
-                    current_node.local_rave_values[action] + search_value) / current_node.num_visits
+                if action in current_node.local_rave_values:
+                    current_node.local_rave_values[action] = (current_node.local_rave_values[action] \
+                        * n + search_value) / (n + 1)
+                else:
+                    current_node.local_rave_values[action] = search_value
 
             current_node = current_node.parent
 
     def simulate(self, current_node):
 
         while current_node.depth < self.tree.max_depth:
-            if self.tree.available_transformations:
+            if self.tree.available_words_to_replace:
                 break
 
             random_tranformation = None
-            while random_tranformation is None and self.tree.available_transformations:
+            while random_tranformation is None and self.tree.available_words_to_replace:
                 random_word_to_replace = random.choice(
                     tuple(self.tree.available_words_to_replace))
 
@@ -247,9 +257,15 @@ class MonteCarloTreeSearch(Attack):
         return node.value + math.sqrt(self.ucb_C * math.log(parent_num_visits) / node.num_visits)
 
     def UCB_RAVE_tuned(self, node, action, parent_num_visits):
-        ucb = self.ucb_C * math.log(parent_num_visits) / node.num_visits
-        return node.value + self.tree.global_rave_values[action] + self.node.local_rave_values[action]
-        + math.sqrt(ucb * min(0.25, node.variance + math.sqrt(ucb)))
+        ucb = self.ucb_C * math.log(parent_num_visits) / max(1, node.num_visits)
+        value = node.value + \
+            math.sqrt(ucb * min(0.25, node.variance + math.sqrt(ucb)))
+        if action in self.tree.global_rave_values:
+            value += 0.5 * self.tree.global_rave_values[action][0]
+        if action in node.local_rave_values:
+            value += 0.5 * node.local_rave_values[action]
+
+        return value
 
     def selection(self):
         """
@@ -258,13 +274,11 @@ class MonteCarloTreeSearch(Attack):
         """
 
         current_node = self.tree.root
-        current_text = self.tree.root.state
-
-        best_next_node = None
-        best_ucb_value = float('-inf')
-        best_action = None
 
         while not current_node.is_leaf():
+            best_next_node = None
+            best_ucb_value = float('-inf')
+            best_action = None
 
             for action in current_node.children.keys():
                 ucb_value = self.UCB_RAVE_tuned(
@@ -288,6 +302,7 @@ class MonteCarloTreeSearch(Attack):
         """
 
         for i in range(self.num_iter):
+            #print(f"Iteration {i+1}")
             self.tree.iteration += 1
             self.tree.reset_tree()
             current_node = self.selection()
@@ -302,8 +317,19 @@ class MonteCarloTreeSearch(Attack):
             self.backprop(current_node, search_value)
 
         # Select best choice based on node value
-        best_action = max(self.tree.root.children,
-                          key=self.tree.root.children.get.value)
+        best_action = None
+        best_value = float('-inf')
+
+        for action in self.tree.root.children:
+            value = self.tree.root.children[action].value
+            if action in self.tree.global_rave_values:
+                value += 0.5 * self.tree.global_rave_values[action][0]
+            if action in self.tree.root.local_rave_values:
+                value += 0.5 * self.tree.root.local_rave_values[action]
+
+            if value > best_value:
+                best_action = action
+                best_value = value
 
         return self.tree.root.children[best_action]
 
@@ -311,7 +337,7 @@ class MonteCarloTreeSearch(Attack):
 
         original_tokenized_text = tokenized_text
         original_confidence = self._call_model(
-            [original_tokenized_text]).squeeze()[original_label]
+            [original_tokenized_text]).squeeze()[original_label].item()
         max_tree_depth = min(self.max_words_changed, len(tokenized_text.words))
 
         self.tree = SearchTree(
@@ -331,7 +357,7 @@ class MonteCarloTreeSearch(Attack):
         print(s.getvalue())
 
         """
-        for i in range(max_words_changed):
+        for i in range(max_tree_depth):
             best_next_node = self.run_mcts()
 
             self.tree.root = best_next_node
