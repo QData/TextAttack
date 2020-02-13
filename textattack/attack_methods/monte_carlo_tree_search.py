@@ -1,7 +1,3 @@
-import io
-import pstats
-import cProfile
-from pstats import SortKey
 from .attack import Attack
 from textattack.attack_results import AttackResult, FailedAttackResult
 import numpy as np
@@ -14,7 +10,13 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 
-DEBUG = True
+PROFILE = False
+if PROFILE:
+    import io
+    import pstats
+    import cProfile
+    from pstats import SortKey
+
 '''
 
 class TransformationCache:
@@ -123,13 +125,15 @@ class MonteCarloTreeSearch(Attack):
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
 
-    def __init__(self, model, transformation, constraints=[], num_iter=10000, max_words_changed=5):
+    def __init__(self, model, transformation, constraints=[], num_iter=500, max_words_changed=5):
         super().__init__(model, transformation, constraints=constraints)
 
         # MCTS Hyper-parameters
         self.num_iter = num_iter
         self.max_words_changed = max_words_changed
         self.ucb_C = 2
+        self.global_C = 100
+        self.local_C = 100
 
         self.word_embedding_distance = 0
 
@@ -224,8 +228,8 @@ class MonteCarloTreeSearch(Attack):
             Create next nodes based on available transformations and then take a random action.
             Returns: New node that we expand to. If no such node exists, return None
         """
-        words_to_replace = list(
-            self.tree.available_words_to_replace.difference(self.tree.words_to_skip))
+        words_to_replace = list(self.tree.available_words_to_replace)
+
         available_transformations = self.get_transformations(
             current_node.text,
             original_text=self.tree.original_text,
@@ -233,9 +237,7 @@ class MonteCarloTreeSearch(Attack):
         )
 
         if len(available_transformations) == 0:
-            self.tree.words_to_skip = self.tree.words_to_skip.union(
-                set(words_to_replace))
-            return None
+            return current_node
         else:
 
             available_actions = [(t.attack_attrs['modified_word_index'],
@@ -260,10 +262,13 @@ class MonteCarloTreeSearch(Attack):
         ucb = self.ucb_C * math.log(parent_num_visits) / max(1, node.num_visits)
         value = node.value + \
             math.sqrt(ucb * min(0.25, node.variance + math.sqrt(ucb)))
+
         if action in self.tree.global_rave_values:
-            value += 0.5 * self.tree.global_rave_values[action][0]
+            alpha = self.global_C / (self.global_C + self.tree.global_rave_values[action][1])
+            value += alpha * self.tree.global_rave_values[action][0]
         if action in node.local_rave_values:
-            value += 0.5 * node.local_rave_values[action]
+            beta = self.local_C / (self.local_C + node.num_visits)
+            value += beta * node.local_rave_values[action]
 
         return value
 
@@ -302,7 +307,6 @@ class MonteCarloTreeSearch(Attack):
         """
 
         for i in range(self.num_iter):
-            #print(f"Iteration {i+1}")
             self.tree.iteration += 1
             self.tree.reset_tree()
             current_node = self.selection()
@@ -323,9 +327,9 @@ class MonteCarloTreeSearch(Attack):
         for action in self.tree.root.children:
             value = self.tree.root.children[action].value
             if action in self.tree.global_rave_values:
-                value += 0.5 * self.tree.global_rave_values[action][0]
+                value += self.tree.global_rave_values[action][0]
             if action in self.tree.root.local_rave_values:
-                value += 0.5 * self.tree.root.local_rave_values[action]
+                value += self.tree.root.local_rave_values[action]
 
             if value > best_value:
                 best_action = action
@@ -343,23 +347,13 @@ class MonteCarloTreeSearch(Attack):
         self.tree = SearchTree(
             tokenized_text, original_label, original_confidence, max_tree_depth)
 
-        """
-        profiler = cProfile.Profile()
-        profiler.enable()
-        replacements = self.get_transformations(
-            tokenized_text, indices_to_replace=[0, 1, 2, 3, 4])
-        profiler.disable()
+        if PROFILE:
+            profiler = cProfile.Profile()
+            profiler.enable()
 
-        s = io.StringIO()
-        sortby = SortKey.CUMULATIVE
-        ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
-        ps.print_stats()
-        print(s.getvalue())
 
-        """
         for i in range(max_tree_depth):
             best_next_node = self.run_mcts()
-
             self.tree.root = best_next_node
 
             _, new_label = self.evaluate(self.tree.root)
@@ -367,6 +361,15 @@ class MonteCarloTreeSearch(Attack):
             if new_label != original_label:
                 new_tokenized_text = self.tree.root.text
                 break
+
+        if PROFILE:
+            profiler.disable()
+
+            s = io.StringIO()
+            sortby = SortKey.CUMULATIVE
+            ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
+            ps.print_stats()
+            print(s.getvalue())
 
         if original_label == new_label:
             return FailedAttackResult(original_tokenized_text, original_label)

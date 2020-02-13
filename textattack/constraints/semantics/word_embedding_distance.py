@@ -104,6 +104,7 @@ class WordEmbeddingDistance(Constraint):
             raise TypeError('x_adv must be of type TokenizedText')
 
         try:
+            adv_text = x_adv
             i = x_adv.attack_attrs['modified_word_index']
             x = x.words[i]
             x_adv = x_adv.words[i]
@@ -143,10 +144,10 @@ class WordEmbeddingDistance(Constraint):
             if mse_dist > self.max_mse_dist:
                 return False
 
-        if 'word_embedding_score' not in x_adv.attack_attrs['constraint_score'].keys():
-            x_adv.attack_attrs['constraint_score']['word_embedding_score'] = embedding_score
+        if 'word_embedding_score' not in adv_text.attack_attrs['constraint_scores'].keys():
+            adv_text.attack_attrs['constraint_scores']['word_embedding_score'] = embedding_score
         else:
-            x_adv.attack_attrs['constraint_score']['word_embedding_score'] += embedding_score
+            adv_text.attack_attrs['constraint_scores']['word_embedding_score'] += embedding_score
         return True
 <<<<<<< HEAD
         
