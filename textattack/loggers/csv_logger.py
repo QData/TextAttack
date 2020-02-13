@@ -14,7 +14,7 @@ class CSVLogger(Logger):
         self.df = pd.DataFrame()
         self._flushed = True
 
-    def log_attack_result(self, result, examples_completed):
+    def log_attack_result(self, result):
         if isinstance(result, FailedAttackResult):
             return
         color_method = None if self.plain else 'file'

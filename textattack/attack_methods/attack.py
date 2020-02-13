@@ -89,19 +89,11 @@ class Attack:
         raise NotImplementedError()
         
     def _call_model_uncached(self, tokenized_text_list, batch_size=8):
-        """
-        Returns model predictions for a list of TokenizedText objects. 
-        
+        """ Queries model and returns predictions for a list of TokenizedText 
+            objects. 
         """
         if not len(tokenized_text_list):
             return torch.tensor([])
-        try:
-            self.num_queries += len(tokenized_text_list)
-        except AttributeError:
-            # If some outside class is just using the attack for its `call_model`
-            # function, then `self.num_queries` will not have been initialized.
-            # In this case, just continue.
-            pass
         ids = [t.ids for t in tokenized_text_list]
         ids = torch.tensor(ids).to(utils.get_device()) 
         #
@@ -146,6 +138,18 @@ class Attack:
         return scores
     
     def _call_model(self, tokenized_text_list):
+        """ Gets predictions for a list of `TokenizedText` objects.
+        
+            Gets prediction from cache if possible. If prediction is not in the 
+            cache, queries model and stores prediction in cache.
+        """
+        try:
+            self.num_queries += len(tokenized_text_list)
+        except AttributeError:
+            # If some outside class is just using the attack for its `call_model`
+            # function, then `self.num_queries` will not have been initialized.
+            # In this case, just continue.
+            pass
         uncached_list = [text for text in tokenized_text_list if text not in self._call_model_cache]
         scores = self._call_model_uncached(uncached_list)
         for text, score in zip(uncached_list, scores):

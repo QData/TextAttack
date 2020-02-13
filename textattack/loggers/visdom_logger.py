@@ -29,7 +29,7 @@ class VisdomLogger(Logger):
         self.windows = {}
         self.sample_rows = []
 
-    def log_attack_result(self, result, examples_completed):
+    def log_attack_result(self, result):
         text_a, text_b = result.diff_color(color_method='html')
         result_str = result.result_str(color_method='html')
         self.sample_rows.append([result_str,text_a,text_b])

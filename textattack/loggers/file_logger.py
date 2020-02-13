@@ -16,10 +16,12 @@ class FileLogger(Logger):
             self.fout = open(filename, 'w')
         else:
             self.fout = filename
+        self.num_results = 0
 
-    def log_attack_result(self, result, examples_completed):
+    def log_attack_result(self, result):
+        self.num_results += 1
         color_method = 'stdout' if self.stdout else 'file'
-        self.fout.write('-'*45 + ' Result ' + str(examples_completed) + ' ' + '-'*45 + '\n')
+        self.fout.write('-'*45 + ' Result ' + str(self.num_results) + ' ' + '-'*45 + '\n')
         self.fout.write(result.__str__(color_method=color_method))
         self.fout.write('\n')
 
