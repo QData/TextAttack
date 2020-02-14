@@ -12,7 +12,7 @@ class AttackLogger:
         self.loggers = []
         self.results = []
         self.max_words_changed = 0
-        self.max_seq_len = 512
+        self.max_seq_len = 2**16
 
     def enable_stdout(self):
         self.loggers.append(FileLogger(stdout=True))
@@ -83,13 +83,14 @@ class AttackLogger:
                 perturbed_word_percentage = 0
             perturbed_word_percentages[i] = perturbed_word_percentage
             num_words_changed_until_success[i] = len(result.original_text.words)
+            all_num_words[i] = len(result.original_text.words)
         
         # Original classifier success rate on these samples.
         original_accuracy = (total_attacks - skipped_attacks)  * 100.0 / (total_attacks) 
         original_accuracy = str(round(original_accuracy, 2)) + '%'
         
         # New classifier success rate on these samples.
-        accuracy_under_attack = (total_attacks - skipped_attacks - successful_attacks) * 100.0 / (total_attacks - skipped_attacks)
+        accuracy_under_attack = (failed_attacks) * 100.0 / (total_attacks)
         accuracy_under_attack = str(round(accuracy_under_attack, 2)) + '%'
         
         # Attack success rate.
@@ -99,6 +100,7 @@ class AttackLogger:
             attack_success_rate = successful_attacks * 100.0 / (successful_attacks + failed_attacks) 
         attack_success_rate = str(round(attack_success_rate, 2)) + '%'
         
+        perturbed_word_percentages = perturbed_word_percentages[perturbed_word_percentages > 0]
         average_perc_words_perturbed = perturbed_word_percentages.mean()
         average_perc_words_perturbed = str(round(average_perc_words_perturbed, 2)) + '%'
         
