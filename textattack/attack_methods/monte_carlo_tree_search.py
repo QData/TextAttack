@@ -9,6 +9,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
+import time
 
 PROFILE = False
 if PROFILE:
@@ -17,41 +18,57 @@ if PROFILE:
     import cProfile
     from pstats import SortKey
 
-'''
 
-class TransformationCache:
+LOG_OUPUTS = True
+if LOG_OUPUTS:
+    import graphviz
+    import collections
+    import pickle
+    import yaml
 
-    def __init__(self):
-        self.cache = {}
+def get_edge_label(action):
+    return f"({action[0]}, {action[1]})"
 
-    def get_transformation(i, new_word):
-        """
-        Args:
-            i (int) : i-th word to transform
-            word (str): transformed word
-        Returns:
-            TokenizedText
-        """
-        if i in self.cache.keys() and word in self.cache[i].keys() > 0:
-            return self.cache[i][new_word]
-        else:
-            return None
+def get_node_label(node):
+    value = str(round(node.value,2))
+    return value + " / " + str(node.num_visits)
 
-    def get_random_transformation(indices_to_transform):
-        i = random.choice(indices_to_transform)
-        if i in self.cache.keys():
-            words
+def generate_dot(root_node, action_history, filename, success):
 
-        if word in self.cache.keys() and transformation in self.cache[i]
-        if word in self.cache.keys() and len(self.cache[word]) > 0:
-            return random.choice(self.cache[word])
-        else:
-            return None
+    dot = graphviz.Graph(f"mcts_{time.time()}", comment=f"{root_node.text.text}", filename=f"mcts_{time.time()}")
+    queue = collections.deque()
+    queue.append(root_node)
 
-    def store_transformation(word, transformations):
-        self.cache[word] = transformations
-'''
+    dot.attr(label=f"\n\n\nOriginal text: {root_node.text.text}")
+    dot.node(str(root_node.id), label=get_node_label(root_node))
 
+    realized_node = root_node.id
+
+    if success:
+        color = "green"
+    else:
+        color = "red"
+
+    while queue:
+        node = queue.popleft()
+
+        for action, child in node.children.items():
+            if child.num_visits > 0:
+                if action_history and action == action_history[0] and node.id == realized_node:
+                    dot.node(str(child.id), label=get_node_label(child), color=color)
+                    dot.edge(str(node.id), str(child.id), label=f"({action[0]}, {action[1]})", color=color)
+                    action_history.pop(0)
+                    realized_node = child.id
+                else:
+                    dot.node(str(child.id), label=get_node_label(child))
+                    dot.edge(str(node.id), str(child.id), label=f"({action[0]}, {action[1]})")
+                queue.append(child)
+
+    with open(f"outputs/{filename}.pkl", "wb") as f:
+        pickle.dump(dot, f)
+
+
+NODE_ID = 1
 
 class Node:
 
@@ -66,7 +83,8 @@ class Node:
             ...
     """
 
-    def __init__(self, text, depth, parent):
+    def __init__(self, node_id, text, depth, parent):
+        self.id = node_id
         self.text = text
         self.depth = depth
         self.parent = parent
@@ -92,7 +110,7 @@ class SearchTree:
     """
 
     def __init__(self, original_text, original_label, original_confidence, max_depth):
-        self.root = Node(original_text, 0, None)
+        self.root = Node(0, original_text, 0, None)
         self.original_text = original_text
         self.original_label = original_label
         self.original_confidence = original_confidence
@@ -131,9 +149,9 @@ class MonteCarloTreeSearch(Attack):
         # MCTS Hyper-parameters
         self.num_iter = num_iter
         self.max_words_changed = max_words_changed
-        self.ucb_C = 2
-        self.global_C = 100
-        self.local_C = 100
+        self.ucb_C = 5
+        self.global_C = 50
+        self.local_C = 50
 
         self.word_embedding_distance = 0
 
@@ -218,7 +236,7 @@ class MonteCarloTreeSearch(Attack):
 
             self.tree.action_history.append(
                 (random_word_to_replace, random_tranformation.attack_attrs['new_word']))
-            current_node = Node(random_tranformation,
+            current_node = Node(-1, random_tranformation,
                                 current_node+1, current_node)
 
         return current_node
@@ -228,6 +246,7 @@ class MonteCarloTreeSearch(Attack):
             Create next nodes based on available transformations and then take a random action.
             Returns: New node that we expand to. If no such node exists, return None
         """
+        global NODE_ID
         words_to_replace = list(self.tree.available_words_to_replace)
 
         available_transformations = self.get_transformations(
@@ -246,7 +265,8 @@ class MonteCarloTreeSearch(Attack):
             for i in range(len(available_actions)):
                 # Create children nodes if it doesn't exist already
                 current_node.children[available_actions[i]] = Node(
-                    available_transformations[i], current_node.depth+1, current_node)
+                    NODE_ID, available_transformations[i], current_node.depth+1, current_node)
+                NODE_ID += 1
 
             random_action = random.choice(available_actions)
 
@@ -335,7 +355,7 @@ class MonteCarloTreeSearch(Attack):
                 best_action = action
                 best_value = value
 
-        return self.tree.root.children[best_action]
+        return self.tree.root.children[best_action], best_action
 
     def attack_one(self, original_label, tokenized_text):
 
@@ -347,15 +367,17 @@ class MonteCarloTreeSearch(Attack):
         self.tree = SearchTree(
             tokenized_text, original_label, original_confidence, max_tree_depth)
 
+        original_root = self.tree.root
+        final_action_history = []
+
         if PROFILE:
             profiler = cProfile.Profile()
             profiler.enable()
 
-
         for i in range(max_tree_depth):
-            best_next_node = self.run_mcts()
+            best_next_node, best_action = self.run_mcts()
             self.tree.root = best_next_node
-
+            final_action_history.append(best_action)
             _, new_label = self.evaluate(self.tree.root)
 
             if new_label != original_label:
@@ -370,6 +392,19 @@ class MonteCarloTreeSearch(Attack):
             ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
             ps.print_stats()
             print(s.getvalue())
+
+        if LOG_OUPUTS:
+            print("Logging...")
+            file_name = f"mcts_{time.time()}"
+            status = original_label != new_label
+            generate_dot(original_root, final_action_history, file_name, status)
+
+            with open(f"outputs/{file_name}_grave.txt", 'w') as f:
+                f.write("Original Text: " + original_tokenized_text.text + "\n")
+                for action in self.tree.global_rave_values:
+                    value, num = self.tree.global_rave_values[action]
+                    f.write(f"Action: ({action[0]}, {action[1]})\n")
+                    f.write(f"Value: {value}   |   Number actions taken: {num} \n\n")
 
         if original_label == new_label:
             return FailedAttackResult(original_tokenized_text, original_label)
