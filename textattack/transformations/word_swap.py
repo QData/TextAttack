@@ -1,7 +1,9 @@
-import numpy as np
-from .transformation import Transformation
-from nltk.corpus import stopwords
 import nltk
+from nltk.corpus import stopwords
+import random
+import string
+
+from .transformation import Transformation
 
 class WordSwap(Transformation):
     """
@@ -27,6 +29,11 @@ class WordSwap(Transformation):
 
     def _get_replacement_words(self, word):
         raise NotImplementedError()
+    
+    def _get_random_letter(self):
+        """ Helper function that returns a random single letter from the English
+            alphabet that could be lowercase or uppercase. """
+        return random.choice(string.ascii_letters)
 
     def __call__(self, tokenized_text, indices_to_replace=None):
         """
