@@ -34,7 +34,7 @@ def attack_from_queue(args, in_queue, out_queue):
             out_queue.put(result)
         except Exception as e:
             out_queue.put(e)
-            raise e
+            exit()
 
 def run(args):
     pytorch_multiprocessing_workaround()
