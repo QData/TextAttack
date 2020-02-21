@@ -3,7 +3,7 @@ filelock
 language_check
 lru-dict
 nltk
-numpy<1.17
+numpy
 pandas
 scikit-learn
 scipy
@@ -16,3 +16,4 @@ tensorflow_hub
 terminaltables
 tqdm
 visdom
+pytest
