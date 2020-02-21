@@ -47,6 +47,6 @@ def Gao2018DeepWordBug(model, use_all_transformations=True):
     # Greedily swap words with "Word Importance Ranking".
     #
     attack = GreedyWordSwapWIR(model, transformation=transformation,
-        constraints=[], max_depth=None)
+        constraints=constraints, max_depth=None)
     
     return attack

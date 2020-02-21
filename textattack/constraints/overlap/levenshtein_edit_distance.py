@@ -3,8 +3,7 @@ import editdistance
 from textattack.constraints import Constraint
 
 class LevenshteinEditDistance(Constraint):
-    """ A constraint on the edit distance (Levenshtein Distance) between `x` 
-        and `x_adv`.
+    """ A constraint on edit distance (Levenshtein Distance).
     """
     
     def __init__(self, max_edit_distance):
@@ -17,4 +16,4 @@ class LevenshteinEditDistance(Constraint):
         if not original_text:
             return True
         edit_distance = editdistance.eval(original_text, x_adv)
-        return edit_distance < self.max_edit_distance
+        return edit_distance <= self.max_edit_distance
