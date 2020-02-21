@@ -1,6 +1,6 @@
 language_check
 nltk
-numpy<1.17
+numpy
 pandas
 scikit-learn
 scipy
@@ -8,7 +8,7 @@ sentence_transformers
 spacy
 torch
 transformers>=2.0.0
-tensorflow-gpu==2
+tensorflow-gpu>=2
 tensorflow_hub
 tqdm
 visdom
