@@ -1,3 +1,4 @@
+editdistance
 filelock
 language_check
 lru-dict
