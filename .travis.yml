@@ -6,5 +6,5 @@ before_install:
   - pip install -U pytest
   - pip install git+https://github.com/jxmorris12/language-check
 install:
-  - pip install . # ".[test]" . # install package + test dependencies
+  - pip install -e .
 script: pytest # run tests
