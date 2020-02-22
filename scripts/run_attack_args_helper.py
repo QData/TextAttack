@@ -13,6 +13,7 @@ RECIPE_NAMES = {
     'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
     'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
     'bert-recipe':   'textattack.attack_recipes.BertRecipe'
+    'mcts':          'textattack.attack_recipes.MctsTest'
 }
 
 MODEL_CLASS_NAMES = {

@@ -10,6 +10,8 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import time
+import collections
+import multiprocessing as mp
 
 PROFILE = False
 if PROFILE:
@@ -22,12 +24,11 @@ if PROFILE:
 LOG_OUPUTS = True
 if LOG_OUPUTS:
     import graphviz
-    import collections
     import pickle
-    import yaml
 
-def get_edge_label(action):
-    return f"({action[0]}, {action[1]})"
+def get_edge_label(root, action):
+    root_text = root.text.words
+    return f"({root_text[action[0]]} --> {action[1]})"
 
 def get_node_label(node):
     value = str(round(node.value,2))
@@ -56,12 +57,12 @@ def generate_dot(root_node, action_history, filename, success):
             if child.num_visits > 0:
                 if action_history and action == action_history[0] and node.id == realized_node:
                     dot.node(str(child.id), label=get_node_label(child), color=color)
-                    dot.edge(str(node.id), str(child.id), label=f"({action[0]}, {action[1]})", color=color)
+                    dot.edge(str(node.id), str(child.id), label=get_edge_label(root_node, action), color=color)
                     action_history.pop(0)
                     realized_node = child.id
                 else:
                     dot.node(str(child.id), label=get_node_label(child))
-                    dot.edge(str(node.id), str(child.id), label=f"({action[0]}, {action[1]})")
+                    dot.edge(str(node.id), str(child.id), label=get_edge_label(root_node, action))
                 queue.append(child)
 
     with open(f"outputs/{filename}.pkl", "wb") as f:
@@ -130,6 +131,17 @@ class SearchTree:
             range(len(self.original_text.words)))
         self.action_history = []
 
+    def reset_node_depth(self):
+        queue = collections.deque()
+        self.root.depth = 0
+        queue.append(self.root)
+
+        while queue:
+            node = queue.popleft()
+
+            for action, child in node.children.items():
+                child.dept = node.depth + 1
+                queue.append(child)
 
 class MonteCarloTreeSearch(Attack):
     """ 
@@ -143,7 +155,7 @@ class MonteCarloTreeSearch(Attack):
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
 
-    def __init__(self, model, transformation, constraints=[], num_iter=500, max_words_changed=5):
+    def __init__(self, model, transformation, constraints=[], num_iter=1000, max_words_changed=10):
         super().__init__(model, transformation, constraints=constraints)
 
         # MCTS Hyper-parameters
@@ -152,6 +164,7 @@ class MonteCarloTreeSearch(Attack):
         self.ucb_C = 5
         self.global_C = 50
         self.local_C = 50
+        self.window_size = 5
 
         self.word_embedding_distance = 0
 
@@ -162,9 +175,7 @@ class MonteCarloTreeSearch(Attack):
         prob_scores = self._call_model([current_node.text])[0]
         new_label = prob_scores.argmax().item()
 
-        value = (new_label != self.tree.original_label) + \
-            self.tree.original_confidence - \
-            prob_scores[self.tree.original_label].item()
+        value = self.tree.original_confidence - prob_scores[self.tree.original_label].item()
 
         value += sum(
             current_node.text.attack_attrs['constraint_scores'].values())
@@ -182,7 +193,7 @@ class MonteCarloTreeSearch(Attack):
         for action in self.tree.action_history:
             if action in self.tree.global_rave_values:
                 old_rave = self.tree.global_rave_values[action]
-                new_value = (old_rave[0] * old_rave[1] + search_value) / old_rave[1] + 1
+                new_value = (old_rave[0] * old_rave[1] + search_value) / (old_rave[1] + 1)
 
                 self.tree.global_rave_values[action] = (new_value, old_rave[1] + 1)
             else:
@@ -362,10 +373,10 @@ class MonteCarloTreeSearch(Attack):
         original_tokenized_text = tokenized_text
         original_confidence = self._call_model(
             [original_tokenized_text]).squeeze()[original_label].item()
-        max_tree_depth = min(self.max_words_changed, len(tokenized_text.words))
+        max_tree_depth = min(self.window_size, len(tokenized_text.words))
+        max_words_changed = min(self.max_words_changed, len(tokenized_text.words))
 
-        self.tree = SearchTree(
-            tokenized_text, original_label, original_confidence, max_tree_depth)
+        self.tree = SearchTree(tokenized_text, original_label, original_confidence, max_tree_depth)
 
         original_root = self.tree.root
         final_action_history = []
@@ -374,9 +385,10 @@ class MonteCarloTreeSearch(Attack):
             profiler = cProfile.Profile()
             profiler.enable()
 
-        for i in range(max_tree_depth):
+        for i in range(max_words_changed):
             best_next_node, best_action = self.run_mcts()
             self.tree.root = best_next_node
+            self.tree.reset_node_depth()
             final_action_history.append(best_action)
             _, new_label = self.evaluate(self.tree.root)
 
