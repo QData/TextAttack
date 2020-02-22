@@ -1,6 +1,5 @@
 editdistance
 filelock
-language-check
 lru-dict
 nltk
 numpy
@@ -16,4 +15,3 @@ tensorflow_hub
 terminaltables
 tqdm
 visdom
-pytest
