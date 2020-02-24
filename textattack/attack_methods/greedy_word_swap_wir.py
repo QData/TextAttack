@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 
 from .attack import Attack
 from textattack.attack_results import AttackResult, FailedAttackResult
@@ -24,24 +25,18 @@ class GreedyWordSwapWIR(Attack):
         super().__init__(model, transformation, constraints=constraints)
         self.max_depth = max_depth
         
-    def attack_one(self, original_label, tokenized_text):
+    def attack_one(self, tokenized_text):
         original_tokenized_text = tokenized_text
         num_words_changed = 0
        
         # Sort words by order of importance
-        orig_probs = self._call_model([tokenized_text]).squeeze()
-        orig_prob = orig_probs.max()
-        cur_score = orig_prob
+        orig_score = self.goal_function.get_results([tokenized_text])[0].score
+        cur_score = orig_score
         len_text = len(tokenized_text.words)
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,'[UNK]') for i in range(len_text)]
-        leave_one_probs = self._call_model(leave_one_texts)
-        leave_one_probs_argmax = leave_one_probs.argmax(dim=-1)
-        importance_scores = (orig_prob - leave_one_probs[:, original_label] 
-            + (leave_one_probs_argmax != original_label).float() *
-            (leave_one_probs.max(dim=-1)[0]
-            - torch.index_select(orig_probs, 0, leave_one_probs_argmax))).data.cpu().numpy()
-        index_order = (-importance_scores).argsort()
+        leave_one_scores = np.array([result.score for result in self.goal_function.get_results(leave_one_texts)])
+        index_order = (-leave_one_scores).argsort()
 
         new_tokenized_text = None
         new_text_label = None
@@ -55,44 +50,40 @@ class GreedyWordSwapWIR(Attack):
             if len(transformed_text_candidates) == 0:
                 continue
             num_words_changed += 1
-            scores = self._call_model(transformed_text_candidates)
-            # The best choice is the one that minimizes the original class label.
-            best_index = scores[:, original_label].argmin()
+            results = sorted(self.goal_function.get_results(transformed_text_candidates), key=lambda x: -x.score)
             # Skip swaps which don't improve the score
-            if scores[best_index, original_label] < cur_score:
-                cur_score = scores[best_index, original_label]
+            if results[0].score > cur_score:
+                cur_score = results[0].score
             else:
                 continue
-            # If we changed the label, return the index with best similarity.
-            new_text_label = scores[best_index].argmax().item()
-            if new_text_label != original_label:
+            # If we succeeded, return the index with best similarity.
+            if results[0].succeeded:
+                bestResult = results[0]
                 # @TODO: Use vectorwise operations
-                new_tokenized_text = None
                 max_similarity = -float('inf')
-                for i in range(len(transformed_text_candidates)):
-                    if scores[i].argmax().item() == new_text_label:
-                        candidate = transformed_text_candidates[i]
-                        try:
-                            similarity_score = candidate.attack_attrs['similarity_score']
-                        except KeyError:
-                            # If the attack was run without any similarity metrics, 
-                            # candidates won't have a similarity score. In this
-                            # case, break and return the candidate that changed
-                            # the original score the most.
-                            new_tokenized_text = transformed_text_candidates[best_index]
-                            break
-                        if similarity_score > max_similarity:
-                            max_similarity = similarity_score
-                            new_tokenized_text = candidate
-                            cur_score = scores[i].max()
+                for result in results:
+                    if not result.succeeded:
+                        break
+                    candidate = result.tokenized_text
+                    try:
+                        similarity_score = candidate.attack_attrs['similarity_score']
+                    except KeyError:
+                        # If the attack was run without any similarity metrics, 
+                        # candidates won't have a similarity score. In this
+                        # case, break and return the candidate that changed
+                        # the original score the most.
+                        break
+                    if similarity_score > max_similarity:
+                        max_similarity = similarity_score
+                        bestResult = result
                 return AttackResult( 
                     original_tokenized_text, 
-                    new_tokenized_text, 
-                    original_label,
-                    new_text_label,
-                    float(orig_prob),
-                    float(cur_score)
+                    bestResult.tokenized_text, 
+                    self.goal_function.correct_output,
+                    int(bestResult.output),
+                    float(orig_score),
+                    float(bestResult.score)
                 )
-            tokenized_text = transformed_text_candidates[best_index]
+            tokenized_text = results[0].tokenized_text
         
-        return FailedAttackResult(original_tokenized_text, original_label)
+        return FailedAttackResult(original_tokenized_text, self.goal_function.correct_output)

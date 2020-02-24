@@ -95,6 +95,11 @@ ATTACK_CLASS_NAMES = {
     'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
 }
 
+GOAL_FUNCTION_CLASS_NAMES = {
+    'untargeted-classification':        'textattack.goal_functions.UntargetedClassification',
+    'targeted-classification':        'textattack.goal_functions.TargetedClassification',
+}
+
 def set_seed(random_seed):
     random.seed(random_seed)
     np.random.seed(random_seed)
@@ -145,6 +150,9 @@ def get_args():
     
     parser.add_argument('--parallel', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
+
+    parser.add_argument('--goal_function', '-g', default='untargeted-classification',
+        choices=GOAL_FUNCTION_CLASS_NAMES.keys(), help='The goal function to use')
     
     def str_to_int(s): return sum((ord(c) for c in s))
     parser.add_argument('--random_seed', default=str_to_int('TEXTATTACK'))
@@ -157,7 +165,7 @@ def get_args():
         help=f'The type of attack to run. choices: {attack_choices}')
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None,
-        help='full attack recipe (overrides provided transformation & constraints)',
+        help='full attack recipe (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
     
     args = parser.parse_args()
@@ -168,7 +176,6 @@ def get_args():
 
 def parse_transformation_from_args(args):
     # Transformations
-    _transformation = []    
     transformation = args.transformation
     if ':' in transformation:
         transformation_name, params = transformation.split(':')
@@ -180,6 +187,20 @@ def parse_transformation_from_args(args):
     else:
         raise ValueError(f'Error: unsupported transformation {transformation}')
     return transformation
+
+def parse_goal_function_from_args(args, model):
+    # Goal Functions
+    goal_function = args.goal_function
+    if ':' in goal_function:
+        goal_function_name, params = goal_function.split(':')
+        if goal_function_name not in GOAL_FUNCTION_CLASS_NAMES:
+            raise ValueError(f'Error: unsupported goal_function {goal_function_name}')
+        goal_function = eval(f'{GOAL_FUNCTION_CLASS_NAMES[goal_function_name]}(model, {params})')
+    elif goal_function in GOAL_FUNCTION_CLASS_NAMES:
+        goal_function = eval(f'{GOAL_FUNCTION_CLASS_NAMES[goal_function]}(model)')
+    else:
+        raise ValueError(f'Error: unsupported goal_function {goal_function}')
+    return goal_function
 
 def parse_constraints_from_args(args):
     # Constraints
@@ -225,15 +246,16 @@ def parse_model_and_attack_from_args(args):
     if args.recipe:
         attack = parse_recipe_from_args(model, args)
     else:
+        goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args)
         constraints = parse_constraints_from_args(args)
         if ':' in args.attack:
             attack_name, params = args.attack.split(':')
             if attack_name not in ATTACK_CLASS_NAMES:
                 raise ValueError(f'Error: unsupported attack {attack_name}')
-            attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(model, transformation, constraints=constraints, {params})')
+            attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(goal_function, transformation, constraints=constraints, {params})')
         elif args.attack in ATTACK_CLASS_NAMES:
-            attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(model, transformation, constraints=constraints)')
+            attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
         else:
             raise ValueError(f'Error: unsupported attack {args.attack}')
     return model, attack

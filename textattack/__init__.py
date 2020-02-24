@@ -10,3 +10,4 @@ from . import models
 from . import shared
 from . import tokenizers
 from . import transformations
+from . import goal_functions

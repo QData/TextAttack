@@ -25,22 +25,20 @@ class Attack:
         constraints: A list of constraints to add to the attack
 
     """
-    def __init__(self, model, transformation, constraints=[], is_black_box=True):
+    def __init__(self, goal_function, transformation, constraints=[], is_black_box=True):
         """ Initialize an attack object. Attacks can be run multiple times.
         """
-        self.model = model
-        self.model_description = model.__class__.__name__
-        if not self.model:
-            raise NameError('Cannot instantiate attack without self.model for prediction scores')
+        self.goal_function = goal_function
+        if not self.goal_function:
+            raise NameError('Cannot instantiate attack without self.goal_function for prediction scores')
         if not hasattr(self, 'tokenizer'):
-            if hasattr(self.model, 'tokenizer'):
-                self.tokenizer = self.model.tokenizer
+            if hasattr(self.goal_function.model, 'tokenizer'):
+                self.tokenizer = self.goal_function.model.tokenizer
             else:
                 raise NameError('Cannot instantiate attack without tokenizer')
         self.transformation = transformation
         self.constraints = constraints
         self.is_black_box = is_black_box
-        self._call_model_cache = lru.LRU(2**18)
     
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
@@ -80,82 +78,13 @@ class Attack:
             transformations = C.call_many(text, transformations, original_text)
         return transformations 
 
-    def attack_one(self, label, tokenized_text):
+    def attack_one(self, tokenized_text):
         """
         Perturbs `text` to until `self.model` gives a different label than 
         `label`.
 
         """
         raise NotImplementedError()
-        
-    def _call_model_uncached(self, tokenized_text_list, batch_size=8):
-        """ Queries model and returns predictions for a list of TokenizedText 
-            objects. 
-        """
-        if not len(tokenized_text_list):
-            return torch.tensor([])
-        ids = [t.ids for t in tokenized_text_list]
-        ids = torch.tensor(ids).to(utils.get_device()) 
-        #
-        # shape of `ids` is (n, m, d)
-        #   - n: number of elements in `tokenized_text_list`
-        #   - m: number of vectors per element
-        #           ex: most classification models take a single vector, so m=1
-        #           ex: some entailment models take three vectors, so m=3
-        #   - d: dimensionality of each vector
-        #           (a typical model might set d=128 or d=256)
-        num_fields = ids.shape[1]
-        num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
-        scores = []
-        for batch_i in range(num_batches):
-            batch_start = batch_i * batch_size
-            batch_stop  = (batch_i + 1) * batch_size
-            batch_ids = ids[batch_start:batch_stop]
-            batch = [batch_ids[:, x, :] for x in range(num_fields)]
-            with torch.no_grad():
-                preds = self.model(*batch)
-            scores.append(preds)
-        scores = torch.cat(scores, dim=0)
-        # Validation check on model score dimensions
-        if scores.ndim == 1:
-            # Unsqueeze prediction, if it's been squeezed by the model.
-            if len(tokenized_text_list == 1):
-                scores = scores.unsqueeze(dim=0)
-            else:
-                raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif scores.ndim != 2:
-            # If model somehow returns too may dimensions, throw an error.
-            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif scores.shape[0] != len(tokenized_text_list):
-            # If model returns an incorrect number of scores, throw an error.
-            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
-            # Values in each row should sum up to 1. The model should return a 
-            # set of numbers corresponding to probabilities, which should add
-            # up to 1. Since they are `torch.float` values, allow a small
-            # error in the summation.
-            raise ValueError('Model scores do not add up to 1.')
-        return scores
-    
-    def _call_model(self, tokenized_text_list):
-        """ Gets predictions for a list of `TokenizedText` objects.
-        
-            Gets prediction from cache if possible. If prediction is not in the 
-            cache, queries model and stores prediction in cache.
-        """
-        try:
-            self.num_queries += len(tokenized_text_list)
-        except AttributeError:
-            # If some outside class is just using the attack for its `call_model`
-            # function, then `self.num_queries` will not have been initialized.
-            # In this case, just continue.
-            pass
-        uncached_list = [text for text in tokenized_text_list if text not in self._call_model_cache]
-        scores = self._call_model_uncached(uncached_list)
-        for text, score in zip(uncached_list, scores):
-            self._call_model_cache[text] = score.cpu()
-        final_scores = [self._call_model_cache[text].to(utils.get_device()) for text in tokenized_text_list]
-        return torch.stack(final_scores)
  
     def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False,
             attack_n=False):
@@ -175,16 +104,15 @@ class Attack:
         """
         examples = []
         n = 0
-        for label, text in dataset:
+        for output, text in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)
-            predicted_label = self._call_model([tokenized_text])[0].argmax().item()
-            if predicted_label != label:
+            if self.goal_function.should_skip(tokenized_text, output):
                 if not attack_n: 
                     n += 1
-                examples.append((label, tokenized_text, True))
+                examples.append((output, tokenized_text, True))
             else:
                 n += 1
-                examples.append((label, tokenized_text, False))
+                examples.append((output, tokenized_text, False))
             if num_examples is not None and (n >= num_examples):
                 break
 
@@ -205,12 +133,12 @@ class Attack:
         examples = self._get_examples_from_dataset(dataset, 
             num_examples=num_examples, shuffle=shuffle, attack_n=attack_n)
 
-        for label, tokenized_text, was_skipped in examples:
+        for output, tokenized_text, was_skipped in examples:
             if was_skipped:
-                yield SkippedAttackResult(tokenized_text, label)
+                yield SkippedAttackResult(tokenized_text, output)
                 continue
             # Start at 1 since we called once to determine that prediction was correct
-            self.num_queries = 1
-            result = self.attack_one(label, tokenized_text)
-            result.num_queries = self.num_queries
+            self.goal_function.set_original_attrs(tokenized_text, output)
+            result = self.attack_one(tokenized_text)
+            result.num_queries = self.goal_function.num_queries
             yield result
