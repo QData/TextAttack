@@ -151,8 +151,9 @@ def get_args():
     parser.add_argument('--parallel', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
 
+    goal_function_choices = ','.join(GOAL_FUNCTION_CLASS_NAMES.keys())
     parser.add_argument('--goal_function', '-g', default='untargeted-classification',
-        choices=GOAL_FUNCTION_CLASS_NAMES.keys(), help='The goal function to use')
+        help=f'The goal function to use. choices: {goal_function_choices}')
     
     def str_to_int(s): return sum((ord(c) for c in s))
     parser.add_argument('--random_seed', default=str_to_int('TEXTATTACK'))

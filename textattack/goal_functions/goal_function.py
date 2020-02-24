@@ -34,7 +34,7 @@ class GoalFunction:
             results.append(GoalFunctionResult(tokenized_text, output, succeeded, score))
         return results
 
-    def _is_goal_complete(self, model_output):
+    def _is_goal_complete(self, correct_output, model_output):
         raise NotImplementedError()
 
     def _get_score(self, model_output):

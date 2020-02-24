@@ -30,8 +30,8 @@ class GreedyWordSwapWIR(Attack):
         num_words_changed = 0
        
         # Sort words by order of importance
-        orig_score = self.goal_function.get_results([tokenized_text])[0].score
-        cur_score = orig_score
+        orig_result = self.goal_function.get_results([tokenized_text])[0]
+        cur_score = orig_result.score
         len_text = len(tokenized_text.words)
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,'[UNK]') for i in range(len_text)]
@@ -79,11 +79,11 @@ class GreedyWordSwapWIR(Attack):
                 return AttackResult( 
                     original_tokenized_text, 
                     bestResult.tokenized_text, 
-                    self.goal_function.correct_output,
-                    int(bestResult.output),
-                    float(orig_score),
+                    orig_result.output,
+                    bestResult.output,
+                    float(orig_result.score),
                     float(bestResult.score)
                 )
             tokenized_text = results[0].tokenized_text
         
-        return FailedAttackResult(original_tokenized_text, self.goal_function.correct_output)
+        return FailedAttackResult(original_tokenized_text, orig_result.output)

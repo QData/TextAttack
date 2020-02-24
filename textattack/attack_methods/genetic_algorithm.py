@@ -5,6 +5,7 @@ Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. 
 """
 
 import numpy as np
+import torch
 from copy import deepcopy
 
 from .attack import Attack
@@ -31,14 +32,13 @@ class GeneticAlgorithm(Attack):
         self.pop_size = pop_size
         self.temp = temp
 
-    def _replace_at_index(self, pop_member, idx, original_label):
+    def _replace_at_index(self, pop_member, idx):
         """
         Select the best replacement for word at position (idx) 
-        in (pop_member) to minimize score for original_label.
+        in (pop_member) to maximize score.
         Args:
             pop_member: The population member being perturbed.
             idx: The index at which to replace a word.
-            original_label: The original prediction label.
         Returns:
             Whether a replacement which decreased the score was found.
         """
@@ -47,21 +47,20 @@ class GeneticAlgorithm(Attack):
                                                    indices_to_replace=[idx])
         if not len(transformations):
             return False
-        new_x_preds = self._call_model(transformations)
-        new_x_scores = new_x_preds[:, original_label]
-        orig_score = self._call_model([pop_member.tokenized_text]).squeeze()[original_label]
+        new_x_results = self.goal_function.get_results(transformations)
+        new_x_scores = np.array([r.score for r in new_x_results])
+        orig_score = self.goal_function.get_results([pop_member.tokenized_text])[0].score
         new_x_scores = orig_score - new_x_scores
         if new_x_scores.max() > 0:
             pop_member.tokenized_text = transformations[new_x_scores.argmax()]
             return True
         return False
 
-    def _perturb(self, pop_member, original_label):
+    def _perturb(self, pop_member):
         """
         Replaces a word in pop_member that has not been modified. 
         Args:
             pop_member: The population member being perturbed.
-            original_label: The original prediction label.
         """
         x_len = pop_member.neighbors_len.shape[0]
         neighbors_len = deepcopy(pop_member.neighbors_len)
@@ -72,25 +71,24 @@ class GeneticAlgorithm(Attack):
         while iterations < non_zero_indices:
             w_select_probs = neighbors_len / np.sum(neighbors_len)
             rand_idx = np.random.choice(x_len, 1, p=w_select_probs)[0]
-            if self._replace_at_index(pop_member, rand_idx, original_label):
+            if self._replace_at_index(pop_member, rand_idx):
                 pop_member.neighbors_len[rand_idx] = 0
                 break
             neighbors_len[rand_idx] = 0
             iterations += 1
 
-    def _generate_population(self, neighbors_len, original_label):
+    def _generate_population(self, neighbors_len):
         """
         Generates a population of texts each with one word replaced
         Args:
             neighbors_len: A list of the number of candidate neighbors for each word.
-            original_label: The original prediction label.
         Returns:
             The population.
         """
         pop = []
         for _ in range(self.pop_size):
             pop_member = PopulationMember(self.original_tokenized_text, deepcopy(neighbors_len))
-            self._perturb(pop_member, original_label)
+            self._perturb(pop_member)
             pop.append(pop_member)
         return pop
 
@@ -136,47 +134,48 @@ class GeneticAlgorithm(Attack):
         neighbors_len = np.array([len(x) for x in neighbors_list])
         return neighbors_len
 
-    def attack_one(self, original_label, tokenized_text):
+    def attack_one(self, tokenized_text):
         self.original_tokenized_text = tokenized_text
-        original_prob = self._call_model([tokenized_text]).squeeze().max()
+        original_result = self.goal_function.get_results([tokenized_text])[0]
         neighbors_len = self._get_neighbors_len(tokenized_text)
-        pop = self._generate_population(neighbors_len, original_label)
+        pop = self._generate_population(neighbors_len)
         for i in range(self.max_iters):
-            pop_preds = self._call_model([pm.tokenized_text for pm in pop])
-            pop_scores = pop_preds[:, original_label]
-            print('\t\t', i, ' -- ', float(pop_scores.min()))
-            top_attack = pop_scores.argmin()
+            pop_results = self.goal_function.get_results([pm.tokenized_text for pm in pop])
+            for idx, result in enumerate(pop_results):
+                pop[idx].result = pop_results[idx]
+            pop = sorted(pop, key=lambda x: -x.result.score)
+            print('\t\t', i, ' -- ', float(pop[0].result.score))
 
+            pop_scores = torch.Tensor([r.score for r in pop_results])
             logits = ((-pop_scores) / self.temp).exp()
             select_probs = (logits / logits.sum()).cpu().numpy()
             
-            top_attack_probs = pop_preds[top_attack, :].cpu()
-            if np.argmax(top_attack_probs) != original_label:
+            if pop[0].result.succeeded:
                 return AttackResult(
                     self.original_tokenized_text,
-                    pop[top_attack].tokenized_text,
-                    original_label,
-                    int(np.argmax(top_attack_probs)),
-                    float(original_prob),
-                    1 - float(pop_scores.min()),
+                    pop[0].result.tokenized_text,
+                    original_result.output,
+                    pop[0].result.output,
+                    float(original_result.score),
+                    float(pop[0].result.score),
                 )
 
-            elite = [pop[top_attack]]  # elite
+            elite = [pop[0]]  # elite
             parent1_idx = np.random.choice(
                 self.pop_size, size=self.pop_size-1, p=select_probs)
             parent2_idx = np.random.choice(
                 self.pop_size, size=self.pop_size-1, p=select_probs)
 
-            children = [self._crossover(pop[parent1_idx[i]], pop[parent2_idx[i]])
-                                for i in range(self.pop_size-1)]
+            children = [self._crossover(pop[parent1_idx[idx]], pop[parent2_idx[idx]])
+                                for idx in range(self.pop_size-1)]
             for c in children:
-                self._perturb(c, original_label)
+                self._perturb(c)
 
             pop = elite + children
 
         return FailedAttackResult(
             self.original_tokenized_text,
-            original_label
+            original_result.output,
         )
     
 class PopulationMember:
