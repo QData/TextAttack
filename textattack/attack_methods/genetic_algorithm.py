@@ -24,13 +24,15 @@ class GeneticAlgorithm(Attack):
     Raises:
         ValueError: If the transformation is not a subclass of WordSwap. 
     """
-    def __init__(self, model, transformation, constraints=[], pop_size=20, max_iters=50, temp=0.3):
+    def __init__(self, model, transformation, constraints=[], pop_size=20, max_iters=50, temp=0.3,
+        give_up_if_no_improvement=False):
         if not isinstance(transformation, WordSwap):
             raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
         super().__init__(model, transformation, constraints=constraints)
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.temp = temp
+        self.give_up_if_no_improvement = give_up_if_no_improvement
 
     def _replace_at_index(self, pop_member, idx):
         """
@@ -48,9 +50,9 @@ class GeneticAlgorithm(Attack):
         if not len(transformations):
             return False
         new_x_results = self.goal_function.get_results(transformations)
-        new_x_scores = np.array([r.score for r in new_x_results])
+        new_x_scores = torch.Tensor([r.score for r in new_x_results])
         orig_score = self.goal_function.get_results([pop_member.tokenized_text])[0].score
-        new_x_scores = orig_score - new_x_scores
+        new_x_scores = new_x_scores - orig_score
         if new_x_scores.max() > 0:
             pop_member.tokenized_text = transformations[new_x_scores.argmax()]
             return True
@@ -139,6 +141,7 @@ class GeneticAlgorithm(Attack):
         original_result = self.goal_function.get_results([tokenized_text])[0]
         neighbors_len = self._get_neighbors_len(tokenized_text)
         pop = self._generate_population(neighbors_len)
+        cur_score = original_result.score
         for i in range(self.max_iters):
             pop_results = self.goal_function.get_results([pm.tokenized_text for pm in pop])
             for idx, result in enumerate(pop_results):
@@ -159,6 +162,11 @@ class GeneticAlgorithm(Attack):
                     float(original_result.score),
                     float(pop[0].result.score),
                 )
+
+            if pop[0].result.score > cur_score:
+                cur_score = pop[0].result.score
+            elif self.give_up_if_no_improvement:
+                break
 
             elite = [pop[0]]  # elite
             parent1_idx = np.random.choice(
