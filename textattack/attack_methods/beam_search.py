@@ -34,7 +34,8 @@ class BeamSearch(Attack):
             potential_next_beam = []
             for text, unswapped_word_indices in beam:
                 transformations = self.get_transformations(
-                        text, indices_to_replace=unswapped_word_indices
+                        text, indices_to_replace=unswapped_word_indices,
+                        original_text=original_tokenized_text
                 )
                 for next_text in transformations:
                     new_unswapped_word_indices = unswapped_word_indices.copy()
