@@ -44,3 +44,7 @@ class BERTTokenizer(Tokenizer):
     def convert_tokens_to_ids(self, tokens):
         ids = self.tokenizer.convert_tokens_to_ids(tokens)
         return ids
+
+    def convert_ids_to_tokens(self, ids):
+        tokens = self.tokenizer.convert_ids_to_tokens(ids)
+        return tokens

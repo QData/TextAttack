@@ -1,8 +1,11 @@
 import numpy as np
 import os
+import torch
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
+from textattack.tokenizers import BERTTokenizer
+from transformers.modeling_bert import BertForMaskedLM
 
 class WordSwapLanguageModel(WordSwap):
     """ 
@@ -10,60 +13,78 @@ class WordSwapLanguageModel(WordSwap):
         Currently, only supports BERT
     """
     
-    PATH = 'word_embeddings'
+    BERT_PATH = 'models/bert_masked_lm'
     
     def __init__(self, max_candidates=30, language_model="bert",  
-        replace_stopwords=False, **kwargs):
+        replace_stopwords=False, model=None, tokenizer=None, **kwargs):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
         self.language_model = language_model
         self.replace_stopwords = replace_stopwords
 
         if language_model == "bert":
-            
+            if tokenizer is None:
+                self.tokenizer = BERTTokenizer()
+            else:
+                self.tokenizer = tokenizer
 
-        
-        if word_embedding == 'paragramcf':
-            word_embeddings_folder = 'paragramcf'
-            word_embeddings_file = 'paragram.npy'
-            word_list_file = 'wordlist.pickle'
-            nn_matrix_file = 'nn.npy'
-        else:
-            raise ValueError(f'Could not find word embedding {word_embedding}')
-        
-        # Download embeddings if they're not cached.
-        cache_path = utils.download_if_needed('{}/{}'.format(
-            WordSwapEmbedding.PATH, word_embedding))
-        # Concatenate folder names to create full path to files.
-        word_embeddings_file = os.path.join(cache_path, word_embeddings_file)
-        word_list_file = os.path.join(cache_path, word_list_file)
-        nn_matrix_file = os.path.join(cache_path, nn_matrix_file)
-        
-        # Actually load the files from disk.
-        self.word_embeddings = np.load(word_embeddings_file)
-        self.word_embedding_word2index = np.load(word_list_file, allow_pickle=True)
-        self.nn = np.load(nn_matrix_file)
-        
-        # Build glove dict and index.
-        self.word_embedding_index2word = {}
-        for word, index in self.word_embedding_word2index.items():
-            self.word_embedding_index2word[index] = word
-        
-    def _get_replacement_words(self, word):
-        """ Returns a list of possible 'candidate words' to replace a word in a sentence 
-            or phrase. Based on nearest neighbors selected word embeddings.
+            if model is None:
+                #model_file_path = utils.download_if_needed(BERT_PATH)
+                self.model = BertForMaskedLM.from_pretrained('bert-base-uncased')
+                self.model.to(utils.get_device())
+                self.model.eval()
+            else:
+                self.model = model
+
+    def __call__(self, tokenized_text, indices_to_replace=None):
+        """ 
+        Returns a list of possible 'candidate words' to replace a word in a sentence 
+            or phrase based off top predictions by a language model
         """
-        try:
-            word_id = self.word_embedding_word2index[word.lower()]
-            nnids = self.nn[word_id][1:self.max_candidates+1]
-            candidate_words = []
-            for i, nbr_id in enumerate(nnids):
-                nbr_word = self.word_embedding_index2word[nbr_id]
-                candidate_words.append(recover_word_case(nbr_word, word))
-            return candidate_words
-        except KeyError:
-            # This word is not in our word embedding database, so return an empty list.
+        text = tokenized_text.words
+        if not indices_to_replace:
+            indices_to_replace = list(range(len(text)))
+        
+        transformations = []
+        tokens_list = []
+        segments_list = []
+        masked_indices = []
+        for i in indices_to_replace:
+            if not self.replace_stopwords and text[i].lower() in self.stopwords:
+                continue
+            masked_indices.append(i)
+            masked_text = list(text)
+            masked_text[i] = "[MASK]"
+            masked_text = " ".join(masked_text)
+            tokens_list.append(self.tokenizer.convert_tokens_to_ids(
+                self.tokenizer.convert_text_to_tokens(masked_text)))
+            segments_list.append([0] * self.tokenizer.max_seq_length)
+
+        if masked_indices:
+            transformations = []
+            tokens_tensor = torch.tensor(tokens_list, device=utils.get_device())
+            segments_tensor = torch.tensor(segments_list, device=utils.get_device())
+
+            with torch.no_grad():
+                preds = self.model(tokens_tensor, token_type_ids=segments_tensor)[0]
+
+            for i in range(len(masked_indices)):
+                # we do +1 b/c whole text is shifted by 1 when passed to LM
+                top_preds = torch.topk(preds[i][masked_indices[i]+1], self.max_candidates)
+                top_ids = top_preds.indices
+                top_scores = top_preds.values
+                top_tokens = self.tokenizer.convert_ids_to_tokens(top_ids)
+
+                for j in range(len(top_tokens)):
+                    new_word = recover_word_case(top_tokens[j], text[masked_indices[i]])
+                    new_tokenized_text = tokenized_text.replace_word_at_index(masked_indices[i], new_word)
+                    new_tokenized_text.attack_attrs["lm_score"] = top_scores[j].item()
+                    transformations.append(new_tokenized_text)
+
+            return transformations
+        else:
             return []
+
 
 def recover_word_case(word, reference_word):
     """ Makes the case of `word` like the case of `reference_word`. Supports 
