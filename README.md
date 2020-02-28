@@ -64,7 +64,7 @@ We have a command-line interface for running different attacks on different data
 
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python scripts/run_attack.py --recipe [recipe_name]`
 Currently, we include four recipes, each for synonym substitution-based classification and entailment attacks:
-- **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers"](Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers))
+- **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers"](https://arxiv.org/abs/1801.04354))
 - **textfooler**: Greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))
 - **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))
 - **tf-adjusted**: TextFooler attack with constraint thresholds adjusted based on human evaluation and grammaticality enforced.
