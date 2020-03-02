@@ -20,12 +20,12 @@ class BeamSearch(Attack):
         self.beam_width = beam_width
         self.max_words_changed = max_words_changed
         
-    def attack_one(self, original_tokenized_text):
+    def attack_one(self, original_tokenized_text, correct_output):
         max_words_changed = min(
             self.max_words_changed, 
             len(original_tokenized_text.words)
         )
-        original_result = self.goal_function.get_results([original_tokenized_text])[0]
+        original_result = self.goal_function.get_results([original_tokenized_text], correct_output)[0]
         default_unswapped_word_indices = list(range(len(original_tokenized_text.words)))
         beam = [(original_tokenized_text, default_unswapped_word_indices)]
         num_words_changed = 0
@@ -44,27 +44,27 @@ class BeamSearch(Attack):
                     potential_next_beam.append((next_text, new_unswapped_word_indices))
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
-                return FailedAttackResult(original_tokenized_text, original_result.output)
+                return FailedAttackResult(original_tokenized_text, correct_output)
             transformed_text_candidates = [text for (text,_) in potential_next_beam]
-            results = self.goal_function.get_results(transformed_text_candidates)
+            results = self.goal_function.get_results(transformed_text_candidates, correct_output)
             scores = np.array([r.score for r in results])
             # If we succeeded, break
             if results[scores.argmax()].succeeded:
                 best_result = results[scores.argmax()]
                 break
             # Otherwise, refill the beam. This works by sorting the scores
-            # descending order and filling the beam from there.
+            # in descending order and filling the beam from there.
             best_indices = -scores.argsort()[:self.beam_width]
             beam = [potential_next_beam[i] for i in best_indices]
            
         
         if best_result is None:
-            return FailedAttackResult(original_tokenized_text, original_result.output)
+            return FailedAttackResult(original_tokenized_text, correct_output)
         else:
             return AttackResult( 
                 original_tokenized_text, 
                 best_result.tokenized_text, 
-                original_result.output,
+                correct_output,
                 best_result.output,
                 original_result.score,
                 best_result.score

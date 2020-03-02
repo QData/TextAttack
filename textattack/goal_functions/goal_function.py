@@ -10,37 +10,29 @@ class GoalFunction:
    
     def __init__(self, model):
         self.model = model
-        self.num_queries = 0
         self._call_model_cache = lru.LRU(2**18)
 
     def should_skip(self, tokenized_text, correct_output):
-        self.original_text = tokenized_text
-        self.correct_output = correct_output
         model_outputs = self._call_model([tokenized_text])
-        return self._is_goal_complete(model_outputs[0])
+        return self._is_goal_complete(model_outputs[0], correct_output)
 
-    def set_original_attrs(self, tokenized_text, correct_output):
-        self.original_text = tokenized_text
-        self.correct_output = correct_output
-        self.num_queries = 1
-
-    def get_results(self, tokenized_text_list):
+    def get_results(self, tokenized_text_list, correct_output):
         model_outputs = self._call_model(tokenized_text_list)
         results = []
         for tokenized_text, raw_output in zip(tokenized_text_list, model_outputs):
-            succeeded = self._is_goal_complete(raw_output)
-            score = self._get_score(raw_output)
-            output = self._get_output(raw_output)
-            results.append(GoalFunctionResult(tokenized_text, output, succeeded, score))
+            succeeded = self._is_goal_complete(raw_output, correct_output)
+            score = self._get_score(raw_output, correct_output)
+            displayed_output = self._get_displayed_output(raw_output)
+            results.append(GoalFunctionResult(tokenized_text, displayed_output, succeeded, score))
         return results
 
-    def _is_goal_complete(self, correct_output, model_output):
+    def _is_goal_complete(self, model_output, correct_output):
         raise NotImplementedError()
 
-    def _get_score(self, model_output):
+    def _get_score(self, model_output, correct_output):
         raise NotImplementedError() 
 
-    def _get_output(self, raw_output):
+    def _get_displayed_output(self, raw_output):
         return raw_output
 
     def _call_model_uncached(self, tokenized_text_list, batch_size=8):

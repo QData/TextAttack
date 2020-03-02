@@ -10,6 +10,7 @@
 
 from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.overlap import LevenshteinEditDistance
+from textattack.goal_functions import UntargetedClassification
 from textattack.transformations import \
     CompositeTransformation, WordSwapNeighboringCharacterSwap, \
     WordSwapRandomCharacterDeletion, WordSwapRandomCharacterInsertion, \
@@ -44,9 +45,13 @@ def Gao2018DeepWordBug(model, use_all_transformations=True):
         LevenshteinEditDistance(30)
     ]
     #
+    # Goal is untargeted classification
+    #
+    goal_function = UntargetedClassification(model)
+    #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(model, transformation=transformation,
+    attack = GreedyWordSwapWIR(goal_function, transformation=transformation,
         constraints=constraints, max_depth=None)
     
     return attack

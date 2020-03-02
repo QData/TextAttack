@@ -49,9 +49,9 @@ class GeneticAlgorithm(Attack):
                                                    indices_to_replace=[idx])
         if not len(transformations):
             return False
-        new_x_results = self.goal_function.get_results(transformations)
+        new_x_results = self.goal_function.get_results(transformations, self.correct_output)
         new_x_scores = torch.Tensor([r.score for r in new_x_results])
-        orig_score = self.goal_function.get_results([pop_member.tokenized_text])[0].score
+        orig_score = self.goal_function.get_results([pop_member.tokenized_text], self.correct_output)[0].score
         new_x_scores = new_x_scores - orig_score
         if new_x_scores.max() > 0:
             pop_member.tokenized_text = transformations[new_x_scores.argmax()]
@@ -136,14 +136,15 @@ class GeneticAlgorithm(Attack):
         neighbors_len = np.array([len(x) for x in neighbors_list])
         return neighbors_len
 
-    def attack_one(self, tokenized_text):
+    def attack_one(self, tokenized_text, correct_output):
         self.original_tokenized_text = tokenized_text
-        original_result = self.goal_function.get_results([tokenized_text])[0]
+        self.correct_output = correct_output
+        original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
         neighbors_len = self._get_neighbors_len(tokenized_text)
         pop = self._generate_population(neighbors_len)
         cur_score = original_result.score
         for i in range(self.max_iters):
-            pop_results = self.goal_function.get_results([pm.tokenized_text for pm in pop])
+            pop_results = self.goal_function.get_results([pm.tokenized_text for pm in pop], correct_output)
             for idx, result in enumerate(pop_results):
                 pop[idx].result = pop_results[idx]
             pop = sorted(pop, key=lambda x: -x.result.score)
@@ -157,7 +158,7 @@ class GeneticAlgorithm(Attack):
                 return AttackResult(
                     self.original_tokenized_text,
                     pop[0].result.tokenized_text,
-                    original_result.output,
+                    correct_output,
                     pop[0].result.output,
                     float(original_result.score),
                     float(pop[0].result.score),
@@ -183,7 +184,7 @@ class GeneticAlgorithm(Attack):
 
         return FailedAttackResult(
             self.original_tokenized_text,
-            original_result.output,
+            correct_output,
         )
     
 class PopulationMember:

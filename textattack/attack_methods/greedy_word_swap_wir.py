@@ -25,17 +25,17 @@ class GreedyWordSwapWIR(Attack):
         super().__init__(model, transformation, constraints=constraints)
         self.max_depth = max_depth
         
-    def attack_one(self, tokenized_text):
+    def attack_one(self, tokenized_text, correct_output):
         original_tokenized_text = tokenized_text
         num_words_changed = 0
        
         # Sort words by order of importance
-        orig_result = self.goal_function.get_results([tokenized_text])[0]
+        orig_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
         cur_score = orig_result.score
         len_text = len(tokenized_text.words)
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,'[UNK]') for i in range(len_text)]
-        leave_one_scores = np.array([result.score for result in self.goal_function.get_results(leave_one_texts)])
+        leave_one_scores = np.array([result.score for result in self.goal_function.get_results(leave_one_texts, correct_output)])
         index_order = (-leave_one_scores).argsort()
 
         new_tokenized_text = None
@@ -50,7 +50,7 @@ class GreedyWordSwapWIR(Attack):
             if len(transformed_text_candidates) == 0:
                 continue
             num_words_changed += 1
-            results = sorted(self.goal_function.get_results(transformed_text_candidates), key=lambda x: -x.score)
+            results = sorted(self.goal_function.get_results(transformed_text_candidates, correct_output), key=lambda x: -x.score)
             # Skip swaps which don't improve the score
             if results[0].score > cur_score:
                 cur_score = results[0].score
@@ -79,11 +79,11 @@ class GreedyWordSwapWIR(Attack):
                 return AttackResult( 
                     original_tokenized_text, 
                     bestResult.tokenized_text, 
-                    orig_result.output,
+                    correct_output,
                     bestResult.output,
                     float(orig_result.score),
                     float(bestResult.score)
                 )
             tokenized_text = results[0].tokenized_text
         
-        return FailedAttackResult(original_tokenized_text, orig_result.output)
+        return FailedAttackResult(original_tokenized_text, correct_output)

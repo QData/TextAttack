@@ -6,12 +6,15 @@ class TargetedClassification(GoalFunction):
         super().__init__(model)
         self.target_class = target_class
 
-    def _is_goal_complete(self, model_output):
-        return self.correct_output != model_output.argmax() or self.correct_output == self.target_class 
+    def _is_goal_complete(self, model_output, correct_output):
+        return correct_output != model_output.argmax() or correct_output == self.target_class 
 
-    def _get_score(self, model_output):
-        return model_output[self.target_class]
+    def _get_score(self, model_output, correct_output):
+        if self.target_class < 0 or self.target_class >= len(model_output):
+            raise KeyError(f'target class set to {self.target_class} with {len(model_output)} classes.')
+        else:
+            return model_output[self.target_class]
         
-    def _get_output(self, raw_output):
+    def _get_displayed_output(self, raw_output):
         return int(raw_output.argmax())
 
