@@ -7,9 +7,11 @@
   <a href="#setup">Setup</a> •
   <a href="#usage">Usage</a> •
   <a href="#design">Design</a> 
-  
-</p>
+  <br> <br>
+  <img src="https://travis-ci.com/UVA-MachineLearningBioinformatics/TextAttack.svg?token=Kpx8qxw1sbsdXyhVxRq3&branch=master" alt="Coverage Status">
 
+</p>
+  
 ## About
 
 TextAttack is a library for running adversarial attacks against NLP models. These may be useful for evaluating attack methods and evaluating model robustness. TextAttack is designed in order to be easily extensible to new NLP tasks, models, attack methods, and attack constraints. The separation between these aspects of an adversarial attack and standardization of constraint evaluation allows for easier ablation studies. TextAttack supports attacks on models trained for classification and entailment.
@@ -62,10 +64,11 @@ We have a command-line interface for running different attacks on different data
 
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python scripts/run_attack.py --recipe [recipe_name]`
 Currently, we include four recipes, each for synonym substitution-based classification and entailment attacks:
-- textfooler: Reproduction of TextFooler's greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))
-- alzantot: Reproduction of genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))
-- tf-adjusted: TextFooler with constraint thresholds adjusted based on human evaluation and grammaticality enforced.
-- alz-adjusted: Alzantot's attack adjusted to follow the same constraints as tf-adjusted such that the only difference is the search method.
+- **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers"](https://arxiv.org/abs/1801.04354))
+- **textfooler**: Greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))
+- **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))
+- **tf-adjusted**: TextFooler attack with constraint thresholds adjusted based on human evaluation and grammaticality enforced.
+- **alz-adjusted**: Alzantot's attack adjusted to follow the same constraints as tf-adjusted such that the only difference is the search method.
 
 ### Adding to TextAttack
 

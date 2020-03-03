@@ -133,7 +133,7 @@ class SentenceEncoder(Constraint):
                 scores[i] = 1
             x_adv.attack_attrs['similarity_score'] = scores[i].item()
         mask = (scores >= self.threshold)
-        return np.array(x_adv_list)[mask.cpu().numpy()]
+        return np.array(x_adv_list)[mask.cpu().numpy().nonzero()]
     
     def __call__(self, x, x_adv):
         return self.sim_score(x.text, x_adv.text) >= self.threshold 
