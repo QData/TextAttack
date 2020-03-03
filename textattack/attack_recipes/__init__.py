@@ -3,3 +3,4 @@ from .alzantot_2018_genetic_algorithm_adjusted import Alzantot2018GeneticAlgorit
 from .jin_2019_textfooler import Jin2019TextFooler
 from .jin_2019_textfooler_adjusted import Jin2019TextFoolerAdjusted
 from .gao_2018_deepwordbug import Gao2018DeepWordBug
+from .bert_recipe import BertRecipe

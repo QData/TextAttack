@@ -12,6 +12,7 @@ RECIPE_NAMES = {
     'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
     'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
     'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
+    'bert-recipe':   'textattack.attack_recipes.BertRecipe'
 }
 
 MODEL_CLASS_NAMES = {
@@ -77,6 +78,7 @@ TRANSFORMATION_CLASS_NAMES = {
     'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
     'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
     'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
+    'word-swap-language-model':        'textattack.transformations.WordSwapLanguageModel'
 }
 
 CONSTRAINT_CLASS_NAMES = {
@@ -93,6 +95,7 @@ ATTACK_CLASS_NAMES = {
     'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
     'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
     'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
+    'mha':                'textattack.attack_methods.MetropolisHastingsSampling'
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {

@@ -1,5 +1,10 @@
+import torch
+import math
+import numpy as np
 from .attack import Attack
+from textattack.shared import utils
 from textattack.attack_results import AttackResult, FailedAttackResult
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
 class MetropolisHastingsSampling(Attack):
     """ 
@@ -7,64 +12,119 @@ class MetropolisHastingsSampling(Attack):
     Based off paper "Generating Fluent Adversarial Examples for Natural Langauges" by Zhang, Zhou, Miao, Li (2019)
     N.B.: Only replacement of words are supported by TextAttack. No deletion or inseration 
     """
-    def __init__(self, model, transformation, constraints=[], top_k = 30, max_iter = 200)
+    def __init__(self, model, transformation, constraints=[], mmax_iter = 200, lm_type = "gpt-2"):
         super().__init__(model, transformation, constraints=constraints)
-        self.top_k = 30
-        self.max_iter 200
+        self.max_iter = 500
+        self.lm_type = lm_type
+        if lm_type == "gpt-2":
+            self.lm_tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+            self.language_model = GPT2LMHeadModel.from_pretrained('gpt2')
+            self.language_model.to(utils.get_device())
+            self.language_model.eval()
 
-    def 
+    def lm_score(self, text):
+        """
+        Args:
+            text (str)
+        Returns: 1/perplexity(x)
+        """
+        if self.lm_type == "gpt-2":
+            
+            input_ids = self.lm_tokenizer.encode(text, add_special_tokens=True)
+            input_ids.append(self.lm_tokenizer.eos_token_id)
+
+            input_ids = torch.tensor(input_ids).to(utils.get_device())
+            loss = self.language_model(input_ids, labels=input_ids)[0].item()
+            pp = math.exp(loss)
+
+            return 1/pp
         
+    def stationary_dist(self, x, original_label, target_label=None):
+        """
+        Stationary distribution that we want to sample from
+        Args:
+            x (TokenizedText)
+            original_label
+            target_label: If running targetted attack, set to output class. Else, none
+        """
+        prob = self._call_model([x])[0]
+        lm_score = self.lm_score(x.text)
+        if target_label:
+            return lm_score * prob[target_label].item()
+        else:
+            return lm_score * torch.cat((prob[:original_label], prob[original_label:])).max().item()
+
+    def stationary_dist_batch(self, x_list, original_label, target_label=None):
+        """
+        Stationary distribution that we want to sample from.
+        Process item in batch and store new labels
+        Args:
+            x (TokenizedText)
+            original_label
+            target_label: If running targetted attack, set to output class. Else, none
+        """
+        probs = self._call_model(x_list)
+        lm_scores = [self.lm_score(x.text) for x in x_list]
+
+        if target_label:
+            scores = [lm_scores[i] * probs[i][target_label].item() for i in range(len(x_list))]
+        else:
+            def cmax(x, original):
+                values, indices = torch.topk(x, 2)
+                if indices[0] == original:
+                    return values[1].item()
+                else:
+                    return values[0].item()
+            scores = [lm_scores[i] * cmax(probs[i], original_label) for i in range(len(x_list))]
+
+        new_labels = [probs[i].argmax().item() for i in range(len(x_list))]
+
+        return scores, new_labels, probs
+
     def attack_one(self, original_label, original_tokenized_text):
+
+        original_prob = self._call_model([original_tokenized_text]).max()
         max_words_changed = min(
-            self.max_words_changed, 
+            self.max_iter, 
             len(original_tokenized_text.words)
         )
-        original_prob = self._call_model([original_tokenized_text]).max()
-        default_unswapped_word_indices = list(range(len(original_tokenized_text.words)))
-        beam = [(original_tokenized_text, default_unswapped_word_indices)]
-        num_words_changed = 0
-        new_text_label = original_label
-        while num_words_changed < max_words_changed:
-            num_words_changed += 1
-            potential_next_beam = []
-            for text, unswapped_word_indices in beam:
-                transformations = self.get_transformations(
-                        text, indices_to_replace=unswapped_word_indices,
+        current_text = original_tokenized_text
+        new_label = original_label
+        
+        for n in range(self.max_iter):
+            i = n % max_words_changed
+            transformations = self.get_transformations(
+                        current_text, indices_to_replace=[i],
                         original_text=original_tokenized_text
                 )
-                for next_text in transformations:
-                    new_unswapped_word_indices = unswapped_word_indices.copy()
-                    modified_word_index = next_text.attack_attrs['modified_word_index']
-                    new_unswapped_word_indices.remove(modified_word_index)
-                    potential_next_beam.append((next_text, new_unswapped_word_indices))
-            if len(potential_next_beam) == 0:
-                # If we did not find any possible perturbations, give up.
-                return FailedAttackResult(original_tokenized_text, original_label)
-            transformed_text_candidates = [text for (text,_) in potential_next_beam]
-            scores = self._call_model(transformed_text_candidates)
-            # The best choice is the one that minimizes the original class label.
-            best_index = scores[:, original_label].argmin()
-            new_tokenized_text = transformed_text_candidates[best_index]
-            # If we changed the label, break.
-            new_text_label = scores[best_index].argmax().item()
-            if new_text_label != original_label:
-                new_prob = scores[best_index].max()
+
+            if not len(transformations):                
+                continue
+
+            scores, new_labels, probs = self.stationary_dist_batch(transformations, original_label) 
+            norm_factor = sum(scores)
+            scores = [s/norm_factor for s in scores]
+            jump = np.random.choice(list(range(len(scores))), p=scores)
+            acceptance_ratio = scores[jump] / self.stationary_dist(current_text, original_label)
+            u = np.random.uniform(low=0.0, high=1.0)
+            if acceptance_ratio <= u:
+                # Accept the proposed jump
+                print("Accept!")
+                current_text = transformations[jump]
+                new_label = new_labels[jump]
+
+            if new_label != original_label:
+                new_prob = probs[jump][new_label]
                 break
-            # Otherwise, refill the beam. This works by sorting the scores from
-            # the original label in ascending order and filling the beam from
-            # there.
-            best_indices = scores[:, original_label].argsort()[:self.beam_width]
-            beam = [potential_next_beam[i] for i in best_indices]
-           
-        
-        if original_label == new_text_label:
+
+        if original_label == new_label:
             return FailedAttackResult(original_tokenized_text, original_label)
         else:
             return AttackResult( 
                 original_tokenized_text, 
-                new_tokenized_text, 
+                current_text,
                 original_label,
-                new_text_label,
+                new_label,
                 float(original_prob),
                 float(new_prob)
             )

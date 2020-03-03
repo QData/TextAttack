@@ -1,11 +1,13 @@
 import numpy as np
 import os
 import torch
+import string
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 from textattack.tokenizers import BERTTokenizer
 from transformers.modeling_bert import BertForMaskedLM
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
 class WordSwapLanguageModel(WordSwap):
     """ 
@@ -14,27 +16,27 @@ class WordSwapLanguageModel(WordSwap):
     """
     
     BERT_PATH = 'models/bert_masked_lm'
+    GPT2_PATH = 'models/gpt2_lm'
     
-    def __init__(self, max_candidates=30, language_model="bert",  
-        replace_stopwords=False, model=None, tokenizer=None, **kwargs):
+    def __init__(self, max_candidates=100, language_model="bert",  
+        replace_stopwords=False, **kwargs):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
         self.language_model = language_model
         self.replace_stopwords = replace_stopwords
 
         if language_model == "bert":
-            if tokenizer is None:
-                self.tokenizer = BERTTokenizer()
-            else:
-                self.tokenizer = tokenizer
+            self.tokenizer = BERTTokenizer()
+            #model_file_path = utils.download_if_needed(BERT_PATH)
+            self.model = BertForMaskedLM.from_pretrained('bert-base-uncased')
 
-            if model is None:
-                #model_file_path = utils.download_if_needed(BERT_PATH)
-                self.model = BertForMaskedLM.from_pretrained('bert-base-uncased')
-                self.model.to(utils.get_device())
-                self.model.eval()
-            else:
-                self.model = model
+        elif language_model == 'gpt-2':
+            #TODO: add gpt-2
+            self.tokenizer = GPT2Tokenizer.from_pretrained('gpt-2')
+            self.model = GPT2LMHeadModel.from_pretrained('gpt2')
+
+        self.model.to(utils.get_device())
+        self.model.eval()
 
     def __call__(self, tokenized_text, indices_to_replace=None):
         """ 
@@ -45,11 +47,12 @@ class WordSwapLanguageModel(WordSwap):
         if not indices_to_replace:
             indices_to_replace = list(range(len(text)))
         
-        transformations = []
         tokens_list = []
         segments_list = []
         masked_indices = []
+
         for i in indices_to_replace:
+
             if not self.replace_stopwords and text[i].lower() in self.stopwords:
                 continue
             masked_indices.append(i)
@@ -69,6 +72,8 @@ class WordSwapLanguageModel(WordSwap):
                 preds = self.model(tokens_tensor, token_type_ids=segments_tensor)[0]
 
             for i in range(len(masked_indices)):
+                if masked_indices[i]+1 >= self.tokenizer.max_seq_length:
+                    continue
                 # we do +1 b/c whole text is shifted by 1 when passed to LM
                 top_preds = torch.topk(preds[i][masked_indices[i]+1], self.max_candidates)
                 top_ids = top_preds.indices
@@ -77,6 +82,8 @@ class WordSwapLanguageModel(WordSwap):
 
                 for j in range(len(top_tokens)):
                     new_word = recover_word_case(top_tokens[j], text[masked_indices[i]])
+                    if not new_word.isalpha():
+                        continue
                     new_tokenized_text = tokenized_text.replace_word_at_index(masked_indices[i], new_word)
                     new_tokenized_text.attack_attrs["lm_score"] = top_scores[j].item()
                     transformations.append(new_tokenized_text)
