@@ -96,7 +96,7 @@ ATTACK_CLASS_NAMES = {
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {
-    'untargeted-classification':        'textattack.goal_functions.UntargetedClassification',
+    'untargeted-classification':      'textattack.goal_functions.UntargetedClassification',
     'targeted-classification':        'textattack.goal_functions.TargetedClassification',
 }
 
@@ -151,7 +151,7 @@ def get_args():
     parser.add_argument('--parallel', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
 
-    goal_function_choices = ','.join(GOAL_FUNCTION_CLASS_NAMES.keys())
+    goal_function_choices = ', '.join(GOAL_FUNCTION_CLASS_NAMES.keys())
     parser.add_argument('--goal_function', '-g', default='untargeted-classification',
         help=f'The goal function to use. choices: {goal_function_choices}')
     
@@ -160,7 +160,7 @@ def get_args():
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
-    attack_choices = ','.join(ATTACK_CLASS_NAMES.keys())
+    attack_choices = ', '.join(ATTACK_CLASS_NAMES.keys())
     attack_group.add_argument('--attack', '--attack_method', type=str, 
         required=False, default='greedy-word-wir', 
         help=f'The type of attack to run. choices: {attack_choices}')
