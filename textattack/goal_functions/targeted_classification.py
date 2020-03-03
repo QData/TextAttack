@@ -1,6 +1,9 @@
 from textattack.goal_functions import GoalFunction
 
 class TargetedClassification(GoalFunction):
+    """
+    An targeted attack on classification models, which attempts to maximize the score of the target label until it is the predicted label.
+    """
    
     def __init__(self, model, target_class=0):
         super().__init__(model)

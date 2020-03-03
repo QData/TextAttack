@@ -17,8 +17,10 @@ class Attack:
     considered successfully fooling the model.
 
     Args:
-        model: A PyTorch or TensorFlow model to attack
+        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
+        transformation: The transformation applied at each step of the attack.
         constraints: A list of constraints to add to the attack
+        is_black_box: Whether or not the attack is black box.
 
     """
     def __init__(self, goal_function, transformation, constraints=[], is_black_box=True):

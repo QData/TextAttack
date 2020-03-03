@@ -17,18 +17,18 @@ class GeneticAlgorithm(Attack):
     """
     Attacks a model using a genetic algorithm. 
     Args:
-        model: A PyTorch or TensorFlow model to attack.
+        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
         transformation: The type of transformation to use. Should be a subclass of WordSwap. 
         pop_size (:obj:`int`, optional): The population size. Defauls to 20. 
         max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 50. 
     Raises:
         ValueError: If the transformation is not a subclass of WordSwap. 
     """
-    def __init__(self, model, transformation, constraints=[], pop_size=20, max_iters=50, temp=0.3,
+    def __init__(self, goal_function, transformation, constraints=[], pop_size=20, max_iters=50, temp=0.3,
         give_up_if_no_improvement=False):
         if not isinstance(transformation, WordSwap):
             raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
-        super().__init__(model, transformation, constraints=constraints)
+        super().__init__(goal_function, transformation, constraints=constraints)
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.temp = temp

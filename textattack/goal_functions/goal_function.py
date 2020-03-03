@@ -7,7 +7,11 @@ from textattack.goal_functions import GoalFunctionResult
 from textattack.shared import utils
 
 class GoalFunction:
-   
+    """
+    Evaluates how well a perturbed tokenized_text object is achieving a specified goal.
+    Args:
+        model: The PyTorch or TensorFlow model used for evaluation.
+    """
     def __init__(self, model):
         self.model = model
         self._call_model_cache = lru.LRU(2**18)
@@ -17,6 +21,9 @@ class GoalFunction:
         return self._is_goal_complete(model_outputs[0], correct_output)
 
     def get_results(self, tokenized_text_list, correct_output):
+        """
+        For each tokenized_text object in tokenized_text_list, returns a result consisting of whether or not the goal has been achieved, the output for display purposes, and a score.
+        """
         model_outputs = self._call_model(tokenized_text_list)
         results = []
         for tokenized_text, raw_output in zip(tokenized_text_list, model_outputs):
