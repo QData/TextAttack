@@ -13,6 +13,7 @@ from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations import WordSwapEmbedding
+from textattack.goal_functions import UntargetedClassification
 
 def Jin2019TextFooler(model):
     #
@@ -50,9 +51,13 @@ def Jin2019TextFooler(model):
         skip_text_shorter_than_window=True)
     constraints.append(use_constraint)
     #
+    # Goal is untargeted classification
+    #
+    goal_function = UntargetedClassification(model)
+    #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(model, transformation=transformation,
+    attack = GreedyWordSwapWIR(goal_function, transformation=transformation,
         constraints=constraints, max_depth=None)
     
     return attack

@@ -82,7 +82,6 @@ class AttackLogger:
             else:
                 perturbed_word_percentage = 0
             perturbed_word_percentages[i] = perturbed_word_percentage
-            num_words_changed_until_success[i] = len(result.original_text.words)
             all_num_words[i] = len(result.original_text.words)
         
         # Original classifier success rate on these samples.
@@ -118,7 +117,7 @@ class AttackLogger:
             ['Average num. words per input:', average_num_words],
         ]
         
-        num_queries = np.array([r.num_queries for r in self.results])
+        num_queries = np.array([r.num_queries for r in self.results if not isinstance(r, SkippedAttackResult)])
         avg_num_queries = num_queries.mean()
         avg_num_queries = str(round(avg_num_queries, 2))
         summary_table_rows.append(['Avg num queries:', avg_num_queries])

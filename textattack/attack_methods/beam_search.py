@@ -1,5 +1,6 @@
 from .attack import Attack
 from textattack.attack_results import AttackResult, FailedAttackResult
+import numpy as np
 
 class BeamSearch(Attack):
     """ 
@@ -19,16 +20,16 @@ class BeamSearch(Attack):
         self.beam_width = beam_width
         self.max_words_changed = max_words_changed
         
-    def attack_one(self, original_label, original_tokenized_text):
+    def attack_one(self, original_tokenized_text, correct_output):
         max_words_changed = min(
             self.max_words_changed, 
             len(original_tokenized_text.words)
         )
-        original_prob = self._call_model([original_tokenized_text]).max()
+        original_result = self.goal_function.get_results([original_tokenized_text], correct_output)[0]
         default_unswapped_word_indices = list(range(len(original_tokenized_text.words)))
         beam = [(original_tokenized_text, default_unswapped_word_indices)]
         num_words_changed = 0
-        new_text_label = original_label
+        best_result = None
         while num_words_changed < max_words_changed:
             num_words_changed += 1
             potential_next_beam = []
@@ -44,32 +45,28 @@ class BeamSearch(Attack):
                     potential_next_beam.append((next_text, new_unswapped_word_indices))
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
-                return FailedAttackResult(original_tokenized_text, original_label)
+                return FailedAttackResult(original_tokenized_text, correct_output)
             transformed_text_candidates = [text for (text,_) in potential_next_beam]
-            scores = self._call_model(transformed_text_candidates)
-            # The best choice is the one that minimizes the original class label.
-            best_index = scores[:, original_label].argmin()
-            new_tokenized_text = transformed_text_candidates[best_index]
-            # If we changed the label, break.
-            new_text_label = scores[best_index].argmax().item()
-            if new_text_label != original_label:
-                new_prob = scores[best_index].max()
+            results = self.goal_function.get_results(transformed_text_candidates, correct_output)
+            scores = np.array([r.score for r in results])
+            # If we succeeded, break
+            if results[scores.argmax()].succeeded:
+                best_result = results[scores.argmax()]
                 break
-            # Otherwise, refill the beam. This works by sorting the scores from
-            # the original label in ascending order and filling the beam from
-            # there.
-            best_indices = scores[:, original_label].argsort()[:self.beam_width]
+            # Otherwise, refill the beam. This works by sorting the scores
+            # in descending order and filling the beam from there.
+            best_indices = -scores.argsort()[:self.beam_width]
             beam = [potential_next_beam[i] for i in best_indices]
            
         
-        if original_label == new_text_label:
-            return FailedAttackResult(original_tokenized_text, original_label)
+        if best_result is None:
+            return FailedAttackResult(original_tokenized_text, correct_output)
         else:
             return AttackResult( 
                 original_tokenized_text, 
-                new_tokenized_text, 
-                original_label,
-                new_text_label,
-                float(original_prob),
-                float(new_prob)
+                best_result.tokenized_text, 
+                correct_output,
+                best_result.output,
+                original_result.score,
+                best_result.score
             )

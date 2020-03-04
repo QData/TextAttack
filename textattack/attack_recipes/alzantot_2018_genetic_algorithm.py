@@ -14,6 +14,7 @@ from textattack.constraints.overlap import WordsPerturbedPercentage
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.language_models import GoogleLanguageModel
 from textattack.transformations import WordSwapEmbedding
+from textattack.goal_functions import UntargetedClassification
 
 def Alzantot2018GeneticAlgorithm(model):
     #
@@ -44,9 +45,13 @@ def Alzantot2018GeneticAlgorithm(model):
             GoogleLanguageModel(top_n_per_index=4)
     )
     #
+    # Goal is untargeted classification
+    #
+    goal_function = UntargetedClassification(model)
+    #
     # Perform word substitution with a genetic algorithm.
     #
-    attack = GeneticAlgorithm(model, constraints=constraints,
+    attack = GeneticAlgorithm(goal_function, constraints=constraints,
         transformation=transformation, pop_size=60, max_iters=20)
     
     return attack
