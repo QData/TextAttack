@@ -155,7 +155,7 @@ class MonteCarloTreeSearch(Attack):
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
 
-    def __init__(self, model, transformation, constraints=[], num_iter=1000, max_words_changed=10):
+    def __init__(self, model, transformation, constraints=[], num_iter=500, max_words_changed=10):
         super().__init__(model, transformation, constraints=constraints)
 
         # MCTS Hyper-parameters
@@ -164,7 +164,7 @@ class MonteCarloTreeSearch(Attack):
         self.ucb_C = 5
         self.global_C = 50
         self.local_C = 50
-        self.window_size = 5
+        self.window_size = 6
 
         self.word_embedding_distance = 0
 
@@ -366,6 +366,9 @@ class MonteCarloTreeSearch(Attack):
                 best_action = action
                 best_value = value
 
+        if best_action not in self.tree.root.children:
+            return None, None
+
         return self.tree.root.children[best_action], best_action
 
     def attack_one(self, original_label, tokenized_text):
@@ -387,6 +390,9 @@ class MonteCarloTreeSearch(Attack):
 
         for i in range(max_words_changed):
             best_next_node, best_action = self.run_mcts()
+            if best_next_node is None:
+                break
+
             self.tree.root = best_next_node
             self.tree.reset_node_depth()
             final_action_history.append(best_action)

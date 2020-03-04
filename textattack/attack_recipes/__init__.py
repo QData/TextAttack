@@ -4,3 +4,5 @@ from .jin_2019_textfooler import Jin2019TextFooler
 from .jin_2019_textfooler_adjusted import Jin2019TextFoolerAdjusted
 from .gao_2018_deepwordbug import Gao2018DeepWordBug
 from .bert_recipe import BertRecipe
+from .mcts_recipe import MCTSRecipe
+from .mcts_recipe_adjusted import MCTSRecipeAdjusted
