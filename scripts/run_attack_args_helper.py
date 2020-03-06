@@ -234,7 +234,7 @@ def parse_recipe_from_args(model, args):
         raise ValueError('Invalid recipe {args.recipe}')
     return recipe
 
-def parse_model_and_attack_from_args(args):
+def parse_goal_function_and_attack_from_args(args):
     if ':' in args.model:
         model_name, params = args.model.split(':')
         if model_name not in MODEL_CLASS_NAMES:
@@ -259,7 +259,7 @@ def parse_model_and_attack_from_args(args):
             attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
         else:
             raise ValueError(f'Error: unsupported attack {args.attack}')
-    return model, attack
+    return goal_function, attack
 
 def parse_logger_from_args(args):# Create logger
     attack_logger = textattack.loggers.AttackLogger()

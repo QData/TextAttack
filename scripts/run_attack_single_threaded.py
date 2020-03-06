@@ -23,7 +23,7 @@ def run(args):
     start_time = time.time()
     
     # Models and Attack
-    model, attack = parse_model_and_attack_from_args(args)
+    goal_function, attack = parse_goal_function_and_attack_from_args(args)
     
     # Logger
     attack_logger = parse_logger_from_args(args)
@@ -47,12 +47,10 @@ def run(args):
 
             tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, model.tokenizer)
             
-            pred = attack._call_model([tokenized_text])
-            label = int(pred.argmax())
-
+            result = goal_function.get_results([tokenized_text])[0]
             print('Attacking...')
 
-            result = next(attack.attack_dataset([(label, text)]))
+            result = next(attack.attack_dataset([(result.output, text, False)]))
             print(result.__str__(color_method='stdout'))
     
     else:

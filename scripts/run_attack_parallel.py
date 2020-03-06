@@ -25,11 +25,11 @@ def attack_from_queue(args, in_queue, out_queue):
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
     print('Using GPU #' + str(gpu_id))
     set_env_variables(gpu_id)
-    model, attack = parse_model_and_attack_from_args(args)
+    _, attack = parse_goal_function_and_attack_from_args(args)
     while not in_queue.empty():
         try: 
-            label, text = in_queue.get()
-            results_gen = attack.attack_dataset([(label, text)], num_examples=1)
+            output, text = in_queue.get()
+            results_gen = attack.attack_dataset([(output, text)], num_examples=1)
             result = next(results_gen)
             out_queue.put(result)
         except Exception as e:
