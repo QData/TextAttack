@@ -45,12 +45,12 @@ def run(args):
             if not text:
                 continue
 
-            tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, model.tokenizer)
+            tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, goal_function.model.tokenizer)
             
-            result = goal_function.get_results([tokenized_text])[0]
+            result = goal_function.get_results([tokenized_text], goal_function.get_output(tokenized_text))[0]
             print('Attacking...')
 
-            result = next(attack.attack_dataset([(result.output, text, False)]))
+            result = next(attack.attack_dataset([(result.output, text)]))
             print(result.__str__(color_method='stdout'))
     
     else:

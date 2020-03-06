@@ -6,7 +6,7 @@ class BERTTokenizer(Tokenizer):
         any type of tokenization, be it word, wordpiece, or character-based.
     """
     def __init__(self, model_path='bert-base-uncased', max_seq_length=256):
-        self.tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
+        self.tokenizer = BertTokenizer.from_pretrained(model_path)
         self.max_seq_length = max_seq_length
         
     def convert_text_to_tokens(self, input_text):

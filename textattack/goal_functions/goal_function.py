@@ -14,11 +14,15 @@ class GoalFunction:
     """
     def __init__(self, model):
         self.model = model
+        self.num_queries = 0
         self._call_model_cache = lru.LRU(2**18)
 
     def should_skip(self, tokenized_text, correct_output):
         model_outputs = self._call_model([tokenized_text])
         return self._is_goal_complete(model_outputs[0], correct_output)
+
+    def get_output(self, tokenized_text):
+        return self._get_displayed_output(self._call_model([tokenized_text])[0])
 
     def get_results(self, tokenized_text_list, correct_output):
         """
