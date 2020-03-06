@@ -19,7 +19,7 @@ class CSVLogger(Logger):
             return
         color_method = None if self.plain else 'file'
         s1, s2 = result.diff_color(color_method)
-        row = {'passage_1': s1, 'passage_2': s2, 'score_1': result.orig_score, 'score_2': result.perturbed_score, 'label_1': int(result.original_label), 'label_2': int(result.perturbed_label)} 
+        row = {'passage_1': s1, 'passage_2': s2, 'score_1': result.orig_score, 'score_2': result.perturbed_score, 'output_1': result.original_output, 'output_2': result.perturbed_output} 
         self.df = self.df.append(row, ignore_index=True)
         self._flushed = False
 
