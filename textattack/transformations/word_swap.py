@@ -35,7 +35,7 @@ class WordSwap(Transformation):
             alphabet that could be lowercase or uppercase. """
         return random.choice(string.ascii_letters)
 
-    def __call__(self, tokenized_text, indices_to_replace=None):
+    def __call__(self, tokenized_text, indices_to_replace=None, shallow=False):
         """
         Returns a list of all possible transformations for `text`.
             
@@ -55,7 +55,7 @@ class WordSwap(Transformation):
             replacement_words = self._get_replacement_words(word_to_replace)
             new_tokenized_texts = []
             for r in replacement_words:
-                new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r))
+                new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r, shallow=shallow))
             transformations.extend(new_tokenized_texts)
         
         return transformations

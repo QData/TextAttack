@@ -45,7 +45,8 @@ class GreedyWordSwapWIR(Attack):
             transformed_text_candidates = self.get_transformations(
                 tokenized_text,
                 original_tokenized_text,
-                indices_to_replace=[index_order[i]])
+                indices_to_replace=[index_order[i]],
+                shallow=False)
             i += 1
             if len(transformed_text_candidates) == 0:
                 continue
