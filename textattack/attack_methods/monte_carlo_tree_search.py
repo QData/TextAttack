@@ -13,15 +13,18 @@ import time
 import collections
 import multiprocessing as mp
 
-PROFILE = False
+PROFILE = True
 if PROFILE:
     import io
     import pstats
     import cProfile
     from pstats import SortKey
 
-
-LOG_OUPUTS = True
+"""
+Functions for visualizing the search tree using graphviz.
+Not essential for running MCTS.
+"""
+LOG_OUPUTS = False
 if LOG_OUPUTS:
     import graphviz
     import pickle
@@ -68,21 +71,24 @@ def generate_dot(root_node, action_history, filename, success):
     with open(f"outputs/{filename}.pkl", "wb") as f:
         pickle.dump(dot, f)
 
-
-NODE_ID = 1
-
 class Node:
-
     """
         Represents a node in search tree
         Members:
-            text (TokenizedText) : Current version of TokenizedText
-            action_seq : list of actions that led to current state
-            depth : Current depth in search tree
-            parent : Parent node
-            num_visits : Number of visits to the current node
+            id (int): unique int for id
+            text (TokenizedText) : Version of TokenizedText that Node represents
+            depth (int): Current depth in search tree
+            parent (Node): Parent node
+            num_visits (int): Number of visits to the current node
+            value (float): Score of adversarial attack
+            local_rave_values ((int, str) --> value (float)): Store local RAVE value
+            value_history (list): Stores the history of score/reward gained when choosing this node at every iteration.
+                                    Used for calculating variance.
+            variance (float): Variance of score
+            children ((int, str) --> Node): Map action to child Node
             ...
     """
+    NODE_ID = 0
 
     def __init__(self, node_id, text, depth, parent):
         self.id = node_id
@@ -91,7 +97,6 @@ class Node:
         self.parent = parent
         self.num_visits = 0
         self.value = 0.0
-        # Maps action (int, str) --> value (int)
         self.local_rave_values = {}
         self.value_history = []
         self.variance = 0.0
@@ -104,31 +109,36 @@ class Node:
         if len(self.value_history) >= 2:
             self.variance = statistics.variance(self.value_history, self.value)
 
-
 class SearchTree:
     """
-        Object used to hold states/variables for a specific run of MCTS
+        Tree used to hold states/variables for MCTS.
+        Each node represents a particular TokenizedText that reflects certain transformation.
+        Each action is represented as tuple of (int, str) where int is the i-th word chosen for transformation
+        and str is the specific word that i-th word is transformed to.
+
+        root (Node): root of search tree
+        original_text (TokenizedText): TokenizedText that is under attack
+        original_label (int)
+        original_confidence (float): Probability of label given by model under attack
+        max_depth (int): max depth of search tree
     """
 
     def __init__(self, original_text, original_label, original_confidence, max_depth):
-        self.root = Node(0, original_text, 0, None)
+        self.root = Node(Node.NODE_ID, original_text, 0, None)
+        Node.NODE_ID += 1
         self.original_text = original_text
         self.original_label = original_label
         self.original_confidence = original_confidence
         self.max_depth = max_depth
 
-        self.available_words_to_replace = set(
-            range(len(self.original_text.words)))
+        self.available_words_to_replace = set(range(len(self.original_text.words)))
         self.words_to_skip = set()
         self.action_history = []
-        self.iteration = 0
-
-        # Maps action (int, str) --> (value (int), number_values (int))
+        self.iteration = 0 
         self.global_rave_values = {}
 
-    def reset_tree(self):
-        self.available_words_to_replace = set(
-            range(len(self.original_text.words)))
+    def clear_history(self):
+        self.available_words_to_replace = set(range(len(self.original_text.words)))
         self.action_history = []
 
     def reset_node_depth(self):
@@ -150,23 +160,40 @@ class MonteCarloTreeSearch(Attack):
         model: A PyTorch or TensorFlow model to attack.
         transformation: The type of transformation to use. Should be a subclass of WordSwap. 
         constraints: A list of constraints to add to the attack
-            - entropy: Uses negative log-likelihood function
-        num_iter (int) : Number of iterations for MCTS. Default is 4000
+        num_iter (int): Number of iterations for MCTS. Default is 4000
+        top_k (int): Top-k transformations to select when expanding search tree.
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
 
-    def __init__(self, model, transformation, constraints=[], num_iter=500, max_words_changed=10):
+    def __init__(self, model, transformation, constraints=[], num_iter=100, top_k=3, max_words_changed=32):
         super().__init__(model, transformation, constraints=constraints)
 
         # MCTS Hyper-parameters
         self.num_iter = num_iter
+        self.top_k = top_k
         self.max_words_changed = max_words_changed
-        self.ucb_C = 5
-        self.global_C = 50
-        self.local_C = 50
-        self.window_size = 6
+        self.ucb_C = 2
+        self.global_C = 100
+        self.local_C = 100
+        self.window_size = 32
 
         self.word_embedding_distance = 0
+
+    def choose_top_transformations(self, transformations):
+        """
+        transformations (list<TokenizedText>)
+        Returns:
+            list of difference if original class probability given by model under attack
+        """
+        prob = self._call_model(transformations)
+        scores = np.zeros(len(transformations))
+        for i in range(len(probs)):
+            diff = self.tree.original_confidence - probs[i][self.tree.original_label].item()
+            scores[i] = diff
+        top_choices = np.argsort(scores)[-self.top_k:]
+        if len(top_choices) != self.top_k:
+            raise ValueError("weee")
+        return [transformations[i] for i in top_choices]
 
     def evaluate(self, current_node):
         """
@@ -220,7 +247,7 @@ class MonteCarloTreeSearch(Attack):
     def simulate(self, current_node):
 
         while current_node.depth < self.tree.max_depth:
-            if self.tree.available_words_to_replace:
+            if not self.tree.available_words_to_replace:
                 break
 
             random_tranformation = None
@@ -237,7 +264,7 @@ class MonteCarloTreeSearch(Attack):
                     indices_to_replace=[random_word_to_replace]
                 )
 
-                if not available_transformations:
+                if len(available_transformations) == 0:
                     continue
 
                 random_tranformation = random.choice(available_transformations)
@@ -248,7 +275,7 @@ class MonteCarloTreeSearch(Attack):
             self.tree.action_history.append(
                 (random_word_to_replace, random_tranformation.attack_attrs['new_word']))
             current_node = Node(-1, random_tranformation,
-                                current_node+1, current_node)
+                                current_node.depth+1, current_node)
 
         return current_node
 
@@ -257,27 +284,23 @@ class MonteCarloTreeSearch(Attack):
             Create next nodes based on available transformations and then take a random action.
             Returns: New node that we expand to. If no such node exists, return None
         """
-        global NODE_ID
-        words_to_replace = list(self.tree.available_words_to_replace)
-
+        print(len(self.tree.available_words_to_replace))
         available_transformations = self.get_transformations(
             current_node.text,
             original_text=self.tree.original_text,
-            indices_to_replace=words_to_replace
+            indices_to_replace=list(self.tree.available_words_to_replace)
         )
 
         if len(available_transformations) == 0:
             return current_node
         else:
-
             available_actions = [(t.attack_attrs['modified_word_index'],
                                   t.attack_attrs['new_word']) for t in available_transformations]
 
             for i in range(len(available_actions)):
-                # Create children nodes if it doesn't exist already
                 current_node.children[available_actions[i]] = Node(
-                    NODE_ID, available_transformations[i], current_node.depth+1, current_node)
-                NODE_ID += 1
+                    Node.NODE_ID, available_transformations[i], current_node.depth+1, current_node)
+                Node.NODE_ID += 1
 
             random_action = random.choice(available_actions)
 
@@ -338,8 +361,9 @@ class MonteCarloTreeSearch(Attack):
         """
 
         for i in range(self.num_iter):
+            print(f"mcts {i}")
             self.tree.iteration += 1
-            self.tree.reset_tree()
+            self.tree.clear_history()
             current_node = self.selection()
 
             if current_node.depth < self.tree.max_depth:
@@ -389,6 +413,7 @@ class MonteCarloTreeSearch(Attack):
             profiler.enable()
 
         for i in range(max_words_changed):
+            print(f"MCTS iteration {i}")
             best_next_node, best_action = self.run_mcts()
             if best_next_node is None:
                 break

@@ -6,3 +6,5 @@ from .gao_2018_deepwordbug import Gao2018DeepWordBug
 from .bert_recipe import BertRecipe
 from .mcts_recipe import MCTSRecipe
 from .mcts_recipe_adjusted import MCTSRecipeAdjusted
+from .mha_recipe import MHARecipe
+from .mha_recipe_adjusted import MHARecipeAdjusted

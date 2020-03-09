@@ -12,9 +12,11 @@ RECIPE_NAMES = {
     'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
     'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
     'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
-    'bert-recipe':   'textattack.attack_recipes.BertRecipe'
     'mcts':          'textattack.attack_recipes.MCTSRecipe',
-    'mcts-adjusted': 'textattack.attack_recipes.MCTSRecipeAdjusted'
+    'mcts-adjusted': 'textattack.attack_recipes.MCTSRecipeAdjusted',
+    'mha':          'textattack.attack_recipes.MHARecipe',
+    'mha-adjusted': 'textattack.attack_recipes.MHARecipeAdjusted',
+    'bert-recipe':   'textattack.attack_recipes.BertRecipe'
 }
 
 MODEL_CLASS_NAMES = {

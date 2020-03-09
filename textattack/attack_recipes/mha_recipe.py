@@ -1,10 +1,10 @@
-from textattack.attack_methods import MonteCarloTreeSearch
+from textattack.attack_methods import MetropolisHastingsSampling
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations import WordSwapEmbedding
 
-def MCTSRecipe(model):
+def MHARecipe(model):
     #
     # Swap words with their embedding nearest-neighbors. 
     #
@@ -42,7 +42,7 @@ def MCTSRecipe(model):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = MonteCarloTreeSearch(model, transformation=transformation,
+    attack = MetropolisHastingsSampling(model, transformation=transformation,
         constraints=constraints)
     
     return attack

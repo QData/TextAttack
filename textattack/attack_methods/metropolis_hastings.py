@@ -93,6 +93,8 @@ class MetropolisHastingsSampling(Attack):
         
         for n in range(self.max_iter):
             i = n % max_words_changed
+            orig_stat_dist = self.stationary_dist(current_text, original_label)
+
             transformations = self.get_transformations(
                         current_text, indices_to_replace=[i],
                         original_text=original_tokenized_text
@@ -103,13 +105,34 @@ class MetropolisHastingsSampling(Attack):
 
             scores, new_labels, probs = self.stationary_dist_batch(transformations, original_label) 
             norm_factor = sum(scores)
-            scores = [s/norm_factor for s in scores]
-            jump = np.random.choice(list(range(len(scores))), p=scores)
-            acceptance_ratio = scores[jump] / self.stationary_dist(current_text, original_label)
+            proposal_prob = [s/norm_factor for s in scores]
+            jump = np.random.choice(list(range(len(proposal_prob))), p=proposal_prob)
+
+            # Now we have calculate probability of return proposal
+            reverse_trans = self.get_transformations(
+                        transformations[jump], indices_to_replace=[i],
+                        original_text=original_tokenized_text
+                )
+
+            reverse_jump = -1
+            for k in range(len(reverse_trans)):
+                if reverse_trans[k].text == current_text.text:
+                    reverse_jump = k
+                    break
+            if reverse_jump == -1:
+                #print("Failed to find reverse jump.")
+                continue
+            dist, _, _ = self.stationary_dist_batch(reverse_trans, original_label)
+            norm_factor = sum(dist)
+            return_prob = dist[reverse_jump] / norm_factor
+
+            acceptance_ratio = (scores[jump] * return_prob) / (orig_stat_dist * proposal_prob[jump])
+            acceptance_ratio = min(1, acceptance_ratio)
             u = np.random.uniform(low=0.0, high=1.0)
-            if acceptance_ratio <= u:
+
+            if acceptance_ratio <= u or new_labels[jump] != original_label:
                 # Accept the proposed jump
-                print("Accept!")
+                #print("Accept!")
                 current_text = transformations[jump]
                 new_label = new_labels[jump]
 
