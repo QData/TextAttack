@@ -74,28 +74,5 @@ class BERTEntailmentTokenizer(BERTTokenizer):
         assert len(segment_ids) == self.max_seq_length
         
         return input_ids, input_mask, segment_ids
-
-    def replace_tokens(self, old_tokens, new_tokens, start_end_indices):
-        """
-        Args:
-            old_tokens (list): List of tokens
-            new_tokens (list): List of list of tokens
-            start_end_indices (list<tuples>): List of tuples of form (start, end)
-        Returns
-            new list of tokens
-        """
-        # Remove paddings and separator tokens
-        raise NotImplementedError
-
-    def replace_ids(self, old_ids, new_ids, start_end_indices):
-        """
-        Args:
-            old_ids (list): List of ids
-            new_ids (list): List of list of ids
-            start_end_indices (list<tuples>): List of tuples of form (start, end)
-        Returns
-            new list of ids
-        """
-        # Remove paddings and separator ids
-        raise NotImplementedError
+        
         

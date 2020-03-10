@@ -1,8 +1,7 @@
 import torch
 from copy import deepcopy
 from .utils import get_device
-import string
-import re
+
 
 class TokenizedText:
     """ A helper class that represents a string that can be attacked. """
@@ -12,75 +11,34 @@ class TokenizedText:
     """
     SPLIT_TOKEN = '>>>>'
 
-    def __init__(self, text, tokenizer, attack_attrs=dict(), tokens=None, ids=None):
+    def __init__(self, text, tokenizer, attack_attrs=dict()):
         """ Initializer stores text and tensor of tokenized text.
 
         Args:
             text (string): The string that this TokenizedText represents
             tokenizer (Tokenizer): an object that can convert text to tokens
                 and convert tokens to IDs
-            attack_attrs (dict): stories attributes used for attacking
         """
         text = text.strip()
         self.tokenizer = tokenizer
-        if tokens:
-            self.tokens = tokens
-        else:
-            self.tokens = tokenizer.convert_text_to_tokens(text)
-
-        if ids:
-            self.ids = ids
-        else:
-            ids = tokenizer.convert_tokens_to_ids(self.tokens)
-            if not isinstance(ids, tuple):
-                # Some tokenizers may tokenize text to a single vector.
-                # In this case, wrap the vector in a tuple to mirror the
-                # format of other tokenizers.
-                ids = (ids,)
-            self.ids = ids
-
+        self.tokens = tokenizer.convert_text_to_tokens(text)
+        ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        if not isinstance(ids, tuple):
+            # Some tokenizers may tokenize text to a single vector.
+            # In this case, wrap the vector in a tuple to mirror the
+            # format of other tokenizers.
+            ids = (ids,)
+        self.ids = ids
         self.words = raw_words(text)
         self.text = text
         self.attack_attrs = attack_attrs
         self.attack_attrs['constraint_scores'] = {}
-        # For each word, we store the index of its first token and last token in self.tokens list
-        self.word_token_map = [(0,0)] * len(self.words)
-        #if not ("\\x1b[92m" in repr(self.text) or "\\x1b[0m" in repr(self.text)):
-            # Don't call map_word_to_token() if TokenizedText is used for logging
-            # Color scheme for terminal output interferes with below function call
-            #self.map_word_to_token()
 
     def __eq__(self, other):
         return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
 
     def __hash__(self):
         return hash(self.text)
-
-    def map_word_to_token(self):
-        j = 1
-        for i in range(len(self.words)):
-            word = self.words[i]
-            token = self.tokens[j].replace("#", "")
-            while j < len(self.tokens) and not self.tokens[j].replace("#", "").isalpha():
-                j += 1
-            start = j
-            while j < len(self.tokens):
-                token = self.tokens[j].replace("#", "")
-                if token == word.lower() or (word == "UNK" and token == "[UNK]"):
-                    self.word_token_map[i] = (start, j)
-                    j += 1
-                    break
-                else:
-                    word = word[len(token):]
-                    j += 1
-            if j == len(self.tokens):
-                # print(f"raw: {self.text}")
-                # print(f"text: {self.words}")
-                # print(f"tokens: {self.tokens}")
-                # print(f"word: {self.words[i]}")
-                # print(f'current_token: {token}')
-                # raise ValueError("Cannot map words to tokens")
-                break
 
     def delete_tensors(self):
         """ Delete tensors to clear up GPU space. Only should be called
@@ -171,42 +129,24 @@ class TokenizedText:
             return True
         return w1[i] != w2[i]
 
-    def replace_words_at_indices(self, indices, new_words, shallow=False):
+    def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
         if len(indices) != len(new_words):
             raise ValueError(f'Cannot replace {len(new_words)} words at {len(indices)} indices.')
         words = self.words[:]
-
-        if shallow:
-            new_tokens = []
-            new_ids = []
-            mapping = []
-
         for i, new_word in zip(indices, new_words):
             words[i] = new_word
-            if shallow:
-                new_token = self.tokenizer.convert_text_to_tokens(new_word)
-                new_id = self.tokenizer.convert_tokens_to_ids(new_token)
-                new_tokens.append(new_token)
-                new_ids.append(new_id)
-                mapping.append(self.word_token_map[i])
+        return self.replace_new_words(words)
 
-        if shallow:
-            tokens = self.tokenizer.replace_tokens(self.tokens, new_tokens, mapping)
-            ids = self.tokenizer.replace_ids(self.ids, new_ids, mapping)
-            return self.replace_new_words(words, tokens, ids)
-        else:
-            return self.replace_new_words(words)
-
-    def replace_word_at_index(self, index, new_word, shallow=False):
+    def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
         self.attack_attrs['modified_word_index'] = index
         self.attack_attrs['new_word'] = new_word
-        return self.replace_words_at_indices([index], [new_word], shallow=shallow)
+        return self.replace_words_at_indices([index], [new_word])
 
-    def replace_new_words(self, new_words, new_tokens=None, new_ids=None):
+    def replace_new_words(self, new_words):
         """ This code returns a new TokenizedText object and replaces old list 
             of words with a new list of words, but preserves the punctuation 
             and spacing of the original message.
@@ -222,15 +162,8 @@ class TokenizedText:
             final_sentence += adv_word
             text = text[word_end:]
         final_sentence += text  # Add all of the ending punctuation.
-
-        if new_tokens and new_ids:
-            return TokenizedText(final_sentence, self.tokenizer,
-                             attack_attrs=deepcopy(self.attack_attrs),
-                             tokens=new_tokens, ids=new_ids)
-        else:
-            return TokenizedText(final_sentence, self.tokenizer,
+        return TokenizedText(final_sentence, self.tokenizer,
                              attack_attrs=deepcopy(self.attack_attrs))
-                             
 
     def clean_text(self):
         """ Represents self in a clean, printable format. Joins text with multiple
