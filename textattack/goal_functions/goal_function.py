@@ -86,13 +86,13 @@ class GoalFunction:
             scores.append(preds)
         scores = torch.cat(scores, dim=0)
         # Validation check on model score dimensions
-        if scores.ndim == 1:
+        if scores.dim() == 1:
             # Unsqueeze prediction, if it's been squeezed by the model.
             if len(tokenized_text_list == 1):
                 scores = scores.unsqueeze(dim=0)
             else:
                 raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif scores.ndim != 2:
+        elif scores.dim() != 2:
             # If model somehow returns too may dimensions, throw an error.
             raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
         elif scores.shape[0] != len(tokenized_text_list):
