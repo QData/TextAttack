@@ -3,6 +3,7 @@ from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations import WordSwapEmbedding
+from textattack.goal_functions import UntargetedClassification
 
 def MCTSRecipe(model):
     #
@@ -39,10 +40,16 @@ def MCTSRecipe(model):
         metric='angular', compare_with_original=False, window_size=15,
         skip_text_shorter_than_window=True)
     constraints.append(use_constraint)
+    
     #
-    # Greedily swap words with "Word Importance Ranking".
+    # Goal is untargeted classification
     #
-    attack = MonteCarloTreeSearch(model, transformation=transformation,
+    goal_function = UntargetedClassification(model)
+
+    #
+    # Swap words with MCTS
+    #
+    attack = MonteCarloTreeSearch(goal_function, transformation=transformation,
         constraints=constraints)
     
     return attack

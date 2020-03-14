@@ -119,16 +119,14 @@ class SearchTree:
         root (Node): root of search tree
         original_text (TokenizedText): TokenizedText that is under attack
         original_label (int)
-        original_confidence (float): Probability of label given by model under attack
         max_depth (int): max depth of search tree
     """
 
-    def __init__(self, original_text, original_label, original_confidence, max_depth):
+    def __init__(self, original_text, original_label, max_depth):
         self.root = Node(Node.NODE_ID, original_text, 0, None)
         Node.NODE_ID += 1
         self.original_text = original_text
         self.original_label = original_label
-        self.original_confidence = original_confidence
         self.max_depth = max_depth
 
         self.available_words_to_replace = set(range(len(self.original_text.words)))
@@ -177,8 +175,7 @@ class MonteCarloTreeSearch(Attack):
         self.local_C = 100
         self.window_size = 32
 
-        self.word_embedding_distance = 0
-
+'''
     def choose_top_transformations(self, transformations):
         """
         transformations (list<TokenizedText>)
@@ -194,15 +191,16 @@ class MonteCarloTreeSearch(Attack):
         if len(top_choices) != self.top_k:
             raise ValueError("weee")
         return [transformations[i] for i in top_choices]
+'''
 
     def evaluate(self, current_node):
         """
             Evaluates the final (or current) transformation
         """
-        prob_scores = self._call_model([current_node.text])[0]
-        new_label = prob_scores.argmax().item()
+        result = self.goal_function.get_results([current_node.text], self.tree.original_label)[0]
+        new_label = result.output
 
-        value = self.tree.original_confidence - prob_scores[self.tree.original_label].item()
+        value = self.result.score
 
         value += sum(
             current_node.text.attack_attrs['constraint_scores'].values())
@@ -245,13 +243,18 @@ class MonteCarloTreeSearch(Attack):
             current_node = current_node.parent
 
     def simulate(self, current_node):
-
+        """
+        Take random actions until we reache a terminal node (either by reaching max tree depth or running out of words to transform).
+        Random action is defined by choosing randomly a word to transform, and then randomly choosing a valid transformation.
+        Returns: Terminal node
+        """
         while current_node.depth < self.tree.max_depth:
             if not self.tree.available_words_to_replace:
                 break
 
             random_tranformation = None
             while random_tranformation is None and self.tree.available_words_to_replace:
+                # First choose random word to replace
                 random_word_to_replace = random.choice(
                     tuple(self.tree.available_words_to_replace))
 
@@ -267,6 +270,7 @@ class MonteCarloTreeSearch(Attack):
                 if len(available_transformations) == 0:
                     continue
 
+                # Choose random transformation
                 random_tranformation = random.choice(available_transformations)
 
             if random_tranformation is None:
@@ -274,6 +278,8 @@ class MonteCarloTreeSearch(Attack):
 
             self.tree.action_history.append(
                 (random_word_to_replace, random_tranformation.attack_attrs['new_word']))
+
+            # Create Node but do not add to our search tree
             current_node = Node(-1, random_tranformation,
                                 current_node.depth+1, current_node)
 
@@ -284,7 +290,6 @@ class MonteCarloTreeSearch(Attack):
             Create next nodes based on available transformations and then take a random action.
             Returns: New node that we expand to. If no such node exists, return None
         """
-        print(len(self.tree.available_words_to_replace))
         available_transformations = self.get_transformations(
             current_node.text,
             original_text=self.tree.original_text,
@@ -395,15 +400,14 @@ class MonteCarloTreeSearch(Attack):
 
         return self.tree.root.children[best_action], best_action
 
-    def attack_one(self, original_label, tokenized_text):
+    def attack_one(self, tokenized_text, correct_output):
 
-        original_tokenized_text = tokenized_text
-        original_confidence = self._call_model(
-            [original_tokenized_text]).squeeze()[original_label].item()
+        original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
+
         max_tree_depth = min(self.window_size, len(tokenized_text.words))
         max_words_changed = min(self.max_words_changed, len(tokenized_text.words))
 
-        self.tree = SearchTree(tokenized_text, original_label, original_confidence, max_tree_depth)
+        self.tree = SearchTree(tokenized_text, original_result.output, max_tree_depth)
 
         original_root = self.tree.root
         final_action_history = []

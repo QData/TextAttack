@@ -138,13 +138,13 @@ class MetropolisHastingsSampling(Attack):
             acceptance_ratio = min(1, acceptance_ratio)
             u = np.random.uniform(low=0.0, high=1.0)
 
-            if acceptance_ratio <= u or new_labels[jump] != correct_output:
+            if acceptance_ratio <= u or results[jump].succeeded:
                 # Accept the proposed jump
                 current_result = results[jump]
                 current_text = transformations[jump]
                 current_label = new_labels[jump]
 
-            if current_label != correct_output:
+            if current_result.succeeded:
                 break
 
         if correct_output == current_label:
