@@ -31,7 +31,7 @@ class BERTTokenizer(Tokenizer):
 
         tokens = self.tokenizer.tokenize(input_text)
         if self.fast:
-            # When using BertokenizerFast, CLS and SEP tokens are inserted already
+            # When using BertTokenizerFast, CLS and SEP tokens are inserted already
             tokens = tokens[:self.max_seq_length]
         else:
             tokens = tokens[:self.max_seq_length-2]
