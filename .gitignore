@@ -27,3 +27,5 @@ tensorflow-hub
 
 # for Macs
 .DS_Store
+
+config.json
