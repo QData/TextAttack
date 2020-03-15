@@ -9,7 +9,7 @@ scipy
 sentence_transformers
 spacy
 torch
-transformers>=2.0.0
+transformers>=2.5.1
 tensorflow-gpu>=2
 tensorflow_hub
 terminaltables
