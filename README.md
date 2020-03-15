@@ -8,7 +8,7 @@
   <a href="#usage">Usage</a> •
   <a href="#design">Design</a> 
   <br> <br>
-  <a href="https://travis-ci.com/UVA-MachineLearningBioinformatics/TextAttack">
+  <a target="_blank" href="https://travis-ci.com/UVA-MachineLearningBioinformatics/TextAttack">
     <img src="https://travis-ci.com/UVA-MachineLearningBioinformatics/TextAttack.svg?token=Kpx8qxw1sbsdXyhVxRq3&branch=master" alt="Coverage Status">
   </a>
 
