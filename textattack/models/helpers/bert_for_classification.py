@@ -25,7 +25,7 @@ class BERTForClassification:
         if entailment:
             self.tokenizer = BERTEntailmentTokenizer()
         else:
-            self.tokenizer = BERTTokenizer(model_file_path, fast=True)
+            self.tokenizer = BERTTokenizer(model_file_path, fast=False)
     
     def __call__(self, *params):
         pred = self.model(*params)[0]
