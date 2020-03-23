@@ -37,7 +37,9 @@ class TextAttackDataset:
                 n (int): number of samples to return
                 offset (int): line to start reading from
         """
-        text_file_path = utils.download_if_needed(text_file_name)
+        # text_file_path = utils.download_if_needed(text_file_name)
+        text_file_path = '/p/qdata/jm8wx/datasets/mr/sentence-level/processed/data/test.txt'
+        print('loading MR test data')
         text_file = open(text_file_path, 'r')
         raw_lines = text_file.readlines()[offset:]
         self.raw_lines = [self._clean_example(ex) for ex in raw_lines]

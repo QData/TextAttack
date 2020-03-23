@@ -1,3 +1,4 @@
+import lru
 import numpy as np
 import os
 import random
@@ -37,6 +38,7 @@ class Attack:
         self.transformation = transformation
         self.constraints = constraints
         self.is_black_box = is_black_box
+        self.constraints_cache = lru.LRU(2**18)
     
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
@@ -60,8 +62,8 @@ class Attack:
         if apply_constraints:
             return self._filter_transformations(transformations, text, original_text)
         return transformations
-     
-    def _filter_transformations(self, transformations, text, original_text=None):
+    
+    def _filter_transformations_uncached(self, original_transformations, text, original_text=None):
         """ Filters a list of potential perturbations based on a list of
                 transformations.
             
@@ -71,10 +73,33 @@ class Attack:
                 text (list: TokenizedText): a list of TokenizedText objects
                     representation potential perturbations
         """
+        transformations = original_transformations[:]
         for C in self.constraints:
             if len(transformations) == 0: break
-            transformations = C.call_many(text, transformations, original_text)
+            transformations_mask = C.call_many(text, transformations, original_text)
+        # Default to false for all original transformations.
+        for original_transformation in original_transformations:
+            self.constraints_cache[original_transformation] = False
+        # Set unfiltered transformations to True in the cache.
+        for successful_transformation in transformations:
+            self.constraints_cache[successful_transformation] = True
         return transformations 
+     
+    def _filter_transformations(self, transformations, text, original_text=None):
+        """ Filters a list of potential perturbations based on a list of
+                transformations. Checks cache first.
+            
+            Args:
+                transformations (list: function): a list of transformations 
+                    that filter a list of candidate perturbations
+                text (list: TokenizedText): a list of TokenizedText objects
+                    representation potential perturbations
+        """
+        # Populate cache with transformations.
+        uncached_transformations = [t for t in transformations if (t not in self.constraints_cache)]
+        self._filter_transformations_uncached(uncached_transformations, text, original_text=original_text)
+        # Return transformations from cache.
+        return [t for t in transformations if self.constraints_cache[t]]
 
     def attack_one(self, tokenized_text):
         """

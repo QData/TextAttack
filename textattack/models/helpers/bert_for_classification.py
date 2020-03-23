@@ -18,6 +18,7 @@ class BERTForClassification:
     def __init__(self, model_path, num_labels=2, entailment=False):
         #model_file_path = utils.download_if_needed(model_path)
         model_file_path = utils.download_if_needed(model_path)
+        # model_file_path = '/p/qdata/jm8wx/research/text_attacks/RobustNLP/BertClassifier/outputs-counterfit/mr-uncased-2020-03-05-11:21/checkpoint-54600/'
         self.model = BertForSequenceClassification.from_pretrained(
             model_file_path, num_labels=num_labels)
         self.model.to(utils.get_device())

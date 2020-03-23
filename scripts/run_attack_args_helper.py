@@ -246,6 +246,7 @@ def parse_goal_function_and_attack_from_args(args):
         raise ValueError(f'Error: unsupported model {args.model}')
     if args.recipe:
         attack = parse_recipe_from_args(model, args)
+        goal_function = attack.goal_function
     else:
         goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args)
