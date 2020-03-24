@@ -6,6 +6,7 @@ class BeamSearch(Attack):
     """ 
     An attack that greedily chooses from a list of possible 
     perturbations.
+    
     Args:
         model (nn.Module): The model to attack.
         transformation (Transformation): The type of transformation.

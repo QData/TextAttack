@@ -5,6 +5,7 @@ from textattack.attack_results import AttackResult, FailedAttackResult
 class GreedyWordSwap(BeamSearch):
     """ 
     An attack that greedily chooses from a list of possible perturbations.
+    
     Args:
         model: The model to attack.
         transformation: The type of transformation.
