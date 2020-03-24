@@ -2,5 +2,5 @@
 Genetic Algorithm
 ===================
 
-.. automodule:: attacks.genetic_algorithm
+.. automodule:: textattack.attack_methods.genetic_algorithm
    :members:

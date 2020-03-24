@@ -16,40 +16,42 @@ Welcome to TextAttack's documentation!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Attack Documentation:
+   :caption: Attack Methods:
 
-   attacks/attack
-   attacks/greedy_word_swap
-   attacks/genetic_algorithm
+   attack_methods/attack
+   attack_methods/beam_search
+   attack_methods/greedy_word_swap
+   attack_methods/genetic_algorithm
 
 .. toctree::
    :maxdepth: 2
-   :caption: Models Documentation:
+   :caption: Attack Recipes:
 
-   models/bert.rst
-   models/infer_sent.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Attack Results:
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Models:
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Transformations Documentation:
 
-   transformations/transformation
-   transformations/word_swap
 
 .. toctree::
    :maxdepth: 2
    :caption: Constraints Documentation:
 
-   constraints/constraint
-   constraints/semantics/semantics
-   constraints/semantics/google_language_model
 
 .. toctree::
    :maxdepth: 2
    :caption: Datasets:
 
-   datasets/built-in_datasets
-   datasets/user_defined_datasets
 
 
 
