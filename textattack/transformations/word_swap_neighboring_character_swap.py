@@ -36,4 +36,4 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
         return candidate_words
         
     def extra_repr_keys(self): 
-        return ['random_one']
+        return super().extra_repr_keys() + ['random_one']

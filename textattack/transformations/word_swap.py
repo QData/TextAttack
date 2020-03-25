@@ -62,4 +62,4 @@ class WordSwap(Transformation):
 
     
     def extra_repr_keys(self): 
-        return ['replace_stopwords', 'textfooler_stopwords']
+        return ['replace_stopwords']

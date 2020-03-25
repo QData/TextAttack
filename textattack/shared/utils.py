@@ -104,10 +104,11 @@ def default_class_repr(self):
          extra_params.append('  ('+key+')'+':  {'+key+'}')
     if len(extra_params):
         extra_str = '\n' + '\n'.join(extra_params) + '\n'
+        extra_str = f'({extra_str})'
     else:
         extra_str = ''
     extra_str = extra_str.format(**self.__dict__)
-    return f'{self.__class__.__name__}({extra_str})'
+    return f'{self.__class__.__name__}{extra_str}'
         
 LABEL_COLORS = [
     'red', 'green', 

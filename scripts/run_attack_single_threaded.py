@@ -24,7 +24,8 @@ def run(args):
     
     # Models and Attack
     goal_function, attack = parse_goal_function_and_attack_from_args(args)
-    print(attack); exit() # delete this line
+    print(attack)
+    print()
     
     # Logger
     attack_logger = parse_logger_from_args(args)
