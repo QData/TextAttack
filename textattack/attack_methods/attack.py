@@ -13,8 +13,8 @@ class Attack:
     
     This is an abstract class that contains main helper functionality for 
     attacks. An attack is comprised of a search method and a transformation, as 
-    well asone or more linguistic constraints that examples must pass to be 
-    considered successfully fooling the model.
+    well as one or more linguistic constraints that successful examples must 
+    meet.
 
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
@@ -154,33 +154,22 @@ class Attack:
         
         # self.goal_function
         lines.append(
-            _addindent(f'(goal_function):  {self.goal_function}', 2)
+            utils.add_indent(f'(goal_function):  {self.goal_function}', 2)
         )
         # self.transformation
         lines.append(
-            _addindent(f'(transformation):  {self.transformation}', 2)
+            utils.add_indent(f'(transformation):  {self.transformation}', 2)
         )
         # self.constraints
         constraints_lines = []
         for i, constraint in enumerate(self.constraints):
-            constraints_lines.append(_addindent(f'({i}): {constraint}', 2))
-        constraints_str = _addindent('\n' + '\n'.join(constraints_lines), 2)
-        lines.append(_addindent(f'(constraints): {constraints_str}', 2))
+            constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
+        constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
+        lines.append(utils.add_indent(f'(constraints): {constraints_str}', 2))
         # self.is_black_box
-        lines.append(_addindent(f'(is_black_box):  {self.is_black_box}', 2))
+        lines.append(utils.add_indent(f'(is_black_box):  {self.is_black_box}', 2))
         main_str += '\n  ' + '\n  '.join(lines) + '\n'
         main_str += ')'
         return main_str
     
     __str__ = __repr__
-    
-def _addindent(s_, numSpaces):
-    s = s_.split('\n')
-    # don't do anything for single-line stuff
-    if len(s) == 1:
-        return s_
-    first = s.pop(0)
-    s = [(numSpaces * ' ') + line for line in s]
-    s = '\n'.join(s)
-    s = first + '\n' + s
-    return s

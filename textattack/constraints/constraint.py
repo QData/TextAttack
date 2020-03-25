@@ -1,6 +1,7 @@
 """ Abstract classes represent constraints on text adversarial examples. 
 """
 
+from textattack.shared.utils import default_class_repr
 
 class Constraint:
     """ 
@@ -35,12 +36,4 @@ class Constraint:
         """ 
         return []
     
-    def __repr__(self):
-        extra_params = []
-        for key in self.extra_repr_keys():
-             extra_params.append(key+'={'+key+'}')
-        extra_str = ', '.join(extra_params)
-        extra_str = extra_str.format(**self.__dict__)
-        return f'{self.__class__.__name__}({extra_str})'
-    
-    __str__ = __repr__
+    __str__ = __repr__ = default_class_repr
