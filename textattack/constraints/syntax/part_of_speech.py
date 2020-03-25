@@ -42,3 +42,6 @@ class PartOfSpeech(Constraint):
         cur_pos = self._get_pos(before_ctx, x_word, after_ctx)
         replace_pos = self._get_pos(before_ctx, x_adv_word, after_ctx)
         return self._can_replace_pos(cur_pos, replace_pos)
+    
+    def extra_repr_keys(self):
+        return ['tagset', 'allow_verb_noun_swap']

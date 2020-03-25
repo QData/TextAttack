@@ -16,3 +16,7 @@ class METEOR(Constraint):
             return True
         meteor = nltk.translate.meteor([original_text], x_adv)  
         return meteor <= self.max_meteor
+        
+    def extra_repr_keys(self):
+        return ['max_meteor']
+

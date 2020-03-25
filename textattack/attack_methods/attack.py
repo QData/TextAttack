@@ -139,3 +139,48 @@ class Attack:
             result = self.attack_one(tokenized_text, output)
             result.num_queries = self.goal_function.num_queries
             yield result
+    
+    def _get_name(self):
+        return self.__class__.__name__
+    
+    def __repr__(self):
+        """ Prints attack parameters in a human-readable string.
+            
+        Inspired by the readability of printing PyTorch nn.Modules:
+        https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py
+        """
+        main_str = self._get_name() + '('
+        lines = []
+        
+        # self.goal_function
+        lines.append(
+            _addindent(f'(goal_function):  {self.goal_function}', 2)
+        )
+        # self.transformation
+        lines.append(
+            _addindent(f'(transformation):  {self.transformation}', 2)
+        )
+        # self.constraints
+        constraints_lines = []
+        for i, constraint in enumerate(self.constraints):
+            constraints_lines.append(_addindent(f'({i}): {constraint}', 2))
+        constraints_str = _addindent('\n' + '\n'.join(constraints_lines), 2)
+        lines.append(_addindent(f'(constraints): {constraints_str}', 2))
+        # self.is_black_box
+        lines.append(_addindent(f'(is_black_box):  {self.is_black_box}', 2))
+        main_str += '\n  ' + '\n  '.join(lines) + '\n'
+        main_str += ')'
+        return main_str
+    
+    __str__ = __repr__
+    
+def _addindent(s_, numSpaces):
+    s = s_.split('\n')
+    # don't do anything for single-line stuff
+    if len(s) == 1:
+        return s_
+    first = s.pop(0)
+    s = [(numSpaces * ' ') + line for line in s]
+    s = '\n'.join(s)
+    s = first + '\n' + s
+    return s

@@ -25,3 +25,22 @@ class Constraint:
     def __call__(self, x, x_adv, original_text=None):
         """ Returns True if C(x,x_adv) is true. """
         raise NotImplementedError()
+    
+    def extra_repr_keys(self):
+        """Set the extra representation of the constraint using these keys.
+        
+        To print customized extra information, you should reimplement
+        this method in your own constraint. Both single-line and multi-line
+        strings are acceptable.
+        """ 
+        return []
+    
+    def __repr__(self):
+        extra_params = []
+        for key in self.extra_repr_keys():
+             extra_params.append(key+'={'+key+'}')
+        extra_str = ', '.join(extra_params)
+        extra_str = extra_str.format(**self.__dict__)
+        return f'{self.__class__.__name__}({extra_str})'
+    
+    __str__ = __repr__
