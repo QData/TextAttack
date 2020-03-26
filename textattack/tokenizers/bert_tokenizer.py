@@ -6,7 +6,7 @@ class BERTTokenizer(Tokenizer):
         any type of tokenization, be it word, wordpiece, or character-based.
     """
     def __init__(self, model_path='bert-base-uncased', max_seq_length=256, fast=False):
-        
+        self.max_seq_length = max_seq_length
         if fast:
             # Faster tokenizer that is implemented in Rust
             self.tokenizer = BertTokenizerFast.from_pretrained(model_path)
