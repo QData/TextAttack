@@ -26,8 +26,7 @@ def attack_from_queue(args, in_queue, out_queue):
     print('Using GPU #' + str(gpu_id))
     set_env_variables(gpu_id)
     _, attack = parse_goal_function_and_attack_from_args(args)
-    print(attack)
-    print()
+    print(attack + '\n')
     while not in_queue.empty():
         try: 
             output, text = in_queue.get()
