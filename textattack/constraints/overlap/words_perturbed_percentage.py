@@ -25,4 +25,11 @@ class WordsPerturbedPercentage(Constraint):
         else:
             min_words_perturbed = round(min_num_words * (self.min_percent / 100))
             return num_words_diff >= min_words_perturbed
+    def extra_repr_keys(self):
+        if self.min_percent is None:
+            metric = 'max_percent'
+        else:
+            metric = 'min_percent'
+        return [metric]
+
 

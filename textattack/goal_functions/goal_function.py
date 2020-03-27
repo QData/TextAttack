@@ -3,6 +3,7 @@ import numpy as np
 import torch
 import math
 
+from textattack.shared.utils import default_class_repr
 from textattack.goal_functions import GoalFunctionResult
 from textattack.shared import utils
 
@@ -129,3 +130,8 @@ class GoalFunction:
                 self._call_model_cache[text] = score.cpu()
             final_scores = [self._call_model_cache[text].to(utils.get_device()) for text in tokenized_text_list]
             return torch.stack(final_scores)
+
+    def extra_repr_keys(self): 
+        return []
+        
+    __repr__ = __str__ = default_class_repr

@@ -14,8 +14,8 @@ class Attack:
     
     This is an abstract class that contains main helper functionality for 
     attacks. An attack is comprised of a search method and a transformation, as 
-    well asone or more linguistic constraints that examples must pass to be 
-    considered successfully fooling the model.
+    well as one or more linguistic constraints that successful examples must 
+    meet.
 
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
@@ -164,3 +164,37 @@ class Attack:
             result = self.attack_one(tokenized_text, output)
             result.num_queries = self.goal_function.num_queries
             yield result
+    
+    def _get_name(self):
+        return self.__class__.__name__
+    
+    def __repr__(self):
+        """ Prints attack parameters in a human-readable string.
+            
+        Inspired by the readability of printing PyTorch nn.Modules:
+        https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py
+        """
+        main_str = self._get_name() + '('
+        lines = []
+        
+        # self.goal_function
+        lines.append(
+            utils.add_indent(f'(goal_function):  {self.goal_function}', 2)
+        )
+        # self.transformation
+        lines.append(
+            utils.add_indent(f'(transformation):  {self.transformation}', 2)
+        )
+        # self.constraints
+        constraints_lines = []
+        for i, constraint in enumerate(self.constraints):
+            constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
+        constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
+        lines.append(utils.add_indent(f'(constraints): {constraints_str}', 2))
+        # self.is_black_box
+        lines.append(utils.add_indent(f'(is_black_box):  {self.is_black_box}', 2))
+        main_str += '\n  ' + '\n  '.join(lines) + '\n'
+        main_str += ')'
+        return main_str
+    
+    __str__ = __repr__

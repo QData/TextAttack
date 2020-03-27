@@ -24,6 +24,7 @@ def run(args):
     
     # Models and Attack
     goal_function, attack = parse_goal_function_and_attack_from_args(args)
+    print(attack+'\n')
     
     # Logger
     attack_logger = parse_logger_from_args(args)

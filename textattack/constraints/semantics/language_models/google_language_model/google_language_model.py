@@ -100,3 +100,6 @@ class GoogleLanguageModel(Constraint):
     
     def __call__(self, x, x_adv):
         raise NotImplementedError()
+        
+    def extra_repr_keys(self):
+        return ['top_n', 'top_n_per_index']
