@@ -27,15 +27,25 @@ Welcome to TextAttack's documentation!
    :maxdepth: 2
    :caption: Attack Recipes:
 
+   attack_recipes/alzantot_genetic
+   attack_recipes/gao_deepwordbug
+   attack_recipes/jin_textfooler
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Attack Results:
 
+   attack_results/attack_result 
+
 
 .. toctree::
    :maxdepth: 2
    :caption: Models:
+
+   models/bert
+   models/lstm
+   models/cnn
 
 
 .. toctree::
@@ -51,6 +61,10 @@ Welcome to TextAttack's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Datasets:
+
+   datasets/generic
+   datasets/classification
+   datasets/entailment 
 
 
 

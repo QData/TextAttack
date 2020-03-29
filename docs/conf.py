@@ -46,7 +46,7 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
-# Added
+# Mock language_check to stop issues with Sphinx not loading it
 autodoc_mock_imports = ["language_check"]
 
 
