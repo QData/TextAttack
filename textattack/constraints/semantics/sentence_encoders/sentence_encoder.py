@@ -9,14 +9,13 @@ from textattack.shared import utils
 class SentenceEncoder(Constraint):
     """ 
     Constraint using cosine similarity between sentence encodings of x and 
-        x_adv.
+    x_adv.
         
     Args:
         threshold (:obj:`float`, optional): The threshold for the constraint to be met.
             Defaults to 0.8
         metric (:obj:`str`, optional): The similarity metric to use. Defaults to 
-            cosine. 
-                Options: ['cosine, 'angular']
+            cosine. Options: ['cosine, 'angular']
         compare_with_original (bool): Whether to compare `x_adv` to the previous `x_adv`
             or the original `x`.
         window_size (int): The number of words to use in the similarity 
