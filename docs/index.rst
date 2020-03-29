@@ -57,6 +57,11 @@ Welcome to TextAttack's documentation!
    :maxdepth: 2
    :caption: Constraints Documentation:
 
+   contraints/constraint
+   contraints/semantics
+   contraints/syntax
+   contraints/overlap
+
 
 .. toctree::
    :maxdepth: 2
