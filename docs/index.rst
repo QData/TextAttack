@@ -14,6 +14,7 @@ Welcome to TextAttack's documentation!
    users/installation
    users/examples
 
+
 .. toctree::
    :maxdepth: 2
    :caption: Attack Methods:
@@ -22,6 +23,7 @@ Welcome to TextAttack's documentation!
    attack_methods/beam_search
    attack_methods/greedy_word_swap
    attack_methods/genetic_algorithm
+
 
 .. toctree::
    :maxdepth: 2
@@ -47,15 +49,25 @@ Welcome to TextAttack's documentation!
    models/lstm
    models/cnn
 
+.. toctree::
+   :maxdepth: 2
+   :caption: Goal Functions:
+
+   goal_functions/goal_functions
+
 
 .. toctree::
    :maxdepth: 2
-   :caption: Transformations Documentation:
+   :caption: Transformations:
+
+   transformations/transformation
+   transformations/composite_transformation
+   transformations/word_swap 
 
 
 .. toctree::
    :maxdepth: 2
-   :caption: Constraints Documentation:
+   :caption: Constraints:
 
    contraints/constraint
    contraints/semantics
@@ -65,13 +77,20 @@ Welcome to TextAttack's documentation!
 
 .. toctree::
    :maxdepth: 2
+   :caption: Tokenizers:
+
+   tokenizers/tokenizer 
+   tokenizers/bert_tokenizer
+   tokenizers/spacy_tokenizer
+
+
+.. toctree::
+   :maxdepth: 2
    :caption: Datasets:
 
    datasets/generic
    datasets/classification
    datasets/entailment 
-
-
 
 
 Indices and tables
