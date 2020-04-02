@@ -16,7 +16,6 @@ class BERTForClassification:
             
     """
     def __init__(self, model_path, num_labels=2, entailment=False):
-        #model_file_path = utils.download_if_needed(model_path)
         model_file_path = utils.download_if_needed(model_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_file_path, num_labels=num_labels)

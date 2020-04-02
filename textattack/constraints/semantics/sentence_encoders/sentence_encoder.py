@@ -24,6 +24,7 @@ class SentenceEncoder(Constraint):
     
     def __init__(self, threshold=0.8, metric='cosine', compare_with_original=False, window_size=None,
         skip_text_shorter_than_window=False):
+        self.metric = metric
         self.threshold = threshold
         self.compare_with_original = compare_with_original
         self.window_size = window_size
@@ -136,6 +137,11 @@ class SentenceEncoder(Constraint):
     
     def __call__(self, x, x_adv):
         return self.sim_score(x.text, x_adv.text) >= self.threshold 
+
+    def extra_repr_keys(self):
+        return ['metric', 'threshold', 'compare_with_original', 'window_size', 
+            'skip_text_shorter_than_window']
+
 
 
 def get_angular_sim(emb1, emb2):

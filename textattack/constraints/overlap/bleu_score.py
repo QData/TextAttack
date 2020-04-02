@@ -18,3 +18,6 @@ class BLEU(Constraint):
         hyp = x_adv.words
         bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
         return bleu_score <= self.max_bleu_score
+    
+    def extra_repr_keys(self):
+        return ['max_bleu_score']

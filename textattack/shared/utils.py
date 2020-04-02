@@ -86,8 +86,30 @@ def http_get(folder_name, out_file, proxies=None):
             progress.update(len(chunk))
             out_file.write(chunk)
     progress.close()
+    
+def add_indent(s_, numSpaces):
+    s = s_.split('\n')
+    # don't do anything for single-line stuff
+    if len(s) == 1:
+        return s_
+    first = s.pop(0)
+    s = [(numSpaces * ' ') + line for line in s]
+    s = '\n'.join(s)
+    s = first + '\n' + s
+    return s
 
-
+def default_class_repr(self):
+    extra_params = []
+    for key in self.extra_repr_keys():
+         extra_params.append('  ('+key+')'+':  {'+key+'}')
+    if len(extra_params):
+        extra_str = '\n' + '\n'.join(extra_params) + '\n'
+        extra_str = f'({extra_str})'
+    else:
+        extra_str = ''
+    extra_str = extra_str.format(**self.__dict__)
+    return f'{self.__class__.__name__}{extra_str}'
+        
 LABEL_COLORS = [
     'red', 'green', 
     'blue', 'purple', 

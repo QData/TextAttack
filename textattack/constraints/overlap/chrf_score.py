@@ -16,3 +16,6 @@ class chrF(Constraint):
         hyp = x_adv.words
         chrf = nltk.translate.chrf_score.sentence_chrf(ref, hyp)
         return chrf <= self.max_chrf
+    
+    def extra_repr_keys(self):
+        return ['max_chrf']
