@@ -7,6 +7,8 @@ from textattack.shared.tokenized_text import TokenizedText
 class PartOfSpeech(Constraint):
     """ Constraints word swaps to only swap words with the same part of speech.
         Uses the NLTK universal part-of-speech tagger by default.
+        An implementation of `<https://arxiv.org/abs/1907.11932>`_
+        adapted from `<https://github.com/jind11/TextFooler>`_. 
     """
     def __init__(self, tagset='universal', allow_verb_noun_swap=True):
         self.tagset = tagset
