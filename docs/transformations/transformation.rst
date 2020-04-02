@@ -1,6 +1,6 @@
-================
+==========================
 Transformation
-================
+==========================
 
-.. automodule:: transformations.transformation
+.. automodule:: textattack.transformations.transformation
    :members:

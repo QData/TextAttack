@@ -2,5 +2,5 @@
 Attack Documentation
 =====================
 
-.. automodule:: attacks.attack
+.. automodule:: textattack.attack_methods.attack
    :members:

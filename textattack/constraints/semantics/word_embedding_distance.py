@@ -11,7 +11,8 @@ class WordEmbeddingDistance(Constraint):
     """
     todo document here
     
-    Params:
+    Args:
+        word_embedding (str): The word embedding to use
         embedding_type (str): The word embedding to use
         include_unknown_words (bool): Whether or not C(x,x_adv) is true
             if the embedding of x or x_adv is unknown
