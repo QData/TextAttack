@@ -70,6 +70,10 @@ class WordEmbeddingDistance(Constraint):
     
     def get_cos_sim(self, a, b):
         """ Returns the cosine similarity of words with IDs a and b."""
+        if isinstance(a, str):
+            a = self.word_embedding_word2index[a]
+        if isinstance(b, str):
+            b = self.word_embedding_word2index[b]
         a, b = min(a, b), max(a,b)
         try:
             cos_sim = self.cos_sim_mat[a][b]
@@ -79,6 +83,7 @@ class WordEmbeddingDistance(Constraint):
             e1 = torch.tensor(e1).to(utils.get_device())
             e2 = torch.tensor(e2).to(utils.get_device())
             cos_sim = torch.nn.CosineSimilarity(dim=0)(e1, e2)
+            self.cos_sim_mat[a][b] = cos_sim
         return cos_sim
     
     def get_mse_dist(self, a, b):
@@ -92,6 +97,7 @@ class WordEmbeddingDistance(Constraint):
             e1 = torch.tensor(e1).to(utils.get_device())
             e2 = torch.tensor(e2).to(utils.get_device())
             mse_dist = torch.sum((e1 - e2) ** 2)
+            self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
     
     def __call__(self, x, x_adv):

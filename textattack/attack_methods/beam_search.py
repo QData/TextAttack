@@ -7,16 +7,16 @@ class BeamSearch(Attack):
     An attack that greedily chooses from a list of possible 
     perturbations.
     Args:
-        model (nn.Module): The model to attack.
+        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
         transformation (Transformation): The type of transformation.
         beam_width (int): the number of candidates to retain at each step
         max_words_changed (:obj:`int`, optional): The maximum number of words 
             to change.
         
     """
-    def __init__(self, model, transformation, constraints=[], beam_width=8, 
+    def __init__(self, goal_function, transformation, constraints=[], beam_width=8, 
             max_words_changed=32):
-        super().__init__(model, transformation, constraints=constraints)
+        super().__init__(goal_function, transformation, constraints=constraints)
         self.beam_width = beam_width
         self.max_words_changed = max_words_changed
         
