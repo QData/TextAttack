@@ -20,10 +20,18 @@ class GreedyWordSwapWIR(Attack):
         transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
     """
+    WIR_TO_REPLACEMENT_STR = {
+        'unk': '[UNK]',
+        'delete': '[DELETE]',
+    }
 
-    def __init__(self, goal_function, transformation, constraints=[], max_depth=32):
+    def __init__(self, goal_function, transformation, constraints=[], wir_method='unk', max_depth=32):
         super().__init__(goal_function, transformation, constraints=constraints)
         self.max_depth = max_depth
+        try: 
+            self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
+        except KeyError:
+            raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
         
     def attack_one(self, tokenized_text, correct_output):
         original_tokenized_text = tokenized_text
@@ -33,8 +41,9 @@ class GreedyWordSwapWIR(Attack):
         orig_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
         cur_score = orig_result.score
         len_text = len(tokenized_text.words)
+        
         leave_one_texts = \
-            [tokenized_text.replace_word_at_index(i,'[UNK]') for i in range(len_text)]
+            [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
         leave_one_scores = np.array([result.score for result in self.goal_function.get_results(leave_one_texts, correct_output)])
         index_order = (-leave_one_scores).argsort()
 

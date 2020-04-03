@@ -6,6 +6,7 @@ class BeamSearch(Attack):
     """ 
     An attack that greedily chooses from a list of possible 
     perturbations.
+    
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
         transformation (Transformation): The type of transformation.
