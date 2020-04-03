@@ -149,7 +149,7 @@ class TokenizedText:
         final_sentence = ''
         text = self.text
         for input_word, adv_word in zip(self.words, new_words):
-            if input_word == '[UNKNOWN]': continue
+            if input_word == '[DELETE]': continue
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)
             final_sentence += text[:word_start]
