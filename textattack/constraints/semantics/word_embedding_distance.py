@@ -11,8 +11,9 @@ class WordEmbeddingDistance(Constraint):
     """
     todo document here
     
-    Params:
+    Args:
         word_embedding (str): The word embedding to use
+        embedding_type (str): The word embedding to use
         include_unknown_words (bool): Whether or not C(x,x_adv) is true
             if the embedding of x or x_adv is unknown
         min_cos_sim: the minimum cosine similarity between word embeddings
@@ -21,14 +22,15 @@ class WordEmbeddingDistance(Constraint):
             (defaults to False, or just lowercase)
     """
     PATH = 'word_embeddings'
-    def __init__(self, word_embedding='paragramcf', include_unknown_words=True,
-        min_cos_sim=None, max_mse_dist=None, embedding_cased=False):
+    def __init__(self, embedding_type='paragramcf', include_unknown_words=True,
+        min_cos_sim=None, max_mse_dist=None, cased=False):
         self.include_unknown_words = include_unknown_words
-        self.embedding_cased = embedding_cased
+        self.cased = cased
         self.min_cos_sim = min_cos_sim
         self.max_mse_dist = max_mse_dist
         
-        if word_embedding == 'paragramcf':
+        self.embedding_type = embedding_type
+        if embedding_type == 'paragramcf':
             word_embeddings_folder = 'paragramcf'
             word_embeddings_file = 'paragram.npy'
             word_list_file = 'wordlist.pickle'
@@ -109,7 +111,7 @@ class WordEmbeddingDistance(Constraint):
         except AttributeError:
             raise AttributeError('Cannot apply word embedding distance constraint without `modified_word_index`')
             
-        if not self.embedding_cased:
+        if not self.cased:
             # If embedding vocabulary is all lowercase, lowercase words.
             x = x.lower()
             x_adv = x_adv.lower()
@@ -133,3 +135,15 @@ class WordEmbeddingDistance(Constraint):
                 return False
         return True
         
+    def extra_repr_keys(self):
+        """Set the extra representation of the constraint using these keys.
+        
+        To print customized extra information, you should reimplement
+        this method in your own constraint. Both single-line and multi-line
+        strings are acceptable.
+        """ 
+        if self.min_cos_sim is None:
+            metric = 'max_mse_dist'
+        else:
+            metric = 'min_cos_sim'
+        return ['embedding_type', metric, 'cased', 'include_unknown_words']

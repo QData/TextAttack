@@ -10,22 +10,22 @@ class WordSwapEmbedding(WordSwap):
     
     PATH = 'word_embeddings'
     
-    def __init__(self, max_candidates=15, word_embedding='paragramcf', 
+    def __init__(self, max_candidates=15, embedding_type='paragramcf', 
         replace_stopwords=False, **kwargs):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
-        
-        if word_embedding == 'paragramcf':
+        self.embedding_type = embedding_type
+        if embedding_type == 'paragramcf':
             word_embeddings_folder = 'paragramcf'
             word_embeddings_file = 'paragram.npy'
             word_list_file = 'wordlist.pickle'
             nn_matrix_file = 'nn.npy'
         else:
-            raise ValueError(f'Could not find word embedding {word_embedding}')
+            raise ValueError(f'Could not find word embedding {embedding_type}')
         
         # Download embeddings if they're not cached.
         cache_path = utils.download_if_needed('{}/{}'.format(
-            WordSwapEmbedding.PATH, word_embedding))
+            WordSwapEmbedding.PATH, embedding_type))
         # Concatenate folder names to create full path to files.
         word_embeddings_file = os.path.join(cache_path, word_embeddings_file)
         word_list_file = os.path.join(cache_path, word_list_file)
@@ -56,6 +56,9 @@ class WordSwapEmbedding(WordSwap):
         except KeyError:
             # This word is not in our word embedding database, so return an empty list.
             return []
+    
+    def extra_repr_keys(self): 
+        return ['max_candidates', 'embedding_type', 'replace_stopwords']
 
 def recover_word_case(word, reference_word):
     """ Makes the case of `word` like the case of `reference_word`. Supports 

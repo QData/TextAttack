@@ -9,13 +9,13 @@ class LanguageTool(Constraint):
         (https://languagetool.org/)
         
         Args:
-            threshold (int): the number of additional errors permitted in x_adv
+            grammar_error_threshold (int): the number of additional errors permitted in x_adv
                 relative to x
     """
     
-    def __init__(self, threshold=0):
+    def __init__(self, grammar_error_threshold=0):
         self.lang_tool = language_check.LanguageTool("en-US")
-        self.threshold = threshold
+        self.grammar_error_threshold = grammar_error_threshold
         self.grammar_error_cache = {}
     
     def get_errors(self, tokenized_text, use_cache=False):
@@ -30,4 +30,7 @@ class LanguageTool(Constraint):
     def __call__(self, x, x_adv, original_text=None):
         original_num_errors = self.get_errors(original_text, use_cache=True)
         errors_added = self.get_errors(x_adv) - original_num_errors
-        return errors_added <= self.threshold
+        return errors_added <= self.grammar_error_threshold
+    
+    def extra_repr_keys(self):
+        return ['grammar_error_threshold']

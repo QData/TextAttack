@@ -59,3 +59,7 @@ class WordSwap(Transformation):
             transformations.extend(new_tokenized_texts)
         
         return transformations
+
+    
+    def extra_repr_keys(self): 
+        return ['replace_stopwords']
