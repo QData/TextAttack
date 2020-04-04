@@ -65,7 +65,7 @@ class Attack:
     
     def _filter_transformations_uncached(self, original_transformations, text, original_text=None):
         """ Filters a list of potential perturbations based on a list of
-                transformations.
+                transformations. Checks cache first.
             
             Args:
                 transformations (list: function): a list of transformations 
@@ -96,7 +96,13 @@ class Attack:
                     representation potential perturbations
         """
         # Populate cache with transformations.
-        uncached_transformations = [t for t in transformations if (t not in self.constraints_cache)]
+        uncached_transformations = []
+        for t in transformations:
+            if t not in self.constraints_cache:
+                uncached_transformations.append(t)
+            else:
+                # promote t to the top of the LRU cache
+                self.constraints_cache[t] = self.constraints_cache[t]
         self._filter_transformations_uncached(uncached_transformations, text, original_text=original_text)
         # Return transformations from cache.
         return [t for t in transformations if self.constraints_cache[t]]
