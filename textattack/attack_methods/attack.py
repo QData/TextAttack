@@ -109,7 +109,7 @@ class Attack:
         raise NotImplementedError()
  
     def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False,
-            attack_n=False, attack_skippable_examples=True):
+            attack_n=False, attack_skippable_examples=False):
         """ 
         Gets examples from a dataset and tokenizes them.
 
