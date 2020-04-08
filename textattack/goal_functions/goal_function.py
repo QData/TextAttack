@@ -51,7 +51,7 @@ class GoalFunction:
     def _get_displayed_output(self, raw_output):
         return raw_output
 
-    def _call_model_uncached(self, tokenized_text_list, batch_size=8):
+    def _call_model_uncached(self, tokenized_text_list, batch_size=16):
         """ Queries model and returns predictions for a list of TokenizedText 
             objects. 
         """

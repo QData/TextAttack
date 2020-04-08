@@ -74,8 +74,9 @@ def run(args):
     )
     # Log results asynchronously and update progress bar.
     num_results = 0
-    pbar = tqdm.tqdm(total=args.num_examples, smoothing=0)
+    num_failures = 0
     num_successes = 0
+    pbar = tqdm.tqdm(total=args.num_examples, smoothing=0)
     while num_results < args.num_examples:
         result = out_queue.get(block=True)
         if isinstance(result, Exception):
@@ -84,9 +85,11 @@ def run(args):
         if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
             pbar.update()
             num_results += 1
-            if (not isinstance(result, textattack.attack_results.FailedAttackResult)) and (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
+            if type(result) == textattack.attack_results.AttackResult:
                 num_successes += 1
-            pbar.set_description('Successes: {} / {}'.format(num_successes, num_results))
+            if type(result) == textattack.attack_results.FailedAttackResult:
+                num_failures += 1
+            pbar.set_description('[Succeeded / Failed / Total] {} / {} / {}'.format(num_successes, num_failures, num_results))
         else:
             label, text = next(dataset)
             in_queue.put((label, text))

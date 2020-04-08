@@ -16,7 +16,7 @@ class GreedyWordSwapWIR(Attack):
         https://github.com/jind11/TextFooler 
         
     Args:
-        model: The PyTorch NLP model to attack.
+        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
         transformation: The type of transformation.
         max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
     """
@@ -25,8 +25,8 @@ class GreedyWordSwapWIR(Attack):
         'delete': '[DELETE]',
     }
 
-    def __init__(self, model, transformation, constraints=[], wir_method='unk', max_depth=32):
-        super().__init__(model, transformation, constraints=constraints)
+    def __init__(self, goal_function, transformation, constraints=[], wir_method='unk', max_depth=32):
+        super().__init__(goal_function, transformation, constraints=constraints)
         self.max_depth = max_depth
         try: 
             self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
@@ -95,4 +95,4 @@ class GreedyWordSwapWIR(Attack):
                 )
             tokenized_text = results[0].tokenized_text
         
-        return FailedAttackResult(original_tokenized_text, correct_output)
+        return FailedAttackResult(original_tokenized_text, correct_output, tokenized_text, correct_output)

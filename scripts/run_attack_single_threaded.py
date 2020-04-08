@@ -62,14 +62,24 @@ def run(args):
             raise ValueError(f'Error: unsupported model {args.model}')
         
         pbar = tqdm.tqdm(total=args.num_examples, smoothing=0)
+        num_results = 0
+        num_failures = 0
+        num_successes = 0
         for result in attack.attack_dataset(data, 
-            num_examples=args.num_examples, shuffle=args.shuffle, 
-            attack_n=args.attack_n):
+                                        num_examples=args.num_examples, 
+                                        shuffle=args.shuffle, 
+                                        attack_n=args.attack_n):
             attack_logger.log_result(result)
             if not args.disable_stdout:
                 print('\n')
             if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
                 pbar.update(1)
+            num_results += 1
+            if type(result) == textattack.attack_results.AttackResult:
+                num_successes += 1
+            if type(result) == textattack.attack_results.FailedAttackResult:
+                num_failures += 1
+            pbar.set_description('[Succeeded / Failed / Total] {} / {} / {}'.format(num_successes, num_failures, num_results))
         pbar.close()
         print()
         # Enable summary stdout

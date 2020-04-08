@@ -115,7 +115,7 @@ class Attack:
         raise NotImplementedError()
  
     def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False,
-            attack_n=False):
+            attack_n=False, attack_skippable_examples=False):
         """ 
         Gets examples from a dataset and tokenizes them.
 
@@ -134,7 +134,7 @@ class Attack:
         n = 0
         for output, text in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)
-            if self.goal_function.should_skip(tokenized_text, output):
+            if (not attack_skippable_examples) and self.goal_function.should_skip(tokenized_text, output):
                 if not attack_n: 
                     n += 1
                 examples.append((output, tokenized_text, True))
