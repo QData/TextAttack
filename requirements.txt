@@ -1,5 +1,6 @@
 editdistance
 filelock
+language-check
 lru-dict
 nltk
 numpy
