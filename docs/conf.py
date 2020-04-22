@@ -14,7 +14,6 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 
-
 # -- Project information -----------------------------------------------------
 
 project = 'TextAttack'
@@ -24,6 +23,8 @@ author = 'UVA QData Lab'
 # The full version, including alpha/beta/rc tags
 release = '0.0.1'
 
+# Set master doc to `index.rst`.
+master_doc = 'index'
 
 # -- General configuration ---------------------------------------------------
 

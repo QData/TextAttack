@@ -3,11 +3,13 @@ import textattack
 import torch
 import sys
 
+from run_attack_args_helper import *
+
 import textattack.models as models
 
-def _cb(s): return textattack.utils.color(str(s), color='blue', method='stdout')
-def _cg(s): return textattack.utils.color(str(s), color='green', method='stdout')
-def _cr(s): return textattack.utils.color(str(s), color='red', method='stdout')
+def _cb(s): return textattack.shared.utils.color(str(s), color='blue', method='stdout')
+def _cg(s): return textattack.shared.utils.color(str(s), color='green', method='stdout')
+def _cr(s): return textattack.shared.utils.color(str(s), color='red', method='stdout')
 def _pb(): print(_cg('-' * 60))
 
 from collections import Counter
@@ -16,16 +18,16 @@ def get_num_successes(model, ids, true_labels):
     id_dim = torch.tensor(ids).ndim
     if id_dim == 2:
         # For models where the input is a single vector.
-        ids = torch.tensor(ids).to(textattack.utils.get_device())
+        ids = torch.tensor(ids).to(textattack.shared.utils.get_device())
         preds = model(ids)
     elif id_dim == 3:
         # For models that take multiple vectors per input.
         ids = map(torch.tensor, zip(*ids))
-        ids = (x.to(textattack.utils.get_device()) for x in ids)
+        ids = (x.to(textattack.shared.utils.get_device()) for x in ids)
         preds = model(*ids)
     else:
         raise TypeError(f'Error: malformed id_dim ({id_dim})')
-    true_labels = torch.tensor(true_labels).to(textattack.utils.get_device())
+    true_labels = torch.tensor(true_labels).to(textattack.shared.utils.get_device())
     guess_labels = preds.argmax(dim=1)
     successes = (guess_labels == true_labels).sum().item()
     return successes, true_labels, guess_labels
@@ -66,11 +68,12 @@ def test_model_on_dataset(model, dataset, batch_size=16, num_examples=100):
 
 def test_all_models(num_examples):
     _pb()
-    for model_name in textattack.run_attack.MODEL_CLASS_NAMES:
-        model = eval(textattack.run_attack.MODEL_CLASS_NAMES[model_name])()
-        dataset = textattack.run_attack.DATASET_BY_MODEL[model_name]()
+    for model_name in MODEL_CLASS_NAMES:
+        if model_name != 'bert-mr': continue 
+        model = eval(MODEL_CLASS_NAMES[model_name])()
+        dataset = DATASET_BY_MODEL[model_name]()
         print(f'\nTesting {_cr(model_name)} on {_cr(type(dataset))}...')
-        test_model_on_dataset(model, dataset)
+        test_model_on_dataset(model, dataset, num_examples=num_examples)
         _pb()
     # @TODO print the grid of models/dataset names with results in a nice table :)
     
