@@ -21,10 +21,12 @@ class PartOfSpeech(Constraint):
     def _get_pos(self, before_ctx, word, after_ctx):
         context_words = before_ctx + [word] + after_ctx
         context_key = ' '.join(context_words)
-        if context_key not in self._pos_tag_cache:
+        if context_key in self._pos_tag_cache:
+            pos_list = self._pos_tag_cache[context_key]
+        else:
             _, pos_list = zip(*nltk.pos_tag(context_words, tagset=self.tagset))
             self._pos_tag_cache[context_key] = pos_list
-        return self._pos_tag_cache[context_key]
+        return pos_list 
         
     def __call__(self, x, x_adv, original_text=None):
         if not isinstance(x, TokenizedText):
