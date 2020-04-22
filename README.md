@@ -30,11 +30,12 @@ conda activate text-attack
 pip install -e .
 ```
 
-We use the list of stopwords from nltk. To download them run in Python shell:
+We use the NLTK package for its list of stopwords and access to the WordNet lexical database. To download them run in Python shell:
 
 ```
 import nltk
 nltk.download('stopwords')
+nltk.download('wordnet')
 ```
 
 We use spaCy's English model. To download it, after installing spaCy run:
