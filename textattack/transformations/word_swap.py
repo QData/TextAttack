@@ -50,11 +50,15 @@ class WordSwap(Transformation):
         word_swaps = []
         for i in indices_to_replace:
             word_to_replace = words[i]
+            # Don't replace stopwords.
             if not self.replace_stopwords and word_to_replace.lower() in self.stopwords:
                 continue
             replacement_words = self._get_replacement_words(word_to_replace)
             new_tokenized_texts = []
             for r in replacement_words:
+                # Don't replace with numbers, punctuation, or other non-letter characters.
+                if not is_word(r):
+                    continue
                 new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r))
             transformations.extend(new_tokenized_texts)
         
@@ -63,3 +67,9 @@ class WordSwap(Transformation):
     
     def extra_repr_keys(self): 
         return ['replace_stopwords']
+
+def is_word(s):
+    """ String `s` counts as a word if it has at least one letter. """
+    for c in s:
+        if c.isalpha(): return True
+    return False 
