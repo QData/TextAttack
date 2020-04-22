@@ -1,11 +1,10 @@
 import numpy as np
-import os
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 class WordSwapHomoglyph(WordSwap):
-    """ Transforms an input by replacing its words with visually-similar words using homoglyph swaps.
+    """ Transforms an input by replacing its words with visually similar words using homoglyph swaps.
     """
 
     def __init__(self, replace_stopwords=False):
