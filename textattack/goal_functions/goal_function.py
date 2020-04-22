@@ -124,12 +124,21 @@ class GoalFunction:
         if not self.use_cache:
             return self._call_model_uncached(tokenized_text_list)
         else:
+            uncached_list = []
+            for text in tokenized_text_list:
+                if text in self._call_model_cache:
+                    # Re-write value in cache. This moves the key to the top of the
+                    # LRU cache and prevents the unlikely event that the text
+                    # is overwritten when we store the inputs from `uncached_list`.
+                    self._call_model_cache[text] = self._call_model_cache[text]
+                else:
+                    uncached_list.append(text)
             uncached_list = [text for text in tokenized_text_list if text not in self._call_model_cache]
             scores = self._call_model_uncached(uncached_list)
             for text, score in zip(uncached_list, scores):
                 self._call_model_cache[text] = score.cpu()
-            final_scores = [self._call_model_cache[text].to(utils.get_device()) for text in tokenized_text_list]
-            return torch.stack(final_scores)
+            final_scores = [self._call_model_cache[text] for text in tokenized_text_list]
+            return torch.stack(final_scores).to(utils.get_device())
 
     def extra_repr_keys(self): 
         return []
