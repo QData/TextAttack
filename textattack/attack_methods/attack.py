@@ -76,7 +76,7 @@ class Attack:
         transformations = original_transformations[:]
         for C in self.constraints:
             if len(transformations) == 0: break
-            transformations_mask = C.call_many(text, transformations, original_text)
+            transformations = C.call_many(text, transformations, original_text)
         # Default to false for all original transformations.
         for original_transformation in original_transformations:
             self.constraints_cache[original_transformation] = False
