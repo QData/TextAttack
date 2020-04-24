@@ -23,8 +23,8 @@ class AttackLogger:
     def add_output_file(self, filename):
         self.loggers.append(FileLogger(filename=filename))
 
-    def add_output_csv(self, filename, plain):
-        self.loggers.append(CSVLogger(filename=filename, plain=plain))
+    def add_output_csv(self, filename, color_method):
+        self.loggers.append(CSVLogger(filename=filename, color_method=color_method))
 
     def log_result(self, result):
         self.results.append(result)
