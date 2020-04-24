@@ -1,6 +1,6 @@
 editdistance
 filelock
-language-check
+language_check
 lru-dict
 nltk
 numpy
@@ -11,7 +11,7 @@ sentence_transformers
 spacy
 torch
 transformers>=2.5.1
-tensorflow
+tensorflow>=2
 tensorflow_hub
 terminaltables
 tqdm
