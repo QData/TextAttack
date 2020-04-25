@@ -74,6 +74,7 @@ DATASET_BY_MODEL = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
+    'word-swap-wordnet':               'textattack.transformations.WordSwapWordNet',
     'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
     'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
     'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
@@ -282,6 +283,7 @@ def parse_logger_from_args(args):# Create logger
         csv_path = os.path.join(args.out_dir, outfile_name)
         attack_logger.add_output_csv(csv_path, color_method)
         print('Logging to CSV at path {}.'.format(csv_path))
+
 
     # Visdom
     if args.enable_visdom:

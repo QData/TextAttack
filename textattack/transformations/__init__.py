@@ -6,3 +6,4 @@ from .word_swap_neighboring_character_swap import WordSwapNeighboringCharacterSw
 from .word_swap_random_character_deletion import WordSwapRandomCharacterDeletion
 from .word_swap_random_character_insertion import WordSwapRandomCharacterInsertion
 from .word_swap_random_character_substitution import WordSwapRandomCharacterSubstitution
+from .word_swap_wordnet import WordSwapWordNet
