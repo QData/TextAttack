@@ -1,9 +1,10 @@
 from textattack.goal_functions import GoalFunction
 
-class TargetedClassification(GoalFunction):
+class NonOverlappingOutput(GoalFunction):
     """
-    An targeted attack on classification models which attempts to maximize the 
-    score of the target label until it is the predicted label.
+    Ensures that the output 
+    
+    Defined in seq2sick (https://arxiv.org/pdf/1803.01128.pdf), equation (3).
     """
    
     def __init__(self, model, target_class=0):

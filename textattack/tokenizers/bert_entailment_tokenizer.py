@@ -3,8 +3,8 @@ from textattack.tokenizers import BERTTokenizer
 
 class BERTEntailmentTokenizer(BERTTokenizer):
     """ Tokenizes an input for entailment. """
-    def __init__(self, model_path='bert-base-uncased'): 
-        super().__init__(model_path=model_path)
+    def __init__(self, name='bert-base-uncased'): 
+        super().__init__(name=name)
         
     def _truncate_seq_pair(self, tokens_a, tokens_b):
         """ Truncates a sequence pair in place to the maximum length.
@@ -44,7 +44,7 @@ class BERTEntailmentTokenizer(BERTTokenizer):
         # Ensure they will fit in self.max_seq_length.
         self._truncate_seq_pair(tokens_a, tokens_b)
         # Concatenate and return.
-        return ['[CLS]'] + tokens_a + ['[SEP]'] + tokens_b + ['[SEP]']
+        return tokens_a + ['[SEP]'] + tokens_b
     
     
     def convert_tokens_to_ids(self, tokens):

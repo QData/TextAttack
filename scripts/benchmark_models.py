@@ -69,7 +69,6 @@ def test_model_on_dataset(model, dataset, batch_size=16, num_examples=100):
 def test_all_models(num_examples):
     _pb()
     for model_name in MODEL_CLASS_NAMES:
-        if model_name != 'bert-mr': continue 
         model = eval(MODEL_CLASS_NAMES[model_name])()
         dataset = DATASET_BY_MODEL[model_name]()
         print(f'\nTesting {_cr(model_name)} on {_cr(type(dataset))}...')

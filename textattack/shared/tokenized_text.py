@@ -15,13 +15,11 @@ class TokenizedText:
         
         Args:
             text (string): The string that this TokenizedText represents
-            tokenizer (Tokenizer): an object that can convert text to tokens
-                and convert tokens to IDs
+            tokenizer (textattack.Tokenizer): an object that can encode text
         """
         text = text.strip()
         self.tokenizer = tokenizer
-        self.tokens = tokenizer.convert_text_to_tokens(text)
-        ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        ids = tokenizer.encode(text)
         if not isinstance(ids, tuple):
             # Some tokenizers may tokenize text to a single vector.
             # In this case, wrap the vector in a tuple to mirror the 
