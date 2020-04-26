@@ -5,7 +5,7 @@ import math
 
 from textattack.shared.utils import default_class_repr
 from textattack.goal_functions import GoalFunctionResult
-from textattack.shared import utils
+from textattack.shared import utils, validators
 
 class GoalFunction:
     """
@@ -14,6 +14,7 @@ class GoalFunction:
         model: The PyTorch or TensorFlow model used for evaluation.
     """
     def __init__(self, model, use_cache=True):
+        validators.validate_model_goal_function_compatibility(self, class(model))
         self.model = model
         self.use_cache = use_cache
         self.num_queries = 0

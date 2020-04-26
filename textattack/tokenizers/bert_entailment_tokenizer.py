@@ -44,7 +44,7 @@ class BERTEntailmentTokenizer(BERTTokenizer):
         # Ensure they will fit in self.max_seq_length.
         self._truncate_seq_pair(tokens_a, tokens_b)
         # Concatenate and return.
-        return tokens_a + ['[SEP]'] + tokens_b
+        return tokens_a + ['[SEP]'] + tokens_b + ['[SEP]']
     
     
     def convert_tokens_to_ids(self, tokens):
