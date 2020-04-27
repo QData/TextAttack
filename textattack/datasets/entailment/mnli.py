@@ -1,6 +1,6 @@
-from .entailment_dataset import TextAttackEntailmentDataset
+from .entailment_dataset import EntailmentDataset
 
-class MNLI(TextAttackEntailmentDataset):
+class MNLI(EntailmentDataset):
     """
     Loads samples from the MNLI dataset. The *mismatched* examples come from a 
     distribution different from the one seen at training time.

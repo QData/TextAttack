@@ -15,17 +15,27 @@ class TextAttackDataset:
     def __iter__(self):
         return self
     
+    def _process_example(self, raw_line):
+        """ Processes each example read from a file. Implemented on a dataset-
+            by-dataset basis.
+            
+            Args:
+                raw_line (str): Line of the example to process.
+                
+            Returns:
+                A tuple of text objects
+        """
+        raise NotImplementedError()
+    
     def __next__(self):
         if self.i >= len(self.raw_lines):
             raise StopIteration
-        tokens = self.raw_lines[self.i].strip().split()
-        label = int(tokens[0])
-        text = ' '.join(tokens[1:])
+        example = self.examples[self.i]
         self.i += 1
-        return (label, text)
+        return example
     
-    def _load_text_file(self, text_file_name, offset=0):
-        """ Loads (label, text) pairs from a text file. 
+    def _load_classification_text_file(self, text_file_name, offset=0):
+        """ Loads tuples from lines of a text file. 
         
             Format must look like:
             
@@ -40,9 +50,13 @@ class TextAttackDataset:
         text_file_path = utils.download_if_needed(text_file_name)
         text_file = open(text_file_path, 'r')
         raw_lines = text_file.readlines()[offset:]
-        self.raw_lines = [self._clean_example(ex) for ex in raw_lines]
+        raw_lines = [self._clean_example(ex) for ex in raw_lines]
+        self.examples = [self._process_example_from_file(ex) for ex in raw_lines]
         self.i = 0
         text_file.close()
+    
+    def _load_from_list(self, examples):
+        self.examples = examples
     
     def _clean_example(self, ex):
         """ Optionally pre-processes an input string before some tokenization.

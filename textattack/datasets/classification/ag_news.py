@@ -1,7 +1,7 @@
 from textattack.shared import utils
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class AGNews(TextAttackDataset):
+class AGNews(ClassificationDataset):
     """
     Loads samples from the AG News Dataset.
     

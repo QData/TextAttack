@@ -19,7 +19,6 @@ MODEL_CLASS_NAMES = {
     #
     # Text classification models
     #
-    
     # BERT models - default uncased
     'bert-ag-news':             'textattack.models.classification.bert.BERTForAGNewsClassification',
     'bert-imdb':                'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
@@ -35,22 +34,18 @@ MODEL_CLASS_NAMES = {
     'lstm-imdb':                'textattack.models.classification.lstm.LSTMForIMDBSentimentClassification',
     'lstm-mr':                  'textattack.models.classification.lstm.LSTMForMRSentimentClassification',
     'lstm-yelp-sentiment':      'textattack.models.classification.lstm.LSTMForYelpSentimentClassification',
-    
     #
     # Textual entailment models
     #
-    
     # BERT models
     'bert-mnli':                'textattack.models.entailment.bert.BERTForMNLI',
     'bert-snli':                'textattack.models.entailment.bert.BERTForSNLI',
-    
     #
     # Translation models
     #
     't5-en2fr':                 'textattack.models.translation.t5.T5EnglishToFrench',
-    't5-en2ge':                 'textattack.models.translation.t5.T5EnglishToGerman',
+    't5-en2de':                 'textattack.models.translation.t5.T5EnglishToGerman',
     't5-en2ro':                 'textattack.models.translation.t5.T5EnglishToRomanian',
-    
     #
     # Summarization models
     #
@@ -61,7 +56,6 @@ DATASET_BY_MODEL = {
     #
     # Text classification datasets
     #
-    
     # AG News
     'bert-ag-news':             textattack.datasets.classification.AGNews,
     'cnn-ag-news':              textattack.datasets.classification.AGNews,
@@ -78,12 +72,15 @@ DATASET_BY_MODEL = {
     'bert-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
     'cnn-yelp-sentiment':       textattack.datasets.classification.YelpSentiment,
     'lstm-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
-    
     #
     # Textual entailment datasets
     #
     'bert-mnli':                textattack.datasets.entailment.MNLI,
     'bert-snli':                textattack.datasets.entailment.SNLI,
+    #
+    # Translation datasets
+    #
+    't5-en2de':                 textattack.datasets.translation.NewsTest2013EnglishToGerman,
 }
 
 TRANSFORMATION_CLASS_NAMES = {

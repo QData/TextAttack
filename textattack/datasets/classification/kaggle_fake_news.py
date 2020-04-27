@@ -1,6 +1,6 @@
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class KaggleFakeNews(TextAttackDataset):
+class KaggleFakeNews(ClassificationDataset):
     """
     Loads samples from the Kaggle Fake News dataset. https://www.kaggle.com/mrisdal/fake-news
     

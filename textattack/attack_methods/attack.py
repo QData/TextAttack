@@ -120,7 +120,7 @@ class Attack:
         Gets examples from a dataset and tokenizes them.
 
         Args:
-            dataset: An iterable of (label, text) pairs
+            dataset: An iterable of (text, ground_truth_output) pairs
             num_examples (int): the number of examples to return
             shuffle (:obj:`bool`, optional): Whether to shuffle the data
             attack_n (bool): If true, returns `num_examples` non-skipped
@@ -128,19 +128,19 @@ class Attack:
         
         Returns:
             results (List[Tuple[Int, TokenizedText, Boolean]]): a list of
-                objects containing (label, text, was_skipped)
+                objects containing (text, ground_truth_output, was_skipped)
         """
         examples = []
         n = 0
-        for output, text in dataset:
+        for text, ground_truth_output in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)
-            if (not attack_skippable_examples) and self.goal_function.should_skip(tokenized_text, output):
+            if (not attack_skippable_examples) and self.goal_function.should_skip(tokenized_text, ground_truth_output):
                 if not attack_n: 
                     n += 1
-                examples.append((output, tokenized_text, True))
+                examples.append((tokenized_text, ground_truth_output, True))
             else:
                 n += 1
-                examples.append((output, tokenized_text, False))
+                examples.append((tokenized_text, ground_truth_output, False))
             if num_examples is not None and (n >= num_examples):
                 break
 
@@ -151,23 +151,24 @@ class Attack:
 
     def attack_dataset(self, dataset, num_examples=None, shuffle=False, attack_n=False):
         """ 
-        Runs an attack on the given dataset and outputs the results to the console and the output file.
+        Runs an attack on the given dataset and outputs the results to the 
+            console and the output file.
 
         Args:
-            dataset: An iterable of (label, text) pairs
+            dataset: An iterable of (text, ground_truth_output) pairs
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
         """
       
         examples = self._get_examples_from_dataset(dataset, 
             num_examples=num_examples, shuffle=shuffle, attack_n=attack_n)
 
-        for output, tokenized_text, was_skipped in examples:
+        for tokenized_text, ground_truth_output, was_skipped in examples:
             if was_skipped:
-                yield SkippedAttackResult(tokenized_text, output)
+                yield SkippedAttackResult(tokenized_text, ground_truth_output)
                 continue
             # Start at 1 since we called once to determine that prediction was correct
             self.goal_function.num_queries = 1
-            result = self.attack_one(tokenized_text, output)
+            result = self.attack_one(tokenized_text, ground_truth_output)
             result.num_queries = self.goal_function.num_queries
             yield result
     
@@ -198,7 +199,7 @@ class Attack:
                 constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
             constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
         else:
-            constraints_str = '[]'
+            constraints_str = 'None'
         lines.append(utils.add_indent(f'(constraints): {constraints_str}', 2))
         # self.is_black_box
         lines.append(utils.add_indent(f'(is_black_box):  {self.is_black_box}', 2))

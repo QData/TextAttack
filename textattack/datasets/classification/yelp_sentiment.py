@@ -1,6 +1,6 @@
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class YelpSentiment(TextAttackDataset):
+class YelpSentiment(ClassificationDataset):
     """
     Loads samples from the Yelp Sentiment dataset.
     

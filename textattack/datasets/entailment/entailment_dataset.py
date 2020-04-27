@@ -1,7 +1,7 @@
 from textattack.datasets import TextAttackDataset
 from textattack.shared.tokenized_text import TokenizedText
 
-class TextAttackEntailmentDataset(TextAttackDataset):
+class EntailmentDataset(TextAttackDataset):
     """ A generic class for loading entailment data. 
     
     Labels:
@@ -20,10 +20,10 @@ class TextAttackEntailmentDataset(TextAttackDataset):
         else:
             raise ValueError(f'Unknown SNLI label {label_str}')
     
-    def __next__(self):
+    def _process_example_from_file(self, raw_line):
         if self.i >= len(self.raw_lines):
             raise StopIteration
-        line = self.raw_lines[self.i].strip()
+        line = raw_line.strip()
         label, premise, hypothesis = line.split('\t')
         try:
             label = int(label)
@@ -32,4 +32,4 @@ class TextAttackEntailmentDataset(TextAttackDataset):
             label = self.map_label_str(label)
         text = TokenizedText.SPLIT_TOKEN.join([premise, hypothesis])
         self.i += 1
-        return (label, text)
+        return (text, label)

@@ -1,6 +1,6 @@
-from .entailment_dataset import TextAttackEntailmentDataset
+from .entailment_dataset import EntailmentDataset
 
-class SNLI(TextAttackEntailmentDataset):
+class SNLI(EntailmentDataset):
     """
     Loads samples from the SNLI dataset.
     

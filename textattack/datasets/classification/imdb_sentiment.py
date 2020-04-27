@@ -1,6 +1,6 @@
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class IMDBSentiment(TextAttackDataset):
+class IMDBSentiment(ClassificationDataset):
     """
     Loads samples from the IMDB Movie Review Sentiment dataset.
     

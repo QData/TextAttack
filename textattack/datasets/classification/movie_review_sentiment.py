@@ -1,6 +1,6 @@
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class MovieReviewSentiment(TextAttackDataset):
+class MovieReviewSentiment(ClassificationDataset):
     """
     Loads samples from the Movie Review Dataset. The "MR" dataset is comprised 
     of sentence-level sentiment classification on positive and negative movie 
