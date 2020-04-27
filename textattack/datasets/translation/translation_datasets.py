@@ -21,5 +21,6 @@ class NewsTest2013EnglishToGerman(TextAttackDataset):
     DATA_PATH = 'datasets/classification/imdb.txt'
     def __init__(self, offset=0):
         examples = gluonnlp.data.WMT2016(segment='newstest2013', src_lang='en', tgt_lang='de')
-        examples = examples[offset:]
-        self._load_from_list(examples)
+        # Then account for the offset.
+        self.i = offset
+        self.examples = examples

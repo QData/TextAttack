@@ -133,6 +133,7 @@ class Attack:
         examples = []
         n = 0
         for text, ground_truth_output in dataset:
+            print(n, '/ text:', text)
             tokenized_text = TokenizedText(text, self.tokenizer)
             if (not attack_skippable_examples) and self.goal_function.should_skip(tokenized_text, ground_truth_output):
                 if not attack_n: 
@@ -158,7 +159,7 @@ class Attack:
             dataset: An iterable of (text, ground_truth_output) pairs
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
         """
-      
+        
         examples = self._get_examples_from_dataset(dataset, 
             num_examples=num_examples, shuffle=shuffle, attack_n=attack_n)
 

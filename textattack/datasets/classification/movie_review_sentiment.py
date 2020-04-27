@@ -18,4 +18,4 @@ class MovieReviewSentiment(ClassificationDataset):
     DATA_PATH = 'datasets/classification/mr.txt'
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
-        self._load_text_file(MovieReviewSentiment.DATA_PATH, offset=offset)
+        self._load_classification_text_file(MovieReviewSentiment.DATA_PATH, offset=offset)

@@ -35,4 +35,4 @@ class AGNews(ClassificationDataset):
     DATA_PATH = 'datasets/classification/ag_news.txt'
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
-        self._load_text_file(AGNews.DATA_PATH, offset=offset)
+        self._load_classification_text_file(AGNews.DATA_PATH, offset=offset)

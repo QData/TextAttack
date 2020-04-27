@@ -28,7 +28,7 @@ class TextAttackDataset:
         raise NotImplementedError()
     
     def __next__(self):
-        if self.i >= len(self.raw_lines):
+        if self.i >= len(self.examples):
             raise StopIteration
         example = self.examples[self.i]
         self.i += 1
@@ -54,9 +54,6 @@ class TextAttackDataset:
         self.examples = [self._process_example_from_file(ex) for ex in raw_lines]
         self.i = 0
         text_file.close()
-    
-    def _load_from_list(self, examples):
-        self.examples = examples
     
     def _clean_example(self, ex):
         """ Optionally pre-processes an input string before some tokenization.

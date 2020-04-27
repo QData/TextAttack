@@ -76,6 +76,7 @@ class GoalFunction:
             model_device = next(self.model.model.parameters()).device
         else:
             model_device = next(self.model.parameters()).device
+        print('ids:', ids)
         ids = torch.tensor(ids).to(model_device) 
         #
         # shape of `ids` is (n, m, d)

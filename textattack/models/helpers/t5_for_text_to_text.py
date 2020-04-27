@@ -1,5 +1,6 @@
 from transformers import AutoModelWithLMHead
 from textattack.tokenizers import T5Tokenizer
+from textattack.shared import utils
 
 class T5ForTextToText:
     """ 
@@ -24,8 +25,10 @@ class T5ForTextToText:
             least `num_beams` sentences finished per batch. Defaults to `True`.
         
     """
-    def __init__(self, mode='english_to_german', max_length=40, num_beams=4, early_stopping=True):
+    def __init__(self, mode='english_to_german', max_length=20, num_beams=1, early_stopping=True):
         self.model = AutoModelWithLMHead.from_pretrained("t5-base")
+        self.model.to(utils.get_device())
+        self.model.eval()
         self.tokenizer = T5Tokenizer(mode)
         self.max_length = max_length
         self.num_beams = num_beams
