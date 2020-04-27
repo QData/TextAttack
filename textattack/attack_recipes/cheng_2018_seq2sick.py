@@ -13,7 +13,7 @@ from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import NonOverlappingOutput
 from textattack.transformations import WordSwapRandomCharacterSubstitution
 
-def Cheng2018seq2sick(model, goal_function='non_overlapping'):
+def Cheng2018Seq2Sick(model, goal_function='non_overlapping'):
     #
     # Goal is non-overlapping output.
     # @TODO verify goal function fits model.
@@ -30,6 +30,6 @@ def Cheng2018seq2sick(model, goal_function='non_overlapping'):
     # Greedily swap words with "Word Importance Ranking".
     #
     attack = GreedyWordSwapWIR(goal_function, transformation=transformation,
-        constraints=constraints, max_depth=[])
+        constraints=[], max_depth=10)
     
     return attack

@@ -10,6 +10,7 @@ RECIPE_NAMES = {
     'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
     'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
     'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
+    'seq2sick':      'textattack.attack_recipes.Cheng2018Seq2Sick',
     'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
     'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
 }
@@ -42,6 +43,18 @@ MODEL_CLASS_NAMES = {
     # BERT models
     'bert-mnli':                'textattack.models.entailment.bert.BERTForMNLI',
     'bert-snli':                'textattack.models.entailment.bert.BERTForSNLI',
+    
+    #
+    # Translation models
+    #
+    't5-en2fr':                 'textattack.models.translation.t5.T5EnglishToFrench',
+    't5-en2ge':                 'textattack.models.translation.t5.T5EnglishToGerman',
+    't5-en2ro':                 'textattack.models.translation.t5.T5EnglishToRomanian',
+    
+    #
+    # Summarization models
+    #
+    't5-summ':                  'textattack.models.summarization.T5Summarization',
 }
 
 DATASET_BY_MODEL = {

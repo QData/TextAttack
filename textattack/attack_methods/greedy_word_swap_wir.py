@@ -44,7 +44,8 @@ class GreedyWordSwapWIR(Attack):
         
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
-        leave_one_scores = np.array([result.score for result in self.goal_function.get_results(leave_one_texts, correct_output)])
+        leave_one_scores = np.array([result.score for result in \
+            self.goal_function.get_results(leave_one_texts, correct_output)])
         index_order = (-leave_one_scores).argsort()
 
         new_tokenized_text = None
@@ -59,7 +60,8 @@ class GreedyWordSwapWIR(Attack):
             if len(transformed_text_candidates) == 0:
                 continue
             num_words_changed += 1
-            results = sorted(self.goal_function.get_results(transformed_text_candidates, correct_output), key=lambda x: -x.score)
+            results = sorted(self.goal_function.get_results(transformed_text_candidates, correct_output), 
+                    key=lambda x: -x.score)
             # Skip swaps which don't improve the score
             if results[0].score > cur_score:
                 cur_score = results[0].score

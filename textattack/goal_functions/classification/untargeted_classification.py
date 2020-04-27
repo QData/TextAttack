@@ -1,6 +1,6 @@
-from textattack.goal_functions import GoalFunction
+from .classification_goal_function import ClassificationGoalFunction
 
-class UntargetedClassification(GoalFunction):
+class UntargetedClassification(ClassificationGoalFunction):
     """
     An untargeted attack on classification models which attempts to minimize the 
     score of the correct label until it is no longer the predicted label.

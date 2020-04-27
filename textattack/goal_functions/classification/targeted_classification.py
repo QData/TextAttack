@@ -1,6 +1,6 @@
-from textattack.goal_functions import GoalFunction
+from .classification_goal_function import ClassificationGoalFunction
 
-class TargetedClassification(GoalFunction):
+class TargetedClassification(ClassificationGoalFunction):
     """
     An targeted attack on classification models which attempts to maximize the 
     score of the target label until it is the predicted label.

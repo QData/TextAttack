@@ -1,6 +1,6 @@
 import torch
 from copy import deepcopy
-from .utils import get_device
+from .utils import get_device, words_from_text
 
 class TokenizedText:
     """ A helper class that represents a string that can be attacked. """
@@ -26,7 +26,7 @@ class TokenizedText:
             # format of other tokenizers.
             ids = (ids,)
         self.ids = ids
-        self.words = raw_words(text)
+        self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
 
@@ -165,17 +165,3 @@ class TokenizedText:
     
     def __repr__(self):
         return f'<TokenizedText "{self.text}">'
-
-def raw_words(s):
-    """ Lowercases a string, removes all non-alphanumeric characters,
-        and splits into words. """
-    words = []
-    word = ''
-    for c in ' '.join(s.split()):
-        if c.isalpha():
-            word += c
-        elif word:
-            if word is not TokenizedText.SPLIT_TOKEN: words.append(word)
-            word = ''
-    if len(word) and (word is not TokenizedText.SPLIT_TOKEN): words.append(word)
-    return words
