@@ -193,9 +193,12 @@ class Attack:
         )
         # self.constraints
         constraints_lines = []
-        for i, constraint in enumerate(self.constraints):
-            constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
-        constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
+        if len(self.constraints):
+            for i, constraint in enumerate(self.constraints):
+                constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
+            constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
+        else:
+            constraints_str = '[]'
         lines.append(utils.add_indent(f'(constraints): {constraints_str}', 2))
         # self.is_black_box
         lines.append(utils.add_indent(f'(is_black_box):  {self.is_black_box}', 2))
