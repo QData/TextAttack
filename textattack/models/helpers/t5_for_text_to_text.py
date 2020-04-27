@@ -36,7 +36,7 @@ class T5ForTextToText:
     
     def __call__(self, input_ids):
         # Generate IDs from the model.
-        output_ids = self.model.generate(input_ids, max_length=self.max_length, 
+        output_ids_list = self.model.generate(input_ids, max_length=self.max_length, 
             num_beams=self.num_beams, early_stopping=self.early_stopping)
         # Convert ID tensor to string and return.
-        return self.tokenizer.decode(output_ids.squeeze())
+        return [self.tokenizer.decode(ids) for ids in output_ids_list]

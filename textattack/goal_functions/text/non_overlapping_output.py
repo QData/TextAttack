@@ -10,9 +10,11 @@ class NonOverlappingOutput(TextGoalFunction):
     """
 
     def _is_goal_complete(self, model_output, correct_output):
+        print('_is_goal_complete model_output/', model_output, '/ correct_output / ', correct_output)
         return word_overlap_score(model_output, correct_output) == 0
 
     def _get_score(self, model_output, correct_output):
+        print('_get_score model_output/', model_output, '/ correct_output / ', correct_output)
         return -word_overlap_score(model_output, correct_output)
 
 @functools.lru_cache(maxsize=2**12)

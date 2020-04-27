@@ -12,10 +12,9 @@ class TextGoalFunction(GoalFunction):
     def _process_model_outputs(self, _, outputs):
         """ Processes and validates a list of model outputs. 
         
-            This is a task-dependent operation. For example, classification 
-            outputs need to have a softmax applied. 
+            Flatten list of lists to a single list.
         """
-        return outputs
+        return [output for batch in outputs for output in batch]
         
     def _get_displayed_output(self, raw_output):
         return raw_output

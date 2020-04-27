@@ -28,14 +28,14 @@ class AutoTokenizer(Tokenizer):
 
 
         tokens = self.tokenizer.tokenize(input_text)
-        if self.max_seq_length is not None:
-            # Truncate to max sequence length.
-            tokens = tokens[:self.max_seq_length]
-            # Pad to max sequence length.
-            pad_tokens_to_add = self.max_seq_length - len(tokens)
-            tokens += [self.tokenizer.pad_token] * pad_tokens_to_add
         return tokens
     
     def convert_tokens_to_ids(self, tokens):
         ids = self.tokenizer.convert_tokens_to_ids(tokens)
+        if self.max_seq_length is not None:
+            # Truncate to max sequence length.
+            ids = ids[:self.max_seq_length]
+            # Pad to max sequence length.
+            pad_ids_to_add = self.max_seq_length - len(tokens)
+            ids += [self.tokenizer.pad_token_id] * pad_ids_to_add
         return ids

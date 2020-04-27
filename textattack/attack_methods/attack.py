@@ -132,8 +132,8 @@ class Attack:
         """
         examples = []
         n = 0
-        for text, ground_truth_output in dataset:
-            print(n, '/ text:', text)
+        for text, ground_truth_output in dataset: # @TODO only evaluate skippability as we go
+            print('text, gto: ', text, ground_truth_output)
             tokenized_text = TokenizedText(text, self.tokenizer)
             if (not attack_skippable_examples) and self.goal_function.should_skip(tokenized_text, ground_truth_output):
                 if not attack_n: 
