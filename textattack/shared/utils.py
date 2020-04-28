@@ -118,7 +118,7 @@ LABEL_COLORS = [
     'gray', 'brown'
 ]
 
-def color_label(label, c=None, method=None):
+def color_text(label, c=None, method=None):
     if method == 'file':
         method = None
     if c is None:

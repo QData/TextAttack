@@ -9,7 +9,7 @@ import torch
 from copy import deepcopy
 
 from .attack import Attack
-from textattack.attack_results import AttackResult, FailedAttackResult
+from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult
 from textattack.transformations import WordSwap
 
 
@@ -155,13 +155,9 @@ class GeneticAlgorithm(Attack):
             select_probs = (logits / logits.sum()).cpu().numpy()
             
             if pop[0].result.succeeded:
-                return AttackResult(
-                    self.original_tokenized_text,
-                    pop[0].result.tokenized_text,
-                    correct_output,
-                    pop[0].result.output,
-                    float(original_result.score),
-                    float(pop[0].result.score),
+                return SuccessfulAttackResult(
+                    original_result,
+                    pop[0].result
                 )
 
             if pop[0].result.score > cur_score:
@@ -169,7 +165,7 @@ class GeneticAlgorithm(Attack):
             elif self.give_up_if_no_improvement:
                 break
 
-            elite = [pop[0]]  # elite
+            elite = [pop[0]]
             parent1_idx = np.random.choice(
                 self.pop_size, size=self.pop_size-1, p=select_probs)
             parent2_idx = np.random.choice(
@@ -182,10 +178,7 @@ class GeneticAlgorithm(Attack):
 
             pop = elite + children
 
-        return FailedAttackResult(
-            self.original_tokenized_text,
-            correct_output,
-        )
+        return FailedAttackResult(original_result, pop[0].result)
     
 class PopulationMember:
     """

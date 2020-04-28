@@ -2,7 +2,7 @@ import torch
 import numpy as np
 
 from .attack import Attack
-from textattack.attack_results import AttackResult, FailedAttackResult
+from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
 
 class GreedyWordSwapWIR(Attack):
     """
@@ -38,8 +38,8 @@ class GreedyWordSwapWIR(Attack):
         num_words_changed = 0
        
         # Sort words by order of importance
-        orig_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
-        cur_score = orig_result.score
+        original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
+        cur_score = original_result.score
         len_text = len(tokenized_text.words)
         
         leave_one_texts = \
@@ -85,14 +85,10 @@ class GreedyWordSwapWIR(Attack):
                     if similarity_score > max_similarity:
                         max_similarity = similarity_score
                         bestResult = result
-                return AttackResult( 
-                    original_tokenized_text, 
-                    bestResult.tokenized_text, 
-                    correct_output,
-                    bestResult.output,
-                    float(orig_result.score),
-                    float(bestResult.score)
+                return SuccessfulAttackResult( 
+                    original_result,
+                    results[0]
                 )
             tokenized_text = results[0].tokenized_text
         
-        return FailedAttackResult(original_tokenized_text, correct_output, tokenized_text, correct_output)
+        return FailedAttackResult(original_result, results[0])

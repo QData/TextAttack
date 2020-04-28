@@ -1,5 +1,5 @@
 from .attack import Attack
-from textattack.attack_results import AttackResult, FailedAttackResult
+from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult
 import numpy as np
 
 class BeamSearch(Attack):
@@ -46,13 +46,13 @@ class BeamSearch(Attack):
                     potential_next_beam.append((next_text, new_unswapped_word_indices))
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
-                return FailedAttackResult(original_tokenized_text, correct_output)
+                return FailedAttackResult(original_result)
             transformed_text_candidates = [text for (text,_) in potential_next_beam]
             results = self.goal_function.get_results(transformed_text_candidates, correct_output)
             scores = np.array([r.score for r in results])
             # If we succeeded, break
-            if results[scores.argmax()].succeeded:
-                best_result = results[scores.argmax()]
+            best_result = results[scores.argmax()]
+            if best_result.succeeded:
                 break
             # Otherwise, refill the beam. This works by sorting the scores
             # in descending order and filling the beam from there.
@@ -61,13 +61,6 @@ class BeamSearch(Attack):
            
         
         if best_result is None:
-            return FailedAttackResult(original_tokenized_text, correct_output)
+            return FailedAttackResult(original_result, best_result)
         else:
-            return AttackResult( 
-                original_tokenized_text, 
-                best_result.tokenized_text, 
-                correct_output,
-                best_result.output,
-                original_result.score,
-                best_result.score
-            )
+            return SuccessfulAttackResult(original_result, best_result)
