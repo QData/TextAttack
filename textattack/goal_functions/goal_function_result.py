@@ -1,3 +1,4 @@
+import torch
 from textattack.shared import utils
 
 class GoalFunctionResult:
@@ -14,6 +15,9 @@ class GoalFunctionResult:
         self.output = output
         self.score = score
         self.succeeded = succeeded
+        
+        if isinstance(self.score, torch.Tensor):
+            self.score = self.score.item()
     
     def get_text_color_input(self):
         """ A string representing the color this result's changed
@@ -28,6 +32,9 @@ class GoalFunctionResult:
         return utils.color_from_label(self.output)
     
     def get_colored_output(self, color_method=None):
-        """ Returns this results output, colored according to `color_method`.
+        """ Returns a string representation of this result's output, colored 
+            according to `color_method`.
         """
-        return utils.color_from_label(self.output)
+        color = utils.color_from_label(self.output)
+        return utils.color_text_by_method(str(self.output), color=color, method=color_method)
+            

@@ -74,15 +74,15 @@ class AttackLogger:
                 skipped_attacks += 1
             else: 
                 successful_attacks += 1
-            num_words_changed =  len(result.original_text.all_words_diff(result.perturbed_text))
+            num_words_changed =  len(result.original_result.tokenized_text.all_words_diff(result.perturbed_result.tokenized_text))
             num_words_changed_until_success[num_words_changed-1] += 1
             max_words_changed = max(max_words_changed or num_words_changed, num_words_changed)
             if num_words_changed > 0:
-                perturbed_word_percentage = num_words_changed * 100.0 / len(result.original_text.words)
+                perturbed_word_percentage = num_words_changed * 100.0 / len(result.original_result.tokenized_text.words)
             else:
                 perturbed_word_percentage = 0
             perturbed_word_percentages[i] = perturbed_word_percentage
-            all_num_words[i] = len(result.original_text.words)
+            all_num_words[i] = len(result.original_result.tokenized_text.words)
         
         # Original classifier success rate on these samples.
         original_accuracy = (total_attacks - skipped_attacks)  * 100.0 / (total_attacks) 

@@ -9,9 +9,8 @@ import torch
 from copy import deepcopy
 
 from .attack import Attack
-from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult
+from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
 from textattack.transformations import WordSwap
-
 
 class GeneticAlgorithm(Attack):
     """

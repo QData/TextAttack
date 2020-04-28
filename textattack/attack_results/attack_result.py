@@ -30,26 +30,36 @@ class AttackResult:
         # because we won't need them anymore anyway.
         self.original_result.tokenized_text.delete_tensors()
         self.perturbed_result.tokenized_text.delete_tensors()
+    
+    def original_text(self):
+        """ Returns the text portion of `self.original_result`. Helper method.
+        """
+        return self.original_result.tokenized_text.clean_text()
+    
+    def perturbed_text(self):
+        """ Returns the text portion of `self.perturbed_result`. Helper method.
+        """
+        return self.original_result.tokenized_text.clean_text()
 
     def str_lines(self, color_method=None):
         """ A list of the lines to be printed for this result's string
             representation. """
         lines = [
             self.goal_function_result_str(color_method=color_method), 
-            self.original_result.tokenized_text.text,
-            self.perturbed_result.tokenized_text.text
+            self.original_text(),
+            self.perturbed_text()
         ]
         if color_method is not None:
-            line[1], line[2] = self.diff_color(color_method)
+            lines[1], lines[2] = self.diff_color(color_method)
         return lines
     
     def __str__(self, color_method=None):
-        return '\n'.join(self.__data__(color_method=color_method))
+        return '\n'.join(self.str_lines(color_method=color_method))
    
     def goal_function_result_str(self, color_method=None):
-        orig_colored = self.original_result.color_output(color_method) # @TODO add this method to goal function results
+        orig_colored = self.original_result.get_colored_output(color_method) # @TODO add this method to goal function results
                                                                         # @TODO also display confidence
-        pert_colored = self.perturbed_result.color_output(color_method)
+        pert_colored = self.perturbed_result.get_colored_output(color_method)
         return orig_colored + '-->' + pert_colored
 
     def diff_color(self, color_method=None):
@@ -57,14 +67,14 @@ class AttackResult:
         Highlights the difference between two texts using color.
         
         """
-        t1 = self.original_text
-        t2 = self.perturbed_text
+        t1 = self.original_result.tokenized_text
+        t2 = self.perturbed_result.tokenized_text
         
         if color_method is None:
             return t1.text, t2.text
         
-        color_1 = self.original_result.get_output_color()
-        color_2 = self.perturbed_result.get_perturbed_color()
+        color_1 = self.original_result.get_text_color_input()
+        color_2 = self.perturbed_result.get_text_color_perturbed()
         replaced_word_indices = []
         new_words_1 = []
         new_words_2 = []
@@ -73,12 +83,12 @@ class AttackResult:
             word_2 = t2.words[i]
             if word_1 != word_2:
                 replaced_word_indices.append(i)
-                new_words_1.append(utils.color(word_1))
-                new_words_2.append(utils.color(word_2, color_2, color_method))
+                new_words_1.append(utils.color_text_by_method(word_1, color_1, color_method))
+                new_words_2.append(utils.color_text_by_method(word_2, color_2, color_method))
         
-        t1 = self.original_text.replace_words_at_indices(replaced_word_indices, 
+        t1 = self.original_result.tokenized_text.replace_words_at_indices(replaced_word_indices, 
             new_words_1)
-        t2 = self.original_text.replace_words_at_indices(replaced_word_indices, 
+        t2 = self.perturbed_result.tokenized_text.replace_words_at_indices(replaced_word_indices, 
             new_words_2)
                 
         return t1.clean_text(), t2.clean_text()

@@ -1,5 +1,5 @@
 from .attack import Attack
-from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult
+from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
 import numpy as np
 
 class BeamSearch(Attack):

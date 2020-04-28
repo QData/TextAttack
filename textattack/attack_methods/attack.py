@@ -170,7 +170,8 @@ class Attack:
             # Start query count at 1 since we made a single query to determine 
             # that the prediction was correct.
             self.goal_function.num_queries = 1
-            result = self.attack_one(tokenized_text, output)
+            result = self.attack_one(goal_function_result.tokenized_text, 
+                goal_function_result.output) # @TODO attacks should take one initial goal function result as a parameter
             result.num_queries = self.goal_function.num_queries
             yield result
     

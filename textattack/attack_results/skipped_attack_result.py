@@ -6,9 +6,9 @@ class SkippedAttackResult(AttackResult):
         super().__init__(original_result, original_result)
 
     def str_lines(self, color_method=None):
-        lines = (self.goal_function_result_str(color_method), self.original_text.text)
+        lines = (self.goal_function_result_str(color_method), self.original_text())
         return tuple(map(str, lines))
 
     def goal_function_result_str(self, color_method=None):
         failed_str = utils.color_text('[SKIPPED]', 'gray', color_method)
-        return self.original_result.colored_output() + '-->' + failed_str 
+        return self.original_result.get_colored_output(color_method) + '-->' + failed_str 
