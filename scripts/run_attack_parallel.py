@@ -23,7 +23,6 @@ def set_env_variables(gpu_id):
 
 def attack_from_queue(args, in_queue, out_queue):
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
-    print('Using GPU #' + str(gpu_id))
     set_env_variables(gpu_id)
     _, attack = parse_goal_function_and_attack_from_args(args)
     if gpu_id == 0:
