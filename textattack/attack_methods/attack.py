@@ -105,7 +105,10 @@ class Attack:
                 self.constraints_cache[t] = self.constraints_cache[t]
         self._filter_transformations_uncached(uncached_transformations, text, original_text=original_text)
         # Return transformations from cache.
-        return [t for t in transformations if self.constraints_cache[t]]
+        filtered_transformations = [t for t in transformations if self.constraints_cache[t]]
+        # Sort transformations to ensure order is preserved between runs.
+        filtered_transformations.sort(key=lambda t: t.text)
+        return filtered_transformations
 
     def attack_one(self, tokenized_text):
         """

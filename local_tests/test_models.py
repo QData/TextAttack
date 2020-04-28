@@ -8,7 +8,6 @@ import subprocess
 def color_text(s, color):
     return colored.stylize(s, colored.fg(color))
     
-    
 FNULL = open(os.devnull, 'w')
 
 MAGIC_STRING = '/.*/'
@@ -54,11 +53,13 @@ class TextAttackTest:
         test_output = self.execute()
         if compare_outputs(self.output, test_output):
             self.log_success()
+            return True
         else:
             self.log_failure(test_output)
+            return False
     
     def log_start(self):
-        print(f'Starting test {color_text(self.name, "blue")}.')
+        print(f'Executing test {color_text(self.name, "blue")}.')
         
     def log_success(self):
         success_text = f'✓ Succeeded.'
