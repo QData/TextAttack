@@ -71,7 +71,7 @@ class AttackResult:
         t2 = self.perturbed_result.tokenized_text
         
         if color_method is None:
-            return t1.text, t2.text
+            return t1.clean_text(), t2.clean_text()
         
         color_1 = self.original_result.get_text_color_input()
         color_2 = self.perturbed_result.get_text_color_perturbed()

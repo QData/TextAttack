@@ -7,9 +7,9 @@ class FailedAttackResult(AttackResult):
         super().__init__(original_result, perturbed_result)
 
     def str_lines(self, color_method=None):
-        lines = (self.goal_function_result_str(color_method), self.original_text.text)
+        lines = (self.goal_function_result_str(color_method), self.original_text())
         return tuple(map(str, lines))
 
     def goal_function_result_str(self, color_method=None):
         failed_str = utils.color_text('[FAILED]', 'red', color_method)
-        return utils.color_text(self.original_output, method=color_method) + '-->' + failed_str 
+        return self.original_result.get_colored_output(color_method) + '-->' + failed_str 
