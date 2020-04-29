@@ -1,3 +1,4 @@
+from textattack.goal_functions import GoalFunctionResult
 from textattack.shared import utils
 
 class AttackResult:
@@ -5,51 +6,60 @@ class AttackResult:
     Result of an Attack run on a single (output, text_input) pair. 
 
     Args:
-        original_text (str): The original text
-        perturbed_text (str): The perturbed text resulting from the attack
-        original_output (int): he classification output of the original text
-        perturbed_output (int): The classification output of the perturbed text
-
+        original_result (GoalFunctionResult): Result of the goal function
+            applied to the original text
+        perturbed_result (GoalFunctionResult): Result of the goal function applied to the
+            perturbed text. May or may not have been successful.
     """
-    def __init__(self, original_text, perturbed_text, original_output,
-        perturbed_output, orig_score=None, perturbed_score=None):
-        if original_text is None:
-            raise ValueError('Attack original text cannot be None')
-        if perturbed_text is None:
-            raise ValueError('Attack perturbed text cannot be None')
-        if original_output is None:
-            raise ValueError('Attack original output cannot be None')
-        if perturbed_output is None:
-            raise ValueError('Attack perturbed output cannot be None')
-        self.original_text = original_text
-        self.perturbed_text = perturbed_text
-        self.original_output = original_output
-        self.perturbed_output = perturbed_output
-        self.orig_score = orig_score
-        self.perturbed_score = perturbed_score
+    def __init__(self, original_result, perturbed_result):
+        if original_result is None:
+            raise ValueError('Attack original result cannot be None')
+        elif not isinstance(original_result, GoalFunctionResult):
+            raise TypeError(f'Invalid original goal function result: {original_text}')
+        if perturbed_result is None:
+            raise ValueError('Attack perturbed result cannot be None')
+        elif not isinstance(perturbed_result, GoalFunctionResult):
+            raise TypeError(f'Invalid perturbed goal function result: {perturbed_result}')
+            
+        self.original_result = original_result
+        self.perturbed_result = perturbed_result
         self.num_queries = 0
         
         # We don't want the TokenizedText `ids` sticking around clogging up 
         # space on our devices. Delete them here, if they're still present,
         # because we won't need them anymore anyway.
-        self.original_text.delete_tensors()
-        self.perturbed_text.delete_tensors()
+        self.original_result.tokenized_text.delete_tensors()
+        self.perturbed_result.tokenized_text.delete_tensors()
+    
+    def original_text(self):
+        """ Returns the text portion of `self.original_result`. Helper method.
+        """
+        return self.original_result.tokenized_text.clean_text()
+    
+    def perturbed_text(self):
+        """ Returns the text portion of `self.perturbed_result`. Helper method.
+        """
+        return self.original_result.tokenized_text.clean_text()
 
-    def __data__(self, color_method=None):
-        data = [self.result_str(color_method=color_method), 
-                self.original_text.text,
-                self.perturbed_text.text]
+    def str_lines(self, color_method=None):
+        """ A list of the lines to be printed for this result's string
+            representation. """
+        lines = [
+            self.goal_function_result_str(color_method=color_method), 
+            self.original_text(),
+            self.perturbed_text()
+        ]
         if color_method is not None:
-            data[1], data[2] = self.diff_color(color_method)
-        return data
+            lines[1], lines[2] = self.diff_color(color_method)
+        return lines
     
     def __str__(self, color_method=None):
-        return '\n'.join(self.__data__(color_method=color_method))
+        return '\n'.join(self.str_lines(color_method=color_method))
    
-    def result_str(self, color_method=None):
-        # @TODO add comment to distinguish this from __str__
-        orig_colored = utils.color_label(self.original_output, method=color_method)
-        pert_colored = utils.color_label(self.perturbed_output, method=color_method)
+    def goal_function_result_str(self, color_method=None):
+        orig_colored = self.original_result.get_colored_output(color_method) # @TODO add this method to goal function results
+                                                                        # @TODO also display confidence
+        pert_colored = self.perturbed_result.get_colored_output(color_method)
         return orig_colored + '-->' + pert_colored
 
     def diff_color(self, color_method=None):
@@ -57,29 +67,32 @@ class AttackResult:
         Highlights the difference between two texts using color.
         
         """
-        t1 = self.original_text
-        t2 = self.perturbed_text
+        t1 = self.original_result.tokenized_text
+        t2 = self.perturbed_result.tokenized_text
         
         if color_method is None:
-            return t1.text, t2.text
-
-        words1 = t1.words
-        words2 = t2.words
+            return t1.clean_text(), t2.clean_text()
         
-        c1 = utils.color_from_label(self.original_output)
-        c2 = utils.color_from_label(self.perturbed_output)
-        new_is = []
-        new_w1s = []
-        new_w2s = []
-        for i in range(min(len(words1), len(words2))):
-            w1 = words1[i]
-            w2 = words2[i]
-            if w1 != w2:
-                new_is.append(i)
-                new_w1s.append(utils.color(w1, c1, color_method))
-                new_w2s.append(utils.color(w2, c2, color_method))
+        color_1 = self.original_result.get_text_color_input()
+        color_2 = self.perturbed_result.get_text_color_perturbed()
+        replaced_word_indices = []
+        new_words_1 = []
+        new_words_2 = []
+        for i in range(min(len(t1.words), len(t2.words))):
+            word_1 = t1.words[i]
+            word_2 = t2.words[i]
+            if word_1 != word_2:
+                replaced_word_indices.append(i)
+                new_words_1.append(utils.color_text_by_method(word_1, color_1, color_method))
+                new_words_2.append(utils.color_text_by_method(word_2, color_2, color_method))
         
-        t1 = self.original_text.replace_words_at_indices(new_is, new_w1s)
-        t2 = self.original_text.replace_words_at_indices(new_is, new_w2s)
+        t1 = self.original_result.tokenized_text.replace_words_at_indices(replaced_word_indices, 
+            new_words_1)
+        t2 = self.perturbed_result.tokenized_text.replace_words_at_indices(replaced_word_indices, 
+            new_words_2)
                 
         return t1.clean_text(), t2.clean_text()
+        
+    
+class SuccessfulAttackResult(AttackResult):
+    """ The result of a successful attack. """

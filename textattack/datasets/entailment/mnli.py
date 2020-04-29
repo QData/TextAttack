@@ -21,4 +21,4 @@ class MNLI(EntailmentDataset):
     def __init__(self, offset=0, mismatched=False):
         """ Loads a full dataset from disk. """
         path = MNLI.MISMATCHED_DATA_PATH if mismatched else MNLI.MATCHED_DATA_PATH
-        self._load_text_file(path, offset=offset)
+        self._load_classification_text_file(path, offset=offset)

@@ -21,8 +21,6 @@ class EntailmentDataset(TextAttackDataset):
             raise ValueError(f'Unknown SNLI label {label_str}')
     
     def _process_example_from_file(self, raw_line):
-        if self.i >= len(self.raw_lines):
-            raise StopIteration
         line = raw_line.strip()
         label, premise, hypothesis = line.split('\t')
         try:
@@ -31,5 +29,4 @@ class EntailmentDataset(TextAttackDataset):
             # If the label is not an integer, it's a label description.
             label = self.map_label_str(label)
         text = TokenizedText.SPLIT_TOKEN.join([premise, hypothesis])
-        self.i += 1
         return (text, label)

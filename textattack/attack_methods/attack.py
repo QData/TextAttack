@@ -6,7 +6,7 @@ import random
 from textattack.shared import utils
 from textattack.constraints import Constraint
 from textattack.shared.tokenized_text import TokenizedText
-from textattack.attack_results import AttackResult, FailedAttackResult, SkippedAttackResult
+from textattack.attack_results import SkippedAttackResult
 
 class Attack:
     """
@@ -105,7 +105,10 @@ class Attack:
                 self.constraints_cache[t] = self.constraints_cache[t]
         self._filter_transformations_uncached(uncached_transformations, text, original_text=original_text)
         # Return transformations from cache.
-        return [t for t in transformations if self.constraints_cache[t]]
+        filtered_transformations = [t for t in transformations if self.constraints_cache[t]]
+        # Sort transformations to ensure order is preserved between runs.
+        filtered_transformations.sort(key=lambda t: t.text)
+        return filtered_transformations
 
     def attack_one(self, tokenized_text):
         """
@@ -123,8 +126,8 @@ class Attack:
             dataset: An iterable of (text, ground_truth_output) pairs
             num_examples (int): the number of examples to return
             shuffle (:obj:`bool`, optional): Whether to shuffle the data
-            attack_n (bool): If true, returns `num_examples` non-skipped
-                examples. If false, returns `num_examples` total examples.
+            attack_n (bool): If `True`, returns `num_examples` non-skipped
+                examples. If `False`, returns `num_examples` total examples.
         
         Returns:
             results (List[Tuple[Int, TokenizedText, Boolean]]): a list of
@@ -132,23 +135,27 @@ class Attack:
         """
         examples = []
         n = 0
-        for text, ground_truth_output in dataset: # @TODO only evaluate skippability as we go
-            print('text, gto: ', text, ground_truth_output)
+        
+        if shuffle:
+            random.shuffle(dataset.examples)
+            
+        for text, ground_truth_output in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)
-            if (not attack_skippable_examples) and self.goal_function.should_skip(tokenized_text, ground_truth_output):
+            goal_function_result = self.goal_function.get_result(tokenized_text, ground_truth_output)
+            # We can skip examples for which the goal is already succeeded,
+            # unless `attack_skippable_examples` is True.
+            if (not attack_skippable_examples) and (goal_function_result.succeeded):
                 if not attack_n: 
                     n += 1
-                examples.append((tokenized_text, ground_truth_output, True))
+                # Store the true output on the goal function so that the
+                # SkippedAttackResult has the correct output, not the incorrect.
+                goal_function_result.output = ground_truth_output
+                yield (goal_function_result, True)
             else:
                 n += 1
-                examples.append((tokenized_text, ground_truth_output, False))
+                yield (goal_function_result, False)
             if num_examples is not None and (n >= num_examples):
                 break
-
-        if shuffle:
-            random.shuffle(examples)
-    
-        return examples
 
     def attack_dataset(self, dataset, num_examples=None, shuffle=False, attack_n=False):
         """ 
@@ -163,13 +170,15 @@ class Attack:
         examples = self._get_examples_from_dataset(dataset, 
             num_examples=num_examples, shuffle=shuffle, attack_n=attack_n)
 
-        for tokenized_text, ground_truth_output, was_skipped in examples:
+        for goal_function_result, was_skipped in examples:
             if was_skipped:
-                yield SkippedAttackResult(tokenized_text, ground_truth_output)
+                yield SkippedAttackResult(goal_function_result)
                 continue
-            # Start at 1 since we called once to determine that prediction was correct
+            # Start query count at 1 since we made a single query to determine 
+            # that the prediction was correct.
             self.goal_function.num_queries = 1
-            result = self.attack_one(tokenized_text, ground_truth_output)
+            result = self.attack_one(goal_function_result.tokenized_text, 
+                goal_function_result.output) # @TODO attacks should take one initial goal function result as a parameter
             result.num_queries = self.goal_function.num_queries
             yield result
     
