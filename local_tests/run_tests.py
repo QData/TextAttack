@@ -1,12 +1,10 @@
 import os
 import time
 
-from tests import tests
 from test_models import color_text
 
 def log_sep():
     print('\n' + ('-' * 60) + '\n')
-    
 
 def print_gray(s):
     print(color_text(s, 'light_gray'))
@@ -22,6 +20,8 @@ def main():
     # Execute tests.
     start_time = time.time()
     passed_tests = 0
+    
+    from tests import tests
     for test in tests: 
         log_sep()
         test_passed = test()
