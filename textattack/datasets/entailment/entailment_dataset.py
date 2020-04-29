@@ -18,7 +18,7 @@ class EntailmentDataset(TextAttackDataset):
         elif label_str == 'contradiction':
             return 2
         else:
-            raise ValueError(f'Unknown SNLI label {label_str}')
+            raise ValueError(f'Unknown entailment label {label_str}')
     
     def _process_example_from_file(self, raw_line):
         line = raw_line.strip()

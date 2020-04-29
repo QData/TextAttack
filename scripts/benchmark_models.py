@@ -7,9 +7,9 @@ from run_attack_args_helper import *
 
 import textattack.models as models
 
-def _cb(s): return textattack.shared.utils.color(str(s), color='blue', method='stdout')
-def _cg(s): return textattack.shared.utils.color(str(s), color='green', method='stdout')
-def _cr(s): return textattack.shared.utils.color(str(s), color='red', method='stdout')
+def _cb(s): return textattack.shared.utils.color_text_by_method(str(s), color='blue', method='stdout')
+def _cg(s): return textattack.shared.utils.color_text_by_method(str(s), color='green', method='stdout')
+def _cr(s): return textattack.shared.utils.color_text_by_method(str(s), color='red', method='stdout')
 def _pb(): print(_cg('-' * 60))
 
 from collections import Counter
@@ -39,7 +39,7 @@ def test_model_on_dataset(model, dataset, batch_size=16, num_examples=100):
     batch_labels = []
     all_true_labels = []
     all_guess_labels = []
-    for i, (label, text) in enumerate(dataset):
+    for i, (text, label) in enumerate(dataset):
         if i >= num_examples: break
         ids = model.tokenizer.encode(text)
         batch_ids.append(ids)
@@ -71,7 +71,7 @@ def test_all_models(num_examples):
     for model_name in MODEL_CLASS_NAMES:
         model = eval(MODEL_CLASS_NAMES[model_name])()
         dataset = DATASET_BY_MODEL[model_name]()
-        print(f'\nTesting {_cr(model_name)} on {_cr(type(dataset))}...')
+        print(f'Testing {_cr(model_name)} on {_cr(type(dataset))}...')
         test_model_on_dataset(model, dataset, num_examples=num_examples)
         _pb()
     # @TODO print the grid of models/dataset names with results in a nice table :)
