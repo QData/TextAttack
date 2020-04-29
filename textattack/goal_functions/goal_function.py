@@ -23,30 +23,31 @@ class GoalFunction:
         else:
             self._call_model_cache = None
 
-    def should_skip(self, tokenized_text, correct_output):
+    def should_skip(self, tokenized_text, ground_truth_output):
         model_outputs = self._call_model([tokenized_text])
-        return self._is_goal_complete(model_outputs[0], correct_output)
+        return self._is_goal_complete(model_outputs[0], ground_truth_output)
 
     def get_output(self, tokenized_text):
         return self._get_displayed_output(self._call_model([tokenized_text])[0])
     
-    def get_result(self, tokenized_text, correct_output):
+    def get_result(self, tokenized_text, ground_truth_output):
         """ A helper method that queries `self.get_results` with a single
             `TokenizedText` object.
         """
-        return self.get_results([tokenized_text], correct_output)[0]
+        return self.get_results([tokenized_text], ground_truth_output)[0]
 
-    def get_results(self, tokenized_text_list, correct_output):
+    def get_results(self, tokenized_text_list, ground_truth_output):
         """
         For each tokenized_text object in tokenized_text_list, returns a result 
         consisting of whether or not the goal has been achieved, the output for 
         display purposes, and a score.
         """
         model_outputs = self._call_model(tokenized_text_list)
+        import pdb; pdb.set_trace()
         results = []
         for tokenized_text, raw_output in zip(tokenized_text_list, model_outputs):
-            succeeded = self._is_goal_complete(raw_output, correct_output)
-            goal_function_score = self._get_score(raw_output, correct_output)
+            succeeded = self._is_goal_complete(raw_output, ground_truth_output)
+            goal_function_score = self._get_score(raw_output, ground_truth_output)
             displayed_output = self._get_displayed_output(raw_output)
             results.append(
                 GoalFunctionResult(tokenized_text, displayed_output, 
@@ -54,10 +55,10 @@ class GoalFunction:
                 )
         return results
 
-    def _is_goal_complete(self, model_output, correct_output):
+    def _is_goal_complete(self, model_output, ground_truth_output):
         raise NotImplementedError()
 
-    def _get_score(self, model_output, correct_output):
+    def _get_score(self, model_output, ground_truth_output):
         raise NotImplementedError() 
 
     def _get_displayed_output(self, raw_output):

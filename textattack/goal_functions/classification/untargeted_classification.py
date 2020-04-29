@@ -7,6 +7,7 @@ class UntargetedClassification(ClassificationGoalFunction):
     """
     
     def _is_goal_complete(self, model_output, correct_output):
+        import pdb; pdb.set_trace()
         return model_output.argmax() != correct_output 
 
     def _get_score(self, model_output, correct_output):
