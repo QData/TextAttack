@@ -43,7 +43,6 @@ class GoalFunction:
         display purposes, and a score.
         """
         model_outputs = self._call_model(tokenized_text_list)
-        import pdb; pdb.set_trace()
         results = []
         for tokenized_text, raw_output in zip(tokenized_text_list, model_outputs):
             succeeded = self._is_goal_complete(raw_output, ground_truth_output)

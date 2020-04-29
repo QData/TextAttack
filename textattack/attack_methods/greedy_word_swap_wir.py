@@ -91,6 +91,7 @@ class GreedyWordSwapWIR(Attack):
                     original_result,
                     best_result
                 )
-            tokenized_text = results[0].tokenized_text
+            else:
+                tokenized_text = results[0].tokenized_text
         
         return FailedAttackResult(original_result, results[0])
