@@ -67,7 +67,7 @@ class GreedyWordSwapWIR(Attack):
                 continue
             # If we succeeded, return the index with best similarity.
             if results[0].succeeded:
-                bestResult = results[0]
+                best_result = results[0]
                 # @TODO: Use vectorwise operations
                 max_similarity = -float('inf')
                 for result in results:
@@ -84,10 +84,10 @@ class GreedyWordSwapWIR(Attack):
                         break
                     if similarity_score > max_similarity:
                         max_similarity = similarity_score
-                        bestResult = result
+                        best_result = result
                 return SuccessfulAttackResult( 
                     original_result,
-                    results[0]
+                    best_result
                 )
             tokenized_text = results[0].tokenized_text
         

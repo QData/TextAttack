@@ -139,14 +139,17 @@ class Attack:
         if shuffle:
             random.shuffle(dataset.examples)
             
-        for output, text in dataset:
+        for true_output, text in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)
-            goal_function_result = self.goal_function.get_result(tokenized_text, output)
+            goal_function_result = self.goal_function.get_result(tokenized_text, true_output)
             # We can skip examples for which the goal is already succeeded,
             # unless `attack_skippable_examples` is True.
             if (not attack_skippable_examples) and (goal_function_result.succeeded):
                 if not attack_n: 
                     n += 1
+                # Store the true output on the goal function so that the
+                # SkippedAttackResult has the correct output, not the incorrect.
+                goal_function_result.output = true_output
                 yield (goal_function_result, True)
             else:
                 n += 1
