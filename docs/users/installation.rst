@@ -2,6 +2,11 @@
 Installation
 ==============
 
+### First download 
+```
+git clone https://github.com/QData/TextAttack.git
+```
+
 
 ### Installation
 
