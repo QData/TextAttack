@@ -1,4 +1,4 @@
-from textattack.goal_functions import GoalFunctionResult
+from textattack.goal_function_results import GoalFunctionResult
 from textattack.shared import utils
 
 class AttackResult:

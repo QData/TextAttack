@@ -4,7 +4,6 @@ import torch
 import math
 
 from textattack.shared.utils import default_class_repr
-from textattack.goal_functions import GoalFunctionResult
 from textattack.shared import utils, validators
 
 class GoalFunction:
@@ -49,7 +48,8 @@ class GoalFunction:
             goal_function_score = self._get_score(raw_output, ground_truth_output)
             displayed_output = self._get_displayed_output(raw_output)
             results.append(
-                GoalFunctionResult(tokenized_text, displayed_output, 
+                self._goal_function_result_type()(
+                    tokenized_text, displayed_output, 
                     succeeded, goal_function_score)
                 )
         return results
@@ -62,6 +62,10 @@ class GoalFunction:
 
     def _get_displayed_output(self, raw_output):
         return raw_output
+    
+    def _goal_function_result_type(self):
+        """ Returns the class of this goal function's results. """
+        raise NotImplementedError()
     
     def _process_model_outputs(self, inputs, outputs):
         """ Processes and validates a list of model outputs. 

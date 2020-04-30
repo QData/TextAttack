@@ -10,8 +10,8 @@ class TargetedClassification(ClassificationGoalFunction):
         super().__init__(model)
         self.target_class = target_class
 
-    def _is_goal_complete(self, model_output, correct_output):
-        return (self.target_class == model_output.argmax()) or correct_output == self.target_class 
+    def _is_goal_complete(self, model_output, ground_truth_output):
+        return (self.target_class == model_output.argmax()) or ground_truth_output == self.target_class 
 
     def _get_score(self, model_output, _):
         if self.target_class < 0 or self.target_class >= len(model_output):

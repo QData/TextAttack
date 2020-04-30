@@ -6,6 +6,7 @@ from . import attack_methods
 from . import constraints
 from . import datasets
 from . import goal_functions
+from . import goal_function_results
 from . import loggers
 from . import models
 from . import shared

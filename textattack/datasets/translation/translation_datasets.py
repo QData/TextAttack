@@ -18,9 +18,6 @@ class NewsTest2013EnglishToGerman(TextAttackDataset):
         offset (int): example to start
     
     """
-    DATA_PATH = 'datasets/classification/imdb.txt'
+    DATA_PATH = 'datasets/translation/NewsTest2013EnglishToGerman'
     def __init__(self, offset=0):
-        examples = gluonnlp.data.WMT2016(segment='newstest2013', src_lang='en', tgt_lang='de')
-        # Then account for the offset.
-        self.i = offset
-        self.examples = examples
+        self._load_pickle_file(NewsTest2013EnglishToGerman.DATA_PATH)

@@ -1,5 +1,6 @@
 import torch
 from textattack.goal_functions import GoalFunction
+from textattack.goal_function_results import ClassificationGoalFunctionResult
 
 class ClassificationGoalFunction(GoalFunction):
     """ A goal function defined on a model that outputs a probability for some
@@ -36,3 +37,10 @@ class ClassificationGoalFunction(GoalFunction):
             if not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
                 raise ValueError('Model scores do not add up to 1.')
         return scores.cpu()
+    
+    def _goal_function_result_type(self):
+        """ Returns the class of this goal function's results. """
+        return ClassificationGoalFunctionResult
+    
+    def extra_repr_keys(self): 
+        return ['target_class']

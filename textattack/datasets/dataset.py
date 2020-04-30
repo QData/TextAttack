@@ -1,4 +1,5 @@
 from textattack.shared import utils
+import pickle
 
 class TextAttackDataset:
     """
@@ -33,6 +34,13 @@ class TextAttackDataset:
         example = self.examples[self.i]
         self.i += 1
         return example
+    
+    def _load_pickle_file(self, file_name, offset=0):
+        self.i = 0
+        file_path = utils.download_if_needed(file_name)
+        self.examples = pickle.load( open(file_path, "rb" ) )
+        import pdb; pdb.set_trace()
+        self.examples = self.examples[offset:]
     
     def _load_classification_text_file(self, text_file_name, offset=0):
         """ Loads tuples from lines of a text file. 

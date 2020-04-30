@@ -6,22 +6,25 @@
     
     ArXiv, abs/1803.01128.
     
+    
+    This is a greedy re-implementation of the seq2sick attack method. It does 
+        not use gradient descent.
+    
 """
 
 from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import NonOverlappingOutput
-from textattack.transformations import WordSwapRandomCharacterSubstitution
+from textattack.transformations import WordSwapEmbedding
 
 def Cheng2018Seq2Sick(model, goal_function='non_overlapping'):
     #
     # Goal is non-overlapping output.
-    # @TODO verify goal function fits model.
     #
     goal_function = NonOverlappingOutput(model)
     # @TODO implement transformation / search method just like they do in
     # seq2sick.
-    transformation = WordSwapRandomCharacterSubstitution()
+    transformation = WordSwapEmbedding(max_candidates=50)
     #
     # In these experiments, we hold the maximum difference
     # on edit distance (ϵ) to a constant 30 for each sample.
