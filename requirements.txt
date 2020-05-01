@@ -1,6 +1,6 @@
 editdistance
 filelock
-language_check
+language_tool_python
 lru-dict
 nltk
 numpy
