@@ -2,6 +2,7 @@ import argparse
 import numpy as np
 import os
 import random
+import sys
 import textattack
 import time
 import torch
@@ -170,7 +171,8 @@ def get_args():
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
     
-    args = parser.parse_args()
+    command_line_args = None if sys.argv[1:] else ['-h'] # Default to help with empty arguments.
+    args = parser.parse_args(command_line_args)
     
     set_seed(args.random_seed)
     
