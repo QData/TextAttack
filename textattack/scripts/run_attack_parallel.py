@@ -8,7 +8,7 @@ import time
 import torch
 import tqdm
 
-from run_attack_args_helper import *
+from .run_attack_args_helper import *
 
 def set_env_variables(gpu_id):
     # Only use one GPU, if we have one.

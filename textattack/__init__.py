@@ -7,6 +7,7 @@ from . import constraints
 from . import datasets
 from . import loggers
 from . import models
+from . import scripts
 from . import shared
 from . import tokenizers
 from . import transformations

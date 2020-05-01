@@ -1,1 +1,1 @@
-include config.json
+include textattack/config.json
