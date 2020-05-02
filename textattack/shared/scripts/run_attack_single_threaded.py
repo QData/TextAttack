@@ -75,7 +75,7 @@ def run(args):
             if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
                 pbar.update(1)
             num_results += 1
-            if type(result) == textattack.attack_results.AttackResult:
+            if type(result) == textattack.attack_results.SuccessfulAttackResult:
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
                 num_failures += 1
