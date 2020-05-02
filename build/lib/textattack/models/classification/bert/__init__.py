@@ -1,0 +1,4 @@
+from .bert_for_ag_news_classification import BERTForAGNewsClassification
+from .bert_for_imdb_sentiment_classification import BERTForIMDBSentimentClassification
+from .bert_for_mr_sentiment_classification import BERTForMRSentimentClassification
+from .bert_for_yelp_sentiment_classification import BERTForYelpSentimentClassification

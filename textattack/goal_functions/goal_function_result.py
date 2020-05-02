@@ -36,5 +36,5 @@ class GoalFunctionResult:
             according to `color_method`.
         """
         color = utils.color_from_label(self.output)
-        return utils.color_text_by_method(str(self.output), color=color, method=color_method)
+        return utils.color_text(str(self.output), color=color, method=color_method)
             

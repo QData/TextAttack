@@ -11,7 +11,7 @@ import tqdm
 import zipfile
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-config_path = os.path.join(dir_path, os.pardir, os.pardir, 'config.json')
+config_path = os.path.join(dir_path, os.pardir, 'config.json')
 CONFIG = json.load(open(config_path, 'r'))
 CONFIG['CACHE_DIR'] = os.path.expanduser(CONFIG['CACHE_DIR'])
 
@@ -118,12 +118,19 @@ LABEL_COLORS = [
     'gray', 'brown'
 ]
 
+def color_label(label, c=None, method=None):
+    if method == 'file':
+        method = None
+    if c is None:
+        c = color_from_label(label)
+    return color(str(label), c, method)
+
 def color_from_label(label_num):
     """ Colors for labels (arbitrary). """
     label_num %= len(LABEL_COLORS)
     return LABEL_COLORS[label_num]
     
-def color_text(text, color=None, method=None):
+def color(text, color=None, method=None):
     if method is None:
         return text
     if method == 'html':

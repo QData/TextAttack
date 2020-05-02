@@ -11,16 +11,16 @@ def color_text(s, color):
 FNULL = open(os.devnull, 'w')
 
 MAGIC_STRING = '/.*/'
-def compare_outputs(desired_output, test_output):
-    """ Desired outputs have the magic string '/.*/' inserted wherever the 
-        outputat that position doesn't actually matter. (For example, when the 
-        time to execute is printed, or another non-deterministic feature of the 
-        program.)
+def compare_outputs(true_output, test_output):
+    """ Desired have the magic string '/.*/' inserted wherever the output
+        at that position doesn't actually matter. (For example,
+        when the time to execute is printed, or another non-deterministic
+        feature of the program.)
         
         `compare_outputs` makes sure all of the outputs match in between
         the magic strings. If they do, it returns True.
     """
-    output_pieces = desired_output.split(MAGIC_STRING)
+    output_pieces = true_output.split(MAGIC_STRING)
     for piece in output_pieces:
         index_in_test = test_output.find(piece)
         if index_in_test < 0:
