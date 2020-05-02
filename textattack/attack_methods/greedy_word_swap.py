@@ -1,6 +1,4 @@
-from .attack import Attack
 from .beam_search import BeamSearch
-from textattack.attack_results import AttackResult, FailedAttackResult
 
 class GreedyWordSwap(BeamSearch):
     """ 

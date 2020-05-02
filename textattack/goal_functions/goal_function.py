@@ -28,6 +28,12 @@ class GoalFunction:
 
     def get_output(self, tokenized_text):
         return self._get_displayed_output(self._call_model([tokenized_text])[0])
+    
+    def get_result(self, tokenized_text, correct_output):
+        """ A helper method that queries `self.get_results` with a single
+            `TokenizedText` object.
+        """
+        return self.get_results([tokenized_text], correct_output)[0]
 
     def get_results(self, tokenized_text_list, correct_output):
         """
