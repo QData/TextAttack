@@ -109,13 +109,6 @@ def default_class_repr(self):
         extra_str = ''
     extra_str = extra_str.format(**self.__dict__)
     return f'{self.__class__.__name__}{extra_str}'
-
-def color_text(label, color=None, method=None):
-    if method == 'file':
-        method = None
-    if color is None:
-        color = color_from_label(label)
-    return color_text_by_method(str(label), color, method)
         
 LABEL_COLORS = [
     'red', 'green', 
@@ -130,7 +123,7 @@ def color_from_label(label_num):
     label_num %= len(LABEL_COLORS)
     return LABEL_COLORS[label_num]
     
-def color_text_by_method(text, color=None, method=None):
+def color_text(text, color=None, method=None):
     if method is None:
         return text
     if method == 'html':

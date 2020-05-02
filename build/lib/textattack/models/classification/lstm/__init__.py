@@ -1,0 +1,4 @@
+from .lstm_for_ag_news_classification import LSTMForAGNewsClassification
+from .lstm_for_imdb_sentiment_classification import LSTMForIMDBSentimentClassification
+from .lstm_for_mr_sentiment_classification import LSTMForMRSentimentClassification
+from .lstm_for_yelp_sentiment_classification import LSTMForYelpSentimentClassification

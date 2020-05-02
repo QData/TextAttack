@@ -44,13 +44,8 @@ class AttackResult:
     def str_lines(self, color_method=None):
         """ A list of the lines to be printed for this result's string
             representation. """
-        lines = [
-            self.goal_function_result_str(color_method=color_method), 
-            self.original_text(),
-            self.perturbed_text()
-        ]
-        if color_method is not None:
-            lines[1], lines[2] = self.diff_color(color_method)
+        lines = [self.goal_function_result_str(color_method=color_method)]
+        lines.extend(self.diff_color(color_method))
         return lines
     
     def __str__(self, color_method=None):
@@ -83,8 +78,8 @@ class AttackResult:
             word_2 = t2.words[i]
             if word_1 != word_2:
                 replaced_word_indices.append(i)
-                new_words_1.append(utils.color_text_by_method(word_1, color_1, color_method))
-                new_words_2.append(utils.color_text_by_method(word_2, color_2, color_method))
+                new_words_1.append(utils.color_text(word_1, color_1, color_method))
+                new_words_2.append(utils.color_text(word_2, color_2, color_method))
         
         t1 = self.original_result.tokenized_text.replace_words_at_indices(replaced_word_indices, 
             new_words_1)
@@ -93,6 +88,3 @@ class AttackResult:
                 
         return t1.clean_text(), t2.clean_text()
         
-    
-class SuccessfulAttackResult(AttackResult):
-    """ The result of a successful attack. """
