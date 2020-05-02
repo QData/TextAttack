@@ -1,5 +1,4 @@
 import torch
-from textattack.shared import utils
 
 class GoalFunctionResult:
     """

@@ -43,4 +43,4 @@ class ClassificationGoalFunction(GoalFunction):
         return ClassificationGoalFunctionResult
     
     def extra_repr_keys(self): 
-        return ['target_class']
+        return []
