@@ -42,7 +42,7 @@ class TextAttackDataset:
         self.examples = self.examples[offset:]
     
     def _load_classification_text_file(self, text_file_name, offset=0):
-        """ Loads tuples from lines of a text file. 
+        """ Loads tuples from lines of a classification text file. 
         
             Format must look like:
             
