@@ -78,7 +78,7 @@ To allow for word replacement after a sequence has been tokenized, we include a 
 
 ### Models and Datasets
 
-We've included a few pretrained models that you can download and run out-of-the-box. However, TextAttack is model agnostic! Anything that overrides `call`, takes in `TokenizedText`, and outputs probabilities works. 
+We've included a few pretrained models that you can download and run out-of-the-box. However, TextAttack is model agnostic! Anything that overrides `__call__`, takes in `TokenizedText`, and outputs probabilities works. 
 
 ### Attacks
 
