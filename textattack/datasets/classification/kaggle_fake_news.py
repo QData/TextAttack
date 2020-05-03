@@ -1,6 +1,6 @@
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class KaggleFakeNews(TextAttackDataset):
+class KaggleFakeNews(ClassificationDataset):
     """
     Loads samples from the Kaggle Fake News dataset. https://www.kaggle.com/mrisdal/fake-news
     
@@ -16,4 +16,4 @@ class KaggleFakeNews(TextAttackDataset):
     DATA_PATH = 'datasets/classification/fake'
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
-        self._load_text_file(KaggleFakeNews.DATA_PATH, offset=offset)
+        self._load_classification_text_file(KaggleFakeNews.DATA_PATH, offset=offset)

@@ -1,6 +1,6 @@
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class YelpSentiment(TextAttackDataset):
+class YelpSentiment(ClassificationDataset):
     """
     Loads samples from the Yelp Sentiment dataset.
     
@@ -15,7 +15,7 @@ class YelpSentiment(TextAttackDataset):
     DATA_PATH = 'datasets/classification/yelp_sentiment.txt'
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
-        self._load_text_file(YelpSentiment.DATA_PATH, offset=offset)
+        self._load_classification_text_file(YelpSentiment.DATA_PATH, offset=offset)
 
     def _clean_example(self, ex):
         """ Applied to every text example loaded from disk. 

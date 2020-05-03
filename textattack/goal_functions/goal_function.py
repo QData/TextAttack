@@ -4,8 +4,7 @@ import torch
 import math
 
 from textattack.shared.utils import default_class_repr
-from textattack.goal_functions import GoalFunctionResult
-from textattack.shared import utils
+from textattack.shared import utils, validators
 
 class GoalFunction:
     """
@@ -14,6 +13,7 @@ class GoalFunction:
         model: The PyTorch or TensorFlow model used for evaluation.
     """
     def __init__(self, model, use_cache=True):
+        validators.validate_model_goal_function_compatibility(self.__class__, model.__class__)
         self.model = model
         self.use_cache = use_cache
         self.num_queries = 0
@@ -22,47 +22,65 @@ class GoalFunction:
         else:
             self._call_model_cache = None
 
-    def should_skip(self, tokenized_text, correct_output):
+    def should_skip(self, tokenized_text, ground_truth_output):
         model_outputs = self._call_model([tokenized_text])
-        return self._is_goal_complete(model_outputs[0], correct_output)
+        return self._is_goal_complete(model_outputs[0], ground_truth_output)
 
     def get_output(self, tokenized_text):
         return self._get_displayed_output(self._call_model([tokenized_text])[0])
     
-    def get_result(self, tokenized_text, correct_output):
+    def get_result(self, tokenized_text, ground_truth_output):
         """ A helper method that queries `self.get_results` with a single
             `TokenizedText` object.
         """
-        return self.get_results([tokenized_text], correct_output)[0]
+        return self.get_results([tokenized_text], ground_truth_output)[0]
 
-    def get_results(self, tokenized_text_list, correct_output):
+    def get_results(self, tokenized_text_list, ground_truth_output):
         """
-        For each tokenized_text object in tokenized_text_list, returns a result consisting of whether or not the goal has been achieved, the output for display purposes, and a score.
+        For each tokenized_text object in tokenized_text_list, returns a result 
+        consisting of whether or not the goal has been achieved, the output for 
+        display purposes, and a score.
         """
         model_outputs = self._call_model(tokenized_text_list)
         results = []
         for tokenized_text, raw_output in zip(tokenized_text_list, model_outputs):
-            succeeded = self._is_goal_complete(raw_output, correct_output)
-            score = self._get_score(raw_output, correct_output)
+            succeeded = self._is_goal_complete(raw_output, ground_truth_output)
+            goal_function_score = self._get_score(raw_output, ground_truth_output)
             displayed_output = self._get_displayed_output(raw_output)
-            results.append(GoalFunctionResult(tokenized_text, displayed_output, succeeded, score))
+            results.append(
+                self._goal_function_result_type()(
+                    tokenized_text, displayed_output, 
+                    succeeded, goal_function_score)
+                )
         return results
 
-    def _is_goal_complete(self, model_output, correct_output):
+    def _is_goal_complete(self, model_output, ground_truth_output):
         raise NotImplementedError()
 
-    def _get_score(self, model_output, correct_output):
+    def _get_score(self, model_output, ground_truth_output):
         raise NotImplementedError() 
 
     def _get_displayed_output(self, raw_output):
         return raw_output
+    
+    def _goal_function_result_type(self):
+        """ Returns the class of this goal function's results. """
+        raise NotImplementedError()
+    
+    def _process_model_outputs(self, inputs, outputs):
+        """ Processes and validates a list of model outputs. 
+        
+            This is a task-dependent operation. For example, classification 
+            outputs need to have a softmax applied. 
+        """
+        raise NotImplementedError()
 
     def _call_model_uncached(self, tokenized_text_list, batch_size=16):
-        """ Queries model and returns predictions for a list of TokenizedText 
+        """ Queries model and returns outputs for a list of TokenizedText 
             objects. 
         """
         if not len(tokenized_text_list):
-            return torch.tensor([])
+            return []
         ids = [t.ids for t in tokenized_text_list]
         if hasattr(self.model, 'model'):
             model_device = next(self.model.model.parameters()).device
@@ -79,7 +97,7 @@ class GoalFunction:
         #           (a typical model might set d=128 or d=256)
         num_fields = ids.shape[1]
         num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
-        scores = []
+        outputs = []
         for batch_i in range(num_batches):
             batch_start = batch_i * batch_size
             batch_stop  = (batch_i + 1) * batch_size
@@ -89,30 +107,8 @@ class GoalFunction:
                 preds = self.model(*batch)
             if isinstance(preds, tuple):
                 preds = preds[0]
-            scores.append(preds)
-        scores = torch.cat(scores, dim=0)
-        # Validation check on model score dimensions
-        if scores.ndim == 1:
-            # Unsqueeze prediction, if it's been squeezed by the model.
-            if len(tokenized_text_list == 1):
-                scores = scores.unsqueeze(dim=0)
-            else:
-                raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif scores.ndim != 2:
-            # If model somehow returns too may dimensions, throw an error.
-            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif scores.shape[0] != len(tokenized_text_list):
-            # If model returns an incorrect number of scores, throw an error.
-            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
-            # Values in each row should sum up to 1. The model should return a 
-            # set of numbers corresponding to probabilities, which should add
-            # up to 1. Since they are `torch.float` values, allow a small
-            # error in the summation.
-            scores = torch.nn.functional.softmax(scores, dim=1)
-            if not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
-                raise ValueError('Model scores do not add up to 1.')
-        return scores
+            outputs.append(preds)
+        return self._process_model_outputs(tokenized_text_list, outputs)
     
     def _call_model(self, tokenized_text_list):
         """ Gets predictions for a list of `TokenizedText` objects.
@@ -140,11 +136,11 @@ class GoalFunction:
                 else:
                     uncached_list.append(text)
             uncached_list = [text for text in tokenized_text_list if text not in self._call_model_cache]
-            scores = self._call_model_uncached(uncached_list)
-            for text, score in zip(uncached_list, scores):
-                self._call_model_cache[text] = score.cpu()
-            final_scores = [self._call_model_cache[text] for text in tokenized_text_list]
-            return torch.stack(final_scores).to(utils.get_device())
+            outputs = self._call_model_uncached(uncached_list)
+            for text, output in zip(uncached_list, outputs):
+                self._call_model_cache[text] = output
+            all_outputs = [self._call_model_cache[text] for text in tokenized_text_list]
+            return all_outputs
 
     def extra_repr_keys(self): 
         return []

@@ -144,6 +144,21 @@ def color_text(text, color=None, method=None):
     elif method == 'file':
         return '[[' + text + ']]'
 
+def words_from_text(s, words_to_ignore=[]):
+    """ Lowercases a string, removes all non-alphanumeric characters,
+        and splits into words. """
+    words = []
+    word = ''
+    for c in ' '.join(s.split()):
+        if c.isalpha():
+            word += c
+        elif word:
+            if word not in words_to_ignore: words.append(word)
+            word = ''
+    if len(word) and (word not in words_to_ignore): 
+        words.append(word)
+    return words
+
 class ANSI_ESCAPE_CODES:
     """ Escape codes for printing color to the terminal. """
     HEADER = '\033[95m'
