@@ -1,6 +1,6 @@
-from .entailment_dataset import TextAttackEntailmentDataset
+from .entailment_dataset import EntailmentDataset
 
-class MNLI(TextAttackEntailmentDataset):
+class MNLI(EntailmentDataset):
     """
     Loads samples from the MNLI dataset. The *mismatched* examples come from a 
     distribution different from the one seen at training time.
@@ -21,4 +21,4 @@ class MNLI(TextAttackEntailmentDataset):
     def __init__(self, offset=0, mismatched=False):
         """ Loads a full dataset from disk. """
         path = MNLI.MISMATCHED_DATA_PATH if mismatched else MNLI.MATCHED_DATA_PATH
-        self._load_text_file(path, offset=offset)
+        self._load_classification_text_file(path, offset=offset)

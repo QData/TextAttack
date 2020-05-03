@@ -13,9 +13,9 @@ class Attack:
     An attack generates adversarial examples on text. 
     
     This is an abstract class that contains main helper functionality for 
-    attacks. An attack is comprised of a search method and a transformation, as 
-    well as one or more linguistic constraints that successful examples must 
-    meet.
+    attacks. An attack is comprised of a search method, a goal function, and a 
+    transformation, as well as one or more linguistic constraints that 
+    successful examples must meet.
 
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
@@ -29,7 +29,7 @@ class Attack:
         """
         self.goal_function = goal_function
         if not self.goal_function:
-            raise NameError('Cannot instantiate attack without self.goal_function for prediction scores')
+            raise NameError('Cannot instantiate attack without self.goal_function for predictions')
         if not hasattr(self, 'tokenizer'):
             if hasattr(self.goal_function.model, 'tokenizer'):
                 self.tokenizer = self.goal_function.model.tokenizer
@@ -123,15 +123,15 @@ class Attack:
         Gets examples from a dataset and tokenizes them.
 
         Args:
-            dataset: An iterable of (label, text) pairs
+            dataset: An iterable of (text, ground_truth_output) pairs
             num_examples (int): the number of examples to return
             shuffle (:obj:`bool`, optional): Whether to shuffle the data
             attack_n (bool): If `True`, returns `num_examples` non-skipped
                 examples. If `False`, returns `num_examples` total examples.
         
         Returns:
-            results (List[Tuple[Int, TokenizedText, Boolean]]): a list of
-                objects containing (label, text, was_skipped)
+            results (Iterable[Tuple[GoalFunctionResult, Boolean]]): a list of
+                objects containing (text, ground_truth_output, was_skipped)
         """
         examples = []
         n = 0
@@ -139,9 +139,9 @@ class Attack:
         if shuffle:
             random.shuffle(dataset.examples)
             
-        for true_output, text in dataset:
+        for text, ground_truth_output in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)
-            goal_function_result = self.goal_function.get_result(tokenized_text, true_output)
+            goal_function_result = self.goal_function.get_result(tokenized_text, ground_truth_output)
             # We can skip examples for which the goal is already succeeded,
             # unless `attack_skippable_examples` is True.
             if (not attack_skippable_examples) and (goal_function_result.succeeded):
@@ -149,7 +149,7 @@ class Attack:
                     n += 1
                 # Store the true output on the goal function so that the
                 # SkippedAttackResult has the correct output, not the incorrect.
-                goal_function_result.output = true_output
+                goal_function_result.output = ground_truth_output
                 yield (goal_function_result, True)
             else:
                 n += 1
@@ -159,13 +159,14 @@ class Attack:
 
     def attack_dataset(self, dataset, num_examples=None, shuffle=False, attack_n=False):
         """ 
-        Runs an attack on the given dataset and outputs the results to the console and the output file.
+        Runs an attack on the given dataset and outputs the results to the 
+            console and the output file.
 
         Args:
-            dataset: An iterable of (label, text) pairs
+            dataset: An iterable of (text, ground_truth_output) pairs
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
         """
-      
+        
         examples = self._get_examples_from_dataset(dataset, 
             num_examples=num_examples, shuffle=shuffle, attack_n=attack_n)
 
@@ -203,9 +204,12 @@ class Attack:
         )
         # self.constraints
         constraints_lines = []
-        for i, constraint in enumerate(self.constraints):
-            constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
-        constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
+        if len(self.constraints):
+            for i, constraint in enumerate(self.constraints):
+                constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
+            constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
+        else:
+            constraints_str = 'None'
         lines.append(utils.add_indent(f'(constraints): {constraints_str}', 2))
         # self.is_black_box
         lines.append(utils.add_indent(f'(is_black_box):  {self.is_black_box}', 2))
