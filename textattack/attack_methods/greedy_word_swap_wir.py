@@ -52,7 +52,6 @@ class GreedyWordSwapWIR(Attack):
         new_text_label = None
         i = 0
         while ((self.max_depth is None) or num_words_changed <= self.max_depth) and i < len(index_order):
-            # import pdb; pdb.set_trace()
             transformed_text_candidates = self.get_transformations(
                 tokenized_text,
                 original_tokenized_text,

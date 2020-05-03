@@ -13,9 +13,9 @@ class Attack:
     An attack generates adversarial examples on text. 
     
     This is an abstract class that contains main helper functionality for 
-    attacks. An attack is comprised of a search method and a transformation, as 
-    well as one or more linguistic constraints that successful examples must 
-    meet.
+    attacks. An attack is comprised of a search method, a goal function, and a 
+    transformation, as well as one or more linguistic constraints that 
+    successful examples must meet.
 
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
@@ -29,7 +29,7 @@ class Attack:
         """
         self.goal_function = goal_function
         if not self.goal_function:
-            raise NameError('Cannot instantiate attack without self.goal_function for prediction scores')
+            raise NameError('Cannot instantiate attack without self.goal_function for predictions')
         if not hasattr(self, 'tokenizer'):
             if hasattr(self.goal_function.model, 'tokenizer'):
                 self.tokenizer = self.goal_function.model.tokenizer
@@ -130,7 +130,7 @@ class Attack:
                 examples. If `False`, returns `num_examples` total examples.
         
         Returns:
-            results (List[Tuple[Int, TokenizedText, Boolean]]): a list of
+            results (Iterable[Tuple[GoalFunctionResult, Boolean]]): a list of
                 objects containing (text, ground_truth_output, was_skipped)
         """
         examples = []

@@ -139,8 +139,8 @@ class GoalFunction:
             outputs = self._call_model_uncached(uncached_list)
             for text, output in zip(uncached_list, outputs):
                 self._call_model_cache[text] = output
-            final_scores = [self._call_model_cache[text] for text in tokenized_text_list]
-            return final_scores
+            all_outputs = [self._call_model_cache[text] for text in tokenized_text_list]
+            return all_outputs
 
     def extra_repr_keys(self): 
         return []

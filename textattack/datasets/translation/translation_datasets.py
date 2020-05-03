@@ -1,4 +1,3 @@
-import gluonnlp
 from textattack.datasets import TextAttackDataset
 
 class NewsTest2013EnglishToGerman(TextAttackDataset):
@@ -20,4 +19,4 @@ class NewsTest2013EnglishToGerman(TextAttackDataset):
     """
     DATA_PATH = 'datasets/translation/NewsTest2013EnglishToGerman'
     def __init__(self, offset=0):
-        self._load_pickle_file(NewsTest2013EnglishToGerman.DATA_PATH)
+        self._load_pickle_file(NewsTest2013EnglishToGerman.DATA_PATH, offset=offset)

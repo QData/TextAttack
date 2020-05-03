@@ -7,9 +7,9 @@ from run_attack_args_helper import *
 
 import textattack.models as models
 
-def _cb(s): return textattack.shared.utils.color_text_by_method(str(s), color='blue', method='stdout')
-def _cg(s): return textattack.shared.utils.color_text_by_method(str(s), color='green', method='stdout')
-def _cr(s): return textattack.shared.utils.color_text_by_method(str(s), color='red', method='stdout')
+def _cb(s): return textattack.shared.utils.color_text(str(s), color='blue', method='stdout')
+def _cg(s): return textattack.shared.utils.color_text(str(s), color='green', method='stdout')
+def _cr(s): return textattack.shared.utils.color_text(str(s), color='red', method='stdout')
 def _pb(): print(_cg('-' * 60))
 
 from collections import Counter
