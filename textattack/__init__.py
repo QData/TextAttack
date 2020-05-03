@@ -9,6 +9,6 @@ from . import goal_functions
 from . import goal_function_results
 from . import loggers
 from . import models
-from . import shared
+from . import shared 
 from . import tokenizers
 from . import transformations

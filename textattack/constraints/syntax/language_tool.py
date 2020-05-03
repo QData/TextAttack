@@ -1,4 +1,4 @@
-import language_check
+import language_tool_python 
 
 from textattack.constraints import Constraint
 
@@ -14,7 +14,7 @@ class LanguageTool(Constraint):
     """
     
     def __init__(self, grammar_error_threshold=0):
-        self.lang_tool = language_check.LanguageTool("en-US")
+        self.lang_tool = language_tool_python.LanguageTool("en-US")
         self.grammar_error_threshold = grammar_error_threshold
         self.grammar_error_cache = {}
     

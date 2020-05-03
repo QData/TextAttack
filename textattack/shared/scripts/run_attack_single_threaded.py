@@ -48,10 +48,10 @@ def run(args):
 
             tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, goal_function.model.tokenizer)
             
-            result = goal_function.get_results([tokenized_text], goal_function.get_output(tokenized_text))[0]
+            result = goal_function.get_result(tokenized_text, goal_function.get_output(tokenized_text))
             print('Attacking...')
 
-            result = next(attack.attack_dataset([(result.output, text)]))
+            result = next(attack.attack_dataset([(text, result.output)]))
             print(result.__str__(color_method='stdout'))
     
     else:
@@ -75,7 +75,7 @@ def run(args):
             if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
                 pbar.update(1)
             num_results += 1
-            if type(result) == textattack.attack_results.AttackResult:
+            if type(result) == textattack.attack_results.SuccessfulAttackResult:
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
                 num_failures += 1

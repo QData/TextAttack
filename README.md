@@ -47,14 +47,6 @@ python -m spacy download en
 ### Cache
 TextAttack provides pretrained models and datasets for user convenience. By default, all this stuff is downloaded to `~/.cache`. You can change this location by editing the `CACHE_DIR` field in `config.json`.
 
-### Common Errors
-
-#### Errors regarding GCC
-If you see an error that GCC is incompatible, make sure your system has an up-to-date version of the GCC compiler.
-
-#### Errors regarding Java
-Using the LanguageTool constraint relies on Java 8 internally (it's not ideal, we know). Please install Java 8 if you're interested in using the LanguageTool grammaticality constraint.
-
 ## Usage
 
 ### Basic Usage

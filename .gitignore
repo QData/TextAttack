@@ -27,3 +27,7 @@ tensorflow-hub
 
 # for Macs
 .DS_Store
+
+# build outputs for PyPI
+build/
+dist/
