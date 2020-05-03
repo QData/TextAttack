@@ -16,7 +16,7 @@
   
 ## About
 
-TextAttack is a library for running adversarial attacks against NLP models. TextAttack builds attacks from four components: a serach method, goal function, transformation, and set of constraints. TextAttack's modular design makes it easily extensible to new NLP tasks, models, and attack strategies. TextAttack currently supports attacks on models trained for classification, entailment, and translation..
+TextAttack is a library for running adversarial attacks against NLP models. TextAttack builds attacks from four components: a serach method, goal function, transformation, and set of constraints. TextAttack's modular design makes it easily extensible to new NLP tasks, models, and attack strategies. TextAttack currently supports attacks on models trained for classification, entailment, and translation.
 
 ## Setup
 
