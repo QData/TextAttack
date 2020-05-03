@@ -22,7 +22,7 @@ TextAttack is a library for running adversarial attacks against NLP models. Text
 
 ### Installation
 
-You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is optional but will greatly improve code speed. After cloning this git repository, run the following commands to install the `textattack` page a `conda` environment:
+You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is optional but will greatly improve code speed. After cloning this git repository, run the following commands to install the `textattack` package a `conda` environment:
 
 ```
 conda create -n text-attack python=3.7
@@ -74,32 +74,32 @@ The final is for translation attacks:
 
 ### TokenizedText
 
-To allow for word replacement after a sequence has been tokenized, we include a TokenizedText object which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
+To allow for word replacement after a sequence has been tokenized, we include a `TokenizedText` object which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
 
 ### Models and Datasets
 
-We've included a few pretrained models that you can download and run out-of-the-box. However, TextAttack is model agnostic! Anything that overrides \_\_call\_\_, takes in tokenized text, and outputs probabilities works. 
+We've included a few pretrained models that you can download and run out-of-the-box. However, TextAttack is model agnostic! Anything that overrides `call`, takes in `TokenizedText`, and outputs probabilities works. 
 
 ### Attacks
 
-Attacks all take as input a TokenizedText, and output either a SuccessfulAttackResult if it succeeds or a FailedAttackResult if it fails. We formulate an attack as consisting of four components: a **goal function** which determines if the attack as succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
+The `attack_one` method in an `Attack` takes as input a `TokenizedText`, and output either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. We formulate an attack as consisting of four components: a **goal function** which determines if the attack as succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
 
-### Goal functions
+### Goal Functions
 
-A goal function takes as input a TokenizedText object and the ground truth output, and determines whether the goal has succeeded. 
+A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the goal has succeeded. 
 
 ### Constraints
 
-Constraints take as input an original TokenizedText, and a list of transformed TokenizedTexts. For each transformed option, the constraint returns a boolean representing whether the constraint is met.
+A `Constraint` takes as input an original `TokenizedText`, and a list of transformed `TokenizedText`s. For each transformed option, it returns a boolean representing whether the constraint is met.
 
 ### Transformations
 
-Transformations take as input a TokenizedText and return a list of possible transformed TokenizedTexts. For example, a transformation might return all possible synonym replacements.
+A `Transformation` takes as input a `TokenizedText` and returns a list of possible transformed `TokenizedText`s. For example, a transformation might return all possible synonym replacements.
 
-### Search methods
+### Search Methods
 
-The search method is currently implemented in an extension of the Attack class. The `get\_transformations` function takes as input a TokenizedText object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds or is exhausted.
+A search method is currently implemented in an extension of the `Attack` class, through implementing the `attack_one` method. The `get_transformations` function takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds or is exhausted.
 
-### Adding to TextAttack
+## Contributing to TextAttack
 
 We welcome contributions and suggestions! Submit a pull request or issue and we will do our best to respond in a timely manner.
