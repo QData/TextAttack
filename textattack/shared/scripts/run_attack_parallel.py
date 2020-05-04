@@ -47,7 +47,7 @@ def run(args):
     )
     start_time = time.time()
     
-    attack_logger = parse_logger_from_args(args)
+    attack_log_manager = parse_logger_from_args(args)
     
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
@@ -80,7 +80,7 @@ def run(args):
         result = out_queue.get(block=True)
         if isinstance(result, Exception):
             raise result
-        attack_logger.log_result(result)
+        attack_log_manager.log_result(result)
         if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
             pbar.update()
             num_results += 1
@@ -96,9 +96,9 @@ def run(args):
     print()
     # Enable summary stdout.
     if args.disable_stdout:
-        attack_logger.enable_stdout()
-    attack_logger.log_summary()
-    attack_logger.flush()
+        attack_log_manager.enable_stdout()
+    attack_log_manager.log_summary()
+    attack_log_manager.flush()
     print()
     finish_time = time.time()
     print(f'Attack time: {time.time() - load_time}s')

@@ -16,3 +16,4 @@ tensorflow_hub
 terminaltables
 tqdm
 visdom
+wandb

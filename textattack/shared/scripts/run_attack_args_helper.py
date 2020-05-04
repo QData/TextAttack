@@ -139,6 +139,9 @@ def get_args():
     parser.add_argument('--enable_visdom', action='store_true',
         help='Enable logging to visdom.')
     
+    parser.add_argument('--enable_wandb', action='store_true',
+        help='Enable logging to Weights & Biases.')
+    
     parser.add_argument('--disable_stdout', action='store_true',
         help='Disable logging to stdout')
    
@@ -276,32 +279,35 @@ def parse_goal_function_and_attack_from_args(args):
     return goal_function, attack
 
 def parse_logger_from_args(args):# Create logger
-    attack_logger = textattack.loggers.AttackLogger()
+    attack_log_manager = textattack.loggers.AttackLogManager()
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        outputs_dir = os.path.join(current_dir, os.pardir, 'outputs')
+        outputs_dir = os.path.join(current_dir, os.pardir, os.pardir, os.pardir, 'outputs')
         args.out_dir = outputs_dir
         
     # Output file.
     out_time = int(time.time()*1000) # Output file
     outfile_name = 'attack-{}.txt'.format(out_time)
-    attack_logger.add_output_file(os.path.join(args.out_dir, outfile_name))
+    attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
         
     # CSV
     if args.enable_csv:
         outfile_name = 'attack-{}.csv'.format(out_time)
         color_method = None if args.enable_csv == 'plain' else 'file'
         csv_path = os.path.join(args.out_dir, outfile_name)
-        attack_logger.add_output_csv(csv_path, color_method)
+        attack_log_manager.add_output_csv(csv_path, color_method)
         print('Logging to CSV at path {}.'.format(csv_path))
-
 
     # Visdom
     if args.enable_visdom:
-        attack_logger.enable_visdom()
+        attack_log_manager.enable_visdom()
+        
+    # Weights & Biases
+    if args.enable_wandb:
+        attack_log_manager.enable_wandb()
 
     # Stdout
     if not args.disable_stdout:
-        attack_logger.enable_stdout()
-    return attack_logger
+        attack_log_manager.enable_stdout()
+    return attack_log_manager

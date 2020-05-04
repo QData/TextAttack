@@ -27,7 +27,7 @@ def run(args):
     print(attack, '\n')
     
     # Logger
-    attack_logger = parse_logger_from_args(args)
+    attack_log_manager = parse_logger_from_args(args)
 
     load_time = time.time()
     print(f'Load time: {load_time - start_time}s')
@@ -69,7 +69,7 @@ def run(args):
                                         num_examples=args.num_examples, 
                                         shuffle=args.shuffle, 
                                         attack_n=args.attack_n):
-            attack_logger.log_result(result)
+            attack_log_manager.log_result(result)
             if not args.disable_stdout:
                 print('\n')
             if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
@@ -84,9 +84,9 @@ def run(args):
         print()
         # Enable summary stdout
         if args.disable_stdout:
-            attack_logger.enable_stdout()
-        attack_logger.log_summary()
-        attack_logger.flush()
+            attack_log_manager.enable_stdout()
+        attack_log_manager.log_summary()
+        attack_log_manager.flush()
         print()
         finish_time = time.time()
         print(f'Attack time: {time.time() - load_time}s')

@@ -34,7 +34,7 @@ class VisdomLogger(Logger):
         result_str = result.goal_function_result_str(color_method='html')
         self.sample_rows.append([result_str,text_a,text_b])
 
-    def log_rows(self, rows, title, window_id):
+    def log_summary_rows(self, rows, title, window_id):
         self.table(rows, title=title, window_id=window_id)
 
     def flush(self):

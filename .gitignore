@@ -31,3 +31,6 @@ tensorflow-hub
 # build outputs for PyPI
 build/
 dist/
+
+# Weights & Biases outputs
+wandb/
