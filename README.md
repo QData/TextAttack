@@ -49,7 +49,7 @@ TextAttack provides pretrained models and datasets for user convenience. By defa
 
 ### Basic Usage
 
-The [examples/](`examples/`) folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint.
+The [`examples/`](examples/) folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint.
 
 We also have a command-line interface for running attacks. See help info and list of arguments with `python -m textattack --help`.
 
