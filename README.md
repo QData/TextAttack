@@ -22,11 +22,9 @@ TextAttack is a library for running adversarial attacks against NLP models. Text
 
 ### Installation
 
-You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is optional but will greatly improve code speed. After cloning this git repository, run the following commands to install the `textattack` package a `conda` environment:
+You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is optional but will greatly improve code speed. TextAttack is available through pip:
 
 ```
-conda create -n text-attack python=3.7
-conda activate text-attack
 pip install textattack
 ```
 
@@ -51,7 +49,7 @@ TextAttack provides pretrained models and datasets for user convenience. By defa
 
 ### Basic Usage
 
-The `examples` folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint.
+The [examples/](`examples/`) folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint.
 
 We also have a command-line interface for running attacks. See help info and list of arguments with `python -m textattack --help`.
 
@@ -78,15 +76,28 @@ To allow for word replacement after a sequence has been tokenized, we include a 
 
 ### Models and Datasets
 
-We've included a few pretrained models that you can download and run out-of-the-box. However, TextAttack is model agnostic! Anything that overrides `__call__`, takes in `TokenizedText`, and outputs probabilities works. 
+TextAttack is model-agnostic! Anything that overrides `__call__`, takes in `TokenizedText`, and correctly formats output works. However, TextAttack provides pre-trained models and samples for the following datasets:
+
+Classification:
+* AG News dataset topic classification
+* IMDB dataset sentiment classification
+* Movie Review dataset sentiment classification
+* Yelp dataset sentiment classification
+
+Entailment:
+* SNLI datastet
+* MNLI dataset (matched & unmatched)
+
+Translation:
+* newstest2013 English to German dataset
 
 ### Attacks
 
-The `attack_one` method in an `Attack` takes as input a `TokenizedText`, and output either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. We formulate an attack as consisting of four components: a **goal function** which determines if the attack as succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
+The `attack_one` method in an `Attack` takes as input a `TokenizedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
 
 ### Goal Functions
 
-A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the goal has succeeded. 
+A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the attack has succeeded. 
 
 ### Constraints
 
