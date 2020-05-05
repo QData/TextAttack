@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.org/pybind/TextAttack.svg?branch=master)](https://travis-ci.org/pybind/TextAttack)
 
 
 <h1 align="center">TextAttack 🐙</h1>
