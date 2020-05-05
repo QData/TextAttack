@@ -14,8 +14,10 @@ class GradientBasedWordSwap(Transformation):
         Arguments:
             model (nn.Module): The model to attack. Model must have a 
                 `word_embeddings` matrix and `convert_id_to_word` function.
+            top_n (int): the number of top words to return at each index
+            replace_stopwords (bool): whether or not to replace stopwords
     """
-    def __init__(self, model, replace_stopwords=False):
+    def __init__(self, model, top_n=1, replace_stopwords=False):
         # @TODO validate model is our word LSTM here
         if not hasattr(model, 'word_embeddings'):
             raise ValueError('Model needs word embedding matrix for gradient-based word swap')
@@ -33,6 +35,7 @@ class GradientBasedWordSwap(Transformation):
         self.model = model
         self.pad_id = self.model.tokenizer.pad_id
         self.oov_id = self.model.tokenizer.oov_id
+        self.top_n = top_n
         # @TODO optionally take other loss functions as a param.
         if replace_stopwords:
             self.stopwords = set()
@@ -53,7 +56,6 @@ class GradientBasedWordSwap(Transformation):
         lookup_table = self.model.lookup_table.to(utils.get_device())
         lookup_table_transpose = lookup_table.transpose(0,1)
         
-        import pdb; pdb.set_trace()
         # set backward hook on the word embeddings for input x
         emb_hook = Hook(self.model.word_embeddings, backward=True)
     
@@ -69,34 +71,21 @@ class GradientBasedWordSwap(Transformation):
     
         # grad differences between all flips and original word (eq. 1 from paper)
         vocab_size = lookup_table.size(0)
-        diffs = torch.zeros(len(swappable_token_idxs), vocab_size)
-        for j, word_idx in enumerate(swappable_token_idxs):
-            # Get the grad w.r.t the one-hot index of the word.
-            b_grads = emb_grad[word_idx].view(1,-1).mm(lookup_table_transpose).squeeze()
-            a_grad = b_grads[text.ids[word_idx]]
-            diffs[j] = b_grads-a_grad
+        
+        # Get the grad w.r.t the one-hot index of the word.
+        b_grads = emb_grad[word_index].view(1,-1).mm(lookup_table_transpose).squeeze()
+        a_grad = b_grads[text.ids[0][word_index]]
+        diffs = b_grads-a_grad
         
         # Don't change to the pad token.
-        diffs[:, self.model.tokenizer.pad_token_id] = 0
+        diffs[self.model.tokenizer.pad_id] = 0
         
-        import pdb; pdb.set_trace()
-        all_words_max_vals, all_words_max_flips = diffs.max(1)
-        max_diff, max_word_idx = all_words_max_vals.max(0)
-        max_word_flip = all_words_max_flips[max_word_idx]
+        word_idxs_sorted_by_grad = (-diffs).argsort()[:self.top_n]
         
-        max_word_idx_in_text = swappable_token_idxs[max_word_idx]
-        
-        # Only swap the word at this index once.
-        swappable_token_idxs.remove(max_word_idx_in_text)
-    
-        # max_word_idx_in_text = max_word_idx_in_text.item() # the index of the word we should flip from x_tensor
-        max_word_flip = max_word_flip.item() # the word to flip max_word_idx to 
-        
-        new_token = self.model.tokenizer.convert_id_to_word(max_word_flip)
-        print('max_word_flip:',max_word_flip,'new_token:',new_token)
-        print('replacing idx:', max_word_idx_in_text,'/', text.tokens[max_word_idx_in_text],'with', new_token)
-        text = text.replace_token_at_index(max_word_idx_in_text, new_token)
-        
+        candidate_words = []
+        for word_id in word_idxs_sorted_by_grad:
+            candidate_words.append(self.model.tokenizer.convert_id_to_word(word_id.item()))
+            
         self.model.eval()
         return candidate_words
     
@@ -124,17 +113,16 @@ class GradientBasedWordSwap(Transformation):
         for i in indices_to_replace:
             word_to_replace = words[i]
             # Don't replace stopwords.
-            if not word_to_replace.lower() in self.stopwords:
+            if word_to_replace.lower() in self.stopwords:
                 continue
             replacement_words = self._replace_word_at_index(tokenized_text, i)
             new_tokenized_texts = []
             for r in replacement_words:
                 # Don't replace with numbers, punctuation, or other non-letter characters.
-                if not is_word(r):
-                    continue
+                # if not is_word(r):
+                    # continue
                 new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r))
             transformations.extend(new_tokenized_texts)
-        
         return transformations
 
 class Hook:

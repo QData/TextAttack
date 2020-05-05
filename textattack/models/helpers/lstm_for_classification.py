@@ -35,7 +35,6 @@ class LSTMForClassification(nn.Module):
         self.out = nn.Linear(d_out, nclasses)
         self.tokenizer = textattack.tokenizers.SpacyTokenizer(self.word2id,
             self.emb_layer.oovid, self.emb_layer.padid, max_seq_length)
-        
     
     def load_from_disk(self, model_folder_path):
         self.load_state_dict(load_cached_state_dict(model_folder_path))
