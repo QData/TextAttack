@@ -7,4 +7,4 @@ before_install:
   - pip install git+https://github.com/jxmorris12/language-check
 install:
   - pip install -e .
-script: pytest # run tests
+script: pytest tests # run tests
