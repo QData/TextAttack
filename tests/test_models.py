@@ -14,8 +14,8 @@ def test_ag_news_load():
     data = datasets.classification.AGNews().__next__()
     print(data[1])
     print(expected_text)
-    actual_label = data[0]
-    actual_text = data[1]
+    actual_label = data[1]
+    actual_text = data[0]
 
     # Test
     assert expected_label == actual_label
@@ -37,8 +37,8 @@ def test_imdb_load():
 
     # Actual
     data = datasets.classification.IMDBSentiment().__next__()
-    actual_label = data[0]
-    actual_text = data[1]
+    actual_label = data[1]
+    actual_text = data[0]
 
     # Test
     assert expected_label == actual_label
@@ -53,8 +53,8 @@ def test_movie_review_load():
     
     # Actual
     data = datasets.classification.MovieReviewSentiment().__next__()
-    actual_label = data[0]
-    actual_text = data[1]
+    actual_label = data[1]
+    actual_text = data[0]
 
     assert expected_label == actual_label
     assert expected_text == actual_text
@@ -72,8 +72,8 @@ def test_yelp_load():
 
     # Actual
     data = datasets.classification.YelpSentiment().__next__()
-    actual_label = data[0]
-    actual_text = data[1]
+    actual_label = data[1]
+    actual_text = data[0]
 
     assert expected_label == actual_label
     assert expected_text == actual_text
@@ -91,8 +91,8 @@ def test_MNLI_load():
 
     # Actual
     data = datasets.entailment.MNLI().__next__()
-    actual_label = data[0]
-    actual_text = data[1]
+    actual_label = data[1]
+    actual_text = data[0]
 
     assert expected_label == actual_label
     assert expected_text == actual_text
