@@ -11,6 +11,7 @@ RECIPE_NAMES = {
     'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
     'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
     'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
+    'hotflip':       'textattack.attack_recipes.Ebrahimi2017HotFlip',
     'seq2sick':      'textattack.attack_recipes.Cheng2018Seq2SickBlackBox',
     'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
     'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
