@@ -1,5 +1,5 @@
 import numpy as np
-from .transformation import Transformation
+from textattack.transformations.transformation import Transformation
 
 class CompositeTransformation(Transformation):
     def __init__(self, transformations):

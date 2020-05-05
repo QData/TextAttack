@@ -41,7 +41,7 @@ register_test('python -m textattack --model bert-snli --recipe textfooler --num_
 register_test('python -m textattack --model lstm-mr --recipe deepwordbug --num_examples 10', 
     name='run_attack_deepwordbug_lstm_mr_10', 
     output_file='local_tests/sample_outputs/run_attack_deepwordbug_lstm_mr_10.txt', 
-    desc='Runs attack using DeepWordBUG recipe on LSTM using 10 examples from the MR dataset')
+    desc='Runs attack using DeepWordBug recipe on LSTM using 10 examples from the MR dataset')
     
 #
 # test: run_attack targeted classification of class 2 on BERT MNLI with enable_csv

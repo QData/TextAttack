@@ -12,7 +12,7 @@ from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.constraints.syntax import PartOfSpeech
-from textattack.transformations import WordSwapEmbedding
+from textattack.transformations.black_box import WordSwapEmbedding
 from textattack.goal_functions import UntargetedClassification
 
 def Jin2019TextFooler(model):
