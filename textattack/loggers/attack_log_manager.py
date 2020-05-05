@@ -120,8 +120,6 @@ class AttackLogManager:
             ['Number of successful attacks:', str(successful_attacks)],
             ['Number of failed attacks:', str(failed_attacks)],
             ['Number of skipped attacks:', str(skipped_attacks)],
-            ### @TODO: everything below this should be computed in a customizable
-            ###     way via overriding `GoalFunctionResult.statistics`.
             ['Original accuracy:', original_accuracy],
             ['Accuracy under attack:', accuracy_under_attack],
             ['Attack success rate:', attack_success_rate],

@@ -14,11 +14,12 @@ class WeightsAndBiasesLogger(Logger):
             Therefore, we have to do it manually.
         """
         result_table = html_table_from_rows(self._result_table_rows)
-        wandb.log({ 'results': wandb.Html(result_table) })
+        wandb.log({ 'results': wandb.Html(result_table, inject=False) })
         
     def log_attack_result(self, result):
         original_text_colored, perturbed_text_colored = result.diff_color(color_method='html')
-        self._result_table_rows.append([original_text_colored, perturbed_text_colored])
+        result_num = len(self._result_table_rows)
+        self._result_table_rows.append([f'<b>Result {result_num}</b>', original_text_colored, perturbed_text_colored])
         result_diff_table = html_table_from_rows([[original_text_colored, perturbed_text_colored]])
         result_diff_table = wandb.Html(result_diff_table)
         wandb.log({

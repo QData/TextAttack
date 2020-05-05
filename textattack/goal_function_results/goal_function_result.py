@@ -18,16 +18,6 @@ class GoalFunctionResult:
         if isinstance(self.score, torch.Tensor):
             self.score = self.score.item()
     
-    def statistics(self):
-        """ A dictionary of statistics about this result. 
-        
-            Used by the `AttackLogManager` to print aggregate attack statistics.
-        """
-        return { # @ TODO implement
-            'num_words_changed', None,
-            'Words changed %', None
-        }
-    
     def get_text_color_input(self):
         """ A string representing the color this result's changed
             portion should be if it represents the original input.
