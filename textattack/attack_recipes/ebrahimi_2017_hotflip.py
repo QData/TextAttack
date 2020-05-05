@@ -9,7 +9,7 @@
 """
 
 from textattack.attack_methods import GeneticAlgorithm
-from textattack.constraints.overlap import WordsPerturbedPercentage
+from textattack.constraints.overlap import NumberOfWordsSwapped, WordsPerturbedPercentage
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations.white_box import GradientBasedWordSwap
@@ -26,30 +26,33 @@ def Ebrahimi2017HotFlip(model):
     transformation = GradientBasedWordSwap(model,  ???top_n=1000?, replace_stopwords=False)
     constraints = []
     #
+    # [0.] We were able to create only 41 examples (2% of the correctly-
+    # classified instances of the SST test set) with one or two flips.
+    # 
+    constraints.append(
+        NumberOfWordsSwapped(max_swaps=2)
+    )
+    #
     # 1. The cosine similarity between the embedding of words is bigger than a 
     #   threshold (0.8).
     #
     constraints.append(
-            WordsPerturbedPercentage(max_percent=20)
+            WordEmbeddingDistance(min_cos_sim=0.8)
     )
     #
     # 2. The two words have the same part-of-speech.
     #
     constraints.append(PartOfSpeech())
     #
-    # Language Model
-    #
-    constraints.append(
-            GoogleLanguageModel(top_n_per_index=4)
-    )
-    #
     # Goal is untargeted classification
     #
     goal_function = UntargetedClassification(model)
     #
-    # Perform word substitution with a genetic algorithm.
+    # HotFlip ... uses a beam search to find a set of manipulations that work 
+    # well together to confuse a classifier ... The adversary uses a beam size 
+    # of 10.
     #
-    attack = GeneticAlgorithm(goal_function, constraints=constraints,
-        transformation=transformation, pop_size=60, max_iters=20)
+    attack = BeamSearch(goal_function, constraints=constraints,
+        transformation=transformation, beam_width=10)
     
     return attack
