@@ -128,6 +128,9 @@ class GradientBasedWordSwap(Transformation):
         for word, idx in self._get_replacement_words_by_grad(tokenized_text, indices_to_replace):
             transformations.append(tokenized_text.replace_word_at_index(idx, word))
         return transformations
+        
+    def extra_repr_keys(self): 
+        return ['top_n', 'replace_stopwords']
 
 def has_letter(word):
     for c in word:
