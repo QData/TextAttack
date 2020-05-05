@@ -11,8 +11,8 @@
   <a href="#usage">Usage</a> •
   <a href="#design">Design</a> 
   <br> <br>
-  <a target="_blank" href="https://travis-ci.com/UVA-MachineLearningBioinformatics/TextAttack">
-    <img src="https://travis-ci.com/UVA-MachineLearningBioinformatics/TextAttack.svg?token=Kpx8qxw1sbsdXyhVxRq3&branch=master" alt="Coverage Status">
+  <a target="_blank" href="https://travis-ci.com/QData/TextAttack">
+    <img src="https://travis-ci.com/QData/TextAttack.svg?token=Kpx8qxw1sbsdXyhVxRq3&branch=master" alt="Coverage Status">
   </a>
 
 </p>
