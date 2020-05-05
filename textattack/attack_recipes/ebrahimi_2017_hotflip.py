@@ -23,7 +23,7 @@ def Ebrahimi2017HotFlip(model):
     # "HotFlip ... uses the gradient with respect to a one-hot input 
     # representation to efficiently estimate which individual change has the 
     # highest estimated loss."
-    transformation = GradientBasedWordSwap(model, replace_stopwords=False)
+    transformation = GradientBasedWordSwap(model, top_n=1, replace_stopwords=False)
     constraints = []
     #
     # 0. "We were able to create only 41 examples (2% of the correctly-

@@ -116,6 +116,8 @@ class WordEmbeddingDistance(Constraint):
             x_adv = x_adv.words[i]
         except AttributeError:
             raise AttributeError('Cannot apply word embedding distance constraint without `modified_word_index`')
+        except IndexError:
+            raise IndexError(f'Could not find word at index {i} with x {x} x_adv {x_adv}.')
             
         if not self.cased:
             # If embedding vocabulary is all lowercase, lowercase words.
