@@ -37,6 +37,7 @@ class GradientBasedWordSwap(Transformation):
         self.pad_id = self.model.tokenizer.pad_id
         self.oov_id = self.model.tokenizer.oov_id
         self.top_n = top_n
+        self.replace_stopwords = replace_stopwords
         if replace_stopwords:
             self.stopwords = set()
         else:
@@ -79,7 +80,7 @@ class GradientBasedWordSwap(Transformation):
             diffs[j] = b_grads-a_grad
         
         # Don't change to the pad token.
-        diffs[:, self.model.tokenizer.pad_id] = 0
+        diffs[:, self.model.tokenizer.pad_id] = float('-inf')
         
         # Find best indices within 2-d tensor by flattening.
         word_idxs_sorted_by_grad = (-diffs).flatten().argsort()
@@ -121,7 +122,6 @@ class GradientBasedWordSwap(Transformation):
             indices_to_replace = list(range(len(words)))
         
         transformations = []
-        word_swaps = []
         # Don't replace stopwords.
         indices_to_replace = [i for i in indices_to_replace if not (words[i].lower() in self.stopwords)]
         transformations = []

@@ -12,7 +12,7 @@
 """
 
 from textattack.attack_methods import BeamSearch
-from textattack.constraints.overlap import NumberOfWordsSwapped, WordsPerturbedPercentage
+from textattack.constraints.overlap import WordsPerturbed
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations.white_box import GradientBasedWordSwap
@@ -30,7 +30,7 @@ def Ebrahimi2017HotFlip(model):
     # classified instances of the SST test set) with one or two flips."
     # 
     constraints.append(
-        NumberOfWordsSwapped(max_swaps=2)
+        WordsPerturbed(max_num_words=2)
     )
     #
     # 1. "The cosine similarity between the embedding of words is bigger than a 
