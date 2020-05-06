@@ -10,12 +10,12 @@
 
 from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.semantics import WordEmbeddingDistance
-from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
-from textattack.constraints.syntax import PartOfSpeech
+from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
+from textattack.constraints.syntax import PartOfSpeech, LanguageTool
 from textattack.transformations.black_box import WordSwapEmbedding
 from textattack.goal_functions import UntargetedClassification
 
-def Jin2019TextFooler(model):
+def TextFoolerJin2019Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     # Swap words with their embedding nearest-neighbors. 
     #
@@ -27,33 +27,36 @@ def Jin2019TextFooler(model):
     #
     transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
     #
-    # Minimum word embedding cosine similarity of 0.5.
+    # Minimum word embedding cosine similarity of 0.9.
     #
     constraints = []
     constraints.append(
-            WordEmbeddingDistance(min_cos_sim=0.5)
-    )
-    #
-    # Only replace words with the same part of speech (or nouns with verbs)
-    #
-    constraints.append(
-            PartOfSpeech(allow_verb_noun_swap=True)
+            WordEmbeddingDistance(min_cos_sim=0.9)
     )
     #
     # Universal Sentence Encoder with a minimum angular similarity of ε = 0.7.
     #
-    # In the TextFooler code, they forget to divide the angle between the two
-    # embeddings by pi. So if the original threshold was that 1 - sim >= 0.7, the 
-    # new threshold is 1 - (0.3) / pi = 0.90445
+    if sentence_encoder == 'bert':
+        se_constraint = BERT(threshold=SE_thresh,
+            metric='cosine', compare_with_original=False, window_size=15,
+            skip_text_shorter_than_window=False)
+    else:
+        se_constraint = UniversalSentenceEncoder(threshold=SE_thresh,
+            metric='cosine', compare_with_original=False, window_size=15,
+            skip_text_shorter_than_window=False)
+    constraints.append(se_constraint)
     #
-    use_constraint = UniversalSentenceEncoder(threshold=0.904458599,
-        metric='angular', compare_with_original=False, window_size=15,
-        skip_text_shorter_than_window=True)
-    constraints.append(use_constraint)
+    # Do grammar checking
     #
-    # Goal is untargeted classification
+    constraints.append(
+            LanguageTool(0)
+    )
+    
+    #
+    # Untargeted attack   
     #
     goal_function = UntargetedClassification(model)
+
     #
     # Greedily swap words with "Word Importance Ranking".
     #

@@ -16,7 +16,7 @@ from textattack.transformations.black_box import \
     WordSwapRandomCharacterDeletion, WordSwapRandomCharacterInsertion, \
     WordSwapRandomCharacterSubstitution, WordSwapNeighboringCharacterSwap
 
-def Gao2018DeepWordBug(model, use_all_transformations=True):
+def DeepWordBugGao2018(model, use_all_transformations=True):
     #
     # Swap characters out from words. Choose the best of four potential transformations. 
     #

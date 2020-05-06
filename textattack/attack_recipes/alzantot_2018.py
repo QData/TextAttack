@@ -16,7 +16,7 @@ from textattack.constraints.semantics.language_models import GoogleLanguageModel
 from textattack.transformations.black_box import WordSwapEmbedding
 from textattack.goal_functions import UntargetedClassification
 
-def Alzantot2018GeneticAlgorithm(model):
+def Alzantot2018(model):
     #
     # Swap words with their embedding nearest-neighbors. 
     #

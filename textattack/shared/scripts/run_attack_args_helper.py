@@ -8,13 +8,13 @@ import time
 import torch
 
 RECIPE_NAMES = {
-    'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
-    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
-    'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
-    'hotflip':       'textattack.attack_recipes.Ebrahimi2017HotFlip',
-    'seq2sick':      'textattack.attack_recipes.Cheng2018Seq2SickBlackBox',
-    'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
-    'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
+    'alzantot':      'textattack.attack_recipes.Alzantot2018',
+    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018Adjusted',
+    'deepwordbug':   'textattack.attack_recipes.DeepWordBugGao2018',
+    'hotflip':       'textattack.attack_recipes.HotFlipEbrahimi2017',
+    'seq2sick':      'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textfooler':    'textattack.attack_recipes.TextFoolerJin2019',
+    'tf-adjusted':   'textattack.attack_recipes.TextFoolerJin2019Adjusted',
 }
 
 MODEL_CLASS_NAMES = {

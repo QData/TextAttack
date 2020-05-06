@@ -18,7 +18,7 @@ from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations.white_box import GradientBasedWordSwap
 from textattack.goal_functions import UntargetedClassification
 
-def Ebrahimi2017HotFlip(model):
+def HotFlipEbrahimi2017(model):
     #
     # "HotFlip ... uses the gradient with respect to a one-hot input 
     # representation to efficiently estimate which individual change has the 
