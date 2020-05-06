@@ -1,4 +1,4 @@
-from textattack.shared.tokenized_text import TokenizedText
+from textattack.shared import TokenizedText
 from textattack.tokenizers import BERTTokenizer
 
 class BERTEntailmentTokenizer(BERTTokenizer):

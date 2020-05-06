@@ -5,7 +5,7 @@ import random
 
 from textattack.shared import utils
 from textattack.constraints import Constraint
-from textattack.shared.tokenized_text import TokenizedText
+from textattack.shared import TokenizedText
 from textattack.attack_results import SkippedAttackResult
 
 class Attack:
