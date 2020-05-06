@@ -133,25 +133,25 @@ def get_args():
         default=[], choices=CONSTRAINT_CLASS_NAMES.keys(),
         help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}"'))
     
-    parser.add_argument('--out_dir', type=str, required=False, default=None,
+    parser.add_argument('--out-dir', type=str, required=False, default=None,
         help='A directory to output results to.')
     
-    parser.add_argument('--enable_visdom', action='store_true',
+    parser.add_argument('--enable-visdom', action='store_true',
         help='Enable logging to visdom.')
     
-    parser.add_argument('--enable_wandb', action='store_true',
+    parser.add_argument('--enable-wandb', action='store_true',
         help='Enable logging to Weights & Biases.')
     
-    parser.add_argument('--disable_stdout', action='store_true',
+    parser.add_argument('--disable-stdout', action='store_true',
         help='Disable logging to stdout')
    
-    parser.add_argument('--enable_csv', nargs='?', default=None, const='fancy', type=str,
+    parser.add_argument('--enable-csv', nargs='?', default=None, const='fancy', type=str,
         help='Enable logging to csv. Use --enable_csv plain to remove [[]] around words.')
 
-    parser.add_argument('--num_examples', '-n', type=int, required=False, 
+    parser.add_argument('--num-examples', '-n', type=int, required=False, 
         default='5', help='The number of examples to process.')
     
-    parser.add_argument('--num_examples_offset', '-o', type=int, required=False, 
+    parser.add_argument('--num-examples-offset', '-o', type=int, required=False, 
         default=0, help='The offset to start at in the dataset.')
 
     parser.add_argument('--shuffle', action='store_true', required=False, 
@@ -160,7 +160,7 @@ def get_args():
     parser.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
     
-    parser.add_argument('--attack_n', action='store_true', default=False,
+    parser.add_argument('--attack-n', action='store_true', default=False,
         help='Whether to run attack until `n` examples have been attacked (not skipped).')
     
     parser.add_argument('--parallel', action='store_true', default=False,
