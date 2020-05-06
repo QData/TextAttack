@@ -7,13 +7,14 @@ class SpacyTokenizer(Tokenizer):
     
         Params:
             word2id (dict<string, int>): A dictionary that matches words to IDs
-            oovid (int): An out-of-variable ID
+            oov_id (int): An out-of-variable ID
     """
-    def __init__(self, word2id, oovid, padid, max_seq_length=128):
+    def __init__(self, word2id, oov_id, pad_id, max_seq_length=128):
         self.tokenizer = spacy.load('en').tokenizer
         self.word2id = word2id
-        self.oovid = oovid
-        self.padid = padid
+        self.id2word = {v: k for k, v in word2id.items()}
+        self.oov_id = oov_id
+        self.pad_id = pad_id
         self.max_seq_length = max_seq_length
     
     def convert_text_to_tokens(self, text):
@@ -27,7 +28,16 @@ class SpacyTokenizer(Tokenizer):
             if token in self.word2id:
                 ids.append(self.word2id[token])
             else:
-                ids.append(self.oovid)
-        pad_ids_to_add = [self.padid] * (self.max_seq_length - len(ids))
+                ids.append(self.oov_id)
+        pad_ids_to_add = [self.pad_id] * (self.max_seq_length - len(ids))
         ids += pad_ids_to_add
         return ids
+    
+    def convert_id_to_word(self, _id):
+        """
+        Takes an integer input and returns the corresponding word from the 
+        vocabulary.
+        
+        Raises: KeyError on OOV.
+        """
+        return self.id2word[_id]

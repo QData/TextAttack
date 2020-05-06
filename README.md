@@ -66,6 +66,7 @@ The first five are for classification and entailment attacks:
 - **tf-adjusted**: TextFooler attack with constraint thresholds adjusted based on human evaluation and grammaticality enforced.
 - **alz-adjusted**: Alzantot's attack adjusted to follow the same constraints as tf-adjusted such that the only difference is the search method.
 - **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers"](https://arxiv.org/abs/1801.04354)).
+- **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification"](https://arxiv.org/abs/1712.06751)
 
 The final is for translation attacks:
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples"](https://arxiv.org/abs/1803.01128)).
@@ -80,17 +81,17 @@ To allow for word replacement after a sequence has been tokenized, we include a 
 
 TextAttack is model-agnostic! Anything that overrides `__call__`, takes in `TokenizedText`, and correctly formats output works. However, TextAttack provides pre-trained models and samples for the following datasets:
 
-Classification:
+#### Classification:
 * AG News dataset topic classification
 * IMDB dataset sentiment classification
 * Movie Review dataset sentiment classification
 * Yelp dataset sentiment classification
 
-Entailment:
+#### Entailment:
 * SNLI datastet
 * MNLI dataset (matched & unmatched)
 
-Translation:
+#### Translation:
 * newstest2013 English to German dataset
 
 ### Attacks

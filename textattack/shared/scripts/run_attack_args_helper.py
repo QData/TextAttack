@@ -8,12 +8,13 @@ import time
 import torch
 
 RECIPE_NAMES = {
-    'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
-    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
-    'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
-    'seq2sick':      'textattack.attack_recipes.Cheng2018Seq2SickBlackBox',
-    'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
-    'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
+    'alzantot':      'textattack.attack_recipes.Alzantot2018',
+    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018Adjusted',
+    'deepwordbug':   'textattack.attack_recipes.DeepWordBugGao2018',
+    'hotflip':       'textattack.attack_recipes.HotFlipEbrahimi2017',
+    'seq2sick':      'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textfooler':    'textattack.attack_recipes.TextFoolerJin2019',
+    'tf-adjusted':   'textattack.attack_recipes.TextFoolerJin2019Adjusted',
 }
 
 MODEL_CLASS_NAMES = {
@@ -85,10 +86,10 @@ DATASET_BY_MODEL = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-    'word-swap-wordnet':               'textattack.transformations.WordSwapWordNet',
-    'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
-    'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
+    'word-swap-wordnet':               'textattack.transformations.black_box.WordSwapWordNet',
+    'word-swap-embedding':             'textattack.transformations.black_box.WordSwapEmbedding',
+    'word-swap-homoglyph':             'textattack.transformations.black_box.WordSwapHomoglyph',
+    'word-swap-neighboring-char-swap': 'textattack.transformations.black_box.WordSwapNeighboringCharacterSwap',
 }
 
 CONSTRAINT_CLASS_NAMES = {
