@@ -25,7 +25,7 @@ class FileLogger(Logger):
         self.fout.write(result.__str__(color_method=color_method))
         self.fout.write('\n')
 
-    def log_rows(self, rows, title, window_id):
+    def log_summary_rows(self, rows, title, window_id):
         if self.stdout:
             table_rows = [[title, '']] + rows
             table = terminaltables.SingleTable(table_rows)
