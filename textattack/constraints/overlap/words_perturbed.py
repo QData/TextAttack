@@ -4,7 +4,7 @@ class WordsPerturbed(Constraint):
     """ A constraint representing a maximum allowed perturbed words. """
     
     def __init__(self, max_num_words=None, max_percent=None):
-        if not (max_num_words is None or max_percent is None):
+        if (max_num_words is None) and (max_percent is None):
             raise ValueError('must set either max perc or max num words')
         self.max_num_words = max_num_words
         self.max_percent = max_percent

@@ -11,8 +11,9 @@
 from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import UntargetedClassification
+from textattack.transformations import CompositeTransformation
 from textattack.transformations.black_box import \
-    CompositeTransformation, WordSwapNeighboringCharacterSwap, \
+    WordSwapNeighboringCharacterSwap, \
     WordSwapRandomCharacterDeletion, WordSwapRandomCharacterInsertion, \
     WordSwapRandomCharacterSubstitution, WordSwapNeighboringCharacterSwap
 
