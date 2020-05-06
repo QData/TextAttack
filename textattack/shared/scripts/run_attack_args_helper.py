@@ -8,12 +8,13 @@ import time
 import torch
 
 RECIPE_NAMES = {
-    'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
-    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
-    'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
-    'seq2sick':      'textattack.attack_recipes.Cheng2018Seq2SickBlackBox',
-    'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
-    'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
+    'alzantot':      'textattack.attack_recipes.Alzantot2018',
+    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018Adjusted',
+    'deepwordbug':   'textattack.attack_recipes.DeepWordBugGao2018',
+    'hotflip':       'textattack.attack_recipes.HotFlipEbrahimi2017',
+    'seq2sick':      'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textfooler':    'textattack.attack_recipes.TextFoolerJin2019',
+    'tf-adjusted':   'textattack.attack_recipes.TextFoolerJin2019Adjusted',
 }
 
 MODEL_CLASS_NAMES = {
@@ -85,10 +86,10 @@ DATASET_BY_MODEL = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-    'word-swap-wordnet':               'textattack.transformations.WordSwapWordNet',
-    'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
-    'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
+    'word-swap-wordnet':               'textattack.transformations.black_box.WordSwapWordNet',
+    'word-swap-embedding':             'textattack.transformations.black_box.WordSwapEmbedding',
+    'word-swap-homoglyph':             'textattack.transformations.black_box.WordSwapHomoglyph',
+    'word-swap-neighboring-char-swap': 'textattack.transformations.black_box.WordSwapNeighboringCharacterSwap',
 }
 
 CONSTRAINT_CLASS_NAMES = {
@@ -133,22 +134,25 @@ def get_args():
         default=[], choices=CONSTRAINT_CLASS_NAMES.keys(),
         help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}"'))
     
-    parser.add_argument('--out_dir', type=str, required=False, default=None,
+    parser.add_argument('--out-dir', type=str, required=False, default=None,
         help='A directory to output results to.')
     
-    parser.add_argument('--enable_visdom', action='store_true',
+    parser.add_argument('--enable-visdom', action='store_true',
         help='Enable logging to visdom.')
     
-    parser.add_argument('--disable_stdout', action='store_true',
+    parser.add_argument('--enable-wandb', action='store_true',
+        help='Enable logging to Weights & Biases.')
+    
+    parser.add_argument('--disable-stdout', action='store_true',
         help='Disable logging to stdout')
    
-    parser.add_argument('--enable_csv', nargs='?', default=None, const='fancy', type=str,
+    parser.add_argument('--enable-csv', nargs='?', default=None, const='fancy', type=str,
         help='Enable logging to csv. Use --enable_csv plain to remove [[]] around words.')
 
-    parser.add_argument('--num_examples', '-n', type=int, required=False, 
+    parser.add_argument('--num-examples', '-n', type=int, required=False, 
         default='5', help='The number of examples to process.')
     
-    parser.add_argument('--num_examples_offset', '-o', type=int, required=False, 
+    parser.add_argument('--num-examples-offset', '-o', type=int, required=False, 
         default=0, help='The offset to start at in the dataset.')
 
     parser.add_argument('--shuffle', action='store_true', required=False, 
@@ -157,7 +161,7 @@ def get_args():
     parser.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
     
-    parser.add_argument('--attack_n', action='store_true', default=False,
+    parser.add_argument('--attack-n', action='store_true', default=False,
         help='Whether to run attack until `n` examples have been attacked (not skipped).')
     
     parser.add_argument('--parallel', action='store_true', default=False,
@@ -276,32 +280,35 @@ def parse_goal_function_and_attack_from_args(args):
     return goal_function, attack
 
 def parse_logger_from_args(args):# Create logger
-    attack_logger = textattack.loggers.AttackLogger()
+    attack_log_manager = textattack.loggers.AttackLogManager()
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        outputs_dir = os.path.join(current_dir, os.pardir, 'outputs')
+        outputs_dir = os.path.join(current_dir, os.pardir, os.pardir, os.pardir, 'outputs')
         args.out_dir = outputs_dir
         
     # Output file.
     out_time = int(time.time()*1000) # Output file
     outfile_name = 'attack-{}.txt'.format(out_time)
-    attack_logger.add_output_file(os.path.join(args.out_dir, outfile_name))
+    attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
         
     # CSV
     if args.enable_csv:
         outfile_name = 'attack-{}.csv'.format(out_time)
         color_method = None if args.enable_csv == 'plain' else 'file'
         csv_path = os.path.join(args.out_dir, outfile_name)
-        attack_logger.add_output_csv(csv_path, color_method)
+        attack_log_manager.add_output_csv(csv_path, color_method)
         print('Logging to CSV at path {}.'.format(csv_path))
-
 
     # Visdom
     if args.enable_visdom:
-        attack_logger.enable_visdom()
+        attack_log_manager.enable_visdom()
+        
+    # Weights & Biases
+    if args.enable_wandb:
+        attack_log_manager.enable_wandb()
 
     # Stdout
     if not args.disable_stdout:
-        attack_logger.enable_stdout()
-    return attack_logger
+        attack_log_manager.enable_stdout()
+    return attack_log_manager

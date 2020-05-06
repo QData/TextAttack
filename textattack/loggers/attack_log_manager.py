@@ -3,9 +3,9 @@ import torch
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 
-from . import CSVLogger, FileLogger, VisdomLogger
+from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
 
-class AttackLogger:
+class AttackLogManager:
     def __init__(self):
         """ Logs the results of an attack to all attached loggers
         """
@@ -20,6 +20,9 @@ class AttackLogger:
     def enable_visdom(self):
         self.loggers.append(VisdomLogger())
 
+    def enable_wandb(self):
+        self.loggers.append(WeightsAndBiasesLogger())
+
     def add_output_file(self, filename):
         self.loggers.append(FileLogger(filename=filename))
 
@@ -27,18 +30,22 @@ class AttackLogger:
         self.loggers.append(CSVLogger(filename=filename, color_method=color_method))
 
     def log_result(self, result):
+        """ Logs an `AttackResult` on each of `self.loggers`. """
         self.results.append(result)
         for logger in self.loggers:
             logger.log_attack_result(result)
     
     def log_results(self, results):
+        """ Logs an iterable of `AttackResult` objects on each of 
+            `self.loggers`. 
+        """
         for result in results:
             self.log_result(result)
         self.log_summary()
 
-    def _log_rows(self, rows, title, window_id):
+    def log_summary_rows(self, rows, title, window_id):
         for logger in self.loggers:
-            logger.log_rows(rows, title, window_id)
+            logger.log_summary_rows(rows, title, window_id)
 
     def log_sep(self):
         for logger in self.loggers:
@@ -49,11 +56,12 @@ class AttackLogger:
             logger.flush()
 
     def log_attack_details(self, attack_name, model_name):
+        # @TODO log a more complete set of attack details
         attack_detail_rows = [
             ['Attack algorithm:', attack_name],
             ['Model:', model_name],
         ]
-        self._log_rows(attack_detail_rows, 'Attack Details', 'attack_details')
+        self.log_summary_rows(attack_detail_rows, 'Attack Details', 'attack_details')
     
     def log_summary(self):
         total_attacks = len(self.results)
@@ -123,9 +131,10 @@ class AttackLogger:
         avg_num_queries = num_queries.mean()
         avg_num_queries = str(round(avg_num_queries, 2))
         summary_table_rows.append(['Avg num queries:', avg_num_queries])
-        self._log_rows(summary_table_rows, 'Attack Results', 'attack_results_summary')
+        self.log_summary_rows(summary_table_rows, 'Attack Results', 'attack_results_summary')
         # Show histogram of words changed.
         numbins = max(self.max_words_changed, 10)
         for logger in self.loggers:
             logger.log_hist(num_words_changed_until_success[:numbins],
                 numbins=numbins, title='Num Words Perturbed', window_id='num_words_perturbed')
+                
