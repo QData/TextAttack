@@ -60,7 +60,7 @@ We also have a command-line interface for running attacks. See help info and lis
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python -m textattack --recipe [recipe_name]`
 Currently, we include six recipes, all synonym substitution-based.
 
-The first five are for classification and entailment attacks:
+The first are for classification and entailment attacks:
 - **textfooler**: Greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932)).
 - **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998)).
 - **tf-adjusted**: TextFooler attack with constraint thresholds adjusted based on human evaluation and grammaticality enforced.
