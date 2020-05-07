@@ -64,7 +64,7 @@ class WordEmbeddingDistance(Constraint):
             self.cos_sim_mat = {}
         
     
-    def call_many(self, x, x_adv_list, original_word=None):
+    def call_many(self, x, x_adv_list, original_text=None):
         """ Returns each `x_adv` from `x_adv_list` where `C(x,x_adv)` is True. 
         """
         return [x_adv for x_adv in x_adv_list if self(x, x_adv)]

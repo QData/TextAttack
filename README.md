@@ -49,7 +49,7 @@ TextAttack provides pretrained models and datasets for user convenience. By defa
 
 ## Usage
 
-### Basic Usage
+### Running Attacks
 
 The [`examples/`](examples/) folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint.
 
@@ -70,6 +70,21 @@ The first are for classification and entailment attacks:
 
 The final is for translation attacks:
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples"](https://arxiv.org/abs/1803.01128)).
+
+### Augmenting Text
+
+Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
+uses a transformation and a list of constraints to augment data. We also offer three built-in recipes
+for data augmentation:
+- `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
+- `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
+- `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
+
+All `Augmenter` objects implement `augment` and `augment_many` to generate augmentations
+of a string or a list of strings. Here's an example of how to use the `EmbeddingAugmenter`:
+
+```
+```
 
 ## Design
 
