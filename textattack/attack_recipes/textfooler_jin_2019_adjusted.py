@@ -11,7 +11,7 @@
 from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
-from textattack.constraints.syntax import PartOfSpeech, LanguageTool
+from textattack.constraints.grammaticality import PartOfSpeech, LanguageTool
 from textattack.transformations.black_box import WordSwapEmbedding
 from textattack.goal_functions import UntargetedClassification
 

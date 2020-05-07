@@ -12,9 +12,9 @@
 """
 
 from textattack.attack_methods import BeamSearch
+from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import WordsPerturbed
 from textattack.constraints.semantics import WordEmbeddingDistance
-from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations.white_box import GradientBasedWordSwap
 from textattack.goal_functions import UntargetedClassification
 

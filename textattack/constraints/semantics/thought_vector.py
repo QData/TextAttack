@@ -15,7 +15,7 @@ class ThoughtVector(Constraint):
         min_cos_sim: the minimum cosine similarity between thought vectors
         max_mse_dist: the maximum euclidean distance between thought vectors
     """
-    def __init__(self, embedding_type='paragramcf', max_mse_dist, min_cos_sim):
+    def __init__(self, embedding_type='paragramcf', max_mse_dist=None, min_cos_sim=None):
         self.word_embedding = WordEmbedding(embedding_type)
         
         if (max_mse_dist or min_cos_sim) is None:
