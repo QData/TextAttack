@@ -48,4 +48,13 @@ class WordEmbedding:
             self.cos_sim_mat = {}
     
     def __getitem__(self, index):
+        """ Gets a word embedding by word or ID. 
+            
+            If word or ID not found, returns None.
+        """
+        if isinstance(index, str):
+            try:
+                index = self.word2index[index]
+            except KeyError:
+                return None
         return self.embeddings[index]

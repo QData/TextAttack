@@ -34,7 +34,7 @@ class LanguageModelConstraint(Constraint):
         x_adv_prob = self.get_log_prob_at_index(x_adv, i)
         if self.max_log_prob_diff is None:
             x_prob, x_adv_prob = math.log(p1), math.log(p2)
-        return (x_prob - x_adv_prob).abs() <= self.max_log_prob_diff
+        return abs(x_prob - x_adv_prob) <= self.max_log_prob_diff
     
     def extra_repr_keys(self):
         return ['max_log_prob_diff']

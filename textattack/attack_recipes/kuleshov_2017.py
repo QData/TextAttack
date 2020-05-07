@@ -8,8 +8,8 @@
 """
 
 from textattack.constraints.overlap import WordsPerturbed
-from textattack.constraints.grammaticality.language_models import Google1BillionWordsLanguageModel
-from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.grammaticality.language_models import GPT2
+from textattack.constraints.semantics import ThoughtVector
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwap
 from textattack.transformations.black_box import WordSwapEmbedding

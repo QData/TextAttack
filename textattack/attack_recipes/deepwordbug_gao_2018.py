@@ -8,9 +8,9 @@
     
 """
 
-from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import UntargetedClassification
+from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import CompositeTransformation
 from textattack.transformations.black_box import \
     WordSwapNeighboringCharacterSwap, \

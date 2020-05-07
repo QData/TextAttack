@@ -10,8 +10,9 @@ class UntargetedClassification(ClassificationGoalFunction):
             below this score. Otherwise, goal is to change the overall predicted
             class.
     """
-    def __init__(self, target_max_score=None):
+    def __init__(self, *args, target_max_score=None, **kwargs):
         self.target_max_score = target_max_score
+        super().__init__(*args, **kwargs)
     
     def _is_goal_complete(self, model_output, ground_truth_output):
         if self.target_max_score:

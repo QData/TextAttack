@@ -17,6 +17,7 @@ class ThoughtVector(Constraint):
     """
     def __init__(self, embedding_type='paragramcf', max_mse_dist=None, min_cos_sim=None):
         self.word_embedding = WordEmbedding(embedding_type)
+        self.embedding_type = embedding_type
         
         if (max_mse_dist or min_cos_sim) is None:
             raise ValueError('Must set max_mse_dist or min_cos_sim')
@@ -26,9 +27,18 @@ class ThoughtVector(Constraint):
     
     @functools.lru_cache(maxsize=2**10)
     def _get_thought_vector(self, tokenized_text):
-        return torch.sum([self.word_embedding[word] for word in tokenized_text.words])
+        """ Sums the embeddings of all the words in `tokenized_text` into a
+            "thought vector".
+        """
+        embeddings = []
+        for word in tokenized_text.words:
+            embedding = self.word_embedding[word]
+            if embedding is not None: # out-of-vocab words do not have embeddings
+                embeddings.append(embedding)
+        embeddings = torch.tensor(embeddings)
+        return torch.sum(embeddings, dim=0)
     
-    def __call__(self, x, x_adv):
+    def __call__(self, x, x_adv, original_text=None):
         """ Returns true if (x, x_adv) are closer than `self.min_cos_sim`
             and `self.max_mse_dist`. """
         
@@ -47,7 +57,7 @@ class ThoughtVector(Constraint):
                 return False
         # Check MSE distance.
         if self.max_mse_dist:
-            mse_dist = torch.sum((e1 - e2) ** 2)
+            mse_dist = torch.sum((thought_vector_1 - thought_vector_2) ** 2)
             if mse_dist > self.max_mse_dist:
                 return False
         return True

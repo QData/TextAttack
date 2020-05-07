@@ -30,7 +30,7 @@ def Alzantot2018(model):
     # Maximum words perturbed percentage of 20%
     #
     constraints.append(
-            WordsPerturbed(max_percent=20)
+            WordsPerturbed(max_percent=0.2)
     )
     #
     # Maximum word embedding euclidean distance of 0.5.
