@@ -28,7 +28,7 @@ class WordEmbeddingDistance(Constraint):
         self.min_cos_sim = min_cos_sim
         self.max_mse_dist = max_mse_dist
     
-    def call_many(self, x, x_adv_list, original_word=None):
+    def call_many(self, x, x_adv_list, original_text=None):
         """ Returns each `x_adv` from `x_adv_list` where `C(x,x_adv)` is True. 
         """
         return [x_adv for x_adv in x_adv_list if self(x, x_adv)]
@@ -65,7 +65,7 @@ class WordEmbeddingDistance(Constraint):
             self.word_embedding.mse_dist_mat[a][b] = mse_dist
         return mse_dist
     
-    def __call__(self, x, x_adv):
+    def __call__(self, x, x_adv, original_text=None):
         """ Returns true if (x, x_adv) are closer than `self.min_cos_sim`
             and `self.max_mse_dist`. """
         
