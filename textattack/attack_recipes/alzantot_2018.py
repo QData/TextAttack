@@ -14,7 +14,7 @@ from textattack.constraints.grammaticality.language_models import Google1Billion
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm
-from textattack.transformations.black_box import WordSwapEmbedding
+from textattack.transformations import WordSwapEmbedding
 
 def Alzantot2018(model):
     #

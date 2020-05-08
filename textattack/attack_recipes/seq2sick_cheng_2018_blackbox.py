@@ -15,7 +15,7 @@
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import NonOverlappingOutput
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.transformations.black_box import WordSwapEmbedding
+from textattack.transformations import WordSwapEmbedding
 
 def Seq2SickCheng2018BlackBox(model, goal_function='non_overlapping'):
     #

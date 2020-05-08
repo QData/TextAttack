@@ -16,7 +16,7 @@ from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import WordsPerturbed
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.search_methods import BeamSearch
-from textattack.transformations.white_box import GradientBasedWordSwap
+from textattack.transformations import GradientBasedWordSwap
 
 def HotFlipEbrahimi2017(model):
     #

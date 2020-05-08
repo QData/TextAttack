@@ -88,10 +88,10 @@ DATASET_BY_MODEL = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-    'word-swap-wordnet':               'textattack.transformations.black_box.WordSwapWordNet',
-    'word-swap-embedding':             'textattack.transformations.black_box.WordSwapEmbedding',
-    'word-swap-homoglyph':             'textattack.transformations.black_box.WordSwapHomoglyph',
-    'word-swap-neighboring-char-swap': 'textattack.transformations.black_box.WordSwapNeighboringCharacterSwap',
+    'word-swap-wordnet':               'textattack.transformations.WordSwapWordNet',
+    'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
+    'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
+    'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
 }
 
 CONSTRAINT_CLASS_NAMES = {

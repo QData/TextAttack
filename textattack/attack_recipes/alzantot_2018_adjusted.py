@@ -14,7 +14,7 @@ from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm
-from textattack.transformations.black_box import WordSwapEmbedding
+from textattack.transformations import WordSwapEmbedding
 
 def Alzantot2018Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #

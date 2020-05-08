@@ -18,9 +18,9 @@ class LanguageModelConstraint(Constraint):
             raise ValueError('Must set max_log_prob_diff')
         self.max_log_prob_diff = max_log_prob_diff
     
-    def get_log_prob_at_index(self, text_list, word_index):
-        """ Gets the log-probability of `text` at index `word_index` according 
-        to a language model.
+    def get_log_probs_at_index(self, text_list, word_index):
+        """ Gets the log-probability of items in `text_list` at index 
+            `word_index` according to a language model.
         """
         raise NotImplementedError()
     
@@ -30,8 +30,10 @@ class LanguageModelConstraint(Constraint):
         except AttributeError:
             raise AttributeError('Cannot apply language model constraint without `modified_word_index`')
             
-        x_prob = self.get_log_prob_at_index(x, i)
-        x_adv_prob = self.get_log_prob_at_index(x_adv, i)
+        probs = self.get_log_probs_at_index((x, x_adv), i)
+        if len(probs) != 2:
+            raise ValueError(f'Error: get_log_probs_at_index returned {len(probs)} values for 2 inputs')
+        x_prob, x_adv_prob = probs
         if self.max_log_prob_diff is None:
             x_prob, x_adv_prob = math.log(p1), math.log(p2)
         return abs(x_prob - x_adv_prob) <= self.max_log_prob_diff

@@ -2,6 +2,8 @@ name = "textattack"
 
 from . import attack_recipes
 from . import attack_results
+from . import augmentation
+
 from . import constraints
 from . import datasets
 from . import goal_functions

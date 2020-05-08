@@ -13,7 +13,7 @@ from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.transformations.black_box import WordSwapEmbedding
+from textattack.transformations import WordSwapEmbedding
 
 def TextFoolerJin2019(model):
     #
