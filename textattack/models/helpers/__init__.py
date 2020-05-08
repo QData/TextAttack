@@ -1,5 +1,5 @@
 # Helper stuff, like embeddings.
-from . import helper_utils
+from . import utils
 from .glove_embedding_layer import GloveEmbeddingLayer
 
 # Helper modules.

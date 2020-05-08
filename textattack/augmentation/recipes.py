@@ -5,7 +5,7 @@ import textattack
 class WordNetAugmenter(Augmenter):
     """ Augments text by replacing with synonyms from the WordNet thesaurus. """
     def __init__(self):
-        from textattack.transformations.black_box import WordSwapWordNet
+        from textattack.transformations import WordSwapWordNet
         transformation = WordSwapWordNet()
         super().__init__(transformation, constraints=[])
 
@@ -13,7 +13,7 @@ class WordNetAugmenter(Augmenter):
 class EmbeddingAugmenter(Augmenter):
     """ Augments text by transforming words with their embeddings. """
     def __init__(self):
-        from textattack.transformations.black_box import WordSwapEmbedding
+        from textattack.transformations import WordSwapEmbedding
         transformation = WordSwapEmbedding(
             max_candidates=50, embedding_type='paragramcf'
         )
@@ -28,7 +28,7 @@ class CharSwapAugmenter(Augmenter):
     """ Augments words by swapping characters out for other characters. """
     def __init__(self):
         from textattack.transformations import CompositeTransformation
-        from textattack.transformations.black_box import \
+        from textattack.transformations import \
             WordSwapNeighboringCharacterSwap, \
             WordSwapRandomCharacterDeletion, WordSwapRandomCharacterInsertion, \
             WordSwapRandomCharacterSubstitution, WordSwapNeighboringCharacterSwap

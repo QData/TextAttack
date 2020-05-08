@@ -8,19 +8,21 @@ import time
 import torch
 
 RECIPE_NAMES = {
-    'alzantot':      'textattack.attack_recipes.Alzantot2018',
-    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018Adjusted',
-    'deepwordbug':   'textattack.attack_recipes.DeepWordBugGao2018',
-    'hotflip':       'textattack.attack_recipes.HotFlipEbrahimi2017',
-    'seq2sick':      'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
-    'textfooler':    'textattack.attack_recipes.TextFoolerJin2019',
-    'tf-adjusted':   'textattack.attack_recipes.TextFoolerJin2019Adjusted',
+    'alzantot':         'textattack.attack_recipes.Alzantot2018',
+    'alz-adjusted':     'textattack.attack_recipes.Alzantot2018Adjusted',
+    'deepwordbug':      'textattack.attack_recipes.DeepWordBugGao2018',
+    'hotflip':          'textattack.attack_recipes.HotFlipEbrahimi2017',
+    'kuleshov':         'textattack.attack_recipes.Kuleshov2017',
+    'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
+    'tf-adjusted':      'textattack.attack_recipes.TextFoolerJin2019Adjusted',
 }
 
 MODEL_CLASS_NAMES = {
     #
     # Text classification models
     #
+    
     # BERT models - default uncased
     'bert-ag-news':             'textattack.models.classification.bert.BERTForAGNewsClassification',
     'bert-imdb':                'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
@@ -86,10 +88,10 @@ DATASET_BY_MODEL = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-    'word-swap-wordnet':               'textattack.transformations.black_box.WordSwapWordNet',
-    'word-swap-embedding':             'textattack.transformations.black_box.WordSwapEmbedding',
-    'word-swap-homoglyph':             'textattack.transformations.black_box.WordSwapHomoglyph',
-    'word-swap-neighboring-char-swap': 'textattack.transformations.black_box.WordSwapNeighboringCharacterSwap',
+    'word-swap-wordnet':               'textattack.transformations.WordSwapWordNet',
+    'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
+    'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
+    'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
 }
 
 CONSTRAINT_CLASS_NAMES = {
@@ -101,11 +103,11 @@ CONSTRAINT_CLASS_NAMES = {
     'lang-tool':    'textattack.constraints.syntax.LanguageTool', 
 }
 
-ATTACK_CLASS_NAMES = {
-    'beam-search':        'textattack.attack_methods.BeamSearch',
-    'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
-    'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
-    'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
+SEARCH_CLASS_NAMES = {
+    'beam-search':        'textattack.search_methods.BeamSearch',
+    'greedy-word':        'textattack.search_methods.GreedyWordSwap',
+    'ga-word':            'textattack.search_methods.GeneticAlgorithm',
+    'greedy-word-wir':    'textattack.search_methods.GreedyWordSwapWIR',
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {
@@ -176,10 +178,10 @@ def get_args():
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
-    attack_choices = ', '.join(ATTACK_CLASS_NAMES.keys())
+    search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
     attack_group.add_argument('--attack', '--attack_method', type=str, 
         required=False, default='greedy-word-wir', 
-        help=f'The type of attack to run. choices: {attack_choices}')
+        help=f'The type of attack to run. choices: {search_choices}')
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
@@ -270,11 +272,11 @@ def parse_goal_function_and_attack_from_args(args):
         constraints = parse_constraints_from_args(args)
         if ':' in args.attack:
             attack_name, params = args.attack.split(':')
-            if attack_name not in ATTACK_CLASS_NAMES:
+            if attack_name not in SEARCH_CLASS_NAMES:
                 raise ValueError(f'Error: unsupported attack {attack_name}')
-            attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(goal_function, transformation, constraints=constraints, {params})')
-        elif args.attack in ATTACK_CLASS_NAMES:
-            attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
+            attack = eval(f'{SEARCH_CLASS_NAMES[attack_name]}(goal_function, transformation, constraints=constraints, {params})')
+        elif args.attack in SEARCH_CLASS_NAMES:
+            attack = eval(f'{SEARCH_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
         else:
             raise ValueError(f'Error: unsupported attack {args.attack}')
     return goal_function, attack

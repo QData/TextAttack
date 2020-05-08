@@ -67,6 +67,7 @@ The first are for classification and entailment attacks:
 - **alz-adjusted**: Alzantot's attack adjusted to follow the same constraints as tf-adjusted such that the only difference is the search method.
 - **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers"](https://arxiv.org/abs/1801.04354)).
 - **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification"](https://arxiv.org/abs/1712.06751)
+- **kuleshov**: Greedy search and counterfitted embedding swap (["Adversarial Examples for Natural Language Classification Problems"](https://openreview.net/pdf?id=r1QZ3zbAZ)
 
 The final is for translation attacks:
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples"](https://arxiv.org/abs/1803.01128)).

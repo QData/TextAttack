@@ -92,7 +92,7 @@ class GradientBasedWordSwap(Transformation):
             idx_in_vocab = idx % (num_words_in_vocab)
             idx_in_sentence = indices_to_replace[idx_in_diffs]
             word = self.model.tokenizer.convert_id_to_word(idx_in_vocab)
-            if not has_letter(word): 
+            if not utils.has_letter(word): 
                 # Do not consider words that are solely letters or punctuation.
                 continue
             candidates.append((word, idx_in_sentence))
@@ -131,11 +131,6 @@ class GradientBasedWordSwap(Transformation):
         
     def extra_repr_keys(self): 
         return ['top_n', 'replace_stopwords']
-
-def has_letter(word):
-    for c in word:
-        if c.isalpha(): return True
-    return False
     
 class Hook:
     def __init__(self, module, backward=False):

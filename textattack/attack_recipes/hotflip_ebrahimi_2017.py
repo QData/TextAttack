@@ -11,12 +11,12 @@
     paper).
 """
 
-from textattack.attack_methods import BeamSearch
+from textattack.goal_functions import UntargetedClassification
+from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import WordsPerturbed
 from textattack.constraints.semantics import WordEmbeddingDistance
-from textattack.constraints.syntax import PartOfSpeech
-from textattack.transformations.white_box import GradientBasedWordSwap
-from textattack.goal_functions import UntargetedClassification
+from textattack.search_methods import BeamSearch
+from textattack.transformations import GradientBasedWordSwap
 
 def HotFlipEbrahimi2017(model):
     #

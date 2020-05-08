@@ -9,12 +9,12 @@
     ArXiv, abs/1801.00554.
 """
 
-from textattack.attack_methods import GeneticAlgorithm
 from textattack.constraints.overlap import WordsPerturbed
+from textattack.constraints.grammaticality.language_models import Google1BillionWordsLanguageModel
 from textattack.constraints.semantics import WordEmbeddingDistance
-from textattack.constraints.semantics.language_models import GoogleLanguageModel
-from textattack.transformations.black_box import WordSwapEmbedding
 from textattack.goal_functions import UntargetedClassification
+from textattack.search_methods import GeneticAlgorithm
+from textattack.transformations import WordSwapEmbedding
 
 def Alzantot2018(model):
     #
@@ -30,7 +30,7 @@ def Alzantot2018(model):
     # Maximum words perturbed percentage of 20%
     #
     constraints.append(
-            WordsPerturbed(max_percent=20)
+            WordsPerturbed(max_percent=0.2)
     )
     #
     # Maximum word embedding euclidean distance of 0.5.
@@ -42,7 +42,7 @@ def Alzantot2018(model):
     # Language Model
     #
     constraints.append(
-            GoogleLanguageModel(top_n_per_index=4)
+            Google1BillionWordsLanguageModel(top_n_per_index=4)
     )
     #
     # Goal is untargeted classification
