@@ -18,7 +18,7 @@ class GoalFunction:
         self.use_cache = use_cache
         self.num_queries = 0
         if self.use_cache:
-            self._call_model_cache = lru.LRU(2**18)
+            self._call_model_cache = lru.LRU(utils.config('MODEL_CACHE_SIZE'))
         else:
             self._call_model_cache = None
 

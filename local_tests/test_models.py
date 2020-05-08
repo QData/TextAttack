@@ -8,7 +8,7 @@ import subprocess
 def color_text(s, color):
     return colored.stylize(s, colored.fg(color))
     
-FNULL = open(os.devnull, 'w')
+FNULL = open('err.txt', 'w')
 
 MAGIC_STRING = '/.*/'
 def compare_outputs(desired_output, test_output):
@@ -50,12 +50,12 @@ class TextAttackTest:
     def __call__(self):
         """ Runs test and prints success or failure. """
         self.log_start()
-        test_output = self.execute()
+        test_output, errored = self.execute()
         if compare_outputs(self.output, test_output):
             self.log_success()
             return True
         else:
-            self.log_failure(test_output)
+            self.log_failure(test_output, errored)
             return False
     
     def log_start(self):
@@ -65,12 +65,15 @@ class TextAttackTest:
         success_text = f'✓ Succeeded.'
         print(color_text(success_text, 'green'))
     
-    def log_failure(self, test_output):
+    def log_failure(self, test_output, errored):
         fail_text = f'✗ Failed.'
         print(color_text(fail_text, 'red'))
         print('\n')
-        print(f'Test output: {test_output}.')
-        print(f'Correct output: {self.output}.')
+        if errored:
+            print(f'Test exited early with error: {test_output}')
+        else:
+            print(f'Test output: {test_output}.')
+            print(f'Correct output: {self.output}.')
 
 class CommandLineTest(TextAttackTest):
     """ Runs a command-line command to check for desired output. """
@@ -81,13 +84,23 @@ class CommandLineTest(TextAttackTest):
         super().__init__(name=name, output=output, desc=desc)
         
     def execute(self):
+        stderr_file = open('err.out', 'w+')
         result = subprocess.run(
             self.command.split(), 
             stdout=subprocess.PIPE,
             # @TODO: Collect stderr somewhere. In the event of an error, point user to the error file.
-            stderr=FNULL 
+            stderr=stderr_file 
         )
-        return result.stdout.decode()
+        stderr_file.seek(0) # go back to beginning of file so we can read the whole thing
+        stderr_str = stderr_file.read()
+        # Remove temp file.
+        os.unlink(stderr_file.name)
+        if result.returncode == 0:
+            # If the command succeeds, return stdout.
+            return result.stdout.decode(), False
+        else:
+            # If the command returns an exit code, return stderr.
+            return stderr_str, True
 
 class Capturing(list):
     """ A context manager that captures standard out during its execution. 
@@ -113,8 +126,12 @@ class PythonFunctionTest(TextAttackTest):
         super().__init__(name=name, output=output, desc=desc)
     
     def execute(self):
-        with Capturing() as output_lines:
-            self.function()
-        output = '\n'.join(output_lines)
-        return output
+        try:
+            with Capturing() as output_lines:
+                self.function()
+            output = '\n'.join(output_lines)
+            return output, False
+        except: # catch *all* exceptions
+            e = sys.exc_info()[0]
+            return str(e), True
         

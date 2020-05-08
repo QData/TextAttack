@@ -38,7 +38,7 @@ class Attack:
         self.transformation = transformation
         self.constraints = constraints
         self.is_black_box = is_black_box
-        self.constraints_cache = lru.LRU(2**18)
+        self.constraints_cache = lru.LRU(utils.config('CONSTRAINT_CACHE_SIZE'))
     
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):

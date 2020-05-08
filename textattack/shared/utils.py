@@ -15,6 +15,9 @@ config_path = os.path.join(dir_path, os.pardir, 'config.json')
 CONFIG = json.load(open(config_path, 'r'))
 CONFIG['CACHE_DIR'] = os.path.expanduser(CONFIG['CACHE_DIR'])
 
+def config(key):
+    return CONFIG[key]
+
 def get_logger():
     return logging.getLogger(__name__)
 
@@ -214,9 +217,3 @@ def html_table_from_rows(rows, title=None, header=None, style_dict=None):
     table_html += '</table></div>'
     
     return table_html
-
-def has_letter(word):
-    """ Returns true if `word` contains at least one character in [A-Za-z]. """
-    for c in word:
-        if c.isalpha(): return True
-    return False
