@@ -11,7 +11,6 @@ def register_test(function, name=None, output_file=None, desc=None):
             function, name=name, output=output, desc=desc
         ))
 
-
 #######################################
 ##            BEGIN TESTS            ##
 #######################################
@@ -23,7 +22,7 @@ def check_gpu_count():
     import torch
     num_gpus = torch.cuda.device_count()
     if num_gpus == 0:
-        print(f'Error: detected 0 GPUs. Must run local tests with multiple GPUs. Perhaps you need to configure CUDA?')
+        raise ValueError(f'detected 0 GPUs. Must run local tests with a GPU. Perhaps you need to configure CUDA?')
     
 register_test(check_gpu_count, name='check CUDA', 
     output_file='local_tests/sample_outputs/empty_file.txt', 

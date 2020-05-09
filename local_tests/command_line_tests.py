@@ -47,13 +47,29 @@ register_test('python -m textattack --model lstm-mr --recipe deepwordbug --num-e
 # test: run_attack targeted classification of class 2 on BERT MNLI with enable_csv
 #   and attack_n set, using the WordNet transformation and beam search with 
 #   beam width 2, using language tool constraint, on 10 samples
-#                   (takes about 171s)
+#                   (takes about 72s)
 #
 register_test(('python -m textattack --attack-n --goal-function targeted-classification:target_class=2 '
-    '--enable_csv --model bert-mnli --num_examples 10 --transformation word-swap-wordnet '
+    '--enable-csv --model bert-mnli --num-examples 4 --transformation word-swap-wordnet '
     '--constraints lang-tool --attack beam-search:beam_width=2'), 
     name='run_attack_targeted2_bertmnli_wordnet_beamwidth_2_enablecsv_attackn', 
-    output_file='local_tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n_10.txt', 
+    output_file='local_tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n_4.txt', 
+    desc=('Runs attack using targeted classification on class 2 on BERT MNLI with'
+        'enable_csv and attack_n set, using the WordNet transformation and beam '
+        'search with  beam width 2, using language tool constraint, on 10 samples')
+        )
+    
+#
+# test: run_attack non-overlapping output of class 2 on T5 en->de translation with
+#   attack_n set, using the WordSwapRandomCharacterSubstitution transformation 
+#   and greedy word swap, using edit distance constraint, on 6 samples
+#                   (takes about 100s)
+#
+register_test(('python -m textattack --attack-n --goal-function non-overlapping-output '
+    '--model t5-en2de --num-examples 6 --transformation word-swap-random-char-substitution '
+    '--constraints edit-distance:12 words-perturbed:max_percent=0.75 --attack greedy-word'), 
+    name='run_attack_nonoverlapping_t5en2de_randomcharsub_editdistance_wordsperturbed_greedyword', 
+    output_file='local_tests/sample_outputs/run_attack_nonoverlapping_t5ende_editdistance_bleu.txt', 
     desc=('Runs attack using targeted classification on class 2 on BERT MNLI with'
         'enable_csv and attack_n set, using the WordNet transformation and beam '
         'search with  beam width 2, using language tool constraint, on 10 samples')
