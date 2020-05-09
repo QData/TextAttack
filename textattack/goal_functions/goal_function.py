@@ -75,7 +75,7 @@ class GoalFunction:
         """
         raise NotImplementedError()
 
-    def _call_model_uncached(self, tokenized_text_list, batch_size=16):
+    def _call_model_uncached(self, tokenized_text_list, batch_size=utils.config('MODEL_BATCH_SIZE')):
         """ Queries model and returns outputs for a list of TokenizedText 
             objects. 
         """

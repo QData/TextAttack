@@ -58,7 +58,7 @@ def run_tests_by_name(test_names):
 def parse_args():
     all_test_names = [t.name for t in tests]
     parser = argparse.ArgumentParser(description='Run TextAttack local tests.')
-    parser.add_argument('--tests', default=str, nargs='+', choices=all_test_names,
+    parser.add_argument('--tests', default=None, nargs='+', choices=all_test_names,
                     help='names of specific tests to run')
     
     return parser.parse_args()
