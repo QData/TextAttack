@@ -1,0 +1,64 @@
+GreedyWordSwap(
+  (goal_function):  NonOverlappingOutput
+  (transformation):  WordSwapRandomCharacterSubstitution(
+    (replace_stopwords):  False
+  )
+  (constraints): 
+    (0): LevenshteinEditDistance(
+        (max_edit_distance):  12
+      )
+    (1): WordsPerturbed(
+        (max_percent):  0.75
+      )
+  (is_black_box):  True
+) 
+
+Load time: /.*/s
+--------------------------------------------- Result 1 ---------------------------------------------
+Eine republikanische Strategie, um der Wiederwahl Obamas entgegenzuwirken-->[91m[FAILED][0m
+A Republican strategy to counter the re-election of Obama
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+Die republikanischen Führer rechtfertigten ihre Politik durch die Not-->[91m[FAILED][0m
+Republican leaders justified their policy by the need to combat electoral fraud.
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+Das Brennan-Zentrum betrachtet dies jedoch als Mythos und behaupt-->Allerdings hält das Brennan Centre dies für einen Mythos, indem e
+However, the Brennan Centre [91mconsiders[0m this a myth, stating that electoral fraud is rarer in the United States than the number of people killed by lightning.
+However, the Brennan Centre [94mcTnsiders[0m this a myth, stating that electoral fraud is rarer in the United States than the number of people killed by lightning.
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+Tatsächlich identifizierten republikanische Anwälte-->In einer DecOde identifizierten republikanische Anwält
+[91mIndeed[0m, Republican lawyers identified only 300 cases of electoral fraud in the United [91mStates[0m in a [91mdecade[0m.
+[94mIndedd[0m, Republican lawyers identified only 300 cases of electoral fraud in the United [94mTtates[0m in a [94mdecOde[0m.
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+Eines ist sicher: Diese neuen Bestimmungen werden sich negativ auf die Wahlbeteiligung aus-->Ein Hhing ist sicher: Diese neuen Bestimmungen werden sich negativ auf die Wahlbeteil
+One [91mthing[0m is certain: these new provisions will have a negative impact on voter turn-out.
+One [94mHhing[0m is certain: these new provisions will have a negative impact on voter turn-out.
+
+
+--------------------------------------------- Result 6 ---------------------------------------------
+In diesem Sinne werden die Maßnahmen das demokratische System der USA teilweise untergraben-->[91m[FAILED][0m
+In this sense, the measures will partially undermine the American democratic system.
+
+
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
+(0x(B Attack Results                (0x(B        (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 3      (0x(B
+(0x(B Number of failed attacks:     (0x(B 3      (0x(B
+(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
+(0x(B Original accuracy:            (0x(B 100.0% (0x(B
+(0x(B Accuracy under attack:        (0x(B 50.0%  (0x(B
+(0x(B Attack success rate:          (0x(B 50.0%  (0x(B
+(0x(B Average perturbed word %:     (0x(B 9.62%  (0x(B
+(0x(B Average num. words per input: (0x(B 15.33  (0x(B
+(0x(B Avg num queries:              (0x(B 23.67  (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
+Attack time: /.*/s

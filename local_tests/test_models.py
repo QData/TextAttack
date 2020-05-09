@@ -2,16 +2,20 @@ import colored
 import io
 import os
 import re
+import signal
 import sys
 import subprocess
+import traceback
+
+from side_by_side import print_side_by_side
 
 def color_text(s, color):
     return colored.stylize(s, colored.fg(color))
     
-FNULL = open('err.txt', 'w')
+stderr_file_name = 'err.out.txt'
 
 MAGIC_STRING = '/.*/'
-def compare_outputs(desired_output, test_output):
+def outputs_are_equivalent(desired_output, test_output):
     """ Desired outputs have the magic string '/.*/' inserted wherever the 
         outputat that position doesn't actually matter. (For example, when the 
         time to execute is printed, or another non-deterministic feature of the 
@@ -51,7 +55,7 @@ class TextAttackTest:
         """ Runs test and prints success or failure. """
         self.log_start()
         test_output, errored = self.execute()
-        if compare_outputs(self.output, test_output):
+        if (not errored) and outputs_are_equivalent(self.output, test_output):
             self.log_success()
             return True
         else:
@@ -68,12 +72,19 @@ class TextAttackTest:
     def log_failure(self, test_output, errored):
         fail_text = f'✗ Failed.'
         print(color_text(fail_text, 'red'))
-        print('\n')
         if errored:
             print(f'Test exited early with error: {test_output}')
         else:
-            print(f'Test output: {test_output}.')
-            print(f'Correct output: {self.output}.')
+            output1 = f'Test output: {test_output}.'
+            output2 = f'Correct output: {self.output}.'
+            ### begin delete
+            print()
+            print(output1)
+            print()
+            print(output2)
+            print()
+            ### end delete
+            print_side_by_side(output1, output2)
 
 class CommandLineTest(TextAttackTest):
     """ Runs a command-line command to check for desired output. """
@@ -84,7 +95,7 @@ class CommandLineTest(TextAttackTest):
         super().__init__(name=name, output=output, desc=desc)
         
     def execute(self):
-        stderr_file = open('err.out', 'w+')
+        stderr_file = open(stderr_file_name, 'w+')
         result = subprocess.run(
             self.command.split(), 
             stdout=subprocess.PIPE,
@@ -94,7 +105,7 @@ class CommandLineTest(TextAttackTest):
         stderr_file.seek(0) # go back to beginning of file so we can read the whole thing
         stderr_str = stderr_file.read()
         # Remove temp file.
-        os.unlink(stderr_file.name)
+        remove_stderr_file()
         if result.returncode == 0:
             # If the command succeeds, return stdout.
             return result.stdout.decode(), False
@@ -132,6 +143,20 @@ class PythonFunctionTest(TextAttackTest):
             output = '\n'.join(output_lines)
             return output, False
         except: # catch *all* exceptions
-            e = sys.exc_info()[0]
-            return str(e), True
-        
+            exc_str_lines = traceback.format_exc().splitlines()
+            exc_str = '\n'.join(exc_str_lines)
+            return exc_str, True
+
+def remove_stderr_file():
+    # Make sure the stderr file is removed on exit.
+    try:
+        os.unlink(stderr_file_name)
+    except FileNotFoundError: 
+        # File doesn't exit - that means we never made it or already cleaned it up
+        pass
+    
+def exit_handler(_,__): 
+    remove_stderr_file()
+
+# If the program exits early, make sure it didn't create any unneeded files.
+signal.signal(signal.SIGINT, exit_handler)
