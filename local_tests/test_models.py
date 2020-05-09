@@ -7,15 +7,13 @@ import sys
 import subprocess
 import traceback
 
-from side_by_side import print_side_by_side
-
 def color_text(s, color):
     return colored.stylize(s, colored.fg(color))
     
-stderr_file_name = 'err.out.txt'
+stderr_file_name = 'err.out'
 
 MAGIC_STRING = '/.*/'
-def outputs_are_equivalent(desired_output, test_output):
+def compare_output_equivalence(desired_output, test_output):
     """ Desired outputs have the magic string '/.*/' inserted wherever the 
         outputat that position doesn't actually matter. (For example, when the 
         time to execute is printed, or another non-deterministic feature of the 
@@ -55,7 +53,7 @@ class TextAttackTest:
         """ Runs test and prints success or failure. """
         self.log_start()
         test_output, errored = self.execute()
-        if (not errored) and outputs_are_equivalent(self.output, test_output):
+        if (not errored) and compare_output_equivalence(self.output, test_output):
             self.log_success()
             return True
         else:
@@ -77,14 +75,7 @@ class TextAttackTest:
         else:
             output1 = f'Test output: {test_output}.'
             output2 = f'Correct output: {self.output}.'
-            ### begin delete
-            print()
-            print(output1)
-            print()
-            print(output2)
-            print()
-            ### end delete
-            print_side_by_side(output1, output2)
+            print(f'\n{output1}\n{output2}\n')
 
 class CommandLineTest(TextAttackTest):
     """ Runs a command-line command to check for desired output. """
@@ -99,7 +90,6 @@ class CommandLineTest(TextAttackTest):
         result = subprocess.run(
             self.command.split(), 
             stdout=subprocess.PIPE,
-            # @TODO: Collect stderr somewhere. In the event of an error, point user to the error file.
             stderr=stderr_file 
         )
         stderr_file.seek(0) # go back to beginning of file so we can read the whole thing

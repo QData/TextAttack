@@ -1,2 +1,1 @@
 colored
-side_by_side

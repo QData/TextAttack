@@ -47,7 +47,7 @@ register_test('python -m textattack --model lstm-mr --recipe deepwordbug --num-e
 # test: run_attack targeted classification of class 2 on BERT MNLI with enable_csv
 #   and attack_n set, using the WordNet transformation and beam search with 
 #   beam width 2, using language tool constraint, on 10 samples
-#                   (takes about 171s)
+#                   (takes about 72s)
 #
 register_test(('python -m textattack --attack-n --goal-function targeted-classification:target_class=2 '
     '--enable-csv --model bert-mnli --num-examples 4 --transformation word-swap-wordnet '

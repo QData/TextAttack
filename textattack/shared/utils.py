@@ -217,3 +217,9 @@ def html_table_from_rows(rows, title=None, header=None, style_dict=None):
     table_html += '</table></div>'
     
     return table_html
+    
+def has_letter(word):
+    """ Returns true if `word` contains at least one character in [A-Za-z]. """
+    for c in word:
+        if c.isalpha(): return True
+    return False
