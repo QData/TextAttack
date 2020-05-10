@@ -1,18 +1,8 @@
 import socket
 from visdom import Visdom
 
+from textattack.shared.utils import html_table_from_rows
 from .logger import Logger
-
-def style_from_dict(style_dict):
-    """ Turns
-            { 'color': 'red', 'height': '100px'}
-        into
-            style: "color: red; height: 100px"
-    """
-    style_str = ''
-    for key in style_dict:
-        style_str += key + ': ' + style_dict[key] + ';'
-    return 'style="{}"'.format(style_str)
 
 def port_is_open(port_num, hostname='127.0.0.1'):
   sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,10 +21,10 @@ class VisdomLogger(Logger):
 
     def log_attack_result(self, result):
         text_a, text_b = result.diff_color(color_method='html')
-        result_str = result.result_str(color_method='html')
+        result_str = result.goal_function_result_str(color_method='html')
         self.sample_rows.append([result_str,text_a,text_b])
 
-    def log_rows(self, rows, title, window_id):
+    def log_summary_rows(self, rows, title, window_id):
         self.table(rows, title=title, window_id=window_id)
 
     def flush(self):
@@ -60,35 +50,7 @@ class VisdomLogger(Logger):
         
         if not window_id:   window_id = title    # Can provide either of these,
         if not title:       title = window_id    # or both.
-
-        # Stylize the container div.
-        if style:
-            table_html = '<div {}>'.format(style_from_dict(style))
-        else:
-            table_html = '<div>'
-        # Print the title string.
-        if title:
-            table_html += '<h1>{}</h1>'.format(title)
-
-        # Construct each row as HTML.
-        table_html = '<table class="table">'
-        if header:
-            table_html += '<tr>'
-            for element in header:
-                table_html += '<th>'
-                table_html += str(element)
-                table_html += '</th>'
-            table_html += '</tr>'
-        for row in rows:
-            table_html += '<tr>'
-            for element in row:
-                table_html += '<td>'
-                table_html += str(element)
-                table_html += '</td>'
-            table_html += '</tr>'
-
-        # Close the table and print to screen.
-        table_html += '</table></div>'
+        table = html_table_from_rows(rows, title=title, header=header, style_dict=style)
         self.text(table_html, title=title, window_id=window_id)
 
     def bar(self, X_data, numbins=10, title=None, window_id=None):

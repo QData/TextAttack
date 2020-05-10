@@ -1,5 +1,6 @@
 editdistance
 filelock
+language_tool_python
 lru-dict
 nltk
 numpy
@@ -10,8 +11,9 @@ sentence_transformers
 spacy
 torch
 transformers>=2.5.1
-tensorflow-gpu>=2
+tensorflow>=2
 tensorflow_hub
 terminaltables
 tqdm
 visdom
+wandb

@@ -30,15 +30,24 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="textattack",
-    version="0.0.1",
+    version="0.0.1.7",
     author="QData Lab at the University of Virginia",
     author_email="jm8wx@virginia.edu",
     description="A library for generating text adversarial examples",
+    include_package_data=False,
+    license='MIT',
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/QData/textattack",
+<<<<<<< HEAD
     packages=setuptools.find_packages(),
     #package_data={'textattack': data_ext},
+=======
+    packages=setuptools.find_namespace_packages(),
+    package_data={
+     '': ['config.json'],
+    },
+>>>>>>> master
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

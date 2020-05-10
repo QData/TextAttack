@@ -1,6 +1,6 @@
 import torch
 from copy import deepcopy
-from .utils import get_device
+from .utils import get_device, words_from_text
 
 
 class TokenizedText:
@@ -16,20 +16,18 @@ class TokenizedText:
 
         Args:
             text (string): The string that this TokenizedText represents
-            tokenizer (Tokenizer): an object that can convert text to tokens
-                and convert tokens to IDs
+            tokenizer (textattack.Tokenizer): an object that can encode text
         """
         text = text.strip()
         self.tokenizer = tokenizer
-        self.tokens = tokenizer.convert_text_to_tokens(text)
-        ids = tokenizer.convert_tokens_to_ids(self.tokens)
+        ids = tokenizer.encode(text)
         if not isinstance(ids, tuple):
             # Some tokenizers may tokenize text to a single vector.
             # In this case, wrap the vector in a tuple to mirror the
             # format of other tokenizers.
             ids = (ids,)
         self.ids = ids
-        self.words = raw_words(text)
+        self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
         self.attack_attrs['constraint_scores'] = {}
@@ -154,8 +152,12 @@ class TokenizedText:
         final_sentence = ''
         text = self.text
         for input_word, adv_word in zip(self.words, new_words):
+<<<<<<< HEAD
             if input_word == '[UNKNOWN]':
                 continue
+=======
+            if input_word == '[DELETE]': continue
+>>>>>>> master
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)
             final_sentence += text[:word_start]
@@ -172,6 +174,7 @@ class TokenizedText:
         return self.text.replace(TokenizedText.SPLIT_TOKEN, '\n\n')
 
     def __repr__(self):
+<<<<<<< HEAD
         return f'<TokenizedText "{self.text}">'
 
 
@@ -190,3 +193,6 @@ def raw_words(s):
     if len(word) and (word is not TokenizedText.SPLIT_TOKEN):
         words.append(word)
     return words
+=======
+        return f'<TokenizedText "{self.text}">'
+>>>>>>> master

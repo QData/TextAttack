@@ -4,7 +4,6 @@ import torch
 from textattack.tokenizers import BERTTokenizer, BERTEntailmentTokenizer
 from transformers.modeling_bert import BertForSequenceClassification
 
-
 class BERTForClassification:
     """ 
     BERT fine-tuned for textual classification. 
@@ -24,7 +23,7 @@ class BERTForClassification:
         if entailment:
             self.tokenizer = BERTEntailmentTokenizer()
         else:
-            self.tokenizer = BERTTokenizer(model_file_path, fast=False)
+            self.tokenizer = BERTTokenizer(model_file_path)
     
     def __call__(self, *params):
         pred = self.model(*params)[0]

@@ -1,0 +1,6 @@
+{
+    "CACHE_DIR": "~/.cache/textattack/",
+    "CONSTRAINT_CACHE_SIZE": 262144,
+    "MODEL_BATCH_SIZE": 32,
+    "MODEL_CACHE_SIZE": 262144
+}

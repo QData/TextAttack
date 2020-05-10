@@ -11,9 +11,12 @@ import tqdm
 import zipfile
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
-config_path = os.path.join(dir_path, os.pardir, os.pardir, 'config.json')
+config_path = os.path.join(dir_path, os.pardir, 'config.json')
 CONFIG = json.load(open(config_path, 'r'))
 CONFIG['CACHE_DIR'] = os.path.expanduser(CONFIG['CACHE_DIR'])
+
+def config(key):
+    return CONFIG[key]
 
 def get_logger():
     return logging.getLogger(__name__)
@@ -118,19 +121,12 @@ LABEL_COLORS = [
     'gray', 'brown'
 ]
 
-def color_label(label, c=None, method=None):
-    if method == 'file':
-        method = None
-    if c is None:
-        c = color_from_label(label)
-    return color(str(label), c, method)
-
 def color_from_label(label_num):
     """ Colors for labels (arbitrary). """
     label_num %= len(LABEL_COLORS)
     return LABEL_COLORS[label_num]
     
-def color(text, color=None, method=None):
+def color_text(text, color=None, method=None):
     if method is None:
         return text
     if method == 'html':
@@ -151,6 +147,21 @@ def color(text, color=None, method=None):
     elif method == 'file':
         return '[[' + text + ']]'
 
+def words_from_text(s, words_to_ignore=[]):
+    """ Lowercases a string, removes all non-alphanumeric characters,
+        and splits into words. """
+    words = []
+    word = ''
+    for c in ' '.join(s.split()):
+        if c.isalpha():
+            word += c
+        elif word:
+            if word not in words_to_ignore: words.append(word)
+            word = ''
+    if len(word) and (word not in words_to_ignore): 
+        words.append(word)
+    return words
+
 class ANSI_ESCAPE_CODES:
     """ Escape codes for printing color to the terminal. """
     HEADER = '\033[95m'
@@ -163,3 +174,52 @@ class ANSI_ESCAPE_CODES:
     UNDERLINE = '\033[4m'
     """ This color stops the current color sequence. """
     STOP = '\033[0m'
+
+def html_style_from_dict(style_dict):
+    """ Turns
+            { 'color': 'red', 'height': '100px'}
+        into
+            style: "color: red; height: 100px"
+    """
+    style_str = ''
+    for key in style_dict:
+        style_str += key + ': ' + style_dict[key] + ';'
+    return 'style="{}"'.format(style_str)
+    
+def html_table_from_rows(rows, title=None, header=None, style_dict=None):
+    # Stylize the container div.
+    if style_dict:
+        table_html = '<div {}>'.format(style_from_dict(style_dict))
+    else:
+        table_html = '<div>'
+    # Print the title string.
+    if title:
+        table_html += '<h1>{}</h1>'.format(title)
+
+    # Construct each row as HTML.
+    table_html = '<table class="table">'
+    if header:
+        table_html += '<tr>'
+        for element in header:
+            table_html += '<th>'
+            table_html += str(element)
+            table_html += '</th>'
+        table_html += '</tr>'
+    for row in rows:
+        table_html += '<tr>'
+        for element in row:
+            table_html += '<td>'
+            table_html += str(element)
+            table_html += '</td>'
+        table_html += '</tr>'
+
+    # Close the table and print to screen.
+    table_html += '</table></div>'
+    
+    return table_html
+    
+def has_letter(word):
+    """ Returns true if `word` contains at least one character in [A-Za-z]. """
+    for c in word:
+        if c.isalpha(): return True
+    return False

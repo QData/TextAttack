@@ -9,14 +9,13 @@ from textattack.shared import utils
 class SentenceEncoder(Constraint):
     """ 
     Constraint using cosine similarity between sentence encodings of x and 
-        x_adv.
+    x_adv.
         
     Args:
         threshold (:obj:`float`, optional): The threshold for the constraint to be met.
             Defaults to 0.8
         metric (:obj:`str`, optional): The similarity metric to use. Defaults to 
-            cosine. 
-                Options: ['cosine, 'angular']
+            cosine. Options: ['cosine, 'angular']
         compare_with_original (bool): Whether to compare `x_adv` to the previous `x_adv`
             or the original `x`.
         window_size (int): The number of words to use in the similarity 
@@ -31,10 +30,16 @@ class SentenceEncoder(Constraint):
         self.window_size = window_size
         self.skip_text_shorter_than_window = skip_text_shorter_than_window
         
-        if metric=='cosine':
+        if metric == 'cosine':
             self.sim_metric = torch.nn.CosineSimilarity(dim=1)
         elif metric == 'angular':
             self.sim_metric = get_angular_sim
+        elif metric == 'max_euclidean':
+            # If the threshold requires embedding similarity measurement 
+            # be less than or equal to a certain value, just negate it,
+            # so that we can still compare to the threshold using >=.
+            self.threshold = -threshold
+            self.sim_metric = get_neg_euclidean_dist
         else:
             raise ValueError(f'Unsupported metric {metric}.')
     
@@ -98,8 +103,18 @@ class SentenceEncoder(Constraint):
             x_text = x.text
             x_adv_list_text = [x_adv.text for x_adv in x_adv_list]
             embeddings = self.encode([x_text] + x_adv_list_text)
-            original_embedding = torch.tensor(embeddings[0]).to(utils.get_device())
-            perturbed_embeddings = torch.tensor(embeddings[1:]).to(utils.get_device())
+            if isinstance(embeddings[0], torch.Tensor):
+                original_embedding = embeddings[0].to(utils.get_device())
+            else:
+                # If the embedding is not yet a tensor, make it one.
+                original_embedding = torch.tensor(embeddings[0]).to(utils.get_device())
+                
+            if isinstance(embeddings, list):
+                # If `encode` did not return a Tensor of all embeddings, combine
+                # into a tensor.
+                perturbed_embeddings = torch.stack(embeddings[1:]).to(utils.get_device())
+            else:
+                perturbed_embeddings = torch.tensor(embeddings[1:]).to(utils.get_device())
         
             # Repeat original embedding to size of perturbed embedding.
             original_embeddings = original_embedding.unsqueeze(dim=0).repeat(len(perturbed_embeddings),1)
@@ -133,8 +148,8 @@ class SentenceEncoder(Constraint):
             if self.skip_text_shorter_than_window and len(x_adv.words) < self.window_size: 
                 scores[i] = 1
             x_adv.attack_attrs['similarity_score'] = scores[i].item()
-        mask = (scores >= self.threshold)
-        return np.array(x_adv_list)[mask.cpu().numpy().nonzero()]
+        mask = (scores >= self.threshold).cpu().numpy().nonzero()
+        return np.array(x_adv_list)[mask]
     
     def __call__(self, x, x_adv):
         return self.sim_score(x.text, x_adv.text) >= self.threshold 
@@ -143,9 +158,15 @@ class SentenceEncoder(Constraint):
         return ['metric', 'threshold', 'compare_with_original', 'window_size', 
             'skip_text_shorter_than_window']
 
-
-
 def get_angular_sim(emb1, emb2):
-    """ Returns the _angular_ similarity between two vectors. """
+    """ Returns the _angular_ similarity between a batch of vector and a batch 
+        of vectors.
+    """
     cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
     return 1 - (torch.acos(cos_sim) / math.pi)
+
+def get_neg_euclidean_dist(emb1, emb2):
+    """ Returns the Euclidean distance between a batch of vectors and a batch of 
+        vectors. 
+    """
+    return -torch.sum((emb1 - emb2) ** 2, dim=1)

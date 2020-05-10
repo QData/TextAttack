@@ -11,8 +11,14 @@ from textattack.shared.tokenized_text import TokenizedText
 class WordEmbeddingDistance(Constraint):
     """
     todo document here
+<<<<<<< HEAD
 
     Params:
+=======
+    
+    Args:
+        word_embedding (str): The word embedding to use
+>>>>>>> master
         embedding_type (str): The word embedding to use
         include_unknown_words (bool): Whether or not C(x,x_adv) is true
             if the embedding of x or x_adv is unknown
@@ -62,15 +68,29 @@ class WordEmbeddingDistance(Constraint):
             self.cos_sim_mat = pickle.load(open(cos_sim_file, 'rb'))
         else:
             self.cos_sim_mat = {}
+<<<<<<< HEAD
 
     def call_many(self, x, x_adv_list, original_word=None):
+=======
+        
+    
+    def call_many(self, x, x_adv_list, original_text=None):
+>>>>>>> master
         """ Returns each `x_adv` from `x_adv_list` where `C(x,x_adv)` is True. 
         """
         return [x_adv for x_adv in x_adv_list if self(x, x_adv)]
 
     def get_cos_sim(self, a, b):
         """ Returns the cosine similarity of words with IDs a and b."""
+<<<<<<< HEAD
         a, b = min(a, b), max(a, b)
+=======
+        if isinstance(a, str):
+            a = self.word_embedding_word2index[a]
+        if isinstance(b, str):
+            b = self.word_embedding_word2index[b]
+        a, b = min(a, b), max(a,b)
+>>>>>>> master
         try:
             cos_sim = self.cos_sim_mat[a][b]
         except KeyError:
@@ -79,6 +99,7 @@ class WordEmbeddingDistance(Constraint):
             e1 = torch.tensor(e1).to(utils.get_device())
             e2 = torch.tensor(e2).to(utils.get_device())
             cos_sim = torch.nn.CosineSimilarity(dim=0)(e1, e2)
+            self.cos_sim_mat[a][b] = cos_sim
         return cos_sim
 
     def get_mse_dist(self, a, b):
@@ -92,6 +113,7 @@ class WordEmbeddingDistance(Constraint):
             e1 = torch.tensor(e1).to(utils.get_device())
             e2 = torch.tensor(e2).to(utils.get_device())
             mse_dist = torch.sum((e1 - e2) ** 2)
+            self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
 
     def __call__(self, x, x_adv):
@@ -111,6 +133,8 @@ class WordEmbeddingDistance(Constraint):
         except AttributeError:
 <<<<<<< HEAD
             raise AttributeError('Cannot apply word embedding distance constraint without `modified_word_index`')
+        except IndexError:
+            raise IndexError(f'Could not find word at index {i} with x {x} x_adv {x_adv}.')
             
         if not self.cased:
 =======

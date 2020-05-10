@@ -18,7 +18,7 @@ class EmbeddingLayer(nn.Module):
         
         Requires some pre-trained embedding with associated word IDs.
     """
-    def __init__(self, n_d=100, embs=None, fix_emb=True, oov='<oov>', pad='<pad>', normalize=True):
+    def __init__(self, n_d=100, embs=None, oov='<oov>', pad='<pad>', normalize=True):
         super(EmbeddingLayer, self).__init__()
         word2id = {}
         if embs is not None:
@@ -55,9 +55,6 @@ class EmbeddingLayer(nn.Module):
             if norms.dim() == 1:
                 norms = norms.unsqueeze(1)
             weight.data.div_(norms.expand_as(weight.data))
-
-        if fix_emb:
-            self.embedding.weight.requires_grad = False
 
     def forward(self, input):
         return self.embedding(input)

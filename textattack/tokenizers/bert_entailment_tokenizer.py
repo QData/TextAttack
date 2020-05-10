@@ -1,10 +1,10 @@
-from textattack.shared.tokenized_text import TokenizedText
+from textattack.shared import TokenizedText
 from textattack.tokenizers import BERTTokenizer
 
 class BERTEntailmentTokenizer(BERTTokenizer):
     """ Tokenizes an input for entailment. """
-    def __init__(self, model_path='bert-base-uncased'): 
-        super().__init__(model_path=model_path)
+    def __init__(self, name='bert-base-uncased'): 
+        super().__init__(name=name)
         
     def _truncate_seq_pair(self, tokens_a, tokens_b):
         """ Truncates a sequence pair in place to the maximum length.
