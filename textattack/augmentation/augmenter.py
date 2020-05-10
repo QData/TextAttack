@@ -1,3 +1,5 @@
+import random
+
 from textattack.shared.tokenized_text import TokenizedText
 
 class Augmenter:
@@ -10,10 +12,17 @@ class Augmenter:
                 that suggests new texts from an input.
             constraints: (list(textattack.Constraint)): constraints
                 that each transformation must meet
+            words_to_swap (int): number of words to swap in each augmented 
+                example
+            transformations_per_example (int): number of transformations
+                to return for each training example
     """
-    def __init__(self, transformation, constraints=[]):
+    def __init__(self, transformation, constraints=[], words_to_swap=1, 
+        transformations_per_example=1):
         self.transformation = transformation
         self.constraints = constraints
+        self.words_to_swap = words_to_swap
+        self.transformations_per_example = transformations_per_example
     
     def _filter_transformations(self, tokenized_text, transformations):
         """ Filters a list of `TokenizedText` objects to include only the ones 
@@ -29,11 +38,31 @@ class Augmenter:
             `self.transformation`.
         """
         tokenized_text = TokenizedText(text, DummyTokenizer())
-        # Get potential transformations for text.
-        transformations = self.transformation(tokenized_text)
-        # Filter out transformations that don't match the constraints.
-        transformations = self._filter_transformations(tokenized_text, transformations)
-        return [t.clean_text() for t in transformations]
+        all_transformations = set()
+        for _ in range(self.transformations_per_example):
+            indices_to_replace = list(range(len(tokenized_text.words)))
+            next_tokenized_text = tokenized_text
+            for __ in range(self.words_to_swap):
+                transformations = []
+                while not len(transformations):
+                    if not len(indices_to_replace):
+                        # This occurs when we couldn't find valid transformations
+                        # – either the constraints were too strict, or the number
+                        # of words to swap was too high, or we were just plain 
+                        # unlucky. In any event, don't throw an error, and just 
+                        # don't return anything.
+                        break
+                    replacement_index = random.choice(indices_to_replace)
+                    indices_to_replace.remove(replacement_index)
+                    transformations = self.transformation(next_tokenized_text, indices_to_replace=[replacement_index])
+                    # Get rid of transformations we already have
+                    transformations = [t for t in transformations if t not in all_transformations]
+                    # Filter out transformations that don't match the constraints.
+                    transformations = self._filter_transformations(tokenized_text, transformations)
+                if len(transformations):
+                    next_tokenized_text = random.choice(transformations)
+            all_transformations.add(next_tokenized_text)
+        return [t.clean_text() for t in all_transformations]
     
     def augment_many(self, text_list):
         """ Returns all possible augmentations of a list of strings according to

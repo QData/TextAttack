@@ -4,15 +4,15 @@ import textattack
 
 class WordNetAugmenter(Augmenter):
     """ Augments text by replacing with synonyms from the WordNet thesaurus. """
-    def __init__(self):
+    def __init__(self, **kwargs):
         from textattack.transformations import WordSwapWordNet
         transformation = WordSwapWordNet()
-        super().__init__(transformation, constraints=[])
+        super().__init__(transformation, constraints=[], **kwargs)
 
 
 class EmbeddingAugmenter(Augmenter):
     """ Augments text by transforming words with their embeddings. """
-    def __init__(self):
+    def __init__(self, **kwargs):
         from textattack.transformations import WordSwapEmbedding
         transformation = WordSwapEmbedding(
             max_candidates=50, embedding_type='paragramcf'
@@ -21,12 +21,12 @@ class EmbeddingAugmenter(Augmenter):
         constraints = [
             WordEmbeddingDistance(min_cos_sim=0.8)
         ]
-        super().__init__(transformation, constraints=constraints)
+        super().__init__(transformation, constraints=constraints, **kwargs)
     
     
 class CharSwapAugmenter(Augmenter):
     """ Augments words by swapping characters out for other characters. """
-    def __init__(self):
+    def __init__(self, **kwargs):
         from textattack.transformations import CompositeTransformation
         from textattack.transformations import \
             WordSwapNeighboringCharacterSwap, \
@@ -42,4 +42,4 @@ class CharSwapAugmenter(Augmenter):
             # (4) Insertion: Insert a random letter in the word.
             WordSwapRandomCharacterInsertion()
         ])
-        super().__init__(transformation, constraints=[])
+        super().__init__(transformation, constraints=[], **kwargs)
