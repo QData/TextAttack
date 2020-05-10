@@ -30,22 +30,11 @@ You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is 
 pip install textattack
 ```
 
-We use the NLTK package for its list of stopwords and access to the WordNet lexical database. To download them run in Python shell:
-
-```
-import nltk
-nltk.download('stopwords')
-nltk.download('wordnet')
-```
-
-We use spaCy's English model. To download it, after installing spaCy run:
-
-```
-python -m spacy download en
-```
-
-### Cache
-TextAttack provides pretrained models and datasets for user convenience. By default, all this stuff is downloaded to `~/.cache`. You can change this location by editing the `CACHE_DIR` field in `config.json`.
+### Configuration
+TextAttack downloads files to `~/.cache/textattack/` by default. This includes
+pretrained models, dataset samples, and the configuration file `config.yaml`.
+Update `config.yaml` to change run-specific variables like the batch size
+for model calls and the sizes of TextAttack's various caches.
 
 ## Usage
 
