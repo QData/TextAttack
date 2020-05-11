@@ -8,18 +8,6 @@ import time
 import torch
 
 RECIPE_NAMES = {
-<<<<<<< HEAD:scripts/run_attack_args_helper.py
-    'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
-    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
-    'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
-    'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
-    'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
-    'mcts':          'textattack.attack_recipes.MCTSRecipe',
-    'mcts-adjusted': 'textattack.attack_recipes.MCTSRecipeAdjusted',
-    'mha':          'textattack.attack_recipes.MHARecipe',
-    'mha-adjusted': 'textattack.attack_recipes.MHARecipeAdjusted',
-    'bert-recipe':   'textattack.attack_recipes.BertRecipe'
-=======
     'alzantot':         'textattack.attack_recipes.Alzantot2018',
     'alz-adjusted':     'textattack.attack_recipes.Alzantot2018Adjusted',
     'deepwordbug':      'textattack.attack_recipes.DeepWordBugGao2018',
@@ -28,7 +16,6 @@ RECIPE_NAMES = {
     'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
     'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
     'tf-adjusted':      'textattack.attack_recipes.TextFoolerJin2019Adjusted',
->>>>>>> master:textattack/shared/scripts/run_attack_args_helper.py
 }
 
 MODEL_CLASS_NAMES = {
@@ -101,12 +88,6 @@ DATASET_BY_MODEL = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-<<<<<<< HEAD:scripts/run_attack_args_helper.py
-    'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
-    'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
-    'word-swap-language-model':        'textattack.transformations.WordSwapLanguageModel'
-=======
     'word-swap-embedding':                  'textattack.transformations.WordSwapEmbedding',
     'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyph',
     'word-swap-neighboring-char-swap':      'textattack.transformations.WordSwapNeighboringCharacterSwap',
@@ -114,7 +95,6 @@ TRANSFORMATION_CLASS_NAMES = {
     'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',
     'word-swap-random-char-substitution':   'textattack.transformations.WordSwapRandomCharacterSubstitution',
     'word-swap-wordnet':                    'textattack.transformations.WordSwapWordNet',
->>>>>>> master:textattack/shared/scripts/run_attack_args_helper.py
 }
 
 CONSTRAINT_CLASS_NAMES = {
@@ -143,21 +123,11 @@ CONSTRAINT_CLASS_NAMES = {
     'words-perturbed':  'textattack.constraints.overlap.WordsPerturbed',
 }
 
-<<<<<<< HEAD:scripts/run_attack_args_helper.py
-ATTACK_CLASS_NAMES = {
-    'beam-search':        'textattack.attack_methods.BeamSearch',
-    'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
-    'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
-    'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
-    'mha':                'textattack.attack_methods.MetropolisHastingsSampling',
-    'mcts':               'textattack.attack_methods.MonteCarloTreeSearch'
-=======
 SEARCH_CLASS_NAMES = {
     'beam-search':      'textattack.search_methods.BeamSearch',
     'greedy-word':      'textattack.search_methods.GreedyWordSwap',
     'ga-word':          'textattack.search_methods.GeneticAlgorithm',
     'greedy-word-wir':  'textattack.search_methods.GreedyWordSwapWIR',
->>>>>>> master:textattack/shared/scripts/run_attack_args_helper.py
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {

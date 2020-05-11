@@ -107,35 +107,8 @@ class GoalFunction:
                 preds = self.model(*batch)
             if isinstance(preds, tuple):
                 preds = preds[0]
-<<<<<<< HEAD
-            scores.append(preds)
-        scores = torch.cat(scores, dim=0)
-        # Validation check on model score dimensions
-        if scores.dim() == 1:
-            # Unsqueeze prediction, if it's been squeezed by the model.
-            if len(tokenized_text_list == 1):
-                scores = scores.unsqueeze(dim=0)
-            else:
-                raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif scores.dim() != 2:
-            # If model somehow returns too may dimensions, throw an error.
-            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif scores.shape[0] != len(tokenized_text_list):
-            # If model returns an incorrect number of scores, throw an error.
-            raise ValueError(f'Model return score of shape {scores.shape} for {len(tokenized_text_list)} inputs.')
-        elif not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
-            # Values in each row should sum up to 1. The model should return a 
-            # set of numbers corresponding to probabilities, which should add
-            # up to 1. Since they are `torch.float` values, allow a small
-            # error in the summation.
-            scores = torch.nn.functional.softmax(scores, dim=1)
-            if not ((scores.sum(dim=1) - 1).abs() < 1e-6).all():
-                raise ValueError('Model scores do not add up to 1.')
-        return scores
-=======
             outputs.append(preds)
         return self._process_model_outputs(tokenized_text_list, outputs)
->>>>>>> master
     
     def _call_model(self, tokenized_text_list):
         """ Gets predictions for a list of `TokenizedText` objects.

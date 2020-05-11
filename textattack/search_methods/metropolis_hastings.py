@@ -11,7 +11,6 @@ class MetropolisHastingsSampling(Attack):
     """ 
     Uses Metropolis-Hastings Sampling to generate adversarial samples.
     Based off paper "Generating Fluent Adversarial Examples for Natural Langauges" by Zhang, Zhou, Miao, Li (2019)
-    N.B.: Only replacement of words are supported by TextAttack. No deletion or insertion 
     """
     def __init__(self, model, transformation, constraints=[], max_iter = 500, lm_type = "gpt-2"):
         super().__init__(model, transformation, constraints=constraints)
@@ -27,7 +26,7 @@ class MetropolisHastingsSampling(Attack):
         """
         Args:
             text (str)
-        Returns: 1/perplexity(x)
+        Returns: 1/perplexity(text)
         """
         if self.lm_type == "gpt-2":
             
@@ -39,6 +38,8 @@ class MetropolisHastingsSampling(Attack):
             pp = math.exp(loss)
 
             return 1/pp
+        else:
+            raise ValueError("Unknown languange model.")
         
     def stationary_dist(self, x, original_label):
         """
@@ -60,7 +61,7 @@ class MetropolisHastingsSampling(Attack):
         """
         Stationary distribution that we want to sample from.
         Process items in batch and store new labels and probability score 
-        to avoid unecessary calls to model. 
+        to avoid unnecessary calls to model. 
         Args:
             x_list (list): List of TokenizedText
             original_label

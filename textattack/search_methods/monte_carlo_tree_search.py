@@ -9,11 +9,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
-import time
+import time, os
 import collections
 import multiprocessing as mp
 
-PROFILE = True
+PROFILE = False
 if PROFILE:
     import io
     import pstats
@@ -135,7 +135,7 @@ class SearchTree:
         self.iteration = 0 
         self.global_rave_values = {}
 
-    def clear_history(self):
+    def clear_single_iteration_history(self):
         self.available_words_to_replace = set(range(len(self.original_text.words)))
         self.action_history = []
 
@@ -171,11 +171,12 @@ class MonteCarloTreeSearch(Attack):
         self.top_k = top_k
         self.max_words_changed = max_words_changed
         self.ucb_C = 2
-        self.global_C = 100
-        self.local_C = 100
-        self.window_size = 32
+        self.global_C = 10
+        self.local_C = 10
+        self.window_size = 5
+        self.branch_factor = 10
+        self.transformation.max_candidates = self.branch_factor
 
-'''
     def choose_top_transformations(self, transformations):
         """
         transformations (list<TokenizedText>)
@@ -189,23 +190,15 @@ class MonteCarloTreeSearch(Attack):
             scores[i] = diff
         top_choices = np.argsort(scores)[-self.top_k:]
         if len(top_choices) != self.top_k:
-            raise ValueError("weee")
+            raise ValueError("Dimension error")
         return [transformations[i] for i in top_choices]
-'''
 
     def evaluate(self, current_node):
         """
             Evaluates the final (or current) transformation
         """
         result = self.goal_function.get_results([current_node.text], self.tree.original_label)[0]
-        new_label = result.output
-
-        value = self.result.score
-
-        value += sum(
-            current_node.text.attack_attrs['constraint_scores'].values())
-
-        return value, new_label
+        return result.score.item(), result.output
 
     def backprop(self, current_node, search_value):
         """
@@ -362,13 +355,12 @@ class MonteCarloTreeSearch(Attack):
     def run_mcts(self):
         """
             Runs Monte Carlo Tree Search at the current root.
-            Returns best action
+            Returns best node and best action.
         """
 
         for i in range(self.num_iter):
-            print(f"mcts {i}")
             self.tree.iteration += 1
-            self.tree.clear_history()
+            self.tree.clear_single_iteration_history()
             current_node = self.selection()
 
             if current_node.depth < self.tree.max_depth:
@@ -403,6 +395,9 @@ class MonteCarloTreeSearch(Attack):
     def attack_one(self, tokenized_text, correct_output):
 
         original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
+        # Initial values
+        new_score = original_result.score.item()
+        new_label = original_result.output
 
         max_tree_depth = min(self.window_size, len(tokenized_text.words))
         max_words_changed = min(self.max_words_changed, len(tokenized_text.words))
@@ -417,7 +412,6 @@ class MonteCarloTreeSearch(Attack):
             profiler.enable()
 
         for i in range(max_words_changed):
-            print(f"MCTS iteration {i}")
             best_next_node, best_action = self.run_mcts()
             if best_next_node is None:
                 break
@@ -425,9 +419,9 @@ class MonteCarloTreeSearch(Attack):
             self.tree.root = best_next_node
             self.tree.reset_node_depth()
             final_action_history.append(best_action)
-            _, new_label = self.evaluate(self.tree.root)
+            new_score, new_label = self.evaluate(self.tree.root)
 
-            if new_label != original_label:
+            if new_label != correct_output:
                 new_tokenized_text = self.tree.root.text
                 break
 
@@ -453,12 +447,14 @@ class MonteCarloTreeSearch(Attack):
                     f.write(f"Action: ({action[0]}, {action[1]})\n")
                     f.write(f"Value: {value}   |   Number actions taken: {num} \n\n")
 
-        if original_label == new_label:
-            return FailedAttackResult(original_tokenized_text, original_label)
+        if correct_output == new_label:
+            return FailedAttackResult(tokenized_text, correct_output)
         else:
-            return AttackResult(
-                original_tokenized_text,
-                new_tokenized_text,
-                original_label,
-                new_label
-            )
+             return AttackResult( 
+                    tokenized_text, 
+                    new_tokenized_text, 
+                    correct_output,
+                    new_label,
+                    float(original_result.score),
+                    float(new_score)
+                )

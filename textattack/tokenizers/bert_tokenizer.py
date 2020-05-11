@@ -28,14 +28,3 @@ class BERTTokenizer(AutoTokenizer):
         pad_tokens_to_add = self.max_seq_length - len(tokens)
         tokens += [self.tokenizer.pad_token] * pad_tokens_to_add
         return tokens
-<<<<<<< HEAD
-    
-    def convert_tokens_to_ids(self, tokens):
-        ids = self.tokenizer.convert_tokens_to_ids(tokens)
-        return ids
-
-    def convert_ids_to_tokens(self, ids):
-        tokens = self.tokenizer.convert_ids_to_tokens(ids)
-        return tokens
-=======
->>>>>>> master

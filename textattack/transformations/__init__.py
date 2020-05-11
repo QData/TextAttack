@@ -9,11 +9,8 @@ from .word_swap_neighboring_character_swap import WordSwapNeighboringCharacterSw
 from .word_swap_random_character_deletion import WordSwapRandomCharacterDeletion
 from .word_swap_random_character_insertion import WordSwapRandomCharacterInsertion
 from .word_swap_random_character_substitution import WordSwapRandomCharacterSubstitution
-<<<<<<< HEAD
 from .word_swap_lm import WordSwapLanguageModel
-=======
 from .word_swap_wordnet import WordSwapWordNet
 
 # White-box transformations
 from .gradient_based_word_swap import GradientBasedWordSwap
->>>>>>> master
