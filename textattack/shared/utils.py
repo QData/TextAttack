@@ -52,17 +52,17 @@ def download_if_needed(folder_name):
     if zipfile.is_zipfile(downloaded_file.name):
         unzip_file(downloaded_file.name, cache_dest_path)
     else:
-        print('Copying', downloaded_file.name, 'to', cache_dest_path + '.')
+        get_logger().info(f'Copying {downloaded_file.name} to {cache_dest_path}.')
         shutil.copyfile(downloaded_file.name, cache_dest_path)
     cache_file_lock.release()
     # Remove the temporary file.
     os.remove(downloaded_file.name)
-    print(f'Successfully saved {folder_name} to cache.')
+    get_logger().info(f'Successfully saved {folder_name} to cache.')
     return cache_dest_path
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
     """ Unzips a .zip file to folder path. """
-    print('Unzipping file', path_to_zip_file, 'to', unzipped_folder_path + '.')
+    get_logger().info(f'Unzipping file  path_to_zip_file to unzipped_folder_path.')
     enclosing_unzipped_path = pathlib.Path(unzipped_folder_path).parent
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
         zip_ref.extractall(enclosing_unzipped_path)
@@ -73,7 +73,7 @@ def http_get(folder_name, out_file, proxies=None):
         https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
     """
     folder_s3_url = s3_url(folder_name)
-    print(f'Downloading {folder_s3_url}.')
+    get_logger().info(f'Downloading {folder_s3_url}.')
     req = requests.get(folder_s3_url, stream=True, proxies=proxies)
     content_length = req.headers.get('Content-Length')
     total = int(content_length) if content_length is not None else None
@@ -227,7 +227,7 @@ def get_logger():
     if not logger:
         logging.basicConfig(level=logging.INFO)
         logger = logging.getLogger(__name__)
-        formatter = logging.Formatter(f'{LOG_STRING} - %(message)s')
+        formatter = logging.Formatter(f'{LOG_STRING}: %(message)s')
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
         logger.addHandler(stream_handler)
@@ -261,8 +261,7 @@ def _post_install_if_needed():
 def config(key):
     return config_dict[key]
     
-config_dict = {'CACHE_DIR': os.path.expanduser('~/.cache/textattack')}
+config_dict = {'CACHE_DIR': os.environ.get('TA_CACHE_DIR', os.path.expanduser('~/.cache/textattack'))}
 config_path = download_if_needed('config.yaml')
 config_dict.update(yaml.load(open(config_path, 'r'), Loader=yaml.FullLoader))
-config_dict['CACHE_DIR'] = os.path.expanduser(config_dict['CACHE_DIR'])
 _post_install_if_needed()

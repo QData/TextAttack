@@ -31,10 +31,9 @@ pip install textattack
 ```
 
 ### Configuration
-TextAttack downloads files to `~/.cache/textattack/` by default. This includes
-pretrained models, dataset samples, and the configuration file `config.yaml`.
-Update `config.yaml` to change run-specific variables like the batch size
-for model calls and the sizes of TextAttack's various caches.
+TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
+dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
+environment variable `TA_CACHE_DIR`.
 
 ## Usage
 
