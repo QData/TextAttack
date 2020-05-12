@@ -1,5 +1,6 @@
 import filelock
 import logging
+import logging.config
 import os
 import pathlib
 import requests
@@ -225,8 +226,8 @@ logger = None
 def get_logger():
     global logger
     if not logger:
-        logging.basicConfig(level=logging.INFO)
         logger = logging.getLogger(__name__)
+        logging.config.dictConfig({'version': 1, 'loggers': {__name__: {'level': logging.INFO}}})
         formatter = logging.Formatter(f'{LOG_STRING}: %(message)s')
         stream_handler = logging.StreamHandler()
         stream_handler.setFormatter(formatter)
