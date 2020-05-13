@@ -1,0 +1,65 @@
+BeamSearch(
+  (goal_function):  TargetedClassification(
+    (target_class):  2
+  )
+  (transformation):  WordSwapWordNet(
+    (replace_stopwords):  False
+  )
+  (constraints): 
+    (0): LanguageTool(
+        (grammar_error_threshold):  0
+      )
+  (is_black_box):  True
+) 
+
+Logging to CSV at path /.*/csv.
+Load time: /.*/s
+--------------------------------------------- Result 1 ---------------------------------------------
+[91m0[0m-->[94m2[0m
+In Temple Bar , the bookshop at the [91mGallery[0m of Photography carries a large selection of photographic publications , and the Flying Pig is a secondhand bookshop .
+
+There is a bookshop at the gallery .
+In Temple Bar , the bookshop at the [94mdrift[0m of Photography carries a large selection of photographic publications , and the Flying Pig is a secondhand bookshop .
+
+There is a bookshop at the gallery .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[91m0[0m-->[91m[FAILED][0m
+On Naxos , you can walk through the pretty villages of the Tragea Valley and the foothills of Mount Zas , admiring Byzantine churches and exploring olive groves at your leisure .
+
+Naxos is a place with beautiful scenery for leisure .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+Impossible .
+
+Impossible , unless circumstances are met .
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[91m0[0m-->[94m2[0m
+Expenses included in calculating net cost for education and training programs that are intended to increase or maintain national economic productive capacity shall be reported as investments in human capital as required supplementary stewardship information accompanying the financial statements of the Federal Government and its component units .
+
+Net cost for education programs can be calculated as a way to [91mincrease[0m productivity .
+Expenses included in calculating net cost for education and training programs that are intended to increase or maintain national economic productive capacity shall be reported as investments in human capital as required supplementary stewardship information accompanying the financial statements of the Federal Government and its component units .
+
+Net cost for education programs can be calculated as a way to [94mincrement[0m productivity .
+
+
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
+(0x(B Attack Results                (0x(B        (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 2      (0x(B
+(0x(B Number of failed attacks:     (0x(B 2      (0x(B
+(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
+(0x(B Original accuracy:            (0x(B 100.0% (0x(B
+(0x(B Accuracy under attack:        (0x(B 50.0%  (0x(B
+(0x(B Attack success rate:          (0x(B 50.0%  (0x(B
+(0x(B Average perturbed word %:     (0x(B 2.38%  (0x(B
+(0x(B Average num. words per input: (0x(B 34.25  (0x(B
+(0x(B Avg num queries:              (0x(B 278.5  (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
+Attack time: /.*/s

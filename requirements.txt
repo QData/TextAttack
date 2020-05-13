@@ -5,6 +5,7 @@ lru-dict
 nltk
 numpy
 pandas
+pyyaml
 scikit-learn
 scipy
 sentence_transformers

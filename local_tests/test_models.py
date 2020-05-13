@@ -2,16 +2,18 @@ import colored
 import io
 import os
 import re
+import signal
 import sys
 import subprocess
+import traceback
 
 def color_text(s, color):
     return colored.stylize(s, colored.fg(color))
     
-FNULL = open(os.devnull, 'w')
+stderr_file_name = 'err.out'
 
 MAGIC_STRING = '/.*/'
-def compare_outputs(desired_output, test_output):
+def compare_output_equivalence(desired_output, test_output):
     """ Desired outputs have the magic string '/.*/' inserted wherever the 
         outputat that position doesn't actually matter. (For example, when the 
         time to execute is printed, or another non-deterministic feature of the 
@@ -50,12 +52,12 @@ class TextAttackTest:
     def __call__(self):
         """ Runs test and prints success or failure. """
         self.log_start()
-        test_output = self.execute()
-        if compare_outputs(self.output, test_output):
+        test_output, errored = self.execute()
+        if (not errored) and compare_output_equivalence(self.output, test_output):
             self.log_success()
             return True
         else:
-            self.log_failure(test_output)
+            self.log_failure(test_output, errored)
             return False
     
     def log_start(self):
@@ -65,12 +67,15 @@ class TextAttackTest:
         success_text = f'✓ Succeeded.'
         print(color_text(success_text, 'green'))
     
-    def log_failure(self, test_output):
+    def log_failure(self, test_output, errored):
         fail_text = f'✗ Failed.'
         print(color_text(fail_text, 'red'))
-        print('\n')
-        print(f'Test output: {test_output}.')
-        print(f'Correct output: {self.output}.')
+        if errored:
+            print(f'Test exited early with error: {test_output}')
+        else:
+            output1 = f'Test output: {test_output}.'
+            output2 = f'Correct output: {self.output}.'
+            print(f'\n{output1}\n{output2}\n')
 
 class CommandLineTest(TextAttackTest):
     """ Runs a command-line command to check for desired output. """
@@ -81,13 +86,22 @@ class CommandLineTest(TextAttackTest):
         super().__init__(name=name, output=output, desc=desc)
         
     def execute(self):
+        stderr_file = open(stderr_file_name, 'w+')
         result = subprocess.run(
             self.command.split(), 
             stdout=subprocess.PIPE,
-            # @TODO: Collect stderr somewhere. In the event of an error, point user to the error file.
-            stderr=FNULL 
+            stderr=stderr_file 
         )
-        return result.stdout.decode()
+        stderr_file.seek(0) # go back to beginning of file so we can read the whole thing
+        stderr_str = stderr_file.read()
+        # Remove temp file.
+        remove_stderr_file()
+        if result.returncode == 0:
+            # If the command succeeds, return stdout.
+            return result.stdout.decode(), False
+        else:
+            # If the command returns an exit code, return stderr.
+            return stderr_str, True
 
 class Capturing(list):
     """ A context manager that captures standard out during its execution. 
@@ -113,8 +127,26 @@ class PythonFunctionTest(TextAttackTest):
         super().__init__(name=name, output=output, desc=desc)
     
     def execute(self):
-        with Capturing() as output_lines:
-            self.function()
-        output = '\n'.join(output_lines)
-        return output
-        
+        try:
+            with Capturing() as output_lines:
+                self.function()
+            output = '\n'.join(output_lines)
+            return output, False
+        except: # catch *all* exceptions
+            exc_str_lines = traceback.format_exc().splitlines()
+            exc_str = '\n'.join(exc_str_lines)
+            return exc_str, True
+
+def remove_stderr_file():
+    # Make sure the stderr file is removed on exit.
+    try:
+        os.unlink(stderr_file_name)
+    except FileNotFoundError: 
+        # File doesn't exit - that means we never made it or already cleaned it up
+        pass
+    
+def exit_handler(_,__): 
+    remove_stderr_file()
+
+# If the program exits early, make sure it didn't create any unneeded files.
+signal.signal(signal.SIGINT, exit_handler)
