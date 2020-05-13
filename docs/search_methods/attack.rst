@@ -1,0 +1,39 @@
+=====================
+Attack Documentation
+=====================
+
+All search methods are implemented as a subclass of the `Attack` class by implementing the `attack_one` method. 
+
+Search Methods:
+
+- `Greedy Word Search`_
+- `Beam Search`_ 
+- `Genetic Algorithm`_
+
+Attack Abstract Class 
+######################
+
+.. automodule:: textattack.search_methods.attack
+   :members:
+
+Greedy Word Search
+####################
+
+.. automodule:: textattack.search_methods.greedy_word_swap
+   :members:
+
+.. automodule:: textattack.search_methods.greedy_word_swap_wir
+   :members:
+
+Beam Search
+############
+
+.. automodule:: textattack.search_methods.beam_search 
+   :members:
+
+Genetic Algorithm 
+##################
+
+.. automodule:: textattack.search_methods.genetic_algorithm
+   :members:
+
