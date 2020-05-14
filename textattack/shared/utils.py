@@ -264,5 +264,6 @@ def config(key):
     
 config_dict = {'CACHE_DIR': os.environ.get('TA_CACHE_DIR', os.path.expanduser('~/.cache/textattack'))}
 config_path = download_if_needed('config.yaml')
-config_dict.update(yaml.load(open(config_path, 'r'), Loader=yaml.FullLoader))
+with open(config_path, 'r') as f:
+    config_dict.update(yaml.load(f, Loader=yaml.FullLoader))
 _post_install_if_needed()

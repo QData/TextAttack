@@ -39,11 +39,13 @@ class WordEmbedding:
         # Precomputed distance matrices store distances at mat[x][y], where
         # x and y are word IDs and x < y.
         if os.path.exists(mse_dist_file):
-            self.mse_dist_mat = pickle.load(open(mse_dist_file, 'rb'))
+            with open(mse_dist_file, 'rb') as f:
+                self.mse_dist_mat = pickle.load(f)
         else:
             self.mse_dist_mat = {}
         if os.path.exists(cos_sim_file):
-            self.cos_sim_mat = pickle.load(open(cos_sim_file, 'rb'))
+            with open(cos_sim_file, 'rb') as f:
+                self.cos_sim_mat = pickle.load(f)
         else:
             self.cos_sim_mat = {}
     
