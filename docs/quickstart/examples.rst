@@ -1,9 +1,0 @@
-=========
-Examples
-=========
-
-Custom Transformations
-########################
-
-Constraints
-############

@@ -6,7 +6,7 @@
 TextAttack
 ======================================
 
-`TextAttack <https://github.com/QData/TextAttack>`__ repository is a library for running adversarial attacks against NLP models. These may be useful for evaluating attack methods and evaluating model robustness. TextAttack is designed in order to be easily extensible to new NLP tasks, models, attack methods, and attack constraints. The separation between these aspects of an adversarial attack and standardization of constraint evaluation allows for easier ablation studies. TextAttack supports attacks on models trained for classification and entailment.
+`TextAttack <https://github.com/QData/TextAttack>`__ is a Python library for running adversarial attacks against NLP models. These may be useful for evaluating attack methods and evaluating model robustness. TextAttack is designed in order to be easily extensible to new NLP tasks, models, attack methods, and attack constraints. The separation between these aspects of an adversarial attack and standardization of constraint evaluation allows for easier ablation studies. TextAttack supports attacks on models trained for classification, entailment, and translation. 
 
 Features 
 -----------
@@ -22,7 +22,7 @@ Features
    :caption: Quickstart
 
    quickstart/installation
-   quickstart/examples
+   quickstart/overview
 
 
 .. toctree::
@@ -33,26 +33,9 @@ Features
 
 .. toctree::
    :maxdepth: 2
-   :caption: Attack Recipes:
-
-   attack_recipes/attack_recipes
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Attack Results:
-
-   attack_results/attack_result 
-
-
-.. toctree::
-   :maxdepth: 2
    :caption: Transformations:
 
    transformations/transformation
-   transformations/composite_transformation
-   transformations/word_swap 
-
 
 .. toctree::
    :maxdepth: 2
@@ -69,6 +52,25 @@ Features
    :caption: Goal Functions:
 
    goal_functions/goal_functions
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Loggers:
+
+   
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Attack Recipes:
+
+   attack_recipes/attack_recipes
+
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Attack Results:
+
+   attack_results/attack_result 
 
 
 .. toctree::
