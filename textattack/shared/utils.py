@@ -1,6 +1,6 @@
 import filelock
-import json
 import logging
+import logging.config
 import os
 import pathlib
 import requests
@@ -8,33 +8,30 @@ import shutil
 import tempfile
 import torch
 import tqdm
+import yaml
 import zipfile
-
-dir_path = os.path.dirname(os.path.realpath(__file__))
-config_path = os.path.join(dir_path, os.pardir, 'config.json')
-CONFIG = json.load(open(config_path, 'r'))
-CONFIG['CACHE_DIR'] = os.path.expanduser(CONFIG['CACHE_DIR'])
-
-def config(key):
-    return CONFIG[key]
-
-def get_logger():
-    return logging.getLogger(__name__)
 
 def get_device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def path_in_cache(file_path):
-    if not os.path.exists(CONFIG['CACHE_DIR']):
-        os.makedirs(CONFIG['CACHE_DIR'])
-    return os.path.join(CONFIG['CACHE_DIR'], file_path)
+    textattack_cache_dir = config('CACHE_DIR')
+    if not os.path.exists(textattack_cache_dir):
+        os.makedirs(textattack_cache_dir)
+    return os.path.join(textattack_cache_dir, file_path)
 
 def s3_url(uri):
     return 'https://textattack.s3.amazonaws.com/' + uri
 
 def download_if_needed(folder_name):
     """ Folder name will be saved as `.cache/textattack/[folder name]`. If it
-        doesn't exist, the zip file will be downloaded and extracted. 
+        doesn't exist on disk, the zip file will be downloaded and extracted. 
+    
+    Args:
+        folder_name (str): path to folder or file in cache
+    
+    Returns:
+        str: path to the downloaded folder or file on disk
     """
     cache_dest_path = path_in_cache(folder_name)
     os.makedirs(os.path.dirname(cache_dest_path), exist_ok=True)
@@ -48,7 +45,7 @@ def download_if_needed(folder_name):
         return cache_dest_path
     # If the file isn't found yet, download the zip file to the cache.
     downloaded_file = tempfile.NamedTemporaryFile(
-        dir=CONFIG['CACHE_DIR'], 
+        dir=config('CACHE_DIR'), 
         suffix='.zip', delete=False)
     http_get(folder_name, downloaded_file)
     # Move or unzip the file.
@@ -56,17 +53,17 @@ def download_if_needed(folder_name):
     if zipfile.is_zipfile(downloaded_file.name):
         unzip_file(downloaded_file.name, cache_dest_path)
     else:
-        print('Copying', downloaded_file.name, 'to', cache_dest_path + '.')
+        get_logger().info(f'Copying {downloaded_file.name} to {cache_dest_path}.')
         shutil.copyfile(downloaded_file.name, cache_dest_path)
     cache_file_lock.release()
     # Remove the temporary file.
     os.remove(downloaded_file.name)
-    print(f'Successfully saved {folder_name} to cache.')
+    get_logger().info(f'Successfully saved {folder_name} to cache.')
     return cache_dest_path
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
     """ Unzips a .zip file to folder path. """
-    print('Unzipping file', path_to_zip_file, 'to', unzipped_folder_path + '.')
+    get_logger().info(f'Unzipping file  path_to_zip_file to unzipped_folder_path.')
     enclosing_unzipped_path = pathlib.Path(unzipped_folder_path).parent
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
         zip_ref.extractall(enclosing_unzipped_path)
@@ -77,7 +74,7 @@ def http_get(folder_name, out_file, proxies=None):
         https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
     """
     folder_s3_url = s3_url(folder_name)
-    print(f'Downloading {folder_s3_url}.')
+    get_logger().info(f'Downloading {folder_s3_url}.')
     req = requests.get(folder_s3_url, stream=True, proxies=proxies)
     content_length = req.headers.get('Content-Length')
     total = int(content_length) if content_length is not None else None
@@ -223,3 +220,49 @@ def has_letter(word):
     for c in word:
         if c.isalpha(): return True
     return False
+
+LOG_STRING = f'\033[34;1mtextattack\033[0m'
+logger = None
+def get_logger():
+    global logger
+    if not logger:
+        logger = logging.getLogger(__name__)
+        logging.config.dictConfig({'version': 1, 'loggers': {__name__: {'level': logging.INFO}}})
+        formatter = logging.Formatter(f'{LOG_STRING}: %(message)s')
+        stream_handler = logging.StreamHandler()
+        stream_handler.setFormatter(formatter)
+        logger.addHandler(stream_handler)
+        logger.propagate = False
+    return logger
+
+def _post_install():
+    logger = get_logger()
+    logger.info('First time importing textattack: downloading remaining required packages.')
+    logger.info('Downloading spaCy required packages.')
+    import spacy
+    spacy.cli.download('en')
+    logger.info('Downloading NLTK required packages.')
+    import nltk
+    nltk.download('wordnet')
+    nltk.download('averaged_perceptron_tagger')
+    nltk.download('universal_tagset')
+    nltk.download('stopwords')
+
+def _post_install_if_needed():
+    """ Runs _post_install if hasn't been run since install. """
+    # Check for post-install file.
+    post_install_file_path = os.path.join(config('CACHE_DIR'), 'post_install_check')
+    if os.path.exists(post_install_file_path):
+        return
+    # Run post-install.
+    _post_install()
+    # Create file that indicates post-install completed.
+    open(post_install_file_path, 'w').close()
+
+def config(key):
+    return config_dict[key]
+    
+config_dict = {'CACHE_DIR': os.environ.get('TA_CACHE_DIR', os.path.expanduser('~/.cache/textattack'))}
+config_path = download_if_needed('config.yaml')
+config_dict.update(yaml.load(open(config_path, 'r'), Loader=yaml.FullLoader))
+_post_install_if_needed()
