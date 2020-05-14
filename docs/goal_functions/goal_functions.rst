@@ -1,3 +1,5 @@
+.. _goal_function:
+
 ================
 Goal Functions
 ================
