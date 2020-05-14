@@ -11,6 +11,8 @@ import tqdm
 from .run_attack_args_helper import *
 
 def set_env_variables(gpu_id):
+    # Set sharing strategy to file_system to avoid file descriptor leaks
+    torch.multiprocessing.set_sharing_strategy('file_system')
     # Only use one GPU, if we have one.
     if 'CUDA_VISIBLE_DEVICES' not in os.environ:
         os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
@@ -22,8 +24,6 @@ def set_env_variables(gpu_id):
         os.environ['TFHUB_CACHE_DIR'] = os.path.expanduser('~/.cache/tensorflow-hub')
 
 def attack_from_queue(args, in_queue, out_queue):
-    # Set sharing strategy to file_system to avoid file descriptor leaks
-    torch.multiprocessing.set_sharing_strategy('file_system')
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
     set_env_variables(gpu_id)
     _, attack = parse_goal_function_and_attack_from_args(args)
