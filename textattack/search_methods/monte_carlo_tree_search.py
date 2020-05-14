@@ -1,5 +1,5 @@
 from .attack import Attack
-from textattack.attack_results import AttackResult, FailedAttackResult
+from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult
 import numpy as np
 import math
 import random
@@ -74,7 +74,7 @@ def generate_dot(root_node, action_history, filename, success):
 class Node:
     """
         Represents a node in search tree
-        Members:
+        Attributes:
             id (int): unique int for id
             text (TokenizedText) : Version of TokenizedText that Node represents
             depth (int): Current depth in search tree
@@ -354,8 +354,8 @@ class MonteCarloTreeSearch(Attack):
 
     def run_mcts(self):
         """
-            Runs Monte Carlo Tree Search at the current root.
-            Returns best node and best action.
+        Runs Monte Carlo Tree Search at the current root.
+        Returns best node and best action.
         """
 
         for i in range(self.num_iter):
@@ -450,7 +450,7 @@ class MonteCarloTreeSearch(Attack):
         if correct_output == new_label:
             return FailedAttackResult(tokenized_text, correct_output)
         else:
-             return AttackResult( 
+             return SuccessfulAttackResult( 
                     tokenized_text, 
                     new_tokenized_text, 
                     correct_output,

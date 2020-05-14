@@ -16,6 +16,8 @@ RECIPE_NAMES = {
     'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
     'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
     'tf-adjusted':      'textattack.attack_recipes.TextFoolerJin2019Adjusted',
+    'mha':              'textattack.attack_recipes.MHARecipe',
+    'mha-adjusted':     'textattack.attack_recipes.MHARecipeAdjusted'
 }
 
 MODEL_CLASS_NAMES = {
@@ -95,6 +97,7 @@ TRANSFORMATION_CLASS_NAMES = {
     'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',
     'word-swap-random-char-substitution':   'textattack.transformations.WordSwapRandomCharacterSubstitution',
     'word-swap-wordnet':                    'textattack.transformations.WordSwapWordNet',
+    'word-swap-language-model':             'textattack.transformations.WordSwapLanguageModel'
 }
 
 CONSTRAINT_CLASS_NAMES = {
@@ -128,6 +131,8 @@ SEARCH_CLASS_NAMES = {
     'greedy-word':      'textattack.search_methods.GreedyWordSwap',
     'ga-word':          'textattack.search_methods.GeneticAlgorithm',
     'greedy-word-wir':  'textattack.search_methods.GreedyWordSwapWIR',
+    'mcts':             'textattack.search_methods.MonteCarloTreeSearch',
+    'mha':              'textattack.search_methods.MetropolisHastingsSampling'
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {

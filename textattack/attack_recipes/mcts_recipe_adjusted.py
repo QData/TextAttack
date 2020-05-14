@@ -1,9 +1,9 @@
-from textattack.attack_methods import MonteCarloTreeSearch
+from textattack.search_methods import MonteCarloTreeSearch
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
-from textattack.constraints.syntax import PartOfSpeech, LanguageTool
-from textattack.transformations import WordSwapEmbedding
+from textattack.constraints.grammaticality import PartOfSpeech, LanguageTool
 from textattack.goal_functions import UntargetedClassification
+from textattack.transformations import WordSwapEmbedding
 
 def MCTSRecipeAdjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #

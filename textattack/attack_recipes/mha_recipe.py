@@ -1,9 +1,9 @@
-from textattack.attack_methods import MetropolisHastingsSampling
+from textattack.search_methods import MetropolisHastingsSampling
+from textattack.goal_functions import UntargetedClassification
+from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
-from textattack.constraints.syntax import PartOfSpeech
 from textattack.transformations import WordSwapEmbedding
-from textattack.goal_functions import UntargetedClassification
 
 def MHARecipe(model):
     #
