@@ -7,7 +7,6 @@ import textattack
 import time
 import torch
 import tqdm
-import psutil
 
 from .run_attack_args_helper import *
 
@@ -80,7 +79,7 @@ def run(args):
     num_successes = 0
     pbar = tqdm.tqdm(total=args.num_examples, smoothing=0)
     while num_results < args.num_examples:
-        result = out_queue.get(block=True)   
+        result = out_queue.get(block=True)
         if isinstance(result, Exception):
             raise result
         attack_log_manager.log_result(result)
