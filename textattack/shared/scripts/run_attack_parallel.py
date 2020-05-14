@@ -7,6 +7,7 @@ import textattack
 import time
 import torch
 import tqdm
+import psutil
 
 from .run_attack_args_helper import *
 
@@ -22,13 +23,15 @@ def set_env_variables(gpu_id):
         os.environ['TFHUB_CACHE_DIR'] = os.path.expanduser('~/.cache/tensorflow-hub')
 
 def attack_from_queue(args, in_queue, out_queue):
+    # Set sharing strategy to file_system to avoid file descriptor leaks
+    torch.multiprocessing.set_sharing_strategy('file_system')
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
     set_env_variables(gpu_id)
     _, attack = parse_goal_function_and_attack_from_args(args)
     if gpu_id == 0:
         print(attack, '\n')
     while not in_queue.empty():
-        try: 
+        try:
             output, text = in_queue.get()
             results_gen = attack.attack_dataset([(output, text)], num_examples=1)
             result = next(results_gen)
@@ -77,7 +80,7 @@ def run(args):
     num_successes = 0
     pbar = tqdm.tqdm(total=args.num_examples, smoothing=0)
     while num_results < args.num_examples:
-        result = out_queue.get(block=True)
+        result = out_queue.get(block=True)   
         if isinstance(result, Exception):
             raise result
         attack_log_manager.log_result(result)
@@ -107,6 +110,7 @@ def pytorch_multiprocessing_workaround():
     # This is a fix for a known bug
     try:
         torch.multiprocessing.set_start_method('spawn')
+        torch.multiprocessing.set_sharing_strategy('file_system')
     except RuntimeError:
         pass
 

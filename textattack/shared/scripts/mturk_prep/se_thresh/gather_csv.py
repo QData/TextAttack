@@ -13,7 +13,8 @@ def main():
         if 'final.txt' not in run_files:
             continue
         args_path = os.path.join(run_path,'args.txt')
-        args_lines = open(args_path, 'r').readlines()
+        with open(args_path, 'r') as f:
+            args_lines = f.readlines()
         se_thresh_idx = args_lines[0].find('tf-adjusted') + len('tf-adjusted:')
         se_thresh = args_lines[0][se_thresh_idx:]
         se_thresh = se_thresh[:se_thresh.index(' ')]
