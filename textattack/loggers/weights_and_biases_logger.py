@@ -1,10 +1,9 @@
-import wandb
-
 from textattack.shared.utils import html_table_from_rows
 from .logger import Logger
 
 class WeightsAndBiasesLogger(Logger):
     def __init__(self, filename='', stdout=False):
+        import wandb
         wandb.init(project='textattack')
         self._result_table_rows = []
 
