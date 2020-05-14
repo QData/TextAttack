@@ -35,9 +35,7 @@ Features
    :maxdepth: 2
    :caption: Attack Recipes:
 
-   attack_recipes/alzantot_genetic
-   attack_recipes/gao_deepwordbug
-   attack_recipes/jin_textfooler
+   attack_recipes/attack_recipes
 
 
 .. toctree::
@@ -60,10 +58,10 @@ Features
    :maxdepth: 2
    :caption: Constraints:
 
-   contraints/constraint
-   contraints/semantics
-   contraints/syntax
-   contraints/overlap
+   constraints/constraint
+   constraints/semantics
+   constraints/syntax
+   constraints/overlap
 
 
 .. toctree::
