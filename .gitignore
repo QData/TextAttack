@@ -34,3 +34,6 @@ dist/
 
 # Weights & Biases outputs
 wandb/
+
+# checkpoints
+checkpoints/

@@ -41,6 +41,17 @@ def attack_from_queue(args, in_queue, out_queue):
 
 def run(args):
     pytorch_multiprocessing_workaround()
+
+    if args.checkpoint_resume:
+        # Override current args with checkpoint args
+        resume_checkpoint = parse_checkpoint_from_args(args)
+        args = resume_checkpoint.args
+        num_examples_offset = resume_checkpoint.dataset_offset
+        num_examples = resume_checkpoint.num_remaining_attack
+        checkpoint_resume = True
+        logger.info('Recovered from previously saved checkpoint at {}'.format(resume_checkpoint.datetime))
+        print(resume_checkpoint, '\n')
+
     # This makes `args` a namespace that's sharable between processes.
     # We could do the same thing with the model, but it's actually faster
     # to let each thread have their own copy of the model.
@@ -49,11 +60,14 @@ def run(args):
     )
     start_time = time.time()
     
-    attack_log_manager = parse_logger_from_args(args)
+    if checkpoint_resume:
+        attack_log_manager = resume_checkpoint.log_manager
+    else:
+        attack_log_manager = parse_logger_from_args(args)
     
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
-    dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+    dataset = DATASET_BY_MODEL[args.model](offset=num_examples_offset)
     
     print(f'Running on {num_gpus} GPUs')
     load_time = time.time()
@@ -64,7 +78,7 @@ def run(args):
     in_queue = torch.multiprocessing.Queue()
     out_queue =  torch.multiprocessing.Queue()
     # Add stuff to queue.
-    for _ in range(args.num_examples):
+    for _ in range(num_examples):
         label, text = next(dataset)
         in_queue.put((label, text))
     # Start workers.
@@ -74,11 +88,16 @@ def run(args):
         (args, in_queue, out_queue)
     )
     # Log results asynchronously and update progress bar.
-    num_results = 0
-    num_failures = 0
-    num_successes = 0
-    pbar = tqdm.tqdm(total=args.num_examples, smoothing=0)
-    while num_results < args.num_examples:
+    if checkpoint_resume:
+        num_results = resume_checkpoint.results_count
+        num_failures = resume_checkpoint.num_failed_attacks
+        num_successes = resume_checkpoint.num_successful_attacks
+    else:
+        num_results = 0
+        num_failures = 0
+        num_successes = 0
+    pbar = tqdm.tqdm(total=num_examples, smoothing=0)
+    while num_results < num_examples:
         result = out_queue.get(block=True)
         if isinstance(result, Exception):
             raise result
@@ -94,6 +113,16 @@ def run(args):
         else:
             label, text = next(dataset)
             in_queue.put((label, text))
+
+        if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
+            chkpt_time = time.time()
+            date_time = datetime.datetime.fromtimestamp(chkpt_time).strftime('%Y-%m-%d %H:%M:%S')
+            print('\n\n' + '=' * 100)
+            logger.info('Saving checkpoint at {} after {} attacks.'.format(date_time, num_results))
+            print('=' * 100 + '\n')
+            checkpoint = textattack.shared.CheckPoint(chkpt_time, args, attack_log_manager)
+            checkpoint.save()
+
     pbar.close()
     print()
     # Enable summary stdout.

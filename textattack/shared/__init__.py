@@ -5,3 +5,4 @@ from . import validators
 
 from .tokenized_text import TokenizedText
 from .word_embedding import WordEmbedding
+from .checkpoint import CheckPoint
