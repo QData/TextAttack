@@ -49,7 +49,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 # Mock language_check to stop issues with Sphinx not loading it
-autodoc_mock_imports = ["language_check"]
+autodoc_mock_imports = []
 
 
 

@@ -22,6 +22,7 @@ TextAttack provides a set of **attack recipes** that assemble attacks from the l
 
 TextAttack has some other features that make it a pleasure to use:
 
+- **Data augmentation** using transformations & constraints
 - **Built-in Datasets** for running attacks without supplying your own data
 - **Pre-trained Models** for testing attacks and evaluating constraints
 - **Built-in tokenizers** so you don't have to worry about tokenizing the inputs
