@@ -3,6 +3,7 @@ import torch
 class GoalFunctionResult:
     """
     Represents the result of a goal function evaluating a TokenizedText object.
+    
     Args:
         tokenized_text: The sequence that was evaluated.
         output: The display-friendly output.

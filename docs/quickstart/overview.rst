@@ -8,7 +8,7 @@ TextAttack builds attacks from four components: a search method, goal function, 
 - A **transformation** perturbs the text input.
 - **Constraints** determine if a transformation is successful. 
 
-TextAttack also has built-in datasets and pre-trained models on these datasets. Below is an example of attacking a pre-trained model on the AGNews dataset::
+Any model that overrides ``__call__``, takes ``TokenizedText`` as input, and formats output correctly can be used with TextAttack. TextAttack also has built-in datasets and pre-trained models on these datasets. Below is an example of attacking a pre-trained model on the AGNews dataset::
 
     from tqdm import tqdm
     from textattack.loggers import FileLogger

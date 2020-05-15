@@ -1,5 +1,5 @@
 =====================
-Attack Documentation
+Search Methods
 =====================
 
 Search methods explore the transformation space in an attempt to find a successful attack as determined by a goal_function (:ref:`goal_function`) and possible constraints (:ref:`constraints`). All search methods are implemented as a subclass of the ``Attack`` class by implementing the ``attack_one`` method. 

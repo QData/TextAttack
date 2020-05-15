@@ -30,6 +30,7 @@ Features
    :caption: Search Methods:
 
    search_methods/attack
+   search_methods/attack_result
 
 .. toctree::
    :maxdepth: 2
@@ -52,13 +53,15 @@ Features
    :caption: Goal Functions:
 
    goal_functions/goal_functions
+   goal_functions/goal_function_results
 
 .. toctree::
    :maxdepth: 2
    :caption: Loggers:
 
-   
+   loggers/loggers
 
+   
 .. toctree::
    :maxdepth: 2
    :caption: Attack Recipes:
@@ -68,18 +71,10 @@ Features
 
 .. toctree::
    :maxdepth: 2
-   :caption: Attack Results:
+   :caption: Tokenizers & Tokenized Text:
 
-   attack_results/attack_result 
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Tokenizers:
-
-   tokenizers/tokenizer 
-   tokenizers/bert_tokenizer
-   tokenizers/spacy_tokenizer
+   tokenizers/tokenized_text
+   tokenizers/tokenizer
 
 
 .. toctree::
@@ -95,9 +90,7 @@ Features
    :maxdepth: 2
    :caption: Datasets:
 
-   datasets/generic
-   datasets/classification
-   datasets/entailment 
+   datasets/datasets
 
 
 Indices and tables
