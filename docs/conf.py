@@ -21,7 +21,7 @@ copyright = '2019, UVA QData Lab'
 author = 'UVA QData Lab'
 
 # The full version, including alpha/beta/rc tags
-release = '0.0.1'
+release = '0.0.1.9'
 
 # Set master doc to `index.rst`.
 master_doc = 'index'
@@ -35,7 +35,8 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
     'sphinx.ext.napoleon',
-    "sphinx_rtd_theme"
+    'sphinx_rtd_theme',
+    'nbsphinx'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -48,7 +49,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
 # Mock language_check to stop issues with Sphinx not loading it
-autodoc_mock_imports = ["language_check"]
+autodoc_mock_imports = []
 
 
 

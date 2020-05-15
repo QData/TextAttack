@@ -1,10 +1,11 @@
 .. _syntactical:
 
 ==============================
-Constraints based on Syntax
+Grammaticality
 ==============================
 
-Syntactic constraints determine if a transformation is valid based on the resulting syntax. 
+Grammaticality constraints determine if a transformation is valid based on
+syntactic properties of the perturbation.
 
 Language Models
 ################
@@ -14,12 +15,7 @@ Language Models
 .. automodule:: textattack.constraints.grammaticality.language_models.gpt2
    :members:
 
-Google Language Models 
-************************
 .. automodule:: textattack.constraints.grammaticality.language_models.google_language_model.google_language_model
-   :members:
-
-.. automodule:: textattack.constraints.grammaticality.language_models.google_language_model.alzantot_goog_lm
    :members:
 
 Language Tool 

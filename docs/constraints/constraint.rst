@@ -8,11 +8,11 @@ Constraints determine whether a given transformation is valid. Since transformat
 
 We split constraints into three main categories:
 
-   :ref:`semantics`: Check meaning of sentence
+   :ref:`semantic`: Based on the meaning of input and perturbation
 
-   :ref:`syntactical`: Check part-of-speech and grammar
+   :ref:`grammaticality`: Based on syntactic properties like part-of-speech and grammar
    
-   :ref:`overlap`: Measure edit distance
+   :ref:`overlap`: Based on character-based properties, like edit distance
 
 .. automodule:: textattack.constraints.constraint
    :members:
