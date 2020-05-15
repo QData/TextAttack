@@ -33,17 +33,26 @@ class CheckPoint:
 
         attack_logger_lines = []
         attack_logger_lines.append(utils.add_indent(
-            f'(Number of attacks performed: {self.results_count}', 2
+            f'(Total number of examples to attack): {self.args.num_examples}', 2
         ))
         attack_logger_lines.append(utils.add_indent(
-            f'(Number of successful attacks: {self.num_successful_attacks}', 2
+            f'(Number of attacks performed): {self.results_count}', 2
         ))
         attack_logger_lines.append(utils.add_indent(
-            f'(Number of failed attacks: {self.num_failed_attacks}', 2
+            f'(Number of remaining attacks): {self.num_remaining_attacks}', 2
         ))
-        attack_logger_lines.append(utils.add_indent(
-            f'(Number of skipped attacks: {self.num_skipped_attacks}', 2
+        breakdown_lines = []
+        breakdown_lines.append(utils.add_indent(
+            f'(Number of successful attacks): {self.num_successful_attacks}', 2
         ))
+        breakdown_lines.append(utils.add_indent(
+            f'(Number of failed attacks): {self.num_failed_attacks}', 2
+        ))
+        breakdown_lines.append(utils.add_indent(
+            f'(Number of skipped attacks): {self.num_skipped_attacks}', 2
+        ))
+        breakdown_str = utils.add_indent('\n' + '\n'.join(breakdown_lines), 2)
+        attack_logger_lines.append(utils.add_indent(f'(Latest result breakdown): {breakdown_str}', 2))
         attack_logger_str = utils.add_indent('\n' + '\n'.join(attack_logger_lines), 2)
         lines.append(utils.add_indent(f'(Previous attack summary):  {attack_logger_str}', 2))
 

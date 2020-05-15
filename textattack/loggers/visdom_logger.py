@@ -1,4 +1,5 @@
 import socket
+import copy
 from visdom import Visdom
 
 from textattack.shared.utils import html_table_from_rows
@@ -16,8 +17,21 @@ class VisdomLogger(Logger):
         if not port_is_open(port, hostname=hostname):
             raise socket.error(f'Visdom not running on {hostname}:{port}')
         self.vis = Visdom(port=port, server=hostname, env=env)
+        self.vis_args = {'port': port, 'server': hostname, 'env': env}
         self.windows = {}
         self.sample_rows = []
+
+    def __getstate__(self):
+        # Temporarily save socket handle b/c we can't copy it
+        tmp = self.vis
+        self.vis = None
+        state = copy.deepcopy(self.__dict__)
+        self.vis = tmp
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.vis = Visdom(**self.vis_args)
 
     def log_attack_result(self, result):
         text_a, text_b = result.diff_color(color_method='html')
@@ -51,7 +65,7 @@ class VisdomLogger(Logger):
         if not window_id:   window_id = title    # Can provide either of these,
         if not title:       title = window_id    # or both.
         table = html_table_from_rows(rows, title=title, header=header, style_dict=style)
-        self.text(table_html, title=title, window_id=window_id)
+        self.text(table, title=title, window_id=window_id)
 
     def bar(self, X_data, numbins=10, title=None, window_id=None):
         window = None
