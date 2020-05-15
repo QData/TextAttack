@@ -132,11 +132,11 @@ We welcome contributions and suggestions! Submit a pull request or issue and we 
 If you use TextAttack for your research, please cite [TextAttack: A Framework for Adversarial Attacks in Natural Language Processing](https://arxiv.org/abs/2005.05909).
 
 ```bibtex
-@inproceedings{Morris2020TextAttack,
-  title={TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
-  author={John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
-  year={2020},
-  Eprint = {arXiv:2005.05909},
+@misc{Morris2020TextAttack,
+    Author = {John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
+    Title = {TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
+    Year = {2020},
+    Eprint = {arXiv:2005.05909},
 }
 ```
 
