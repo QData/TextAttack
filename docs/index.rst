@@ -11,10 +11,21 @@ TextAttack
 Features 
 -----------
 
-- **Search Methods**: Explores the transformation space and attempts to find a successful attack
-- **Transformations**: Takes a text input and transforms it by replacing words and phrases while attempting to retain the meaning
-- **Constraints**: Determines if a given transformation is valid
-- **Built-in Datasets** and **Pre-trained Models** for ease of use
+TextAttack isn't just a Python library; it's a framework for constructing adversarial attacks in NLP. TextAttack builds attacks from four components:
+
+- **Goal Functions** stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output
+- **Search Methods** explores the space of transformations and attempt to find a successful perturbtion
+- **Transformations** takes a text input and transform it by replacing characters, words, or phrases
+- **Constraints**: Determines if a potential perturbtion is valid with respect to the original input
+
+TextAttack provides a set of **attack recipes** that assemble attacks from the literature from these four components.
+
+TextAttack has some other features that make it a pleasure to use:
+
+- **Built-in Datasets** for running attacks without supplying your own data
+- **Pre-trained Models** for testing attacks and evaluating constraints
+- **Built-in tokenizers** so you don't have to worry about tokenizing the inputs
+- **Visualization options** like Visdom and Weights & Biases
 
 
 .. toctree::
@@ -23,6 +34,13 @@ Features
 
    quickstart/installation
    quickstart/overview
+   
+.. toctree::
+   :maxdepth: 2
+   :caption: Examples
+
+   examples/1_Introduction_and_Transformtions.ipynb
+   examples/2_Constraints.ipynb
 
 
 .. toctree::
@@ -44,7 +62,7 @@ Features
 
    constraints/constraint
    constraints/semantics
-   constraints/syntax
+   constraints/grammaticality
    constraints/overlap
 
 

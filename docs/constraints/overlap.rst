@@ -1,7 +1,7 @@
 .. _overlap:
 
 ==========================================
-Constraints based on Overlap
+Overlap
 ==========================================
 
 Overlap constraints determine if a transformation is valid based on character-level analysis.

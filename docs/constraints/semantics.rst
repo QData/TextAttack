@@ -1,10 +1,11 @@
 .. _semantics:
 
 ================================
-Constraints based on Semantics
+Semantics
 ================================
 
-Semantic constraints determine if a transformation is valid based on similarity of the semantics between the orignal input and the transformed input.
+Semantic constraints determine if a transformation is valid based on similarity 
+of the semantics between the orignal input and the transformed input.
 
 Word Embedding Distance 
 ########################
