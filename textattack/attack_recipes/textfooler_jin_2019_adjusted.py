@@ -8,14 +8,14 @@
     
 """
 
-from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
-from textattack.constraints.syntax import PartOfSpeech, LanguageTool
-from textattack.transformations import WordSwapEmbedding
+from textattack.constraints.grammaticality import PartOfSpeech, LanguageTool
 from textattack.goal_functions import UntargetedClassification
+from textattack.search_methods import GreedyWordSwapWIR
+from textattack.transformations import WordSwapEmbedding
 
-def Jin2019TextFoolerAdjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
+def TextFoolerJin2019Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     # Swap words with their embedding nearest-neighbors. 
     #

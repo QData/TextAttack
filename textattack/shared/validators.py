@@ -1,6 +1,7 @@
 import collections
 import re
 
+import textattack
 from textattack.goal_functions import *
 
 from .utils import get_logger
@@ -60,3 +61,15 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     # update the corresponding dictionary. Warn user and return.
     logger.warn(f'Unknown if model {model} compatible with goal function {goal_function}.')
     return True
+    
+def validate_model_gradient_word_swap_compatibility(model):
+    """
+        Determines if `model` is task-compatible with `GradientBasedWordSwap`. 
+        
+        We can only take the gradient with respect to an individual word if the
+            model uses a word-based tokenizer.
+    """
+    if isinstance(model, textattack.models.helpers.LSTMForClassification):
+        return True
+    else:
+        raise ValueError(f'Cannot perform GradientBasedWordSwap on model {model}.')

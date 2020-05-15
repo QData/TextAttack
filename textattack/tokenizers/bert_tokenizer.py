@@ -1,4 +1,3 @@
-from transformers.tokenization_bert import BertTokenizer, BertTokenizerFast
 from textattack.tokenizers import AutoTokenizer
 
 class BERTTokenizer(AutoTokenizer):

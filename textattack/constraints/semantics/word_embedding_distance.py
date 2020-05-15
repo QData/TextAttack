@@ -55,16 +55,18 @@ class WordEmbeddingDistance(Constraint):
         # Precomputed distance matrices store distances at mat[x][y], where
         # x and y are word IDs and x < y.
         if self.max_mse_dist is not None and os.path.exists(mse_dist_file):
-            self.mse_dist_mat = pickle.load(open(mse_dist_file, 'rb'))
+            with open(mse_dist_file, 'rb') as f:
+                self.mse_dist_mat = pickle.load(f)
         else:
             self.mse_dist_mat = {}
         if self.min_cos_sim is not None and os.path.exists(cos_sim_file):
-            self.cos_sim_mat = pickle.load(open(cos_sim_file, 'rb'))
+            with open(cos_sim_file, 'rb') as f:
+                self.cos_sim_mat = pickle.load(f)
         else:
             self.cos_sim_mat = {}
         
     
-    def call_many(self, x, x_adv_list, original_word=None):
+    def call_many(self, x, x_adv_list, original_text=None):
         """ Returns each `x_adv` from `x_adv_list` where `C(x,x_adv)` is True. 
         """
         return [x_adv for x_adv in x_adv_list if self(x, x_adv)]
@@ -116,6 +118,8 @@ class WordEmbeddingDistance(Constraint):
             x_adv = x_adv.words[i]
         except AttributeError:
             raise AttributeError('Cannot apply word embedding distance constraint without `modified_word_index`')
+        except IndexError:
+            raise IndexError(f'Could not find word at index {i} with x {x} x_adv {x_adv}.')
             
         if not self.cased:
             # If embedding vocabulary is all lowercase, lowercase words.

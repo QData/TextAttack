@@ -12,12 +12,12 @@
     
 """
 
-from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import NonOverlappingOutput
+from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import WordSwapEmbedding
 
-def Cheng2018Seq2SickBlackBox(model, goal_function='non_overlapping'):
+def Seq2SickCheng2018BlackBox(model, goal_function='non_overlapping'):
     #
     # Goal is non-overlapping output.
     #

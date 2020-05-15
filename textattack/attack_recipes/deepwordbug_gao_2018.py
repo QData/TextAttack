@@ -8,15 +8,16 @@
     
 """
 
-from textattack.attack_methods import GreedyWordSwapWIR
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import UntargetedClassification
+from textattack.search_methods import GreedyWordSwapWIR
+from textattack.transformations import CompositeTransformation
 from textattack.transformations import \
-    CompositeTransformation, WordSwapNeighboringCharacterSwap, \
+    WordSwapNeighboringCharacterSwap, \
     WordSwapRandomCharacterDeletion, WordSwapRandomCharacterInsertion, \
     WordSwapRandomCharacterSubstitution, WordSwapNeighboringCharacterSwap
 
-def Gao2018DeepWordBug(model, use_all_transformations=True):
+def DeepWordBugGao2018(model, use_all_transformations=True):
     #
     # Swap characters out from words. Choose the best of four potential transformations. 
     #

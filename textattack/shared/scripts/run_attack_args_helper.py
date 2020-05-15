@@ -8,18 +8,21 @@ import time
 import torch
 
 RECIPE_NAMES = {
-    'alzantot':      'textattack.attack_recipes.Alzantot2018GeneticAlgorithm',
-    'alz-adjusted':  'textattack.attack_recipes.Alzantot2018GeneticAlgorithmAdjusted',
-    'deepwordbug':   'textattack.attack_recipes.Gao2018DeepWordBug',
-    'seq2sick':      'textattack.attack_recipes.Cheng2018Seq2SickBlackBox',
-    'textfooler':    'textattack.attack_recipes.Jin2019TextFooler',
-    'tf-adjusted':   'textattack.attack_recipes.Jin2019TextFoolerAdjusted',
+    'alzantot':         'textattack.attack_recipes.Alzantot2018',
+    'alz-adjusted':     'textattack.attack_recipes.Alzantot2018Adjusted',
+    'deepwordbug':      'textattack.attack_recipes.DeepWordBugGao2018',
+    'hotflip':          'textattack.attack_recipes.HotFlipEbrahimi2017',
+    'kuleshov':         'textattack.attack_recipes.Kuleshov2017',
+    'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
+    'tf-adjusted':      'textattack.attack_recipes.TextFoolerJin2019Adjusted',
 }
 
 MODEL_CLASS_NAMES = {
     #
     # Text classification models
     #
+    
     # BERT models - default uncased
     'bert-ag-news':             'textattack.models.classification.bert.BERTForAGNewsClassification',
     'bert-imdb':                'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
@@ -85,31 +88,52 @@ DATASET_BY_MODEL = {
 }
 
 TRANSFORMATION_CLASS_NAMES = {
-    'word-swap-wordnet':               'textattack.transformations.WordSwapWordNet',
-    'word-swap-embedding':             'textattack.transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':             'textattack.transformations.WordSwapHomoglyph',
-    'word-swap-neighboring-char-swap': 'textattack.transformations.WordSwapNeighboringCharacterSwap',
+    'word-swap-embedding':                  'textattack.transformations.WordSwapEmbedding',
+    'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyph',
+    'word-swap-neighboring-char-swap':      'textattack.transformations.WordSwapNeighboringCharacterSwap',
+    'word-swap-random-char-deletion':       'textattack.transformations.WordSwapRandomCharacterDeletion',
+    'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',
+    'word-swap-random-char-substitution':   'textattack.transformations.WordSwapRandomCharacterSubstitution',
+    'word-swap-wordnet':                    'textattack.transformations.WordSwapWordNet',
 }
 
 CONSTRAINT_CLASS_NAMES = {
-    'embedding':    'textattack.constraints.semantics.WordEmbeddingDistance',
-    'goog-lm':      'textattack.constraints.semantics.language_models.GoogleLanguageModel',
-    'bert':         'textattack.constraints.semantics.sentence_encoders.BERT',
-    'infer-sent':   'textattack.constraints.semantics.sentence_encoders.InferSent',
-    'use':          'textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
-    'lang-tool':    'textattack.constraints.syntax.LanguageTool', 
+    #
+    # Semantics constraints
+    #
+    'embedding':        'textattack.constraints.semantics.WordEmbeddingDistance',
+    'bert':             'textattack.constraints.semantics.sentence_encoders.BERT',
+    'infer-sent':       'textattack.constraints.semantics.sentence_encoders.InferSent',
+    'thought-vector':   'textattack.constraints.semantics.sentence_encoders.ThoughtVector',
+    'use':              'textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
+    #
+    # Grammaticality constraints
+    #
+    'lang-tool':        'textattack.constraints.grammaticality.LanguageTool', 
+    'part-of-speech':   'textattack.constraints.grammaticality.PartOfSpeech', 
+    'goog-lm':          'textattack.constraints.grammaticality.language_models.GoogleLanguageModel',
+    'gpt2':             'textattack.constraints.grammaticality.language_models.GPT2',
+    #
+    # Overlap constraints
+    #
+    'bleu':             'textattack.constraints.overlap.BLEU', 
+    'chrf':             'textattack.constraints.overlap.chrF', 
+    'edit-distance':    'textattack.constraints.overlap.LevenshteinEditDistance',
+    'meteor':           'textattack.constraints.overlap.METEOR',
+    'words-perturbed':  'textattack.constraints.overlap.WordsPerturbed',
 }
 
-ATTACK_CLASS_NAMES = {
-    'beam-search':        'textattack.attack_methods.BeamSearch',
-    'greedy-word':        'textattack.attack_methods.GreedyWordSwap',
-    'ga-word':            'textattack.attack_methods.GeneticAlgorithm',
-    'greedy-word-wir':    'textattack.attack_methods.GreedyWordSwapWIR',
+SEARCH_CLASS_NAMES = {
+    'beam-search':      'textattack.search_methods.BeamSearch',
+    'greedy-word':      'textattack.search_methods.GreedyWordSwap',
+    'ga-word':          'textattack.search_methods.GeneticAlgorithm',
+    'greedy-word-wir':  'textattack.search_methods.GreedyWordSwapWIR',
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {
-    'untargeted-classification':      'textattack.goal_functions.UntargetedClassification',
-    'targeted-classification':        'textattack.goal_functions.TargetedClassification',
+    'non-overlapping-output':     'textattack.goal_functions.NonOverlappingOutput',
+    'targeted-classification':    'textattack.goal_functions.TargetedClassification',
+    'untargeted-classification':  'textattack.goal_functions.UntargetedClassification',
 }
 
 def set_seed(random_seed):
@@ -130,25 +154,28 @@ def get_args():
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
-        default=[], choices=CONSTRAINT_CLASS_NAMES.keys(),
-        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}"'))
+        default=[],
+        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys())))
     
-    parser.add_argument('--out_dir', type=str, required=False, default=None,
+    parser.add_argument('--out-dir', type=str, required=False, default=None,
         help='A directory to output results to.')
     
-    parser.add_argument('--enable_visdom', action='store_true',
+    parser.add_argument('--enable-visdom', action='store_true',
         help='Enable logging to visdom.')
     
-    parser.add_argument('--disable_stdout', action='store_true',
+    parser.add_argument('--enable-wandb', action='store_true',
+        help='Enable logging to Weights & Biases.')
+    
+    parser.add_argument('--disable-stdout', action='store_true',
         help='Disable logging to stdout')
    
-    parser.add_argument('--enable_csv', nargs='?', default=None, const='fancy', type=str,
-        help='Enable logging to csv. Use --enable_csv plain to remove [[]] around words.')
+    parser.add_argument('--enable-csv', nargs='?', default=None, const='fancy', type=str,
+        help='Enable logging to csv. Use --enable-csv plain to remove [[]] around words.')
 
-    parser.add_argument('--num_examples', '-n', type=int, required=False, 
+    parser.add_argument('--num-examples', '-n', type=int, required=False, 
         default='5', help='The number of examples to process.')
     
-    parser.add_argument('--num_examples_offset', '-o', type=int, required=False, 
+    parser.add_argument('--num-examples-offset', '-o', type=int, required=False, 
         default=0, help='The offset to start at in the dataset.')
 
     parser.add_argument('--shuffle', action='store_true', required=False, 
@@ -157,25 +184,25 @@ def get_args():
     parser.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
     
-    parser.add_argument('--attack_n', action='store_true', default=False,
+    parser.add_argument('--attack-n', action='store_true', default=False,
         help='Whether to run attack until `n` examples have been attacked (not skipped).')
     
     parser.add_argument('--parallel', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
 
     goal_function_choices = ', '.join(GOAL_FUNCTION_CLASS_NAMES.keys())
-    parser.add_argument('--goal_function', '-g', default='untargeted-classification',
+    parser.add_argument('--goal-function', '-g', default='untargeted-classification',
         help=f'The goal function to use. choices: {goal_function_choices}')
     
     def str_to_int(s): return sum((ord(c) for c in s))
-    parser.add_argument('--random_seed', default=str_to_int('TEXTATTACK'))
+    parser.add_argument('--random-seed', default=str_to_int('TEXTATTACK'))
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
-    attack_choices = ', '.join(ATTACK_CLASS_NAMES.keys())
+    search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
     attack_group.add_argument('--attack', '--attack_method', type=str, 
         required=False, default='greedy-word-wir', 
-        help=f'The type of attack to run. choices: {attack_choices}')
+        help=f'The type of attack to run. choices: {search_choices}')
     
     attack_group.add_argument('--recipe', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
@@ -266,42 +293,45 @@ def parse_goal_function_and_attack_from_args(args):
         constraints = parse_constraints_from_args(args)
         if ':' in args.attack:
             attack_name, params = args.attack.split(':')
-            if attack_name not in ATTACK_CLASS_NAMES:
+            if attack_name not in SEARCH_CLASS_NAMES:
                 raise ValueError(f'Error: unsupported attack {attack_name}')
-            attack = eval(f'{ATTACK_CLASS_NAMES[attack_name]}(goal_function, transformation, constraints=constraints, {params})')
-        elif args.attack in ATTACK_CLASS_NAMES:
-            attack = eval(f'{ATTACK_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
+            attack = eval(f'{SEARCH_CLASS_NAMES[attack_name]}(goal_function, transformation, constraints=constraints, {params})')
+        elif args.attack in SEARCH_CLASS_NAMES:
+            attack = eval(f'{SEARCH_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
         else:
             raise ValueError(f'Error: unsupported attack {args.attack}')
     return goal_function, attack
 
 def parse_logger_from_args(args):# Create logger
-    attack_logger = textattack.loggers.AttackLogger()
+    attack_log_manager = textattack.loggers.AttackLogManager()
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
-        outputs_dir = os.path.join(current_dir, os.pardir, 'outputs')
+        outputs_dir = os.path.join(current_dir, os.pardir, os.pardir, os.pardir, 'outputs')
         args.out_dir = outputs_dir
         
     # Output file.
     out_time = int(time.time()*1000) # Output file
     outfile_name = 'attack-{}.txt'.format(out_time)
-    attack_logger.add_output_file(os.path.join(args.out_dir, outfile_name))
+    attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
         
     # CSV
     if args.enable_csv:
         outfile_name = 'attack-{}.csv'.format(out_time)
         color_method = None if args.enable_csv == 'plain' else 'file'
         csv_path = os.path.join(args.out_dir, outfile_name)
-        attack_logger.add_output_csv(csv_path, color_method)
+        attack_log_manager.add_output_csv(csv_path, color_method)
         print('Logging to CSV at path {}.'.format(csv_path))
-
 
     # Visdom
     if args.enable_visdom:
-        attack_logger.enable_visdom()
+        attack_log_manager.enable_visdom()
+        
+    # Weights & Biases
+    if args.enable_wandb:
+        attack_log_manager.enable_wandb()
 
     # Stdout
     if not args.disable_stdout:
-        attack_logger.enable_stdout()
-    return attack_logger
+        attack_log_manager.enable_stdout()
+    return attack_log_manager

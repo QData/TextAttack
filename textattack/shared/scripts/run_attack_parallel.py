@@ -11,6 +11,8 @@ import tqdm
 from .run_attack_args_helper import *
 
 def set_env_variables(gpu_id):
+    # Set sharing strategy to file_system to avoid file descriptor leaks
+    torch.multiprocessing.set_sharing_strategy('file_system')
     # Only use one GPU, if we have one.
     if 'CUDA_VISIBLE_DEVICES' not in os.environ:
         os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
@@ -28,7 +30,7 @@ def attack_from_queue(args, in_queue, out_queue):
     if gpu_id == 0:
         print(attack, '\n')
     while not in_queue.empty():
-        try: 
+        try:
             output, text = in_queue.get()
             results_gen = attack.attack_dataset([(output, text)], num_examples=1)
             result = next(results_gen)
@@ -47,7 +49,7 @@ def run(args):
     )
     start_time = time.time()
     
-    attack_logger = parse_logger_from_args(args)
+    attack_log_manager = parse_logger_from_args(args)
     
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
@@ -80,7 +82,7 @@ def run(args):
         result = out_queue.get(block=True)
         if isinstance(result, Exception):
             raise result
-        attack_logger.log_result(result)
+        attack_log_manager.log_result(result)
         if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
             pbar.update()
             num_results += 1
@@ -96,9 +98,9 @@ def run(args):
     print()
     # Enable summary stdout.
     if args.disable_stdout:
-        attack_logger.enable_stdout()
-    attack_logger.log_summary()
-    attack_logger.flush()
+        attack_log_manager.enable_stdout()
+    attack_log_manager.log_summary()
+    attack_log_manager.flush()
     print()
     finish_time = time.time()
     print(f'Attack time: {time.time() - load_time}s')
@@ -107,6 +109,7 @@ def pytorch_multiprocessing_workaround():
     # This is a fix for a known bug
     try:
         torch.multiprocessing.set_start_method('spawn')
+        torch.multiprocessing.set_sharing_strategy('file_system')
     except RuntimeError:
         pass
 

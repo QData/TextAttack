@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="textattack",
-    version="0.0.1.7",
+    version="0.0.1.9",
     author="QData Lab at the University of Virginia",
     author_email="jm8wx@virginia.edu",
     description="A library for generating text adversarial examples",
