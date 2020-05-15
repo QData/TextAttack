@@ -15,11 +15,13 @@ from textattack.transformations import WordSwap
 class GeneticAlgorithm(Attack):
     """
     Attacks a model using a genetic algorithm. 
+
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
         transformation: The type of transformation to use. Should be a subclass of WordSwap. 
         pop_size (:obj:`int`, optional): The population size. Defauls to 20. 
         max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 50. 
+
     Raises:
         ValueError: If the transformation is not a subclass of WordSwap. 
     """
@@ -37,9 +39,11 @@ class GeneticAlgorithm(Attack):
         """
         Select the best replacement for word at position (idx) 
         in (pop_member) to maximize score.
+
         Args:
             pop_member: The population member being perturbed.
             idx: The index at which to replace a word.
+
         Returns:
             Whether a replacement which decreased the score was found.
         """
@@ -182,6 +186,7 @@ class GeneticAlgorithm(Attack):
 class PopulationMember:
     """
     A member of the population during the course of the genetic algorithm.
+    
     Args:
         tokenized_text: The tokenized text of the population member.
         neighbors_len: A list of the number of candidate neighbors list for each word.
