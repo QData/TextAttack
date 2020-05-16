@@ -5,7 +5,7 @@ import torch
 
 from textattack.shared import utils
 from textattack.constraints import Constraint
-from textattack.shared.tokenized_text import TokenizedText
+from textattack.shared import TokenizedText
 
 class WordEmbeddingDistance(Constraint):
     """
@@ -65,12 +65,6 @@ class WordEmbeddingDistance(Constraint):
         else:
             self.cos_sim_mat = {}
         
-    
-    def call_many(self, x, x_adv_list, original_text=None):
-        """ Returns each `x_adv` from `x_adv_list` where `C(x,x_adv)` is True. 
-        """
-        return [x_adv for x_adv in x_adv_list if self(x, x_adv)]
-    
     def get_cos_sim(self, a, b):
         """ Returns the cosine similarity of words with IDs a and b."""
         if isinstance(a, str):
@@ -103,7 +97,7 @@ class WordEmbeddingDistance(Constraint):
             self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
     
-    def __call__(self, x, x_adv):
+    def __call__(self, x, x_adv, original_text=None):
         """ Returns true if (x, x_adv) are closer than `self.min_cos_sim`
             and `self.max_mse_dist`. """
         

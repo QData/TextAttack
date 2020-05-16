@@ -1,4 +1,4 @@
-from textattack.shared.tokenized_text import TokenizedText
+from textattack.shared import TokenizedText
 
 class Augmenter:
     """ A class for performing data augmentation using TextAttack.

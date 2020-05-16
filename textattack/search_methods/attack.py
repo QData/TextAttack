@@ -76,7 +76,6 @@ class Attack:
         transformations = original_transformations[:]
         for C in self.constraints:
             if len(transformations) == 0: break
-            tl = len(transformations)
             transformations = C.call_many(text, transformations, original_text=original_text)
         # Default to false for all original transformations.
         for original_transformation in original_transformations:
