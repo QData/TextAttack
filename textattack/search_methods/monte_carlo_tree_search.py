@@ -13,64 +13,6 @@ import time, os
 import collections
 import multiprocessing as mp
 
-PROFILE = False
-if PROFILE:
-    import io
-    import pstats
-    import cProfile
-    from pstats import SortKey
-
-"""
-Functions for visualizing the search tree using graphviz.
-Not essential for running MCTS.
-"""
-LOG_OUPUTS = False
-if LOG_OUPUTS:
-    import graphviz
-    import pickle
-
-def get_edge_label(root, action):
-    root_text = root.text.words
-    return f"({root_text[action[0]]} --> {action[1]})"
-
-def get_node_label(node):
-    value = str(round(node.value,2))
-    return value + " / " + str(node.num_visits)
-
-def generate_dot(root_node, action_history, filename, success):
-
-    dot = graphviz.Graph(f"mcts_{time.time()}", comment=f"{root_node.text.text}", filename=f"mcts_{time.time()}")
-    queue = collections.deque()
-    queue.append(root_node)
-
-    dot.attr(label=f"\n\n\nOriginal text: {root_node.text.text}")
-    dot.node(str(root_node.id), label=get_node_label(root_node))
-
-    realized_node = root_node.id
-
-    if success:
-        color = "green"
-    else:
-        color = "red"
-
-    while queue:
-        node = queue.popleft()
-
-        for action, child in node.children.items():
-            if child.num_visits > 0:
-                if action_history and action == action_history[0] and node.id == realized_node:
-                    dot.node(str(child.id), label=get_node_label(child), color=color)
-                    dot.edge(str(node.id), str(child.id), label=get_edge_label(root_node, action), color=color)
-                    action_history.pop(0)
-                    realized_node = child.id
-                else:
-                    dot.node(str(child.id), label=get_node_label(child))
-                    dot.edge(str(node.id), str(child.id), label=get_edge_label(root_node, action))
-                queue.append(child)
-
-    with open(f"outputs/{filename}.pkl", "wb") as f:
-        pickle.dump(dot, f)
-
 class Node:
     """
         Represents a node in search tree
@@ -163,7 +105,7 @@ class MonteCarloTreeSearch(Attack):
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
 
-    def __init__(self, model, transformation, constraints=[], num_iter=100, top_k=3, max_words_changed=32):
+    def __init__(self, model, transformation, constraints=[], num_iter=1000, top_k=3, max_words_changed=32):
         super().__init__(model, transformation, constraints=constraints)
 
         # MCTS Hyper-parameters
@@ -177,28 +119,12 @@ class MonteCarloTreeSearch(Attack):
         self.branch_factor = 10
         self.transformation.max_candidates = self.branch_factor
 
-    def choose_top_transformations(self, transformations):
-        """
-        transformations (list<TokenizedText>)
-        Returns:
-            list of difference if original class probability given by model under attack
-        """
-        prob = self._call_model(transformations)
-        scores = np.zeros(len(transformations))
-        for i in range(len(probs)):
-            diff = self.tree.original_confidence - probs[i][self.tree.original_label].item()
-            scores[i] = diff
-        top_choices = np.argsort(scores)[-self.top_k:]
-        if len(top_choices) != self.top_k:
-            raise ValueError("Dimension error")
-        return [transformations[i] for i in top_choices]
-
     def evaluate(self, current_node):
         """
             Evaluates the final (or current) transformation
         """
         result = self.goal_function.get_results([current_node.text], self.tree.original_label)[0]
-        return result.score.item(), result.output
+        return result.score, result.output
 
     def backprop(self, current_node, search_value):
         """
@@ -339,7 +265,10 @@ class MonteCarloTreeSearch(Attack):
 
             for action in current_node.children.keys():
                 ucb_value = self.UCB_RAVE_tuned(
-                    current_node.children[action], action, current_node.num_visits)
+                    current_node.children[action], 
+                    action, 
+                    current_node.num_visits
+                )
 
                 if ucb_value > best_ucb_value:
                     best_next_node = current_node.children[action]
@@ -369,7 +298,8 @@ class MonteCarloTreeSearch(Attack):
             if current_node is not None and current_node.depth < self.tree.max_depth:
                 current_node = self.simulate(current_node)
 
-            search_value, _ = self.evaluate(current_node)
+            result = self.goal_function.get_results([current_node.text], self.tree.original_label)[0]
+            search_value = result.score
             self.backprop(current_node, search_value)
 
         # Select best choice based on node value
@@ -396,7 +326,7 @@ class MonteCarloTreeSearch(Attack):
 
         original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
         # Initial values
-        new_score = original_result.score.item()
+        new_score = original_result.score
         new_label = original_result.output
 
         max_tree_depth = min(self.window_size, len(tokenized_text.words))
@@ -407,10 +337,6 @@ class MonteCarloTreeSearch(Attack):
         original_root = self.tree.root
         final_action_history = []
 
-        if PROFILE:
-            profiler = cProfile.Profile()
-            profiler.enable()
-
         for i in range(max_words_changed):
             best_next_node, best_action = self.run_mcts()
             if best_next_node is None:
@@ -419,42 +345,13 @@ class MonteCarloTreeSearch(Attack):
             self.tree.root = best_next_node
             self.tree.reset_node_depth()
             final_action_history.append(best_action)
-            new_score, new_label = self.evaluate(self.tree.root)
+            new_result = self.goal_function.get_results([self.tree.root.text], self.tree.original_label)[0]
 
-            if new_label != correct_output:
+            if new_result.output != correct_output:
                 new_tokenized_text = self.tree.root.text
                 break
 
-        if PROFILE:
-            profiler.disable()
-
-            s = io.StringIO()
-            sortby = SortKey.CUMULATIVE
-            ps = pstats.Stats(profiler, stream=s).sort_stats(sortby)
-            ps.print_stats()
-            print(s.getvalue())
-
-        if LOG_OUPUTS:
-            print("Logging...")
-            file_name = f"mcts_{time.time()}"
-            status = original_label != new_label
-            generate_dot(original_root, final_action_history, file_name, status)
-
-            with open(f"outputs/{file_name}_grave.txt", 'w') as f:
-                f.write("Original Text: " + original_tokenized_text.text + "\n")
-                for action in self.tree.global_rave_values:
-                    value, num = self.tree.global_rave_values[action]
-                    f.write(f"Action: ({action[0]}, {action[1]})\n")
-                    f.write(f"Value: {value}   |   Number actions taken: {num} \n\n")
-
-        if correct_output == new_label:
-            return FailedAttackResult(tokenized_text, correct_output)
+        if correct_output == new_result.output:
+            return FailedAttackResult(original_result, new_result)
         else:
-             return SuccessfulAttackResult( 
-                    tokenized_text, 
-                    new_tokenized_text, 
-                    correct_output,
-                    new_label,
-                    float(original_result.score),
-                    float(new_score)
-                )
+             return SuccessfulAttackResult(original_result, new_result)

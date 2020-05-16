@@ -137,6 +137,7 @@ class TokenizedText:
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
         self.attack_attrs['modified_word_index'] = index
+        self.attack_attrs['new_word'] = new_word
         return self.replace_words_at_indices([index], [new_word])
     
     def replace_new_words(self, new_words):
