@@ -11,6 +11,8 @@ import tqdm
 from .run_attack_args_helper import *
 
 def set_env_variables(gpu_id):
+    # Set sharing strategy to file_system to avoid file descriptor leaks
+    torch.multiprocessing.set_sharing_strategy('file_system')
     # Only use one GPU, if we have one.
     if 'CUDA_VISIBLE_DEVICES' not in os.environ:
         os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
@@ -28,7 +30,7 @@ def attack_from_queue(args, in_queue, out_queue):
     if gpu_id == 0:
         print(attack, '\n')
     while not in_queue.empty():
-        try: 
+        try:
             output, text = in_queue.get()
             results_gen = attack.attack_dataset([(output, text)], num_examples=1)
             result = next(results_gen)
@@ -107,6 +109,7 @@ def pytorch_multiprocessing_workaround():
     # This is a fix for a known bug
     try:
         torch.multiprocessing.set_start_method('spawn')
+        torch.multiprocessing.set_sharing_strategy('file_system')
     except RuntimeError:
         pass
 

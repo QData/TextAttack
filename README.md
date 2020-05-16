@@ -18,7 +18,7 @@
   
 ## About
 
-TextAttack is a Python framework for running adversarial attacks against NLP models. TextAttack builds attacks from four components: a serach method, goal function, transformation, and set of constraints. TextAttack's modular design makes it easily extensible to new NLP tasks, models, and attack strategies. TextAttack currently supports attacks on models trained for classification, entailment, and translation.
+TextAttack is a Python framework for running adversarial attacks against NLP models. TextAttack builds attacks from four components: a search method, goal function, transformation, and set of constraints. TextAttack's modular design makes it easily extensible to new NLP tasks, models, and attack strategies. TextAttack currently supports attacks on models trained for classification, entailment, and translation.
 
 ## Setup
 
@@ -39,26 +39,25 @@ environment variable `TA_CACHE_DIR`.
 
 ### Running Attacks
 
-The [`examples/`](examples/) folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint.
+The [`examples/`](docs/examples/) folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint. These examples can also be viewed through the [documentation website](https://textattack.readthedocs.io/en/latest).
 
 We also have a command-line interface for running attacks. See help info and list of arguments with `python -m textattack --help`.
 
 ### Attack Recipes
 
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python -m textattack --recipe [recipe_name]`
-Currently, we include six recipes, all synonym substitution-based.
 
 The first are for classification and entailment attacks:
 - **textfooler**: Greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932)).
 - **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998)).
 - **tf-adjusted**: TextFooler attack with constraint thresholds adjusted based on human evaluation and grammaticality enforced.
 - **alz-adjusted**: Alzantot's attack adjusted to follow the same constraints as tf-adjusted such that the only difference is the search method.
-- **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers"](https://arxiv.org/abs/1801.04354)).
-- **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification"](https://arxiv.org/abs/1712.06751)
-- **kuleshov**: Greedy search and counterfitted embedding swap (["Adversarial Examples for Natural Language Classification Problems"](https://openreview.net/pdf?id=r1QZ3zbAZ)
+- **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)).
+- **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751)).
+- **kuleshov**: Greedy search and counterfitted embedding swap (["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ)).
 
 The final is for translation attacks:
-- **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples"](https://arxiv.org/abs/1803.01128)).
+- **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)).
 
 ### Augmenting Text
 
@@ -126,3 +125,18 @@ A search method is currently implemented in an extension of the `Attack` class, 
 ## Contributing to TextAttack
 
 We welcome contributions and suggestions! Submit a pull request or issue and we will do our best to respond in a timely manner.
+
+## Citing TextAttack
+
+If you use TextAttack for your research, please cite [TextAttack: A Framework for Adversarial Attacks in Natural Language Processing](https://arxiv.org/abs/2005.05909).
+
+```bibtex
+@misc{Morris2020TextAttack,
+    Author = {John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
+    Title = {TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
+    Year = {2020},
+    Eprint = {arXiv:2005.05909},
+}
+```
+
+

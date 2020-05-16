@@ -3,20 +3,22 @@ from copy import deepcopy
 from .utils import get_device, words_from_text
 
 class TokenizedText:
-    """ A helper class that represents a string that can be attacked. """
-    
-    """ Models that take multiple sentences as input separate them by `SPLIT_TOKEN`. Attacks "see" the entire 
-        input, joined into one string, without the split token. 
+
+    """ 
+     A helper class that represents a string that can be attacked.
+     
+     Models that take multiple sentences as input separate them by `SPLIT_TOKEN`. 
+     Attacks "see" the entire input, joined into one string, without the split token. 
+
+     Args:
+        text (string): The string that this TokenizedText represents
+        tokenizer (textattack.Tokenizer): An object that can encode text
+        
     """
+   
     SPLIT_TOKEN = '>>>>'
     
-    def __init__(self, text, tokenizer, attack_attrs=dict()):
-        """ Initializer stores text and tensor of tokenized text.
-        
-        Args:
-            text (string): The string that this TokenizedText represents
-            tokenizer (textattack.Tokenizer): an object that can encode text
-        """
+    def __init__(self, text, tokenizer, attack_attrs=dict()):   
         text = text.strip()
         self.tokenizer = tokenizer
         ids = tokenizer.encode(text)

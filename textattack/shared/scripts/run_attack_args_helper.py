@@ -17,7 +17,8 @@ RECIPE_NAMES = {
     'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
     'tf-adjusted':      'textattack.attack_recipes.TextFoolerJin2019Adjusted',
     'mha':              'textattack.attack_recipes.MHARecipe',
-    'mha-adjusted':     'textattack.attack_recipes.MHARecipeAdjusted'
+    'mha-adjusted':     'textattack.attack_recipes.MHARecipeAdjusted',
+    'mcts':             'textattack.attack_recipes.MCTSRecipe'
 }
 
 MODEL_CLASS_NAMES = {

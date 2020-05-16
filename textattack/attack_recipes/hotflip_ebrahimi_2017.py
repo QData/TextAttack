@@ -16,14 +16,14 @@ from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import WordsPerturbed
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.search_methods import BeamSearch
-from textattack.transformations import GradientBasedWordSwap
+from textattack.transformations import WordSwapGradientBased
 
 def HotFlipEbrahimi2017(model):
     #
     # "HotFlip ... uses the gradient with respect to a one-hot input 
     # representation to efficiently estimate which individual change has the 
     # highest estimated loss."
-    transformation = GradientBasedWordSwap(model, top_n=1, replace_stopwords=False)
+    transformation = WordSwapGradientBased(model, top_n=1, replace_stopwords=False)
     constraints = []
     #
     # 0. "We were able to create only 41 examples (2% of the correctly-

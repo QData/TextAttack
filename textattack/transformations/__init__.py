@@ -13,4 +13,4 @@ from .word_swap_lm import WordSwapLanguageModel
 from .word_swap_wordnet import WordSwapWordNet
 
 # White-box transformations
-from .gradient_based_word_swap import GradientBasedWordSwap
+from .word_swap_gradient_based import WordSwapGradientBased

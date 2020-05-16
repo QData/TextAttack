@@ -9,6 +9,7 @@ from textattack.shared import utils, validators
 class GoalFunction:
     """
     Evaluates how well a perturbed tokenized_text object is achieving a specified goal.
+    
     Args:
         model: The PyTorch or TensorFlow model used for evaluation.
     """
