@@ -103,7 +103,7 @@ class WordSwapGradientBased(Transformation):
         ids = ids.unsqueeze(0)
         return self.model(ids)
 
-    def _get_transformations(self, tokenized_text, modifiable_indices):
+    def _get_transformations(self, tokenized_text, indices_to_replace):
         """
         Returns a list of all possible transformations for `text`.
             
@@ -111,10 +111,6 @@ class WordSwapGradientBased(Transformation):
         
         """
         words = tokenized_text.words
-        if not indices_to_replace:
-            indices_to_replace = list(range(len(words)))
-        
-        transformations = []
         transformations = []
         for word, idx in self._get_replacement_words_by_grad(tokenized_text, indices_to_replace):
             transformations.append(tokenized_text.replace_word_at_index(idx, word))
