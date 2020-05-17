@@ -1,0 +1,21 @@
+""" Abstract classes represent constraints on text adversarial examples. 
+"""
+
+from textattack.shared.utils import default_class_repr
+from textattack.constraints import Constraint
+
+class ModificationConstraint(Constraint):
+    """ 
+    An abstract class that represents constraints on adversial text examples 
+    which apply only to which words can be modified. 
+    A constraint evaluates if (x,x_adv) meets a certain constraint. 
+    """
+   
+    def __call__(self, x, transformation):
+        """ Returns the word indices in x which are able to be modified """
+        if not self.check_compatibility(self, transformation):
+            return True
+        return _get_modifiable_indices(x)
+
+    def _get_modifiable_indices(x):
+        raise NotImplementedError()

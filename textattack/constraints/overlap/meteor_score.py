@@ -11,7 +11,7 @@ class METEOR(Constraint):
         self.max_meteor = max_meteor
         
     
-    def __call__(self, x, x_adv, original_text=None):
+    def _check_constraint(self, x, x_adv, original_text=None):
         if not original_text:
             return True
         meteor = nltk.translate.meteor([original_text], x_adv)  

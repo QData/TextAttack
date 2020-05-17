@@ -11,7 +11,7 @@ class BLEU(Constraint):
         self.max_bleu_score = max_bleu_score
         
     
-    def __call__(self, x, x_adv, original_text=None):
+    def _check_constraint(self, x, x_adv, original_text=None):
         if not original_text:
             return True
         ref = original_text.words
