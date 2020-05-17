@@ -4,7 +4,7 @@ import os
 import random
 
 from textattack.shared import utils
-from textattack.constraints import Constraint
+from textattack.constraints import Constraint, ModificationConstraint
 from textattack.shared import TokenizedText
 from textattack.attack_results import SkippedAttackResult, SuccessfulAttackResult, FailedAtttackResult
 
@@ -43,7 +43,15 @@ class Attack:
                 if not transformation.is_black_box:
                     self.is_black_box = False
                     break
-        self.constraints = constraints
+
+        self.constraints = []
+        self.modification_constraints = []
+        for constraint in constraints:
+            is isinstance(constraint, ModiifcationConstraint):
+                self.modification_constraints.append(constraint)
+            else:
+                self.constraints.append(constraint)
+        
         self.constraints_cache = lru.LRU(utils.config('CONSTRAINT_CACHE_SIZE'))
         
         # Give search method access to functions for getting transformations and evaluating them
@@ -68,7 +76,10 @@ class Attack:
         """
         if not self.transformation:
             raise RuntimeError('Cannot call `get_transformations` without a transformation.')
-        transformations = np.array(self.transformation(text, **kwargs))
+        
+        modification_constraints = self.modification_constraints if apply_constraints else []
+        transformations = np.array(self.transformation(text, 
+                                   modification_constraints=modification_constraints, **kwargs))
         if apply_constraints:
             return self._filter_transformations(transformations, text, original_text)
         return transformations

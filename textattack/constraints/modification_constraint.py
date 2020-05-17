@@ -6,9 +6,8 @@ from textattack.constraints import Constraint
 
 class ModificationConstraint(Constraint):
     """ 
-    An abstract class that represents constraints on adversial text examples 
-    which apply only to which words can be modified. 
-    A constraint evaluates if (x,x_adv) meets a certain constraint. 
+    An abstract class that represents constraints which apply only 
+    to which words can be modified. 
     """
    
     def __call__(self, x, transformation):

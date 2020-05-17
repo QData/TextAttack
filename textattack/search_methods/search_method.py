@@ -6,7 +6,6 @@ class SearchMethod:
     search methods.
 
     """
-
     def __call__(self, intial_result):
         """
         Perturbs `tokenized_text` from intial_result until goal is reached

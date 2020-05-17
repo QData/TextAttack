@@ -1,10 +1,9 @@
-import torch
 import numpy as np
 
-from .attack import Attack
+from textattack.search_methods import SearchMethod
 from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
 
-class GreedyWordSwapWIR(Attack):
+class GreedyWordSwapWIR(SearchMethod):
     """
     An attack that greedily chooses from a list of possible perturbations in 
     order of index, after ranking indices by importance.
@@ -16,55 +15,47 @@ class GreedyWordSwapWIR(Attack):
         https://github.com/jind11/TextFooler 
         
     Args:
-        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
-        transformation: The type of transformation.
-        max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
+        wir_method: method for ranking most important words
     """
+
     WIR_TO_REPLACEMENT_STR = {
         'unk': '[UNK]',
         'delete': '[DELETE]',
     }
 
-    def __init__(self, goal_function, transformation, constraints=[], wir_method='unk', max_depth=32):
-        super().__init__(goal_function, transformation, constraints=constraints)
-        self.max_depth = max_depth
+    def __init__(self, wir_method='unk'):
         try: 
             self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
         except KeyError:
             raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
         
-    def attack_one(self, tokenized_text, correct_output):
-        original_tokenized_text = tokenized_text
-        num_words_changed = 0
-       
+    def __call__(self, initial_result):
+        original_tokenized_text = intial_result.tokenized_text
+        cur_result = intial_result
+
         # Sort words by order of importance
-        original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
-        cur_score = original_result.score
         len_text = len(tokenized_text.words)
         
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
         leave_one_scores = np.array([result.score for result in \
-            self.goal_function.get_results(leave_one_texts, correct_output)])
+            self.get_goal_results(leave_one_texts, intial_result.output)])
         index_order = (-leave_one_scores).argsort()
 
-        new_tokenized_text = None
-        new_text_label = None
         i = 0
-        while ((self.max_depth is None) or num_words_changed <= self.max_depth) and i < len(index_order):
+        while i < len(index_order):
             transformed_text_candidates = self.get_transformations(
-                tokenized_text,
-                original_tokenized_text,
-                indices_to_replace=[index_order[i]])
+                cur_result.tokenized_text,
+                original_text=original_tokenized_text,
+                indices_to_modify=[index_order[i]])
             i += 1
             if len(transformed_text_candidates) == 0:
                 continue
-            num_words_changed += 1
-            results = sorted(self.goal_function.get_results(transformed_text_candidates, correct_output), 
+            results = sorted(self.get_goal_results(transformed_text_candidates, intial_result.output), 
                     key=lambda x: -x.score)
             # Skip swaps which don't improve the score
-            if results[0].score > cur_score:
-                cur_score = results[0].score
+            if results[0].score > cur_result.score:
+                cur_result = results[0]
             else:
                 continue
             # If we succeeded, return the index with best similarity.
@@ -87,14 +78,10 @@ class GreedyWordSwapWIR(Attack):
                     if similarity_score > max_similarity:
                         max_similarity = similarity_score
                         best_result = result
-                return SuccessfulAttackResult( 
-                    original_result,
-                    best_result
-                )
+                return best_result
             else:
-                tokenized_text = results[0].tokenized_text
-        
-        if len(results):
-            return FailedAttackResult(original_result, results[0])
-        else:
-            return FailedAttackResult(original_result)
+                cur_result = results[0]
+       
+        if results and len(results):
+            return results[0]
+        return initial_result
