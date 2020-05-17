@@ -36,6 +36,7 @@ class WordSwapGradientBased(Transformation):
         self.pad_id = self.model.tokenizer.pad_id
         self.oov_id = self.model.tokenizer.oov_id
         self.top_n = top_n
+        self.is_black_box = False
 
     def _get_replacement_words_by_grad(self, text, indices_to_replace):
         """ Returns returns a list containing all possible words to replace

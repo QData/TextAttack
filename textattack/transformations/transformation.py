@@ -7,6 +7,8 @@ class Transformation:
         
     """
 
+    self.is_black_box = True
+
     def __call__(self, tokenized_text, modification_constraints=[], indices_to_modify=None):
         """ Returns a list of all possible transformations for `tokenized_text`."""
         if indices_to_modify is None:
