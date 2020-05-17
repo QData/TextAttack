@@ -3,7 +3,7 @@ import nltk
 
 from textattack.constraints import Constraint
 from textattack.shared import TokenizedText
-from textattack.transformation import WordSwap
+from textattack.transformations import WordSwap
 
 class PartOfSpeech(Constraint):
     """ Constraints word swaps to only swap words with the same part of speech.
@@ -50,7 +50,7 @@ class PartOfSpeech(Constraint):
             after_ctx = x.words[i+1:min(i+5,len(x.words))]
             cur_pos = self._get_pos(before_ctx, x_word, after_ctx)
             replace_pos = self._get_pos(before_ctx, x_adv_word, after_ctx)
-            if not self._can_replace_pos(cur_post, replace_pos)
+            if not self._can_replace_pos(cur_pos, replace_pos):
                 return False
 
         return True

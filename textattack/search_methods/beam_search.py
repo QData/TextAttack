@@ -1,5 +1,6 @@
-from texattack.search_methods import SearchMethod
 import numpy as np
+
+from textattack.search_methods import SearchMethod
 
 class BeamSearch(SearchMethod):
     """ 
@@ -36,8 +37,7 @@ class BeamSearch(SearchMethod):
             # in descending order and filling the beam from there.
             best_indices = -scores.argsort()[:self.beam_width]
             beam = [potential_next_beam[i] for i in best_indices]
-       
-       return best_result
+        return best_result
 
     def extra_repr_keys(self):
         return ['beam_width']

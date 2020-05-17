@@ -7,21 +7,21 @@ class Transformation:
         
     """
 
-    self.is_black_box = True
-
     def __call__(self, tokenized_text, modification_constraints=[], indices_to_modify=None):
         """ Returns a list of all possible transformations for `tokenized_text`."""
         if indices_to_modify is None:
             indices_to_modify = set(range(len(tokenized_text.words)))
+        else:
+            indices_to_modify = set(indices_to_modify)
         for constraint in modification_constraints:
             if constraint.check_compatibility(self):
                 indices_to_modify = indices_to_modify & constraint(tokenized_text, self)
-        transformed_texts = _get_transformations(tokenized_text, indices_to_modify)
+        transformed_texts = self._get_transformations(tokenized_text, indices_to_modify)
         for text in transformed_texts:
             text.attack_attrs['last_transformation'] = self
         return transformed_texts
    
-    def _get_transformations(self, tokenized_text, indices_to_modify)
+    def _get_transformations(self, tokenized_text, indices_to_modify):
         raise NotImplementedError()
 
     def extra_repr_keys(self): 

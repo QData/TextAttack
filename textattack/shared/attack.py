@@ -6,7 +6,7 @@ import random
 from textattack.shared import utils
 from textattack.constraints import Constraint, ModificationConstraint
 from textattack.shared import TokenizedText
-from textattack.attack_results import SkippedAttackResult, SuccessfulAttackResult, FailedAtttackResult
+from textattack.attack_results import SkippedAttackResult, SuccessfulAttackResult, FailedAttackResult
 
 class Attack:
     """
@@ -39,11 +39,7 @@ class Attack:
             else:
                 raise NameError('Cannot instantiate attack without tokenizer')
         self.transformation = transformation
-        self.is_black_box = True
-        for transformation in transformations:
-            if not transformation.is_black_box:
-                self.is_black_box = False
-                break
+        self.is_black_box = getattr(transformation, 'is_black_box', True)
 
         if not self.search_method.check_transformation_compatibility(self.transformation):
             raise ValueError('SearchMethod {self.search_method} incompatible with transformation {self.transformation}')
@@ -51,7 +47,7 @@ class Attack:
         self.constraints = []
         self.modification_constraints = []
         for constraint in constraints:
-            is isinstance(constraint, ModiifcationConstraint):
+            if isinstance(constraint, ModificationConstraint):
                 self.modification_constraints.append(constraint)
             else:
                 self.constraints.append(constraint)
@@ -138,7 +134,7 @@ class Attack:
         """
         Perturbs `tokenized_text` from initial_result until goal is reached.
         """
-        final_result = search_method(initial_result)
+        final_result = self.search_method(initial_result)
         if final_result.succeeded:
             return SuccessfulAttackResult(initial_result, final_result)
         else:

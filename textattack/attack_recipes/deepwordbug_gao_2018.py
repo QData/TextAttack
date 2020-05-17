@@ -8,6 +8,8 @@
     
 """
 
+from textattack.shared.attack import Attack
+from textattack.constraints.semantics import RepeatModification, StopwordModification
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
@@ -39,12 +41,19 @@ def DeepWordBugGao2018(model, use_all_transformations=True):
         # (ϵ = 30).
         transformation = WordSwapRandomCharacterSubstitution()
     #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification()
+    ]
+    #
     # In these experiments, we hold the maximum difference
     # on edit distance (ϵ) to a constant 30 for each sample.
     #
-    constraints = [
+    constraints.append(
         LevenshteinEditDistance(30)
-    ]
+    )
     #
     # Goal is untargeted classification
     #
@@ -52,7 +61,6 @@ def DeepWordBugGao2018(model, use_all_transformations=True):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(goal_function, transformation=transformation,
-        constraints=constraints, max_depth=None)
+    search_method = GreedyWordSwapWIR()
     
-    return attack
+    return Attack(goal_function, constraints, transformation, search_method)

@@ -24,14 +24,14 @@ class Constraint:
         compatible_x_advs = []
         for x_adv in x_adv_list:
             try:
-                if self.check_compatibility(x_adv.attack-attrs['last_transformation']):
+                if self.check_compatibility(x_adv.attack_attrs['last_transformation']):
                     compatible_x_advs.append(x_adv)
                 else:
                     incompatible_x_advs.append(x_adv)
             except KeyError:
                 raise KeyError('x_adv must have `last_transformation` attack_attr to apply GoogLM constraint')
         filtered_x_advs = self._check_constraint_many(x, compatible_x_advs, original_text=original_text)
-        return filtered_x_advs + incompatible_x_advs
+        return list(filtered_x_advs) + incompatible_x_advs
 
     def _check_constraint_many(self, x, x_adv_list, original_text=None):
         return [x_adv for x_adv in x_adv_list 

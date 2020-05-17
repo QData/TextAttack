@@ -107,7 +107,7 @@ CONSTRAINT_CLASS_NAMES = {
     'thought-vector':   'textattack.constraints.semantics.sentence_encoders.ThoughtVector',
     'use':              'textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
     'repeat':           'textattack.constraints.semantics.RepeatModification',
-    'stopword':         'textattack.constraints.semantics.StopwordModification',.
+    'stopword':         'textattack.constraints.semantics.StopwordModification',
     #
     # Grammaticality constraints
     #
@@ -156,7 +156,7 @@ def get_args():
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
-        default=[],
+        default=['repeat', 'stopword'],
         help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys())))
     
     parser.add_argument('--out-dir', type=str, required=False, default=None,

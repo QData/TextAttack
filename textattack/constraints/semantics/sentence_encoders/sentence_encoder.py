@@ -93,7 +93,11 @@ class SentenceEncoder(Constraint):
             x_list_text = []
             x_adv_list_text = []
             for x_adv in x_adv_list:
-                modified_index = x_adv.attack_attrs['modified_word_index']
+                #@TODO make this work when multiple indices have been modified
+                try:
+                    modified_index = next(iter(x_adv.attack_attrs['newly_modified_indices']))
+                except KeyError:
+                    raise KeyError('Cannot apply sentence encoder constraint without `newly_modified_indices`')
                 x_list_text.append(x.text_window_around_index(modified_index, self.window_size))
                 x_adv_list_text.append(x_adv.text_window_around_index(modified_index, self.window_size))
             embeddings = self.encode(x_list_text + x_adv_list_text)

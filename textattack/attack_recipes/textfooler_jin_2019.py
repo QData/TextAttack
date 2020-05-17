@@ -27,14 +27,13 @@ def TextFoolerJin2019(model):
     # results show that it's definitely 0.5.)
     #
     transformation = WordSwapEmbedding(max_candidates=50)
-    constraints = []
     #
     # Don't modify the same word twice or stopwords
     #
-    constraints.append(
-        RepeatModfication(),
-        StopwordModification(textfooler_stopwords=True),
-    )
+    constraints = [
+        RepeatModification(),
+        StopwordModification(textfooler_stopwords=True)
+    ]
     #
     # Minimum word embedding cosine similarity of 0.5.
     #

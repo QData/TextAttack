@@ -27,7 +27,7 @@ class GeneticAlgorithm(SearchMethod):
         self.give_up_if_no_improvement = give_up_if_no_improvement
 
     def check_transformation_compatibility(self, transformation):
-        return transformation.instance_of(WordSwap)
+        return transformation.consists_of(WordSwap)
 
     def _replace_at_index(self, pop_member, idx):
         """
