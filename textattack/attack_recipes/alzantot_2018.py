@@ -9,9 +9,10 @@
     ArXiv, abs/1801.00554.
 """
 
+from textattack.shared.attack import Attack
 from textattack.constraints.overlap import WordsPerturbed
 from textattack.constraints.grammaticality.language_models import Google1BillionWordsLanguageModel
-from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.semantics import WordEmbeddingDistance, RepeatModification, StopwordModification
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm
 from textattack.transformations import WordSwapEmbedding

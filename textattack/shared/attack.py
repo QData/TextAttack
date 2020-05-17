@@ -18,15 +18,15 @@ class Attack:
     constraints that successful examples must meet.
 
     Args:
-        search_method: A strategy for exploring the search space of possible perturbations
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
+        constraints: A list of constraints to add to the attack, defining which perturbations are valid.
         transformation: The transformation applied at each step of the attack.
-        constraints: A list of constraints to add to the attack
+        search_method: A strategy for exploring the search space of possible perturbations
         is_black_box: Whether or not the attack is black box.
 
     """
 
-    def __init__(self, search_method, goal_function, transformation, constraints=[], is_black_box=True):
+    def __init__(self, goal_function, constraints, transformation, search_method):
         """ Initialize an attack object. Attacks can be run multiple times.
         """
         self.search_method = search_method
@@ -40,10 +40,10 @@ class Attack:
                 raise NameError('Cannot instantiate attack without tokenizer')
         self.transformation = transformation
         self.is_black_box = True
-            for transformation in transformations:
-                if not transformation.is_black_box:
-                    self.is_black_box = False
-                    break
+        for transformation in transformations:
+            if not transformation.is_black_box:
+                self.is_black_box = False
+                break
 
         if not self.search_method.check_transformation_compatibility(self.transformation):
             raise ValueError('SearchMethod {self.search_method} incompatible with transformation {self.transformation}')
