@@ -16,4 +16,9 @@ class CompositeTransformation(Transformation):
                 transformation(*args, **kwargs)
             )
         return list(new_tokenized_texts)
-        
+    
+    def consists_of(self, subclass):
+        for transformation in self.transformations:
+            if not transformation.consists_of(subclass):
+                return False
+        return True

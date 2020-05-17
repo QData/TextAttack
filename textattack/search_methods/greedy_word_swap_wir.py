@@ -1,7 +1,6 @@
 import numpy as np
 
 from textattack.search_methods import SearchMethod
-from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
 
 class GreedyWordSwapWIR(SearchMethod):
     """
@@ -29,6 +28,9 @@ class GreedyWordSwapWIR(SearchMethod):
         except KeyError:
             raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
         
+    def check_transformation_compatibility(self, transformation):
+        return transformation.instance_of(WordSwap)
+
     def __call__(self, initial_result):
         original_tokenized_text = intial_result.tokenized_text
         cur_result = intial_result
@@ -85,3 +87,6 @@ class GreedyWordSwapWIR(SearchMethod):
         if results and len(results):
             return results[0]
         return initial_result
+
+    def extra_repr_keys(self):
+        return ['wir_method']

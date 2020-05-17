@@ -26,5 +26,8 @@ class Transformation:
 
     def extra_repr_keys(self): 
         return []
+
+    def consists_of(self, subclass):
+        return isinstance(self, subclass)
         
     __repr__ = __str__ = default_class_repr

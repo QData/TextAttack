@@ -12,6 +12,9 @@ class SearchMethod:
         """
         raise NotImplementedError()
 
+    def check_transformation_compatibility(self, transformation):
+        return True
+
     def extra_repr_keys(self):
         return []
  

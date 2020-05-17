@@ -25,6 +25,7 @@ class Attack:
         is_black_box: Whether or not the attack is black box.
 
     """
+
     def __init__(self, search_method, goal_function, transformation, constraints=[], is_black_box=True):
         """ Initialize an attack object. Attacks can be run multiple times.
         """
@@ -43,6 +44,9 @@ class Attack:
                 if not transformation.is_black_box:
                     self.is_black_box = False
                     break
+
+        if not self.search_method.check_transformation_compatibility(self.transformation):
+            raise ValueError('SearchMethod {self.search_method} incompatible with transformation {self.transformation}')
 
         self.constraints = []
         self.modification_constraints = []
@@ -67,7 +71,7 @@ class Attack:
             transformation: 
             text:
             original text (:obj:`type`, optional): Defaults to None. 
-            apply_constraints:
+            apply_constraints: Whether or not to apply (non-modification) constraints
             **kwargs:
 
         Returns:
@@ -77,9 +81,8 @@ class Attack:
         if not self.transformation:
             raise RuntimeError('Cannot call `get_transformations` without a transformation.')
         
-        modification_constraints = self.modification_constraints if apply_constraints else []
         transformations = np.array(self.transformation(text, 
-                                   modification_constraints=modification_constraints, **kwargs))
+                                   modification_constraints=self.modification_constraints, **kwargs))
         if apply_constraints:
             return self._filter_transformations(transformations, text, original_text)
         return transformations

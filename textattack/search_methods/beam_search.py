@@ -22,9 +22,7 @@ class BeamSearch(SearchMethod):
             potential_next_beam = []
             for text in beam:
                 transformations = self.get_transformations(
-                        text, original_text=original_tokenized_text,
-                        indices_to_modify=unswapped_word_indices
-                )
+                        text, original_text=original_tokenized_text)
                 for next_text in transformations:
                     potential_next_beam.append(next_text)
             if len(potential_next_beam) == 0:
