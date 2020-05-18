@@ -9,7 +9,7 @@ import torch
 from copy import deepcopy
 
 from textattack.search_methods import SearchMethod
-from textattack.transformations import WordSwap
+from textattack.shared.validators import is_word_swap
 
 class GeneticAlgorithm(SearchMethod):
     """
@@ -27,7 +27,7 @@ class GeneticAlgorithm(SearchMethod):
         self.give_up_if_no_improvement = give_up_if_no_improvement
 
     def check_transformation_compatibility(self, transformation):
-        return transformation.consists_of(WordSwap)
+        return transformation.consists_of(is_word_swap)
 
     def _replace_at_index(self, pop_member, idx):
         """

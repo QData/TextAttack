@@ -26,7 +26,7 @@ class Transformation:
     def extra_repr_keys(self): 
         return []
 
-    def consists_of(self, subclass):
-        return isinstance(self, subclass)
+    def consists_of(self, validator):
+        return validator(self)
         
     __repr__ = __str__ = default_class_repr

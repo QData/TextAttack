@@ -6,7 +6,7 @@ import torch
 from textattack.shared import utils
 from textattack.constraints import Constraint
 from textattack.shared import TokenizedText
-from textattack.transformations import WordSwap
+from textattack.shared.validators import is_word_swap
 
 class WordEmbeddingDistance(Constraint):
     """
@@ -99,7 +99,7 @@ class WordEmbeddingDistance(Constraint):
         return mse_dist
     
     def check_compatibility(self, transformation):
-        return isinstance(transformation, WordSwap)
+        return transformation.consists_of(is_word_swap)
 
     def _check_constraint(self, x, x_adv, original_text=None):
         """ Returns true if (x, x_adv) are closer than `self.min_cos_sim`

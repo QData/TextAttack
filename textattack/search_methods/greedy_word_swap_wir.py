@@ -1,7 +1,7 @@
 import numpy as np
 
 from textattack.search_methods import SearchMethod
-from textattack.transformations import WordSwap
+from textattack.shared.validators import is_word_swap
 
 class GreedyWordSwapWIR(SearchMethod):
     """
@@ -31,7 +31,7 @@ class GreedyWordSwapWIR(SearchMethod):
             raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
         
     def check_transformation_compatibility(self, transformation):
-        return transformation.consists_of(WordSwap)
+        return transformation.consists_of(is_word_swap)
 
     def __call__(self, initial_result):
         tokenized_text = initial_result.tokenized_text

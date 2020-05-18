@@ -17,8 +17,8 @@ class CompositeTransformation(Transformation):
             )
         return list(new_tokenized_texts)
     
-    def consists_of(self, subclass):
+    def consists_of(self, validator):
         for transformation in self.transformations:
-            if not transformation.consists_of(subclass):
+            if not transformation.consists_of(validator):
                 return False
         return True

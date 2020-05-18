@@ -3,7 +3,7 @@ import nltk
 
 from textattack.constraints import Constraint
 from textattack.shared import TokenizedText
-from textattack.transformations import WordSwap
+from textattack.shared.validators import is_word_swap
 
 class PartOfSpeech(Constraint):
     """ Constraints word swaps to only swap words with the same part of speech.
@@ -17,7 +17,7 @@ class PartOfSpeech(Constraint):
         self._pos_tag_cache = lru.LRU(2**14)
   
     def check_compatibility(self, transformation):
-        return isinstance(transformation, WordSwap)
+        return transformation.consists_of(is_word_swap)
 
     def _can_replace_pos(self, pos_a, pos_b):
         return (pos_a == pos_b) or (self.allow_verb_noun_swap and set([pos_a,pos_b]) <= set(['NOUN','VERB']))

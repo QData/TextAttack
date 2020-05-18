@@ -2,8 +2,8 @@
 """
 
 from textattack.shared.utils import default_class_repr
-from textattack.transformations import WordSwap
 from textattack.constraints import ModificationConstraint
+from textattack.shared.validators import is_word_swap
 
 class StopwordModification(ModificationConstraint):
     """ 
@@ -28,7 +28,4 @@ class StopwordModification(ModificationConstraint):
         Args:
             transformation: The transformation to check compatibility with.
         """
-        return isinstance(transformation, WordSwap) 
-
-    def extra_repr_keys(self):
-        return ['textfooler_stopwords']
+        return transformation.consists_of(is_word_swap)

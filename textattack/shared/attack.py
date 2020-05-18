@@ -226,8 +226,9 @@ class Attack:
         )
         # self.constraints
         constraints_lines = []
-        if len(self.constraints):
-            for i, constraint in enumerate(self.constraints):
+        constraints = self.constraints + self.modification_constraints
+        if len(constraints):
+            for i, constraint in enumerate(constraints):
                 constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
             constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
         else:
