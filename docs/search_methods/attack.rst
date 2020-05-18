@@ -10,7 +10,7 @@ Search Methods:
 - `Beam Search`_ 
 - `Genetic Algorithm`_
 
-Attack Abstract Class 
+Attack
 ######################
 
 .. automodule:: textattack.search_methods.attack

@@ -3,18 +3,18 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-TextAttack
+🐙 TextAttack
 ======================================
 
-`TextAttack <https://github.com/QData/TextAttack>`__ is a Python library for running adversarial attacks against NLP models. These may be useful for evaluating attack methods and evaluating model robustness. TextAttack is designed in order to be easily extensible to new NLP tasks, models, attack methods, and attack constraints. The separation between these aspects of an adversarial attack and standardization of constraint evaluation allows for easier ablation studies. TextAttack supports attacks on models trained for classification, entailment, and translation. 
+`TextAttack <https://github.com/QData/TextAttack>`__ is a Python library for adversarial attacks and data augmentation in NLP.
 
 Features 
 -----------
 
-TextAttack isn't just a Python library; it's a framework for constructing adversarial attacks in NLP. TextAttack builds attacks from four components:
+TextAttack isn't just a Python library; it's a framework for constructing and thinking about adversarial attacks in NLP. TextAttack builds attacks from four components:
 
 - **Goal Functions** stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output
-- **Search Methods** explores the space of transformations and attempt to find a successful perturbtion
+- **Search Methods** explore the space of transformations and attempt to find a successful perturbation
 - **Transformations** takes a text input and transform it by replacing characters, words, or phrases
 - **Constraints**: Determines if a potential perturbtion is valid with respect to the original input
 
@@ -28,93 +28,48 @@ TextAttack has some other features that make it a pleasure to use:
 - **Built-in tokenizers** so you don't have to worry about tokenizing the inputs
 - **Visualization options** like Visdom and Weights & Biases
 
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
+   :hidden:
    :caption: Quickstart
 
    quickstart/installation
    quickstart/overview
-   
-.. toctree::
-   :maxdepth: 2
-   :caption: Examples
-
    examples/1_Introduction_and_Transformtions.ipynb
    examples/2_Constraints.ipynb
 
-
 .. toctree::
-   :maxdepth: 2
-   :caption: Search Methods:
+   :maxdepth: 3
+   :hidden:
+   :caption: NLP Attacks
 
    search_methods/attack
-   search_methods/attack_result
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Transformations:
-
    transformations/transformation
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Constraints:
-
    constraints/constraint
-   constraints/semantics
-   constraints/grammaticality
-   constraints/overlap
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Goal Functions:
-
-   goal_functions/goal_functions
-   goal_functions/goal_function_results
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Loggers:
-
-   loggers/loggers
-
+   goal_functions/goal_function
+   goal_functions/goal_function_result
+   attack_recipes/attack_recipes
    
 .. toctree::
    :maxdepth: 2
-   :caption: Attack Recipes:
+   :hidden:
+   :caption: Data Augmentation
 
-   attack_recipes/attack_recipes
-
+   augmentation/augmentation
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Tokenizers & Tokenized Text:
+   :maxdepth: 1
+   :hidden:
+   :caption: Pretrained Datasets & Models
 
-   tokenizers/tokenized_text
+   models/models
+   datasets/datasets
    tokenizers/tokenizer
 
-
 .. toctree::
-   :maxdepth: 2
-   :caption: Models:
-
-   models/bert
-   models/lstm
-   models/cnn
-
-
-.. toctree::
-   :maxdepth: 2
-   :caption: Datasets:
-
-   datasets/datasets
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+   :maxdepth: 1
+   :hidden:
+   :caption: Miscellaneous:
+   
+   loggers/loggers
+   tokenizers/tokenized_text

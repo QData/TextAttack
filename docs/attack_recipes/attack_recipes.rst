@@ -7,8 +7,8 @@ We provide a number of pre-built attack recipes. To run an attack recipe, you ca
 
 Currently, six main recipes are provided, all of which are synonym substitution based:
 
-- `Textfooler`_
-- `Textfooler-adjusted`_ 
+- `TextFooler`_
+- `TextFooler-adjusted`_ 
 - `Alzantot`_
 - `Alzantot-adjusted`_
 - `DeepWordBug`_ 
@@ -16,13 +16,13 @@ Currently, six main recipes are provided, all of which are synonym substitution 
 - `Kuleshov`_
 - `Seq2Sick`_ 
 
-Textfooler
+TextFooler
 ###########
 
 .. automodule:: textattack.attack_recipes.textfooler_jin_2019
    :members:
 
-Textfooler-adjusted
+TextFooler-adjusted
 #####################
 
 .. automodule:: textattack.attack_recipes.textfooler_jin_2019_adjusted
