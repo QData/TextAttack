@@ -60,4 +60,4 @@ def Alzantot2018(model):
     #
     search_method = GeneticAlgorithm(pop_size=60, max_iters=20)
 
-    return Attack(goal_function, constraint, transformation, search_method)
+    return Attack(goal_function, constraints, transformation, search_method)

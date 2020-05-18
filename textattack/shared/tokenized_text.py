@@ -162,7 +162,7 @@ class TokenizedText:
         """
         final_sentence = ''
         text = self.text
-        new_attack_attrs = deepcopy(self.attack_attrs)
+        new_attack_attrs = dict()
         new_attack_attrs['stopword_indices'] = set()
         new_attack_attrs['modified_indices'] = set()
         new_attack_attrs['newly_modified_indices'] = set()

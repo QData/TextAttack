@@ -76,7 +76,7 @@ class Attack:
         """
         if not self.transformation:
             raise RuntimeError('Cannot call `get_transformations` without a transformation.')
-        
+       
         transformations = np.array(self.transformation(text, 
                                    modification_constraints=self.modification_constraints, **kwargs))
         if apply_constraints:
@@ -138,7 +138,7 @@ class Attack:
         if final_result.succeeded:
             return SuccessfulAttackResult(initial_result, final_result)
         else:
-            return FailedAttackResult(intial_result, final_result)
+            return FailedAttackResult(initial_result, final_result)
  
     def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False,
             attack_n=False, attack_skippable_examples=False):

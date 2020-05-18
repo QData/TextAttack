@@ -14,8 +14,7 @@ class Transformation:
         else:
             indices_to_modify = set(indices_to_modify)
         for constraint in modification_constraints:
-            if constraint.check_compatibility(self):
-                indices_to_modify = indices_to_modify & constraint(tokenized_text, self)
+            indices_to_modify = indices_to_modify & constraint(tokenized_text, self)
         transformed_texts = self._get_transformations(tokenized_text, indices_to_modify)
         for text in transformed_texts:
             text.attack_attrs['last_transformation'] = self

@@ -135,7 +135,7 @@ class GeneticAlgorithm(SearchMethod):
 
     def __call__(self, initial_result):
         self.original_tokenized_text = initial_result.tokenized_text
-        self.correct_output = intial_result.output
+        self.correct_output = initial_result.output
         neighbors_len = self._get_neighbors_len(self.original_tokenized_text)
         pop = self._generate_population(neighbors_len)
         cur_score = initial_result.score

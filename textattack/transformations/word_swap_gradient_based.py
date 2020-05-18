@@ -67,6 +67,7 @@ class WordSwapGradientBased(Transformation):
         # grad differences between all flips and original word (eq. 1 from paper)
         vocab_size = lookup_table.size(0)
         diffs = torch.zeros(len(indices_to_replace), vocab_size)
+        indices_to_replace = list(indices_to_replace)
         for j, word_idx in enumerate(indices_to_replace):
             # Get the grad w.r.t the one-hot index of the word.
             b_grads = emb_grad[word_idx].view(1,-1).mm(lookup_table_transpose).squeeze()
