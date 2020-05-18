@@ -1,21 +1,27 @@
 import os
 import pickle
+import time
 import datetime
 from textattack.shared import utils
 from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult, SkippedAttackResult
 
-class CheckPoint:
+logger = utils.get_logger()
+
+class Checkpoint:
     """ An object that stores necessary information for saving and loading checkpoints
     
         Args:
-            time (float): epoch time representing when checkpoint was made
             args: command line arguments of the original attack
             log_manager (AttackLogManager)
+            chkpt_time (float): epoch time representing when checkpoint was made
     """
-    def __init__(self, time, args, log_manager):
-        self.time = time
+    def __init__(self, args, log_manager, chkpt_time=None):
         self.args = args
         self.log_manager = log_manager
+        if chkpt_time:
+            self.time = chkpt_time
+        else:
+            self.time = time.time()
 
     def __repr__(self):
         main_str = 'Checkpoint('
@@ -69,27 +75,15 @@ class CheckPoint:
     
     @property
     def num_skipped_attacks(self):
-        count = 0
-        for r in self.log_manager.results:
-            if isinstance(r, SkippedAttackResult):
-                count += 1
-        return count
+        return sum(isinstance(r, SkippedAttackResult) for r in self.log_manager.results)
 
     @property
     def num_failed_attacks(self):
-        count = 0
-        for r in self.log_manager.results:
-            if isinstance(r, FailedAttackResult):
-                count += 1
-        return count
+        return sum(isinstance(r, FailedAttackResult) for r in self.log_manager.results)
 
     @property
     def num_successful_attacks(self):
-        count = 0
-        for r in self.log_manager.results:
-            if isinstance(r, SuccessfulAttackResult):
-                count += 1
-        return count
+       return sum(isinstance(r, SuccessfulAttackResult) for r in self.log_manager.results)
 
     @property
     def num_remaining_attacks(self):
@@ -110,11 +104,15 @@ class CheckPoint:
     def datetime(self):
         return datetime.datetime.fromtimestamp(self.time).strftime('%Y-%m-%d %H:%M:%S')
 
-    def save(self):
+    def save(self, quiet=False):
         file_name = "{}.ta.chkpt".format(int(self.time*1000))
         if not os.path.exists(self.args.checkpoint_dir):
             os.makedirs(self.args.checkpoint_dir)
         path = os.path.join(self.args.checkpoint_dir, file_name)
+        if not quiet:
+            print('\n\n' + '=' * 125)
+            logger.info('Saving checkpoint under "{}" at {} after {} attacks.'.format(path, self.datetime, self.results_count))
+            print('=' * 125 + '\n')
         with open(path, 'wb') as f:
             pickle.dump(self, f)
 
@@ -122,7 +120,7 @@ class CheckPoint:
     def load(self, path):
         with open(path, 'rb') as f:
             checkpoint = pickle.load(f)
-        assert isinstance(checkpoint, CheckPoint)
+        assert isinstance(checkpoint, Checkpoint)
 
         return checkpoint
         

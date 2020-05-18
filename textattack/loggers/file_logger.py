@@ -22,10 +22,7 @@ class FileLogger(Logger):
 
     def __getstate__(self):
         # Temporarily save file handle b/c we can't copy it
-        tmp = self.fout
-        self.fout = None
-        state = copy.deepcopy(self.__dict__)
-        self.fout = tmp
+        state = {i: self.__dict__[i] for i in self.__dict__ if i !='fout'}
         return state
 
     def __setstate__(self, state):
@@ -53,4 +50,8 @@ class FileLogger(Logger):
 
     def log_sep(self):
         self.fout.write('-' * 90 + '\n')
+
+    def flush(self):
+        self.fout.flush()
+
         

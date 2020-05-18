@@ -17,21 +17,19 @@ class VisdomLogger(Logger):
         if not port_is_open(port, hostname=hostname):
             raise socket.error(f'Visdom not running on {hostname}:{port}')
         self.vis = Visdom(port=port, server=hostname, env=env)
-        self.vis_args = {'port': port, 'server': hostname, 'env': env}
+        self.env = env
+        self.port = port
+        self.hostname = hostname
         self.windows = {}
         self.sample_rows = []
 
     def __getstate__(self):
-        # Temporarily save socket handle b/c we can't copy it
-        tmp = self.vis
-        self.vis = None
-        state = copy.deepcopy(self.__dict__)
-        self.vis = tmp
+        state = {i: self.__dict__[i] for i in self.__dict__ if i !='vis'}
         return state
 
     def __setstate__(self, state):
         self.__dict__ = state
-        self.vis = Visdom(**self.vis_args)
+        self.vis = Visdom(port=self.port, server=self.hostname, env=self.env)
 
     def log_attack_result(self, result):
         text_a, text_b = result.diff_color(color_method='html')

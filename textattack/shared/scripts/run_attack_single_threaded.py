@@ -26,17 +26,14 @@ def run(args):
     if args.checkpoint_resume:
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
-        args = resume_checkpoint.args
+        args = merge_checkpoint_args(resume_checkpoint.args, args)
         num_examples_offset = resume_checkpoint.dataset_offset
         num_examples = resume_checkpoint.num_remaining_attacks
-        checkpoint_resume = True
         logger.info('Recovered from previously saved checkpoint at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
-        
     else:
         num_examples_offset = args.num_examples_offset
         num_examples = args.num_examples
-        checkpoint_resume = False
     
     start_time = time.time()
     
@@ -45,7 +42,7 @@ def run(args):
     print(attack, '\n')
     
     # Logger
-    if checkpoint_resume:
+    if args.checkpoint_resume:
         attack_log_manager = resume_checkpoint.log_manager
     else:
         attack_log_manager = parse_logger_from_args(args)
@@ -83,7 +80,7 @@ def run(args):
             raise ValueError(f'Error: unsupported model {args.model}')
         
         pbar = tqdm.tqdm(total=num_examples, smoothing=0)
-        if checkpoint_resume:
+        if args.checkpoint_resume:
             num_results = resume_checkpoint.results_count
             num_failures = resume_checkpoint.num_failed_attacks
             num_successes = resume_checkpoint.num_successful_attacks
@@ -108,13 +105,9 @@ def run(args):
             pbar.set_description('[Succeeded / Failed / Total] {} / {} / {}'.format(num_successes, num_failures, num_results))
 
             if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
-                chkpt_time = time.time()
-                date_time = datetime.datetime.fromtimestamp(chkpt_time).strftime('%Y-%m-%d %H:%M:%S')
-                print('\n\n' + '=' * 100)
-                logger.info('Saving checkpoint at {} after {} attacks.'.format(date_time, num_results))
-                print('=' * 100 + '\n')
-                checkpoint = textattack.shared.CheckPoint(chkpt_time, args, attack_log_manager)
+                checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
                 checkpoint.save()
+                attack_log_manager.flush()
 
         pbar.close()
         print()
