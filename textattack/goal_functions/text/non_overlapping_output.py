@@ -27,6 +27,8 @@ def word_difference_score(s1, s2):
     s1_words = get_words_cached(s1)
     s2_words = get_words_cached(s2)
     min_length = min(len(s1_words), len(s2_words))
+    if min_length == 0:
+        return 0
     s1_words = s1_words[:min_length]
     s2_words = s2_words[:min_length]
     return (s1_words != s2_words).sum()

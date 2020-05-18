@@ -5,7 +5,8 @@ import torch
 
 from textattack.shared import utils
 from textattack.constraints import Constraint
-from textattack.shared.tokenized_text import TokenizedText
+from textattack.shared import TokenizedText
+from textattack.shared.validators import is_word_swap
 
 class WordEmbeddingDistance(Constraint):
     """
@@ -65,12 +66,6 @@ class WordEmbeddingDistance(Constraint):
         else:
             self.cos_sim_mat = {}
         
-    
-    def call_many(self, x, x_adv_list, original_text=None):
-        """ Returns each `x_adv` from `x_adv_list` where `C(x,x_adv)` is True. 
-        """
-        return [x_adv for x_adv in x_adv_list if self(x, x_adv)]
-    
     def get_cos_sim(self, a, b):
         """ Returns the cosine similarity of words with IDs a and b."""
         if isinstance(a, str):
@@ -103,46 +98,46 @@ class WordEmbeddingDistance(Constraint):
             self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
     
-    def __call__(self, x, x_adv):
+    def check_compatibility(self, transformation):
+        return transformation.consists_of(is_word_swap)
+
+    def _check_constraint(self, x, x_adv, original_text=None):
         """ Returns true if (x, x_adv) are closer than `self.min_cos_sim`
             and `self.max_mse_dist`. """
-        
-        if not isinstance(x, TokenizedText):
-            raise TypeError('x must be of type TokenizedText')
-        if not isinstance(x_adv, TokenizedText):
-            raise TypeError('x_adv must be of type TokenizedText')
-        
         try:
-            i = x_adv.attack_attrs['modified_word_index']
+            indices = x_adv.attack_attrs['newly_modified_indices']
+        except KeyError:
+            raise KeyError('Cannot apply part-of-speech constraint without `newly_modified_indices`')
+        
+        for i in indices:
             x = x.words[i]
             x_adv = x_adv.words[i]
-        except AttributeError:
-            raise AttributeError('Cannot apply word embedding distance constraint without `modified_word_index`')
-        except IndexError:
-            raise IndexError(f'Could not find word at index {i} with x {x} x_adv {x_adv}.')
             
-        if not self.cased:
-            # If embedding vocabulary is all lowercase, lowercase words.
-            x = x.lower()
-            x_adv = x_adv.lower()
-        
-        try:
-            x_id = self.word_embedding_word2index[x]
-            x_adv_id = self.word_embedding_word2index[x_adv]
-        except KeyError:
-            # This error is thrown if x or x_adv has no corresponding ID.
-            return self.include_unknown_words
+            if not self.cased:
+                # If embedding vocabulary is all lowercase, lowercase words.
+                x = x.lower()
+                x_adv = x_adv.lower()
             
-        # Check cosine distance.
-        if self.min_cos_sim:
-            cos_sim = self.get_cos_sim(x_id, x_adv_id)
-            if cos_sim < self.min_cos_sim:
+            try:
+                x_id = self.word_embedding_word2index[x]
+                x_adv_id = self.word_embedding_word2index[x_adv]
+            except KeyError:
+                # This error is thrown if x or x_adv has no corresponding ID.
+                if self.include_unknown_words:
+                    continue
                 return False
-        # Check MSE distance.
-        if self.max_mse_dist:
-            mse_dist = self.get_mse_dist(x_id, x_adv_id)
-            if mse_dist > self.max_mse_dist:
-                return False
+                
+            # Check cosine distance.
+            if self.min_cos_sim:
+                cos_sim = self.get_cos_sim(x_id, x_adv_id)
+                if cos_sim < self.min_cos_sim:
+                    return False
+            # Check MSE distance.
+            if self.max_mse_dist:
+                mse_dist = self.get_mse_dist(x_id, x_adv_id)
+                if mse_dist > self.max_mse_dist:
+                    return False
+
         return True
         
     def extra_repr_keys(self):

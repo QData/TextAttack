@@ -8,9 +8,10 @@
     
 """
 
+from textattack.shared.attack import Attack
 from textattack.goal_functions import UntargetedClassification
 from textattack.constraints.grammaticality import PartOfSpeech
-from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.semantics import WordEmbeddingDistance, RepeatModification, StopwordModification
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import WordSwapEmbedding
@@ -25,19 +26,25 @@ def TextFoolerJin2019(model):
     # (The paper claims 0.7, but analysis of the code and some empirical
     # results show that it's definitely 0.5.)
     #
-    transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
+    transformation = WordSwapEmbedding(max_candidates=50)
+    #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification(textfooler_stopwords=True)
+    ]
     #
     # Minimum word embedding cosine similarity of 0.5.
     #
-    constraints = []
     constraints.append(
-            WordEmbeddingDistance(min_cos_sim=0.5)
+        WordEmbeddingDistance(min_cos_sim=0.5)
     )
     #
     # Only replace words with the same part of speech (or nouns with verbs)
     #
     constraints.append(
-            PartOfSpeech(allow_verb_noun_swap=True)
+        PartOfSpeech(allow_verb_noun_swap=True)
     )
     #
     # Universal Sentence Encoder with a minimum angular similarity of ε = 0.7.
@@ -57,7 +64,6 @@ def TextFoolerJin2019(model):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(goal_function, transformation=transformation,
-        constraints=constraints, max_depth=None)
-    
-    return attack
+    search_method = GreedyWordSwapWIR()
+
+    return Attack(goal_function, constraints, transformation, search_method)

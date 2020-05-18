@@ -8,32 +8,26 @@ import numpy as np
 import torch
 from copy import deepcopy
 
-from .attack import Attack
-from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
-from textattack.transformations import WordSwap
+from textattack.search_methods import SearchMethod
+from textattack.shared.validators import is_word_swap
 
-class GeneticAlgorithm(Attack):
+class GeneticAlgorithm(SearchMethod):
     """
-    Attacks a model using a genetic algorithm. 
+    Attacks a model with word substiutitions using a genetic algorithm.
 
     Args:
-        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
-        transformation: The type of transformation to use. Should be a subclass of WordSwap. 
         pop_size (:obj:`int`, optional): The population size. Defauls to 20. 
         max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 50. 
-
-    Raises:
-        ValueError: If the transformation is not a subclass of WordSwap. 
     """
-    def __init__(self, goal_function, transformation, constraints=[], pop_size=20, max_iters=50, temp=0.3,
-        give_up_if_no_improvement=False):
-        if not isinstance(transformation, WordSwap):
-            raise ValueError(f'Transformation is of type {type(transformation)}, should be a subclass of WordSwap')
-        super().__init__(goal_function, transformation, constraints=constraints)
+
+    def __init__(self, pop_size=20, max_iters=50, temp=0.3, give_up_if_no_improvement=False):
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.temp = temp
         self.give_up_if_no_improvement = give_up_if_no_improvement
+
+    def check_transformation_compatibility(self, transformation):
+        return transformation.consists_of(is_word_swap)
 
     def _replace_at_index(self, pop_member, idx):
         """
@@ -49,12 +43,12 @@ class GeneticAlgorithm(Attack):
         """
         transformations = self.get_transformations(pop_member.tokenized_text,
                                                    original_text=self.original_tokenized_text,
-                                                   indices_to_replace=[idx])
+                                                   indices_to_modify=[idx])
         if not len(transformations):
             return False
-        new_x_results = self.goal_function.get_results(transformations, self.correct_output)
+        new_x_results = self.get_goal_results(transformations, self.correct_output)
         new_x_scores = torch.Tensor([r.score for r in new_x_results])
-        orig_score = self.goal_function.get_results([pop_member.tokenized_text], self.correct_output)[0].score
+        orig_score = self.get_goal_results([pop_member.tokenized_text], self.correct_output)[0].score
         new_x_scores = new_x_scores - orig_score
         if new_x_scores.max() > 0:
             pop_member.tokenized_text = transformations[new_x_scores.argmax()]
@@ -139,15 +133,14 @@ class GeneticAlgorithm(Attack):
         neighbors_len = np.array([len(x) for x in neighbors_list])
         return neighbors_len
 
-    def attack_one(self, tokenized_text, correct_output):
-        self.original_tokenized_text = tokenized_text
-        self.correct_output = correct_output
-        original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
-        neighbors_len = self._get_neighbors_len(tokenized_text)
+    def __call__(self, initial_result):
+        self.original_tokenized_text = initial_result.tokenized_text
+        self.correct_output = initial_result.output
+        neighbors_len = self._get_neighbors_len(self.original_tokenized_text)
         pop = self._generate_population(neighbors_len)
-        cur_score = original_result.score
+        cur_score = initial_result.score
         for i in range(self.max_iters):
-            pop_results = self.goal_function.get_results([pm.tokenized_text for pm in pop], correct_output)
+            pop_results = self.get_goal_results([pm.tokenized_text for pm in pop], self.correct_output)
             for idx, result in enumerate(pop_results):
                 pop[idx].result = pop_results[idx]
             pop = sorted(pop, key=lambda x: -x.result.score)
@@ -158,10 +151,7 @@ class GeneticAlgorithm(Attack):
             select_probs = (logits / logits.sum()).cpu().numpy()
             
             if pop[0].result.succeeded:
-                return SuccessfulAttackResult(
-                    original_result,
-                    pop[0].result
-                )
+                return pop[0].result
 
             if pop[0].result.score > cur_score:
                 cur_score = pop[0].result.score
@@ -181,7 +171,10 @@ class GeneticAlgorithm(Attack):
 
             pop = elite + children
 
-        return FailedAttackResult(original_result, pop[0].result)
+        return pop[0].result
+
+    def extra_repr_keys(self):
+        return ['pop_size', 'max_iters', 'temp', 'give_up_if_no_improvement']
     
 class PopulationMember:
     """

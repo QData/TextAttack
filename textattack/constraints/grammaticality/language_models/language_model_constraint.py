@@ -24,19 +24,23 @@ class LanguageModelConstraint(Constraint):
         """
         raise NotImplementedError()
     
-    def __call__(self, x, x_adv, original_text=None):
+    def _check_constraint(self, x, x_adv, original_text=None):
         try:
-            i = x_adv.attack_attrs['modified_word_index']
-        except AttributeError:
-            raise AttributeError('Cannot apply language model constraint without `modified_word_index`')
-            
-        probs = self.get_log_probs_at_index((x, x_adv), i)
-        if len(probs) != 2:
-            raise ValueError(f'Error: get_log_probs_at_index returned {len(probs)} values for 2 inputs')
-        x_prob, x_adv_prob = probs
-        if self.max_log_prob_diff is None:
-            x_prob, x_adv_prob = math.log(p1), math.log(p2)
-        return abs(x_prob - x_adv_prob) <= self.max_log_prob_diff
+            indices = x_adv.attack_attrs['newly_modified_indices']
+        except KeyError:
+            raise KeyError('Cannot apply part-of-speech constraint without `newly_modified_indices`')
+
+        for i in indices:
+            probs = self.get_log_probs_at_index((x, x_adv), i)
+            if len(probs) != 2:
+                raise ValueError(f'Error: get_log_probs_at_index returned {len(probs)} values for 2 inputs')
+            x_prob, x_adv_prob = probs
+            if self.max_log_prob_diff is None:
+                x_prob, x_adv_prob = math.log(p1), math.log(p2)
+            if abs(x_prob - x_adv_prob) > self.max_log_prob_diff:
+                return False
+        
+        return True
     
     def extra_repr_keys(self):
         return ['max_log_prob_diff']

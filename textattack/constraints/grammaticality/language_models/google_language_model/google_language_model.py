@@ -3,6 +3,7 @@ import time
 
 from collections import defaultdict
 
+from textattack.transformations import WordSwap
 from textattack.constraints import Constraint
 from .alzantot_goog_lm import GoogLMHelper
 
@@ -35,15 +36,18 @@ class GoogleLanguageModel(Constraint):
         self.top_n = top_n
         self.top_n_per_index = top_n_per_index
         self.print_step = print_step
-    
-    def call_many(self, x, x_adv_list, original_text=None):
+
+    def check_compatibility(self, transformation):
+        return isinstance(transformation, WordSwap)
+
+    def _check_constraint_many(self, x, x_adv_list, original_text=None):
         """
         Returns the `top_n` of x_adv_list, as evaluated by the language 
         model. 
 
         Args:
             x:
-            X_adv_list:
+            x_adv_list:
             original_text (:obj:`type`, optional): Defaults to None. 
 
         """
@@ -96,7 +100,7 @@ class GoogleLanguageModel(Constraint):
         # same order they were passed in.
         max_el_indices.sort()
         
-        return np.array(x_adv_list)[max_el_indices]
+        return list(np.array(x_adv_list)[max_el_indices])
     
     def __call__(self, x, x_adv):
         raise NotImplementedError()

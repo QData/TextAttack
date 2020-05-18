@@ -3,6 +3,7 @@ import nltk
 
 from textattack.constraints import Constraint
 from textattack.shared import TokenizedText
+from textattack.shared.validators import is_word_swap
 
 class PartOfSpeech(Constraint):
     """ Constraints word swaps to only swap words with the same part of speech.
@@ -14,7 +15,10 @@ class PartOfSpeech(Constraint):
         self.tagset = tagset
         self.allow_verb_noun_swap = allow_verb_noun_swap
         self._pos_tag_cache = lru.LRU(2**14)
-   
+  
+    def check_compatibility(self, transformation):
+        return transformation.consists_of(is_word_swap)
+
     def _can_replace_pos(self, pos_a, pos_b):
         return (pos_a == pos_b) or (self.allow_verb_noun_swap and set([pos_a,pos_b]) <= set(['NOUN','VERB']))
 
@@ -28,24 +32,28 @@ class PartOfSpeech(Constraint):
             self._pos_tag_cache[context_key] = pos_list
         return pos_list 
         
-    def __call__(self, x, x_adv, original_text=None):
+    def _check_constraint(self, x, x_adv, original_text=None):
         if not isinstance(x, TokenizedText):
             raise TypeError('x must be of type TokenizedText')
         if not isinstance(x_adv, TokenizedText):
             raise TypeError('x_adv must be of type TokenizedText')
         
         try:
-            i = x_adv.attack_attrs['modified_word_index']
+            indices = x_adv.attack_attrs['newly_modified_indices']
+        except KeyError:
+            raise KeyError('Cannot apply part-of-speech constraint without `newly_modified_indices`')
+        
+        for i in indices:
             x_word = x.words[i]
             x_adv_word = x_adv.words[i]
-        except AttributeError:
-            raise AttributeError('Cannot apply part-of-speech constraint without `modified_word_index`')
-        
-        before_ctx = x.words[max(i-4,0):i]
-        after_ctx = x.words[i+1:min(i+5,len(x.words))]
-        cur_pos = self._get_pos(before_ctx, x_word, after_ctx)
-        replace_pos = self._get_pos(before_ctx, x_adv_word, after_ctx)
-        return self._can_replace_pos(cur_pos, replace_pos)
+            before_ctx = x.words[max(i-4,0):i]
+            after_ctx = x.words[i+1:min(i+5,len(x.words))]
+            cur_pos = self._get_pos(before_ctx, x_word, after_ctx)
+            replace_pos = self._get_pos(before_ctx, x_adv_word, after_ctx)
+            if not self._can_replace_pos(cur_pos, replace_pos):
+                return False
+
+        return True
     
     def extra_repr_keys(self):
         return ['tagset', 'allow_verb_noun_swap']

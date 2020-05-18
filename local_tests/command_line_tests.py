@@ -51,7 +51,7 @@ register_test('python -m textattack --model lstm-mr --recipe deepwordbug --num-e
 #
 register_test(('python -m textattack --attack-n --goal-function targeted-classification:target_class=2 '
     '--enable-csv --model bert-mnli --num-examples 4 --transformation word-swap-wordnet '
-    '--constraints lang-tool --attack beam-search:beam_width=2'), 
+    '--constraints lang-tool repeat stopword --search beam-search:beam_width=2'), 
     name='run_attack_targeted2_bertmnli_wordnet_beamwidth_2_enablecsv_attackn', 
     output_file='local_tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n_4.txt', 
     desc=('Runs attack using targeted classification on class 2 on BERT MNLI with'
@@ -67,7 +67,8 @@ register_test(('python -m textattack --attack-n --goal-function targeted-classif
 #
 register_test(('python -m textattack --attack-n --goal-function non-overlapping-output '
     '--model t5-en2de --num-examples 6 --transformation word-swap-random-char-substitution '
-    '--constraints edit-distance:12 words-perturbed:max_percent=0.75 --attack greedy-word'), 
+    '--constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword '
+    '--search greedy'), 
     name='run_attack_nonoverlapping_t5en2de_randomcharsub_editdistance_wordsperturbed_greedyword', 
     output_file='local_tests/sample_outputs/run_attack_nonoverlapping_t5ende_editdistance_bleu.txt', 
     desc=('Runs attack using targeted classification on class 2 on BERT MNLI with'

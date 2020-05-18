@@ -10,6 +10,7 @@ class GoalFunctionResult:
         succeeded: Whether the goal has been achieved.
         score: A score representing how close the model is to achieving its goal.
     """
+
     def __init__(self, tokenized_text, output, succeeded, score):
         self.tokenized_text = tokenized_text
         self.output = output

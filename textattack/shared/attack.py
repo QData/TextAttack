@@ -4,29 +4,32 @@ import os
 import random
 
 from textattack.shared import utils
-from textattack.constraints import Constraint
+from textattack.constraints import Constraint, ModificationConstraint
 from textattack.shared import TokenizedText
-from textattack.attack_results import SkippedAttackResult
+from textattack.attack_results import SkippedAttackResult, SuccessfulAttackResult, FailedAttackResult
 
 class Attack:
     """
     An attack generates adversarial examples on text. 
     
     This is an abstract class that contains main helper functionality for 
-    attacks. An attack is comprised of a search method, a goal function, and a 
-    transformation, as well as one or more linguistic constraints that 
-    successful examples must meet.
+    attacks. An attack is comprised of a search method, which makes use of
+    a goal function, a transformation, and a set of one or more linguistic 
+    constraints that successful examples must meet.
 
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
+        constraints: A list of constraints to add to the attack, defining which perturbations are valid.
         transformation: The transformation applied at each step of the attack.
-        constraints: A list of constraints to add to the attack
+        search_method: A strategy for exploring the search space of possible perturbations
         is_black_box: Whether or not the attack is black box.
 
     """
-    def __init__(self, goal_function, transformation, constraints=[], is_black_box=True):
+
+    def __init__(self, goal_function, constraints, transformation, search_method):
         """ Initialize an attack object. Attacks can be run multiple times.
         """
+        self.search_method = search_method
         self.goal_function = goal_function
         if not self.goal_function:
             raise NameError('Cannot instantiate attack without self.goal_function for predictions')
@@ -36,9 +39,24 @@ class Attack:
             else:
                 raise NameError('Cannot instantiate attack without tokenizer')
         self.transformation = transformation
-        self.constraints = constraints
-        self.is_black_box = is_black_box
+        self.is_black_box = getattr(transformation, 'is_black_box', True)
+
+        if not self.search_method.check_transformation_compatibility(self.transformation):
+            raise ValueError('SearchMethod {self.search_method} incompatible with transformation {self.transformation}')
+
+        self.constraints = []
+        self.modification_constraints = []
+        for constraint in constraints:
+            if isinstance(constraint, ModificationConstraint):
+                self.modification_constraints.append(constraint)
+            else:
+                self.constraints.append(constraint)
+        
         self.constraints_cache = lru.LRU(utils.config('CONSTRAINT_CACHE_SIZE'))
+        
+        # Give search method access to functions for getting transformations and evaluating them
+        self.search_method.get_transformations = self.get_transformations
+        self.search_method.get_goal_results = self.goal_function.get_results 
     
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
@@ -49,7 +67,7 @@ class Attack:
             transformation: 
             text:
             original text (:obj:`type`, optional): Defaults to None. 
-            apply_constraints:
+            apply_constraints: Whether or not to apply (non-modification) constraints
             **kwargs:
 
         Returns:
@@ -58,7 +76,9 @@ class Attack:
         """
         if not self.transformation:
             raise RuntimeError('Cannot call `get_transformations` without a transformation.')
-        transformations = np.array(self.transformation(text, **kwargs))
+       
+        transformations = np.array(self.transformation(text, 
+                                   modification_constraints=self.modification_constraints, **kwargs))
         if apply_constraints:
             return self._filter_transformations(transformations, text, original_text)
         return transformations
@@ -76,7 +96,6 @@ class Attack:
         transformations = original_transformations[:]
         for C in self.constraints:
             if len(transformations) == 0: break
-            tl = len(transformations)
             transformations = C.call_many(text, transformations, original_text=original_text)
         # Default to false for all original transformations.
         for original_transformation in original_transformations:
@@ -111,12 +130,15 @@ class Attack:
         filtered_transformations.sort(key=lambda t: t.text)
         return filtered_transformations
 
-    def attack_one(self, tokenized_text):
+    def attack_one(self, initial_result):
         """
-        Perturbs `tokenized_text` to until goal is reached.
-
+        Perturbs `tokenized_text` from initial_result until goal is reached.
         """
-        raise NotImplementedError()
+        final_result = self.search_method(initial_result)
+        if final_result.succeeded:
+            return SuccessfulAttackResult(initial_result, final_result)
+        else:
+            return FailedAttackResult(initial_result, final_result)
  
     def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False,
             attack_n=False, attack_skippable_examples=False):
@@ -182,13 +204,9 @@ class Attack:
             # Start query count at 1 since we made a single query to determine 
             # that the prediction was correct.
             self.goal_function.num_queries = 1
-            result = self.attack_one(goal_function_result.tokenized_text, 
-                goal_function_result.output) # @TODO attacks should take one initial goal function result as a parameter
+            result = self.attack_one(goal_function_result)
             result.num_queries = self.goal_function.num_queries
             yield result
-    
-    def _get_name(self):
-        return self.__class__.__name__
     
     def __repr__(self):
         """ Prints attack parameters in a human-readable string.
@@ -196,9 +214,12 @@ class Attack:
         Inspired by the readability of printing PyTorch nn.Modules:
         https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py
         """
-        main_str = self._get_name() + '('
+        main_str = 'Attack' + '('
         lines = []
-        
+       
+        lines.append(
+            utils.add_indent(f'(search_method): {self.search_method}', 2)
+        )
         # self.goal_function
         lines.append(
             utils.add_indent(f'(goal_function):  {self.goal_function}', 2)
@@ -209,8 +230,9 @@ class Attack:
         )
         # self.constraints
         constraints_lines = []
-        if len(self.constraints):
-            for i, constraint in enumerate(self.constraints):
+        constraints = self.constraints + self.modification_constraints
+        if len(constraints):
+            for i, constraint in enumerate(constraints):
                 constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))
             constraints_str = utils.add_indent('\n' + '\n'.join(constraints_lines), 2)
         else:

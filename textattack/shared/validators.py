@@ -73,3 +73,7 @@ def validate_model_gradient_word_swap_compatibility(model):
         return True
     else:
         raise ValueError(f'Cannot perform GradientBasedWordSwap on model {model}.')
+
+def is_word_swap(transformation):
+    from textattack.transformations import WordSwap, WordSwapGradientBased
+    return isinstance(transformation, WordSwap) or isinstance(transformation, WordSwapGradientBased)

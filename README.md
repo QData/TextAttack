@@ -123,7 +123,7 @@ A `Transformation` takes as input a `TokenizedText` and returns a list of possib
 
 ### Search Methods
 
-A search method is currently implemented in an extension of the `Attack` class, through implementing the `attack_one` method. The `get_transformations` function takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds or is exhausted.
+A search method takes as input an initial `goal_function` result and returns a final `goal_function` result. The search is given access to the `get_transformations` function, which takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined through `get_goal_results`) or is exhausted.
 
 ## Contributing to TextAttack
 
