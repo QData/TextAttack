@@ -22,7 +22,6 @@ class Node:
             children ((int, str) --> Node): Map action to child Node
             ...
     """
-    NODE_ID = 0
 
     def __init__(self, text, parent):
         self.text = text
@@ -35,15 +34,17 @@ class Node:
         self.value = 0.0
         self.local_rave_values = {}
         self.value_history = []
-        self.variance = 0.0
         self.children = {}
 
     def is_leaf(self):
         return not bool(self.children)
 
-    def calc_variance(self):
-        if len(self.value_history) >= 2:
-            self.variance = statistics.variance(self.value_history, self.value)
+    @property
+    def variance(self):
+        if len(self.value_history) < 2:
+            return 0
+        else:
+            return statistics.variance(self.value_history, self.value)
 
 class SearchTree:
     """
@@ -57,6 +58,8 @@ class SearchTree:
         original_label (int)
         max_depth (int): max depth of search tree
     """
+
+    NOOP_ACTION = (-1, '<noop>')
 
     def __init__(self, original_text, original_label, max_depth):
         self.root = Node(original_text, None)
@@ -97,16 +100,17 @@ class MonteCarloTreeSearch(Attack):
         max_words_changed (int) : Maximum number of words we change during MCTS. Effectively represents depth of search tree.
     """
 
-    def __init__(self, model, transformation, constraints=[], num_iter=500, max_words_changed=32):
+    def __init__(self, model, transformation, constraints=[], num_iter=100, max_words_changed=32):
         super().__init__(model, transformation, constraints=constraints)
 
         # MCTS Hyper-parameters
         self.num_iter = num_iter
         self.max_words_changed = max_words_changed
-        self.max_tree_depth = 10
+        self.max_tree_depth = 8
+        self.step_size = 2
         self.ucb_C = 2
-        self.global_C = 8
-        self.local_C = 8
+        self.global_C = 2
+        self.local_C = 2
 
     def _backprop(self, current_node, search_value):
         """
@@ -131,7 +135,6 @@ class MonteCarloTreeSearch(Attack):
             current_node.num_visits += 1
             current_node.value = (current_node.value * n + search_value) / (n + 1)
             current_node.value_history.append(search_value)
-            current_node.calc_variance()
 
             # Update local RAVE values
             for action in self.search_tree.action_history:
@@ -172,36 +175,39 @@ class MonteCarloTreeSearch(Attack):
                     available_transformations[i],
                     current_node
                 )
+            # Add no-op node
+            current_node.children[SearchTree.NOOP_ACTION] = Node(current_node.text, current_node)
 
             random_action = random.choice(available_actions)
-            self.search_tree.available_words_to_transform.remove(word_to_transform)
+            if random_action != SearchTree.NOOP_ACTION:
+                self.search_tree.available_words_to_transform.remove(word_to_transform)
             self.search_tree.action_history.append(random_action)
 
             return current_node.children[random_action]
 
-    def _UCB(self, node):
-        return node.value + self.ucb_C * math.sqrt(
-            math.log(node.parent.num_visits) / node.num_visits
+    def _UCB(self, node, action):
+        return node.children[action].value + math.sqrt(
+            self.ucb_C * math.log(node.num_visits) / node.children[action].num_visits
+        )
+
+    def _UCB_tuned(self, node, action):
+        return  node.children[action].value + math.sqrt(
+            self.ucb_C * math.log(node.num_visits) / node.children[action].num_visits
+            * min(0.25, node.children[action].variance + math.sqrt(2 * math.log(node.num_visits) / node.children[action].num_visits))
         )
 
     def _UCB_RAVE_tuned(self, node, action):
-        ucb = self.ucb_C * math.log(node.parent.num_visits) / max(1, node.num_visits)
-        value = node.value + \
-            math.sqrt(ucb * min(0.25, node.variance + math.sqrt(ucb)))
-        v1 = value
-        v2 = 0.0
-        v3 = 0.0
+        ucb = math.sqrt(
+            self.ucb_C * math.log(node.num_visits) / max(1, node.children[action].num_visits)
+            * min(0.25, node.children[action].variance
+            + math.sqrt(2 * math.log(node.num_visits) / max(1, node.children[action].num_visits)))
+        )
+        global_rave = 0.0
         if action in self.search_tree.global_rave_values:
-            alpha = self.global_C / (self.global_C + self.search_tree.global_rave_values[action][1])
-            value += alpha * self.search_tree.global_rave_values[action][0]
-            v2 = value
-        if action in node.local_rave_values:
-            beta = self.local_C / (self.local_C + node.num_visits)
-            value += beta * node.local_rave_values[action]
-            v3 = value
-        #print(f"{v1} | {v2} | {v3}")
+            global_rave = self.search_tree.global_rave_values[action][0]
 
-        return value
+        #print(f"{node.children[action].value} | {global_rave} | {ucb}")
+        return node.children[action].value + global_rave + ucb
 
     def _selection(self):
         """
@@ -218,7 +224,7 @@ class MonteCarloTreeSearch(Attack):
 
             for action in current_node.children.keys():
                 ucb_value = self._UCB_RAVE_tuned(
-                    current_node.children[action], 
+                    current_node, 
                     action
                 )
 
@@ -228,18 +234,19 @@ class MonteCarloTreeSearch(Attack):
                     best_action = action
 
             current_node = best_next_node
-            self.search_tree.available_words_to_transform.remove(best_action[0])
+            if best_action != SearchTree.NOOP_ACTION:
+                self.search_tree.available_words_to_transform.remove(best_action[0])
             self.search_tree.action_history.append(best_action)
 
         return current_node
 
-    def _run_mcts(self):
+    def _run_mcts(self, num_iter):
         """
             Runs Monte Carlo Tree Search at the current root.
             Returns best node and best action.
         """
 
-        for i in range(self.num_iter):
+        for i in range(num_iter):
             #print(f'Iteration {i+1}')
             self.search_tree.iteration += 1
             self.search_tree.clear_single_iteration_history()
@@ -254,12 +261,11 @@ class MonteCarloTreeSearch(Attack):
             search_value = 1 + result.score if result.score < 0 else result.score
             self._backprop(current_node, search_value)
 
-        # Select best choice based on node value
+    def _choose_best_move(self, node):
         best_action = None
         best_value = float('-inf')
-
-        for action in self.search_tree.root.children:
-            value = self.search_tree.root.children[action].value
+        for action in node.children:
+            value = node.children[action].value
             if action in self.search_tree.global_rave_values:
                 value += self.search_tree.global_rave_values[action][0]
             if action in self.search_tree.root.local_rave_values:
@@ -269,33 +275,49 @@ class MonteCarloTreeSearch(Attack):
                 best_action = action
                 best_value = value
 
-        if best_action not in self.search_tree.root.children:
+        if best_action not in node.children:
             return None, None
-
-        #print(f"Best Action {best_action}")
-
-        return self.search_tree.root.children[best_action], best_action
+        else:
+            return node.children[best_action], best_action
 
     def attack_one(self, tokenized_text, correct_output):
 
         original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
         max_tree_depth = min(self.max_tree_depth, len(tokenized_text.words))
         max_words_changed = min(self.max_words_changed, len(tokenized_text.words))
+        num_iter = self.num_iter
 
         self.search_tree = SearchTree(tokenized_text, original_result.output, max_tree_depth)
         current_result = original_result
+        words_changed = 0
 
-        for i in range(max_words_changed):
-            best_next_node, best_action = self._run_mcts()
-            if best_next_node is None:
+        while words_changed < max_words_changed:
+            self._run_mcts(num_iter)
+
+            root = self.search_tree.root
+            i = 0
+            while i < self.step_size:
+                root, action = self._choose_best_move(root)
+                if not root:
+                    break
+                
+                current_result = self.goal_function.get_results([root.text], self.search_tree.original_label)[0]
+                if current_result.output != correct_output:
+                    break
+
+                if action != SearchTree.NOOP_ACTION:
+                    words_changed += 1
+                i+=1
+            
+            if not root:
                 break
-            self.search_tree.root = best_next_node
-            self.search_tree.root.parent = None
-            self.search_tree.reset_node_depth()
-            current_result = self.goal_function.get_results([best_next_node.text], self.search_tree.original_label)[0]
-
             if current_result.output != correct_output:
                 break
+
+            self.search_tree.root = root
+            self.search_tree.root.parent = None
+            self.search_tree.reset_node_depth()
+            num_iter = int(num_iter * 0.9)
 
         if correct_output == current_result.output:
             return FailedAttackResult(original_result, current_result)
