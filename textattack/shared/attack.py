@@ -161,6 +161,10 @@ class Attack:
         
         if shuffle:
             random.shuffle(dataset.examples)
+
+        if num_examples <= 0:
+            return
+            yield
             
         for text, ground_truth_output in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)

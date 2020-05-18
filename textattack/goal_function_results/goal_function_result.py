@@ -19,6 +19,9 @@ class GoalFunctionResult:
         
         if isinstance(self.score, torch.Tensor):
             self.score = self.score.item()
+
+        if isinstance(self.succeeded, torch.Tensor):
+            self.succeeded = self.succeeded.item()
     
     def get_text_color_input(self):
         """ A string representing the color this result's changed
