@@ -1,7 +1,7 @@
 import numpy as np
 
 from textattack.search_methods import SearchMethod
-from textattack.shared.validators import is_word_swap
+from textattack.shared.validators import consists_of_word_swaps
 
 class GreedyWordSwapWIR(SearchMethod):
     """
@@ -30,10 +30,7 @@ class GreedyWordSwapWIR(SearchMethod):
         except KeyError:
             raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
         
-    def check_transformation_compatibility(self, transformation):
-        return transformation.consists_of(is_word_swap)
-
-    def __call__(self, initial_result):
+    def _perform_search(self, initial_result):
         tokenized_text = initial_result.tokenized_text
         cur_result = initial_result
 
@@ -89,6 +86,12 @@ class GreedyWordSwapWIR(SearchMethod):
         if results and len(results):
             return results[0]
         return initial_result
+
+    def check_transformation_compatibility(self, transformation):
+        """
+            Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swaps transformations.
+        """
+        return consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
         return ['wir_method']

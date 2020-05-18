@@ -13,9 +13,9 @@ class Attack:
     An attack generates adversarial examples on text. 
     
     This is an abstract class that contains main helper functionality for 
-    attacks. An attack is comprised of a search method, which makes use of
-    a goal function, a transformation, and a set of one or more linguistic 
-    constraints that successful examples must meet.
+    attacks. An attack is comprised of a search method, goal function, 
+    a transformation, and a set of one or more linguistic constraints that 
+    successful examples must meet.
 
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
@@ -67,7 +67,7 @@ class Attack:
             transformation: 
             text:
             original text (:obj:`type`, optional): Defaults to None. 
-            apply_constraints: Whether or not to apply (non-modification) constraints
+            apply_constraints: Whether or not to apply non-modification constraints
             **kwargs:
 
         Returns:

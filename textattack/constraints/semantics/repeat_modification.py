@@ -6,7 +6,7 @@ from textattack.constraints import ModificationConstraint
 
 class RepeatModification(ModificationConstraint):
     """ 
-    A constraint disallowing the modification of words which have already been modified
+    A constraint disallowing the modification of words which have already been modified.
     """
    
     def _get_modifiable_indices(self, tokenized_text):

@@ -1,7 +1,6 @@
 import torch
 from copy import deepcopy
 from .utils import get_device, words_from_text
-from nltk.corpus import stopwords
 
 class TokenizedText:
 
@@ -32,26 +31,13 @@ class TokenizedText:
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
-        if 'modified_indices' not in attack_attrs:
-            attack_attrs['modified_indices'] = set()
-        if 'stopword_indices' not in attack_attrs:
-            attack_attrs['stopword_indices'] = set()
+        self.attack_attrs.setdefault('modified_indices', set())
 
     def __eq__(self, other):
         return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
     
     def __hash__(self):
         return hash(self.text)
-
-    def identify_stopwords(self, textfooler_stopwords=False):
-        self.stopwords = set(stopwords.words('english'))
-        if textfooler_stopwords:
-            self.stopwords = set(['a', 'about', 'above', 'across', 'after', 'afterwards', 'again', 'against', 'ain', 'all', 'almost', 'alone', 'along', 'already', 'also', 'although', 'am', 'among', 'amongst', 'an', 'and', 'another', 'any', 'anyhow', 'anyone', 'anything', 'anyway', 'anywhere', 'are', 'aren', "aren't", 'around', 'as', 'at', 'back', 'been', 'before', 'beforehand', 'behind', 'being', 'below', 'beside', 'besides', 'between', 'beyond', 'both',  'but', 'by', 'can', 'cannot', 'could', 'couldn', "couldn't", 'd', 'didn', "didn't", 'doesn', "doesn't", 'don', "don't", 'down', 'due', 'during', 'either', 'else', 'elsewhere', 'empty', 'enough', 'even', 'ever', 'everyone', 'everything', 'everywhere', 'except',  'first', 'for', 'former', 'formerly', 'from', 'hadn', "hadn't",  'hasn', "hasn't",  'haven', "haven't", 'he', 'hence', 'her', 'here', 'hereafter', 'hereby', 'herein', 'hereupon', 'hers', 'herself', 'him', 'himself', 'his', 'how', 'however', 'hundred', 'i', 'if', 'in', 'indeed', 'into', 'is', 'isn', "isn't", 'it', "it's", 'its', 'itself', 'just', 'latter', 'latterly', 'least', 'll', 'may', 'me', 'meanwhile', 'mightn', "mightn't", 'mine', 'more', 'moreover', 'most', 'mostly',  'must', 'mustn', "mustn't", 'my', 'myself', 'namely', 'needn', "needn't", 'neither', 'never', 'nevertheless', 'next', 'no', 'nobody', 'none', 'noone', 'nor', 'not', 'nothing', 'now', 'nowhere', 'o', 'of', 'off', 'on', 'once', 'one', 'only', 'onto', 'or', 'other', 'others', 'otherwise', 'our', 'ours', 'ourselves', 'out', 'over', 'per', 'please','s', 'same', 'shan', "shan't", 'she', "she's", "should've", 'shouldn', "shouldn't", 'somehow', 'something', 'sometime', 'somewhere', 'such', 't', 'than', 'that', "that'll", 'the', 'their', 'theirs', 'them', 'themselves', 'then', 'thence', 'there', 'thereafter', 'thereby', 'therefore', 'therein', 'thereupon', 'these', 'they','this', 'those', 'through', 'throughout', 'thru', 'thus', 'to', 'too','toward', 'towards', 'under', 'unless', 'until', 'up', 'upon', 'used',  've', 'was', 'wasn', "wasn't", 'we',  'were', 'weren', "weren't", 'what', 'whatever', 'when', 'whence', 'whenever', 'where', 'whereafter', 'whereas', 'whereby', 'wherein', 'whereupon', 'wherever', 'whether', 'which', 'while', 'whither', 'who', 'whoever', 'whole', 'whom', 'whose', 'why', 'with', 'within', 'without', 'won', "won't", 'would', 'wouldn', "wouldn't", 'y', 'yet', 'you', "you'd", "you'll", "you're", "you've", 'your', 'yours', 'yourself', 'yourselves'])
-        
-        self.attack_attrs['stopword_indices'] = set()
-        for i, word in enumerate(self.words):
-            if word.lower() in self.stopwords:
-                self.attack_attrs['stopword_indices'].add(i)
 
     def delete_tensors(self):
         """ Delete tensors to clear up GPU space. Only should be called
@@ -163,7 +149,6 @@ class TokenizedText:
         final_sentence = ''
         text = self.text
         new_attack_attrs = dict()
-        new_attack_attrs['stopword_indices'] = set()
         new_attack_attrs['modified_indices'] = set()
         new_attack_attrs['newly_modified_indices'] = set()
         new_i = 0
@@ -174,8 +159,6 @@ class TokenizedText:
             final_sentence += text[:word_start]
             final_sentence += adv_word
             text = text[word_end:]
-            if i in self.attack_attrs['stopword_indices']:
-                new_attack_attrs['stopword_indices'].add(new_i)
             if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
                 new_attack_attrs['modified_indices'].add(new_i)
                 if input_word != adv_word:

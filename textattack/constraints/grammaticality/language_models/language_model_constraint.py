@@ -28,7 +28,7 @@ class LanguageModelConstraint(Constraint):
         try:
             indices = x_adv.attack_attrs['newly_modified_indices']
         except KeyError:
-            raise KeyError('Cannot apply part-of-speech constraint without `newly_modified_indices`')
+            raise KeyError('Cannot apply language model constraint without `newly_modified_indices`')
 
         for i in indices:
             probs = self.get_log_probs_at_index((x, x_adv), i)
