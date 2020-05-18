@@ -4,8 +4,13 @@ from .logger import Logger
 class WeightsAndBiasesLogger(Logger):
     def __init__(self, filename='', stdout=False):
         import wandb
-        wandb.init(project='textattack')
+        wandb.init(project='textattack', resume=True)
         self._result_table_rows = []
+
+    def __setstate__(self, state):
+        import wandb
+        self.__dict__ = state
+        wandb.init(project='textattack', resume=True)
 
     def log_summary_rows(self, rows, title, window_id):
         table = wandb.Table(columns=['Attack Results', ''])
