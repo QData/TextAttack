@@ -35,7 +35,7 @@ class BeamSearch(SearchMethod):
 
             # Refill the beam. This works by sorting the scores
             # in descending order and filling the beam from there.
-            best_indices = -scores.argsort()[:self.beam_width]
+            best_indices = (-scores).argsort()[:self.beam_width]
             beam = [potential_next_beam[i] for i in best_indices]
         return best_result
 
