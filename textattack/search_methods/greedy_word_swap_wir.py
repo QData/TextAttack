@@ -60,8 +60,8 @@ class GreedyWordSwapWIR(SearchMethod):
             else:
                 continue
             # If we succeeded, return the index with best similarity.
-            if results[0].succeeded:
-                best_result = results[0]
+            if cur_result.succeeded:
+                best_result = cur_result
                 # @TODO: Use vectorwise operations
                 max_similarity = -float('inf')
                 for result in results:
@@ -80,8 +80,6 @@ class GreedyWordSwapWIR(SearchMethod):
                         max_similarity = similarity_score
                         best_result = result
                 return best_result
-            else:
-                cur_result = results[0]
        
         if results and len(results):
             return results[0]
