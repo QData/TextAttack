@@ -45,7 +45,7 @@ templates_path = []
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # Mock language_check to stop issues with Sphinx not loading it
 autodoc_mock_imports = []
@@ -61,3 +61,9 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = []
+
+# Path to favicon.
+html_favicon = 'favicon.png'
+
+# Don't show module names in front of class names.
+add_module_names = False

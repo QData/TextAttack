@@ -29,7 +29,7 @@ class Constraint:
                 else:
                     incompatible_x_advs.append(x_adv)
             except KeyError:
-                raise KeyError('x_adv must have `last_transformation` attack_attr to apply GoogLM constraint')
+                raise KeyError('x_adv must have `last_transformation` attack_attr to apply constraint')
         filtered_x_advs = self._check_constraint_many(x, compatible_x_advs, original_text=original_text)
         return list(filtered_x_advs) + incompatible_x_advs
 
@@ -58,6 +58,10 @@ class Constraint:
     def check_compatibility(self, transformation):
         """ 
         Checks if this constraint is compatible with the given transformation.
+        For example, the WordEmbeddingDistance constraint compares the embedding of
+        the word inserted with that of the word deleted. Therefore it can only be
+        applied in the case of word swaps, and not for transformations which involve
+        only one of insertion or deletion.
         Args:
             transformation: The transformation to check compatibility with.
         """

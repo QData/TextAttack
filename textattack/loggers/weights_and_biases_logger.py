@@ -2,6 +2,7 @@ from textattack.shared.utils import html_table_from_rows
 from .logger import Logger
 
 class WeightsAndBiasesLogger(Logger):
+    """ Logs attack results to Weights & Biases. """
     def __init__(self, filename='', stdout=False):
         import wandb
         wandb.init(project='textattack', resume=True)

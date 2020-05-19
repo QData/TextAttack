@@ -35,9 +35,11 @@ Sentence Encoders
 .. automodule:: textattack.constraints.semantics.sentence_encoders.sentence_encoder
    :members:
 
+
+Thought Vectors 
+****************
 .. automodule:: textattack.constraints.semantics.sentence_encoders.thought_vector
    :members:
-
 
 BERT 
 *****
@@ -70,15 +72,22 @@ Language Models
 ################
 .. automodule:: textattack.constraints.grammaticality.language_models.language_model_constraint
    :members:
+   
+GPT-2
+*******
 
 .. automodule:: textattack.constraints.grammaticality.language_models.gpt2
    :members:
 
+
+Google 1-Billion Words Language Model
+**************************************
+
 .. automodule:: textattack.constraints.grammaticality.language_models.google_language_model.google_language_model
    :members:
 
-Language Tool 
-##############
+LanguageTool Grammar Checker 
+##############################
 .. automodule:: textattack.constraints.grammaticality.language_tool
    :members:
 
@@ -94,7 +103,7 @@ Overlap
 
 Overlap constraints determine if a transformation is valid based on character-level analysis.
 
-Bleu Score 
+BLEU Score 
 ############
 .. automodule:: textattack.constraints.overlap.bleu_score
    :members:
@@ -109,12 +118,12 @@ Lenvenshtein Edit Distance
 .. automodule:: textattack.constraints.overlap.levenshtein_edit_distance
    :members:
 
-Meteor Score  
+METEOR Score  
 #############
 .. automodule:: textattack.constraints.overlap.meteor_score
    :members:
 
-Number of Words Perturbed  
+Maximum Words Perturbed  
 ###########################
-.. automodule:: textattack.constraints.overlap.words_perturbed
+.. automodule:: textattack.constraints.overlap.max_words_perturbed
    :members:

@@ -6,23 +6,19 @@ Search methods explore the transformation space in an attempt to find a successf
 
 Search Methods:
 
-- `Greedy Word Search`_
+- `Greedy Search`_
 - `Beam Search`_ 
-- `Genetic Algorithm`_
+- `Greedy Word Swap with Word Importance Ranking`_
+- `Genetic Algorithm Word Swap`_
 
-Attack
-######################
 
-.. automodule:: textattack.search_methods.attack
+.. automodule:: textattack.search_methods.search_method
    :members:
 
-Greedy Word Search
+Greedy Search
 ####################
 
 .. automodule:: textattack.search_methods.greedy_word_swap
-   :members:
-
-.. automodule:: textattack.search_methods.greedy_word_swap_wir
    :members:
 
 Beam Search
@@ -31,8 +27,15 @@ Beam Search
 .. automodule:: textattack.search_methods.beam_search 
    :members:
 
-Genetic Algorithm 
-##################
+
+Greedy Word Swap with Word Importance Ranking
+##############################################
+
+.. automodule:: textattack.search_methods.greedy_word_swap_wir
+   :members:
+   
+Genetic Algorithm Word Swap
+###########################
 
 .. automodule:: textattack.search_methods.genetic_algorithm
    :members:

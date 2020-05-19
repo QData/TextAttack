@@ -213,7 +213,7 @@ def get_args():
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
     attack_group.add_argument('--search', '-s', '--search_method', type=str, 
         required=False, default='greedy-word-wir', 
-        help=f'The search_method to use. choices: {search_choices}')
+        help=f'The search method to use. choices: {search_choices}')
     
     attack_group.add_argument('--recipe', '-r', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',

@@ -100,7 +100,7 @@ class GoogleLanguageModel(Constraint):
         # same order they were passed in.
         max_el_indices.sort()
         
-        return list(np.array(x_adv_list)[max_el_indices])
+        return [x_adv_list[i] for i in max_el_indices]
     
     def __call__(self, x, x_adv):
         raise NotImplementedError()

@@ -9,14 +9,14 @@ A transformation is a method of perturbing a text input by replacing words or ph
 
 
 Composite Transformation 
-##########################
+--------------------------
 Multiple transformations can be used by providing a list of ``transformation`` s to ``CompositeTransformation``
 
 .. automodule:: textattack.transformations.composite_transformation
    :members:
 
-Word Swaps
-###########
+Word Swap
+-----------------
 Word swap transformations act by replacing some words in the input. Subclasses can implement the abstract ``word_swap`` class by overriding ``self._get_replacement_words``
 
 .. automodule:: textattack.transformations.word_swap
@@ -38,7 +38,7 @@ Word Swap by WordNet Word Replacement
 Word Swap by Gradient
 ---------------------------------------
 
-.. automodule:: textattack.transformations.gradient_based_word_swap
+.. automodule:: textattack.transformations.word_swap_gradient_based
    :members:
    
 Word Swap by Homoglyph

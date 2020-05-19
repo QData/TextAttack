@@ -1,9 +1,4 @@
-.. TextAttack documentation master file, created by
-   sphinx-quickstart on Sat Oct 19 20:54:30 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-🐙 TextAttack
+TextAttack
 ======================================
 
 `TextAttack <https://github.com/QData/TextAttack>`__ is a Python library for adversarial attacks and data augmentation in NLP.
@@ -35,41 +30,42 @@ TextAttack has some other features that make it a pleasure to use:
 
    quickstart/installation
    quickstart/overview
-   examples/1_Introduction_and_Transformtions.ipynb
-   examples/2_Constraints.ipynb
+   Example 1: Transformations <examples/1_Introduction_and_Transformations.ipynb>
+   Example 2: Constraints <examples/2_Constraints.ipynb>
 
 .. toctree::
    :maxdepth: 3
    :hidden:
    :caption: NLP Attacks
 
-   search_methods/attack
-   transformations/transformation
-   constraints/constraint
-   goal_functions/goal_function
-   goal_functions/goal_function_result
-   attack_recipes/attack_recipes
+   attacks/search_method
+   attacks/transformation
+   attacks/constraint
+   attacks/goal_function
+   attacks/goal_function_result
+   attacks/attack
+   attacks/attack_recipes
    
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
    :caption: Data Augmentation
 
    augmentation/augmentation
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :hidden:
-   :caption: Pretrained Datasets & Models
+   :caption: Datasets, Models, and Tokenizers
 
-   models/models
-   datasets/datasets
-   tokenizers/tokenizer
+   datasets_models/models
+   datasets_models/datasets
+   datasets_models/tokenizers
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 3
    :hidden:
    :caption: Miscellaneous:
    
-   loggers/loggers
-   tokenizers/tokenized_text
+   misc/loggers
+   misc/tokenized_text

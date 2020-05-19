@@ -4,8 +4,8 @@ from textattack.search_methods import SearchMethod
 
 class BeamSearch(SearchMethod):
     """ 
-    An attack that greedily chooses from a list of possible 
-    perturbations.
+    An attack that maintinas a beam of the `beam_width` highest scoring TokenizedTexts, greedily
+    updating the beam with the highest scoring transformations from the current beam.
     
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
@@ -16,7 +16,7 @@ class BeamSearch(SearchMethod):
     def __init__(self, beam_width=8):
         self.beam_width = beam_width
         
-    def __call__(self, initial_result):
+    def _perform_search(self, initial_result):
         beam = [initial_result.tokenized_text]
         best_result = initial_result
         while not best_result.succeeded:

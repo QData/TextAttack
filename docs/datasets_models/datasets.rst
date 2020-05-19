@@ -28,6 +28,7 @@ Classification
 Entailment
 ############
 .. automodule:: textattack.datasets.entailment.entailment_dataset
+   :members:
 
 .. automodule:: textattack.datasets.entailment.mnli
    :members:
