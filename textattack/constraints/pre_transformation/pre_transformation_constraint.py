@@ -1,9 +1,5 @@
-""" Abstract classes represent constraints on text adversarial examples. 
-"""
-
 from textattack.shared.utils import default_class_repr
 from textattack.constraints import Constraint
-
 
 class PreTransformationConstraint(Constraint):
     """ 

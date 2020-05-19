@@ -15,7 +15,8 @@ from textattack.shared.attack import Attack
 from textattack.goal_functions import UntargetedClassification
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import MaxWordsPerturbed
-from textattack.constraints.semantics import WordEmbeddingDistance, RepeatModification, StopwordModification
+from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.search_methods import BeamSearch
 from textattack.transformations import WordSwapGradientBased
 
