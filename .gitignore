@@ -37,3 +37,6 @@ wandb/
 
 # checkpoints
 checkpoints/
+
+# vim
+*.swp
