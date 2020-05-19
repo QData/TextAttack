@@ -63,7 +63,7 @@ def download_if_needed(folder_name):
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
     """ Unzips a .zip file to folder path. """
-    get_logger().info(f'Unzipping file  path_to_zip_file to unzipped_folder_path.')
+    get_logger().info(f'Unzipping file {path_to_zip_file} to {unzipped_folder_path}.')
     enclosing_unzipped_path = pathlib.Path(unzipped_folder_path).parent
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
         zip_ref.extractall(enclosing_unzipped_path)

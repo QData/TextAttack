@@ -14,6 +14,10 @@ We split constraints into three main categories.
    
    :ref:`overlap`: Based on character-based properties, like edit distance
 
+A fourth type of constraint restricts the search method from exploring certain parts of the search space:
+
+   :ref:`pre_transformation`: based on the input and index of word replacement
+
 .. automodule:: textattack.constraints.constraint
    :members:
 
@@ -24,16 +28,6 @@ Semantics
 
 Semantic constraints determine if a transformation is valid based on similarity 
 of the semantics of the orignal input and the transformed input.
-
-Stopword Modification
-########################
-.. automodule:: textattack.constraints.semantics.stopword_modification
-   :members:
-   
-Repeat Modification
-########################
-.. automodule:: textattack.constraints.semantics.repeat_modification
-   :members:
 
 Word Embedding Distance 
 ########################
@@ -136,4 +130,25 @@ METEOR Score
 Maximum Words Perturbed  
 ###########################
 .. automodule:: textattack.constraints.overlap.max_words_perturbed
+   :members:
+
+.. _pre_transformation:
+
+Pre-Transformation
+----------
+
+Pre-transformation constraints determine if a transformation is valid based on 
+only the original input and the position of the replacement. These constraints 
+are applied before the transformation is even called. For example, these
+constraints can prevent search methods from swapping words at the same index
+twice, or from replacing stopwords.
+
+Stopword Modification
+########################
+.. automodule:: textattack.constraints.pre_transformation.stopword_modification
+   :members:
+   
+Repeat Modification
+########################
+.. automodule:: textattack.constraints.pre_transformation.repeat_modification
    :members:
