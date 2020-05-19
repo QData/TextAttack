@@ -11,7 +11,7 @@ from textattack.shared.attack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.grammaticality.language_models import GPT2
 from textattack.constraints.semantics.sentence_encoders import ThoughtVector
-from textattack.constraints.semantics import RepeatModification, StopwordModification
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
 from textattack.transformations import WordSwapEmbedding

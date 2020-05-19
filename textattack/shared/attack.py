@@ -4,7 +4,8 @@ import os
 import random
 
 from textattack.shared import utils
-from textattack.constraints import Constraint, PreTransformationConstraint
+from textattack.constraints import Constraint
+from textattack.constraints.pre_transformation import PreTransformationConstraint
 from textattack.shared import TokenizedText
 from textattack.attack_results import SkippedAttackResult, SuccessfulAttackResult, FailedAttackResult
 
@@ -162,6 +163,8 @@ class Attack:
         
         if shuffle:
             random.shuffle(dataset.examples)
+        
+        num_examples = num_examples or len(dataset)        
 
         if num_examples <= 0:
             return

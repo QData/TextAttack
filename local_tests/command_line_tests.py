@@ -16,6 +16,16 @@ def register_test(command, name=None, output_file=None, desc=None):
 ##            BEGIN TESTS            ##
 #######################################
 
+
+#
+# test: run_attack --interactive
+#
+register_test(('printf "All that glitters is not gold\nq\n"', 
+    'python -m textattack --recipe textfooler --model bert-imdb --interactive'), 
+    name='interactive_mode', 
+    output_file='local_tests/sample_outputs/interactive_mode.txt', 
+    desc='Runs textfooler attack on BERT trained on IMDB using interactive mode')
+
 #
 # test: run_attack_parallel textfooler attack on 10 samples from BERT MR
 #                   (takes about 81s)
