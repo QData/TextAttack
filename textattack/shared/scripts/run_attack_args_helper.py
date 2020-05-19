@@ -108,8 +108,6 @@ CONSTRAINT_CLASS_NAMES = {
     'infer-sent':       'textattack.constraints.semantics.sentence_encoders.InferSent',
     'thought-vector':   'textattack.constraints.semantics.sentence_encoders.ThoughtVector',
     'use':              'textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder',
-    'repeat':           'textattack.constraints.semantics.RepeatModification',
-    'stopword':         'textattack.constraints.semantics.StopwordModification',
     #
     # Grammaticality constraints
     #
@@ -125,6 +123,11 @@ CONSTRAINT_CLASS_NAMES = {
     'edit-distance':        'textattack.constraints.overlap.LevenshteinEditDistance',
     'meteor':               'textattack.constraints.overlap.METEOR',
     'max-words-perturbed':  'textattack.constraints.overlap.MaxWordsPerturbed',
+    #
+    # Pre-transformation constraints
+    #
+    'repeat':           'textattack.constraints.pre_transformation.RepeatModification',
+    'stopword':         'textattack.constraints.pre_transformation.StopwordModification',
 }
 
 SEARCH_CLASS_NAMES = {
