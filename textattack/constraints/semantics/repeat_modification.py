@@ -2,9 +2,9 @@
 """
 
 from textattack.shared.utils import default_class_repr
-from textattack.constraints import ModificationConstraint
+from textattack.constraints import PreTransformationConstraint
 
-class RepeatModification(ModificationConstraint):
+class RepeatModification(PreTransformationConstraint):
     """ 
     A constraint disallowing the modification of words which have already been modified.
     """

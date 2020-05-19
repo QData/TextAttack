@@ -7,13 +7,13 @@ class Transformation:
         
     """
 
-    def __call__(self, tokenized_text, modification_constraints=[], indices_to_modify=None):
+    def __call__(self, tokenized_text, pre_transformation_constraints=[], indices_to_modify=None):
         """ Returns a list of all possible transformations for `tokenized_text`."""
         if indices_to_modify is None:
             indices_to_modify = set(range(len(tokenized_text.words)))
         else:
             indices_to_modify = set(indices_to_modify)
-        for constraint in modification_constraints:
+        for constraint in pre_transformation_constraints:
             indices_to_modify = indices_to_modify & constraint(tokenized_text, self)
         transformed_texts = self._get_transformations(tokenized_text, indices_to_modify)
         for text in transformed_texts:
