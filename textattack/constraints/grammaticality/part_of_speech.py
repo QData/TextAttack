@@ -3,7 +3,7 @@ import nltk
 
 from textattack.constraints import Constraint
 from textattack.shared import TokenizedText
-from textattack.shared.validators import consists_of_word_swaps
+from textattack.shared.validators import transformation_consists_of_word_swaps
 
 class PartOfSpeech(Constraint):
     """ Constraints word swaps to only swap words with the same part of speech.
@@ -53,7 +53,7 @@ class PartOfSpeech(Constraint):
         return True
 
     def check_compatibility(self, transformation):
-        return consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
         return ['tagset', 'allow_verb_noun_swap']

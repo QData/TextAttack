@@ -9,7 +9,7 @@ import torch
 from copy import deepcopy
 
 from textattack.search_methods import SearchMethod
-from textattack.shared.validators import consists_of_word_swaps
+from textattack.shared.validators import transformation_consists_of_word_swaps
 
 class GeneticAlgorithm(SearchMethod):
     """
@@ -174,7 +174,7 @@ class GeneticAlgorithm(SearchMethod):
         """
         The genetic algorithm is specifically designed for word substitutions.
         """
-        return consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
         return ['pop_size', 'max_iters', 'temp', 'give_up_if_no_improvement']

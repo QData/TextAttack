@@ -1,7 +1,7 @@
 import numpy as np
 
 from textattack.search_methods import SearchMethod
-from textattack.shared.validators import consists_of_word_swaps
+from textattack.shared.validators import transformation_consists_of_word_swaps
 
 class GreedyWordSwapWIR(SearchMethod):
     """
@@ -91,7 +91,7 @@ class GreedyWordSwapWIR(SearchMethod):
         """
             Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swaps transformations.
         """
-        return consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
         return ['wir_method']

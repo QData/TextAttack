@@ -6,7 +6,7 @@ import torch
 from textattack.shared import utils
 from textattack.constraints import Constraint
 from textattack.shared import TokenizedText
-from textattack.shared.validators import consists_of_word_swaps
+from textattack.shared.validators import transformation_consists_of_word_swaps
 
 class WordEmbeddingDistance(Constraint):
     """
@@ -142,7 +142,7 @@ class WordEmbeddingDistance(Constraint):
         WordEmbeddingDistance requires a word being both deleted and inserted at the same index
         in order to compare their embeddings, therefore it's restricted to word swaps.
         """
-        return consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps(transformation)
         
     def extra_repr_keys(self):
         """Set the extra representation of the constraint using these keys.

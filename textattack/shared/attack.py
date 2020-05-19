@@ -26,7 +26,7 @@ class Attack:
 
     """
 
-    def __init__(self, goal_function, constraints, transformation, search_method):
+    def __init__(self, goal_function=None, constraints=[], transformation=None, search_method=None):
         """ Initialize an attack object. Attacks can be run multiple times.
         """
         self.search_method = search_method

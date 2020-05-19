@@ -3,7 +3,7 @@
 
 from textattack.shared.utils import default_class_repr
 from textattack.constraints import ModificationConstraint
-from textattack.shared.validators import consists_of_word_swaps
+from textattack.shared.validators import transformation_consists_of_word_swaps
 import nltk
 
 class StopwordModification(ModificationConstraint):
@@ -32,4 +32,4 @@ class StopwordModification(ModificationConstraint):
         Args:
             transformation: The transformation to check compatibility with.
         """
-        return consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps(transformation)
