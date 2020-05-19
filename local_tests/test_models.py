@@ -107,7 +107,7 @@ class CommandLineTest(TextAttackTest):
                 proc.wait()
         else:
             result = subprocess.run(
-                shlex.split(self.command.split), 
+                shlex.split(self.command), 
                 stdout=subprocess.PIPE,
                 stderr=stderr_file 
             )
