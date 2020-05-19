@@ -4,10 +4,13 @@
 from textattack.shared.utils import default_class_repr
 from textattack.constraints import Constraint
 
-class ModificationConstraint(Constraint):
+
+class PreTransformationConstraint(Constraint):
     """ 
-    An abstract class that represents constraints which apply only 
-    to which words can be modified. 
+    An abstract class that represents constraints which are applied before
+    the transformation. These restrict which words are allowed to be modified
+    during the transformation. For example, we might not allow stopwords to be
+    modified.
     """
    
     def __call__(self, x, transformation):

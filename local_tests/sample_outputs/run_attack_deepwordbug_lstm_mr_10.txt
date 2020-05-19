@@ -1,14 +1,19 @@
-GreedyWordSwapWIR(
+Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
   (goal_function):  UntargetedClassification
   (transformation):  CompositeTransformation
   (constraints): 
     (0): LevenshteinEditDistance(
         (max_edit_distance):  30
       )
+    (1): RepeatModification
+    (2): StopwordModification
   (is_black_box):  True
 ) 
 
-Load time: /.*/
+Load time: /.*/s
 --------------------------------------------- Result 1 ---------------------------------------------
 [91m0[0m-->[92m1[0m
 [91mpossibly[0m the most [91mirresponsible[0m picture ever released by a major [91mfilm[0m [91mstudio[0m .
@@ -79,6 +84,6 @@ disappointingly , the characters are too strange and dysfunctional , tom include
 (0x(B Attack success rate:          (0x(B 80.0%  (0x(B
 (0x(B Average perturbed word %:     (0x(B 20.05% (0x(B
 (0x(B Average num. words per input: (0x(B 20.7   (0x(B
-(0x(B Avg num queries:              (0x(B 39.9   (0x(B
+(0x(B Avg num queries:              (0x(B 38.9   (0x(B
 (0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
-Attack time: /.*/
+Attack time: /.*/s

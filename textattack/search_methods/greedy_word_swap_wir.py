@@ -1,7 +1,7 @@
 import numpy as np
 
 from textattack.search_methods import SearchMethod
-from textattack.shared.validators import consists_of_word_swaps
+from textattack.shared.validators import transformation_consists_of_word_swaps
 
 class GreedyWordSwapWIR(SearchMethod):
     """
@@ -60,8 +60,8 @@ class GreedyWordSwapWIR(SearchMethod):
             else:
                 continue
             # If we succeeded, return the index with best similarity.
-            if results[0].succeeded:
-                best_result = results[0]
+            if cur_result.succeeded:
+                best_result = cur_result
                 # @TODO: Use vectorwise operations
                 max_similarity = -float('inf')
                 for result in results:
@@ -80,8 +80,6 @@ class GreedyWordSwapWIR(SearchMethod):
                         max_similarity = similarity_score
                         best_result = result
                 return best_result
-            else:
-                cur_result = results[0]
        
         if results and len(results):
             return results[0]
@@ -91,7 +89,7 @@ class GreedyWordSwapWIR(SearchMethod):
         """
             Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swaps transformations.
         """
-        return consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
         return ['wir_method']
