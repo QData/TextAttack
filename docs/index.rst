@@ -38,13 +38,13 @@ TextAttack has some other features that make it a pleasure to use:
    :hidden:
    :caption: NLP Attacks
 
-   attacks/search_method
-   attacks/transformation
-   attacks/constraint
-   attacks/goal_function
-   attacks/goal_function_result
-   attacks/attack
-   attacks/attack_recipes
+   attacks/search_methods
+   attacks/transformations
+   attacks/constraints
+   attacks/goal_functions
+   attacks/goal_function_results
+   attacks/attacks
+   attacks/attack_recipess
    
 .. toctree::
    :maxdepth: 3
@@ -68,4 +68,5 @@ TextAttack has some other features that make it a pleasure to use:
    :caption: Miscellaneous:
    
    misc/loggers
+   misc/validators
    misc/tokenized_text

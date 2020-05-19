@@ -23,7 +23,17 @@ Semantics
 ----------
 
 Semantic constraints determine if a transformation is valid based on similarity 
-of the semantics between the orignal input and the transformed input.
+of the semantics of the orignal input and the transformed input.
+
+Stopword Modification
+########################
+.. automodule:: textattack.constraints.semantics.stopword_modification
+   :members:
+   
+Repeat Modification
+########################
+.. automodule:: textattack.constraints.semantics.repeat_modification
+   :members:
 
 Word Embedding Distance 
 ########################
