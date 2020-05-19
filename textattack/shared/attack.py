@@ -4,7 +4,7 @@ import os
 import random
 
 from textattack.shared import utils
-from textattack.constraints import Constraint, ModificationConstraint
+from textattack.constraints import Constraint, PreTransformationConstraint
 from textattack.shared import TokenizedText
 from textattack.attack_results import SkippedAttackResult, SuccessfulAttackResult, FailedAttackResult
 
@@ -45,10 +45,10 @@ class Attack:
             raise ValueError('SearchMethod {self.search_method} incompatible with transformation {self.transformation}')
 
         self.constraints = []
-        self.modification_constraints = []
+        self.pre_transformation_constraints = []
         for constraint in constraints:
-            if isinstance(constraint, ModificationConstraint):
-                self.modification_constraints.append(constraint)
+            if isinstance(constraint, PreTransformationConstraint):
+                self.pre_transformation_constraints.append(constraint)
             else:
                 self.constraints.append(constraint)
         
@@ -67,7 +67,7 @@ class Attack:
             transformation: 
             text:
             original text (:obj:`type`, optional): Defaults to None. 
-            apply_constraints: Whether or not to apply non-modification constraints
+            apply_constraints: Whether or not to apply post-transformation constraints
             **kwargs:
 
         Returns:
@@ -78,7 +78,8 @@ class Attack:
             raise RuntimeError('Cannot call `get_transformations` without a transformation.')
        
         transformations = np.array(self.transformation(text, 
-                                   modification_constraints=self.modification_constraints, **kwargs))
+                            pre_transformation_constraints=self.pre_transformation_constraints, 
+                            **kwargs))
         if apply_constraints:
             return self._filter_transformations(transformations, text, original_text)
         return transformations
@@ -230,7 +231,7 @@ class Attack:
         )
         # self.constraints
         constraints_lines = []
-        constraints = self.constraints + self.modification_constraints
+        constraints = self.constraints + self.pre_transformation_constraints
         if len(constraints):
             for i, constraint in enumerate(constraints):
                 constraints_lines.append(utils.add_indent(f'({i}): {constraint}', 2))

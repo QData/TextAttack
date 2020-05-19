@@ -2,11 +2,11 @@
 """
 
 from textattack.shared.utils import default_class_repr
-from textattack.constraints import ModificationConstraint
+from textattack.constraints import PreTransformationConstraint
 from textattack.shared.validators import transformation_consists_of_word_swaps
 import nltk
 
-class StopwordModification(ModificationConstraint):
+class StopwordModification(PreTransformationConstraint):
     """ 
     A constraint disallowing the modification of stopwords
     """
