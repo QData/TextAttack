@@ -6,9 +6,8 @@ from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
 
 class AttackLogManager:
+    """ Logs the results of an attack to all attached loggers. """
     def __init__(self):
-        """ Logs the results of an attack to all attached loggers
-        """
         self.loggers = []
         self.results = []
         self.max_words_changed = 0

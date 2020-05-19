@@ -118,16 +118,21 @@ CONSTRAINT_CLASS_NAMES = {
     #
     # Overlap constraints
     #
-    'bleu':             'textattack.constraints.overlap.BLEU', 
-    'chrf':             'textattack.constraints.overlap.chrF', 
-    'edit-distance':    'textattack.constraints.overlap.LevenshteinEditDistance',
-    'meteor':           'textattack.constraints.overlap.METEOR',
-    'words-perturbed':  'textattack.constraints.overlap.WordsPerturbed',
+    'bleu':                 'textattack.constraints.overlap.BLEU', 
+    'chrf':                 'textattack.constraints.overlap.chrF', 
+    'edit-distance':        'textattack.constraints.overlap.LevenshteinEditDistance',
+    'meteor':               'textattack.constraints.overlap.METEOR',
+    'max-words-perturbed':  'textattack.constraints.overlap.MaxWordsPerturbed',
+    #
+    # Pre-transformation constraints
+    #
+    'repeat':           'textattack.constraints.pre_transformation.RepeatModification',
+    'stopword':         'textattack.constraints.pre_transformation.StopwordModification',
 }
 
 SEARCH_CLASS_NAMES = {
     'beam-search':      'textattack.search_methods.BeamSearch',
-    'greedy-word':      'textattack.search_methods.GreedyWordSwap',
+    'greedy':           'textattack.search_methods.GreedySearch',
     'ga-word':          'textattack.search_methods.GeneticAlgorithm',
     'greedy-word-wir':  'textattack.search_methods.GreedyWordSwapWIR',
 }
@@ -157,7 +162,7 @@ def get_args():
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
-        default=[],
+        default=['repeat', 'stopword'],
         help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys())))
     
     parser.add_argument('--out-dir', type=str, required=False, default=None,
@@ -209,11 +214,11 @@ def get_args():
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
-    attack_group.add_argument('--attack', '--attack_method', type=str, 
+    attack_group.add_argument('--search', '-s', '--search-method', type=str, 
         required=False, default='greedy-word-wir', 
-        help=f'The type of attack to run. choices: {search_choices}')
+        help=f'The search method to use. choices: {search_choices}')
     
-    attack_group.add_argument('--recipe', type=str, required=False, default=None,
+    attack_group.add_argument('--recipe', '-r', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
 
@@ -321,20 +326,21 @@ def parse_goal_function_and_attack_from_args(args):
     if args.recipe:
         attack = parse_recipe_from_args(model, args)
         goal_function = attack.goal_function
+        return goal_function, attack
     else:
         goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args)
         constraints = parse_constraints_from_args(args)
-        if ':' in args.attack:
-            attack_name, params = args.attack.split(':')
-            if attack_name not in SEARCH_CLASS_NAMES:
-                raise ValueError(f'Error: unsupported attack {attack_name}')
-            attack = eval(f'{SEARCH_CLASS_NAMES[attack_name]}(goal_function, transformation, constraints=constraints, {params})')
-        elif args.attack in SEARCH_CLASS_NAMES:
-            attack = eval(f'{SEARCH_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
+        if ':' in args.search:
+            search_name, params = args.search.split(':')
+            if search_name not in SEARCH_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported search {search_name}')
+            search_method = eval(f'{SEARCH_CLASS_NAMES[search_name]}({params})')
+        elif args.search in SEARCH_CLASS_NAMES:
+            search_method = eval(f'{SEARCH_CLASS_NAMES[args.search]}()')
         else:
-            raise ValueError(f'Error: unsupported attack {args.attack}')
-    return goal_function, attack
+            raise ValueError(f'Error: unsupported attack {args.search}')
+    return goal_function, textattack.shared.Attack(goal_function, constraints, transformation, search_method)
 
 def parse_logger_from_args(args):# Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()

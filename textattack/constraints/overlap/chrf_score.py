@@ -9,7 +9,7 @@ class chrF(Constraint):
             raise TypeError('max_chrf must be an int')
         self.max_chrf = max_chrf
     
-    def __call__(self, x, x_adv, original_text=None):
+    def _check_constraint(self, x, x_adv, original_text=None):
         if not original_text:
             return True
         ref = original_text.words

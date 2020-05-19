@@ -31,13 +31,14 @@ class TokenizedText:
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
+        self.attack_attrs.setdefault('modified_indices', set())
 
     def __eq__(self, other):
         return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
     
     def __hash__(self):
         return hash(self.text)
-    
+
     def delete_tensors(self):
         """ Delete tensors to clear up GPU space. Only should be called
             once the TokenizedText is only needed to display.
@@ -138,7 +139,6 @@ class TokenizedText:
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
             `index` is replaced with a new word."""
-        self.attack_attrs['modified_word_index'] = index
         return self.replace_words_at_indices([index], [new_word])
     
     def replace_new_words(self, new_words):
@@ -148,16 +148,25 @@ class TokenizedText:
         """
         final_sentence = ''
         text = self.text
-        for input_word, adv_word in zip(self.words, new_words):
+        new_attack_attrs = dict()
+        new_attack_attrs['modified_indices'] = set()
+        new_attack_attrs['newly_modified_indices'] = set()
+        new_i = 0
+        for i, (input_word, adv_word) in enumerate(zip(self.words, new_words)):
             if input_word == '[DELETE]': continue
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)
             final_sentence += text[:word_start]
             final_sentence += adv_word
             text = text[word_end:]
+            if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
+                new_attack_attrs['modified_indices'].add(new_i)
+                if input_word != adv_word:
+                    new_attack_attrs['newly_modified_indices'].add(new_i)
+            new_i += 1
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
-            attack_attrs=deepcopy(self.attack_attrs))
+            attack_attrs=new_attack_attrs)
     
     def clean_text(self):
         """ Represents self in a clean, printable format. Joins text with multiple

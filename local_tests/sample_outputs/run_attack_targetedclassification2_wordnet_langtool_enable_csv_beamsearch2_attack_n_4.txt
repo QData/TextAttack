@@ -1,18 +1,21 @@
-BeamSearch(
+Attack(
+  (search_method): BeamSearch(
+    (beam_width):  2
+  )
   (goal_function):  TargetedClassification(
     (target_class):  2
   )
-  (transformation):  WordSwapWordNet(
-    (replace_stopwords):  False
-  )
+  (transformation):  WordSwapWordNet
   (constraints): 
     (0): LanguageTool(
         (grammar_error_threshold):  0
       )
+    (1): RepeatModification
+    (2): StopwordModification
   (is_black_box):  True
 ) 
 
-Logging to CSV at path /.*/csv.
+Logging to CSV at path /.*/.csv.
 Load time: /.*/s
 --------------------------------------------- Result 1 ---------------------------------------------
 [91m0[0m-->[94m2[0m
@@ -25,10 +28,13 @@ There is a bookshop at the gallery .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[91m0[0m-->[91m[FAILED][0m
-On Naxos , you can walk through the pretty villages of the Tragea Valley and the foothills of Mount Zas , admiring Byzantine churches and exploring olive groves at your leisure .
+[91m0[0m-->[94m2[0m
+On Naxos , you can walk through the pretty villages of the Tragea Valley and the foothills of Mount Zas , admiring [91mByzantine[0m churches and exploring olive groves at your leisure .
 
-Naxos is a place with beautiful scenery for leisure .
+Naxos is a [91mplace[0m with beautiful scenery for leisure .
+On Naxos , you can walk through the pretty villages of the Tragea Valley and the foothills of Mount Zas , admiring [94mconvoluted[0m churches and exploring olive groves at your leisure .
+
+Naxos is a [94mpiazza[0m with beautiful scenery for leisure .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
@@ -52,14 +58,14 @@ Net cost for education programs can be calculated as a way to [94mincrement[0m
 (0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
 (0x(B Attack Results                (0x(B        (0x(B
 (0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
-(0x(B Number of successful attacks: (0x(B 2      (0x(B
-(0x(B Number of failed attacks:     (0x(B 2      (0x(B
+(0x(B Number of successful attacks: (0x(B 3      (0x(B
+(0x(B Number of failed attacks:     (0x(B 1      (0x(B
 (0x(B Number of skipped attacks:    (0x(B 0      (0x(B
 (0x(B Original accuracy:            (0x(B 100.0% (0x(B
-(0x(B Accuracy under attack:        (0x(B 50.0%  (0x(B
-(0x(B Attack success rate:          (0x(B 50.0%  (0x(B
-(0x(B Average perturbed word %:     (0x(B 2.38%  (0x(B
+(0x(B Accuracy under attack:        (0x(B 25.0%  (0x(B
+(0x(B Attack success rate:          (0x(B 75.0%  (0x(B
+(0x(B Average perturbed word %:     (0x(B 3.34%  (0x(B
 (0x(B Average num. words per input: (0x(B 34.25  (0x(B
-(0x(B Avg num queries:              (0x(B 278.5  (0x(B
+(0x(B Avg num queries:              (0x(B 144.25 (0x(B
 (0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
 Attack time: /.*/s

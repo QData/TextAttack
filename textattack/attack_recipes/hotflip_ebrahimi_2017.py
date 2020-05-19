@@ -11,10 +11,12 @@
     paper).
 """
 
+from textattack.shared.attack import Attack
 from textattack.goal_functions import UntargetedClassification
 from textattack.constraints.grammaticality import PartOfSpeech
-from textattack.constraints.overlap import WordsPerturbed
+from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.search_methods import BeamSearch
 from textattack.transformations import WordSwapGradientBased
 
@@ -23,14 +25,20 @@ def HotFlipEbrahimi2017(model):
     # "HotFlip ... uses the gradient with respect to a one-hot input 
     # representation to efficiently estimate which individual change has the 
     # highest estimated loss."
-    transformation = WordSwapGradientBased(model, top_n=1, replace_stopwords=False)
-    constraints = []
+    transformation = WordSwapGradientBased(model, top_n=1)
+    #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification()
+    ]
     #
     # 0. "We were able to create only 41 examples (2% of the correctly-
     # classified instances of the SST test set) with one or two flips."
     # 
     constraints.append(
-        WordsPerturbed(max_num_words=2)
+        MaxWordsPerturbed(max_num_words=2)
     )
     #
     # 1. "The cosine similarity between the embedding of words is bigger than a 
@@ -52,7 +60,6 @@ def HotFlipEbrahimi2017(model):
     # well together to confuse a classifier ... The adversary uses a beam size 
     # of 10."
     #
-    attack = BeamSearch(goal_function, constraints=constraints,
-        transformation=transformation, beam_width=10)
-    
-    return attack
+    search_method = BeamSearch(beam_width=10)
+
+    return Attack(goal_function, constraints, transformation, search_method)
