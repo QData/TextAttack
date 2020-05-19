@@ -2,6 +2,7 @@ import colored
 import io
 import os
 import re
+import shlex
 import signal
 import sys
 import subprocess
@@ -87,11 +88,29 @@ class CommandLineTest(TextAttackTest):
         
     def execute(self):
         stderr_file = open(stderr_file_name, 'w+')
-        result = subprocess.run(
-            self.command.split(), 
-            stdout=subprocess.PIPE,
-            stderr=stderr_file 
-        )
+        if isinstance(self.command, tuple):
+            # Support pipes via tuple of commands
+            procs = []
+            for i in range(len(self.command) - 1):
+                if i == 0:
+                    proc = subprocess.Popen(shlex.split(self.command[i]), stdout=subprocess.PIPE)
+                else:
+                    proc = subprocess.Popen(shlex.split(self.command[i]), stdout=subprocess.PIPE, stdin=proc.stdout)
+                procs.append(proc)
+            # Run last commmand
+            result = subprocess.run(
+                shlex.split(self.command[-1]), stdin=procs[-1].stdout, 
+                stdout=subprocess.PIPE, stderr=stderr_file 
+            )
+            # Wait for all intermittent processes
+            for proc in procs:
+                proc.wait()
+        else:
+            result = subprocess.run(
+                shlex.split(self.command.split), 
+                stdout=subprocess.PIPE,
+                stderr=stderr_file 
+            )
         stderr_file.seek(0) # go back to beginning of file so we can read the whole thing
         stderr_str = stderr_file.read()
         # Remove temp file.

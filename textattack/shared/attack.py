@@ -162,6 +162,8 @@ class Attack:
         
         if shuffle:
             random.shuffle(dataset.examples)
+        
+        num_examples = num_examples or len(dataset)        
 
         if num_examples <= 0:
             return
