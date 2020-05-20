@@ -34,8 +34,9 @@ class Augmenter:
                 self.constraints.append(constraint)
     
     def _filter_transformations(self, tokenized_text, transformations):
-        """ Filters a list of `TokenizedText` objects to include only the ones 
-            that pass `self.constraints`.
+        """ 
+        Filters a list of ``TokenizedText`` objects to include only the ones 
+        that pass ``self.constraints``.
         """
         for C in self.constraints:
             if len(transformations) == 0: break
@@ -43,8 +44,8 @@ class Augmenter:
         return transformations
     
     def augment(self, text):
-        """ Returns all possible augmentations of `text` according to 
-            `self.transformation`.
+        """ Returns all possible augmentations of ``text`` according to 
+            ``self.transformation``.
         """
         tokenized_text = TokenizedText(text, DummyTokenizer())
         all_transformations = set()
@@ -79,7 +80,7 @@ class Augmenter:
     def augment_many(self, text_list):
         """
         Returns all possible augmentations of a list of strings according to
-        `self.transformation`.
+        ``self.transformation``.
     
         Args:
             text_list (list(string)): a list of strings for data augmentation
@@ -89,8 +90,9 @@ class Augmenter:
         return [self.augment(text) for text in text_list]
         
     def augment_text_and_ids(self, text_list, id_list, show_progress=True):
-        """ Supplements a list of text with more text data. Returns the augmented
-            text along with the corresponding IDs for each augmented example.
+        """ 
+        Supplements a list of text with more text data. Returns the augmented
+        text along with the corresponding IDs for each augmented example.
         """
         if len(text_list) != len(id_list):
             raise ValueError('List of text must be same length as list of IDs')
