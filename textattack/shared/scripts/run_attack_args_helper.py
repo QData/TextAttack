@@ -6,6 +6,8 @@ import sys
 import textattack
 import time
 import torch
+import pickle
+import copy
 
 RECIPE_NAMES = {
     'alzantot':         'textattack.attack_recipes.Alzantot2018',
@@ -116,16 +118,21 @@ CONSTRAINT_CLASS_NAMES = {
     #
     # Overlap constraints
     #
-    'bleu':             'textattack.constraints.overlap.BLEU', 
-    'chrf':             'textattack.constraints.overlap.chrF', 
-    'edit-distance':    'textattack.constraints.overlap.LevenshteinEditDistance',
-    'meteor':           'textattack.constraints.overlap.METEOR',
-    'words-perturbed':  'textattack.constraints.overlap.WordsPerturbed',
+    'bleu':                 'textattack.constraints.overlap.BLEU', 
+    'chrf':                 'textattack.constraints.overlap.chrF', 
+    'edit-distance':        'textattack.constraints.overlap.LevenshteinEditDistance',
+    'meteor':               'textattack.constraints.overlap.METEOR',
+    'max-words-perturbed':  'textattack.constraints.overlap.MaxWordsPerturbed',
+    #
+    # Pre-transformation constraints
+    #
+    'repeat':           'textattack.constraints.pre_transformation.RepeatModification',
+    'stopword':         'textattack.constraints.pre_transformation.StopwordModification',
 }
 
 SEARCH_CLASS_NAMES = {
     'beam-search':      'textattack.search_methods.BeamSearch',
-    'greedy-word':      'textattack.search_methods.GreedyWordSwap',
+    'greedy':           'textattack.search_methods.GreedySearch',
     'ga-word':          'textattack.search_methods.GeneticAlgorithm',
     'greedy-word-wir':  'textattack.search_methods.GreedyWordSwapWIR',
 }
@@ -142,6 +149,7 @@ def set_seed(random_seed):
     torch.manual_seed(random_seed)
 
 def get_args():
+    # Parser for regular arguments
     parser = argparse.ArgumentParser(
         description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -149,12 +157,12 @@ def get_args():
     parser.add_argument('--transformation', type=str, required=False,
         default='word-swap-embedding', choices=TRANSFORMATION_CLASS_NAMES.keys(),
         help='The transformations to apply.')
-        
+
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
-        default=[],
+        default=['repeat', 'stopword'],
         help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys())))
     
     parser.add_argument('--out-dir', type=str, required=False, default=None,
@@ -196,22 +204,53 @@ def get_args():
     
     def str_to_int(s): return sum((ord(c) for c in s))
     parser.add_argument('--random-seed', default=str_to_int('TEXTATTACK'))
+
+    parser.add_argument('--checkpoint-dir', required=False, type=str, default=default_checkpoint_dir(),
+        help='A directory to save/load checkpoint files.')
+
+    parser.add_argument('--checkpoint-interval', required=False, type=int, 
+        help='Interval for saving checkpoints. If not set, no checkpoints will be saved.')
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
-    attack_group.add_argument('--attack', '--attack_method', type=str, 
+    attack_group.add_argument('--search', '-s', '--search-method', type=str, 
         required=False, default='greedy-word-wir', 
-        help=f'The type of attack to run. choices: {search_choices}')
+        help=f'The search method to use. choices: {search_choices}')
     
-    attack_group.add_argument('--recipe', type=str, required=False, default=None,
+    attack_group.add_argument('--recipe', '-r', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
-    
-    command_line_args = None if sys.argv[1:] else ['-h'] # Default to help with empty arguments.
-    args = parser.parse_args(command_line_args)
-    
-    set_seed(args.random_seed)
+
+    # Parser for parsing args for resume
+    resume_parser = argparse.ArgumentParser(
+        description='A commandline parser for TextAttack', 
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    resume_parser.add_argument('--checkpoint-file', '-f', type=str, required=False, default='latest', 
+        help='Name of checkpoint file to resume attack from. If "latest" is entered, recover latest checkpoint.')
+
+    resume_parser.add_argument('--checkpoint-dir', '-d', required=False, type=str, default=default_checkpoint_dir(),
+        help='A directory to save/load checkpoint files.')
+
+    resume_parser.add_argument('--checkpoint-interval', '-i', required=False, type=int, 
+        help='Interval for saving checkpoints. If not set, no checkpoints will be saved.')
+
+    resume_parser.add_argument('--parallel', action='store_true', default=False,
+        help='Run attack using multiple GPUs.')
+
+    if sys.argv[1:] and sys.argv[1].lower() == 'resume':
+        args = resume_parser.parse_args(sys.argv[2:])
+        setattr(args, 'checkpoint_resume', True)
+    else:
+        command_line_args = None if sys.argv[1:] else ['-h'] # Default to help with empty arguments.
+        args = parser.parse_args(command_line_args)
+        setattr(args, 'checkpoint_resume', False)
+
+        if args.checkpoint_interval and args.shuffle:
+            # Not allowed b/c we cannot recover order of shuffled data
+            raise ValueError('Cannot use `--checkpoint-interval` with `--shuffle=True`')
+        
+        set_seed(args.random_seed)
     
     return args
 
@@ -287,20 +326,21 @@ def parse_goal_function_and_attack_from_args(args):
     if args.recipe:
         attack = parse_recipe_from_args(model, args)
         goal_function = attack.goal_function
+        return goal_function, attack
     else:
         goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args)
         constraints = parse_constraints_from_args(args)
-        if ':' in args.attack:
-            attack_name, params = args.attack.split(':')
-            if attack_name not in SEARCH_CLASS_NAMES:
-                raise ValueError(f'Error: unsupported attack {attack_name}')
-            attack = eval(f'{SEARCH_CLASS_NAMES[attack_name]}(goal_function, transformation, constraints=constraints, {params})')
-        elif args.attack in SEARCH_CLASS_NAMES:
-            attack = eval(f'{SEARCH_CLASS_NAMES[args.attack]}(goal_function, transformation, constraints=constraints)')
+        if ':' in args.search:
+            search_name, params = args.search.split(':')
+            if search_name not in SEARCH_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported search {search_name}')
+            search_method = eval(f'{SEARCH_CLASS_NAMES[search_name]}({params})')
+        elif args.search in SEARCH_CLASS_NAMES:
+            search_method = eval(f'{SEARCH_CLASS_NAMES[args.search]}()')
         else:
-            raise ValueError(f'Error: unsupported attack {args.attack}')
-    return goal_function, attack
+            raise ValueError(f'Error: unsupported attack {args.search}')
+    return goal_function, textattack.shared.Attack(goal_function, constraints, transformation, search_method)
 
 def parse_logger_from_args(args):# Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
@@ -308,7 +348,7 @@ def parse_logger_from_args(args):# Create logger
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
         outputs_dir = os.path.join(current_dir, os.pardir, os.pardir, os.pardir, 'outputs')
-        args.out_dir = outputs_dir
+        args.out_dir = os.path.normpath(outputs_dir)
         
     # Output file.
     out_time = int(time.time()*1000) # Output file
@@ -335,3 +375,36 @@ def parse_logger_from_args(args):# Create logger
     if not args.disable_stdout:
         attack_log_manager.enable_stdout()
     return attack_log_manager
+
+def parse_checkpoint_from_args(args):
+    if args.checkpoint_file.lower() == 'latest':
+        chkpt_file_names = [f for f in os.listdir(args.checkpoint_dir) if f.endswith('.ta.chkpt')]
+        assert chkpt_file_names, "Checkpoint directory is empty"
+        timestamps = [int(f.replace('.ta.chkpt', '')) for f in chkpt_file_names]
+        latest_file = str(max(timestamps)) + '.ta.chkpt'
+        checkpoint_path = os.path.join(args.checkpoint_dir, latest_file)
+    else:
+        checkpoint_path = os.path.join(args.checkpoint_dir, args.checkpoint_file)
+    
+    checkpoint = textattack.shared.Checkpoint.load(checkpoint_path)
+    set_seed(checkpoint.args.random_seed)
+
+    return checkpoint
+
+def default_checkpoint_dir():
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    checkpoints_dir = os.path.join(current_dir, os.pardir, os.pardir, os.pardir, 'checkpoints')
+    return os.path.normpath(checkpoints_dir)
+
+def merge_checkpoint_args(saved_args, cmdline_args):
+    """ Merge previously saved arguments for checkpoint and newly entered arguments """
+    args = copy.deepcopy(saved_args)
+    # Newly entered arguments take precedence
+    args.checkpoint_resume = cmdline_args.checkpoint_resume
+    args.parallel =  cmdline_args.parallel
+    args.checkpoint_dir = cmdline_args.checkpoint_dir
+    # If set, we replace
+    if cmdline_args.checkpoint_interval:
+        args.checkpoint_interval = cmdlineargs.checkpoint_interval
+    
+    return args

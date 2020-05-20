@@ -5,7 +5,7 @@ lru-dict
 nltk
 numpy
 pandas
-pyyaml
+pyyaml>=5.1
 scikit-learn
 scipy
 sentence_transformers

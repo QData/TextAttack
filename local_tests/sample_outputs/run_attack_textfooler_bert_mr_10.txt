@@ -1,9 +1,11 @@
-/.*/GreedyWordSwapWIR(
+Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
   (goal_function):  UntargetedClassification
   (transformation):  WordSwapEmbedding(
     (max_candidates):  50
     (embedding_type):  paragramcf
-    (replace_stopwords):  False
   )
   (constraints): 
     (0): WordEmbeddingDistance(
@@ -23,6 +25,8 @@
         (window_size):  15
         (skip_text_shorter_than_window):  True
       )
+    (3): RepeatModification
+    (4): StopwordModification
   (is_black_box):  True
 ) 
 
@@ -96,6 +100,6 @@ disappointingly , the [91mcharacter[0m are too [91mloopy[0m and dysfunctiona
 (0x(B Attack success rate:          (0x(B 100.0% (0x(B
 (0x(B Average perturbed word %:     (0x(B 19.15% (0x(B
 (0x(B Average num. words per input: (0x(B 20.7   (0x(B
-(0x(B Avg num queries:              (0x(B 99.86  (0x(B
+(0x(B Avg num queries:              (0x(B 98.86  (0x(B
 (0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
 Attack time: /.*/s

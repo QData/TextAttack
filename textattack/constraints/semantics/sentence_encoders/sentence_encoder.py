@@ -93,7 +93,11 @@ class SentenceEncoder(Constraint):
             x_list_text = []
             x_adv_list_text = []
             for x_adv in x_adv_list:
-                modified_index = x_adv.attack_attrs['modified_word_index']
+                #@TODO make this work when multiple indices have been modified
+                try:
+                    modified_index = next(iter(x_adv.attack_attrs['newly_modified_indices']))
+                except KeyError:
+                    raise KeyError('Cannot apply sentence encoder constraint without `newly_modified_indices`')
                 x_list_text.append(x.text_window_around_index(modified_index, self.window_size))
                 x_adv_list_text.append(x_adv.text_window_around_index(modified_index, self.window_size))
             embeddings = self.encode(x_list_text + x_adv_list_text)
@@ -121,7 +125,7 @@ class SentenceEncoder(Constraint):
         
         return self.sim_metric(original_embeddings, perturbed_embeddings)
     
-    def call_many(self, x, x_adv_list, original_text=None):
+    def _check_constraint_many(self, x, x_adv_list, original_text=None):
         """
         Filters the list of perturbed texts so that the similarity between the original text
         and the perturbed text is greater than the :obj:`threshold`. 
@@ -151,7 +155,7 @@ class SentenceEncoder(Constraint):
         mask = (scores >= self.threshold).cpu().numpy().nonzero()
         return np.array(x_adv_list)[mask]
     
-    def __call__(self, x, x_adv):
+    def _check_constraint(self, x, x_adv, original_text=None):
         return self.sim_score(x.text, x_adv.text) >= self.threshold 
 
     def extra_repr_keys(self):

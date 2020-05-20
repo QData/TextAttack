@@ -52,6 +52,9 @@ class AttackResult:
         return '\n'.join(self.str_lines(color_method=color_method))
    
     def goal_function_result_str(self, color_method=None):
+        """
+        Returns a string illustrating the results of the goal function.
+        """
         orig_colored = self.original_result.get_colored_output(color_method) # @TODO add this method to goal function results
                                                                         # @TODO also display confidence
         pert_colored = self.perturbed_result.get_colored_output(color_method)

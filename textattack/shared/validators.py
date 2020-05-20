@@ -73,3 +73,26 @@ def validate_model_gradient_word_swap_compatibility(model):
         return True
     else:
         raise ValueError(f'Cannot perform GradientBasedWordSwap on model {model}.')
+
+def transformation_consists_of(transformation, transformation_classes):
+    """
+        Determines if the transofrmation is or consists only of instances of a class in `transformation_classes`
+    """
+    from textattack.transformations import CompositeTransformation
+    if isinstance(transformation, CompositeTransformation):
+        for t in transformation.transformations:
+            if not transformation_consists_of(t, transformation_classes):
+                return False
+        return True
+    else:
+        for transformation_class in transformation_classes:
+            if isinstance(transformation, transformation_class):
+                return True
+        return False
+
+def transformation_consists_of_word_swaps(transformation):
+    """
+        Determines if the transofmration is a word swap or consists of only word swaps
+    """
+    from textattack.transformations import WordSwap, WordSwapGradientBased
+    return transformation_consists_of(transformation, [WordSwap, WordSwapGradientBased])

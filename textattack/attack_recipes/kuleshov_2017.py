@@ -1,20 +1,20 @@
-"""
-    Kuleshov, V. et al. 
-    
-    Generating Natural Language Adversarial Examples. 
-    
-    
-    https://openreview.net/pdf?id=r1QZ3zbAZ.
-"""
-
-from textattack.constraints.overlap import WordsPerturbed
+from textattack.shared.attack import Attack
+from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.grammaticality.language_models import GPT2
 from textattack.constraints.semantics.sentence_encoders import ThoughtVector
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.goal_functions import UntargetedClassification
-from textattack.search_methods import GreedyWordSwap
+from textattack.search_methods import GreedySearch
 from textattack.transformations import WordSwapEmbedding
 
 def Kuleshov2017(model):
+    """
+        Kuleshov, V. et al. 
+        
+        Generating Natural Language Adversarial Examples. 
+        
+        https://openreview.net/pdf?id=r1QZ3zbAZ.
+    """
     #
     # "Specifically, in all experiments, we used a target of τ = 0.7,
     # a neighborhood size of N = 15, and parameters λ_1 = 0.2 and δ = 0.5; we set
@@ -25,11 +25,17 @@ def Kuleshov2017(model):
     #
     transformation = WordSwapEmbedding(max_candidates=15)
     #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification()
+    ]
+    #
     # Maximum of 50% of words perturbed (δ in the paper).
     #
-    constraints = []
     constraints.append(
-            WordsPerturbed(max_percent=0.5)
+            MaxWordsPerturbed(max_percent=0.5)
     )
     #
     # Maximum thought vector Euclidean distance of λ_1 = 0.2. (eq. 4)
@@ -52,10 +58,6 @@ def Kuleshov2017(model):
     #
     # Perform word substitution with a genetic algorithm.
     #
-    attack = GreedyWordSwap(goal_function, constraints=constraints,
-        transformation=transformation)
+    search_method = GreedySearch()
     
-    return attack
-
-
-        # GPT2(max_log_prob_diff=2)
+    return Attack(goal_function, constraints, transformation, search_method)

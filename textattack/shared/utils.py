@@ -63,7 +63,7 @@ def download_if_needed(folder_name):
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
     """ Unzips a .zip file to folder path. """
-    get_logger().info(f'Unzipping file  path_to_zip_file to unzipped_folder_path.')
+    get_logger().info(f'Unzipping file {path_to_zip_file} to {unzipped_folder_path}.')
     enclosing_unzipped_path = pathlib.Path(unzipped_folder_path).parent
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
         zip_ref.extractall(enclosing_unzipped_path)
@@ -264,5 +264,6 @@ def config(key):
     
 config_dict = {'CACHE_DIR': os.environ.get('TA_CACHE_DIR', os.path.expanduser('~/.cache/textattack'))}
 config_path = download_if_needed('config.yaml')
-config_dict.update(yaml.load(open(config_path, 'r'), Loader=yaml.FullLoader))
+with open(config_path, 'r') as f:
+    config_dict.update(yaml.load(f, Loader=yaml.FullLoader))
 _post_install_if_needed()

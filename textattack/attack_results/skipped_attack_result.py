@@ -2,6 +2,8 @@ from .attack_result import AttackResult
 from textattack.shared import utils
 
 class SkippedAttackResult(AttackResult):
+    '''The result of a skipped attack.'''
+
     def __init__(self, original_result):
         super().__init__(original_result, original_result)
 

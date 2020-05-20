@@ -1,14 +1,6 @@
-"""
-    Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019). 
-    
-    Is BERT Really Robust? Natural Language Attack on Text Classification and 
-        Entailment. 
-    
-    ArXiv, abs/1907.11932.
-    
-"""
-
+from textattack.shared.attack import Attack
 from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
 from textattack.constraints.grammaticality import PartOfSpeech, LanguageTool
 from textattack.goal_functions import UntargetedClassification
@@ -16,6 +8,15 @@ from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import WordSwapEmbedding
 
 def TextFoolerJin2019Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
+    """
+        Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019). 
+        
+        Is BERT Really Robust? Natural Language Attack on Text Classification and Entailment. 
+        
+        https://arxiv.org/abs/1907.11932 
+       
+        Constraints adjusted from paper to align with human evaluation.
+    """
     #
     # Swap words with their embedding nearest-neighbors. 
     #
@@ -25,13 +26,19 @@ def TextFoolerJin2019Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     # (The paper claims 0.7, but analysis of the code and some empirical
     # results show that it's definitely 0.5.)
     #
-    transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
+    transformation = WordSwapEmbedding(max_candidates=50)
+    #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification()
+    ]
     #
     # Minimum word embedding cosine similarity of 0.9.
     #
-    constraints = []
     constraints.append(
-            WordEmbeddingDistance(min_cos_sim=0.9)
+        WordEmbeddingDistance(min_cos_sim=0.9)
     )
     #
     # Universal Sentence Encoder with a minimum angular similarity of ε = 0.7.
@@ -49,7 +56,7 @@ def TextFoolerJin2019Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     # Do grammar checking
     #
     constraints.append(
-            LanguageTool(0)
+        LanguageTool(0)
     )
     
     #
@@ -60,7 +67,6 @@ def TextFoolerJin2019Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(goal_function, transformation=transformation,
-        constraints=constraints, max_depth=None)
+    search_method = GreedyWordSwapWIR()
     
-    return attack
+    return Attack(goal_function, constraints, transformation, search_method)

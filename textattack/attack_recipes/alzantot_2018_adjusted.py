@@ -1,22 +1,23 @@
-"""
-    Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, 
-        K. (2018). 
-    
-    Generating Natural Language Adversarial Examples. 
-    
-    EMNLP. 
-    
-    ArXiv, abs/1801.00554.
-"""
-
+from textattack.shared.attack import Attack
 from textattack.constraints.grammaticality import PartOfSpeech, LanguageTool
 from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm
 from textattack.transformations import WordSwapEmbedding
 
 def Alzantot2018Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
+    """
+        Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, 
+        K. (2018). 
+        
+        Generating Natural Language Adversarial Examples.
+        
+        https://arxiv.org/abs/1801.00554 
+
+        Constraints adjusted from paper to align with human evaluation.
+    """
     #
     # Swap words with their embedding nearest-neighbors. 
     #
@@ -24,7 +25,14 @@ def Alzantot2018Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     # "[We] fix the hyperparameter values to S = 60, N = 8, K = 4, and δ = 0.5"
     #
-    transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
+    transformation = WordSwapEmbedding(max_candidates=50)
+    #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification()
+    ]
     #
     # Minimum word embedding cosine similarity of 0.9.
     #
@@ -55,8 +63,8 @@ def Alzantot2018Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     goal_function = UntargetedClassification(model)
     #
-    # Greedily swap words with "Word Importance Ranking".
+    # Perform word substitution with a genetic algorithm.
     #
-    attack = GeneticAlgorithm(goal_function, transformation=transformation, 
-        constraints=constraints, pop_size=60, max_iters=20)
-    return attack
+    search_method = GeneticAlgorithm(pop_size=60, max_iters=20)
+
+    return Attack(goal_function, constraint, transformation, search_method)

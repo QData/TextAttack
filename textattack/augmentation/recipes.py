@@ -2,12 +2,17 @@ from . import Augmenter
 
 import textattack
 
+DEFAULT_CONSTRAINTS = [
+    textattack.constraints.pre_transformation.RepeatModification(),
+    textattack.constraints.pre_transformation.StopwordModification()
+]
+
 class WordNetAugmenter(Augmenter):
     """ Augments text by replacing with synonyms from the WordNet thesaurus. """
     def __init__(self, **kwargs):
         from textattack.transformations import WordSwapWordNet
         transformation = WordSwapWordNet()
-        super().__init__(transformation, constraints=[], **kwargs)
+        super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
 
 class EmbeddingAugmenter(Augmenter):
@@ -18,7 +23,7 @@ class EmbeddingAugmenter(Augmenter):
             max_candidates=50, embedding_type='paragramcf'
         )
         from textattack.constraints.semantics import WordEmbeddingDistance
-        constraints = [
+        constraints = DEFAULT_CONSTRAINTS + [
             WordEmbeddingDistance(min_cos_sim=0.8)
         ]
         super().__init__(transformation, constraints=constraints, **kwargs)
@@ -42,4 +47,4 @@ class CharSwapAugmenter(Augmenter):
             # (4) Insertion: Insert a random letter in the word.
             WordSwapRandomCharacterInsertion()
         ])
-        super().__init__(transformation, constraints=[], **kwargs)
+        super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)

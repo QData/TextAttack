@@ -38,7 +38,8 @@ class TextAttackDataset:
     def _load_pickle_file(self, file_name, offset=0):
         self.i = 0
         file_path = utils.download_if_needed(file_name)
-        self.examples = pickle.load( open(file_path, "rb" ) )
+        with open(file_path, "rb") as f:
+            self.examples = pickle.load(f)
         self.examples = self.examples[offset:]
     
     def _load_classification_text_file(self, text_file_name, offset=0):
