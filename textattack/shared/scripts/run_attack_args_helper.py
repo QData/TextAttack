@@ -97,6 +97,7 @@ TRANSFORMATION_CLASS_NAMES = {
     'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',
     'word-swap-random-char-substitution':   'textattack.transformations.WordSwapRandomCharacterSubstitution',
     'word-swap-wordnet':                    'textattack.transformations.WordSwapWordNet',
+    'word-swap-language-model':             'textattack.transfomrations.WordSwapLanguageModel',
 }
 
 CONSTRAINT_CLASS_NAMES = {
