@@ -4,6 +4,7 @@ Datasets
 
 .. automodule:: textattack.datasets.dataset
    :members:
+   :private-members:
 
 Classification
 ###############

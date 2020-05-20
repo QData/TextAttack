@@ -15,7 +15,7 @@ We split models up into two broad categories:
 
    :ref:`LSTM`: a standard LSTM fine-tuned on various datasets.
    
-   :ref:`CNN`: a word-CNN fine-tuned on various datasets.
+   :ref:`CNN`: a Word-CNN fine-tuned on various datasets.
 
 
 **Text-to-text models:**
@@ -76,7 +76,7 @@ We provide pre-trained LSTM models on the following datasets:
 
 
 
-word-CNN
+Word-CNN
 ************
 .. _CNN:
 
