@@ -111,7 +111,7 @@ The `attack_one` method in an `Attack` takes as input a `TokenizedText`, and out
 
 ### Goal Functions
 
-A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the attack has succeeded. 
+A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
 
 ### Constraints
 
@@ -123,7 +123,7 @@ A `Transformation` takes as input a `TokenizedText` and returns a list of possib
 
 ### Search Methods
 
-A search method takes as input an initial `goal_function` result and returns a final `goal_function` result. The search is given access to the `get_transformations` function, which takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined through `get_goal_results`) or is exhausted.
+A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
 ## Contributing to TextAttack
 
