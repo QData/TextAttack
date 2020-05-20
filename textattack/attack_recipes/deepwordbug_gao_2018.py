@@ -1,13 +1,3 @@
-"""
-    Gao, Lanchantin, Soffa, Qi.
-    
-    Black-box Generation of Adversarial Text Sequences to Evade Deep Learning 
-        Classifiers.
-    
-    ArXiv, abs/1801.04354.
-    
-"""
-
 from textattack.shared.attack import Attack
 from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.constraints.overlap import LevenshteinEditDistance
@@ -20,6 +10,14 @@ from textattack.transformations import \
     WordSwapRandomCharacterSubstitution, WordSwapNeighboringCharacterSwap
 
 def DeepWordBugGao2018(model, use_all_transformations=True):
+    """
+        Gao, Lanchantin, Soffa, Qi.
+        
+        Black-box Generation of Adversarial Text Sequences to Evade Deep Learning 
+        Classifiers.
+        
+        https://arxiv.org/abs/1801.04354
+    """
     #
     # Swap characters out from words. Choose the best of four potential transformations. 
     #

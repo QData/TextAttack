@@ -24,9 +24,10 @@ class StopwordModification(PreTransformationConstraint):
 
     def check_compatibility(self, transformation):
         """ 
-        The stopword constraint only is concerned with word swaps since, paraphrasing phrases
+        The stopword constraint only is concerned with word swaps since paraphrasing phrases
         containing stopwords is OK.
+
         Args:
-            transformation: The transformation to check compatibility with.
+            transformation: The ``Transformation`` to check compatibility with.
         """
         return transformation_consists_of_word_swaps(transformation)

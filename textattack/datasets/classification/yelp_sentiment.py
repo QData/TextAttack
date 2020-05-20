@@ -4,9 +4,9 @@ class YelpSentiment(ClassificationDataset):
     """
     Loads samples from the Yelp Sentiment dataset.
     
-    Labels:
-        0 - Negative
-        1 - Positive
+    Labels
+        0: Negative
+        1: Positive
 
     Args:
         offset (int): line to start reading from

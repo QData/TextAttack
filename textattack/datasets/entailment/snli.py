@@ -4,10 +4,10 @@ class SNLI(EntailmentDataset):
     """
     Loads samples from the SNLI dataset.
     
-    Labels:
-        0 - Entailment
-        1 - Neutral
-        2 - Contradiction
+    Labels
+        0: Entailment
+        1: Neutral
+        2: Contradiction
 
     Args:
         offset (int): line to start reading from

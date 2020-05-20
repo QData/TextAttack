@@ -2,12 +2,13 @@ from textattack.datasets import TextAttackDataset
 from textattack.shared import TokenizedText
 
 class EntailmentDataset(TextAttackDataset):
-    """ A generic class for loading entailment data. 
+    """ 
+    A generic class for loading entailment data. 
     
-    Labels:
-        0 - Entailment
-        1 - Neutral
-        2 - Contradiction
+    Labels
+        0: Entailment
+        1: Neutral
+        2: Contradiction
     """
     
     def map_label_str(self, label_str):

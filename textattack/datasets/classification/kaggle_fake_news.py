@@ -4,9 +4,9 @@ class KaggleFakeNews(ClassificationDataset):
     """
     Loads samples from the Kaggle Fake News dataset. https://www.kaggle.com/mrisdal/fake-news
     
-    Labels:
-        0 - Real Article
-        1 - Fake Article
+    Labels
+        0: Real Article
+        1: Fake Article
 
     Args:
         n (int): The number of examples to load

@@ -1,13 +1,3 @@
-"""
-    Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019). 
-    
-    Is BERT Really Robust? Natural Language Attack on Text Classification and 
-        Entailment. 
-    
-    ArXiv, abs/1907.11932.
-    
-"""
-
 from textattack.shared.attack import Attack
 from textattack.goal_functions import UntargetedClassification
 from textattack.constraints.grammaticality import PartOfSpeech
@@ -18,6 +8,13 @@ from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import WordSwapEmbedding
 
 def TextFoolerJin2019(model):
+    """
+        Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019). 
+        
+        Is BERT Really Robust? Natural Language Attack on Text Classification and Entailment. 
+        
+        https://arxiv.org/abs/1907.11932 
+    """
     #
     # Swap words with their embedding nearest-neighbors. 
     #

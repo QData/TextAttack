@@ -4,6 +4,7 @@ Datasets
 
 .. automodule:: textattack.datasets.dataset
    :members:
+   :private-members:
 
 Classification
 ###############
@@ -27,7 +28,8 @@ Classification
 
 Entailment
 ############
-.. automodule.textattack.datasets.entailment.entailment_dataset
+.. automodule:: textattack.datasets.entailment.entailment_dataset
+   :members:
 
 .. automodule:: textattack.datasets.entailment.mnli
    :members:

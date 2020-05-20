@@ -6,9 +6,9 @@ class MovieReviewSentiment(ClassificationDataset):
     of sentence-level sentiment classification on positive and negative movie 
     reviews (Pang and Lee, 2005).
     
-    Labels:
-        0 - Negative
-        1 - Positive
+    Labels
+        0: Negative
+        1: Positive
 
     Args:
         n (int): The number of examples to load

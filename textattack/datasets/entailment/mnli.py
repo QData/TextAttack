@@ -7,10 +7,10 @@ class MNLI(EntailmentDataset):
     
     See https://www.nyu.edu/projects/bowman/multinli/paper.pdf for more details.
     
-    Labels:
-        0 - Entailment
-        1 - Neutral
-        2 - Contradiction
+    Labels
+        0: Entailment
+        1: Neutral
+        2: Contradiction
 
     Args:
         offset (int): line to start reading from

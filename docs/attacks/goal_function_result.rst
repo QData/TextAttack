@@ -1,8 +1,8 @@
 =======================
-Goal Function Results
+Goal Function Result
 =======================
 
-The result of a goal function evaluation.
+Goal function results report the result of a goal function evaluation, indicating whether an attack succeeded for a given example.
 
 .. automodule:: textattack.goal_function_results.goal_function_result 
    :members:

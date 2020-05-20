@@ -1,3 +1,12 @@
+"""
+When WIR method is set to ``unk``, this is a
+reimplementation of the search method from thepaper: 
+Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and 
+Entailment by Jin et. al, 2019. 
+See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
+"""
+
+
 import numpy as np
 
 from textattack.search_methods import SearchMethod
@@ -7,12 +16,6 @@ class GreedyWordSwapWIR(SearchMethod):
     """
     An attack that greedily chooses from a list of possible perturbations in 
     order of index, after ranking indices by importance.
-    
-    Reimplementation of paper:
-        Is BERT Really Robust? A Strong Baseline for Natural Language Attack on 
-        Text Classification and Entailment by Jin et. al, 2019
-        
-        https://github.com/jind11/TextFooler 
         
     Args:
         wir_method: method for ranking most important words

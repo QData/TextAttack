@@ -1,17 +1,3 @@
-"""
-    Cheng, Minhao, et al. 
-    
-    Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with 
-        Adversarial Examples
-    
-    ArXiv, abs/1803.01128.
-    
-    
-    This is a greedy re-implementation of the seq2sick attack method. It does 
-        not use gradient descent.
-    
-"""
-
 from textattack.shared.attack import Attack
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.constraints.semantics import WordEmbeddingDistance
@@ -21,6 +7,18 @@ from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import WordSwapEmbedding
 
 def Seq2SickCheng2018BlackBox(model, goal_function='non_overlapping'):
+    """
+        Cheng, Minhao, et al. 
+        
+        Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with 
+        Adversarial Examples
+        
+        https://arxiv.org/abs/1803.01128    
+        
+        This is a greedy re-implementation of the seq2sick attack method. It does 
+        not use gradient descent.
+    """
+
     #
     # Goal is non-overlapping output.
     #

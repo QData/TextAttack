@@ -13,6 +13,7 @@ def port_is_open(port_num, hostname='127.0.0.1'):
   return False
   
 class VisdomLogger(Logger):
+    """ Logs attack results to Visdom. """
     def __init__(self, env='main', port=8097, hostname='localhost'):
         if not port_is_open(port, hostname=hostname):
             raise socket.error(f'Visdom not running on {hostname}:{port}')
