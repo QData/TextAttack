@@ -1,7 +1,7 @@
 .. _goal_function:
 
 ================
-Goal Functions
+Goal Function
 ================
 
 Goal functions determine if an attack has been successful. 

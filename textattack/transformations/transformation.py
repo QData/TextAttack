@@ -2,13 +2,22 @@ from textattack.shared.utils import default_class_repr
 
 class Transformation:
     """
-    An abstract class for transofrming a string of text to produce
+    An abstract class for transforming a sequence of text to produce
     a potential adversarial example. 
         
     """
 
     def __call__(self, tokenized_text, pre_transformation_constraints=[], indices_to_modify=None):
-        """ Returns a list of all possible transformations for `tokenized_text`."""
+        """ 
+        Returns a list of all possible transformations for ``tokenized_text``.
+
+        Args:
+            tokenized_text: The ``TokenizedText`` to transform.
+            pre_transformation_constraints: The ``PreTransformationConstraint``\s to apply before
+                beginning the transformation.
+            indicies_to_modify: Which word indices should be modified as dictated by the
+                ``SearchMethod``.
+        """
         if indices_to_modify is None:
             indices_to_modify = set(range(len(tokenized_text.words)))
         else:

@@ -1,27 +1,32 @@
 TextAttack
 ======================================
 
-`TextAttack <https://github.com/QData/TextAttack>`__ is a Python library for adversarial attacks and data augmentation in NLP.
+`TextAttack <https://github.com/QData/TextAttack>`__ is a Python framework for adversarial attacks and data augmentation in NLP.
 
-Features 
+NLP Attacks
 -----------
 
-TextAttack isn't just a Python library; it's a framework for constructing and thinking about adversarial attacks in NLP. TextAttack builds attacks from four components:
+TextAttack provides a framework for constructing and thinking about attacks via perturbation in NLP. TextAttack builds attacks from four components:
 
-- **Goal Functions** stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output
-- **Search Methods** explore the space of transformations and attempt to find a successful perturbation
-- **Transformations** takes a text input and transform it by replacing characters, words, or phrases
-- **Constraints**: Determines if a potential perturbtion is valid with respect to the original input
+- `Goal Functions <attacks/goal_function.html>`__ stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
+- `Constraints <attacks/constraint.html>`__ determine if a potential perturbation is valid with respect to the original input.
+- `Transformations <attacks/transformation.html>`__ take a text input and transform it by inserting and deleting characters, words, and/or phrases.
+- `Search Methods <attacks/search_method.html>`__ explore the space of possible **transformations** within the defined **constraints** and attempt to find a successful perturbation which satisfies the **goal function**.
 
-TextAttack provides a set of **attack recipes** that assemble attacks from the literature from these four components.
+TextAttack provides a set of `Attack Recipes <attacks/attack_recipes.html>`__ that assemble attacks from the literature from these four components.
 
+Data Augmentation
+-------------
+Data augmentation is easy and extremely common in computer vision but harder and less common in NLP. We provide a `Data Augmentation <augmentation/augmentation.html>`__ module using transformations and constraints.
+
+Features
+------------
 TextAttack has some other features that make it a pleasure to use:
 
-- **Data augmentation** using transformations & constraints
-- **Built-in Datasets** for running attacks without supplying your own data
-- **Pre-trained Models** for testing attacks and evaluating constraints
-- **Built-in tokenizers** so you don't have to worry about tokenizing the inputs
-- **Visualization options** like Visdom and Weights & Biases
+- `Built-in Datasets <datasets_models/datasets.html>`__ for running attacks without supplying your own data
+- `Pre-trained Models <datasets_models/models.html>`__ for testing attacks and evaluating constraints
+- `Built-in Tokenizers <datasets_models/tokenizers.html>`__ so you don't have to worry about tokenizing the inputs
+- `Visualization options <misc/loggers.html>`__ like Weights & Biases and Visdom
 
 .. toctree::
    :maxdepth: 1
@@ -38,25 +43,26 @@ TextAttack has some other features that make it a pleasure to use:
    :hidden:
    :caption: NLP Attacks
 
-   attacks/search_methods
-   attacks/transformations
-   attacks/constraints
-   attacks/goal_functions
-   attacks/goal_function_results
-   attacks/attacks
-   attacks/attack_recipess
+   attacks/attack
+   attacks/attack_result
+   attacks/goal_function
+   attacks/goal_function_result
+   attacks/constraint
+   attacks/transformation
+   attacks/search_method
+   attacks/attack_recipes
    
 .. toctree::
    :maxdepth: 3
    :hidden:
    :caption: Data Augmentation
 
-   augmentation/augmentation
+   augmentation/augmenter
 
 .. toctree::
    :maxdepth: 3
    :hidden:
-   :caption: Datasets, Models, and Tokenizers
+   :caption: Models, Datasets and Tokenizers
 
    datasets_models/models
    datasets_models/datasets
@@ -65,7 +71,7 @@ TextAttack has some other features that make it a pleasure to use:
 .. toctree::
    :maxdepth: 3
    :hidden:
-   :caption: Miscellaneous:
+   :caption: Miscellaneous
    
    misc/loggers
    misc/validators

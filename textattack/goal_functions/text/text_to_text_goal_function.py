@@ -2,7 +2,7 @@ from textattack.goal_functions import GoalFunction
 from textattack.goal_function_results import TextToTextGoalFunctionResult
 
 class TextToTextGoalFunction(GoalFunction):
-    """"" A goal function defined on a model that outputs text.
+    """ A goal function defined on a model that outputs text.
         
         model: The PyTorch or TensorFlow model used for evaluation.
         original_output: the original output of the model

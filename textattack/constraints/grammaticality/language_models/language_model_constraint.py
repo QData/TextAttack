@@ -5,12 +5,12 @@ from textattack.constraints import Constraint
 
 class LanguageModelConstraint(Constraint):
     """ 
-        Determines if two sentences have a swapped word that has a similar
-            probability according to a language model.
+    Determines if two sentences have a swapped word that has a similar
+    probability according to a language model.
         
-        Args:
-            max_log_prob_diff (float): the maximum difference in log-probability
-                between x and x_adv
+    Args:
+        max_log_prob_diff (float): the maximum difference in log-probability
+            between x and x_adv
     """
     
     def __init__(self, max_log_prob_diff=None):

@@ -2,7 +2,7 @@
 Attack Result
 ===================
 
-The result of a search method's attempt to find a valid transformation. 
+The result of an attack's attempt to find a successful adversarial perturbation. 
 
 .. automodule:: textattack.attack_results.attack_result
    :members:

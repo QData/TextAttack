@@ -23,8 +23,6 @@ class Attack:
         constraints: A list of constraints to add to the attack, defining which perturbations are valid.
         transformation: The transformation applied at each step of the attack.
         search_method: A strategy for exploring the search space of possible perturbations
-        is_black_box: Whether or not the attack is black box.
-
     """
 
     def __init__(self, goal_function=None, constraints=[], transformation=None, search_method=None):
@@ -62,14 +60,13 @@ class Attack:
     def get_transformations(self, text, original_text=None, 
                             apply_constraints=True, **kwargs):
         """
-        Filters a list of transformations by self.constraints. 
+        Applies ``self.transformation`` to ``text``, then filters the list of possible transformations
+        through the applicable constraints.
         
         Args:
-            transformation: 
-            text:
-            original text (:obj:`type`, optional): Defaults to None. 
-            apply_constraints: Whether or not to apply post-transformation constraints
-            **kwargs:
+            text: The current ``TokenizedText`` on which to perform the transformations.
+            original_text: The original ``TokenizedText`` from which the attack started.
+            apply_constraints: Whether or not to apply post-transformation constraints.
 
         Returns:
             A filtered list of transformations where each transformation matches the constraints
@@ -108,14 +105,15 @@ class Attack:
         return transformations 
      
     def _filter_transformations(self, transformations, text, original_text=None):
-        """ Filters a list of potential perturbations based on a list of
+        """ 
+        Filters a list of potential perturbations based on a list of
                 transformations. Checks cache first.
             
-            Args:
-                transformations (list: function): a list of transformations 
-                    that filter a list of candidate perturbations
-                text (list: TokenizedText): a list of TokenizedText objects
-                    representation potential perturbations
+        Args:
+            transformations (list: function): a list of transformations 
+                that filter a list of candidate perturbations
+            text (list: TokenizedText): a list of TokenizedText objects
+                representation potential perturbations
         """
         # Populate cache with transformations.
         uncached_transformations = []
@@ -134,7 +132,14 @@ class Attack:
 
     def attack_one(self, initial_result):
         """
-        Perturbs `tokenized_text` from initial_result until goal is reached.
+        Calls the ``SearchMethod`` to perturb the ``TokenizedText`` stored in 
+        ``initial_result``.
+
+        Args:
+            initial_result: The initial ``GoalFunctionResult`` from which to perturb.
+
+        Returns:
+            Either a ``SuccessfulAttackResult`` or ``FailedAttackResult``.
         """
         final_result = self.search_method(initial_result)
         if final_result.succeeded:
@@ -191,11 +196,15 @@ class Attack:
     def attack_dataset(self, dataset, num_examples=None, shuffle=False, attack_n=False):
         """ 
         Runs an attack on the given dataset and outputs the results to the 
-            console and the output file.
+        console and the output file.
 
         Args:
-            dataset: An iterable of (text, ground_truth_output) pairs
+            dataset: An iterable of (text, ground_truth_output) pairs.
+            num_examples: The number of samples to attack.
             shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
+            attack_n: Whether or not to attack ``num_examples`` examples. If false, will process
+                ``num_examples`` examples including ones which are skipped due to the model 
+                mispredicting the original sample.
         """
         
         examples = self._get_examples_from_dataset(dataset, 

@@ -1,24 +1,25 @@
-.. _constraints:
+.. _constraint:
 
 =============
-Constraints
+Constraint
 =============
 
-Constraints determine whether a given transformation is valid. Since transformations may not perfectly preserve syntax of semantics, constraints can increase the likelihood that the resulting transformation preserves these qualities. All constraints are subclasses of the constrain abstract class, documeted here, and must implement at least one of ``__call__`` or ``call_many``. 
+Constraints determine whether a given transformation is valid. Since transformations do not perfectly preserve semantics semantics or grammaticality, constraints can increase the likelihood that the resulting transformation preserves these qualities. All constraints are subclasses of the ``Constraint`` abstract class, and must implement at least one of ``__call__`` or ``call_many``. 
 
 We split constraints into three main categories.
 
-   :ref:`semantics`: Based on the meaning of input and perturbation
+   :ref:`Semantics`: Based on the meaning of the input and perturbation.
 
-   :ref:`grammaticality`: Based on syntactic properties like part-of-speech and grammar
+   :ref:`Grammaticality`: Based on syntactic properties like part-of-speech and grammar.
    
-   :ref:`overlap`: Based on character-based properties, like edit distance
+   :ref:`Overlap`: Based on character-based properties, like edit distance.
 
 A fourth type of constraint restricts the search method from exploring certain parts of the search space:
 
-   :ref:`pre_transformation`: based on the input and index of word replacement
+   :ref:`pre_transformation`: Based on the input and index of word replacement.
 
 .. automodule:: textattack.constraints.constraint
+   :special-members: __call__
    :members:
 
 .. _semantics:
@@ -38,7 +39,6 @@ Sentence Encoders
 ##################
 .. automodule:: textattack.constraints.semantics.sentence_encoders.sentence_encoder
    :members:
-
 
 Thought Vectors 
 ****************
@@ -142,6 +142,12 @@ only the original input and the position of the replacement. These constraints
 are applied before the transformation is even called. For example, these
 constraints can prevent search methods from swapping words at the same index
 twice, or from replacing stopwords.
+
+Pre-Transformation Constraint
+########################
+.. automodule:: textattack.constraints.pre_transformation.pre_transformation_constraint
+   :special-members: __call__
+   :members:
 
 Stopword Modification
 ########################

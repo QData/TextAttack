@@ -1,12 +1,12 @@
 ===========
 Overview
 ===========
-TextAttack builds attacks from four components: a search method, goal function, transformation, and a set of constraints. 
+TextAttack builds attacks from four components:
 
-- A **search method** explores the transformation space and attempts to find a successful attack as determined by a set of constraints. 
-- A **goal function** determines if an attack has succeeded.
-- A **transformation** perturbs the text input.
-- **Constraints** determine if a transformation is successful. 
+- `Goal Functions <attacks/goal_functions.html>`__ stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
+- `Constraints <attacks/constraints.html>`__ determine if a potential perturbation is valid with respect to the original input.
+- `Transformations <attacks/transformations.html>`__ take a text input and transform it by inserting and deleting characters, words, and/or phrases.
+- `Search Methods <attacks/search_methods.html>`__ explore the space of possible **transformations** within the defined **constraints** and attempt to find a successful perturbation which satisfies the **goal function**.
 
 Any model that overrides ``__call__``, takes ``TokenizedText`` as input, and formats output correctly can be used with TextAttack. TextAttack also has built-in datasets and pre-trained models on these datasets. Below is an example of attacking a pre-trained model on the AGNews dataset::
 

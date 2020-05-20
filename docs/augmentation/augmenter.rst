@@ -1,8 +1,8 @@
 ======================
-Data Augmentation
+Augmenter
 ======================
 
-Transformations and constraints can be used outside of an attack for simple NLP data augmentation.
+Transformations and constraints can be used outside of an attack for simple NLP data augmentation with the ``Augmenter`` module.
 
 
 .. automodule:: textattack.augmentation.augmenter

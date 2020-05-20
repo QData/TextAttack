@@ -11,11 +11,7 @@ class WordSwap(Transformation):
     some of its words.
 
     Other classes can achieve this by inheriting from WordSwap and 
-    overriding self._get_replacement_words.
-
-    Args:
-        replace_stopwords(:obj:`bool`, optional): Whether to replace stopwords. Defaults to False. 
-
+    overriding ``self._get_replacement_words``.
     """
 
     def _get_replacement_words(self, word):

@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.abspath('../'))
 # -- Project information -----------------------------------------------------
 
 project = 'TextAttack'
-copyright = '2019, UVA QData Lab'
+copyright = '2020, UVA QData Lab'
 author = 'UVA QData Lab'
 
 # The full version, including alpha/beta/rc tags

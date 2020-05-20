@@ -10,7 +10,7 @@ You're now all set to use TextAttack! Try running an attack from the command lin
 
     python -m textattack --recipe textfooler --model bert-mr --num-examples 10
 
-This will run an attack using the TextFooler_ recipe, attacking BERT fine-tuned on the MR dataset using 10 samples. Once everything downloads and starts running, you should see attack results print to ``stdout``.
+This will run an attack using the TextFooler_ recipe, attacking BERT fine-tuned on the MR dataset. It will attack the first 10 samples. Once everything downloads and starts running, you should see attack results print to ``stdout``.
 
 Read on for more information on TextAttack, including how to use it from a Python script (``import textattack``).
 
