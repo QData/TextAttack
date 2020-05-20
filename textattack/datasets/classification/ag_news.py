@@ -21,11 +21,11 @@ class AGNews(ClassificationDataset):
     Yann LeCun. Character-level Convolutional Networks for Text Classification. 
     Advances in Neural Information Processing Systems 28 (NIPS 2015).
     
-    Labels:
-        0 - World
-        1 - Sports
-        2 - Business
-        3 - Sci/Tech
+    Labels
+        0: World
+        1: Sports
+        2: Business
+        3: Sci/Tech
 
     Args:
         n (int): The number of examples to load

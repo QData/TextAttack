@@ -7,13 +7,13 @@ class T5ForTextToText:
     A T5 model trained to generate text from text.
     
     For more information, please see the T5 paper, "Exploring the Limits of 
-        Transfer Learning with a Unified Text-to-Text Transformer".
-        Appendix D contains information about the various tasks supported
-        by T5.
+    Transfer Learning with a Unified Text-to-Text Transformer".
+    Appendix D contains information about the various tasks supported
+    by T5.
     
     For usage information, see HuggingFace Transformers documentation section
-        on text_to_text with T5 
-        (https://huggingface.co/transformers/usage.html).
+    on text-to-text with T5:
+    https://huggingface.co/transformers/usage.html.
 
     Args:
         mode (string): Name of the T5 model to use.

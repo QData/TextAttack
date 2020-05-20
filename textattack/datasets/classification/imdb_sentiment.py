@@ -4,9 +4,9 @@ class IMDBSentiment(ClassificationDataset):
     """
     Loads samples from the IMDB Movie Review Sentiment dataset.
     
-    Labels:
-        0 - Negative
-        1 - Positive
+    Labels
+        0: Negative
+        1: Positive
 
     Args:
         n (int): The number of examples to load
