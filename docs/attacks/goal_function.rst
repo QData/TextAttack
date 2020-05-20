@@ -8,6 +8,7 @@ Goal functions determine if an attack has been successful.
 
 .. automodule:: textattack.goal_functions.goal_function
    :members:
+   :private-members:
 
 Classification 
 ################

@@ -6,6 +6,7 @@ A transformation is a method which perturbs a text input through the insertion, 
 
 .. automodule:: textattack.transformations.transformation
    :special-members: __call__
+   :private-members:
    :members:
 
 
@@ -21,6 +22,7 @@ Word Swap
 Word swap transformations act by replacing some words in the input. Subclasses can implement the abstract ``WordSwap`` class by overriding ``self._get_replacement_words``
 
 .. automodule:: textattack.transformations.word_swap
+   :private-members:
    :members:
    
    

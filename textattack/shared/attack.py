@@ -222,7 +222,8 @@ class Attack:
             yield result
     
     def __repr__(self):
-        """ Prints attack parameters in a human-readable string.
+        """ 
+        Prints attack parameters in a human-readable string.
             
         Inspired by the readability of printing PyTorch nn.Modules:
         https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py

@@ -17,7 +17,7 @@ TextAttack provides a set of `Attack Recipes <attacks/attack_recipes.html>`__ th
 
 Data Augmentation
 -------------
-Data augmentation is easy and extremely common in computer vision but harder and less common in NLP. We provide a `Data Augmentation <augmentation/augmentation.html>`__ module using transformations and constraints.
+Data augmentation is easy and extremely common in computer vision but harder and less common in NLP. We provide a `Data Augmentation <augmentation/augmenter.html>`__ module using transformations and constraints.
 
 Features
 ------------

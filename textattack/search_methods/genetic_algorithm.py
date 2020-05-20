@@ -1,5 +1,6 @@
 """
-Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. al
+Reimplementatio of search method from Generating Natural Language Adversarial Examples 
+by Alzantot et. al
 `<arxiv.org/abs/1804.07998>`_
 `<github.com/nesl/nlp_adversarial_examples>`_
 """
@@ -184,7 +185,7 @@ class PopulationMember:
     A member of the population during the course of the genetic algorithm.
     
     Args:
-        tokenized_text: The tokenized text of the population member.
+        tokenized_text: The ``TokenizedText`` of the population member.
         neighbors_len: A list of the number of candidate neighbors list for each word.
     """
     def __init__(self, tokenized_text, neighbors_len):

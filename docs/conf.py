@@ -67,3 +67,6 @@ html_favicon = 'favicon.png'
 
 # Don't show module names in front of class names.
 add_module_names = False
+
+# Sort members by group
+autodoc_member_order = 'groupwise'

@@ -2,23 +2,17 @@
 Search Method
 =====================
 
-Search methods explore the transformation space in an attempt to find a successful attack as determined by a :ref:`goal_function` and list of :ref:`constraint`\s. All search methods are implemented as a subclass of the ``Attack`` class by implementing the ``attack_one`` method. 
-
-Search Methods:
-
-- `Greedy Search`_
-- `Beam Search`_ 
-- `Greedy Word Swap with Word Importance Ranking`_
-- `Genetic Algorithm Word Swap`_
-
+Search methods explore the transformation space in an attempt to find a successful attack as determined by a :ref:`goal_function` and list of :ref:`constraint`\s.
 
 .. automodule:: textattack.search_methods.search_method
+   :special-members: __call__
+   :private-members:
    :members:
 
 Greedy Search
 ####################
 
-.. automodule:: textattack.search_methods.greedy_word_swap
+.. automodule:: textattack.search_methods.greedy_search
    :members:
 
 Beam Search

@@ -1,12 +1,3 @@
-"""
-    Kuleshov, V. et al. 
-    
-    Generating Natural Language Adversarial Examples. 
-    
-    
-    https://openreview.net/pdf?id=r1QZ3zbAZ.
-"""
-
 from textattack.shared.attack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.grammaticality.language_models import GPT2
@@ -17,6 +8,13 @@ from textattack.search_methods import GreedySearch
 from textattack.transformations import WordSwapEmbedding
 
 def Kuleshov2017(model):
+    """
+        Kuleshov, V. et al. 
+        
+        Generating Natural Language Adversarial Examples. 
+        
+        https://openreview.net/pdf?id=r1QZ3zbAZ.
+    """
     #
     # "Specifically, in all experiments, we used a target of τ = 0.7,
     # a neighborhood size of N = 15, and parameters λ_1 = 0.2 and δ = 0.5; we set

@@ -1,14 +1,3 @@
-"""
-    Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, 
-        K. (2018). 
-    
-    Generating Natural Language Adversarial Examples. 
-    
-    EMNLP. 
-    
-    ArXiv, abs/1801.00554.
-"""
-
 from textattack.shared.attack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.grammaticality.language_models import Google1BillionWordsLanguageModel
@@ -19,6 +8,13 @@ from textattack.search_methods import GeneticAlgorithm
 from textattack.transformations import WordSwapEmbedding
 
 def Alzantot2018(model):
+    """
+        Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, K. (2018). 
+        
+        Generating Natural Language Adversarial Examples. 
+        
+        https://arxiv.org/abs/1801.00554 
+    """
     #
     # Swap words with their embedding nearest-neighbors. 
     #

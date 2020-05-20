@@ -24,15 +24,23 @@ class GoalFunction:
             self._call_model_cache = None
 
     def should_skip(self, tokenized_text, ground_truth_output):
+        """
+        Returns whether or not the goal has already been completed for ``tokenized_text``\,
+        due to misprediction by the model.
+        """
         model_outputs = self._call_model([tokenized_text])
         return self._is_goal_complete(model_outputs[0], ground_truth_output)
 
     def get_output(self, tokenized_text):
+        """
+        Returns output for display based on the result of calling the model.
+        """
         return self._get_displayed_output(self._call_model([tokenized_text])[0])
     
     def get_result(self, tokenized_text, ground_truth_output):
-        """ A helper method that queries `self.get_results` with a single
-            `TokenizedText` object.
+        """ 
+        A helper method that queries `self.get_results` with a single
+        ``TokenizedText`` object.
         """
         return self.get_results([tokenized_text], ground_truth_output)[0]
 
@@ -65,20 +73,24 @@ class GoalFunction:
         return raw_output
     
     def _goal_function_result_type(self):
-        """ Returns the class of this goal function's results. """
+        """ 
+        Returns the class of this goal function's results. 
+        """
         raise NotImplementedError()
     
     def _process_model_outputs(self, inputs, outputs):
-        """ Processes and validates a list of model outputs. 
+        """ 
+        Processes and validates a list of model outputs. 
         
-            This is a task-dependent operation. For example, classification 
-            outputs need to have a softmax applied. 
+        This is a task-dependent operation. For example, classification 
+        outputs need to have a softmax applied. 
         """
         raise NotImplementedError()
 
     def _call_model_uncached(self, tokenized_text_list, batch_size=utils.config('MODEL_BATCH_SIZE')):
-        """ Queries model and returns outputs for a list of TokenizedText 
-            objects. 
+        """ 
+        Queries model and returns outputs for a list of TokenizedText 
+        objects. 
         """
         if not len(tokenized_text_list):
             return []

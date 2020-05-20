@@ -20,6 +20,7 @@ A fourth type of constraint restricts the search method from exploring certain p
 
 .. automodule:: textattack.constraints.constraint
    :special-members: __call__
+   :private-members:
    :members:
 
 .. _semantics:
@@ -147,6 +148,7 @@ Pre-Transformation Constraint
 ########################
 .. automodule:: textattack.constraints.pre_transformation.pre_transformation_constraint
    :special-members: __call__
+   :private-members:
    :members:
 
 Stopword Modification

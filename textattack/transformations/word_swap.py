@@ -9,26 +9,26 @@ class WordSwap(Transformation):
     """
     An abstract class that takes a sentence and transforms it by replacing
     some of its words.
-
-    Other classes can achieve this by inheriting from WordSwap and 
-    overriding ``self._get_replacement_words``.
     """
 
     def _get_replacement_words(self, word):
+        """
+        Returns a set of replacements given an input word. Must be overriden by specific
+        word swap transformations.
+
+        Args:
+            word: The input word to find replacements for.
+        """
         raise NotImplementedError()
     
     def _get_random_letter(self):
-        """ Helper function that returns a random single letter from the English
-            alphabet that could be lowercase or uppercase. """
+        """ 
+        Helper function that returns a random single letter from the English
+        alphabet that could be lowercase or uppercase. 
+        """
         return random.choice(string.ascii_letters)
 
     def _get_transformations(self, tokenized_text, indices_to_replace):
-        """
-        Returns a list of all possible transformations for `text`.
-            
-        If indices_to_replace is set, only replaces words at those indices.
-        
-        """
         words = tokenized_text.words
         transformations = []
         word_swaps = []
