@@ -38,3 +38,6 @@ wandb/
 # Vim files
 *.swo
 *.swp
+
+# checkpoints
+checkpoints/

@@ -109,7 +109,7 @@ class MonteCarloTreeSearch(Attack):
         self.max_tree_depth = 8
         self.step_size = 2
         self.ucb_C = 2
-        self.global_C = 2
+        self.global_C = 30
         self.local_C = 2
 
     def _backprop(self, current_node, search_value):
@@ -128,7 +128,6 @@ class MonteCarloTreeSearch(Attack):
                 self.search_tree.global_rave_values[action] = (new_value, old_rave[1] + 1)
             else:
                 self.search_tree.global_rave_values[action] = (search_value, 1)
-                
 
         while current_node is not None:
             n = current_node.num_visits
@@ -203,11 +202,13 @@ class MonteCarloTreeSearch(Attack):
             + math.sqrt(2 * math.log(node.num_visits) / max(1, node.children[action].num_visits)))
         )
         global_rave = 0.0
+        beta = 0.0
         if action in self.search_tree.global_rave_values:
             global_rave = self.search_tree.global_rave_values[action][0]
+            beta = self.global_C / (self.global_C + self.search_tree.global_rave_values[action][1])
 
         #print(f"{node.children[action].value} | {global_rave} | {ucb}")
-        return node.children[action].value + global_rave + ucb
+        return (1 - beta) * node.children[action].value + beta * global_rave + ucb
 
     def _selection(self):
         """
@@ -266,10 +267,12 @@ class MonteCarloTreeSearch(Attack):
         best_value = float('-inf')
         for action in node.children:
             value = node.children[action].value
+            global_rave = 0.0
+            beta = 0.0
             if action in self.search_tree.global_rave_values:
-                value += self.search_tree.global_rave_values[action][0]
-            if action in self.search_tree.root.local_rave_values:
-                value += self.search_tree.root.local_rave_values[action]
+                global_rave += self.search_tree.global_rave_values[action][0]
+                beta = self.global_C / (self.global_C + self.search_tree.global_rave_values[action][1])
+            value = (1 - beta) * value + beta * global_rave     
 
             if value > best_value:
                 best_action = action
