@@ -48,7 +48,7 @@ templates_path = []
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
 # Mock language_check to stop issues with Sphinx not loading it
-autodoc_mock_imports = []
+autodoc_mock_imports = ['filelock']
 
 # -- Options for HTML output -------------------------------------------------
 
