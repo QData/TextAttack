@@ -16,7 +16,8 @@ class Augmenter:
         constraints: (list(textattack.Constraint)): constraints
             that each transformation must meet
         words_to_swap: (int): Number of words to swap per augmented example
-        transformations_per_example: (int): Number of words to swap per augmented example
+        transformations_per_example: (int): Maximum number of augmentations
+            per input
     """
     def __init__(self, transformation, constraints=[], words_to_swap=1, 
         transformations_per_example=1):
