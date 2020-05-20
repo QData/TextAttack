@@ -7,12 +7,12 @@ class TokenizedText:
     """ 
      A helper class that represents a string that can be attacked.
      
-     Models that take multiple sentences as input separate them by `SPLIT_TOKEN`. 
+     Models that take multiple sentences as input separate them by ``SPLIT_TOKEN``. 
      Attacks "see" the entire input, joined into one string, without the split token. 
 
      Args:
         text (string): The string that this TokenizedText represents
-        tokenizer (textattack.Tokenizer): An object that can encode text
+        tokenizer (`TextAttack.Tokenizer`): An object that can encode text
         
     """
    
@@ -49,7 +49,7 @@ class TokenizedText:
                 del self.attack_attrs[key]
 
     def text_window_around_index(self, index, window_size):
-        """ The text window of `window_size` words centered around `index`. """
+        """ The text window of ``window_size`` words centered around ``index``. """
         length = len(self.words)
         half_size = (window_size - 1) // 2
         if index - half_size < 0:
@@ -66,7 +66,7 @@ class TokenizedText:
         return self.text[text_idx_start:text_idx_end]
          
     def _text_index_of_word_index(self, i):
-        """ Returns the index of word `i` in self.text. """
+        """ Returns the index of word ``i`` in self.text. """
         pre_words = self.words[:i+1]
         lower_text = self.text.lower()
         # Find all words until `i` in string.
@@ -76,12 +76,12 @@ class TokenizedText:
         return look_after_index 
 
     def text_until_word_index(self, i):
-        """ Returns the text before the beginning of word at index `i`. """
+        """ Returns the text before the beginning of word at index ``i``. """
         look_after_index = self._text_index_of_word_index(i)
         return self.text[:look_after_index]
     
     def text_after_word_index(self, i):
-        """ Returns the text after the end of word at index `i`. """
+        """ Returns the text after the end of word at index ``i``. """
         # Get index of beginning of word then jump to end of word.
         look_after_index = self._text_index_of_word_index(i) + len(self.words[i])
         return self.text[look_after_index:]
@@ -128,7 +128,7 @@ class TokenizedText:
 
     def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
-            `index` is replaced with a new word."""
+            ``index`` is replaced with a new word."""
         if len(indices) != len(new_words):
             raise ValueError(f'Cannot replace {len(new_words)} words at {len(indices)} indices.')
         words = self.words[:]
@@ -138,7 +138,7 @@ class TokenizedText:
     
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
-            `index` is replaced with a new word."""
+            ``index`` is replaced with a new word."""
         return self.replace_words_at_indices([index], [new_word])
     
     def replace_new_words(self, new_words):
@@ -170,7 +170,7 @@ class TokenizedText:
     
     def clean_text(self):
         """ Represents self in a clean, printable format. Joins text with multiple
-            inputs separated by `TokenizedText.SPLIT_TOKEN` with a line break.
+            inputs separated by ``TokenizedText.SPLIT_TOKEN`` with a line break.
         """
         return self.text.replace(TokenizedText.SPLIT_TOKEN, '\n\n')
     

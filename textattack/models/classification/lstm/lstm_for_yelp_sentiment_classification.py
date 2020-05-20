@@ -8,7 +8,7 @@ class LSTMForYelpSentimentClassification(LSTMForClassification):
     parameters, trained on the Yelp Sentiment dataset for sentiment 
     classification. Base embeddings are GLOVE vectors of dimension 200.
     
-    Base model in `textattack.models.helpers.lstm_for_classification`.
+    Base model in ``textattack.models.helpers.lstm_for_classification``.
 
     Args:
         max_seq_length(:obj:`int`, optional):  Maximum length of a sequence after tokenizing.

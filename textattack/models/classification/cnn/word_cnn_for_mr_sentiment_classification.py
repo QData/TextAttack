@@ -9,9 +9,9 @@ class WordCNNForMRSentimentClassification(WordCNNForClassification):
     Base embeddings are GLOVE vectors of dimension 200.
     
     Movie Review Dataset (Pang and Lee, 2005):
-        http://www.cs.cornell.edu/people/pabo/movie-review-data/
+    http://www.cs.cornell.edu/people/pabo/movie-review-data/
     
-    Base model in `textattack.models.helpers.cnn_for_classification`.
+    Base model in ``textattack.models.helpers.cnn_for_classification``.
 
     Args:
         max_seq_length(:obj:`int`, optional):  Maximum length of a sequence after tokenizing.

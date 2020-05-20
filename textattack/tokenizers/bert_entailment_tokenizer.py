@@ -2,12 +2,15 @@ from textattack.shared import TokenizedText
 from textattack.tokenizers import BERTTokenizer
 
 class BERTEntailmentTokenizer(BERTTokenizer):
-    """ Tokenizes an input for entailment. """
+    """ 
+    Tokenizes an input for entailment. 
+    """
     def __init__(self, name='bert-base-uncased'): 
         super().__init__(name=name)
         
     def _truncate_seq_pair(self, tokens_a, tokens_b):
-        """ Truncates a sequence pair in place to the maximum length.
+        """ 
+        Truncates a sequence pair in place to the maximum length.
 
         This is a simple heuristic which will always truncate the longer 
         sequence one token at a time. This makes more sense than truncating an
@@ -27,8 +30,7 @@ class BERTEntailmentTokenizer(BERTTokenizer):
                 
     def convert_text_to_tokens(self, entailment_input):
         """ 
-        Takes a string input, tokenizes, formats, and returns a tensor with text 
-        IDs. 
+        Takes a string input, tokenizes, formats, and returns a list of text tokens.
         
         Args:
             entailment_input (string): A dictionary containing the premise and
