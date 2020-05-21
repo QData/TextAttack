@@ -21,7 +21,7 @@ class UntargetedClassification(ClassificationGoalFunction):
             return model_output.argmax() != ground_truth_output 
 
     def _get_score(self, model_output, ground_truth_output):
-        return -model_output[ground_truth_output]
+        return 1 - model_output[ground_truth_output]
 
     def _get_displayed_output(self, raw_output):
         return int(raw_output.argmax())

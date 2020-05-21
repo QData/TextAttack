@@ -31,4 +31,4 @@ def word_difference_score(s1, s2):
         return 0
     s1_words = s1_words[:min_length]
     s2_words = s2_words[:min_length]
-    return (s1_words != s2_words).sum()
+    return (s1_words != s2_words).sum() / min_length
