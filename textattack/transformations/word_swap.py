@@ -28,22 +28,22 @@ class WordSwap(Transformation):
         """
         return random.choice(string.ascii_letters)
 
-    def _get_transformations(self, tokenized_text, indices_to_replace):
-        words = tokenized_text.words
-        transformations = []
+    def _get_transformations(self, current_text, indices_to_replace):
+        words = current_text.words
+        transformed_texts = []
         word_swaps = []
         for i in indices_to_replace:
             word_to_replace = words[i]
             replacement_words = self._get_replacement_words(word_to_replace)
-            new_tokenized_texts = []
+            transformed_texts_idx = []
             for r in replacement_words:
                 # Don't replace with numbers, punctuation, or other non-letter characters.
                 if not is_word(r):
                     continue
-                new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r))
-            transformations.extend(new_tokenized_texts)
+                transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
+            transformed_texts.extend(transformed_texts_idx)
         
-        return transformations
+        return transformed_texts
 
 def is_word(s):
     """ String `s` counts as a word if it has at least one letter. """

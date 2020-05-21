@@ -3,77 +3,79 @@ from textattack.shared.utils import default_class_repr
 class Constraint:
     """ 
     An abstract class that represents constraints on adversial text examples. 
-    A constraint evaluates if (x,x_adv) meets a certain constraint. 
-
+    Constraints evaluate whether transformations from a ``TokenizedText`` to another 
+    ``TokenizedText`` meet certain conditions.
     """
      
-    def call_many(self, x, x_adv_list, original_text=None):
+    def call_many(self, transformed_texts, current_text, original_text=None):
         """
-        Filters ``x_adv_list`` to ``x_adv`` where ``x_adv`` fulfills the constraint.
+        Filters ``transformed_texts`` based on which transformations fulfill the constraint.
         First checks compatibility with latest ``Transformation``, then calls 
         ``_check_constraint_many``\.
 
         Args:
-            x: The current ``TokenizedText``.
-            x_adv_list: The potential altered ``TokenizedText``\s.
+            transformed_texts: The candidate transformed ``TokenizedText``\s.
+            current_text: The current ``TokenizedText``.
             original_text: The original ``TokenizedText`` from which the attack began.
         """
-        incompatible_x_advs = []
-        compatible_x_advs = []
-        for x_adv in x_adv_list:
+        incompatible_transformed_texts = []
+        compatible_transformed_texts = []
+        for transformed_text in transformed_texts:
             try:
-                if self.check_compatibility(x_adv.attack_attrs['last_transformation']):
-                    compatible_x_advs.append(x_adv)
+                if self.check_compatibility(transformed_text.attack_attrs['last_transformation']):
+                    compatible_transformed_texts.append(transformed_text)
                 else:
-                    incompatible_x_advs.append(x_adv)
+                    incompatible_transformed_texts.append(transformed_text)
             except KeyError:
-                raise KeyError('x_adv must have `last_transformation` attack_attr to apply constraint')
-        filtered_x_advs = self._check_constraint_many(x, compatible_x_advs, original_text=original_text)
-        return list(filtered_x_advs) + incompatible_x_advs
+                raise KeyError('transformed_text must have `last_transformation` attack_attr to apply constraint')
+        filtered_texts = self._check_constraint_many(compatible_transformed_texts, 
+                            current_text, original_text=original_text)
+        return list(filtered_texts) + incompatible_transformed_texts
 
-    def _check_constraint_many(self, x, x_adv_list, original_text=None):
+    def _check_constraint_many(self, transformed_texts, current_text, original_text=None):
         """
-        Filters ``x_adv_list`` to ``x_adv`` where ``x_adv`` fulfills the constraint.
+        Filters ``transformed_texts`` based on which transformations fulfill the constraint.
         Calls ``check_constraint``\.
 
         Args:
-            x: The current ``TokenizedText``.
-            x_adv_list: The potential altered ``TokenizedText``\s.
+            transformed_texts: The candidate transformed ``TokenizedText``\s.
+            current_text: The current ``TokenizedText``.
             original_text: The original ``TokenizedText`` from which the attack began.
         """
-        return [x_adv for x_adv in x_adv_list 
-                if self._check_constraint(x, x_adv, original_text=original_text)]
+        return [transformed_text for transformed_text in transformed_texts
+                if self._check_constraint(transformed_text, current_text, 
+                    original_text=original_text)]
 
-    def __call__(self, x, x_adv, original_text=None):
+    def __call__(self, transformed_text, current_text, original_text=None):
         """ 
         Returns True if the constraint is fulfilled, False otherwise. First checks
         compatibility with latest ``Transformation``, then calls ``_check_constraint``\.
         
         Args:
-            x: The current ``TokenizedText``.
-            x_adv: The potential altered ``TokenizedText``.
+            transformed_text: The candidate transformed ``TokenizedText``.
+            current_text: The current ``TokenizedText``.
             original_text: The original ``TokenizedText`` from which the attack began.
         """
-        if not isinstance(x, TokenizedText):
-            raise TypeError('x must be of type TokenizedText')
-        if not isinstance(x_adv, TokenizedText):
-            raise TypeError('x_adv must be of type TokenizedText')
+        if not isinstance(transformed_text, TokenizedText):
+            raise TypeError('transformed_text must be of type TokenizedText')
+        if not isinstance(current_text, TokenizedText):
+            raise TypeError('current_text must be of type TokenizedText')
 
         try:
-            if not self.check_compatibility(x_adv.attack_attrs['last_transformation']):
+            if not self.check_compatibility(transformed_text.attack_attrs['last_transformation']):
                 return True
         except KeyError:
             raise KeyError('x_adv must have `last_transformation` attack_attr to apply constraint.')
-        return self._check_constraint(x_adv, original_text=original_text)
+        return self._check_constraint(transformed_text, current_text, original_text=original_text)
 
-    def _check_constraint(self, x, x_adv, original_text=None):
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
         """ 
-        Returns True if the constraint is fulfilled, False otherwise. Must be implemented
-        by the specific constraint.
+        Returns True if the constraint is fulfilled, False otherwise. Must be overridden by
+        the specific constraint.
         
         Args:
-            x: The current ``TokenizedText``.
-            x_adv: The potential altered ``TokenizedText``.
+            transformed_text: The candidate transformed ``TokenizedText``.
+            current_text: The current ``TokenizedText``.
             original_text: The original ``TokenizedText`` from which the attack began.
         """
         raise NotImplementedError()

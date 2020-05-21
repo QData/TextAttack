@@ -98,26 +98,28 @@ class WordEmbeddingDistance(Constraint):
             self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
     
-    def _check_constraint(self, x, x_adv, original_text=None):
-        """ Returns true if (x, x_adv) are closer than `self.min_cos_sim`
-            and `self.max_mse_dist`. """
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
+        """ 
+        Returns true if (``current_text, ``transformed_text``) are closer than 
+        ``self.min_cos_sim`` and ``self.max_mse_dist``. 
+        """
         try:
-            indices = x_adv.attack_attrs['newly_modified_indices']
+            indices = transformed_text.attack_attrs['newly_modified_indices']
         except KeyError:
             raise KeyError('Cannot apply part-of-speech constraint without `newly_modified_indices`')
         
         for i in indices:
-            x = x.words[i]
-            x_adv = x_adv.words[i]
+            cur_word = current_text.words[i]
+            transformed_word = transformed_text.words[i]
             
             if not self.cased:
                 # If embedding vocabulary is all lowercase, lowercase words.
-                x = x.lower()
-                x_adv = x_adv.lower()
+                cur_word = cur_word.lower()
+                transformed_word = transformed_word.lower()
             
             try:
-                x_id = self.word_embedding_word2index[x]
-                x_adv_id = self.word_embedding_word2index[x_adv]
+                cur_id = self.word_embedding_word2index[cur_word]
+                transformed_id = self.word_embedding_word2index[transformed_word]
             except KeyError:
                 # This error is thrown if x or x_adv has no corresponding ID.
                 if self.include_unknown_words:
@@ -126,12 +128,12 @@ class WordEmbeddingDistance(Constraint):
                 
             # Check cosine distance.
             if self.min_cos_sim:
-                cos_sim = self.get_cos_sim(x_id, x_adv_id)
+                cos_sim = self.get_cos_sim(cur_id, transformed_id)
                 if cos_sim < self.min_cos_sim:
                     return False
             # Check MSE distance.
             if self.max_mse_dist:
-                mse_dist = self.get_mse_dist(x_id, x_adv_id)
+                mse_dist = self.get_mse_dist(cur_id, transformed_id)
                 if mse_dist > self.max_mse_dist:
                     return False
 

@@ -11,11 +11,11 @@ class BLEU(Constraint):
         self.max_bleu_score = max_bleu_score
         
     
-    def _check_constraint(self, x, x_adv, original_text=None):
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
         if not original_text:
             return True
         ref = original_text.words
-        hyp = x_adv.words
+        hyp = transfomred_text.words
         bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
         return bleu_score <= self.max_bleu_score
     
