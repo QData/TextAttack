@@ -28,11 +28,11 @@ class WordSwap(Transformation):
         """
         return random.choice(string.ascii_letters)
 
-    def _get_transformations(self, current_text, indices_to_replace):
+    def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
         transformed_texts = []
         word_swaps = []
-        for i in indices_to_replace:
+        for i in indices_to_modify:
             word_to_replace = words[i]
             replacement_words = self._get_replacement_words(word_to_replace)
             transformed_texts_idx = []

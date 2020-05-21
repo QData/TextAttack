@@ -8,9 +8,8 @@ class WordSwapGradientBased(Transformation):
     """ Uses the model's gradient to suggest replacements for a given word.
         
         Based off of HotFlip: White-Box Adversarial Examples for Text 
-            Classification (Ebrahimi et al., 2018).
-        
-            https://arxiv.org/pdf/1712.06751.pdf
+        Classification (Ebrahimi et al., 2018).
+        https://arxiv.org/pdf/1712.06751.pdf
         
         Arguments:
             model (nn.Module): The model to attack. Model must have a 

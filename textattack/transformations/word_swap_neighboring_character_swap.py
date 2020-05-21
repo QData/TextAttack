@@ -6,8 +6,9 @@ from textattack.transformations.word_swap import WordSwap
 class WordSwapNeighboringCharacterSwap(WordSwap):
     """ Transforms an input by replacing its words with a neighboring character swap.
             
-        random_one (bool): Whether to return a single word with two characters 
-            swapped. If not, returns all possible options.
+        Args:
+            random_one (bool): Whether to return a single word with two characters 
+                swapped. If not, returns all possible options.
     """
     def __init__(self, random_one=True, **kwargs):
         super().__init__(**kwargs)

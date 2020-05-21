@@ -5,9 +5,10 @@ from textattack.transformations.word_swap import WordSwap
 
 class WordSwapRandomCharacterDeletion(WordSwap):
     """ Transforms an input by deleting its characters.
-            
-        random_one (bool): Whether to return a single word with a random 
-            character deleted. If not, returns all possible options.
+           
+        Args:
+            random_one (bool): Whether to return a single word with a random 
+                character deleted. If not, returns all possible options.
     """
     def __init__(self, random_one=True, **kwargs):
         super().__init__(**kwargs)
