@@ -41,7 +41,7 @@ class Augmenter:
         """
         for C in self.constraints:
             if len(transformations) == 0: break
-            transformations = C.call_many(tokenized_text, transformations, original_text=tokenized_text)
+            transformations = C.call_many(tokenized_text, transformations, original_text=original_text)
         return transformations
     
     def augment(self, text):
