@@ -73,6 +73,7 @@ TextAttack has some other features that make it a pleasure to use:
    :hidden:
    :caption: Miscellaneous
    
+   misc/checkpoints
    misc/loggers
    misc/validators
    misc/tokenized_text
