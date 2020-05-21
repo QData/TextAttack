@@ -15,7 +15,7 @@ class BLEU(Constraint):
         if not original_text:
             return True
         ref = original_text.words
-        hyp = transfomred_text.words
+        hyp = transformed_text.words
         bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
         return bleu_score <= self.max_bleu_score
     

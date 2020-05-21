@@ -39,7 +39,6 @@ class GoogleLanguageModel(Constraint):
         Returns the `top_n` of transformed_texts, as evaluated by the language 
         model. 
         """
-        # @TODO Allow user to implement perplexity threshold
         if not len(transformed_texts): return []
         
         def get_probs(current_text, transformed_texts):

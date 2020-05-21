@@ -12,7 +12,7 @@ class PreTransformationConstraint(Constraint):
     def __call__(self, current_text, transformation):
         """ 
         Returns the word indices in ``current_text`` which are able to be modified. 
-        First checks compatibilitywith ``transformation`` then calls ``_get_modifiable_indices``\.
+        First checks compatibility with ``transformation`` then calls ``_get_modifiable_indices``\.
 
         Args:
             current_text: The ``TokenizedText`` input to consider.
