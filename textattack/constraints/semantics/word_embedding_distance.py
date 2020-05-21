@@ -10,17 +10,17 @@ from textattack.shared.validators import transformation_consists_of_word_swaps
 
 class WordEmbeddingDistance(Constraint):
     """
-    todo document here
+    A constraint on word substitutions which places a maximum distance between the embedding of the
+    word being deleted and the word being inserted.
     
     Args:
-        word_embedding (str): The word embedding to use
-        embedding_type (str): The word embedding to use
-        include_unknown_words (bool): Whether or not C(x,x_adv) is true
-            if the embedding of x or x_adv is unknown
-        min_cos_sim: the minimum cosine similarity between word embeddings
-        max_mse_dist: the maximum euclidean distance between word embeddings
-        embedding_cased (bool): whether embedding supports uppercase & lowercase
-            (defaults to False, or just lowercase)
+        embedding_type (str): The word embedding to use.
+        include_unknown_words (bool): Whether or not the constraint is fulfilled
+            if the embedding of x or x_adv is unknown.
+        min_cos_sim: The minimum cosine similarity between word embeddings.
+        max_mse_dist: The maximum euclidean distance between word embeddings.
+        cased (bool): Whether embedding supports uppercase & lowercase
+            (defaults to False, or just lowercase).
     """
     PATH = 'word_embeddings'
     def __init__(self, embedding_type='paragramcf', include_unknown_words=True,

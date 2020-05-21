@@ -102,7 +102,7 @@ class MonteCarloTreeSearch(SearchMethod):
     """
 
     def __init__(self, num_rollouts=100, selection_policy='UCB_G_RAVE_tuned',
-        max_tree_depth=8, step_size=2, ucb_C=2, global_RAVE_C=30, max_words_changed=32):
+        max_tree_depth=8, step_size=2, ucb_C=2, global_RAVE_C=50, max_words_changed=32):
 
         # MCTS Hyper-parameters
         self.num_rollouts = num_rollouts
@@ -211,7 +211,8 @@ class MonteCarloTreeSearch(SearchMethod):
             global_rave = self.search_tree.global_rave_values[action][0]
             beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
 
-        #print(f"{node.children[action].value} | {global_rave} | {ucb}")
+        if node.children[action].value > 0.5 or global_rave > 0.5:
+            print(f"{node.children[action].value} | {global_rave} | {ucb}")
         return (1 - beta) * node.children[action].value + beta * global_rave + ucb
 
     def _selection(self):
@@ -259,7 +260,7 @@ class MonteCarloTreeSearch(SearchMethod):
                 previous_node = current_node
                 current_node = self._expansion(current_node)
 
-            result = self.goal_function.get_results([current_node.text], self.search_tree.original_label)[0]
+            result = self.get_goal_results([current_node.text], self.search_tree.original_label)[0]
             search_value = 1 + result.score if result.score < 0 else result.score
             self._backprop(current_node, search_value)
 
@@ -306,8 +307,8 @@ class MonteCarloTreeSearch(SearchMethod):
                 if not root:
                     break
                 
-                current_result = self.goal_function.get_results([root.text], self.search_tree.original_label)[0]
-                if current_result.output != correct_output:
+                current_result = self.get_goal_results([root.text], self.search_tree.original_label)[0]
+                if current_result.output != initial_result.output:
                     break
 
                 if action != SearchTree.NOOP_ACTION:
@@ -316,7 +317,7 @@ class MonteCarloTreeSearch(SearchMethod):
             
             if not root:
                 break
-            if current_result.output != correct_output:
+            if current_result.output != initial_result.output:
                 break
 
         return current_result

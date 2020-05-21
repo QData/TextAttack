@@ -5,7 +5,6 @@ import numpy as np
 from textattack.shared import utils
 from textattack.search_methods import SearchMethod
 from transformers import AutoTokenizer, AutoModelWithLMHead
-from textattack.goal_functions import UntargetedClassification, TargetedClassification
 
 class MetropolisHastingsSampling(SearchMethod):
     """ 
@@ -70,13 +69,8 @@ class MetropolisHastingsSampling(SearchMethod):
         Returns: lm_score(x) * prob_model(wrong|x)
         """
         model_result = self.get_goal_results([x], original_label)[0]
-        lm_score = self.lm_score(x.text)
-        if isinstance(self.goal_function, UntargetedClassification):
-            # If untargetted, we care about P(y != y_correct).
-            # We add b/c result.score is negative. 
-            return lm_score * (1 + model_result.score)
-        else:
-            return lm_score * model_result.score
+        lm_score = self._lm_score(x.text)
+        return lm_score * model_result.score
 
     def _batch_stationary_dist(self, x_list, original_label):
         """
@@ -88,13 +82,9 @@ class MetropolisHastingsSampling(SearchMethod):
         Returns: list of floats representing lm_score(x) * prob_model(wrong|x)
         """
         batch_size = len(x_list)
-        model_results = self.goal_function.get_results(x_list, original_label)
-        lm_scores = [self.lm_score(x.text) for x in x_list]
-
-        if isinstance(self.goal_function, UntargetedClassification):
-            scores = [lm_scores[i] * (1 + model_results[i].score) for i in range(batch_size)]
-        else:
-            scores = [lm_scores[i] * model_results[i].score for i in range(batch_size)]
+        model_results = self.get_goal_results(x_list, original_label)
+        lm_scores = [self._lm_score(x.text) for x in x_list]
+        scores = [lm_scores[i] * model_results[i].score for i in range(batch_size)]
 
         return scores, model_results
 
@@ -106,13 +96,12 @@ class MetropolisHastingsSampling(SearchMethod):
         return [v/s for v in values]
 
     def _perform_search(self, initial_result):
-        correct_output = initial_result.output
         text_len = len(initial_result.tokenized_text.words)
         max_iter = max(self.max_iter, text_len)
 
         current_result = initial_result
         current_text = initial_result.tokenized_text
-        current_score = self._stationary_dist(current_text, correct_output)
+        current_score = self._stationary_dist(current_text, initial_result.output)
         
         for n in range(max_iter):
             # i-th word we want to transform
@@ -121,13 +110,13 @@ class MetropolisHastingsSampling(SearchMethod):
             transformations = self.get_transformations(
                         current_text, 
                         indices_to_modify=[i],
-                        original_text=tokenized_text
+                        original_text=initial_result.tokenized_text
                     )
 
             if len(transformations) == 0:                
                 continue
 
-            scores, model_results = self._batch_stationary_dist(transformations, correct_output) 
+            scores, model_results = self._batch_stationary_dist(transformations, initial_result.output) 
             proposal_dist = self._normalize(scores)
             # Choose one transformation randomly according to proposal distribution
             jump = np.random.choice(list(range(len(transformations))), p=proposal_dist)
@@ -135,7 +124,7 @@ class MetropolisHastingsSampling(SearchMethod):
             # Now we have calculate probability of return proposal g(x'|x)
             reverse_transformations = self.get_transformations(
                         transformations[jump], indices_to_modify=[i],
-                        original_text=tokenized_text
+                        original_text=initial_result.tokenized_text
                     )
 
             reverse_jump = -1
@@ -147,7 +136,7 @@ class MetropolisHastingsSampling(SearchMethod):
             if reverse_jump == -1:
                 return_prob = 0
             else:
-                ret_scores, _ = self._batch_stationary_dist(reverse_transformations, correct_output)
+                ret_scores, _ = self._batch_stationary_dist(reverse_transformations, initial_result.output)
                 return_prob = self._normalize(ret_scores)[reverse_jump]
 
             """

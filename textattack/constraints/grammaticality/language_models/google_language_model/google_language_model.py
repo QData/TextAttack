@@ -22,12 +22,6 @@ class GoogleLanguageModel(Constraint):
 
     Raises:
         ValueError: If :obj:`top_n` or :obj:`top_n_per_index` are not provided. 
-    
-    @TODO allow user to set perplexity threshold; implement __call__.
-    
-    @TODO this use of the language model only really makes sense for 
-        adversarial examples based on word swaps
-
     """
     def __init__(self, top_n=None, top_n_per_index=None, print_step=False):
         if not (top_n or top_n_per_index): 
@@ -51,6 +45,7 @@ class GoogleLanguageModel(Constraint):
             original_text (:obj:`type`, optional): Defaults to None. 
 
         """
+        # @TODO Allow user to implement perplexity threshold
         if not len(x_adv_list): return []
         
         def get_probs(x, x_adv_list):

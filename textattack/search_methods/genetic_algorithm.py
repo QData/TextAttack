@@ -1,5 +1,6 @@
 """
-Algorithm from Generating Natural Language Adversarial Examples by Alzantot et. al
+Reimplementatio of search method from Generating Natural Language Adversarial Examples 
+by Alzantot et. al
 `<arxiv.org/abs/1804.07998>`_
 `<github.com/nesl/nlp_adversarial_examples>`_
 """
@@ -121,8 +122,7 @@ class GeneticAlgorithm(SearchMethod):
         words = tokenized_text.words
         neighbors_list = [[] for _ in range(len(words))]
         transformations = self.get_transformations(tokenized_text,
-                                                   original_text=self.original_tokenized_text,
-                                                   apply_constraints=False)
+                                                   original_text=self.original_tokenized_text)
         for transformed_text in transformations:
             diff_idx = tokenized_text.first_word_diff_index(transformed_text)
             neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
@@ -184,7 +184,7 @@ class PopulationMember:
     A member of the population during the course of the genetic algorithm.
     
     Args:
-        tokenized_text: The tokenized text of the population member.
+        tokenized_text: The ``TokenizedText`` of the population member.
         neighbors_len: A list of the number of candidate neighbors list for each word.
     """
     def __init__(self, tokenized_text, neighbors_len):

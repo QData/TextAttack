@@ -2,6 +2,8 @@ from .attack_result import AttackResult
 from textattack.shared import utils
 
 class FailedAttackResult(AttackResult):
+    '''The result of a failed attack.'''
+
     def __init__(self, original_result, perturbed_result=None):
         perturbed_result = perturbed_result or original_result
         super().__init__(original_result, perturbed_result)

@@ -4,6 +4,7 @@ from .logger import Logger
 import wandb
 
 class WeightsAndBiasesLogger(Logger):
+    """ Logs attack results to Weights & Biases. """
     def __init__(self, filename='', stdout=False):
         wandb.init(project='textattack', resume=True)
         self._result_table_rows = []

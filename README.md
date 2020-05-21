@@ -5,6 +5,7 @@
 <p align="center">Generating adversarial examples for NLP models</p>
 
 <p align="center">
+  <a href="https://textattack.readthedocs.io/">Docs</a> •
   <a href="#about">About</a> •
   <a href="#setup">Setup</a> •
   <a href="#usage">Usage</a> •

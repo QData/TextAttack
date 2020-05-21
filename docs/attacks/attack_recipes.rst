@@ -1,28 +1,17 @@
 Attack Recipes
 ===============
 
-We provide a number of pre-built attack recipes. To run an attack recipe, you can run::
+We provide a number of pre-built attack recipes. To run an attack recipe, run::
 
     python -m textattack --recipe [recipe_name]
 
-Currently, six main recipes are provided, all of which are synonym substitution based:
-
-- `Textfooler`_
-- `Textfooler-adjusted`_ 
-- `Alzantot`_
-- `Alzantot-adjusted`_
-- `DeepWordBug`_ 
-- `Hotflip`_ 
-- `Kuleshov`_
-- `Seq2Sick`_ 
-
-Textfooler
+TextFooler
 ###########
 
 .. automodule:: textattack.attack_recipes.textfooler_jin_2019
    :members:
 
-Textfooler-adjusted
+TextFooler-adjusted
 #####################
 
 .. automodule:: textattack.attack_recipes.textfooler_jin_2019_adjusted
@@ -52,16 +41,14 @@ Hotflip
 .. automodule:: textattack.attack_recipes.hotflip_ebrahimi_2017
    :members:
 
-
 Kuleshov
 ###########
 
 .. automodule:: textattack.attack_recipes.kuleshov_2017
    :members:
 
-
 Seq2Sick
 ###########
 
-.. automodule:: textattack.attack_recipes.seq2sick_cheng_2018
+.. automodule:: textattack.attack_recipes.seq2sick_cheng_2018_blackbox
    :members:

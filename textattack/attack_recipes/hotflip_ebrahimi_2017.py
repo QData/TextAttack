@@ -1,16 +1,3 @@
-"""
-    Ebrahimi, J. et al. (2017)
-    
-    HotFlip: White-Box Adversarial Examples for Text Classification
-    
-    EMNLP. 
-    
-    ArXiv, abs/1801.00554.
-    
-    This is a reproduction of the HotFlip word-level attack (section 5 of the 
-    paper).
-"""
-
 from textattack.shared.attack import Attack
 from textattack.goal_functions import UntargetedClassification
 from textattack.constraints.grammaticality import PartOfSpeech
@@ -21,6 +8,16 @@ from textattack.search_methods import BeamSearch
 from textattack.transformations import WordSwapGradientBased
 
 def HotFlipEbrahimi2017(model):
+    """
+        Ebrahimi, J. et al. (2017)
+        
+        HotFlip: White-Box Adversarial Examples for Text Classification
+        
+        https://arxiv.org/abs/1712.06751
+        
+        This is a reproduction of the HotFlip word-level attack (section 5 of the 
+        paper).
+    """
     #
     # "HotFlip ... uses the gradient with respect to a one-hot input 
     # representation to efficiently estimate which individual change has the 

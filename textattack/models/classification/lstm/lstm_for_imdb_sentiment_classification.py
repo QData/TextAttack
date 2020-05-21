@@ -8,12 +8,11 @@ class LSTMForIMDBSentimentClassification(LSTMForClassification):
     parameters, trained on the IMDB Movie Review Sentiment dataset for sentiment 
     classification. Base embeddings are GLOVE vectors of dimension 200.
     
-    Base model in `textattack.models.helpers.lstm_for_classification`.
+    Base model in ``textattack.models.helpers.lstm_for_classification``.
 
     Args:
         max_seq_length(:obj:`int`, optional):  Maximum length of a sequence after tokenizing.
             Defaults to 128.
-            
     """
     
     MODEL_PATH = 'models/classification/lstm/imdb'

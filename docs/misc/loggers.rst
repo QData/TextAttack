@@ -2,7 +2,7 @@
 Loggers
 ======================
 
-Loggers can track the results of attacks for easy visualization. 
+Loggers track, visualize, and export attack results. 
 
 .. automodule:: textattack.loggers.logger 
    :members:
