@@ -26,8 +26,7 @@ class Attack:
     """
 
     def __init__(self, goal_function=None, constraints=[], transformation=None, search_method=None):
-        """ Initialize an attack object. Attacks can be run multiple times.
-        """
+        """ Initialize an attack object. Attacks can be run multiple times. """
         self.search_method = search_method
         self.goal_function = goal_function
         if not self.goal_function:
@@ -57,8 +56,7 @@ class Attack:
         self.search_method.get_transformations = self.get_transformations
         self.search_method.get_goal_results = self.goal_function.get_results 
     
-    def get_transformations(self, text, original_text=None, 
-                            apply_constraints=True, **kwargs):
+    def get_transformations(self, text, original_text=None, **kwargs):
         """
         Applies ``self.transformation`` to ``text``, then filters the list of possible transformations
         through the applicable constraints.
@@ -78,9 +76,7 @@ class Attack:
         transformations = np.array(self.transformation(text, 
                             pre_transformation_constraints=self.pre_transformation_constraints, 
                             **kwargs))
-        if apply_constraints:
-            return self._filter_transformations(transformations, text, original_text)
-        return transformations
+        return self._filter_transformations(transformations, text, original_text)
     
     def _filter_transformations_uncached(self, original_transformations, text, original_text=None):
         """ Filters a list of potential perturbations based on a list of

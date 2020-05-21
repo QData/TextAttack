@@ -122,8 +122,7 @@ class GeneticAlgorithm(SearchMethod):
         words = tokenized_text.words
         neighbors_list = [[] for _ in range(len(words))]
         transformations = self.get_transformations(tokenized_text,
-                                                   original_text=self.original_tokenized_text,
-                                                   apply_constraints=False)
+                                                   original_text=self.original_tokenized_text)
         for transformed_text in transformations:
             diff_idx = tokenized_text.first_word_diff_index(transformed_text)
             neighbors_list[diff_idx].append(transformed_text.words[diff_idx])

@@ -16,7 +16,7 @@ class Transformation:
             tokenized_text: The ``TokenizedText`` to transform.
             pre_transformation_constraints: The ``PreTransformationConstraint``\s to apply before
                 beginning the transformation.
-            indicies_to_modify: Which word indices should be modified as dictated by the
+            indices_to_modify: Which word indices should be modified as dictated by the
                 ``SearchMethod``.
         """
         if indices_to_modify is None:
