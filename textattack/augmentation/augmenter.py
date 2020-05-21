@@ -34,14 +34,14 @@ class Augmenter:
             else:
                 self.constraints.append(constraint)
     
-    def _filter_transformations(self, tokenized_text, transformations):
+    def _filter_transformations(self, tokenized_text, transformations, original_text):
         """ 
         Filters a list of ``TokenizedText`` objects to include only the ones 
         that pass ``self.constraints``.
         """
         for C in self.constraints:
             if len(transformations) == 0: break
-            transformations = C.call_many(tokenized_text, transformations, original_text=tokenized_text)
+            transformations = C.call_many(tokenized_text, transformations, original_text=original_text)
         return transformations
     
     def augment(self, text):
@@ -50,30 +50,27 @@ class Augmenter:
         ``self.transformation``.
         """
         tokenized_text = TokenizedText(text, DummyTokenizer())
+        original_text = tokenized_text
         all_transformations = set()
         for _ in range(self.transformations_per_example):
-            indices_to_modify = set(range(len(tokenized_text.words)))
+            index_order = list(range(len(tokenized_text.words)))
+            random.shuffle(index_order)
             next_tokenized_text = tokenized_text
-            for __ in range(self.num_words_to_swap):
-                transformations = []
-                num_tries = 0
-                while not len(transformations):
-                    # Loop until we find a valid transformation.
-                    num_tries += 1
-                    if num_tries == len(tokenized_text.words):
-                        # This occurs when we couldn't find valid transformations
-                        # – either the constraints were too strict, or the number
-                        # of words to swap was too high, or we were just plain 
-                        # unlucky. In any event, don't throw an error, and just 
-                        # don't return anything.
-                        break
-                    transformations = self.transformation(next_tokenized_text)
-                    # Get rid of transformations we already have
-                    transformations = [t for t in transformations if t not in all_transformations]
-                    # Filter out transformations that don't match the constraints.
-                    transformations = self._filter_transformations(tokenized_text, transformations)
-                if len(transformations):
-                    next_tokenized_text = random.choice(transformations)
+            words_swapped = 0
+            for i in index_order:
+                transformations = self.transformation(next_tokenized_text, 
+                                    self.pre_transformation_constraints, [i])
+                # Get rid of transformations we already have
+                transformations = [t for t in transformations if t not in all_transformations]
+                # Filter out transformations that don't match the constraints.
+                transformations = self._filter_transformations(tokenized_text, transformations,
+                                    original_text)
+                if not len(transformations):
+                    continue
+                next_tokenized_text = random.choice(transformations)
+                words_swapped += 1
+                if words_swapped == self.num_words_to_swap:
+                    break
             all_transformations.add(next_tokenized_text)
         return [t.clean_text() for t in all_transformations]
     
