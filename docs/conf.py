@@ -47,8 +47,8 @@ templates_path = []
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', '**.ipynb_checkpoints']
 
-# Mock language_check to stop issues with Sphinx not loading it
-autodoc_mock_imports = []
+# Mock expensive textattack imports. Docs imports are in `docs/requirements.txt`.
+autodoc_mock_imports = open('../requirements.txt').readlines()
 
 # -- Options for HTML output -------------------------------------------------
 
