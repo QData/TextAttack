@@ -1,5 +1,7 @@
 from textattack.search_methods import MetropolisHastingsSampling
+from textattack.shared.attack import Attack
 from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder, BERT
 from textattack.constraints.grammaticality import PartOfSpeech, LanguageTool
 from textattack.goal_functions import UntargetedClassification
@@ -15,13 +17,19 @@ def MHARecipeAdjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     # (The paper claims 0.7, but analysis of the code and some empirical
     # results show that it's definitely 0.5.)
     #
-    transformation = WordSwapEmbedding(max_candidates=50, textfooler_stopwords=True)
+    transformation = WordSwapEmbedding(max_candidates=50)
+    #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification()
+    ]
     #
     # Minimum word embedding cosine similarity of 0.9.
     #
-    constraints = []
     constraints.append(
-            WordEmbeddingDistance(min_cos_sim=0.9)
+        WordEmbeddingDistance(min_cos_sim=0.9)
     )
     #
     # Universal Sentence Encoder with a minimum angular similarity of ε = 0.7.
@@ -39,9 +47,9 @@ def MHARecipeAdjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     # Do grammar checking
     #
     constraints.append(
-            LanguageTool(0)
+        LanguageTool(0)
     )
-
+    
     #
     # Untargeted attack   
     #
@@ -50,7 +58,6 @@ def MHARecipeAdjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = MetropolisHastingsSampling(goal_function, transformation=transformation,
-        constraints=constraints)
+    search_method = MetropolisHastingsSampling()
     
-    return attack
+    return Attack(goal_function, constraints, transformation, search_method)

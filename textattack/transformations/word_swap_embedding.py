@@ -10,8 +10,7 @@ class WordSwapEmbedding(WordSwap):
     
     PATH = 'word_embeddings'
     
-    def __init__(self, max_candidates=15, embedding_type='paragramcf', 
-        replace_stopwords=False, **kwargs):
+    def __init__(self, max_candidates=15, embedding_type='paragramcf', **kwargs):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
         self.embedding_type = embedding_type
@@ -58,7 +57,7 @@ class WordSwapEmbedding(WordSwap):
             return []
     
     def extra_repr_keys(self): 
-        return ['max_candidates', 'embedding_type', 'replace_stopwords']
+        return ['max_candidates', 'embedding_type']
 
 def recover_word_case(word, reference_word):
     """ Makes the case of `word` like the case of `reference_word`. Supports 

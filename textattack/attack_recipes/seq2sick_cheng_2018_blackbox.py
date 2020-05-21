@@ -12,7 +12,10 @@
     
 """
 
+from textattack.shared.attack import Attack
 from textattack.constraints.overlap import LevenshteinEditDistance
+from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.goal_functions import NonOverlappingOutput
 from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import WordSwapEmbedding
@@ -26,13 +29,22 @@ def Seq2SickCheng2018BlackBox(model, goal_function='non_overlapping'):
     # seq2sick.
     transformation = WordSwapEmbedding(max_candidates=50)
     #
+    # Don't modify the same word twice or stopwords
+    #
+    constraints = [
+        RepeatModification(),
+        StopwordModification()
+    ]
+    #
     # In these experiments, we hold the maximum difference
     # on edit distance (ϵ) to a constant 30 for each sample.
     #
+    constraints.append(
+        LevenshteinEditDistance(30)
+    )
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    attack = GreedyWordSwapWIR(goal_function, transformation=transformation,
-        constraints=[], max_depth=10)
+    search_method = GreedyWordSwapWIR()
     
-    return attack
+    return Attack(goal_function, constraints, transformation, search_method)

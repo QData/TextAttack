@@ -13,6 +13,9 @@
   <a target="_blank" href="https://travis-ci.org/QData/TextAttack">
     <img src="https://travis-ci.org/QData/TextAttack.svg?branch=master" alt="Coverage Status">
   </a>
+  <a href="https://badge.fury.io/py/textattack">
+    <img src="https://badge.fury.io/py/textattack.svg" alt="PyPI version" height="18">
+  </a>
 
 </p>
   
@@ -108,7 +111,7 @@ The `attack_one` method in an `Attack` takes as input a `TokenizedText`, and out
 
 ### Goal Functions
 
-A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the attack has succeeded. 
+A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
 
 ### Constraints
 
@@ -120,7 +123,7 @@ A `Transformation` takes as input a `TokenizedText` and returns a list of possib
 
 ### Search Methods
 
-A search method is currently implemented in an extension of the `Attack` class, through implementing the `attack_one` method. The `get_transformations` function takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds or is exhausted.
+A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
 ## Contributing to TextAttack
 

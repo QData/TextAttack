@@ -1,7 +1,7 @@
 import math
 from textattack.constraints import Constraint
 
-class WordsPerturbed(Constraint):
+class MaxWordsPerturbed(Constraint):
     """ A constraint representing a maximum allowed perturbed words. """
     
     def __init__(self, max_num_words=None, max_percent=None):
@@ -12,9 +12,9 @@ class WordsPerturbed(Constraint):
         self.max_num_words = max_num_words
         self.max_percent = max_percent
     
-    def __call__(self, x, x_adv, original_text=None):
+    def _check_constraint(self, x, x_adv, original_text=None):
         if not original_text:
-            raise ValueError('Cannot constraint WordsPerturbed without original_text')
+            raise ValueError('Cannot apply constraint MaxWordsPerturbed without original_text')
         
         num_words_diff = len(x_adv.all_words_diff(original_text))
         if self.max_percent:
@@ -37,5 +37,4 @@ class WordsPerturbed(Constraint):
         if self.max_num_words is not None:
             metric.append('max_num_words')
         return metric
-
 

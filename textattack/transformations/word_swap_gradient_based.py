@@ -16,9 +16,8 @@ class WordSwapGradientBased(Transformation):
             model (nn.Module): The model to attack. Model must have a 
                 `word_embeddings` matrix and `convert_id_to_word` function.
             top_n (int): the number of top words to return at each index
-            replace_stopwords (bool): whether or not to replace stopwords
     """
-    def __init__(self, model, top_n=1, replace_stopwords=False):
+    def __init__(self, model, top_n=1):
         validate_model_gradient_word_swap_compatibility(model)
         if not hasattr(model, 'word_embeddings'):
             raise ValueError('Model needs word embedding matrix for gradient-based word swap')
@@ -37,12 +36,7 @@ class WordSwapGradientBased(Transformation):
         self.pad_id = self.model.tokenizer.pad_id
         self.oov_id = self.model.tokenizer.oov_id
         self.top_n = top_n
-        self.replace_stopwords = replace_stopwords
-        if replace_stopwords:
-            self.stopwords = set()
-        else:
-            from nltk.corpus import stopwords
-            self.stopwords = set(stopwords.words('english'))
+        self.is_black_box = False
 
     def _get_replacement_words_by_grad(self, text, indices_to_replace):
         """ Returns returns a list containing all possible words to replace
@@ -73,6 +67,7 @@ class WordSwapGradientBased(Transformation):
         # grad differences between all flips and original word (eq. 1 from paper)
         vocab_size = lookup_table.size(0)
         diffs = torch.zeros(len(indices_to_replace), vocab_size)
+        indices_to_replace = list(indices_to_replace)
         for j, word_idx in enumerate(indices_to_replace):
             # Get the grad w.r.t the one-hot index of the word.
             b_grads = emb_grad[word_idx].view(1,-1).mm(lookup_table_transpose).squeeze()
@@ -110,27 +105,20 @@ class WordSwapGradientBased(Transformation):
         ids = ids.unsqueeze(0)
         return self.model(ids)
 
-    def __call__(self, tokenized_text, indices_to_replace=None):
+    def _get_transformations(self, tokenized_text, indices_to_replace):
         """
         Returns a list of all possible transformations for `text`.
             
         If indices_to_replace is set, only replaces words at those indices.
         
         """
-        words = tokenized_text.words
-        if not indices_to_replace:
-            indices_to_replace = list(range(len(words)))
-        
-        transformations = []
-        # Don't replace stopwords.
-        indices_to_replace = [i for i in indices_to_replace if not (words[i].lower() in self.stopwords)]
         transformations = []
         for word, idx in self._get_replacement_words_by_grad(tokenized_text, indices_to_replace):
             transformations.append(tokenized_text.replace_word_at_index(idx, word))
         return transformations
         
     def extra_repr_keys(self): 
-        return ['top_n', 'replace_stopwords']
+        return ['top_n']
     
 class Hook:
     def __init__(self, module, backward=False):

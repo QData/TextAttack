@@ -1,10 +1,9 @@
-import torch
 import numpy as np
 
-from .attack import Attack
-from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
+from textattack.search_methods import SearchMethod
+from textattack.shared.validators import transformation_consists_of_word_swaps
 
-class GreedyWordSwapWIR(Attack):
+class GreedyWordSwapWIR(SearchMethod):
     """
     An attack that greedily chooses from a list of possible perturbations in 
     order of index, after ranking indices by importance.
@@ -16,61 +15,53 @@ class GreedyWordSwapWIR(Attack):
         https://github.com/jind11/TextFooler 
         
     Args:
-        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
-        transformation: The type of transformation.
-        max_depth (:obj:`int`, optional): The maximum number of words to change. Defaults to 32. 
+        wir_method: method for ranking most important words
     """
+
     WIR_TO_REPLACEMENT_STR = {
         'unk': '[UNK]',
         'delete': '[DELETE]',
     }
 
-    def __init__(self, goal_function, transformation, constraints=[], wir_method='unk', max_depth=32):
-        super().__init__(goal_function, transformation, constraints=constraints)
-        self.max_depth = max_depth
+    def __init__(self, wir_method='unk'):
+        self.wir_method = wir_method
         try: 
             self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
         except KeyError:
             raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
         
-    def attack_one(self, tokenized_text, correct_output):
-        original_tokenized_text = tokenized_text
-        num_words_changed = 0
-       
+    def _perform_search(self, initial_result):
+        tokenized_text = initial_result.tokenized_text
+        cur_result = initial_result
+
         # Sort words by order of importance
-        original_result = self.goal_function.get_results([tokenized_text], correct_output)[0]
-        cur_score = original_result.score
         len_text = len(tokenized_text.words)
         
         leave_one_texts = \
             [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
         leave_one_scores = np.array([result.score for result in \
-            self.goal_function.get_results(leave_one_texts, correct_output)])
+            self.get_goal_results(leave_one_texts, initial_result.output)])
         index_order = (-leave_one_scores).argsort()
 
-        new_tokenized_text = None
-        new_text_label = None
         i = 0
-        results = []
-        while ((self.max_depth is None) or num_words_changed <= self.max_depth) and i < len(index_order):
+        while i < len(index_order):
             transformed_text_candidates = self.get_transformations(
-                tokenized_text,
-                original_tokenized_text,
-                indices_to_replace=[index_order[i]])
+                cur_result.tokenized_text,
+                original_text=initial_result.tokenized_text,
+                indices_to_modify=[index_order[i]])
             i += 1
             if len(transformed_text_candidates) == 0:
                 continue
-            num_words_changed += 1
-            results = sorted(self.goal_function.get_results(transformed_text_candidates, correct_output), 
+            results = sorted(self.get_goal_results(transformed_text_candidates, initial_result.output), 
                     key=lambda x: -x.score)
             # Skip swaps which don't improve the score
-            if results[0].score > cur_score:
-                cur_score = results[0].score
+            if results[0].score > cur_result.score:
+                cur_result = results[0]
             else:
                 continue
             # If we succeeded, return the index with best similarity.
-            if results[0].succeeded:
-                best_result = results[0]
+            if cur_result.succeeded:
+                best_result = cur_result
                 # @TODO: Use vectorwise operations
                 max_similarity = -float('inf')
                 for result in results:
@@ -88,14 +79,17 @@ class GreedyWordSwapWIR(Attack):
                     if similarity_score > max_similarity:
                         max_similarity = similarity_score
                         best_result = result
-                return SuccessfulAttackResult( 
-                    original_result,
-                    best_result
-                )
-            else:
-                tokenized_text = results[0].tokenized_text
-        
-        if len(results):
-            return FailedAttackResult(original_result, results[0])
-        else:
-            return FailedAttackResult(original_result)
+                return best_result
+       
+        if results and len(results):
+            return results[0]
+        return initial_result
+
+    def check_transformation_compatibility(self, transformation):
+        """
+            Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swaps transformations.
+        """
+        return transformation_consists_of_word_swaps(transformation)
+
+    def extra_repr_keys(self):
+        return ['wir_method']

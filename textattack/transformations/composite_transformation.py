@@ -16,4 +16,3 @@ class CompositeTransformation(Transformation):
                 transformation(*args, **kwargs)
             )
         return list(new_tokenized_texts)
-        
