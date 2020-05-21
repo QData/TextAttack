@@ -29,24 +29,19 @@ class PartOfSpeech(Constraint):
             self._pos_tag_cache[context_key] = pos_list
         return pos_list 
         
-    def _check_constraint(self, x, x_adv, original_text=None):
-        if not isinstance(x, TokenizedText):
-            raise TypeError('x must be of type TokenizedText')
-        if not isinstance(x_adv, TokenizedText):
-            raise TypeError('x_adv must be of type TokenizedText')
-        
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
         try:
-            indices = x_adv.attack_attrs['newly_modified_indices']
+            indices = transformed_text.attack_attrs['newly_modified_indices']
         except KeyError:
             raise KeyError('Cannot apply part-of-speech constraint without `newly_modified_indices`')
         
         for i in indices:
-            x_word = x.words[i]
-            x_adv_word = x_adv.words[i]
-            before_ctx = x.words[max(i-4,0):i]
-            after_ctx = x.words[i+1:min(i+5,len(x.words))]
-            cur_pos = self._get_pos(before_ctx, x_word, after_ctx)
-            replace_pos = self._get_pos(before_ctx, x_adv_word, after_ctx)
+            current_word = current_text.words[i]
+            transformed_word = transformed_text.words[i]
+            before_ctx = current_text.words[max(i-4,0):i]
+            after_ctx = current_text.words[i+1:min(i+5,len(current_text.words))]
+            cur_pos = self._get_pos(before_ctx, current_word, after_ctx)
+            replace_pos = self._get_pos(before_ctx, transformed_word, after_ctx)
             if not self._can_replace_pos(cur_pos, replace_pos):
                 return False
 

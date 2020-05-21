@@ -40,7 +40,7 @@ register_test('python -m textattack --model bert-mr --recipe textfooler --num-ex
 #                   (takes about 51s)
 #
 register_test('python -m textattack --model bert-snli --recipe deepwordbug --num-examples 10', 
-    name='run_attack_textfooler_bert_snli_10', 
+    name='run_attack_deepwordbug_bert_snli_10', 
     output_file='local_tests/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt', 
     desc='Runs attack using DeepWordBug recipe on BERT using 10 examples from the SNLI dataset')
     

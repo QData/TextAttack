@@ -34,24 +34,17 @@ class GoogleLanguageModel(Constraint):
     def check_compatibility(self, transformation):
         return isinstance(transformation, WordSwap)
 
-    def _check_constraint_many(self, x, x_adv_list, original_text=None):
+    def _check_constraint_many(self, transformed_texts, current_text, original_text=None):
         """
-        Returns the `top_n` of x_adv_list, as evaluated by the language 
+        Returns the `top_n` of transformed_texts, as evaluated by the language 
         model. 
-
-        Args:
-            x:
-            x_adv_list:
-            original_text (:obj:`type`, optional): Defaults to None. 
-
         """
-        # @TODO Allow user to implement perplexity threshold
-        if not len(x_adv_list): return []
+        if not len(transformed_texts): return []
         
-        def get_probs(x, x_adv_list):
-            word_swap_index = x.first_word_diff_index(x_adv_list[0])
-            prefix = x.words[word_swap_index-1]
-            swapped_words = np.array([t.words[word_swap_index] for t in x_adv_list])
+        def get_probs(current_text, transformed_texts):
+            word_swap_index = current_text.first_word_diff_index(transformed_texts[0])
+            prefix = current_text.words[word_swap_index-1]
+            swapped_words = np.array([t.words[word_swap_index] for t in transformed_texts])
             if self.print_step:
                 print(prefix, swapped_words, suffix)
             probs = self.lm.get_words_probs(prefix, swapped_words)
@@ -60,16 +53,16 @@ class GoogleLanguageModel(Constraint):
         # This creates a dictionary where each new key is initialized to [].
         word_swap_index_map = defaultdict(list)
         
-        for idx, x_adv in enumerate(x_adv_list):
-            word_swap_index = x.first_word_diff_index(x_adv)
-            word_swap_index_map[word_swap_index].append((idx, x_adv))
+        for idx, transformed_text in enumerate(transformed_texts):
+            word_swap_index = current_text.first_word_diff_index(transformed_text)
+            word_swap_index_map[word_swap_index].append((idx, transformed_text))
         
         probs = []
         for word_swap_index, item_list in word_swap_index_map.items():
             # zip(*some_list) is the inverse operator of zip!
-            item_indices, this_x_adv_list = zip(*item_list)
+            item_indices, this_transformed_texts = zip(*item_list)
             t1 = time.time()
-            probs_of_swaps_at_index = list(zip(item_indices, get_probs(x, this_x_adv_list)))
+            probs_of_swaps_at_index = list(zip(item_indices, get_probs(current_text, this_transformed_texts)))
             # Sort by probability in descending order and take the top n for this index.
             probs_of_swaps_at_index.sort(key=lambda x: -x[1])
             if self.top_n_per_index:
@@ -80,7 +73,7 @@ class GoogleLanguageModel(Constraint):
                 print(f'LM {len(item_list)} items in {t2-t1}s')
         
         # Probs is a list of (index, prob) where index is the corresponding 
-        # position in x_adv_list.
+        # position in transformed_texts.
         probs.sort(key=lambda x: x[0])
         
         # Now that they're in order, reduce to just a list of probabilities.
@@ -95,7 +88,7 @@ class GoogleLanguageModel(Constraint):
         # same order they were passed in.
         max_el_indices.sort()
         
-        return [x_adv_list[i] for i in max_el_indices]
+        return [transformed_texts[i] for i in max_el_indices]
     
     def __call__(self, x, x_adv):
         raise NotImplementedError()

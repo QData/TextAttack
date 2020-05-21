@@ -24,20 +24,20 @@ class LanguageModelConstraint(Constraint):
         """
         raise NotImplementedError()
     
-    def _check_constraint(self, x, x_adv, original_text=None):
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
         try:
-            indices = x_adv.attack_attrs['newly_modified_indices']
+            indices = transformed_text.attack_attrs['newly_modified_indices']
         except KeyError:
             raise KeyError('Cannot apply language model constraint without `newly_modified_indices`')
 
         for i in indices:
-            probs = self.get_log_probs_at_index((x, x_adv), i)
+            probs = self.get_log_probs_at_index((current_text, transformed_text), i)
             if len(probs) != 2:
                 raise ValueError(f'Error: get_log_probs_at_index returned {len(probs)} values for 2 inputs')
-            x_prob, x_adv_prob = probs
+            cur_prob, transformed_prob = probs
             if self.max_log_prob_diff is None:
-                x_prob, x_adv_prob = math.log(p1), math.log(p2)
-            if abs(x_prob - x_adv_prob) > self.max_log_prob_diff:
+                cur_prob, transformed_prob = math.log(p1), math.log(p2)
+            if abs(cur_prob - transformed_prob) > self.max_log_prob_diff:
                 return False
         
         return True

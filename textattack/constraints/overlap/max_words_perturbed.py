@@ -12,13 +12,13 @@ class MaxWordsPerturbed(Constraint):
         self.max_num_words = max_num_words
         self.max_percent = max_percent
     
-    def _check_constraint(self, x, x_adv, original_text=None):
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
         if not original_text:
             raise ValueError('Cannot apply constraint MaxWordsPerturbed without original_text')
         
-        num_words_diff = len(x_adv.all_words_diff(original_text))
+        num_words_diff = len(transformed_text.all_words_diff(original_text))
         if self.max_percent:
-            min_num_words = min(len(x_adv.words), len(original_text.words))
+            min_num_words = min(len(transformed_text.words), len(original_text.words))
             max_words_perturbed = math.ceil(min_num_words * (self.max_percent))
             max_percent_met = num_words_diff <= max_words_perturbed
         else:
