@@ -2,6 +2,7 @@ import os
 import pickle
 import time
 import datetime
+import copy
 from textattack.shared import utils
 from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult, SkippedAttackResult
 
@@ -16,7 +17,7 @@ class Checkpoint:
             chkpt_time (float): epoch time representing when checkpoint was made
     """
     def __init__(self, args, log_manager, chkpt_time=None):
-        self.args = args
+        self.args = copy.deepcopy(args)
         self.log_manager = log_manager
         if chkpt_time:
             self.time = chkpt_time

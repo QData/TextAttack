@@ -405,6 +405,6 @@ def merge_checkpoint_args(saved_args, cmdline_args):
     args.checkpoint_dir = cmdline_args.checkpoint_dir
     # If set, we replace
     if cmdline_args.checkpoint_interval:
-        args.checkpoint_interval = cmdlineargs.checkpoint_interval
+        args.checkpoint_interval = cmdline_args.checkpoint_interval
     
     return args
