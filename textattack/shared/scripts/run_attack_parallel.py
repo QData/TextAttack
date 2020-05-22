@@ -47,7 +47,7 @@ def run(args):
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
         num_examples_offset = resume_checkpoint.dataset_offset
-        num_examples = resume_checkpoint.num_remaining_attack
+        num_examples = resume_checkpoint.num_remaining_attacks
         logger.info('Recovered from previously saved checkpoint at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
     else:
