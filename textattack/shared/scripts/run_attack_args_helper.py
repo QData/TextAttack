@@ -10,18 +10,27 @@ import pickle
 import copy
 
 RECIPE_NAMES = {
-    'alzantot':         'textattack.attack_recipes.Alzantot2018',
-    'alz-adjusted':     'textattack.attack_recipes.Alzantot2018Adjusted',
-    'deepwordbug':      'textattack.attack_recipes.DeepWordBugGao2018',
-    'hotflip':          'textattack.attack_recipes.HotFlipEbrahimi2017',
-    'kuleshov':         'textattack.attack_recipes.Kuleshov2017',
-    'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
-    'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
-    'tf-adjusted':      'textattack.attack_recipes.TextFoolerJin2019Adjusted',
-    'mha':              'textattack.attack_recipes.MHARecipe',
-    'mha-adjusted':     'textattack.attack_recipes.MHARecipeAdjusted',
-    'mcts':             'textattack.attack_recipes.MCTSRecipe',
-    'mcts-adjusted':             'textattack.attack_recipes.MCTSRecipeAdjusted'
+    'alzantot':             'textattack.attack_recipes.Alzantot2018',
+    'alz-adjusted':         'textattack.attack_recipes.Alzantot2018Adjusted',
+    'deepwordbug':          'textattack.attack_recipes.DeepWordBugGao2018',
+    'hotflip':              'textattack.attack_recipes.HotFlipEbrahimi2017',
+    'kuleshov':             'textattack.attack_recipes.Kuleshov2017',
+    'seq2sick':             'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textfooler':           'textattack.attack_recipes.TextFoolerJin2019',
+    'tf-adjusted':          'textattack.attack_recipes.TextFoolerJin2019Adjusted',
+    'mha':                  'textattack.attack_recipes.MHARecipe',
+    'mha-adjusted':         'textattack.attack_recipes.MHARecipeAdjusted',
+    'mcts':                 'textattack.attack_recipes.MCTSRecipe',
+    'mcts-adjusted':        'textattack.attack_recipes.MCTSRecipeAdjusted',
+    'beam-4-wed-strong':    'textattack.attack_recipes.BeamSearch4WordEmbeddingStrong',
+    'beam-8-wed-strong':    'textattack.attack_recipes.BeamSearch8WordEmbeddingStrong',
+    'greedy-wed-weak':      'textattack.attack_recipes.Greedy_WED_Weak',
+    'greedyWIR-wed-weak':   'textattack.attack_recipes.GreedyWIR_WED_Weak',
+    'beam4-wed-weak':       'textattack.attack_recipes.BeamSearch4_WED_Weak',
+    'beam8-wed-weak':       'textattack.attack_recipes.BeamSearch8_WED_Weak',
+    'mha-wed-weak':         'textattack.attack_recipes.MHA_WED_Weak',
+    'genetic-wed-weak':     'textattack.attack_recipes.Genetic_WED_Weak',
+    'mcts-wed-weak':        'textattack.attack_recipes.MCTS_WED_Weak',
 }
 
 MODEL_CLASS_NAMES = {
@@ -411,6 +420,6 @@ def merge_checkpoint_args(saved_args, cmdline_args):
     args.checkpoint_dir = cmdline_args.checkpoint_dir
     # If set, we replace
     if cmdline_args.checkpoint_interval:
-        args.checkpoint_interval = cmdlineargs.checkpoint_interval
+        args.checkpoint_interval = cmdline_args.checkpoint_interval
     
     return args

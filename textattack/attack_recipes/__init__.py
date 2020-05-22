@@ -10,3 +10,5 @@ from .mcts_recipe import MCTSRecipe
 from .mcts_recipe_adjusted import MCTSRecipeAdjusted
 from .mha_recipe import MHARecipe
 from .mha_recipe_adjusted import MHARecipeAdjusted
+from .beam_search_recipes import BeamSearch4WordEmbeddingStrong, BeamSearch8WordEmbeddingStrong
+from .benchmark_recipes import *
