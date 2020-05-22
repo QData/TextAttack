@@ -47,7 +47,7 @@ def run(args):
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
         num_examples_offset = resume_checkpoint.dataset_offset
-        num_examples = resume_checkpoint.num_remaining_attack
+        num_examples = resume_checkpoint.num_remaining_attacks
         logger.info('Recovered from previously saved checkpoint at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
     else:
@@ -117,7 +117,7 @@ def run(args):
             in_queue.put((label, text))
 
         if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
-            checkpoint = textattack.shared.Checkpoint(chkpt_time, args, attack_log_manager)
+            checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
             checkpoint.save()
             attack_log_manager.flush()
 
