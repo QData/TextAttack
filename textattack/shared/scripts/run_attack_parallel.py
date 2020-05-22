@@ -117,7 +117,7 @@ def run(args):
             in_queue.put((label, text))
 
         if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
-            checkpoint = textattack.shared.Checkpoint(chkpt_time, args, attack_log_manager)
+            checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
             checkpoint.save()
             attack_log_manager.flush()
 
