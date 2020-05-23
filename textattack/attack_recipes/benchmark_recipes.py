@@ -207,7 +207,7 @@ def GreedyWIR_WED_Strict(model):
     search_method = GreedyWordSwapWIR()
     return Attack(goal_function, constraints, WED_transformation, search_method)
 
-deStrict(model):
+def BeamSearch4_WED_Strict(model):
     constraints = [
         RepeatModification(),
         StopwordModification(stopwords=stopwords)
