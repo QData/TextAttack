@@ -10,6 +10,8 @@ import tqdm
 
 from .run_attack_args_helper import *
 
+logger = textattack.shared.utils.get_logger()
+
 def set_env_variables(gpu_id):
     # Set sharing strategy to file_system to avoid file descriptor leaks
     torch.multiprocessing.set_sharing_strategy('file_system')
