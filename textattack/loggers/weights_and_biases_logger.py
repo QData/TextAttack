@@ -10,6 +10,8 @@ class WeightsAndBiasesLogger(Logger):
         self._result_table_rows = []
 
     def __setstate__(self, state):
+        global wandb
+        import wandb
         self.__dict__ = state
         wandb.init(project='textattack', resume=True)
 
