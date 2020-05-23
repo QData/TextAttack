@@ -14,10 +14,12 @@ class StopwordModification(PreTransformationConstraint):
         else:
             self.stopwords = set(nltk.corpus.stopwords.words('english'))
 
-    def _get_modifiable_indices(self, tokenized_text):
-        """ Returns the word indices in x which are able to be deleted """
+    def _get_modifiable_indices(self, current_text):
+        """ 
+        Returns the word indices in ``current_text`` which are able to be modified.
+        """
         non_stopword_indices = set()
-        for i, word in enumerate(tokenized_text.words):
+        for i, word in enumerate(current_text.words):
             if word not in self.stopwords:
                 non_stopword_indices.add(i)
         return non_stopword_indices

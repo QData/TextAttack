@@ -22,8 +22,7 @@ RECIPE_NAMES = {
     'mha-adjusted':         'textattack.attack_recipes.MHARecipeAdjusted',
     'mcts':                 'textattack.attack_recipes.MCTSRecipe',
     'mcts-adjusted':        'textattack.attack_recipes.MCTSRecipeAdjusted',
-    'beam-4-wed-strong':    'textattack.attack_recipes.BeamSearch4WordEmbeddingStrong',
-    'beam-8-wed-strong':    'textattack.attack_recipes.BeamSearch8WordEmbeddingStrong',
+
     'greedy-wed-weak':      'textattack.attack_recipes.Greedy_WED_Weak',
     'greedyWIR-wed-weak':   'textattack.attack_recipes.GreedyWIR_WED_Weak',
     'beam4-wed-weak':       'textattack.attack_recipes.BeamSearch4_WED_Weak',
@@ -31,6 +30,22 @@ RECIPE_NAMES = {
     'mha-wed-weak':         'textattack.attack_recipes.MHA_WED_Weak',
     'genetic-wed-weak':     'textattack.attack_recipes.Genetic_WED_Weak',
     'mcts-wed-weak':        'textattack.attack_recipes.MCTS_WED_Weak',
+    
+    'greedy-wed-med':      'textattack.attack_recipes.Greedy_WED_Med',
+    'greedyWIR-wed-med':   'textattack.attack_recipes.GreedyWIR_WED_Med',
+    'beam4-wed-med':       'textattack.attack_recipes.BeamSearch4_WED_Med',
+    'beam8-wed-med':       'textattack.attack_recipes.BeamSearch8_WED_Med',
+    'mha-wed-med':         'textattack.attack_recipes.MHA_WED_Med',
+    'genetic-wed-med':     'textattack.attack_recipes.Genetic_WED_Med',
+    'mcts-wed-med':        'textattack.attack_recipes.MCTS_WED_Med',
+
+    'greedy-wed-strict':      'textattack.attack_recipes.Greedy_WED_Strict',
+    'greedyWIR-wed-strict':   'textattack.attack_recipes.GreedyWIR_WED_Strict',
+    'beam4-wed-strict':       'textattack.attack_recipes.BeamSearch4_WED_Strict',
+    'beam8-wed-strict':       'textattack.attack_recipes.BeamSearch8_WED_Strict',
+    'mha-wed-strict':         'textattack.attack_recipes.MHA_WED_Strict',
+    'genetic-wed-strict':     'textattack.attack_recipes.Genetic_WED_Strict',
+    'mcts-wed-strict':        'textattack.attack_recipes.MCTS_WED_Strict',
 }
 
 MODEL_CLASS_NAMES = {

@@ -34,15 +34,15 @@ class Augmenter:
             else:
                 self.constraints.append(constraint)
     
-    def _filter_transformations(self, tokenized_text, transformations, original_text):
+    def _filter_transformations(self, transformed_texts, current_text, original_text):
         """ 
         Filters a list of ``TokenizedText`` objects to include only the ones 
         that pass ``self.constraints``.
         """
         for C in self.constraints:
-            if len(transformations) == 0: break
-            transformations = C.call_many(tokenized_text, transformations, original_text=original_text)
-        return transformations
+            if len(transformed_texts) == 0: break
+            transformed_texts = C.call_many(transformed_texts, current_text, original_text=original_text)
+        return transformed_texts
     
     def augment(self, text):
         """ 
@@ -51,28 +51,28 @@ class Augmenter:
         """
         tokenized_text = TokenizedText(text, DummyTokenizer())
         original_text = tokenized_text
-        all_transformations = set()
+        all_transformed_texts = set()
         for _ in range(self.transformations_per_example):
             index_order = list(range(len(tokenized_text.words)))
             random.shuffle(index_order)
-            next_tokenized_text = tokenized_text
+            current_text = tokenized_text
             words_swapped = 0
             for i in index_order:
-                transformations = self.transformation(next_tokenized_text, 
+                transformed_texts = self.transformation(current_text, 
                                     self.pre_transformation_constraints, [i])
                 # Get rid of transformations we already have
-                transformations = [t for t in transformations if t not in all_transformations]
+                transformed_texts = [t for t in transformed_texts if t not in all_transformed_texts]
                 # Filter out transformations that don't match the constraints.
-                transformations = self._filter_transformations(tokenized_text, transformations,
+                transformed_texts = self._filter_transformations(transformed_texts, current_text,
                                     original_text)
-                if not len(transformations):
+                if not len(transformed_texts):
                     continue
-                next_tokenized_text = random.choice(transformations)
+                current_text = random.choice(transformed_texts)
                 words_swapped += 1
                 if words_swapped == self.num_words_to_swap:
                     break
-            all_transformations.add(next_tokenized_text)
-        return [t.clean_text() for t in all_transformations]
+            all_transformed_texts.add(current_text)
+        return [t.clean_text() for t in all_transformed_texts]
     
     def augment_many(self, text_list, show_progress=False):
         """

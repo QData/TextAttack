@@ -34,6 +34,14 @@ You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is 
 pip install textattack
 ```
 
+To install the latest version of TextAttack from source, run:
+
+```
+git clone https://github.com/QData/TextAttack
+cd textattack
+pip install .
+```
+
 ### Configuration
 TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
 dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
@@ -116,7 +124,7 @@ A `GoalFunction` takes as input a `TokenizedText` object and the ground truth ou
 
 ### Constraints
 
-A `Constraint` takes as input an original `TokenizedText`, and a list of transformed `TokenizedText`s. For each transformed option, it returns a boolean representing whether the constraint is met.
+A `Constraint` takes as input a current `TokenizedText`, and a list of transformed `TokenizedText`s. For each transformed option, it returns a boolean representing whether the constraint is met.
 
 ### Transformations
 
@@ -128,7 +136,7 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 ## Contributing to TextAttack
 
-We welcome contributions and suggestions! Submit a pull request or issue and we will do our best to respond in a timely manner.
+We welcome suggestions and contributions! Submit an issue or pull request and we will do our best to respond in a timely manner. TextAttack is currently in an "alpha" stage in which we are working to improve its capabilities and design.
 
 ## Citing TextAttack
 

@@ -47,6 +47,7 @@ class GreedyWordSwapWIR(SearchMethod):
         index_order = (-leave_one_scores).argsort()
 
         i = 0
+        results = None
         while i < len(index_order):
             transformed_text_candidates = self.get_transformations(
                 cur_result.tokenized_text,

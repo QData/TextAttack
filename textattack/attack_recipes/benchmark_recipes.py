@@ -94,3 +94,175 @@ def MCTS_WED_Weak(model):
     goal_function = UntargetedClassification(model)
     search_method = MonteCarloTreeSearch()
     return Attack(goal_function, constraints, WED_transformation, search_method)
+
+#########################################################################################################
+
+def Greedy_WED_Med(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GreedySearch()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def GreedyWIR_WED_Med(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GreedyWordSwapWIR()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def BeamSearch4_WED_Med(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = BeamSearch(beam_width=4)
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def BeamSearch8_WED_Med(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = BeamSearch(beam_width=8)
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def MHA_WED_Med(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = MetropolisHastingsSampling()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def Genetic_WED_Med(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GeneticAlgorithm()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def MCTS_WED_Med(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = MonteCarloTreeSearch()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+#########################################################################################################
+
+def Greedy_WED_Strict(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GreedySearch()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def GreedyWIR_WED_Strict(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GreedyWordSwapWIR()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+deStrict(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = BeamSearch(beam_width=4)
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def BeamSearch8_WED_Strict(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = BeamSearch(beam_width=8)
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def MHA_WED_Strict(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = MetropolisHastingsSampling()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def Genetic_WED_Strict(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GeneticAlgorithm()
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def MCTS_WED_Strict(model):
+    constraints = [
+        RepeatModification(),
+        StopwordModification(stopwords=stopwords)
+    ]
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = MonteCarloTreeSearch()
+    return Attack(goal_function, constraints, WED_transformation, search_method)

@@ -1,3 +1,5 @@
+# Version number is tracked in docs/conf.py.
+from docs import conf as docs_conf
 import setuptools
 
 with open("README.md", "r") as fh:
@@ -5,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="textattack",
-    version="0.0.1.9",
+    version=docs_conf.release,
     author="QData Lab at the University of Virginia",
     author_email="jm8wx@virginia.edu",
     description="A library for generating text adversarial examples",

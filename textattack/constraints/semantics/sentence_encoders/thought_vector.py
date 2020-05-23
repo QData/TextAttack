@@ -20,7 +20,7 @@ class ThoughtVector(SentenceEncoder):
     
     @functools.lru_cache(maxsize=2**10)
     def _get_thought_vector(self, text):
-        """ Sums the embeddings of all the words in `tokenized_text` into a
+        """ Sums the embeddings of all the words in ``text`` into a
             "thought vector".
         """
         embeddings = []
@@ -31,8 +31,8 @@ class ThoughtVector(SentenceEncoder):
         embeddings = torch.tensor(embeddings)
         return torch.mean(embeddings, dim=0)
     
-    def encode(self, tokenized_text_list):
-        return [self._get_thought_vector(tt) for tt in tokenized_text_list]
+    def encode(self, raw_text_list):
+        return [self._get_thought_vector(text) for text in raw_text_list]
         
     def extra_repr_keys(self):
         """Set the extra representation of the constraint using these keys.
