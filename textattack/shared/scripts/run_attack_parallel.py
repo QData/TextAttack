@@ -37,8 +37,6 @@ def attack_from_queue(args, in_queue, out_queue):
             results_gen = attack.attack_dataset([(output, text)], num_examples=1)
             result = next(results_gen)
             out_queue.put(result)
-            del output
-            del text
         except Exception as e:
             out_queue.put(e)
             exit()
@@ -125,9 +123,6 @@ def run(args):
             attack_log_manager.flush()
             checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
             checkpoint.save()
-        else:
-            if num_results > 0 and num_results % 50 == 0:
-                attack_log_manager.flush()
 
     pbar.close()
     print()

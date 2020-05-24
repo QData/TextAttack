@@ -120,7 +120,7 @@ class Checkpoint:
     @classmethod
     def load(self, path):
         with open(path, 'rb') as f:
-            checkpoint = pickle.load(f, protocol=pickle.HIGHEST_PROTOCOL)
+            checkpoint = pickle.load(f)
         assert isinstance(checkpoint, Checkpoint)
 
         return checkpoint
