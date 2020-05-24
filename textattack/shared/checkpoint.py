@@ -115,12 +115,12 @@ class Checkpoint:
             logger.info('Saving checkpoint under "{}" at {} after {} attacks.'.format(path, self.datetime, self.results_count))
             print('=' * 125 + '\n')
         with open(path, 'wb') as f:
-            pickle.dump(self, f)
+            pickle.dump(self, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     @classmethod
     def load(self, path):
         with open(path, 'rb') as f:
-            checkpoint = pickle.load(f)
+            checkpoint = pickle.load(f, protocol=pickle.HIGHEST_PROTOCOL)
         assert isinstance(checkpoint, Checkpoint)
 
         return checkpoint

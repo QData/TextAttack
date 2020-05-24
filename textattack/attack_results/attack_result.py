@@ -28,8 +28,8 @@ class AttackResult:
         # We don't want the TokenizedText `ids` sticking around clogging up 
         # space on our devices. Delete them here, if they're still present,
         # because we won't need them anymore anyway.
-        self.original_result.tokenized_text.delete_tensors()
-        self.perturbed_result.tokenized_text.delete_tensors()
+        self.original_result.tokenized_text.free_memory()
+        self.perturbed_result.tokenized_text.free_memory()
     
     def original_text(self):
         """ Returns the text portion of `self.original_result`. Helper method.

@@ -1,5 +1,4 @@
 import torch
-from copy import deepcopy
 from .utils import get_device, words_from_text
 
 class TokenizedText:
@@ -21,13 +20,16 @@ class TokenizedText:
     def __init__(self, text, tokenizer, attack_attrs=dict()):   
         text = text.strip()
         self.tokenizer = tokenizer
-        ids = tokenizer.encode(text)
-        if not isinstance(ids, tuple):
-            # Some tokenizers may tokenize text to a single vector.
-            # In this case, wrap the vector in a tuple to mirror the 
-            # format of other tokenizers.
-            ids = (ids,)
-        self.ids = ids
+        if tokenizer:
+            ids = tokenizer.encode(text)
+            if not isinstance(ids, tuple):
+                # Some tokenizers may tokenize text to a single vector.
+                # In this case, wrap the vector in a tuple to mirror the 
+                # format of other tokenizers.
+                ids = (ids,)
+            self.ids = ids
+        else:
+            self.ids = None
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
@@ -39,11 +41,15 @@ class TokenizedText:
     def __hash__(self):
         return hash(self.text)
 
-    def delete_tensors(self):
-        """ Delete tensors to clear up GPU space. Only should be called
-            once the TokenizedText is only needed to display.
+    def free_memory(self):
+        """ Delete items that take up memory.
+            Delete tensors to clear up GPU space. 
+            Only should be called once the TokenizedText is only needed to display.
         """
         self.ids = None
+        self.tokenizer = None
+        if 'last_transformation' in self.attack_attrs:
+            del self.attack_attrs['last_transformation']
         for key in self.attack_attrs:
             if isinstance(self.attack_attrs[key], torch.Tensor):
                 del self.attack_attrs[key]
