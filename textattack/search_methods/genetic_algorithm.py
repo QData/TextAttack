@@ -141,7 +141,6 @@ class GeneticAlgorithm(SearchMethod):
             for idx, result in enumerate(pop_results):
                 pop[idx].result = pop_results[idx]
             pop = sorted(pop, key=lambda x: -x.result.score)
-            print('\t\t', i, ' -- ', float(pop[0].result.score))
 
             pop_scores = torch.Tensor([r.score for r in pop_results])
             logits = ((-pop_scores) / self.temp).exp()
