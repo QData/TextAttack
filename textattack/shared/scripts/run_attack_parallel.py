@@ -103,6 +103,7 @@ def run(args):
     pbar = tqdm.tqdm(total=num_examples, smoothing=0)
     while num_results < num_examples:
         result = out_queue.get(block=True)
+
         if isinstance(result, Exception):
             raise result
         attack_log_manager.log_result(result)
@@ -119,9 +120,9 @@ def run(args):
             in_queue.put((label, text))
 
         if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
+            attack_log_manager.flush()
             checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
             checkpoint.save()
-            attack_log_manager.flush()
 
     pbar.close()
     print()
