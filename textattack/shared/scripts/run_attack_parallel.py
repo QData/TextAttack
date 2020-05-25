@@ -49,12 +49,14 @@ def run(args):
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
         num_examples_offset = resume_checkpoint.dataset_offset
+        num_remaining_examples = resume_checkpoint.num_remaining_attacks
+        num_total_examples = args.num_examples
         logger.info('Recovered from previously saved checkpoint at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
     else:
         num_examples_offset = args.num_examples_offset
-        
-    num_examples = args.num_examples
+        num_total_examples = args.num_examples
+        num_remaining_examples = num_total_examples
 
     # This makes `args` a namespace that's sharable between processes.
     # We could do the same thing with the model, but it's actually faster
@@ -82,7 +84,7 @@ def run(args):
     in_queue = torch.multiprocessing.Queue()
     out_queue =  torch.multiprocessing.Queue()
     # Add stuff to queue.
-    for _ in range(num_examples):
+    for _ in range(num_remaining_examples):
         label, text = next(dataset)
         in_queue.put((label, text))
     # Start workers.
@@ -100,8 +102,8 @@ def run(args):
         num_results = 0
         num_failures = 0
         num_successes = 0
-    pbar = tqdm.tqdm(total=num_examples, smoothing=0)
-    while num_results < num_examples:
+    pbar = tqdm.tqdm(total=num_remaining_examples, smoothing=0)
+    while num_results < num_total_examples:
         result = out_queue.get(block=True)
 
         if isinstance(result, Exception):
