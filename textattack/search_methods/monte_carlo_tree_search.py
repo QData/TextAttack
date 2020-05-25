@@ -102,7 +102,7 @@ class MonteCarloTreeSearch(SearchMethod):
     """
 
     def __init__(self, num_rollouts=100, selection_policy='UCB_G_RAVE_tuned',
-        max_tree_depth=10, step_size=2, ucb_C=2, global_RAVE_C=50, max_words_changed=32):
+        max_tree_depth=10, step_size=2, ucb_C=2, global_RAVE_C=5, max_words_changed=32):
 
         # MCTS Hyper-parameters
         self.num_rollouts = num_rollouts
@@ -271,11 +271,12 @@ class MonteCarloTreeSearch(SearchMethod):
         for action in node.children:
             value = node.children[action].value
             global_rave = 0.0
-            beta = 0.0
+            #beta = 0.0
             if action in self.search_tree.global_rave_values:
                 global_rave += self.search_tree.global_rave_values[action][0]
-                beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
-            value = (1 - beta) * value + beta * global_rave     
+                #beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
+            #value = (1 - beta) * value + beta * global_rave     
+            value = value + global_rave
 
             if value > best_value:
                 best_action = action
@@ -317,6 +318,8 @@ class MonteCarloTreeSearch(SearchMethod):
                 break
             if current_result.output != initial_result.output:
                 break
+
+            num_rollouts = int(num_rollouts * 0.9)
 
         return current_result
 
