@@ -17,7 +17,7 @@ class MetropolisHastingsSampling(SearchMethod):
             Currently supported LM is "gpt-2"
     """
 
-    def __init__(self, max_iter = 200, lm_type = "gpt-2"):
+    def __init__(self, max_iter = 400, lm_type = "gpt-2"):
         self.max_iter = max_iter
         self.lm_type = lm_type
 
