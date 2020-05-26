@@ -46,6 +46,23 @@ RECIPE_NAMES = {
     'mha-wed-strict':         'textattack.attack_recipes.MHA_WED_Strict',
     'genetic-wed-strict':     'textattack.attack_recipes.Genetic_WED_Strict',
     'mcts-wed-strict':        'textattack.attack_recipes.MCTS_WED_Strict',
+
+    'greedy-wordnet-lax':      'textattack.attack_recipes.Greedy_WordNet_Lax',
+    'greedyWIR-wordnet-lax':   'textattack.attack_recipes.GreedyWIR_WordNet_Lax',
+    'beam4-wordnet-lax':       'textattack.attack_recipes.BeamSearch4_WordNet_Lax',
+    'beam8-wordnet-lax':       'textattack.attack_recipes.BeamSearch8_WordNet_Lax',
+    'mha-wordnet-lax':         'textattack.attack_recipes.MHA_WordNet_Lax',
+    'genetic-wordnet-lax':     'textattack.attack_recipes.Genetic_WordNet_Lax',
+    'mcts-wordnet-lax':        'textattack.attack_recipes.MCTS_WordNet_Lax',
+
+    'greedy-wordnet-strict':      'textattack.attack_recipes.Greedy_WordNet_Strict',
+    'greedyWIR-wordnet-strict':   'textattack.attack_recipes.GreedyWIR_WordNet_Strict',
+    'beam4-wordnet-strict':       'textattack.attack_recipes.BeamSearch4_WordNet_Strict',
+    'beam8-wordnet-strict':       'textattack.attack_recipes.BeamSearch8_WordNet_Strict',
+    'mha-wordnet-strict':         'textattack.attack_recipes.MHA_WordNet_Strict',
+    'genetic-wordnet-strict':     'textattack.attack_recipes.Genetic_WordNet_Strict',
+    'mcts-wordnet-strict':        'textattack.attack_recipes.MCTS_WordNet_Strict',
+    
 }
 
 MODEL_CLASS_NAMES = {
