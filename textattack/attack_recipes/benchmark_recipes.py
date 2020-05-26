@@ -232,7 +232,7 @@ def Greedy_WordNet_Lax(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = GreedySearch()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def GreedyWIR_WordNet_Lax(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -243,7 +243,7 @@ def GreedyWIR_WordNet_Lax(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = GreedyWordSwapWIR()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def BeamSearch4_WordNet_Lax(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -254,7 +254,7 @@ def BeamSearch4_WordNet_Lax(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = BeamSearch(beam_width=4)
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def BeamSearch8_WordNet_Lax(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -265,7 +265,7 @@ def BeamSearch8_WordNet_Lax(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = BeamSearch(beam_width=8)
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def MHA_WordNet_Lax(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -276,7 +276,7 @@ def MHA_WordNet_Lax(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = MetropolisHastingsSampling()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def Genetic_WordNet_Lax(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -287,7 +287,7 @@ def Genetic_WordNet_Lax(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = GeneticAlgorithm()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def MCTS_WordNet_Lax(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -298,7 +298,7 @@ def MCTS_WordNet_Lax(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = MonteCarloTreeSearch()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 ##############################################################################
 def Greedy_WordNet_Strict(model):
@@ -310,7 +310,7 @@ def Greedy_WordNet_Strict(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = GreedySearch()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def GreedyWIR_WordNet_Strict(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -321,7 +321,7 @@ def GreedyWIR_WordNet_Strict(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = GreedyWordSwapWIR()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def BeamSearch4_WordNet_Strict(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -332,7 +332,7 @@ def BeamSearch4_WordNet_Strict(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = BeamSearch(beam_width=4)
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def BeamSearch8_WordNet_Strict(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -343,7 +343,7 @@ def BeamSearch8_WordNet_Strict(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = BeamSearch(beam_width=8)
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def MHA_WordNet_Strict(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -354,7 +354,7 @@ def MHA_WordNet_Strict(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = MetropolisHastingsSampling()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def Genetic_WordNet_Strict(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -365,7 +365,7 @@ def Genetic_WordNet_Strict(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = GeneticAlgorithm()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
 
 def MCTS_WordNet_Strict(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
@@ -376,4 +376,4 @@ def MCTS_WordNet_Strict(model):
     )
     goal_function = UntargetedClassification(model)
     search_method = MonteCarloTreeSearch()
-    return Attack(goal_function, constraints, WED_transformation, search_method)
+    return Attack(goal_function, constraints, WORDNET_transformation, search_method)
