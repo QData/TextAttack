@@ -67,4 +67,4 @@ def Alzantot2018Adjusted(model, SE_thresh=0.98, sentence_encoder='bert'):
     #
     search_method = GeneticAlgorithm(pop_size=60, max_iters=20)
 
-    return Attack(goal_function, constraint, transformation, search_method)
+    return Attack(goal_function, constraints, transformation, search_method)
