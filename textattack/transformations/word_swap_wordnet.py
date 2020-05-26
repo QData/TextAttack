@@ -10,6 +10,7 @@ class WordSwapWordNet(WordSwap):
         """
         synonyms = set()
         for syn in wordnet.synsets(word): 
-            for l in syn.lemmas(): 
-                synonyms.add(l.name()) 
+            for l in syn.lemmas():
+                if l.name() != word:
+                    synonyms.add(l.name()) 
         return list(synonyms)
