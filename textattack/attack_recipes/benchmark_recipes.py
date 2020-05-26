@@ -219,7 +219,7 @@ def MCTS_WED_Strict(model):
 
 #Angular simliarity
 USE_SIM_LAX = 0.7 
-USE_SIM_STRICT = 0.9
+USE_SIM_STRICT = 0.95
 WORDNET_transformation = WordSwapWordNet()
 
 ##############################################################################
