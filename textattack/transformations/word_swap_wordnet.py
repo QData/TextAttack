@@ -11,7 +11,13 @@ class WordSwapWordNet(WordSwap):
         synonyms = set()
         for syn in wordnet.synsets(word): 
             for l in syn.lemmas():
-                if l.name() != word and not '_' in l.name():
+                if l.name() != word and check_if_one_word(l.name()):
                     # WordNet can suggest phrases that are joined by '_' but we ignore phrases.
                     synonyms.add(l.name()) 
         return list(synonyms)
+
+def check_if_one_word(word):
+    for c in word:
+        if not c.isalpha():
+            return False
+    return True
