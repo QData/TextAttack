@@ -101,11 +101,12 @@ class MonteCarloTreeSearch(SearchMethod):
         max_words_changed (int) : Maximum number of words we change during MCTS.
     """
 
-    def __init__(self, num_rollouts=200, selection_policy='UCB_G_RAVE_tuned',
+    def __init__(self, num_rollouts=200, rollout_anneal_rate = 0.75, selection_policy='UCB_G_RAVE_tuned',
         max_tree_depth=10, step_size=2, ucb_C=2, global_RAVE_C=30, max_words_changed=32):
 
         # MCTS Hyper-parameters
         self.num_rollouts = num_rollouts
+        self.rollout_anneal_rate = rollout_anneal_rate
         self.max_words_changed = max_words_changed
         self.max_tree_depth = max_tree_depth
         self.step_size = step_size
@@ -199,6 +200,21 @@ class MonteCarloTreeSearch(SearchMethod):
             self.ucb_C * math.log(node.num_visits) /  max(1, node.children[action].num_visits)
             * min(0.25, node.children[action].variance + math.sqrt(2 * math.log(node.num_visits) / max(1, node.children[action].num_visits)))
         )
+
+    def _UCB_G_RAVE_tuned(self, node, action):
+        ucb = math.sqrt(
+            self.ucb_C * math.log(node.num_visits) / max(1, node.children[action].num_visits)
+            * min(0.25, node.children[action].variance
+            + math.sqrt(2 * math.log(node.num_visits) / max(1, node.children[action].num_visits)))
+        )
+
+        global_rave = 0.0
+        beta = 0.0
+        if action in self.search_tree.global_rave_values:
+            global_rave = self.search_tree.global_rave_values[action][0]
+            beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
+
+        return (1 - beta) * node.children[action].value + beta * global_rave + ucb
 
     def _UCB_G_RAVE_tuned(self, node, action):
         ucb = math.sqrt(
@@ -323,11 +339,14 @@ class MonteCarloTreeSearch(SearchMethod):
             if current_result.output != initial_result.output:
                 break
 
-            num_rollouts = max(20, int(num_rollouts * 0.75))
+            num_rollouts = max(20, int(num_rollouts * self.rollout_anneal_rate))
+            # Reuse search tree with new root
             self.search_tree.root = root
+            self.search_tree.root.parent = None
+            self.search_tree.reset_node_depth()
 
         return current_result
 
     def extra_repr_keys(self):
         return ['num_rollouts', 'max_tree_depth', 'step_size', 
-            'ucb_C', 'global_RAVE_C', 'max_words_changed' ]
+            'ucb_C', 'global_RAVE_C', 'max_words_changed']

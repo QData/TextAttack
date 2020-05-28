@@ -17,7 +17,7 @@ class MetropolisHastingsSampling(SearchMethod):
             Currently supported LM is "gpt-2"
     """
 
-    def __init__(self, max_iter = 400, lm_type = "gpt-2"):
+    def __init__(self, max_iter = 200, lm_type = "gpt-2"):
         self.max_iter = max_iter
         self.lm_type = lm_type
 
@@ -75,7 +75,7 @@ class MetropolisHastingsSampling(SearchMethod):
     def _batch_stationary_dist(self, x_list, original_label):
         """
         Unnormalized estimation of the distribution that we want to sample from.
-        Process items in batch to avoid unnecessary calls to model. 
+        Process items in batch.
         Args:
             x_list (list): List of TokenizedText
             original_label
