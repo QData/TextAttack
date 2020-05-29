@@ -101,7 +101,7 @@ class MonteCarloTreeSearch(SearchMethod):
         max_words_changed (int) : Maximum number of words we change during MCTS.
     """
 
-    def __init__(self, num_rollouts=200, rollout_anneal_rate = 0.75, selection_policy='UCB_G_RAVE_tuned',
+    def __init__(self, num_rollouts=200, rollout_anneal_rate = 0.8, selection_policy='UCB_G_RAVE_tuned',
         max_tree_depth=10, step_size=2, ucb_C=2, global_RAVE_C=30, max_words_changed=32):
 
         # MCTS Hyper-parameters
@@ -348,5 +348,5 @@ class MonteCarloTreeSearch(SearchMethod):
         return current_result
 
     def extra_repr_keys(self):
-        return ['num_rollouts', 'max_tree_depth', 'step_size', 
-            'ucb_C', 'global_RAVE_C', 'max_words_changed']
+        return ['num_rollouts', 'rollout_anneal_rate', '_selection_policy',
+        'max_tree_depth', 'step_size', 'ucb_C', 'global_RAVE_C', 'max_words_changed']
