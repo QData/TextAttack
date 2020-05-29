@@ -348,5 +348,5 @@ class MonteCarloTreeSearch(SearchMethod):
         return current_result
 
     def extra_repr_keys(self):
-        return ['num_rollouts', 'rollout_anneal_rate', '_selection_policy',
-        'max_tree_depth', 'step_size', 'ucb_C', 'global_RAVE_C', 'max_words_changed']
+        return ['num_rollouts', 'rollout_anneal_rate', 'max_tree_depth', 
+        'step_size', 'ucb_C', 'global_RAVE_C', 'max_words_changed']
