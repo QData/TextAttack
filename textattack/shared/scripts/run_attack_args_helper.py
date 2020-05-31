@@ -253,10 +253,10 @@ def get_args():
     parser.add_argument('--random-seed', default=str_to_int('TEXTATTACK'))
 
     parser.add_argument('--checkpoint-dir', required=False, type=str, default=default_checkpoint_dir(),
-        help='A directory to save/load checkpoint files.')
+        help='The directory to save checkpoint files.')
 
     parser.add_argument('--checkpoint-interval', required=False, type=int, 
-        help='Interval for saving checkpoints. If not set, no checkpoints will be saved.')
+        help='If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.')
     
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
@@ -273,14 +273,15 @@ def get_args():
     resume_parser = argparse.ArgumentParser(
         description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    resume_parser.add_argument('--checkpoint-file', '-f', type=str, required=False, default='latest', 
-        help='Name of checkpoint file to resume attack from. If "latest" is entered, recover latest checkpoint.')
+    resume_parser.add_argument('--checkpoint-file', '-f', type=str, required=True, 
+        help='Path of checkpoint file to resume attack from. If "latest" (or "{directory path}/latest") is entered,'\
+        'recover latest checkpoint from either current path or specified directory.')
 
-    resume_parser.add_argument('--checkpoint-dir', '-d', required=False, type=str, default=default_checkpoint_dir(),
-        help='A directory to save/load checkpoint files.')
+    resume_parser.add_argument('--checkpoint-dir', '-d', required=False, type=str, default=None,
+        help='The directory to save checkpoint files. If not set, use directory from recovered arguments.')
 
     resume_parser.add_argument('--checkpoint-interval', '-i', required=False, type=int, 
-        help='Interval for saving checkpoints. If not set, no checkpoints will be saved.')
+        help='If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.')
 
     resume_parser.add_argument('--parallel', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
@@ -357,7 +358,7 @@ def parse_recipe_from_args(model, args):
     elif args.recipe in RECIPE_NAMES:
         recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
     else:
-        raise ValueError('Invalid recipe {args.recipe}')
+        raise ValueError(f'Invalid recipe {args.recipe}')
     return recipe
 
 def parse_goal_function_and_attack_from_args(args):
@@ -424,14 +425,16 @@ def parse_logger_from_args(args):# Create logger
     return attack_log_manager
 
 def parse_checkpoint_from_args(args):
-    if args.checkpoint_file.lower() == 'latest':
-        chkpt_file_names = [f for f in os.listdir(args.checkpoint_dir) if f.endswith('.ta.chkpt')]
+    file_name = os.path.basename(args.checkpoint_file)   
+    if file_name.lower() == 'latest':
+        dir_path = os.path.dirname(args.checkpoint_file)
+        chkpt_file_names = [f for f in os.listdir(dir_path) if f.endswith('.ta.chkpt')]
         assert chkpt_file_names, "Checkpoint directory is empty"
         timestamps = [int(f.replace('.ta.chkpt', '')) for f in chkpt_file_names]
         latest_file = str(max(timestamps)) + '.ta.chkpt'
-        checkpoint_path = os.path.join(args.checkpoint_dir, latest_file)
+        checkpoint_path = os.path.join(dir_path, latest_file)
     else:
-        checkpoint_path = os.path.join(args.checkpoint_dir, args.checkpoint_file)
+        checkpoint_path = args.checkpoint_file
     
     checkpoint = textattack.shared.Checkpoint.load(checkpoint_path)
     set_seed(checkpoint.args.random_seed)
@@ -449,8 +452,9 @@ def merge_checkpoint_args(saved_args, cmdline_args):
     # Newly entered arguments take precedence
     args.checkpoint_resume = cmdline_args.checkpoint_resume
     args.parallel =  cmdline_args.parallel
-    args.checkpoint_dir = cmdline_args.checkpoint_dir
-    # If set, we replace
+    # If set, replace
+    if cmdline_args.checkpoint_dir:
+        args.checkpoint_dir = cmdline_args.checkpoint_dir
     if cmdline_args.checkpoint_interval:
         args.checkpoint_interval = cmdline_args.checkpoint_interval
     

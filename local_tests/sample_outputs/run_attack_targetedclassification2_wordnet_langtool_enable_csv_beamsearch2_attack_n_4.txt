@@ -66,6 +66,6 @@ Net cost for education programs can be calculated as a way to [94mincrement[0m
 (0x(B Attack success rate:          (0x(B 75.0%  (0x(B
 (0x(B Average perturbed word %:     (0x(B 3.34%  (0x(B
 (0x(B Average num. words per input: (0x(B 34.25  (0x(B
-(0x(B Avg num queries:              (0x(B 144.25 (0x(B
+(0x(B Avg num queries:              (0x(B 127.25 (0x(B
 (0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
 Attack time: /.*/s
