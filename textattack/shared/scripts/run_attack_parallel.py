@@ -51,7 +51,7 @@ def run(args):
         num_examples_offset = resume_checkpoint.dataset_offset
         num_remaining_examples = resume_checkpoint.num_remaining_attacks
         num_total_examples = args.num_examples
-        logger.info('Recovered from previously saved checkpoint at {}'.format(resume_checkpoint.datetime))
+        logger.info('Recovered from checkpoint previously saved at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
     else:
         num_examples_offset = args.num_examples_offset

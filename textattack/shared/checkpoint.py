@@ -32,10 +32,20 @@ class Checkpoint:
         )
 
         args_lines = []
+        recipe_set = True if 'recipe' in self.args.__dict__ and self.args.__dict__['recipe'] else False
+        mutually_exclusive_args = ['search', 'transformation', 'constraints', 'recipe']
+        if recipe_set:
+            args_lines.append(utils.add_indent(f'(recipe): {self.args.__dict__["recipe"]}', 2))
+        else:
+            args_lines.append(utils.add_indent(f'(search): {self.args.__dict__["search"]}', 2))
+            args_lines.append(utils.add_indent(f'(transformation): {self.args.__dict__["transformation"]}', 2))
+            args_lines.append(utils.add_indent(f'(constraints): {self.args.__dict__["constraints"]}', 2))
+    
         for key in self.args.__dict__:
-            args_lines.append(utils.add_indent(f'({key}): {self.args.__dict__[key]}', 2))
+            if key not in mutually_exclusive_args:
+                args_lines.append(utils.add_indent(f'({key}): {self.args.__dict__[key]}', 2))
+
         args_str = utils.add_indent('\n' + '\n'.join(args_lines), 2)
-        
         lines.append(utils.add_indent(f'(Args):  {args_str}', 2))
 
         attack_logger_lines = []
