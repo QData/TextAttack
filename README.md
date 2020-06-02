@@ -34,14 +34,6 @@ You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is 
 pip install textattack
 ```
 
-To install the latest version of TextAttack from source, run:
-
-```
-git clone https://github.com/QData/TextAttack
-cd textattack
-pip install .
-```
-
 ### Configuration
 TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
 dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
@@ -55,7 +47,7 @@ The [`examples/`](docs/examples/) folder contains notebooks walking through exam
 
 We also have a command-line interface for running attacks. See help info and list of arguments with `python -m textattack --help`.
 
-### Attack Recipes
+### Attacks and Papers Implemented ("Attack Recipes")
 
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python -m textattack --recipe [recipe_name]`
 
