@@ -11,17 +11,11 @@ import copy
 
 RECIPE_NAMES = {
     'alzantot':             'textattack.attack_recipes.Alzantot2018',
-    'alz-adjusted':         'textattack.attack_recipes.Alzantot2018Adjusted',
     'deepwordbug':          'textattack.attack_recipes.DeepWordBugGao2018',
     'hotflip':              'textattack.attack_recipes.HotFlipEbrahimi2017',
     'kuleshov':             'textattack.attack_recipes.Kuleshov2017',
     'seq2sick':             'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
     'textfooler':           'textattack.attack_recipes.TextFoolerJin2019',
-    'tf-adjusted':          'textattack.attack_recipes.TextFoolerJin2019Adjusted',
-    'mha':                  'textattack.attack_recipes.MHARecipe',
-    'mha-adjusted':         'textattack.attack_recipes.MHARecipeAdjusted',
-    'mcts':                 'textattack.attack_recipes.MCTSRecipe',
-    'mcts-adjusted':        'textattack.attack_recipes.MCTSRecipeAdjusted',
 
     'greedy-wed-weak':      'textattack.attack_recipes.Greedy_WED_Weak',
     'greedyWIR-wed-weak':   'textattack.attack_recipes.GreedyWIR_WED_Weak',
