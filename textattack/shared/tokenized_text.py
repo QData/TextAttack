@@ -33,10 +33,10 @@ class TokenizedText:
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
-        # Indices of deleted words from the *original* text.
-        self.attack_attrs.setdefault('deletion_indices', set())
-        # Indices of inserted words in the *perturbed* text (this).
-        self.attack_attrs.setdefault('insertion_indices', set())
+        # Indices of deleted words from the *original* text. Allows us to map
+        # insertions/deletions back to their locations in the original text.
+        self.attack_attrs.setdefault('original_modified_indices', set())
+        # A list of all indices in *this* text that have been modified.
         self.attack_attrs.setdefault('modified_indices', set()) # @TODO replace ``modified`` with ``modification``
 
     def __eq__(self, other):
@@ -159,8 +159,7 @@ class TokenizedText:
         final_sentence = ''
         text = self.text
         new_attack_attrs = dict()
-        new_attack_attrs['deletion_indices'] = self.attack_attrs['deletion_indices'].copy()
-        new_attack_attrs['insertion_indices'] = self.attack_attrs['insertion_indices'].copy()
+        new_attack_attrs['original_modified_indices'] = self.attack_attrs['original_modified_indices'].copy()
         new_attack_attrs['modified_indices'] = set()
         new_attack_attrs['newly_modified_indices'] = set()
         new_i = 0
@@ -189,15 +188,6 @@ class TokenizedText:
             # Now add the new words
             #
             if adv_num_words == 0:
-                # Re-calculated deleted index.
-                deleted_idx = i
-                for other_deleted_idx in sorted(new_attack_attrs['deletion_indices']):
-                    if other_deleted_idx < deleted_idx:
-                        deleted_idx += 1
-                # Track deleted words.
-                new_attack_attrs['deletion_indices'].add(deleted_idx)
-                print('idx', deleted_idx, 'deleting i',i,'input_word',input_word,'adv_word',adv_word, new_attack_attrs['deletion_indices'])
-                # if i > 18: import pdb; pdb.set_trace()
                 # Remove extra space (or else there would be two spaces for each
                 # deleted word).
                 # @TODO What to do with punctuation in this case? This behavior is undefined
@@ -209,22 +199,15 @@ class TokenizedText:
                     # If a word other than the first was deleted, take a preceding space.
                     if final_sentence[-1] == ' ':
                         final_sentence = final_sentence[:-1]
-            elif adv_num_words == 1:
-                if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
-                    new_attack_attrs['modified_indices'].add(new_i)
-                    if input_word != adv_word:
-                        new_attack_attrs['newly_modified_indices'].add(new_i)
-            elif adv_num_words > 0:
-                new_attack_attrs['new_modified_indices'] = new_modified_indices
-                # Re-calculated insertion indices.
-                insertion_idx = i
-                for (other_insertion_idx, num_words_inserted) in sorted(new_attack_attrs['insertion_indices'], key=lambda x: x[0]):
-                    if other_insertion_idx < insertion_idx:
-                        insertion_idx -= num_words_inserted
-                # Track deleted words.
-                new_attack_attrs['insertion_indices'].add((insertion_idx, adv_num_words-1))
-            else:
-                raise ValueError(f'perturbed sequence has {adv_num_words} words')
+            new_attack_attrs['new_modified_indices'] = new_modified_indices
+            # Track insertions and deletions wrt original text.
+            if adv_num_words != 1:
+                original_modification_idx = i
+                for (other_insertion_idx, num_words_inserted) in sorted(new_attack_attrs['original_modified_indices'], key=lambda x: x[0]):
+                    if other_insertion_idx < original_modification_idx:
+                        original_modification_idx -= num_words_inserted
+                new_attack_attrs['original_modified_indices'].add((original_modification_idx, adv_num_words-1))
+            # Add substitute word(s) to new sentence.
             final_sentence += adv_word
             new_i += 1
         final_sentence += text # Add all of the ending punctuation.
