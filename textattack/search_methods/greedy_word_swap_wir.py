@@ -58,6 +58,9 @@ class GreedyWordSwapWIR(SearchMethod):
                 continue
             results = sorted(self.get_goal_results(transformed_text_candidates, initial_result.output), 
                     key=lambda x: -x.score)
+            print('transformed_text_candidates:', transformed_text_candidates)
+            print('results:', [r.score for r in results])
+            print()
             # Skip swaps which don't improve the score
             if results[0].score > cur_result.score:
                 cur_result = results[0]

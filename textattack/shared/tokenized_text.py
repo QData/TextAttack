@@ -38,7 +38,7 @@ class TokenizedText:
         self.attack_attrs.setdefault('original_modified_indices', set())
         # A list of all indices in *this* text that have been modified.
         self.attack_attrs.setdefault('modified_indices', set()) # @TODO replace ``modified`` with ``modification``
-
+        # print('text:', text, 'self.attack_attrs:', self.attack_attrs)
     def __eq__(self, other):
         return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
     
@@ -160,7 +160,7 @@ class TokenizedText:
         text = self.text
         new_attack_attrs = dict()
         new_attack_attrs['original_modified_indices'] = self.attack_attrs['original_modified_indices'].copy()
-        new_attack_attrs['modified_indices'] = set()
+        new_attack_attrs['modified_indices'] = self.attack_attrs['modified_indices'].copy()
         new_attack_attrs['newly_modified_indices'] = set()
         new_i = 0
         for i, (input_word, adv_word) in enumerate(zip(self.words, new_words)):
@@ -170,23 +170,34 @@ class TokenizedText:
             final_sentence += text[:word_start]
             text = text[word_end:]
             adv_num_words = len(words_from_text(adv_word))
-            # Re-calculated modified indices. If words are inserted or deleted, this will change.
-            modified_indices = list(new_attack_attrs['newly_modified_indices'])
-            new_modified_indices = set()
-            for j, modified_idx in enumerate(modified_indices):
-                if modified_idx < i:
-                    new_modified_indices.add(modified_idx)
-                elif modified_idx > i:
-                    new_modified_indices.add(modified_idx + (adv_num_words - 1))
-                else:
-                    pass
-            # Add indices of new modified words.
-            for j in range(i, i + adv_num_words):
-                new_modified_indices.add(j)
-            new_attack_attrs['newly_modified_indices'] = new_modified_indices
-            # 
-            # Now add the new words
-            #
+            num_words_diff = adv_num_words - len(words_from_text(input_word))
+            # Track indices on insertions and deletions.
+            if num_words_diff != 0:
+                # Re-calculated modified indices. If words are inserted or deleted, 
+                # they could change.
+                shifted_modified_indices = set()
+                for j, modified_idx in enumerate(new_attack_attrs['modified_indices']):
+                    if modified_idx < i:
+                        shifted_modified_indices.add(modified_idx)
+                    elif modified_idx > i:
+                        shifted_modified_indices.add(modified_idx + num_words_diff)
+                    else:
+                        pass
+                new_attack_attrs['modified_indices'] = shifted_modified_indices
+                # Track insertions and deletions wrt original text.
+                if num_words_diff != 0:
+                    original_modification_idx = i
+                    for (other_insertion_idx, num_words_inserted) in sorted(new_attack_attrs['original_modified_indices'], key=lambda x: x[0]):
+                        if other_insertion_idx < original_modification_idx:
+                            original_modification_idx -= num_words_inserted
+                    new_attack_attrs['original_modified_indices'].add((original_modification_idx, num_words_diff))
+            # Save indices of new modified words.
+            if input_word != adv_word:
+                for j in range(i, i + adv_num_words):
+                    new_attack_attrs['modified_indices'].add(new_i)
+                    new_attack_attrs['newly_modified_indices'].add(new_i)
+                    new_i += 1
+            # Check spaces.
             if adv_num_words == 0:
                 # Remove extra space (or else there would be two spaces for each
                 # deleted word).
@@ -199,17 +210,8 @@ class TokenizedText:
                     # If a word other than the first was deleted, take a preceding space.
                     if final_sentence[-1] == ' ':
                         final_sentence = final_sentence[:-1]
-            new_attack_attrs['new_modified_indices'] = new_modified_indices
-            # Track insertions and deletions wrt original text.
-            if adv_num_words != 1:
-                original_modification_idx = i
-                for (other_insertion_idx, num_words_inserted) in sorted(new_attack_attrs['original_modified_indices'], key=lambda x: x[0]):
-                    if other_insertion_idx < original_modification_idx:
-                        original_modification_idx -= num_words_inserted
-                new_attack_attrs['original_modified_indices'].add((original_modification_idx, adv_num_words-1))
             # Add substitute word(s) to new sentence.
             final_sentence += adv_word
-            new_i += 1
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
             attack_attrs=new_attack_attrs)

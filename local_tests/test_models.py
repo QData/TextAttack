@@ -50,7 +50,7 @@ class TextAttackTest:
         """
         raise NotImplementedError()
     
-    def __call__(self):
+    def __call__(self, args):
         """ Runs test and prints success or failure. """
         self.log_start()
         test_output, errored = self.execute()
@@ -58,7 +58,7 @@ class TextAttackTest:
             self.log_success()
             return True
         else:
-            self.log_failure(test_output, errored)
+            self.log_failure(test_output, errored, quiet=args.quiet)
             return False
     
     def log_start(self):
@@ -68,15 +68,16 @@ class TextAttackTest:
         success_text = f'✓ Succeeded.'
         print(color_text(success_text, 'green'))
     
-    def log_failure(self, test_output, errored):
+    def log_failure(self, test_output, errored, quiet=False):
         fail_text = f'✗ Failed.'
         print(color_text(fail_text, 'red'))
-        if errored:
-            print(f'Test exited early with error: {test_output}')
-        else:
-            output1 = f'Test output: {test_output}.'
-            output2 = f'Correct output: {self.output}.'
-            print(f'\n{output1}\n{output2}\n')
+        if not quiet:
+            if errored:
+                print(f'Test exited early with error: {test_output}')
+            else:
+                output1 = f'Test output: {test_output}.'
+                output2 = f'Correct output: {self.output}.'
+                print(f'\n{output1}\n{output2}\n')
 
 class CommandLineTest(TextAttackTest):
     """ Runs a command-line command to check for desired output. """

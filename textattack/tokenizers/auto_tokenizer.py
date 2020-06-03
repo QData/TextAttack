@@ -12,7 +12,7 @@ class AutoTokenizer(Tokenizer):
             https://github.com/huggingface/transformers/blob/master/src/transformers/tokenization_auto.py)
         max_seq_length: if set, will truncate & pad tokens to fit this length
     """
-    def __init__(self, name='bert-base-uncased', max_seq_length=None, use_fast=True):
+    def __init__(self, name='bert-base-uncased', max_seq_length=None, use_fast=False):
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(name, use_fast=use_fast)
         self.max_seq_length = max_seq_length
 
