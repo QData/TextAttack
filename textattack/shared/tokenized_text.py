@@ -183,7 +183,7 @@ class TokenizedText:
             # Add indices of new modified words.
             for j in range(i, i + adv_num_words):
                 new_modified_indices.add(j)
-            new_attack_attrs['new_modified_indices'] = new_modified_indices
+            new_attack_attrs['newly_modified_indices'] = new_modified_indices
             # 
             # Now add the new words
             #
