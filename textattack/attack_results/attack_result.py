@@ -63,7 +63,6 @@ class AttackResult:
     def diff_color(self, color_method=None):
         """ 
         Highlights the difference between two texts using color.
-        
         """
         t1 = self.original_result.tokenized_text
         t2 = self.perturbed_result.tokenized_text
@@ -80,8 +79,8 @@ class AttackResult:
         words_2 = []
         i1 = 0
         i2 = 0
-        print("t1.attack_attrs['deletion_indices']", t1.attack_attrs['deletion_indices'])
-        print("t2.attack_attrs['deletion_indices']", t2.attack_attrs['deletion_indices'])
+        print("t1.attack_attrs['insertion_indices']", t1.attack_attrs['insertion_indices'])
+        print("t2.attack_attrs['insertion_indices']", t2.attack_attrs['insertion_indices'])
         print('t1 deleted words:', [t1.words[x] for x in t2.attack_attrs['deletion_indices']])
         while i1 < len(t1.words) and i2 < len(t2.words):
             # show deletions
@@ -89,14 +88,15 @@ class AttackResult:
                 words_1.append(utils.color_text(t1.words[i1], color_1, color_method)) # @TODO color
                 i1 += 1
             # show insertions
-            while i2 in t2.attack_attrs['insertion_indices']:
-                # @TODO this isnt right
-                words_2.append(t2.words[i2])
-                i2 += 1
+            for insertion_idx, num_words_inserted in t2.attack_attrs['insertion_indices']:
+                if i1 == insertion_idx:
+                    for _ in range(num_words_inserted):
+                        words_2.append(utils.color_text(t2.words[i2], color_2, color_method))
+                        i2 += 1
+                    break
             # show swaps
             word_1 = t1.words[i1]
             word_2 = t2.words[i2]
-            print(i1,'/', i2,word_1,'/',word_2)
             if word_1 != word_2:
                 words_1.append(utils.color_text(word_1, color_1, color_method))
                 words_2.append(utils.color_text(word_2, color_2, color_method))
@@ -105,6 +105,11 @@ class AttackResult:
                 words_2.append(word_2)
             i1 += 1
             i2 += 1
+        
+        t1 = self.original_result.tokenized_text.replace_words_at_indices(range(len(words_1)), 
+            words_1)
+        t2 = self.perturbed_result.tokenized_text.replace_words_at_indices(range(len(words_2)), 
+            words_2)
                 
         return ' '.join(words_1), ' '.join(words_2)
         

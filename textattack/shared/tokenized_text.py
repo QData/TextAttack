@@ -171,19 +171,24 @@ class TokenizedText:
             final_sentence += text[:word_start]
             text = text[word_end:]
             adv_num_words = len(words_from_text(adv_word))
+            # Re-calculated modified indices. If words are inserted or deleted, this will change.
+            modified_indices = list(new_attack_attrs['newly_modified_indices'])
+            new_modified_indices = set()
+            for j, modified_idx in enumerate(modified_indices):
+                if modified_idx < i:
+                    new_modified_indices.add(modified_idx)
+                elif modified_idx > i:
+                    new_modified_indices.add(modified_idx + (adv_num_words - 1))
+                else:
+                    pass
+            # Add indices of new modified words.
+            for j in range(i, i + adv_num_words):
+                new_modified_indices.add(j)
+            new_attack_attrs['new_modified_indices'] = new_modified_indices
+            # 
+            # Now add the new words
+            #
             if adv_num_words == 0:
-                # Re-calculated modified indices.
-                modified_indices = list(new_attack_attrs['newly_modified_indices'])
-                new_modified_indices = set()
-                for j, modified_idx in enumerate(modified_indices):
-                    if modified_idx < i:
-                        new_modified_indices.add(modified_idx)
-                    elif modified_idx > i:
-                        new_modified_indices.add(modified_idx-1)
-                    else:
-                        pass
-                        # @TODO what if modified_idx == i? is it correct to just remove?
-                new_attack_attrs['new_modified_indices'] = new_modified_indices
                 # Re-calculated deleted index.
                 deleted_idx = i
                 for other_deleted_idx in sorted(new_attack_attrs['deletion_indices']):
@@ -210,12 +215,14 @@ class TokenizedText:
                     if input_word != adv_word:
                         new_attack_attrs['newly_modified_indices'].add(new_i)
             elif adv_num_words > 0:
-                import textattack
-                textattack.shared.utils.get_logger().warn(f'havent yet implemented multiword subs - cant handle {adv_word} / {adv_num_words} / {words_from_text(adv_word)}')
-                if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
-                    new_attack_attrs['modified_indices'].add(new_i)
-                    if input_word != adv_word:
-                        new_attack_attrs['newly_modified_indices'].add(new_i)
+                new_attack_attrs['new_modified_indices'] = new_modified_indices
+                # Re-calculated insertion indices.
+                insertion_idx = i
+                for (other_insertion_idx, num_words_inserted) in sorted(new_attack_attrs['insertion_indices'], key=lambda x: x[0]):
+                    if other_insertion_idx < insertion_idx:
+                        insertion_idx -= num_words_inserted
+                # Track deleted words.
+                new_attack_attrs['insertion_indices'].add((insertion_idx, adv_num_words-1))
             else:
                 raise ValueError(f'perturbed sequence has {adv_num_words} words')
             final_sentence += adv_word
