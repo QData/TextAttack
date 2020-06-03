@@ -13,8 +13,10 @@ RECIPE_NAMES = {
     'alzantot':         'textattack.attack_recipes.Alzantot2018',
     'deepwordbug':      'textattack.attack_recipes.DeepWordBugGao2018',
     'hotflip':          'textattack.attack_recipes.HotFlipEbrahimi2017',
+    'input-reduction':  'textattack.attack_recipes.InputReductionFeng2018',
     'kuleshov':         'textattack.attack_recipes.Kuleshov2017',
     'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textbugger':       'textattack.attack_recipes.TextBuggerLi2018',
     'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
 }
 
@@ -89,7 +91,7 @@ DATASET_BY_MODEL = {
 
 TRANSFORMATION_CLASS_NAMES = {
     'word-swap-embedding':                  'textattack.transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyph',
+    'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyphSwap',
     'word-swap-neighboring-char-swap':      'textattack.transformations.WordSwapNeighboringCharacterSwap',
     'word-swap-random-char-deletion':       'textattack.transformations.WordSwapRandomCharacterDeletion',
     'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',

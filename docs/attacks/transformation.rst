@@ -47,7 +47,7 @@ Word Swap by Gradient
 Word Swap by Homoglyph
 ----------------------
 
-.. automodule:: textattack.transformations.word_swap_homoglyph
+.. automodule:: textattack.transformations.word_swap_homoglyph_swap
    :members:
    
 Word Swap by Neighboring Character Swap

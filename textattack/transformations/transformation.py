@@ -4,7 +4,6 @@ class Transformation:
     """
     An abstract class for transforming a sequence of text to produce
     a potential adversarial example. 
-        
     """
 
     def __call__(self, current_text, pre_transformation_constraints=[], indices_to_modify=None):

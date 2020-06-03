@@ -33,7 +33,11 @@ class TokenizedText:
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
-        self.attack_attrs.setdefault('modified_indices', set())
+        # Indices of deleted words from the *original* text.
+        self.attack_attrs.setdefault('deletion_indices', set())
+        # Indices of inserted words in the *perturbed* text (this).
+        self.attack_attrs.setdefault('insertion_indices', set())
+        self.attack_attrs.setdefault('modified_indices', set()) # @TODO replace ``modified`` with ``modification``
 
     def __eq__(self, other):
         return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
@@ -43,8 +47,8 @@ class TokenizedText:
 
     def free_memory(self):
         """ Delete items that take up memory.
-            Delete tensors to clear up GPU space. 
-            Only should be called once the TokenizedText is only needed to display.
+            
+            Can be called once the TokenizedText is only needed to display.
         """
         self.ids = None
         self.tokenizer = None
@@ -155,6 +159,8 @@ class TokenizedText:
         final_sentence = ''
         text = self.text
         new_attack_attrs = dict()
+        new_attack_attrs['deletion_indices'] = self.attack_attrs['deletion_indices'].copy()
+        new_attack_attrs['insertion_indices'] = self.attack_attrs['insertion_indices'].copy()
         new_attack_attrs['modified_indices'] = set()
         new_attack_attrs['newly_modified_indices'] = set()
         new_i = 0
@@ -163,12 +169,56 @@ class TokenizedText:
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)
             final_sentence += text[:word_start]
-            final_sentence += adv_word
             text = text[word_end:]
-            if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
-                new_attack_attrs['modified_indices'].add(new_i)
-                if input_word != adv_word:
-                    new_attack_attrs['newly_modified_indices'].add(new_i)
+            adv_num_words = len(words_from_text(adv_word))
+            if adv_num_words == 0:
+                # Re-calculated modified indices.
+                modified_indices = list(new_attack_attrs['newly_modified_indices'])
+                new_modified_indices = set()
+                for j, modified_idx in enumerate(modified_indices):
+                    if modified_idx < i:
+                        new_modified_indices.add(modified_idx)
+                    elif modified_idx > i:
+                        new_modified_indices.add(modified_idx-1)
+                    else:
+                        pass
+                        # @TODO what if modified_idx == i? is it correct to just remove?
+                new_attack_attrs['new_modified_indices'] = new_modified_indices
+                # Re-calculated deleted index.
+                deleted_idx = i
+                for other_deleted_idx in sorted(new_attack_attrs['deletion_indices']):
+                    if other_deleted_idx < deleted_idx:
+                        deleted_idx += 1
+                # Track deleted words.
+                new_attack_attrs['deletion_indices'].add(deleted_idx)
+                print('idx', deleted_idx, 'deleting i',i,'input_word',input_word,'adv_word',adv_word, new_attack_attrs['deletion_indices'])
+                # if i > 18: import pdb; pdb.set_trace()
+                # Remove extra space (or else there would be two spaces for each
+                # deleted word).
+                # @TODO What to do with punctuation in this case? This behavior is undefined
+                if i == 0:
+                    # If the first word was deleted, take a subsequent space.
+                    if text[0] == ' ':
+                        text = text[1:]
+                else:
+                    # If a word other than the first was deleted, take a preceding space.
+                    if final_sentence[-1] == ' ':
+                        final_sentence = final_sentence[:-1]
+            elif adv_num_words == 1:
+                if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
+                    new_attack_attrs['modified_indices'].add(new_i)
+                    if input_word != adv_word:
+                        new_attack_attrs['newly_modified_indices'].add(new_i)
+            elif adv_num_words > 0:
+                import textattack
+                textattack.shared.utils.get_logger().warn(f'havent yet implemented multiword subs - cant handle {adv_word} / {adv_num_words} / {words_from_text(adv_word)}')
+                if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
+                    new_attack_attrs['modified_indices'].add(new_i)
+                    if input_word != adv_word:
+                        new_attack_attrs['newly_modified_indices'].add(new_i)
+            else:
+                raise ValueError(f'perturbed sequence has {adv_num_words} words')
+            final_sentence += adv_word
             new_i += 1
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 

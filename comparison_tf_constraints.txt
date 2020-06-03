@@ -1,0 +1,100 @@
+Running on 3 GPUs
+Running on 4 GPUs
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqqk(B
+(0x(B Attack Results                (0x(B         (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 811     (0x(B
+(0x(B Number of failed attacks:     (0x(B 40      (0x(B
+(0x(B Number of skipped attacks:    (0x(B 149     (0x(B
+(0x(B Original accuracy:            (0x(B 85.1%   (0x(B
+(0x(B Accuracy under attack:        (0x(B 4.0%    (0x(B
+(0x(B Attack success rate:          (0x(B 95.3%   (0x(B
+(0x(B Average perturbed word %:     (0x(B 17.17%  (0x(B
+(0x(B Average num. words per input: (0x(B 19.06   (0x(B
+(0x(B Avg num queries:              (0x(B 3225.67 (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqqj(BAttack(
+  (search_method): GeneticAlgorithm(
+    (pop_size):  60
+    (max_iters):  20
+    (temp):  0.3
+    (give_up_if_no_improvement):  False
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  50
+    (embedding_type):  paragramcf
+  )
+  (constraints): 
+    (0): WordEmbeddingDistance(
+        (embedding_type):  paragramcf
+        (min_cos_sim):  0.5
+        (cased):  False
+        (include_unknown_words):  True
+      )
+    (1): PartOfSpeech(
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+      )
+    (2): UniversalSentenceEncoder(
+        (metric):  angular
+        (threshold):  0.904458599
+        (compare_with_original):  False
+        (window_size):  15
+        (skip_text_shorter_than_window):  True
+      )
+    (3): RepeatModification
+    (4): StopwordModification
+  (is_black_box):  True
+) 
+
+
+Attack time: 7079.935920953751s
+Running on 4 GPUs
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
+(0x(B Attack Results                (0x(B        (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 775    (0x(B
+(0x(B Number of failed attacks:     (0x(B 76     (0x(B
+(0x(B Number of skipped attacks:    (0x(B 149    (0x(B
+(0x(B Original accuracy:            (0x(B 85.1%  (0x(B
+(0x(B Accuracy under attack:        (0x(B 7.6%   (0x(B
+(0x(B Attack success rate:          (0x(B 91.07% (0x(B
+(0x(B Average perturbed word %:     (0x(B 18.93% (0x(B
+(0x(B Average num. words per input: (0x(B 19.06  (0x(B
+(0x(B Avg num queries:              (0x(B 76.99  (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(BAttack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  50
+    (embedding_type):  paragramcf
+  )
+  (constraints): 
+    (0): WordEmbeddingDistance(
+        (embedding_type):  paragramcf
+        (min_cos_sim):  0.5
+        (cased):  False
+        (include_unknown_words):  True
+      )
+    (1): PartOfSpeech(
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+      )
+    (2): UniversalSentenceEncoder(
+        (metric):  angular
+        (threshold):  0.904458599
+        (compare_with_original):  False
+        (window_size):  15
+        (skip_text_shorter_than_window):  True
+      )
+    (3): RepeatModification
+    (4): StopwordModification
+  (is_black_box):  True
+) 
+
+
+Attack time: 321.7706706523895s
