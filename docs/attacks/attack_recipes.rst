@@ -11,22 +11,10 @@ TextFooler
 .. automodule:: textattack.attack_recipes.textfooler_jin_2019
    :members:
 
-TextFooler-adjusted
-#####################
-
-.. automodule:: textattack.attack_recipes.textfooler_jin_2019_adjusted
-   :members:
-
 Alzantot
 ###########
 
 .. automodule:: textattack.attack_recipes.alzantot_2018
-   :members:
-
-Alzantot-adjusted
-###################
-
-.. automodule:: textattack.attack_recipes.alzantot_2018_adjusted
    :members:
 
 DeepWordBug
@@ -35,7 +23,7 @@ DeepWordBug
 .. automodule:: textattack.attack_recipes.deepwordbug_gao_2018
    :members:
 
-Hotflip
+HotFlip
 ###########
 
 .. automodule:: textattack.attack_recipes.hotflip_ebrahimi_2017
