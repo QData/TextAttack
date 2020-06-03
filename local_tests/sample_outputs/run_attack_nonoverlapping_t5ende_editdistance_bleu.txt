@@ -1,0 +1,65 @@
+Attack(
+  (search_method): GreedySearch
+  (goal_function):  NonOverlappingOutput
+  (transformation):  WordSwapRandomCharacterSubstitution
+  (constraints): 
+    (0): LevenshteinEditDistance(
+        (max_edit_distance):  12
+      )
+    (1): MaxWordsPerturbed(
+        (max_percent):  0.75
+      )
+    (2): RepeatModification
+    (3): StopwordModification
+  (is_black_box):  True
+) 
+
+Load time: /.*/s
+--------------------------------------------- Result 1 ---------------------------------------------
+Eine republikanische Strategie, um der Wiederwahl Obamas entgegenzuwirken-->[91m[FAILED][0m
+A Republican strategy to counter the re-election of Obama
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+Die republikanischen Führer rechtfertigten ihre Politik durch die Not-->Repuzlican leaders justifZed their policy by the need to coq
+[91mRepublican[0m leaders [91mjustified[0m their policy by the need to [91mcombat[0m electoral fraud.
+[94mRepuzlican[0m leaders [94mjustifZed[0m their policy by the need to [94mcoqbat[0m electoral fraud.
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+Das Brennan-Zentrum betrachtet dies jedoch als Mythos und behaupt-->HTwo die Brennan-Zentren halten dies jedoch für einen My
+[91mHowever[0m, the Brennan Centre considers this a myth, stating that electoral [91mfraud[0m is rarer in the United States than the number of people killed by lightning.
+[94mHTwever[0m, the Brennan Centre considers this a myth, stating that electoral [94mfrauP[0m is rarer in the United States than the number of people killed by lightning.
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+Tatsächlich identifizierten republikanische Anwälte-->In einem Jahrzehnt hat der republikanische Rechtsanwalt 
+[91mIndeed[0m, Republican [91mlawyers[0m identified only 300 cases of electoral fraud in the United States in a decade.
+[94mIndeGd[0m, Republican [94mlawyerf[0m identified only 300 cases of electoral fraud in the United States in a decade.
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+Eines ist sicher: Diese neuen Bestimmungen werden sich negativ auf die Wahlbeteiligung aus-->[91m[FAILED][0m
+One thing is certain: these new provisions will have a negative impact on voter turn-out.
+
+
+--------------------------------------------- Result 6 ---------------------------------------------
+In diesem Sinne werden die Maßnahmen das demokratische System der USA teilweise untergraben-->[91m[FAILED][0m
+In this sense, the measures will partially undermine the American democratic system.
+
+
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
+(0x(B Attack Results                (0x(B        (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 3      (0x(B
+(0x(B Number of failed attacks:     (0x(B 3      (0x(B
+(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
+(0x(B Original accuracy:            (0x(B 100.0% (0x(B
+(0x(B Accuracy under attack:        (0x(B 50.0%  (0x(B
+(0x(B Attack success rate:          (0x(B 50.0%  (0x(B
+(0x(B Average perturbed word %:     (0x(B 15.06% (0x(B
+(0x(B Average num. words per input: (0x(B 15.33  (0x(B
+(0x(B Avg num queries:              (0x(B 28.5   (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
+Attack time: /.*/s

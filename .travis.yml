@@ -1,10 +1,9 @@
 language: python
-python: '3.7'
+python: '3.8'
 before_install:
   - python --version
   - pip install -U pip
   - pip install -U pytest
-  - pip install git+https://github.com/jxmorris12/language-check
 install:
   - pip install -e .
-script: pytest # run tests
+script: pytest tests # run tests

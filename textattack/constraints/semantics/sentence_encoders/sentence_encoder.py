@@ -30,10 +30,16 @@ class SentenceEncoder(Constraint):
         self.window_size = window_size
         self.skip_text_shorter_than_window = skip_text_shorter_than_window
         
-        if metric=='cosine':
+        if metric == 'cosine':
             self.sim_metric = torch.nn.CosineSimilarity(dim=1)
         elif metric == 'angular':
             self.sim_metric = get_angular_sim
+        elif metric == 'max_euclidean':
+            # If the threshold requires embedding similarity measurement 
+            # be less than or equal to a certain value, just negate it,
+            # so that we can still compare to the threshold using >=.
+            self.threshold = -threshold
+            self.sim_metric = get_neg_euclidean_dist
         else:
             raise ValueError(f'Unsupported metric {metric}.')
     
@@ -41,110 +47,145 @@ class SentenceEncoder(Constraint):
         """ Encodes a list of sentences. To be implemented by subclasses. """
         raise NotImplementedError()
     
-    def sim_score(self, x, x_adv):
+    def _sim_score(self, starting_text, transformed_text):
         """ 
-        Returns the metric similarity between embeddings of the text and 
-        the perturbed text. 
+        Returns the metric similarity between the embedding of the starting text and the 
+        transformed text.
 
         Args:
-            x (str): The original text
-            x_adv (str): The perturbed text
+            starting_text: The ``TokenizedText``to use as a starting point.
+            transformed_text: A transformed ``TokenizedText``\.
 
         Returns:
-            The similarity between the original and perturbed text using the metric. 
-
+            The similarity between the starting and transformed text using the metric. 
         """
-        original_embedding, perturbed_embedding = self.model.encode([x, x_adv])
+        try:
+            modified_index = next(iter(x_adv.attack_attrs['newly_modified_indices']))
+        except KeyError:
+            raise KeyError('Cannot apply sentence encoder constraint without `newly_modified_indices`')
+        starting_text_window = starting_text.text_window_around_index(modified_index, 
+                                                                      self.window_size)
+
+        transformed_text_window = transformed_text.text_window_around_index(modified_index, 
+                                                                            self.window_size)
+
+        starting_embedding, transformed_embedding = self.model.encode(
+                                                [starting_text_window, transformed_text_window])
         
-        original_embedding = torch.tensor(original_embedding).to(utils.get_device())
-        perturbed_embedding = torch.tensor(perturbed_embedding).to(utils.get_device())
+        starting_embedding = torch.tensor(starting_embedding).to(utils.get_device())
+        transformed_embedding = torch.tensor(transformed_embedding).to(utils.get_device())
         
-        original_embedding = torch.unsqueeze(original_embedding, dim=0)
-        perturbed_embedding = torch.unsqueeze(perturbed_embedding, dim=0) 
+        starting_embedding = torch.unsqueeze(starting_embedding, dim=0)
+        transformed_embedding = torch.unsqueeze(transformed_embedding, dim=0) 
         
-        return self.sim_metric(original_embedding, perturbed_embedding)
+        return self.sim_metric(starting_embedding, transformed_embedding)
     
-    def _score_list(self, x, x_adv_list):
+    def _score_list(self, starting_text, transformed_texts):
         """
-        Returns the metric similarity between the embedding of the text and a list
-        of perturbed text. 
+        Returns the metric similarity between the embedding of the starting text and a list
+        of transformed texts. 
 
         Args:
-            x (str): The original text
-            x_adv_list (list(str)): A list of perturbed texts
+            starting_text: The ``TokenizedText``to use as a starting point.
+            transformed_texts: A list of transformed ``TokenizedText``\s.
 
         Returns:
-            A list with the similarity between the original text and each perturbed text in :obj:`x_adv_list`. 
-            If x_adv_list is empty, an empty tensor is returned
-
+            A list with the similarity between the ``starting_text`` and each of 
+                ``transformed_texts``. If ``transformed_texts`` is empty, 
+                an empty tensor is returned
         """
         # Return an empty tensor if x_adv_list is empty.
         # This prevents us from calling .repeat(x, 0), which throws an
         # error on machines with multiple GPUs (pytorch 1.2).
-        if len(x_adv_list) == 0: return torch.tensor([])
+        if len(transformed_texts) == 0: return torch.tensor([])
         
         if self.window_size:
-            x_list_text = []
-            x_adv_list_text = []
-            for x_adv in x_adv_list:
-                modified_index = x_adv.attack_attrs['modified_word_index']
-                x_list_text.append(x.text_window_around_index(modified_index, self.window_size))
-                x_adv_list_text.append(x_adv.text_window_around_index(modified_index, self.window_size))
-            embeddings = self.encode(x_list_text + x_adv_list_text)
-            original_embeddings = torch.tensor(embeddings[:len(x_adv_list)]).to(utils.get_device())
-            perturbed_embeddings = torch.tensor(embeddings[len(x_adv_list):]).to(utils.get_device())
+            starting_text_windows = []
+            transformed_text_windows = []
+            for transformed_text in transformed_texts:
+                #@TODO make this work when multiple indices have been modified
+                try:
+                    modified_index = next(iter(transformed_text.attack_attrs['newly_modified_indices']))
+                except KeyError:
+                    raise KeyError('Cannot apply sentence encoder constraint without `newly_modified_indices`')
+                starting_text_windows.append(
+                    starting_text.text_window_around_index(modified_index, self.window_size))
+                transformed_text_windows.append(
+                    transformed_text.text_window_around_index(modified_index, self.window_size))
+            embeddings = self.encode(starting_text_windows + transformed_text_windows)
+            starting_embeddings = torch.tensor(
+                                    embeddings[:len(transformed_texts)]).to(utils.get_device())
+            transformed_embeddings = torch.tensor(
+                                    embeddings[len(transformed_texts):]).to(utils.get_device())
         else:
-            x_text = x.text
-            x_adv_list_text = [x_adv.text for x_adv in x_adv_list]
-            embeddings = self.encode([x_text] + x_adv_list_text)
-            original_embedding = torch.tensor(embeddings[0]).to(utils.get_device())
-            perturbed_embeddings = torch.tensor(embeddings[1:]).to(utils.get_device())
+            starting_raw_text = starting_text.text
+            transformed_raw_texts = [t.text for t in transformed_texts]
+            embeddings = self.encode([starting_raw_text] + transformed_raw_texts)
+            if isinstance(embeddings[0], torch.Tensor):
+                starting_embedding = embeddings[0].to(utils.get_device())
+            else:
+                # If the embedding is not yet a tensor, make it one.
+                starting_embedding = torch.tensor(embeddings[0]).to(utils.get_device())
+                
+            if isinstance(embeddings, list):
+                # If `encode` did not return a Tensor of all embeddings, combine
+                # into a tensor.
+                transformed_embeddings = torch.stack(embeddings[1:]).to(utils.get_device())
+            else:
+                transformed_embeddings = torch.tensor(embeddings[1:]).to(utils.get_device())
         
             # Repeat original embedding to size of perturbed embedding.
-            original_embeddings = original_embedding.unsqueeze(dim=0).repeat(len(perturbed_embeddings),1)
+            starting_embeddings = starting_embedding.unsqueeze(dim=0).repeat(len(transformed_embeddings),1)
         
-        return self.sim_metric(original_embeddings, perturbed_embeddings)
+        return self.sim_metric(starting_embeddings, transformed_embeddings)
     
-    def call_many(self, x, x_adv_list, original_text=None):
+    def _check_constraint_many(self, transformed_texts, current_text, original_text=None):
         """
-        Filters the list of perturbed texts so that the similarity between the original text
-        and the perturbed text is greater than the :obj:`threshold`. 
-
-        Args:
-            x (TokenizedText): The original text
-            x_adv_list (list(TokenizedText)): A list of perturbed texts
-            original_text(:obj:TokenizedText, optional): Defaults to None. 
-
-        Returns:
-            A filtered list of perturbed texts where each perturbed text meets the similarity threshold. 
-
+        Filters the list ``transformed_texts`` so that the similarity between the ``current_text``
+        and the transformed text is greater than the ``self.threshold``.
         """
         if self.compare_with_original:
             if original_text:
-                scores = self._score_list(original_text, x_adv_list)
+                scores = self._score_list(original_text, transformed_texts)
             else:
                 raise ValueError('Must provide original text when compare_with_original is true.')
         else:
-            scores = self._score_list(x, x_adv_list)
-        for i, x_adv in enumerate(x_adv_list):
+            scores = self._score_list(current_text, transformed_texts)
+        for i, transformed_text in enumerate(transformed_texts):
             # Optionally ignore similarity score for sentences shorter than the 
             # window size.
-            if self.skip_text_shorter_than_window and len(x_adv.words) < self.window_size: 
+            if self.skip_text_shorter_than_window and len(transformed_text.words) < self.window_size: 
                 scores[i] = 1
-            x_adv.attack_attrs['similarity_score'] = scores[i].item()
-        mask = (scores >= self.threshold)
-        return np.array(x_adv_list)[mask.cpu().numpy().nonzero()]
+            transformed_text.attack_attrs['similarity_score'] = scores[i].item()
+        mask = (scores >= self.threshold).cpu().numpy().nonzero()
+        return np.array(transformed_texts)[mask]
     
-    def __call__(self, x, x_adv):
-        return self.sim_score(x.text, x_adv.text) >= self.threshold 
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
+        if self.skip_text_shorter_than_window and len(transformed_text.words) < self.window_size:
+            score = 1
+        elif self.compare_with_original:
+            if original_text:
+                score = self._sim_score(original_text, transformed_text)
+            else:
+                raise ValueError('Must provide original text when compare_with_original is true.')
+        else:
+            scores = self._sim_score(current_text, transformed_texts)
+        transformed_text.attack_attrs['similarity_score'] = score
+        return score >= self.threshold 
 
     def extra_repr_keys(self):
         return ['metric', 'threshold', 'compare_with_original', 'window_size', 
             'skip_text_shorter_than_window']
 
-
-
 def get_angular_sim(emb1, emb2):
-    """ Returns the _angular_ similarity between two vectors. """
+    """ Returns the _angular_ similarity between a batch of vector and a batch 
+        of vectors.
+    """
     cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
     return 1 - (torch.acos(cos_sim) / math.pi)
+
+def get_neg_euclidean_dist(emb1, emb2):
+    """ Returns the Euclidean distance between a batch of vectors and a batch of 
+        vectors. 
+    """
+    return -torch.sum((emb1 - emb2) ** 2, dim=1)

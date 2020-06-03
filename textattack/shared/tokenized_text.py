@@ -1,54 +1,61 @@
 import torch
-from copy import deepcopy
-from .utils import get_device
+from .utils import get_device, words_from_text
 
 class TokenizedText:
-    """ A helper class that represents a string that can be attacked. """
-    
-    """ Models that take multiple sentences as input separate them by `SPLIT_TOKEN`. Attacks "see" the entire 
-        input, joined into one string, without the split token. 
+
+    """ 
+     A helper class that represents a string that can be attacked.
+     
+     Models that take multiple sentences as input separate them by ``SPLIT_TOKEN``. 
+     Attacks "see" the entire input, joined into one string, without the split token. 
+
+     Args:
+        text (string): The string that this TokenizedText represents
+        tokenizer (`TextAttack.Tokenizer`): An object that can encode text
+        
     """
+   
     SPLIT_TOKEN = '>>>>'
     
-    def __init__(self, text, tokenizer, attack_attrs=dict()):
-        """ Initializer stores text and tensor of tokenized text.
-        
-        Args:
-            text (string): The string that this TokenizedText represents
-            tokenizer (Tokenizer): an object that can convert text to tokens
-                and convert tokens to IDs
-        """
+    def __init__(self, text, tokenizer, attack_attrs=dict()):   
         text = text.strip()
         self.tokenizer = tokenizer
-        self.tokens = tokenizer.convert_text_to_tokens(text)
-        ids = tokenizer.convert_tokens_to_ids(self.tokens)
-        if not isinstance(ids, tuple):
-            # Some tokenizers may tokenize text to a single vector.
-            # In this case, wrap the vector in a tuple to mirror the 
-            # format of other tokenizers.
-            ids = (ids,)
-        self.ids = ids
-        self.words = raw_words(text)
+        if tokenizer:
+            ids = tokenizer.encode(text)
+            if not isinstance(ids, tuple):
+                # Some tokenizers may tokenize text to a single vector.
+                # In this case, wrap the vector in a tuple to mirror the 
+                # format of other tokenizers.
+                ids = (ids,)
+            self.ids = ids
+        else:
+            self.ids = None
+        self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs
+        self.attack_attrs.setdefault('modified_indices', set())
 
     def __eq__(self, other):
         return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
     
     def __hash__(self):
         return hash(self.text)
-    
-    def delete_tensors(self):
-        """ Delete tensors to clear up GPU space. Only should be called
-            once the TokenizedText is only needed to display.
+
+    def free_memory(self):
+        """ Delete items that take up memory.
+            Delete tensors to clear up GPU space. 
+            Only should be called once the TokenizedText is only needed to display.
         """
         self.ids = None
+        self.tokenizer = None
+        if 'last_transformation' in self.attack_attrs:
+            del self.attack_attrs['last_transformation']
         for key in self.attack_attrs:
             if isinstance(self.attack_attrs[key], torch.Tensor):
                 del self.attack_attrs[key]
 
     def text_window_around_index(self, index, window_size):
-        """ The text window of `window_size` words centered around `index`. """
+        """ The text window of ``window_size`` words centered around ``index``. """
         length = len(self.words)
         half_size = (window_size - 1) // 2
         if index - half_size < 0:
@@ -65,7 +72,7 @@ class TokenizedText:
         return self.text[text_idx_start:text_idx_end]
          
     def _text_index_of_word_index(self, i):
-        """ Returns the index of word `i` in self.text. """
+        """ Returns the index of word ``i`` in self.text. """
         pre_words = self.words[:i+1]
         lower_text = self.text.lower()
         # Find all words until `i` in string.
@@ -75,12 +82,12 @@ class TokenizedText:
         return look_after_index 
 
     def text_until_word_index(self, i):
-        """ Returns the text before the beginning of word at index `i`. """
+        """ Returns the text before the beginning of word at index ``i``. """
         look_after_index = self._text_index_of_word_index(i)
         return self.text[:look_after_index]
     
     def text_after_word_index(self, i):
-        """ Returns the text after the end of word at index `i`. """
+        """ Returns the text after the end of word at index ``i``. """
         # Get index of beginning of word then jump to end of word.
         look_after_index = self._text_index_of_word_index(i) + len(self.words[i])
         return self.text[look_after_index:]
@@ -127,7 +134,7 @@ class TokenizedText:
 
     def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
-            `index` is replaced with a new word."""
+            ``index`` is replaced with a new word."""
         if len(indices) != len(new_words):
             raise ValueError(f'Cannot replace {len(new_words)} words at {len(indices)} indices.')
         words = self.words[:]
@@ -137,8 +144,7 @@ class TokenizedText:
     
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
-            `index` is replaced with a new word."""
-        self.attack_attrs['modified_word_index'] = index
+            ``index`` is replaced with a new word."""
         return self.replace_words_at_indices([index], [new_word])
     
     def replace_new_words(self, new_words):
@@ -148,36 +154,31 @@ class TokenizedText:
         """
         final_sentence = ''
         text = self.text
-        for input_word, adv_word in zip(self.words, new_words):
+        new_attack_attrs = dict()
+        new_attack_attrs['modified_indices'] = set()
+        new_attack_attrs['newly_modified_indices'] = set()
+        new_i = 0
+        for i, (input_word, adv_word) in enumerate(zip(self.words, new_words)):
             if input_word == '[DELETE]': continue
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)
             final_sentence += text[:word_start]
             final_sentence += adv_word
             text = text[word_end:]
+            if i in self.attack_attrs['modified_indices'] or input_word != adv_word:
+                new_attack_attrs['modified_indices'].add(new_i)
+                if input_word != adv_word:
+                    new_attack_attrs['newly_modified_indices'].add(new_i)
+            new_i += 1
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
-            attack_attrs=deepcopy(self.attack_attrs))
+            attack_attrs=new_attack_attrs)
     
     def clean_text(self):
         """ Represents self in a clean, printable format. Joins text with multiple
-            inputs separated by `TokenizedText.SPLIT_TOKEN` with a line break.
+            inputs separated by ``TokenizedText.SPLIT_TOKEN`` with a line break.
         """
         return self.text.replace(TokenizedText.SPLIT_TOKEN, '\n\n')
     
     def __repr__(self):
         return f'<TokenizedText "{self.text}">'
-
-def raw_words(s):
-    """ Lowercases a string, removes all non-alphanumeric characters,
-        and splits into words. """
-    words = []
-    word = ''
-    for c in ' '.join(s.split()):
-        if c.isalpha():
-            word += c
-        elif word:
-            if word is not TokenizedText.SPLIT_TOKEN: words.append(word)
-            word = ''
-    if len(word) and (word is not TokenizedText.SPLIT_TOKEN): words.append(word)
-    return words

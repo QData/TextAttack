@@ -1,0 +1,105 @@
+Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  50
+    (embedding_type):  paragramcf
+  )
+  (constraints): 
+    (0): WordEmbeddingDistance(
+        (embedding_type):  paragramcf
+        (min_cos_sim):  0.5
+        (cased):  False
+        (include_unknown_words):  True
+      )
+    (1): PartOfSpeech(
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+      )
+    (2): UniversalSentenceEncoder(
+        (metric):  angular
+        (threshold):  0.904458599
+        (compare_with_original):  False
+        (window_size):  15
+        (skip_text_shorter_than_window):  True
+      )
+    (3): RepeatModification
+    (4): StopwordModification
+  (is_black_box):  True
+) 
+
+Load time: /.*/s
+--------------------------------------------- Result 1 ---------------------------------------------
+[91m0[0m-->[37m[SKIPPED][0m
+possibly the most irresponsible picture ever released by a major film studio .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+the pain , [92mloneliness[0m and insecurity of the screenwriting process are [92mvividly[0m and painfully [92mbrought[0m to slovenly life in this self-deprecating , biting and [92mwitty[0m [92mfeature[0m written by charlie kaufman and his twin brother , donald , and directed by spike jonze .
+the pain , [91mloner[0m and insecurity of the screenwriting process are [91malarmingly[0m and painfully [91mfiled[0m to slovenly life in this self-deprecating , biting and [91mbawdy[0m [91mspecs[0m written by charlie kaufman and his twin brother , donald , and directed by spike jonze .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+[92mboisterous[0m and daft documentary .
+[91mrambunctious[0m and daft documentary .
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[91m0[0m-->[92m1[0m
+in a [91mstrange[0m [91mway[0m , egoyan has [91mdone[0m too much . he's [91mworked[0m too [91mhard[0m on this [91mmovie[0m .
+in a [92msurprising[0m [92mways[0m , egoyan has [92machieved[0m too much . he's [92mworks[0m too [92mpainful[0m on this [92mfilms[0m .
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+[91m0[0m-->[92m1[0m
+[91mskip[0m the film and buy the philip glass soundtrack cd .
+[92mleaping[0m the film and buy the philip glass soundtrack cd .
+
+
+--------------------------------------------- Result 6 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+it's the kind of [92meffectively[0m creepy-[92mscary[0m thriller that has you fixating on a [92mfar[0m corner of the screen at [92mtimes[0m [92mbecause[0m your nerves just can't take it any more .
+it's the kind of [91msoundly[0m creepy-[91mdreadful[0m thriller that has you fixating on a [91mheavily[0m corner of the screen at [91mjours[0m [91msince[0m your nerves just can't take it any more .
+
+
+--------------------------------------------- Result 7 ---------------------------------------------
+[91m0[0m-->[92m1[0m
+a [91mfeel[0m-good [91mmovie[0m that doesn't give you enough to feel good about .
+a [92mmeanings[0m-good [92mcinema[0m that doesn't give you enough to feel good about .
+
+
+--------------------------------------------- Result 8 ---------------------------------------------
+[91m0[0m-->[37m[SKIPPED][0m
+it bites hard .
+
+
+--------------------------------------------- Result 9 ---------------------------------------------
+[91m0[0m-->[37m[SKIPPED][0m
+for all of its insights into the dream world of teen life , and its electronic expression through cyber culture , the film gives no quarter to anyone seeking to pull a cohesive story out of its 2 1/2-hour running time .
+
+
+--------------------------------------------- Result 10 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+disappointingly , the [92mcharacters[0m are too [92mstrange[0m and dysfunctional , tom [92mincluded[0m , to ever [92mget[0m under the skin , but this is compensated in [92mlarge[0m part by the off-the-[92mwall[0m [92mdialogue[0m , visual [92mplayfulness[0m and the outlandishness of the idea itself .
+disappointingly , the [91mcharacter[0m are too [91mloopy[0m and dysfunctional , tom [91maccounted[0m , to ever [91mfetch[0m under the skin , but this is compensated in [91mgrosse[0m part by the off-the-[91mwail[0m [91mdialog[0m , visual [91mirreverence[0m and the outlandishness of the idea itself .
+
+
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
+(0x(B Attack Results                (0x(B        (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 7      (0x(B
+(0x(B Number of failed attacks:     (0x(B 0      (0x(B
+(0x(B Number of skipped attacks:    (0x(B 3      (0x(B
+(0x(B Original accuracy:            (0x(B 70.0%  (0x(B
+(0x(B Accuracy under attack:        (0x(B 0.0%   (0x(B
+(0x(B Attack success rate:          (0x(B 100.0% (0x(B
+(0x(B Average perturbed word %:     (0x(B 19.15% (0x(B
+(0x(B Average num. words per input: (0x(B 20.7   (0x(B
+(0x(B Avg num queries:              (0x(B 98.86  (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
+Attack time: /.*/s

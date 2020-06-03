@@ -1,0 +1,89 @@
+Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  CompositeTransformation
+  (constraints): 
+    (0): LevenshteinEditDistance(
+        (max_edit_distance):  30
+      )
+    (1): RepeatModification
+    (2): StopwordModification
+  (is_black_box):  True
+) 
+
+Load time: /.*/s
+--------------------------------------------- Result 1 ---------------------------------------------
+[91m0[0m-->[92m1[0m
+[91mpossibly[0m the most [91mirresponsible[0m picture ever released by a major [91mfilm[0m [91mstudio[0m .
+[92mposibly[0m the most [92mirresEponsible[0m picture ever released by a major [92mfWlm[0m [92mptudio[0m .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+the pain , loneliness and insecurity of the screenwriting process are [92mvividly[0m and [92mpainfully[0m brought to slovenly life in this self-deprecating , biting and [92mwitty[0m [92mfeature[0m [92mwritten[0m by charlie kaufman and his twin brother , donald , and directed by spike jonze .
+the pain , loneliness and insecurity of the screenwriting process are [91mvVividly[0m and [91mipainfully[0m brought to slovenly life in this self-deprecating , biting and [91miwtty[0m [91mfeatur[0m [91mwriYtten[0m by charlie kaufman and his twin brother , donald , and directed by spike jonze .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+boisterous and daft [92mdocumentary[0m .
+boisterous and daft [91mdocumenBtary[0m .
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[91m0[0m-->[91m[FAILED][0m
+in a strange way , egoyan has done too much . he's worked too hard on this movie .
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+[91m0[0m-->[92m1[0m
+skip the film and [91mbuy[0m the [91mphilip[0m glass soundtrack [91mcd[0m .
+skip the film and [92mbyu[0m the [92mhpilip[0m glass soundtrack [92mdc[0m .
+
+
+--------------------------------------------- Result 6 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+it's the kind of effectively [92mcreepy[0m-[92mscary[0m thriller that has you fixating on a far corner of the [92mscreen[0m at times because your [92mnerves[0m just can't [92mtake[0m it any more .
+it's the kind of effectively [91mcqreepy[0m-[91msacry[0m thriller that has you fixating on a far corner of the [91mTcreen[0m at times because your [91mnTerves[0m just can't [91mtakU[0m it any more .
+
+
+--------------------------------------------- Result 7 ---------------------------------------------
+[91m0[0m-->[92m1[0m
+a feel-[91mgood[0m [91mmovie[0m that doesn't [91mgive[0m you [91menough[0m to feel [91mgood[0m about .
+a feel-[92mgoold[0m [92mmoie[0m that doesn't [92mive[0m you [92meniough[0m to feel [92mgdod[0m about .
+
+
+--------------------------------------------- Result 8 ---------------------------------------------
+[91m0[0m-->[91m[FAILED][0m
+it bites hard .
+
+
+--------------------------------------------- Result 9 ---------------------------------------------
+[91m0[0m-->[92m1[0m
+for all of its insights into the dream world of teen [91mlife[0m , and its electronic expression through cyber culture , the film gives no quarter to [91manyone[0m seeking to pull a cohesive story out of its 2 1/2-hour running time .
+for all of its insights into the dream world of teen [92mlief[0m , and its electronic expression through cyber culture , the film gives no quarter to [92manone[0m seeking to pull a cohesive story out of its 2 1/2-hour running time .
+
+
+--------------------------------------------- Result 10 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+disappointingly , the characters are too strange and dysfunctional , tom included , to ever get under the [92mskin[0m , but this is compensated in large part by the off-the-wall dialogue , visual playfulness and the outlandishness of the idea itself .
+disappointingly , the characters are too strange and dysfunctional , tom included , to ever get under the [91mski[0m , but this is compensated in large part by the off-the-wall dialogue , visual playfulness and the outlandishness of the idea itself .
+
+
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
+(0x(B Attack Results                (0x(B        (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 8      (0x(B
+(0x(B Number of failed attacks:     (0x(B 2      (0x(B
+(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
+(0x(B Original accuracy:            (0x(B 100.0% (0x(B
+(0x(B Accuracy under attack:        (0x(B 20.0%  (0x(B
+(0x(B Attack success rate:          (0x(B 80.0%  (0x(B
+(0x(B Average perturbed word %:     (0x(B 20.05% (0x(B
+(0x(B Average num. words per input: (0x(B 20.7   (0x(B
+(0x(B Avg num queries:              (0x(B 38.9   (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
+Attack time: /.*/s

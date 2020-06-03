@@ -1,12 +1,12 @@
-from textattack.datasets import TextAttackDataset
+from .classification_dataset import ClassificationDataset
 
-class IMDBSentiment(TextAttackDataset):
+class IMDBSentiment(ClassificationDataset):
     """
     Loads samples from the IMDB Movie Review Sentiment dataset.
     
-    Labels:
-        0 - Negative
-        1 - Positive
+    Labels
+        0: Negative
+        1: Positive
 
     Args:
         n (int): The number of examples to load
@@ -16,4 +16,4 @@ class IMDBSentiment(TextAttackDataset):
     DATA_PATH = 'datasets/classification/imdb.txt'
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
-        self._load_text_file(IMDBSentiment.DATA_PATH, offset=offset)
+        self._load_classification_text_file(IMDBSentiment.DATA_PATH, offset=offset)

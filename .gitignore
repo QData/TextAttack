@@ -27,3 +27,16 @@ tensorflow-hub
 
 # for Macs
 .DS_Store
+
+# build outputs for PyPI
+build/
+dist/
+
+# Weights & Biases outputs
+wandb/
+
+# checkpoints
+checkpoints/
+
+# vim
+*.swp

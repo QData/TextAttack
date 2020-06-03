@@ -1,13 +1,14 @@
 from textattack.datasets import TextAttackDataset
-from textattack.shared.tokenized_text import TokenizedText
+from textattack.shared import TokenizedText
 
-class TextAttackEntailmentDataset(TextAttackDataset):
-    """ A generic class for loading entailment data. 
+class EntailmentDataset(TextAttackDataset):
+    """ 
+    A generic class for loading entailment data. 
     
-    Labels:
-        0 - Entailment
-        1 - Neutral
-        2 - Contradiction
+    Labels
+        0: Entailment
+        1: Neutral
+        2: Contradiction
     """
     
     def map_label_str(self, label_str):
@@ -18,12 +19,10 @@ class TextAttackEntailmentDataset(TextAttackDataset):
         elif label_str == 'contradiction':
             return 2
         else:
-            raise ValueError(f'Unknown SNLI label {label_str}')
+            raise ValueError(f'Unknown entailment label {label_str}')
     
-    def __next__(self):
-        if self.i >= len(self.raw_lines):
-            raise StopIteration
-        line = self.raw_lines[self.i].strip()
+    def _process_example_from_file(self, raw_line):
+        line = raw_line.strip()
         label, premise, hypothesis = line.split('\t')
         try:
             label = int(label)
@@ -31,5 +30,4 @@ class TextAttackEntailmentDataset(TextAttackDataset):
             # If the label is not an integer, it's a label description.
             label = self.map_label_str(label)
         text = TokenizedText.SPLIT_TOKEN.join([premise, hypothesis])
-        self.i += 1
-        return (label, text)
+        return (text, label)

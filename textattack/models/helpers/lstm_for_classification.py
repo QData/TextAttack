@@ -5,7 +5,7 @@ import torch.nn as nn
 from textattack.shared import utils
 
 from textattack.models.helpers import GloveEmbeddingLayer
-from textattack.models.helpers.helper_utils import load_cached_state_dict
+from textattack.models.helpers.utils import load_cached_state_dict
 
 class LSTMForClassification(nn.Module):
     """ A long short-term memory neural network for text classification. 
@@ -38,6 +38,8 @@ class LSTMForClassification(nn.Module):
     
     def load_from_disk(self, model_folder_path):
         self.load_state_dict(load_cached_state_dict(model_folder_path))
+        self.word_embeddings = self.emb_layer.embedding
+        self.lookup_table = self.emb_layer.embedding.weight.data
         self.to(utils.get_device())
         self.eval()
 

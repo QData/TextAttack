@@ -8,6 +8,7 @@ from textattack.shared.utils import get_logger
 from .logger import Logger
 
 class CSVLogger(Logger):
+    """ Logs attack results to a CSV. """
     def __init__(self, filename='results.csv', color_method='file'):
         self.filename = filename
         self.color_method = color_method
@@ -17,8 +18,15 @@ class CSVLogger(Logger):
     def log_attack_result(self, result):
         if isinstance(result, FailedAttackResult):
             return
-        s1, s2 = result.diff_color(self.color_method)
-        row = {'passage_1': s1, 'passage_2': s2, 'score_1': result.orig_score, 'score_2': result.perturbed_score, 'output_1': result.original_output, 'output_2': result.perturbed_output} 
+        original_text, perturbed_text = result.diff_color(self.color_method)
+        row = {
+            'original_text': original_text, 
+            'perturbed_text': perturbed_text, 
+            'original_score': result.original_result.score, 
+            'perturbed_score': result.perturbed_result.score, 
+            'original_output': result.original_result.output, 
+            'perturbed_output': result.perturbed_result.output
+        } 
         self.df = self.df.append(row, ignore_index=True)
         self._flushed = False
 

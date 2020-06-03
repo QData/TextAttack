@@ -1,14 +1,16 @@
-from textattack.attack_results import AttackResult
+from .attack_result import AttackResult
 from textattack.shared import utils
 
 class SkippedAttackResult(AttackResult):
-    def __init__(self, original_text, original_output):
-        super().__init__(original_text, original_text, original_output, original_output)
+    '''The result of a skipped attack.'''
 
-    def __data__(self, color_method=None):
-        data = (self.result_str(color_method), self.original_text.text)
-        return tuple(map(str, data))
+    def __init__(self, original_result):
+        super().__init__(original_result, original_result)
 
-    def result_str(self, color_method=None):
-        failed_str = utils.color_label('[SKIPPED]', 'gray', color_method)
-        return utils.color_label(self.original_output, method=color_method) + '-->' + failed_str 
+    def str_lines(self, color_method=None):
+        lines = (self.goal_function_result_str(color_method), self.original_text())
+        return tuple(map(str, lines))
+
+    def goal_function_result_str(self, color_method=None):
+        skipped_str = utils.color_text('[SKIPPED]', 'gray', color_method)
+        return self.original_result.get_colored_output(color_method) + '-->' + skipped_str 

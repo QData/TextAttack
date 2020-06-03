@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 from textattack.shared import utils
 from textattack.models.helpers import GloveEmbeddingLayer
-from textattack.models.helpers.helper_utils import load_cached_state_dict
+from textattack.models.helpers.utils import load_cached_state_dict
 
 class WordCNNForClassification(nn.Module):
     """ A convolutional neural network for text classification. 
