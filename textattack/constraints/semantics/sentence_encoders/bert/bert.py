@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
-import textattack.shared.utils as utils
+from textattack.shared import utils
 
 class BERT(SentenceEncoder):
     """ 
