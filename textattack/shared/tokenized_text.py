@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 from .utils import get_device, words_from_text
 
@@ -135,6 +136,26 @@ class TokenizedText:
         if len(w1) - 1 < i or len(w2) - 1 < i:
             return True
         return w1[i] != w2[i]
+    
+    def convert_from_original_idxs(self, idxs):
+        """ Takes indices of words from original string and converts them to 
+            indices of the same words in the current string.
+            
+            Uses information from ``self.attack_attrs['original_modified_indices'],
+            which is a list of (insertion, num_words_inserted) tuples.
+        """
+        if len(self.attack_attrs['original_modified_indices']) == 0:
+            return idxs
+        elif isinstance(idxs, set):
+            idxs = list(idxs)
+        if isinstance(idxs, list) or isinstance(idxs, np.ndarray):
+            idxs = torch.tensor(idxs)
+        elif not isinstance(idxs, torch.Tensor):
+            raise TypeError(f'convert_from_original_idxs got invalid idxs type {type(idxs)}')
+        new_idxs = idxs.clone()
+        for (idx, num_words_inserted) in self.attack_attrs['original_modified_indices']:
+            new_idxs[idxs >= idx] += num_words_inserted
+        return new_idxs
 
     def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
