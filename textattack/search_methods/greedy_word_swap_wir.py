@@ -30,7 +30,7 @@ class GreedyWordSwapWIR(SearchMethod):
 
     def __init__(self, wir_method='unk', ascending=False):
         self.wir_method = wir_method
-        self.ascending
+        self.ascending = ascending
         try: 
             self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
         except KeyError:

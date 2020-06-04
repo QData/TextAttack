@@ -23,8 +23,9 @@ def InputReductionFeng2018(model):
         StopwordModification()
     ]
     #
-    # Goal is untargeted classification
-    #
+    # "During the iterative reduction process, we ensure that the prediction 
+    # does not change (exact same span for SQUAD); consequently, the model 
+    # accuracy on the reduced examples is identical to the original."
     goal_function = UntargetedClassification(model)
     #
     # "For each word in an input sentence, we measure its importance by the 
