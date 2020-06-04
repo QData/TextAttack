@@ -145,7 +145,7 @@ class TokenizedText:
                 except:
                     raise TypeError(f'replace_words_at_indices requires ``int`` indices, got {type(i)}')
             if not isinstance(new_word, str):
-                raise TypeError(f'replace_words_at_indices requires ``str`` wordds, got {type(new_word)}')
+                raise TypeError(f'replace_words_at_indices requires ``str`` words, got {type(new_word)}')
             words[i] = new_word
         return self.replace_new_words(words)
     
