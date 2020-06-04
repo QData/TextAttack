@@ -87,7 +87,7 @@ DATASET_BY_MODEL = {
     't5-en2de':                 textattack.datasets.translation.NewsTest2013EnglishToGerman,
 }
 
-TRANSFORMATION_CLASS_NAMES = {
+BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     'word-swap-embedding':                  'textattack.transformations.WordSwapEmbedding',
     'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyph',
     'word-swap-neighboring-char-swap':      'textattack.transformations.WordSwapNeighboringCharacterSwap',
@@ -95,6 +95,10 @@ TRANSFORMATION_CLASS_NAMES = {
     'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',
     'word-swap-random-char-substitution':   'textattack.transformations.WordSwapRandomCharacterSubstitution',
     'word-swap-wordnet':                    'textattack.transformations.WordSwapWordNet',
+}
+
+WHITE_BOX_TRANSFORMATION_CLASS_NAMES = {
+    'word-swap-gradient':                   'textattack.transformations.WordSwapGradientBased'
 }
 
 CONSTRAINT_CLASS_NAMES = {
@@ -152,8 +156,9 @@ def get_args():
         description='A commandline parser for TextAttack', 
         formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
+    transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(WHITE_BOX_TRANSFORMATION_CLASS_NAMES.keys())
     parser.add_argument('--transformation', type=str, required=False,
-        default='word-swap-embedding', choices=TRANSFORMATION_CLASS_NAMES.keys(),
+        default='word-swap-embedding', choices=transformation_names,
         help='The transformations to apply.')
 
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
@@ -253,18 +258,25 @@ def get_args():
     
     return args
 
-def parse_transformation_from_args(args):
+def parse_transformation_from_args(args, model):
     # Transformations
-    transformation = args.transformation
-    if ':' in transformation:
-        transformation_name, params = transformation.split(':')
-        if transformation_name not in TRANSFORMATION_CLASS_NAMES:
+    transformation_name = args.transformation
+    if ':' in transformation_name:
+        transformation_name, params = transformation_name.split(':')
+        
+        if transformation_name in WHITE_BOX_TRANSFORMATION_CLASS_NAMES:
+            transformation = eval(f'{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model, {params})')
+        elif transformation_name in BLACK_BOX_TRANSFORMATION_CLASS_NAMES:
+            transformation = eval(f'{BLACK_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})')
+        else:
             raise ValueError(f'Error: unsupported transformation {transformation_name}')
-        transformation = eval(f'{TRANSFORMATION_CLASS_NAMES[transformation_name]}({params})')
-    elif transformation in TRANSFORMATION_CLASS_NAMES:
-        transformation = eval(f'{TRANSFORMATION_CLASS_NAMES[transformation]}()')
     else:
-        raise ValueError(f'Error: unsupported transformation {transformation}')
+        if transformation_name in WHITE_BOX_TRANSFORMATION_CLASS_NAMES:
+            transformation = eval(f'{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model)')
+        elif transformation_name in BLACK_BOX_TRANSFORMATION_CLASS_NAMES:
+            transformation = eval(f'{BLACK_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}()')
+        else:
+            raise ValueError(f'Error: unsupported transformation {transformation_name}')
     return transformation
 
 def parse_goal_function_from_args(args, model):
@@ -328,7 +340,7 @@ def parse_goal_function_and_attack_from_args(args):
         return goal_function, attack
     else:
         goal_function = parse_goal_function_from_args(args, model)
-        transformation = parse_transformation_from_args(args)
+        transformation = parse_transformation_from_args(args, model)
         constraints = parse_constraints_from_args(args)
         if ':' in args.search:
             search_name, params = args.search.split(':')
