@@ -27,7 +27,15 @@ class BERTEntailmentTokenizer(BERTTokenizer):
                 tokens_a.pop()
             else:
                 tokens_b.pop()
-                
+    
+    def _drop_special_tokens(self, tokens):
+        """ Removes start [CLS] and end [SEP] tokens from a list of tokens. """
+        while tokens[0] == '[CLS]':
+            tokens = tokens[1:]
+        while tokens[-1] == '[SEP]':
+            tokens = tokens[:-1]
+        return tokens
+        
     def convert_text_to_tokens(self, entailment_input):
         """ 
         Takes a string input, tokenizes, formats, and returns a list of text tokens.
@@ -43,6 +51,11 @@ class BERTEntailmentTokenizer(BERTTokenizer):
         premise, hypothesis = entailment_input.split(TokenizedText.SPLIT_TOKEN)
         tokens_a = self.tokenizer.tokenize(premise)
         tokens_b = self.tokenizer.tokenize(hypothesis)
+        # Remove [CLS] tokens the tokenizer may have added. This allows us
+        # to support tokenizers whether or not they add [CLS] and [SEP] 
+        # automatically.
+        tokens_a = self._drop_special_tokens(tokens_a)
+        tokens_b = self._drop_special_tokens(tokens_b)
         # Ensure they will fit in self.max_seq_length.
         self._truncate_seq_pair(tokens_a, tokens_b)
         # Concatenate and return.
@@ -53,6 +66,9 @@ class BERTEntailmentTokenizer(BERTTokenizer):
         """ Takes in a tokenized (premise, hypothesis) pair and returns the
             three ID vectors. 
         """
+        assert tokens.count('[CLS]') == 1
+        assert tokens.count('[SEP]') == 2 
+        
         input_ids = self.tokenizer.convert_tokens_to_ids(tokens)
         
         # The mask has 1 for real tokens and 0 for padding tokens. Only real

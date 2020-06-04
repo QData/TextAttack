@@ -29,4 +29,6 @@ class BERTTokenizer(AutoTokenizer):
             tokens.append(self.tokenizer.sep_token)
         pad_tokens_to_add = self.max_seq_length - len(tokens)
         tokens += [self.tokenizer.pad_token] * pad_tokens_to_add
+        assert tokens.count('[CLS]') == 1
+        assert tokens.count('[SEP]') == 1 
         return tokens

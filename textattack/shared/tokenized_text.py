@@ -37,8 +37,8 @@ class TokenizedText:
         # insertions/deletions back to their locations in the original text.
         self.attack_attrs.setdefault('original_modified_indices', set())
         # A list of all indices in *this* text that have been modified.
-        self.attack_attrs.setdefault('modified_indices', set()) # @TODO replace ``modified`` with ``modification``
-        # print('text:', text, 'self.attack_attrs:', self.attack_attrs)
+        self.attack_attrs.setdefault('modified_indices', set())
+        
     def __eq__(self, other):
         return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
     
@@ -191,12 +191,12 @@ class TokenizedText:
                         if other_insertion_idx < original_modification_idx:
                             original_modification_idx -= num_words_inserted
                     new_attack_attrs['original_modified_indices'].add((original_modification_idx, num_words_diff))
-            # Save indices of new modified words.
-            if input_word != adv_word:
-                for j in range(i, i + adv_num_words):
+            # Move pointer and save indices of new modified words.
+            for j in range(i, i + adv_num_words):
+                if input_word != adv_word:
                     new_attack_attrs['modified_indices'].add(new_i)
                     new_attack_attrs['newly_modified_indices'].add(new_i)
-                    new_i += 1
+                new_i += 1
             # Check spaces.
             if adv_num_words == 0:
                 # Remove extra space (or else there would be two spaces for each

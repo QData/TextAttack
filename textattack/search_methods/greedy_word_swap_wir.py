@@ -19,6 +19,8 @@ class GreedyWordSwapWIR(SearchMethod):
         
     Args:
         wir_method: method for ranking most important words
+        ascending: if True, ranks words from least-to-most important. (Default
+            ranking shows the most important word first.)
     """
 
     WIR_TO_REPLACEMENT_STR = {
@@ -26,8 +28,9 @@ class GreedyWordSwapWIR(SearchMethod):
         'delete': '[DELETE]',
     }
 
-    def __init__(self, wir_method='unk'):
+    def __init__(self, wir_method='unk', ascending=False):
         self.wir_method = wir_method
+        self.ascending
         try: 
             self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
         except KeyError:
@@ -44,7 +47,10 @@ class GreedyWordSwapWIR(SearchMethod):
             [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
         leave_one_scores = np.array([result.score for result in \
             self.get_goal_results(leave_one_texts, initial_result.output)])
-        index_order = (-leave_one_scores).argsort()
+        if self.ascending:
+            index_order = (leave_one_scores).argsort()
+        else:
+            index_order = (-leave_one_scores).argsort()
 
         i = 0
         results = None
@@ -58,9 +64,6 @@ class GreedyWordSwapWIR(SearchMethod):
                 continue
             results = sorted(self.get_goal_results(transformed_text_candidates, initial_result.output), 
                     key=lambda x: -x.score)
-            print('transformed_text_candidates:', transformed_text_candidates)
-            print('results:', [r.score for r in results])
-            print()
             # Skip swaps which don't improve the score
             if results[0].score > cur_result.score:
                 cur_result = results[0]

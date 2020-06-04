@@ -14,6 +14,8 @@ def InputReductionFeng2018(model):
  
     ArXiv, abs/1804.07781.
     """
+    # At each step, we remove the word with the lowest importance value until 
+    # the model changes its prediction.
     transformation = WordDeletion()
     
     constraints = [
@@ -25,8 +27,15 @@ def InputReductionFeng2018(model):
     #
     goal_function = UntargetedClassification(model)
     #
-    # Greedily swap words with "Word Importance Ranking".
+    # "For each word in an input sentence, we measure its importance by the 
+    # change in the confidence of the original prediction when we remove
+    # that word from the sentence."
     #
-    search_method = GreedyWordSwapWIR()
+    # "Instead of looking at the words with high importance values—what 
+    # interpretation methods commonly do—we take a complementary approach
+    # and study how the model behaves when the supposedly unimportant words are 
+    # removed."
+    #
+    search_method = GreedyWordSwapWIR(wir_method='delete', ascending=True)
         
     return Attack(goal_function, constraints, transformation, search_method)
