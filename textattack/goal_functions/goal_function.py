@@ -13,9 +13,17 @@ class GoalFunction:
     Args:
         model: The PyTorch or TensorFlow model used for evaluation.
     """
-    def __init__(self, model, use_cache=True):
+    def __init__(self, model, tokenizer=None, use_cache=True):
         validators.validate_model_goal_function_compatibility(self.__class__, model.__class__)
         self.model = model
+        self.tokenizer = tokenizer
+        if not self.tokenizer:
+            if hasattr(self.model, 'tokenizer'):
+                self.tokenizer = self.model.tokenizer
+            else:
+                raise NameError('Cannot instantiate goal function without tokenizer')
+        if not hasattr(self.tokenizer, 'encode'):
+            raise TypeError('Tokenizer must contain `encode()` method')
         self.use_cache = use_cache
         self.num_queries = 0
         if self.use_cache:
@@ -99,7 +107,21 @@ class GoalFunction:
             model_device = next(self.model.model.parameters()).device
         else:
             model_device = next(self.model.parameters()).device
-        ids = torch.tensor(ids).to(model_device) 
+        try:
+            ids = torch.tensor(ids).to(model_device) 
+        except ValueError:
+            # A ValueError is thrown if `ids` consists of a list of different-
+            # length lists of IDs. Handle this case automatically.
+            ids = utils.preprocess_ids(ids)
+            ids = torch.tensor(ids).to(model_device) 
+        
+        # Add extra dimension if not present.
+        if ids.ndim == 2:
+            ids = ids.unsqueeze(dim=1)
+        
+        # Truncate to maximum sequence length.
+        ids = ids[:, :, :utils.config('MAX_SEQ_LEN')]
+        
         #
         # shape of `ids` is (n, m, d)
         #   - n: number of elements in `tokenized_text_list`

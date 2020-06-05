@@ -1,4 +1,5 @@
 import argparse
+import importlib
 import numpy as np
 import os
 import random
@@ -160,9 +161,30 @@ def get_args():
     parser.add_argument('--transformation', type=str, required=False,
         default='word-swap-embedding', choices=transformation_names,
         help='The transformations to apply.')
-
-    parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
-        choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
+    
+    model_group = parser.add_mutually_exclusive_group()
+    
+    model_group.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
+        choices=MODEL_CLASS_NAMES.keys(), help='The pre-trained model to attack.')
+        
+    model_group.add_argument('--model_from_file', type=str, required=False,
+        help='File of model and tokenizer to import.')
+        
+    model_group.add_argument('--model_from_huggingface', type=str, required=False,
+        help='huggingface.co ID of pre-trained model to load')
+        
+    dataset_group = parser.add_mutually_exclusive_group()
+    dataset_group.add_argument('--dataset_from_nlp', type=str, required=False, default=None,
+        help='Dataset to load from `nlp` repository.')
+    dataset_group = parser.add_mutually_exclusive_group()
+    dataset_group.add_argument('--dataset_from_file', type=str, required=False, default=None,
+        help='Dataset to load from a file.')
+        # TODO load dataset [list of tuples] from file, too
+        # TODO delete ~/.cache and make sure tests pass [after the utils refactor]
+        # TODO replace all calls to get_logger() with just logger and make it textattack.shared.logger
+        # TODO edit model benchmarking script to support these
+        # TODO add README info about attacking models from file/pretrained huggingface, and dataset
+        # TODO add tests that support nlp dataset/loading and huggingface
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['repeat', 'stopword'],
@@ -324,16 +346,67 @@ def parse_recipe_from_args(model, args):
         raise ValueError(f'Invalid recipe {args.recipe}')
     return recipe
 
+def parse_model_from_args(args):
+    if args.model_from_file:
+        textattack.shared.utils.get_logger().info(f'Loading model and tokenizer from file: {args.model_from_file}')
+        try:
+            model_file = args.model_from_file.replace(".py", "")
+            model_module = importlib.import_module(model_file)
+        except:
+            raise ValueError(f'Failed to import model or tokenizer from file {args.model_from_file}')
+        try:
+            model = getattr(model_module, 'model')
+        except AttributeError:
+            raise AttributeError(f'``model`` not found in module {args.model_from_file}')
+        try:
+            tokenizer = getattr(model_module, 'tokenizer')
+        except AttributeError:
+            raise AttributeError(f'``tokenizer`` not found in module {args.model_from_file}')
+        setattr(model, 'tokenizer', tokenizer)
+    elif args.model_from_huggingface:
+        import transformers
+        textattack.shared.utils.get_logger().info(f'Loading pre-trained model from HuggingFace model repository: {args.model_from_huggingface}')
+        model = transformers.AutoModelForSequenceClassification.from_pretrained(args.model_from_huggingface)
+        tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_from_huggingface)
+        setattr(model, 'tokenizer', tokenizer)
+    else:
+        if ':' in args.model:
+            model_name, params = args.model.split(':')
+            if model_name not in MODEL_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported model {model_name}')
+            model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
+        elif args.model in MODEL_CLASS_NAMES:
+            model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
+        else: 
+            raise ValueError(f'Error: unsupported model {args.model}')
+    return model
+
+def parse_dataset_from_args(args):
+    if args.dataset_from_file:
+        textattack.shared.utils.get_logger().info(f'Loading model and tokenizer from file: {args.model_from_file}')
+        try:
+            dataset_file = args.dataset_from_file.replace(".py", "")
+            dataset_module = importlib.import_module(dataset_file)
+        except:
+            raise ValueError(f'Failed to import dataset from file {args.dataset_from_file}')
+        try:
+            dataset = getattr(dataset_module, 'dataset')
+        except AttributeError:
+            raise AttributeError(f'``dataset`` not found in module {args.dataset_from_file}')
+    elif args.dataset_from_nlp:
+        dataset_args = args.dataset_from_nlp.split(':')
+        dataset = textattack.datasets.HuggingFaceNLPDataset(dataset_args)
+    else:
+        if not args.model:
+            raise ValueError('Must supply pretrained model or dataset')
+        elif args.model in DATASET_BY_MODEL:
+            dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+        else:
+            raise ValueError(f'Error: unsupported model {args.model}')
+    return dataset
+
 def parse_goal_function_and_attack_from_args(args):
-    if ':' in args.model:
-        model_name, params = args.model.split(':')
-        if model_name not in MODEL_CLASS_NAMES:
-            raise ValueError(f'Error: unsupported model {model_name}')
-        model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
-    elif args.model in MODEL_CLASS_NAMES:
-        model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
-    else: 
-        raise ValueError(f'Error: unsupported model {args.model}')
+    model = parse_model_from_args(args)
     if args.recipe:
         attack = parse_recipe_from_args(model, args)
         goal_function = attack.goal_function
@@ -353,12 +426,12 @@ def parse_goal_function_and_attack_from_args(args):
             raise ValueError(f'Error: unsupported attack {args.search}')
     return goal_function, textattack.shared.Attack(goal_function, constraints, transformation, search_method)
 
-def parse_logger_from_args(args):# Create logger
+def parse_logger_from_args(args):
+    # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        outputs_dir = os.path.join(current_dir, os.pardir, os.pardir, os.pardir, 'outputs')
+        outputs_dir = os.path.join(os.getcwd(), 'textattack_outputs')
         args.out_dir = os.path.normpath(outputs_dir)
         
     # Output file.

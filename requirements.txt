@@ -2,6 +2,7 @@ editdistance
 filelock
 language_tool_python
 lru-dict
+nlp
 nltk
 numpy
 pandas

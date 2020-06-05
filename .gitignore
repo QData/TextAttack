@@ -6,6 +6,7 @@ __pycache__/
 
 # run logs
 outputs/
+textattack_outputs/
 
 # IDE files
 .c9*

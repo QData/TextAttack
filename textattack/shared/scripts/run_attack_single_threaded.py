@@ -74,10 +74,8 @@ def run(args):
     
     else:
         # Not interactive? Use default dataset.
-        if args.model in DATASET_BY_MODEL:
-            data = DATASET_BY_MODEL[args.model](offset=num_examples_offset)
-        else:
-            raise ValueError(f'Error: unsupported model {args.model}')
+        args.num_examples_offset = num_examples_offset
+        dataset = parse_dataset_from_args(args)
         
         pbar = tqdm.tqdm(total=num_examples, smoothing=0)
         if args.checkpoint_resume:
@@ -88,7 +86,7 @@ def run(args):
             num_results = 0
             num_failures = 0
             num_successes = 0
-        for result in attack.attack_dataset(data, 
+        for result in attack.attack_dataset(dataset, 
                                         num_examples=num_examples, 
                                         shuffle=args.shuffle, 
                                         attack_n=args.attack_n):
