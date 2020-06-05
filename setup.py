@@ -16,7 +16,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/QData/textattack",
-    packages=setuptools.find_packages(exclude=['wandb']),
+    packages=setuptools.find_namespace_packages(include=['textattack.*'], exclude=['wandb']),
     package_data={
      '': ['config.json'],
     },
