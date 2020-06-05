@@ -59,7 +59,9 @@ class GreedyWordSwapWIR(SearchMethod):
             results = sorted(self.get_goal_results(transformed_text_candidates, initial_result.output), 
                     key=lambda x: -x.score)
             # Skip swaps which don't improve the score
-            if results[0].score > cur_result.score:
+            if not len(results):
+                break
+            elif results[0].score > cur_result.score:
                 cur_result = results[0]
             else:
                 continue
@@ -84,10 +86,8 @@ class GreedyWordSwapWIR(SearchMethod):
                         max_similarity = similarity_score
                         best_result = result
                 return best_result
-       
-        if results and len(results):
-            return results[0]
-        return initial_result
+      
+        return cur_result
 
     def check_transformation_compatibility(self, transformation):
         """

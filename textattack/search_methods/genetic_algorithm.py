@@ -138,6 +138,9 @@ class GeneticAlgorithm(SearchMethod):
         cur_score = initial_result.score
         for i in range(self.max_iters):
             pop_results = self.get_goal_results([pm.tokenized_text for pm in pop], self.correct_output)
+            if not len(pop_results):
+                # Over query budget
+                return pop[0].result
             for idx, result in enumerate(pop_results):
                 pop[idx].result = pop_results[idx]
             pop = sorted(pop, key=lambda x: -x.result.score)

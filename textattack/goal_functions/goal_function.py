@@ -12,12 +12,14 @@ class GoalFunction:
     
     Args:
         model: The PyTorch or TensorFlow model used for evaluation.
+        query_budget: The maximum number of model queries allowed.
     """
-    def __init__(self, model, use_cache=True):
+    def __init__(self, model, use_cache=True, query_budget=float('inf')):
         validators.validate_model_goal_function_compatibility(self.__class__, model.__class__)
         self.model = model
         self.use_cache = use_cache
         self.num_queries = 0
+        self.query_budget = query_budget
         if self.use_cache:
             self._call_model_cache = lru.LRU(utils.config('MODEL_CACHE_SIZE'))
         else:
@@ -42,7 +44,8 @@ class GoalFunction:
         A helper method that queries `self.get_results` with a single
         ``TokenizedText`` object.
         """
-        return self.get_results([tokenized_text], ground_truth_output)[0]
+        result = self.get_results([tokenized_text], ground_truth_output)
+        return result[0] if len(result) else None
 
     def get_results(self, tokenized_text_list, ground_truth_output):
         """
@@ -50,8 +53,11 @@ class GoalFunction:
         consisting of whether or not the goal has been achieved, the output for 
         display purposes, and a score.
         """
-        model_outputs = self._call_model(tokenized_text_list)
         results = []
+        # TODO: Do we want to enfoce this within calls to get_results?
+        if self.num_queries > self.query_budget:
+            return results
+        model_outputs = self._call_model(tokenized_text_list)
         for tokenized_text, raw_output in zip(tokenized_text_list, model_outputs):
             succeeded = self._is_goal_complete(raw_output, ground_truth_output)
             goal_function_score = self._get_score(raw_output, ground_truth_output)
@@ -156,6 +162,6 @@ class GoalFunction:
             return all_outputs
 
     def extra_repr_keys(self): 
-        return []
+        return ['query_budget']
         
     __repr__ = __str__ = default_class_repr

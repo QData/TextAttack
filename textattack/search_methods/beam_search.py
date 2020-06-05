@@ -30,6 +30,9 @@ class BeamSearch(SearchMethod):
                 # If we did not find any possible perturbations, give up.
                 return best_result
             results = self.get_goal_results(potential_next_beam, initial_result.output)
+            if not len(results):
+                # Over query budget
+                return best_result
             scores = np.array([r.score for r in results])
             best_result = results[scores.argmax()]
 
