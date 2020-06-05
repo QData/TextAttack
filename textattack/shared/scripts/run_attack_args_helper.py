@@ -159,7 +159,7 @@ def get_args():
     transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(WHITE_BOX_TRANSFORMATION_CLASS_NAMES.keys())
     parser.add_argument('--transformation', type=str, required=False,
         default='word-swap-embedding', 
-        help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Chocies: ' + str(transformation_names))
+        help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Choices: ' + str(transformation_names))
 
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
