@@ -162,6 +162,8 @@ class GoalFunction:
             return all_outputs
 
     def extra_repr_keys(self): 
-        return ['query_budget']
+        if self.query_budget < float('inf'):
+            return ['query_budget']
+        return []
         
     __repr__ = __str__ = default_class_repr
