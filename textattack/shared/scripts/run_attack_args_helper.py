@@ -212,7 +212,7 @@ def get_args():
         default=0, help='The offset to start at in the dataset.')
 
     parser.add_argument('--shuffle', action='store_true', required=False, 
-        default=False, help='Randomly shuffle the data before attacking')
+        default=True, help='Randomly shuffle the data before attacking')
     
     parser.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
@@ -395,7 +395,7 @@ def parse_dataset_from_args(args):
             raise AttributeError(f'``dataset`` not found in module {args.dataset_from_file}')
     elif args.dataset_from_nlp:
         dataset_args = args.dataset_from_nlp.split(':')
-        dataset = textattack.datasets.HuggingFaceNLPDataset(dataset_args)
+        dataset = textattack.datasets.HuggingFaceNLPDataset(dataset_args, shuffle=args.shuffle)
     else:
         if not args.model:
             raise ValueError('Must supply pretrained model or dataset')

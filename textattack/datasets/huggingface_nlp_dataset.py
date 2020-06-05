@@ -30,14 +30,18 @@ def get_nlp_dataset_columns(dataset):
     return input_columns, output_column
 
 class HuggingFaceNLPDataset(TextAttackDataset):
-    def __init__(self, dataset_args, dataset_split='test', shuffle=True):
+    """ Loads a dataset from HuggingFace ``nlp`` and prepares it as a
+        TextAttack dataset.
+    """
+    def __init__(self, dataset_args, split='train', shuffle=True):
         dataset = nlp.load_dataset(*dataset_args)
-        self._input_columns, self.output_columns = get_nlp_dataset_columns(dataset[dataset_split])
+        self._input_columns, self.output_columns = get_nlp_dataset_columns(dataset[split])
         self._i = 0
-        self.examples = list(dataset[dataset_split])
+        self.examples = list(dataset[split])
         if shuffle:
             random.shuffle(self.examples)
-            import pdb; pdb.set_trace()
+        
+        # test columns
     
     def __next__(self):
         if self._i >= len(self.examples):
