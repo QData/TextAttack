@@ -33,22 +33,19 @@ class HuggingFaceNLPDataset(TextAttackDataset):
     """ Loads a dataset from HuggingFace ``nlp`` and prepares it as a
         TextAttack dataset.
     """
-    def __init__(self, dataset_args, split='train', shuffle=True):
+    def __init__(self, dataset_args, split='train', shuffle=False):
         dataset = nlp.load_dataset(*dataset_args)
-        self._input_columns, self.output_columns = get_nlp_dataset_columns(dataset[split])
+        self.input_columns, self.output_columns = get_nlp_dataset_columns(dataset[split])
         self._i = 0
         self.examples = list(dataset[split])
         if shuffle:
             random.shuffle(self.examples)
-        
-        # test columns
     
     def __next__(self):
         if self._i >= len(self.examples):
             raise StopIteration
         raw_example = self.examples[self._i]
         self._i += 1
-        joined_input = TokenizedText.SPLIT_TOKEN.join(raw_example[c] for c in self._input_columns)
+        joined_input = TokenizedText.SPLIT_TOKEN.join(raw_example[c] for c in self.input_columns)
         output = raw_example[self.output_columns]
-        print(joined_input, output)
         return (joined_input, output)

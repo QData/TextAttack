@@ -179,12 +179,8 @@ def get_args():
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument('--dataset_from_file', type=str, required=False, default=None,
         help='Dataset to load from a file.')
-        # TODO load dataset [list of tuples] from file, too
-        # TODO delete ~/.cache and make sure tests pass [after the utils refactor]
-        # TODO replace all calls to get_logger() with just logger and make it textattack.shared.logger
-        # TODO edit model benchmarking script to support these
+        # TODO edit model benchmarking script to support models/datasets loaded from command-line
         # TODO add README info about attacking models from file/pretrained huggingface, and dataset
-        # TODO add tests that support nlp dataset/loading and huggingface
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['repeat', 'stopword'],
@@ -212,7 +208,7 @@ def get_args():
         default=0, help='The offset to start at in the dataset.')
 
     parser.add_argument('--shuffle', action='store_true', required=False, 
-        default=True, help='Randomly shuffle the data before attacking')
+        default=False, help='Randomly shuffle the data before attacking')
     
     parser.add_argument('--interactive', action='store_true', default=False,
         help='Whether to run attacks interactively.')
@@ -348,9 +344,9 @@ def parse_recipe_from_args(model, args):
 
 def parse_model_from_args(args):
     if args.model_from_file:
-        textattack.shared.utils.get_logger().info(f'Loading model and tokenizer from file: {args.model_from_file}')
+        textattack.shared.logger.info(f'Loading model and tokenizer from file: {args.model_from_file}')
         try:
-            model_file = args.model_from_file.replace(".py", "")
+            model_file = args.model_from_file.replace('.py', '').replace('/', '.')
             model_module = importlib.import_module(model_file)
         except:
             raise ValueError(f'Failed to import model or tokenizer from file {args.model_from_file}')
@@ -365,7 +361,7 @@ def parse_model_from_args(args):
         setattr(model, 'tokenizer', tokenizer)
     elif args.model_from_huggingface:
         import transformers
-        textattack.shared.utils.get_logger().info(f'Loading pre-trained model from HuggingFace model repository: {args.model_from_huggingface}')
+        textattack.shared.logger.info(f'Loading pre-trained model from HuggingFace model repository: {args.model_from_huggingface}')
         model = transformers.AutoModelForSequenceClassification.from_pretrained(args.model_from_huggingface)
         tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_from_huggingface)
         setattr(model, 'tokenizer', tokenizer)
@@ -383,9 +379,9 @@ def parse_model_from_args(args):
 
 def parse_dataset_from_args(args):
     if args.dataset_from_file:
-        textattack.shared.utils.get_logger().info(f'Loading model and tokenizer from file: {args.model_from_file}')
+        textattack.shared.logger.info(f'Loading model and tokenizer from file: {args.model_from_file}')
         try:
-            dataset_file = args.dataset_from_file.replace(".py", "")
+            dataset_file = args.dataset_from_file.replace('.py', '').replace('/', '.')
             dataset_module = importlib.import_module(dataset_file)
         except:
             raise ValueError(f'Failed to import dataset from file {args.dataset_from_file}')

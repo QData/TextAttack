@@ -50,17 +50,17 @@ def download_if_needed(folder_name):
     if zipfile.is_zipfile(downloaded_file.name):
         unzip_file(downloaded_file.name, cache_dest_path)
     else:
-        get_logger().info(f'Copying {downloaded_file.name} to {cache_dest_path}.')
+        logger.info(f'Copying {downloaded_file.name} to {cache_dest_path}.')
         shutil.copyfile(downloaded_file.name, cache_dest_path)
     cache_file_lock.release()
     # Remove the temporary file.
     os.remove(downloaded_file.name)
-    get_logger().info(f'Successfully saved {folder_name} to cache.')
+    logger.info(f'Successfully saved {folder_name} to cache.')
     return cache_dest_path
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
     """ Unzips a .zip file to folder path. """
-    get_logger().info(f'Unzipping file {path_to_zip_file} to {unzipped_folder_path}.')
+    logger.info(f'Unzipping file {path_to_zip_file} to {unzipped_folder_path}.')
     enclosing_unzipped_path = pathlib.Path(unzipped_folder_path).parent
     with zipfile.ZipFile(path_to_zip_file, 'r') as zip_ref:
         zip_ref.extractall(enclosing_unzipped_path)
@@ -71,7 +71,7 @@ def http_get(folder_name, out_file, proxies=None):
         https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
     """
     folder_s3_url = s3_url(folder_name)
-    get_logger().info(f'Downloading {folder_s3_url}.')
+    logger.info(f'Downloading {folder_s3_url}.')
     req = requests.get(folder_s3_url, stream=True, proxies=proxies)
     content_length = req.headers.get('Content-Length')
     total = int(content_length) if content_length is not None else None
@@ -85,21 +85,15 @@ def http_get(folder_name, out_file, proxies=None):
     progress.close()
 
 LOG_STRING = f'\033[34;1mtextattack\033[0m'
-logger = None
-def get_logger():
-    global logger
-    if not logger:
-        logger = logging.getLogger(__name__)
-        logging.config.dictConfig({'version': 1, 'loggers': {__name__: {'level': logging.INFO}}})
-        formatter = logging.Formatter(f'{LOG_STRING}: %(message)s')
-        stream_handler = logging.StreamHandler()
-        stream_handler.setFormatter(formatter)
-        logger.addHandler(stream_handler)
-        logger.propagate = False
-    return logger
+logger = logging.getLogger(__name__)
+logging.config.dictConfig({'version': 1, 'loggers': {__name__: {'level': logging.INFO}}})
+formatter = logging.Formatter(f'{LOG_STRING}: %(message)s')
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+logger.addHandler(stream_handler)
+logger.propagate = False
 
 def _post_install():
-    logger = get_logger()
     logger.info('First time importing textattack: downloading remaining required packages.')
     logger.info('Downloading spaCy required packages.')
     import spacy

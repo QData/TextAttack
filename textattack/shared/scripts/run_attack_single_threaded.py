@@ -10,7 +10,7 @@ import datetime
 
 from .run_attack_args_helper import *
 
-logger = textattack.shared.utils.get_logger()
+logger = textattack.shared.logger
 
 def run(args):
     # Only use one GPU, if we have one.
