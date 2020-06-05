@@ -174,7 +174,7 @@ class Attack:
         for text, ground_truth_output in dataset:
             tokenized_text = TokenizedText(text, self.tokenizer)
             self.goal_function.num_queries = 0
-            goal_function_result = self.goal_function.get_result(tokenized_text, ground_truth_output)
+            goal_function_result, _ = self.goal_function.get_result(tokenized_text, ground_truth_output)
             # We can skip examples for which the goal is already succeeded,
             # unless `attack_skippable_examples` is True.
             if (not attack_skippable_examples) and (goal_function_result.succeeded):
