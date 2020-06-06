@@ -21,7 +21,7 @@ class InferSent(SentenceEncoder):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.model = self.get_infersent_model()
-        self.model.to(utils.get_device())
+        self.model.to(utils.device)
     
     def get_infersent_model(self):
         """

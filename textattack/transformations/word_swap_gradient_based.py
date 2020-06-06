@@ -47,7 +47,7 @@ class WordSwapGradientBased(Transformation):
         """
         self.model.train()
        
-        lookup_table = self.model.lookup_table.to(utils.get_device())
+        lookup_table = self.model.lookup_table.to(utils.device)
         lookup_table_transpose = lookup_table.transpose(0,1)
         
         # set backward hook on the word embeddings for input x
@@ -56,12 +56,12 @@ class WordSwapGradientBased(Transformation):
         self.model.zero_grad()
         predictions = self._call_model(text)
         original_label = predictions.argmax()
-        y_true = torch.Tensor([original_label]).long().to(utils.get_device())
+        y_true = torch.Tensor([original_label]).long().to(utils.device)
         loss = self.loss(predictions, y_true)
         loss.backward()
     
         # grad w.r.t to word embeddings
-        emb_grad = emb_hook.output[0].to(utils.get_device()).squeeze()
+        emb_grad = emb_hook.output[0].to(utils.device).squeeze()
     
         # grad differences between all flips and original word (eq. 1 from paper)
         vocab_size = lookup_table.size(0)
@@ -127,8 +127,8 @@ class Hook:
             self.hook = module.register_forward_hook(self.hook_fn)
             
     def hook_fn(self, module, input, output):
-        self.input = [x.to(utils.get_device()) for x in input]
-        self.output = [x.to(utils.get_device()) for x in output]
+        self.input = [x.to(utils.device) for x in input]
+        self.output = [x.to(utils.device) for x in output]
         
     def close(self):
         self.hook.remove()

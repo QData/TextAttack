@@ -1,3 +1,4 @@
+click
 editdistance
 filelock
 language_tool_python

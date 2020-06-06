@@ -179,8 +179,6 @@ def get_args():
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument('--dataset_from_file', type=str, required=False, default=None,
         help='Dataset to load from a file.')
-        # TODO edit model benchmarking script to support models/datasets loaded from command-line
-        # TODO add README info about attacking models from file/pretrained huggingface, and dataset
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['repeat', 'stopword'],
@@ -358,11 +356,13 @@ def parse_model_from_args(args):
             tokenizer = getattr(model_module, 'tokenizer')
         except AttributeError:
             raise AttributeError(f'``tokenizer`` not found in module {args.model_from_file}')
+        model = model.to(textattack.shared.utils.device)
         setattr(model, 'tokenizer', tokenizer)
     elif args.model_from_huggingface:
         import transformers
         textattack.shared.logger.info(f'Loading pre-trained model from HuggingFace model repository: {args.model_from_huggingface}')
         model = transformers.AutoModelForSequenceClassification.from_pretrained(args.model_from_huggingface)
+        model = model.to(textattack.shared.utils.device)
         tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_from_huggingface)
         setattr(model, 'tokenizer', tokenizer)
     else:

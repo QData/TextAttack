@@ -57,7 +57,7 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     
     # Otherwise, this is an unknown model–perhaps user-provided, or we forgot to
     # update the corresponding dictionary. Warn user and return.
-    logger.warn(f'Unknown if model of class {model_class} compatible with goal function {goal_function}.')
+    logger.warn(f'Unknown if model of class {model_class} compatible with goal function {goal_function_class}.')
     return True
     
 def validate_model_gradient_word_swap_compatibility(model):

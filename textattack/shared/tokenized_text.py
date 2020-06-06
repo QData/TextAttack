@@ -1,5 +1,5 @@
 import torch
-from .utils import get_device, words_from_text
+from .utils import device, words_from_text
 
 class TokenizedText:
 

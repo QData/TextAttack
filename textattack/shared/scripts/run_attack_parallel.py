@@ -8,7 +8,7 @@ import time
 import torch
 import tqdm
 
-from .run_attack_args_helper import *
+from .attack_args_helper import *
 
 logger = textattack.shared.logger
 

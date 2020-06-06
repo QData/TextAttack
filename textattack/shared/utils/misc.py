@@ -1,7 +1,6 @@
 import torch
 
-def get_device():
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def html_style_from_dict(style_dict):
     """ Turns

@@ -8,7 +8,7 @@ import tqdm
 import os
 import datetime
 
-from .run_attack_args_helper import *
+from .attack_args_helper import *
 
 logger = textattack.shared.logger
 
