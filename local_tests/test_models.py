@@ -20,7 +20,7 @@ def compare_output_equivalence(desired_output, test_output):
         time to execute is printed, or another non-deterministic feature of the 
         program.)
         
-        `compare_outputs` makes sure all of the outputs match in between
+        ``compare_outputs`` makes sure all of the outputs match in between
         the magic strings. If they do, it returns True.
     """
     output_pieces = desired_output.split(MAGIC_STRING)

@@ -13,7 +13,7 @@ class WordSwap(Transformation):
     Args:
         letters_to_insert (string): letters allowed for insertion into words
     """
-    def __init__(self, letters_to_insert=None, **kwargs):
+    def __init__(self, letters_to_insert=None):
         self.letters_to_insert = letters_to_insert
         if not self.letters_to_insert: 
             self.letters_to_insert = string.ascii_letters
@@ -38,7 +38,7 @@ class WordSwap(Transformation):
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
         transformed_texts = []
-        word_swaps = []
+        
         for i in indices_to_modify:
             word_to_replace = words[i]
             replacement_words = self._get_replacement_words(word_to_replace)

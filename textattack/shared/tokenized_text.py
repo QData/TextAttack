@@ -18,7 +18,7 @@ class TokenizedText:
    
     SPLIT_TOKEN = '>>>>'
     
-    def __init__(self, text, tokenizer, attack_attrs=dict()):   
+    def __init__(self, text, tokenizer, attack_attrs=None):   
         text = text.strip()
         self.tokenizer = tokenizer
         if tokenizer:
@@ -33,15 +33,34 @@ class TokenizedText:
             self.ids = None
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
-        self.attack_attrs = attack_attrs
+        self.attack_attrs = attack_attrs or dict()
         # Indices of deleted words from the *original* text. Allows us to map
         # insertions/deletions back to their locations in the original text.
-        self.attack_attrs.setdefault('original_modified_indices', set())
+        self.attack_attrs.setdefault('original_index_map', np.arange(len(self.words)))
         # A list of all indices in *this* text that have been modified.
         self.attack_attrs.setdefault('modified_indices', set())
         
     def __eq__(self, other):
-        return (self.text == other.text) and (self.attack_attrs == other.attack_attrs)
+        """ Compares two text instances to make sure they have the same attack
+            attributes.
+            
+            Since some elements stored in ``self.attack_attrs`` may be numpy
+            arrays, we have to take special care when comparing them.
+        """
+        if not (self.text == other.text):
+            return False
+        for key in self.attack_attrs:
+            if key not in other.attack_attrs:
+                return False
+            elif isinstance(self.attack_attrs[key], np.ndarray):
+                if not (self.attack_attrs[key].shape == other.attack_attrs[key].shape):
+                    return False
+                elif not (self.attack_attrs[key] == other.attack_attrs[key]).all():
+                    return False
+            else:
+                if not self.attack_attrs[key] == other.attack_attrs[key]:
+                    return False
+        return True
     
     def __hash__(self):
         return hash(self.text)
@@ -141,10 +160,10 @@ class TokenizedText:
         """ Takes indices of words from original string and converts them to 
             indices of the same words in the current string.
             
-            Uses information from ``self.attack_attrs['original_modified_indices'],
+            Uses information from ``self.attack_attrs['original_index_map'],
             which is a list of (insertion, num_words_inserted) tuples.
         """
-        if len(self.attack_attrs['original_modified_indices']) == 0:
+        if len(self.attack_attrs['original_index_map']) == 0:
             return idxs
         elif isinstance(idxs, set):
             idxs = list(idxs)
@@ -152,10 +171,8 @@ class TokenizedText:
             idxs = torch.tensor(idxs)
         elif not isinstance(idxs, torch.Tensor):
             raise TypeError(f'convert_from_original_idxs got invalid idxs type {type(idxs)}')
-        new_idxs = idxs.clone()
-        for (idx, num_words_inserted) in self.attack_attrs['original_modified_indices']:
-            new_idxs[idxs >= idx] += num_words_inserted
-        return new_idxs
+        idxs = [self.attack_attrs['original_index_map'][i] for i in idxs]
+        return idxs
 
     def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
@@ -172,32 +189,47 @@ class TokenizedText:
             ``index`` is replaced with a new word."""
         return self.replace_words_at_indices([index], [new_word])
     
+    def delete_word_at_index(self, index):
+        """ This code returns a new TokenizedText object where the word at 
+            ``index`` is removed."""
+        return self.replace_words_at_indices([index], [''])
+    
+    def get_deletion_indices(self):
+        return self.attack_attrs['original_index_map'][self.attack_attrs['original_index_map'] == -1]
+    
     def replace_new_words(self, new_words):
         """ This code returns a new TokenizedText object and replaces old list 
             of words with a new list of words, but preserves the punctuation 
             and spacing of the original message.
+            
+            ``self.words`` is a list of the words in the current text with 
+            punctuation removed. However, each "word" in ``new_words``
+            could be an empty string, representing a word deletion, or a string
+            with multiple space-separated words, representation an insertion
+            of one or more words.
         """
         final_sentence = ''
         text = self.text
         new_attack_attrs = dict()
-        new_attack_attrs['original_modified_indices'] = self.attack_attrs['original_modified_indices'].copy()
-        new_attack_attrs['modified_indices'] = self.attack_attrs['modified_indices'].copy()
         new_attack_attrs['newly_modified_indices'] = set()
+        new_attack_attrs['modified_indices'] = self.attack_attrs['modified_indices'].copy()
+        new_attack_attrs['original_index_map'] = self.attack_attrs['original_index_map'].copy()
         new_i = 0
-        for i, (input_word, adv_word) in enumerate(zip(self.words, new_words)):
-            if input_word == '[DELETE]': continue
+        # Create the new tokenized text by swapping out words from the original
+        # text with a sequence of 0+ words in the new text.
+        for i, (input_word, adv_word_seq) in enumerate(zip(self.words, new_words)):
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)
             final_sentence += text[:word_start]
             text = text[word_end:]
-            adv_num_words = len(words_from_text(adv_word))
+            adv_num_words = len(words_from_text(adv_word_seq))
             num_words_diff = adv_num_words - len(words_from_text(input_word))
             # Track indices on insertions and deletions.
             if num_words_diff != 0:
                 # Re-calculated modified indices. If words are inserted or deleted, 
                 # they could change.
                 shifted_modified_indices = set()
-                for j, modified_idx in enumerate(new_attack_attrs['modified_indices']):
+                for modified_idx in new_attack_attrs['modified_indices']:
                     if modified_idx < i:
                         shifted_modified_indices.add(modified_idx)
                     elif modified_idx > i:
@@ -206,15 +238,15 @@ class TokenizedText:
                         pass
                 new_attack_attrs['modified_indices'] = shifted_modified_indices
                 # Track insertions and deletions wrt original text.
-                if num_words_diff != 0:
-                    original_modification_idx = i
-                    for (other_insertion_idx, num_words_inserted) in sorted(new_attack_attrs['original_modified_indices'], key=lambda x: x[0]):
-                        if other_insertion_idx < original_modification_idx:
-                            original_modification_idx -= num_words_inserted
-                    new_attack_attrs['original_modified_indices'].add((original_modification_idx, num_words_diff))
+                original_modification_idx = i
+                new_idx_map = new_attack_attrs['original_index_map'].copy()
+                if num_words_diff == -1:
+                    new_idx_map[new_idx_map == i] = -1
+                new_idx_map[new_idx_map > i] += num_words_diff
+                new_attack_attrs['original_index_map'] = new_idx_map
             # Move pointer and save indices of new modified words.
             for j in range(i, i + adv_num_words):
-                if input_word != adv_word:
+                if input_word != adv_word_seq:
                     new_attack_attrs['modified_indices'].add(new_i)
                     new_attack_attrs['newly_modified_indices'].add(new_i)
                 new_i += 1
@@ -222,7 +254,7 @@ class TokenizedText:
             if adv_num_words == 0:
                 # Remove extra space (or else there would be two spaces for each
                 # deleted word).
-                # @TODO What to do with punctuation in this case? This behavior is undefined
+                # @TODO What to do with punctuation in this case? This behavior is undefined.
                 if i == 0:
                     # If the first word was deleted, take a subsequent space.
                     if text[0] == ' ':
@@ -232,7 +264,7 @@ class TokenizedText:
                     if final_sentence[-1] == ' ':
                         final_sentence = final_sentence[:-1]
             # Add substitute word(s) to new sentence.
-            final_sentence += adv_word
+            final_sentence += adv_word_seq
         final_sentence += text # Add all of the ending punctuation.
         return TokenizedText(final_sentence, self.tokenizer, 
             attack_attrs=new_attack_attrs)

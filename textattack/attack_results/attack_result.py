@@ -55,8 +55,7 @@ class AttackResult:
         """
         Returns a string illustrating the results of the goal function.
         """
-        orig_colored = self.original_result.get_colored_output(color_method) # @TODO add this method to goal function results
-                                                                        # @TODO also display confidence
+        orig_colored = self.original_result.get_colored_output(color_method)
         pert_colored = self.perturbed_result.get_colored_output(color_method)
         return orig_colored + '-->' + pert_colored
 
@@ -78,20 +77,17 @@ class AttackResult:
         i1 = 0
         i2 = 0
         
-        deletion_indices = set(i for (i, num_inserted) in t2.attack_attrs['original_modified_indices'] if num_inserted < 0)
+        deletion_indices = t2.get_deletion_indices()
         
         while i1 < len(t1.words) and i2 < len(t2.words):
             # show deletions
-            while i1 in deletion_indices:
-                words_1.append(utils.color_text(t1.words[i1], color_1, color_method)) # @TODO color
+            while t2.attack_attrs['original_index_map'][i1] == -1:
+                words_1.append(utils.color_text(t1.words[i1], color_1, color_method))
                 i1 += 1
             # show insertions
-            for insertion_idx, num_words_inserted in t2.attack_attrs['original_modified_indices']:
-                if i1 == insertion_idx and (num_words_inserted >= 1):
-                    for _ in range(num_words_inserted):
-                        words_2.append(utils.color_text(t2.words[i2], color_2, color_method))
-                        i2 += 1
-                    break
+            while i2 < t2.attack_attrs['original_index_map'][i1]:
+                words_1.append(utils.color_text(t1.words[i2], color_2, color_method))
+                i2 += 1
             # show swaps
             word_1 = t1.words[i1]
             word_2 = t2.words[i2]

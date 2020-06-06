@@ -23,12 +23,6 @@ HotFlip
 .. automodule:: textattack.attack_recipes.input_reduction_feng_2018
    :members:
 
-Input Reduction
-###########
-
-.. automodule:: textattack.attack_recipes.seq2sick_cheng_2018_blackbox
-   :members:
-
 Kuleshov
 ###########
 
@@ -49,7 +43,7 @@ TextFooler
    :members:
 
 
-TextBuffer
+TextBugger
 ###########
 
 .. automodule:: textattack.attack_recipes.textbugger_li_2018
