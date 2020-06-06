@@ -30,7 +30,7 @@ class WordSwapRandomCharacterInsertion(WordSwap):
         candidate_words = []
         
         start_idx = 1 if self.skip_first_char else 0
-        end_idx = (len(word) - 2) if self.skip_last_char else (len(word) - 1)
+        end_idx = (len(word) - 1) if self.skip_last_char else len(word)
 
         if self.random_one:
             i = np.random.randint(start_idx, end_idx)
