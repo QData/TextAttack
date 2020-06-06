@@ -88,6 +88,12 @@ DATASET_BY_MODEL = {
     't5-en2de':                 textattack.datasets.translation.NewsTest2013EnglishToGerman,
 }
 
+HUGGINGFACE_DATASET_BY_MODEL = {
+    'distilbert-sst2':  ('distilbert-base-uncased-finetuned-sst-2-english', 'glue:sst2'),
+    'bert-cola':        ('Huntersx/cola_model', 'glue:cola'),
+    'bart-mnli':        ('facebook/bart-large-mnli', 'glue:mnli_matched'),
+}
+
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     'word-swap-embedding':                  'textattack.transformations.WordSwapEmbedding',
     'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyph',
@@ -363,7 +369,11 @@ def parse_model_from_args(args):
         textattack.shared.logger.info(f'Loading pre-trained model from HuggingFace model repository: {args.model_from_huggingface}')
         model = transformers.AutoModelForSequenceClassification.from_pretrained(args.model_from_huggingface)
         model = model.to(textattack.shared.utils.device)
-        tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_from_huggingface)
+        try:
+            tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_from_huggingface)
+        except OSError:
+            textattack.shared.logger.warn(f'AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`')
+            tokenizer = transformers.AutoTokenizer.from_pretrained('bert-base-uncased')
         setattr(model, 'tokenizer', tokenizer)
     else:
         if ':' in args.model:
