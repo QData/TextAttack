@@ -12,13 +12,17 @@ class Checkpoint:
     """ An object that stores necessary information for saving and loading checkpoints
     
         Args:
-            args: command line arguments of the original attack
-            log_manager (AttackLogManager)
+            args: Command line arguments of the original attack
+            log_manager (AttackLogManager): Object for storing attack results
+            worklist (list[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
+            last_example (int): Last example that will be attacked. Represented by its index within the dataset.
             chkpt_time (float): epoch time representing when checkpoint was made
     """
-    def __init__(self, args, log_manager, chkpt_time=None):
+    def __init__(self, args, log_manager, worklist, last_example, chkpt_time=None):
         self.args = copy.deepcopy(args)
         self.log_manager = log_manager
+        self.worklist = worklist
+        self.last_example = last_example
         if chkpt_time:
             self.time = chkpt_time
         else:
@@ -134,4 +138,14 @@ class Checkpoint:
         assert isinstance(checkpoint, Checkpoint)
 
         return checkpoint
+
+    def verify_no_duplicates(self):
+        """ Check if our N results are N unique results (i.e. no duplicates)"""
+        results_set = set()
+        for result in self.log_manager.results:
+            results_set.add(result.orginal_result.tokenized_text)
+        if len(results_set) == self.results_count:
+            return True
+        else:
+            return False
         

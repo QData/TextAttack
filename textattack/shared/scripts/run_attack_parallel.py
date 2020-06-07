@@ -33,10 +33,10 @@ def attack_from_queue(args, in_queue, out_queue):
         print(attack, '\n')
     while not in_queue.empty():
         try:
-            output, text = in_queue.get()
+            i, output, text = in_queue.get()
             results_gen = attack.attack_dataset([(output, text)], num_examples=1)
             result = next(results_gen)
-            out_queue.put(result)
+            out_queue.put((i, result))
         except Exception as e:
             out_queue.put(e)
             exit()
@@ -48,15 +48,19 @@ def run(args):
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
-        num_examples_offset = resume_checkpoint.dataset_offset
+        
         num_remaining_examples = resume_checkpoint.num_remaining_attacks
         num_total_examples = args.num_examples
+        worklist = resume_checkpoint.worklist.copy()
+        last_example = resume_checkpoint.last_example
+        
         logger.info('Recovered from checkpoint previously saved at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
     else:
-        num_examples_offset = args.num_examples_offset
         num_total_examples = args.num_examples
         num_remaining_examples = num_total_examples
+        worklist = list(range(0, num_total_examples))
+        last_example = worklist[-1]
 
     # This makes `args` a namespace that's sharable between processes.
     # We could do the same thing with the model, but it's actually faster
@@ -73,7 +77,7 @@ def run(args):
     
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
-    dataset = DATASET_BY_MODEL[args.model](offset=num_examples_offset)
+    dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
     
     print(f'Running on {num_gpus} GPUs')
     load_time = time.time()
@@ -84,9 +88,10 @@ def run(args):
     in_queue = torch.multiprocessing.Queue()
     out_queue =  torch.multiprocessing.Queue()
     # Add stuff to queue.
-    for _ in range(num_remaining_examples):
-        label, text = next(dataset)
-        in_queue.put((label, text))
+    for i in worklist:
+        label, text = dataset[i]
+        in_queue.put((i, label, text))
+
     # Start workers.
     pool = torch.multiprocessing.Pool(
         num_gpus, 
@@ -103,27 +108,37 @@ def run(args):
         num_failures = 0
         num_successes = 0
     pbar = tqdm.tqdm(total=num_remaining_examples, smoothing=0)
-    while num_results < num_total_examples:
-        result = out_queue.get(block=True)
+    while num_results < num_total_examples and worklist:
+        idx, result = out_queue.get(block=True)
 
         if isinstance(result, Exception):
             raise result
         attack_log_manager.log_result(result)
+        worklist.remove(idx)
+
         if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
             pbar.update()
             num_results += 1
+
             if type(result) == textattack.attack_results.SuccessfulAttackResult:
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
                 num_failures += 1
             pbar.set_description('[Succeeded / Failed / Total] {} / {} / {}'.format(num_successes, num_failures, num_results))
         else:
-            label, text = next(dataset)
-            in_queue.put((label, text))
+            last_example += 1
+            try:
+                label, text = dataset[last_example]
+                worklist.append(last_example)
+                in_queue.put((last_example, label, text))
+            except IndexError:
+                last_example -= 1
 
         if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
             attack_log_manager.flush()
-            checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
+            checkpoint = textattack.shared.Checkpoint(args, attack_log_manager, worklist, last_example)
+            if not checkpoint.verify_no_duplicates():
+                logger.warning('Duplicate results processed.')
             checkpoint.save()
 
     pbar.close()

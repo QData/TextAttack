@@ -34,6 +34,12 @@ class TextAttackDataset:
         example = self.examples[self.i]
         self.i += 1
         return example
+
+    def __len__(self):
+        return len(self.examples)
+    
+    def __getitem__(self, item):
+        return self.examples[item]
     
     def _load_pickle_file(self, file_name, offset=0):
         self.i = 0

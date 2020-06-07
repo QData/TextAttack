@@ -27,13 +27,19 @@ def run(args):
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
+
         num_examples_offset = resume_checkpoint.dataset_offset
         num_examples = resume_checkpoint.num_remaining_attacks
+        worklist = resume_checkpoint.worklist.copy()
+        last_example = resume_checkpoint.last_example
+
         logger.info('Recovered from checkpoint previously saved at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
     else:
         num_examples_offset = args.num_examples_offset
         num_examples = args.num_examples
+        worklist = list(range(0, num_examples))
+        last_example = worklist[-1]
     
     start_time = time.time()
     
@@ -88,6 +94,7 @@ def run(args):
             num_results = 0
             num_failures = 0
             num_successes = 0
+        idx = 0
         for result in attack.attack_dataset(data, 
                                         num_examples=num_examples, 
                                         shuffle=args.shuffle, 
@@ -97,7 +104,15 @@ def run(args):
                 print('\n')
             if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
                 pbar.update(1)
+            else:
+                last_example += 1
+                worklist.append(last_example)
             num_results += 1
+            try:
+                worklist.remove(idx)
+                idx += 1
+            except ValueError:
+                raise Exception('{} does not exist in the worklist.'.format(idx))
             if type(result) == textattack.attack_results.SuccessfulAttackResult:
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
@@ -105,7 +120,9 @@ def run(args):
             pbar.set_description('[Succeeded / Failed / Total] {} / {} / {}'.format(num_successes, num_failures, num_results))
 
             if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
-                checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
+                checkpoint = textattack.shared.Checkpoint(args, attack_log_manager, worklist, last_example)
+                if not checkpoint.verify_no_duplicates():
+                    logger.warning('Duplicate results processed.')
                 checkpoint.save()
                 attack_log_manager.flush()
 
