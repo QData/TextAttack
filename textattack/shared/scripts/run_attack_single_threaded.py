@@ -70,7 +70,7 @@ def run(args):
             print('Attacking...')
 
             result = next(attack.attack_dataset([(text, result.output)]))
-            print(result.__str__(color_method='stdout'))
+            print(result.__str__(color_method='ansi'))
     
     else:
         # Not interactive? Use default dataset.

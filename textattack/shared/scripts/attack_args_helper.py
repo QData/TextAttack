@@ -89,9 +89,54 @@ DATASET_BY_MODEL = {
 }
 
 HUGGINGFACE_DATASET_BY_MODEL = {
-    'distilbert-sst2':  ('distilbert-base-uncased-finetuned-sst-2-english', 'glue:sst2'),
-    'bert-cola':        ('Huntersx/cola_model', 'glue:cola'),
-    'bart-mnli':        ('facebook/bart-large-mnli', 'glue:mnli_matched'),
+    #
+    # bert-base-uncased
+    #
+    'bert-base-uncased-CoLA':  ('textattack/bert-base-uncased-CoLA',  ('glue', 'cola',  'train')),
+    'bert-base-uncased-MNLI':  ('textattack/bert-base-uncased-MNLI',  ('glue', 'mnli',  'train', [1, 2, 0])),
+    'bert-base-uncased-MRPC':  ('textattack/bert-base-uncased-MRPC',  ('glue', 'mrpc',  'train')),
+    'bert-base-uncased-QNLI':  ('textattack/bert-base-uncased-QNLI',  ('glue', 'qnli',  'train')),
+    'bert-base-uncased-QQP':   ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'train')),
+    'bert-base-uncased-RTE':   ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'train')),
+    'bert-base-uncased-SST-2': ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'train')),
+    'bert-base-uncased-STS-B': ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'train')),
+    'bert-base-uncased-WNLI':  ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'train')),
+    #
+    # distilbert-base-cased
+    #
+    'distilbert-base-cased-CoLA':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'train')),
+    'distilbert-base-cased-MRPC':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'train')),
+    'distilbert-base-cased-QQP':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'train')),
+    'distilbert-base-cased-SST-2':  ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'train')),
+    'distilbert-base-cased-STS-B':  ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'train')),
+    #
+    # distilbert-base-uncased
+    #
+    'distilbert-base-uncased-CoLA':  ('textattack/distilbert-base-uncased-CoLA',  ('glue', 'cola',  'train')),
+    'distilbert-base-uncased-MNLI':  ('textattack/distilbert-base-uncased-MNLI',  ('glue', 'mnli',  'train')),
+    'distilbert-base-uncased-MRPC':  ('textattack/distilbert-base-uncased-MRPC',  ('glue', 'mrpc',  'train')),
+    'distilbert-base-uncased-QNLI':  ('textattack/distilbert-base-uncased-QNLI',  ('glue', 'qnli',  'train')),
+    'distilbert-base-uncased-QQP':   ('textattack/distilbert-base-uncased-QQP',   ('glue', 'qqp',   'train')),
+    'distilbert-base-uncased-RTE':   ('textattack/distilbert-base-uncased-RTE',   ('glue', 'rte',   'train')),
+    'distilbert-base-uncased-SST-2': ('textattack/distilbert-base-uncased-SST-2', ('glue', 'sst2', 'train')),
+    'distilbert-base-uncased-STS-B': ('textattack/distilbert-base-uncased-STS-B', ('glue', 'sstb', 'train')),
+    'distilbert-base-uncased-WNLI':  ('textattack/distilbert-base-uncased-WNLI',  ('glue', 'wnli',  'train')),
+    #
+    # roberta-base (RoBERTa is cased by default)
+    #
+    'roberta-base-CoLA':  ('textattack/roberta-base-CoLA',  ('glue', 'cola',  'train')),
+    'roberta-base-MNLI':  ('textattack/roberta-base-MNLI',  ('glue', 'mnli',  'train')),
+    'roberta-base-MRPC':  ('textattack/roberta-base-MRPC',  ('glue', 'mrpc',  'train')),
+    'roberta-base-QNLI':  ('textattack/roberta-base-QNLI',  ('glue', 'mnli',  'train')),
+    'roberta-base-RTE':   ('textattack/roberta-base-RTE',   ('glue', 'rte',   'train')),
+    'roberta-base-SST-2': ('textattack/roberta-base-SST-2', ('glue', 'sst2', 'train')),
+    'roberta-base-STS-B': ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'train')),
+    'roberta-base-WNLI':  ('textattack/roberta-base-WNLI',  ('glue', 'wnli',  'train')),
+    #
+    # xlnet-base-cased
+    #
+    'xnlet-base-cased-CoLA':  ('textattack/xlnet-base-cased-CoLA',  ('glue', 'CoLA',  'train')),
+    
 }
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
@@ -170,20 +215,21 @@ def get_args():
     
     model_group = parser.add_mutually_exclusive_group()
     
+    model_names = list(MODEL_CLASS_NAMES.keys()) + list(HUGGINGFACE_DATASET_BY_MODEL.keys())
     model_group.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
-        choices=MODEL_CLASS_NAMES.keys(), help='The pre-trained model to attack.')
+        choices=model_names, help='The pre-trained model to attack.')
         
-    model_group.add_argument('--model_from_file', type=str, required=False,
+    model_group.add_argument('--model-from-file', type=str, required=False,
         help='File of model and tokenizer to import.')
         
-    model_group.add_argument('--model_from_huggingface', type=str, required=False,
+    model_group.add_argument('--model-from-huggingface', type=str, required=False,
         help='huggingface.co ID of pre-trained model to load')
         
     dataset_group = parser.add_mutually_exclusive_group()
-    dataset_group.add_argument('--dataset_from_nlp', type=str, required=False, default=None,
+    dataset_group.add_argument('--dataset-from-nlp', type=str, required=False, default=None,
         help='Dataset to load from `nlp` repository.')
     dataset_group = parser.add_mutually_exclusive_group()
-    dataset_group.add_argument('--dataset_from_file', type=str, required=False, default=None,
+    dataset_group.add_argument('--dataset-from-file', type=str, required=False, default=None,
         help='Dataset to load from a file.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
@@ -224,7 +270,7 @@ def get_args():
         help='Run attack using multiple GPUs.')
 
     goal_function_choices = ', '.join(GOAL_FUNCTION_CLASS_NAMES.keys())
-    parser.add_argument('--goal-function', '-g', default='untargeted-classification',
+    parser.add_argument('--goal-function', default='untargeted-classification',
         help=f'The goal function to use. choices: {goal_function_choices}')
     
     def str_to_int(s): return sum((ord(c) for c in s))
@@ -239,12 +285,16 @@ def get_args():
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
-    attack_group.add_argument('--search', '-s', '--search-method', type=str, 
+    attack_group.add_argument('--search', '--search-method', type=str, 
         required=False, default='greedy-word-wir', 
         help=f'The search method to use. choices: {search_choices}')
     
-    attack_group.add_argument('--recipe', '-r', type=str, required=False, default=None,
+    attack_group.add_argument('--recipe', '--attack-recipe', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
+        choices=RECIPE_NAMES.keys())
+    
+    attack_group.add_argument('--attack-from-file', type=str, required=False, default=None,
+        help='attack to load from file (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
 
     # Parser for parsing args for resume
@@ -263,7 +313,8 @@ def get_args():
 
     resume_parser.add_argument('--parallel', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
-
+    
+    # Resume attack from checkpoint.
     if sys.argv[1:] and sys.argv[1].lower() == 'resume':
         args = resume_parser.parse_args(sys.argv[2:])
         setattr(args, 'checkpoint_resume', True)
@@ -277,6 +328,11 @@ def get_args():
             raise ValueError('Cannot use `--checkpoint-interval` with `--shuffle=True`')
         
         set_seed(args.random_seed)
+    
+    # Shortcuts for huggingface models using --model.
+    if args.model in HUGGINGFACE_DATASET_BY_MODEL:
+        args.model_from_huggingface, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
+        args.model = None
     
     return args
 
@@ -334,46 +390,64 @@ def parse_constraints_from_args(args):
     
     return _constraints
 
-def parse_recipe_from_args(model, args):
-    if ':' in args.recipe:
-        recipe_name, params = args.recipe.split(':')
-        if recipe_name not in RECIPE_NAMES:
-            raise ValueError(f'Error: unsupported recipe {recipe_name}')
-        recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model, {params})')
-    elif args.recipe in RECIPE_NAMES:
-        recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
+def parse_attack_from_args(model, args):
+    if args.recipe:
+        if ':' in args.recipe:
+            recipe_name, params = args.recipe.split(':')
+            if recipe_name not in RECIPE_NAMES:
+                raise ValueError(f'Error: unsupported recipe {recipe_name}')
+            recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model, {params})')
+        elif args.recipe in RECIPE_NAMES:
+            recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
+        else:
+            raise ValueError(f'Invalid recipe {args.recipe}')
+        return recipe
+    elif args.attack_from_file:
+        if ':' in args.attack_from_file:
+            attack_file, attack_name = args.attack_from_file.split(':')
+        else:
+            attack_file, attack_name = args.attack_from_file, 'attack'
+        attack = attack_file.replace('.py', '').replace('/', '.')
+        attack = importlib.import_module(model_file)
+        attack_func = getattr(model_module, attack_name)
+        return attack(model)
     else:
-        raise ValueError(f'Invalid recipe {args.recipe}')
-    return recipe
+        raise ValueError('Could not parse attack from args - no recipe or filename specified')
 
 def parse_model_from_args(args):
     if args.model_from_file:
-        textattack.shared.logger.info(f'Loading model and tokenizer from file: {args.model_from_file}')
+        colored_model_name = textattack.shared.utils.color_text(args.model_from_file, color='blue', method='ansi')
+        textattack.shared.logger.info(f'Loading model and tokenizer from file: {colored_model_name}')
+        if ':' in args.model_from_file:
+            model_file, model_name, tokenizer_name = args.model_from_file.split(':')
+        else:
+            model_file, model_name, tokenizer_name = args.model_from_file, 'model', 'tokenizer'
         try:
             model_file = args.model_from_file.replace('.py', '').replace('/', '.')
             model_module = importlib.import_module(model_file)
         except:
             raise ValueError(f'Failed to import model or tokenizer from file {args.model_from_file}')
         try:
-            model = getattr(model_module, 'model')
+            model = getattr(model_module, model_name)
         except AttributeError:
-            raise AttributeError(f'``model`` not found in module {args.model_from_file}')
+            raise AttributeError(f'``{model_name}`` not found in module {args.model_from_file}')
         try:
-            tokenizer = getattr(model_module, 'tokenizer')
+            tokenizer = getattr(model_module, tokenizer_name)
         except AttributeError:
-            raise AttributeError(f'``tokenizer`` not found in module {args.model_from_file}')
+            raise AttributeError(f'``{tokenizer_name}`` not found in module {args.model_from_file}')
         model = model.to(textattack.shared.utils.device)
         setattr(model, 'tokenizer', tokenizer)
     elif args.model_from_huggingface:
         import transformers
-        textattack.shared.logger.info(f'Loading pre-trained model from HuggingFace model repository: {args.model_from_huggingface}')
+        colored_model_name = textattack.shared.utils.color_text(args.model_from_huggingface, color='blue', method='ansi')
+        textattack.shared.logger.info(f'Loading pre-trained model from HuggingFace model repository: {colored_model_name}')
         model = transformers.AutoModelForSequenceClassification.from_pretrained(args.model_from_huggingface)
         model = model.to(textattack.shared.utils.device)
         try:
-            tokenizer = transformers.AutoTokenizer.from_pretrained(args.model_from_huggingface)
+            tokenizer = textattack.tokenizers.AutoTokenizer(args.model_from_huggingface)
         except OSError:
             textattack.shared.logger.warn(f'AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`')
-            tokenizer = transformers.AutoTokenizer.from_pretrained('bert-base-uncased')
+            tokenizer = textattack.tokenizers.AutoTokenizer('bert-base-uncased')
         setattr(model, 'tokenizer', tokenizer)
     else:
         if ':' in args.model:
@@ -390,18 +464,24 @@ def parse_model_from_args(args):
 def parse_dataset_from_args(args):
     if args.dataset_from_file:
         textattack.shared.logger.info(f'Loading model and tokenizer from file: {args.model_from_file}')
+        if ':' in args.dataset_from_file:
+            dataset_file, dataset_name = args.dataset_from_file.split(':')
+        else:
+            dataset_file, dataset_name = args.dataset_from_file, 'dataset'
         try:
-            dataset_file = args.dataset_from_file.replace('.py', '').replace('/', '.')
+            dataset_file = dataset_file.replace('.py', '').replace('/', '.')
             dataset_module = importlib.import_module(dataset_file)
         except:
             raise ValueError(f'Failed to import dataset from file {args.dataset_from_file}')
         try:
-            dataset = getattr(dataset_module, 'dataset')
+            dataset = getattr(dataset_module, dataset_name)
         except AttributeError:
             raise AttributeError(f'``dataset`` not found in module {args.dataset_from_file}')
     elif args.dataset_from_nlp:
-        dataset_args = args.dataset_from_nlp.split(':')
-        dataset = textattack.datasets.HuggingFaceNLPDataset(dataset_args, shuffle=args.shuffle)
+        dataset_args = args.dataset_from_nlp
+        if ':' in dataset_args:
+            dataset_args = dataset_args.split(':')
+        dataset = textattack.datasets.HuggingFaceNLPDataset(*dataset_args, shuffle=args.shuffle)
     else:
         if not args.model:
             raise ValueError('Must supply pretrained model or dataset')
@@ -413,8 +493,8 @@ def parse_dataset_from_args(args):
 
 def parse_goal_function_and_attack_from_args(args):
     model = parse_model_from_args(args)
-    if args.recipe:
-        attack = parse_recipe_from_args(model, args)
+    if args.recipe or args.attack_from_file:
+        attack = parse_attack_from_args(model, args)
         goal_function = attack.goal_function
         return goal_function, attack
     else:

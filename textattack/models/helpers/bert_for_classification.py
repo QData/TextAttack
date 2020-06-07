@@ -1,7 +1,7 @@
 from textattack.shared import utils
 import torch
 
-from textattack.tokenizers import BERTTokenizer, BERTEntailmentTokenizer
+from textattack.tokenizers import BERTTokenizer
 from transformers.modeling_bert import BertForSequenceClassification
 
 class BERTForClassification:
@@ -20,10 +20,7 @@ class BERTForClassification:
             model_file_path, num_labels=num_labels)
         self.model.to(utils.device)
         self.model.eval()
-        if entailment:
-            self.tokenizer = BERTEntailmentTokenizer()
-        else:
-            self.tokenizer = BERTTokenizer(model_file_path)
+        self.tokenizer = BERTTokenizer(model_file_path)
     
     def __call__(self, *params):
         pred = self.model(*params)[0]

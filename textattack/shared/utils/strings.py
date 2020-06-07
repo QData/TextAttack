@@ -73,7 +73,7 @@ def color_text(text, color=None, method=None):
         return text
     if method == 'html':
         return f'<font color = {color}>{text}</font>'
-    elif method == 'stdout':
+    elif method == 'ansi':
         if color == 'green':
             color = ANSI_ESCAPE_CODES.OKGREEN
         elif color == 'red':

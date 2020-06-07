@@ -5,18 +5,18 @@ import sys
 
 from attack_args_helper import get_args, parse_model_from_args, parse_dataset_from_args
 
-def _cb(s): return textattack.shared.utils.color_text(str(s), color='blue', method='stdout')
-def _cg(s): return textattack.shared.utils.color_text(str(s), color='green', method='stdout')
-def _cr(s): return textattack.shared.utils.color_text(str(s), color='red', method='stdout')
+def _cb(s): return textattack.shared.utils.color_text(str(s), color='blue', method='ansi')
+def _cg(s): return textattack.shared.utils.color_text(str(s), color='green', method='ansi')
+def _cr(s): return textattack.shared.utils.color_text(str(s), color='red', method='ansi')
 def _pb(): print(_cg('-' * 60))
 
 from collections import Counter
 
-def get_num_successes(model, ids, true_labels):
-    ids = textattack.shared.utils.preprocess_ids(ids)
+def get_num_successes(args, model, ids, true_labels):
     id_dim = torch.tensor(ids).ndim
     if id_dim == 2:
         # For models where the input is a single vector.
+        ids = textattack.shared.utils.preprocess_ids(ids)
         ids = torch.tensor(ids).to(textattack.shared.utils.device)
         preds = model(ids)
     elif id_dim == 3:
@@ -33,7 +33,8 @@ def get_num_successes(model, ids, true_labels):
     successes = (guess_labels == true_labels).sum().item()
     return successes, true_labels, guess_labels
 
-def test_model_on_dataset(model, dataset, batch_size=16, num_examples=1000):
+def test_model_on_dataset(args, model, dataset, batch_size=16):
+    num_examples = args.num_examples
     succ = 0
     fail = 0
     batch_ids = []
@@ -46,7 +47,7 @@ def test_model_on_dataset(model, dataset, batch_size=16, num_examples=1000):
         batch_ids.append(ids)
         batch_labels.append(label)
         if len(batch_ids) == batch_size:
-            batch_succ, true_labels, guess_labels = get_num_successes(model, batch_ids, batch_labels)
+            batch_succ, true_labels, guess_labels = get_num_successes(args, model, batch_ids, batch_labels)
             batch_fail = batch_size - batch_succ
             succ += batch_succ
             fail += batch_fail
@@ -55,7 +56,7 @@ def test_model_on_dataset(model, dataset, batch_size=16, num_examples=1000):
             all_true_labels.extend(true_labels.tolist())
             all_guess_labels.extend(guess_labels.tolist())
     if len(batch_ids) > 0:
-        batch_succ, true_labels, guess_labels = get_num_successes(model, batch_ids, batch_labels)
+        batch_succ, true_labels, guess_labels = get_num_successes(args, model, batch_ids, batch_labels)
         batch_fail = len(batch_ids) - batch_succ
         succ += batch_succ
         fail += batch_fail
@@ -74,4 +75,4 @@ if __name__ == '__main__':
     dataset = parse_dataset_from_args(args)
     
     with torch.no_grad():
-        test_model_on_dataset(model, dataset, num_examples=args.num_examples)
+        test_model_on_dataset(args, model, dataset)
