@@ -194,7 +194,7 @@ class PopulationMember:
         tokenized_text: The ``TokenizedText`` of the population member.
         neighbors_len: A list of the number of candidate neighbors list for each word.
     """
-    def __init__(self, tokenized_text, neighbors_len, result):
+    def __init__(self, tokenized_text, neighbors_len, result=None):
         self.tokenized_text = tokenized_text
         self.neighbors_len = neighbors_len
         self.result = result
