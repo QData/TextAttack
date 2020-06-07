@@ -21,7 +21,7 @@ class MetropolisHastingsSampling(SearchMethod):
         self.max_iter = max_iter
         self.lm_type = lm_type
 
-        self.lm_tokenizer = AutoTokenizer.from_pretrained("gpt2")
+        self.lm_tokenizer = AutoTokenizer.from_pretrained("gpt2", use_fast=False)
         self.language_model = AutoModelWithLMHead.from_pretrained("gpt2")
 
         try:
@@ -47,8 +47,14 @@ class MetropolisHastingsSampling(SearchMethod):
             text (str)
         Returns: 1/perplexity(text)
         """
-        input_ids = self.lm_tokenizer.encode(text)
-        input_ids.append(self.lm_tokenizer.eos_token_id)
+
+        input_tokens = self.lm_tokenizer.tokenize(text, max_length=self.lm_tokenizer.model_max_length-2)
+        # Occasionally, len(input_tokens) != 1022, so we have to check it
+        if len(input_tokens) != self.lm_tokenizer.model_max_length-2:
+            input_tokens = input_tokens[:self.lm_tokenizer.model_max_length-2]
+        input_tokens.insert(0, self.lm_tokenizer.bos_token)
+        input_tokens.append(self.lm_tokenizer.eos_token_id)
+        input_ids = self.lm_tokenizer.convert_tokens_to_ids(input_tokens)
         input_ids = torch.tensor(input_ids)
         if self.use_gpu:
             input_ids = input_ids.to(utils.get_device())
@@ -93,7 +99,10 @@ class MetropolisHastingsSampling(SearchMethod):
         Take list of values and normalize it into a probability distribution
         """
         s = sum(values)
-        return [v/s for v in values]
+        if s == 0:
+            return [1/len(values) for v in values]
+        else:
+            return [v/s for v in values]
 
     def _perform_search(self, initial_result):
         text_len = len(initial_result.tokenized_text.words)
@@ -145,6 +154,8 @@ class MetropolisHastingsSampling(SearchMethod):
             and g(x|x') be transition probability from x' to x.
             Then, acceptance ratio = min(1, (f(x')*g(x|x')) / (f(x) * g(x'|x)))
             """
+            if current_score == 0.0:
+                current_score += 1e-9
             acceptance_ratio = (scores[jump] * return_prob) / (current_score * proposal_dist[jump])
             acceptance_ratio = min(1, acceptance_ratio)
             u = np.random.uniform(low=0.0, high=1.0)

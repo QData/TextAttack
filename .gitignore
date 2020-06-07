@@ -35,12 +35,9 @@ dist/
 # Weights & Biases outputs
 wandb/
 
-# Vim files
-*.swo
-*.swp
-
 # checkpoints
 checkpoints/
 
 # vim
 *.swp
+*.swo
