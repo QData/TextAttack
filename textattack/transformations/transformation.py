@@ -4,10 +4,10 @@ class Transformation:
     """
     An abstract class for transforming a sequence of text to produce
     a potential adversarial example. 
-        
     """
 
-    def __call__(self, current_text, pre_transformation_constraints=[], indices_to_modify=None):
+    def __call__(self, current_text, pre_transformation_constraints=[], indices_shifted_from_original=True,
+        convert_from_original_idxs=True):
         """ 
         Returns a list of all possible transformations for ``current_text``. Applies the
         ``pre_transformation_constraints`` then calles ``_get_transformations``.
@@ -18,12 +18,15 @@ class Transformation:
                 beginning the transformation.
             indices_to_modify: Which word indices should be modified as dictated by the
                 ``SearchMethod``.
+            indices_shifted_from_original (bool): Whether indices have been shifted from
+                their original position in the text.
         """
         if indices_to_modify is None:
             indices_to_modify = set(range(len(current_text.words)))
         else:
             indices_to_modify = set(indices_to_modify)
-        indices_to_modify = set(current_text.convert_from_original_idxs(indices_to_modify))
+        if indices_shifted_from_original:
+            indices_to_modify = set(current_text.convert_from_original_idxs(indices_to_modify))
         for constraint in pre_transformation_constraints:
             indices_to_modify = indices_to_modify & constraint(current_text, self)
         transformed_texts = self._get_transformations(current_text, indices_to_modify)

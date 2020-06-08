@@ -12,12 +12,14 @@ class GoalFunction:
     
     Args:
         model: The PyTorch or TensorFlow model used for evaluation.
+        query_budget: The maximum number of model queries allowed.
     """
-    def __init__(self, model, use_cache=True):
+    def __init__(self, model, use_cache=True, query_budget=float('inf')):
         validators.validate_model_goal_function_compatibility(self.__class__, model.__class__)
         self.model = model
         self.use_cache = use_cache
         self.num_queries = 0
+        self.query_budget = query_budget
         if self.use_cache:
             self._call_model_cache = lru.LRU(utils.config('MODEL_CACHE_SIZE'))
         else:
@@ -42,26 +44,33 @@ class GoalFunction:
         A helper method that queries `self.get_results` with a single
         ``TokenizedText`` object.
         """
-        return self.get_results([tokenized_text], ground_truth_output)[0]
+        results, search_over = self.get_results([tokenized_text], ground_truth_output)
+        result = results[0] if len(results) else None
+        return result, search_over
 
     def get_results(self, tokenized_text_list, ground_truth_output):
         """
         For each tokenized_text object in tokenized_text_list, returns a result 
         consisting of whether or not the goal has been achieved, the output for 
-        display purposes, and a score.
+        display purposes, and a score. Additionally returns whether the search
+        is over due to the query budget.
         """
-        model_outputs = self._call_model(tokenized_text_list)
         results = []
+        if self.query_budget < float('inf'):
+            queries_left = self.query_budget - self.num_queries
+            tokenized_text_list = tokenized_text_list[:queries_left]
+        self.num_queries += len(tokenized_text_list)
+        model_outputs = self._call_model(tokenized_text_list)
         for tokenized_text, raw_output in zip(tokenized_text_list, model_outputs):
+            displayed_output = self._get_displayed_output(raw_output)
             succeeded = self._is_goal_complete(raw_output, ground_truth_output)
             goal_function_score = self._get_score(raw_output, ground_truth_output)
-            displayed_output = self._get_displayed_output(raw_output)
             results.append(
                 self._goal_function_result_type()(
                     tokenized_text, displayed_output, 
                     succeeded, goal_function_score)
                 )
-        return results
+        return results, self.num_queries == self.query_budget
 
     def _is_goal_complete(self, model_output, ground_truth_output):
         raise NotImplementedError()
@@ -129,13 +138,6 @@ class GoalFunction:
             Gets prediction from cache if possible. If prediction is not in the 
             cache, queries model and stores prediction in cache.
         """
-        try:
-            self.num_queries += len(tokenized_text_list)
-        except AttributeError:
-            # If some outside class is just using the attack for its `call_model`
-            # function, then `self.num_queries` will not have been initialized.
-            # In this case, just continue.
-            pass
         if not self.use_cache:
             return self._call_model_uncached(tokenized_text_list)
         else:
@@ -156,6 +158,8 @@ class GoalFunction:
             return all_outputs
 
     def extra_repr_keys(self): 
+        if self.query_budget < float('inf'):
+            return ['query_budget']
         return []
         
     __repr__ = __str__ = default_class_repr

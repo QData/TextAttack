@@ -181,12 +181,26 @@ class TokenizedText:
             raise ValueError(f'Cannot replace {len(new_words)} words at {len(indices)} indices.')
         words = self.words[:]
         for i, new_word in zip(indices, new_words):
+            if not isinstance(i, int):
+                try:
+                    i = int(i)
+                except:
+                    raise TypeError(f'replace_words_at_indices requires ``int`` indices, got {type(i)}')
+            if not isinstance(new_word, str):
+                raise TypeError(f'replace_words_at_indices requires ``str`` words, got {type(new_word)}')
             words[i] = new_word
         return self.replace_new_words(words)
     
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new TokenizedText object where the word at 
             ``index`` is replaced with a new word."""
+        if not isinstance(index, int):
+            try:
+                index = int(index)
+            except:
+                raise TypeError(f'replace_word_at_index requires ``int`` index, got {type(index)}')
+        if not isinstance(new_word, str):
+            raise TypeError(f'replace_word_at_index requires ``str`` new_word, got {type(new_word)}')
         return self.replace_words_at_indices([index], [new_word])
     
     def delete_word_at_index(self, index):

@@ -1,0 +1,49 @@
+--------------------------------------------- Result 1 ---------------------------------------------
+[[1]]-->[[0]]
+Our friends won't buy this analysis, [[let]] alone the next one we propose.
+Our friends won't buy this analysis, [[et]] alone the next one we propose.
+--------------------------------------------- Result 2 ---------------------------------------------
+[[1]]-->[[0]]
+[[One]] more pseudo [[generalization]] and I'm [[giving]] up.
+[[Ole]] more pseudo [[generaization]] and I'm [[givign]] up.
+--------------------------------------------- Result 3 ---------------------------------------------
+[[1]]-->[[0]]
+One more pseudo [[generalization]] or I'm [[giving]] up.
+One more pseudo [[geneHalization]] or I'm [[igving]] up.
+--------------------------------------------- Result 4 ---------------------------------------------
+[[1]]-->[[0]]
+The more we study verbs, the crazier they [[get]].
+The more we study verbs, the crazier they [[gedt]].
+--------------------------------------------- Result 5 ---------------------------------------------
+[[1]]-->[[0]]
+Day by day the facts are [[getting]] murkier.
+Day by day the facts are [[geNting]] murkier.
+--------------------------------------------- Result 6 ---------------------------------------------
+[[1]]-->[[0]]
+I'll [[fix]] you a [[drink]].
+I'll [[ifx]] you a [[drlnk]].
+--------------------------------------------- Result 7 ---------------------------------------------
+[[1]]-->[[0]]
+Fred [[watered]] the plants [[flat]].
+Fred [[wtaered]] the plants [[fylat]].
+--------------------------------------------- Result 8 ---------------------------------------------
+[[1]]-->[[0]]
+Bill coughed his [[way]] out of the restaurant.
+Bill coughed his [[wy]] out of the restaurant.
+--------------------------------------------- Result 9 ---------------------------------------------
+[[1]]-->[[0]]
+We're dancing the [[night]] away.
+We're dancing the [[nihgt]] away.
+--------------------------------------------- Result 10 ---------------------------------------------
+[[1]]-->[[0]]
+Herman [[hammered]] the metal flat.
+Herman [[hammere]] the metal flat.
+Number of successful attacks: 10
+Number of failed attacks: 0
+Number of skipped attacks: 0
+Original accuracy: 100.0%
+Accuracy under attack: 0.0%
+Attack success rate: 100.0%
+Average perturbed word %: 20.88%
+Average num. words per input: 7.9
+Avg num queries: 14.9

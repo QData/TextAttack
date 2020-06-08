@@ -29,9 +29,11 @@ class BeamSearch(SearchMethod):
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
                 return best_result
-            results = self.get_goal_results(potential_next_beam, initial_result.output)
+            results, search_over = self.get_goal_results(potential_next_beam, initial_result.output)
             scores = np.array([r.score for r in results])
             best_result = results[scores.argmax()]
+            if search_over:
+                return best_result
 
             # Refill the beam. This works by sorting the scores
             # in descending order and filling the beam from there.
