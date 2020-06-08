@@ -158,15 +158,15 @@ def get_args():
 
     transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(WHITE_BOX_TRANSFORMATION_CLASS_NAMES.keys())
     parser.add_argument('--transformation', type=str, required=False,
-        default='word-swap-embedding', choices=transformation_names,
-        help='The transformations to apply.')
+        default='word-swap-embedding', 
+        help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Choices: ' + str(transformation_names))
 
     parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['repeat', 'stopword'],
-        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys())))
+        help='Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys()))
     
     parser.add_argument('--out-dir', type=str, required=False, default=None,
         help='A directory to output results to.')
@@ -204,7 +204,7 @@ def get_args():
     goal_function_choices = ', '.join(GOAL_FUNCTION_CLASS_NAMES.keys())
     parser.add_argument('--goal-function', '-g', default='untargeted-classification',
         help=f'The goal function to use. choices: {goal_function_choices}')
-    
+   
     def str_to_int(s): return sum((ord(c) for c in s))
     parser.add_argument('--random-seed', default=str_to_int('TEXTATTACK'))
 
@@ -213,7 +213,11 @@ def get_args():
 
     parser.add_argument('--checkpoint-interval', required=False, type=int, 
         help='If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.')
-    
+
+    parser.add_argument('--query-budget', '-q', type=int, default=float('inf'),
+        help='The maximum number of model queries allowed per example attacked.')
+
+    attack_group = parser.add_mutually_exclusive_group(required=False)
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
@@ -291,6 +295,7 @@ def parse_goal_function_from_args(args, model):
         goal_function = eval(f'{GOAL_FUNCTION_CLASS_NAMES[goal_function]}(model)')
     else:
         raise ValueError(f'Error: unsupported goal_function {goal_function}')
+    goal_function.query_budget = args.query_budget
     return goal_function
 
 def parse_constraints_from_args(args):
@@ -322,9 +327,10 @@ def parse_recipe_from_args(model, args):
         recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
     else:
         raise ValueError(f'Invalid recipe {args.recipe}')
+    recipe.goal_function.query_budget = args.query_budget
     return recipe
 
-def parse_goal_function_and_attack_from_args(args):
+def parse_attack_from_args(args):
     if ':' in args.model:
         model_name, params = args.model.split(':')
         if model_name not in MODEL_CLASS_NAMES:
@@ -336,8 +342,7 @@ def parse_goal_function_and_attack_from_args(args):
         raise ValueError(f'Error: unsupported model {args.model}')
     if args.recipe:
         attack = parse_recipe_from_args(model, args)
-        goal_function = attack.goal_function
-        return goal_function, attack
+        return attack
     else:
         goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args, model)
@@ -351,7 +356,7 @@ def parse_goal_function_and_attack_from_args(args):
             search_method = eval(f'{SEARCH_CLASS_NAMES[args.search]}()')
         else:
             raise ValueError(f'Error: unsupported attack {args.search}')
-    return goal_function, textattack.shared.Attack(goal_function, constraints, transformation, search_method)
+    return textattack.shared.Attack(goal_function, constraints, transformation, search_method)
 
 def parse_logger_from_args(args):# Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()

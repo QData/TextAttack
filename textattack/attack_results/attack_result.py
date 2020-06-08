@@ -11,7 +11,7 @@ class AttackResult:
         perturbed_result (GoalFunctionResult): Result of the goal function applied to the
             perturbed text. May or may not have been successful.
     """
-    def __init__(self, original_result, perturbed_result):
+    def __init__(self, original_result, perturbed_result, num_queries=0):
         if original_result is None:
             raise ValueError('Attack original result cannot be None')
         elif not isinstance(original_result, GoalFunctionResult):
@@ -23,7 +23,7 @@ class AttackResult:
             
         self.original_result = original_result
         self.perturbed_result = perturbed_result
-        self.num_queries = 0
+        self.num_queries = num_queries
         
         # We don't want the TokenizedText `ids` sticking around clogging up 
         # space on our devices. Delete them here, if they're still present,
