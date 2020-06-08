@@ -261,7 +261,6 @@ def get_args():
         help='The maximum number of model queries allowed per example attacked.')
 
     attack_group = parser.add_mutually_exclusive_group(required=False)
-    attack_group = parser.add_mutually_exclusive_group(required=False)
     
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
     attack_group.add_argument('--search', '-s', '--search-method', type=str, 
