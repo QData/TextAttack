@@ -37,8 +37,8 @@ def run(args):
     
     start_time = time.time()
     
-    # Models and Attack
-    goal_function, attack = parse_goal_function_and_attack_from_args(args)
+    # Attack
+    attack = parse_attack_from_args(args)
     print(attack, '\n')
     
     # Logger
@@ -64,12 +64,11 @@ def run(args):
             if not text:
                 continue
 
-            tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, goal_function.model.tokenizer)
+            tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, attack.goal_function.model.tokenizer)
             
-            result = goal_function.get_result(tokenized_text, goal_function.get_output(tokenized_text))
             print('Attacking...')
 
-            result = next(attack.attack_dataset([(text, result.output)]))
+            result = next(attack.attack_dataset([(text, attack.goal_function.get_output(tokenized_text))]))
             print(result.__str__(color_method='stdout'))
     
     else:

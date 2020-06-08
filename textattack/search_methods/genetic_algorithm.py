@@ -26,6 +26,7 @@ class GeneticAlgorithm(SearchMethod):
         self.pop_size = pop_size
         self.temp = temp
         self.give_up_if_no_improvement = give_up_if_no_improvement
+        self.search_over = False
 
     def _replace_at_index(self, pop_member, idx):
         """
@@ -37,18 +38,20 @@ class GeneticAlgorithm(SearchMethod):
             idx: The index at which to replace a word.
 
         Returns:
-            Whether a replacement which decreased the score was found.
+            Whether a replacement which increased the score was found.
         """
         transformations = self.get_transformations(pop_member.tokenized_text,
                                                    original_text=self.original_tokenized_text,
                                                    indices_to_modify=[idx])
         if not len(transformations):
             return False
-        new_x_results = self.get_goal_results(transformations, self.correct_output)
+        orig_result, self.search_over = self.get_goal_results([pop_member.tokenized_text], self.correct_output)
+        if self.search_over:
+            return False
+        new_x_results, self.search_over = self.get_goal_results(transformations, self.correct_output)
         new_x_scores = torch.Tensor([r.score for r in new_x_results])
-        orig_score = self.get_goal_results([pop_member.tokenized_text], self.correct_output)[0].score
-        new_x_scores = new_x_scores - orig_score
-        if new_x_scores.max() > 0:
+        new_x_scores = new_x_scores - orig_result[0].score
+        if len(new_x_scores) and new_x_scores.max() > 0:
             pop_member.tokenized_text = transformations[new_x_scores.argmax()]
             return True
         return False
@@ -65,7 +68,7 @@ class GeneticAlgorithm(SearchMethod):
         if non_zero_indices == 0:
             return
         iterations = 0
-        while iterations < non_zero_indices:
+        while iterations < non_zero_indices and not self.search_over:
             w_select_probs = neighbors_len / np.sum(neighbors_len)
             rand_idx = np.random.choice(x_len, 1, p=w_select_probs)[0]
             if self._replace_at_index(pop_member, rand_idx):
@@ -74,17 +77,18 @@ class GeneticAlgorithm(SearchMethod):
             neighbors_len[rand_idx] = 0
             iterations += 1
 
-    def _generate_population(self, neighbors_len):
+    def _generate_population(self, neighbors_len, initial_result):
         """
         Generates a population of texts each with one word replaced
         Args:
             neighbors_len: A list of the number of candidate neighbors for each word.
+            initial_result: The result to instantiate the population with
         Returns:
             The population.
         """
         pop = []
         for _ in range(self.pop_size):
-            pop_member = PopulationMember(self.original_tokenized_text, deepcopy(neighbors_len))
+            pop_member = PopulationMember(self.original_tokenized_text, deepcopy(neighbors_len), initial_result)
             self._perturb(pop_member)
             pop.append(pop_member)
         return pop
@@ -134,10 +138,14 @@ class GeneticAlgorithm(SearchMethod):
         self.original_tokenized_text = initial_result.tokenized_text
         self.correct_output = initial_result.output
         neighbors_len = self._get_neighbors_len(self.original_tokenized_text)
-        pop = self._generate_population(neighbors_len)
+        pop = self._generate_population(neighbors_len, initial_result)
         cur_score = initial_result.score
         for i in range(self.max_iters):
-            pop_results = self.get_goal_results([pm.tokenized_text for pm in pop], self.correct_output)
+            pop_results, self.search_over = self.get_goal_results([pm.tokenized_text for pm in pop], self.correct_output)
+            if self.search_over:
+                if not len(pop_results):
+                    return pop[0].result
+                return max(pop_results, key=lambda x: x.score)
             for idx, result in enumerate(pop_results):
                 pop[idx].result = pop_results[idx]
             pop = sorted(pop, key=lambda x: -x.result.score)
@@ -186,6 +194,7 @@ class PopulationMember:
         tokenized_text: The ``TokenizedText`` of the population member.
         neighbors_len: A list of the number of candidate neighbors list for each word.
     """
-    def __init__(self, tokenized_text, neighbors_len):
+    def __init__(self, tokenized_text, neighbors_len, result=None):
         self.tokenized_text = tokenized_text
         self.neighbors_len = neighbors_len
+        self.result = result
