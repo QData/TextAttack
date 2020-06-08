@@ -10,20 +10,23 @@ def get_nlp_dataset_columns(dataset):
     if {'premise', 'hypothesis', 'label'} <= schema:
         input_columns = ('premise', 'hypothesis')
         output_column = 'label'
-    elif {'sentence', 'label'} <= schema:
-        input_columns = ('sentence',)
+    elif {'question', 'sentence', 'label'} <= schema:
+        input_columns = ('question', 'sentence')
+        output_column = 'label'
+    elif {'sentence1', 'sentence2', 'label'} <= schema:
+        input_columns = ('sentence1', 'sentence2')
+        output_column = 'label'
+    elif {'question1', 'question2', 'label'} <= schema:
+        input_columns = ('question1', 'question2')
+        output_column = 'label'
+    elif {'question', 'sentence', 'label'} <= schema:
+        input_columns = ('question', 'sentence')
         output_column = 'label'
     elif {'text', 'label'} <= schema:
         input_columns = ('text',)
         output_column = 'label'
-    elif {'sentence1', 'sentence2', 'label'} <= schema:
-        input_columns = {'sentence1', 'sentence2'}
-        output_column = 'label'
-    elif {'question1', 'question2', 'label'} <= schema:
-        input_columns = {'question1', 'question2'}
-        output_column = 'label'
-    elif {'question', 'sentence', 'label'} <= schema:
-        input_columns = {'question', 'sentence'}
+    elif {'sentence', 'label'} <= schema:
+        input_columns = ('sentence',)
         output_column = 'label'
     else:
         raise ValueError(f'Unsupported dataset schema {schema}. Try loading dataset manually (from a file) instead.')
@@ -37,6 +40,7 @@ class HuggingFaceNLPDataset(TextAttackDataset):
     def __init__(self, name, subset=None, split='train', label_map=None, shuffle=False):
         dataset = nlp.load_dataset(name, subset)
         self.input_columns, self.output_column = get_nlp_dataset_columns(dataset[split])
+        print('schema:', self.input_columns, self.output_column)
         self._i = 0
         self.examples = list(dataset[split])
         self.label_map = label_map

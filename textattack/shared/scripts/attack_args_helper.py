@@ -98,14 +98,14 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     'bert-base-uncased-QNLI':  ('textattack/bert-base-uncased-QNLI',  ('glue', 'qnli',  'train')),
     'bert-base-uncased-QQP':   ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'train')),
     'bert-base-uncased-RTE':   ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'train')),
-    'bert-base-uncased-SST-2': ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'train')),
-    'bert-base-uncased-STS-B': ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'train')),
-    'bert-base-uncased-WNLI':  ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'train')),
+    'bert-base-uncased-SST-2': ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'train')), #######not working
+    'bert-base-uncased-STS-B': ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'train')), #######not working
+    'bert-base-uncased-WNLI':  ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'train')),#######not working
     #
     # distilbert-base-cased
     #
-    'distilbert-base-cased-CoLA':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'train')),
-    'distilbert-base-cased-MRPC':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'train')),
+    'distilbert-base-cased-CoLA':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'train')),#######not working
+    'distilbert-base-cased-MRPC':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'train')),######actually broken
     'distilbert-base-cased-QQP':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'train')),
     'distilbert-base-cased-SST-2':  ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'train')),
     'distilbert-base-cased-STS-B':  ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'train')),
@@ -135,7 +135,15 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # xlnet-base-cased
     #
-    'xnlet-base-cased-CoLA':  ('textattack/xlnet-base-cased-CoLA',  ('glue', 'CoLA',  'train')),
+    'xlnet-base-uncased-CoLA':  ('textattack/xlnet-base-cased-CoLA',  ('glue', 'cola',  'train')),
+    'xlnet-base-uncased-MNLI':  ('textattack/xlnet-base-cased-MNLI',  ('glue', 'mnli',  'train', [1, 2, 0])),
+    'xlnet-base-uncased-MRPC':  ('textattack/xlnet-base-cased-MRPC',  ('glue', 'mrpc',  'train')),
+    'xlnet-base-uncased-QNLI':  ('textattack/xlnet-base-cased-QNLI',  ('glue', 'qnli',  'train')),
+    'xlnet-base-uncased-QQP':   ('textattack/xlnet-base-cased-QQP',   ('glue', 'qqp',   'train')),
+    'xlnet-base-uncased-RTE':   ('textattack/xlnet-base-cased-RTE',   ('glue', 'rte',   'train')),
+    'xlnet-base-uncased-SST-2': ('textattack/xlnet-base-cased-SST-2', ('glue', 'sst2', 'train')), #######not working
+    'xlnet-base-uncased-STS-B': ('textattack/xlnet-base-cased-STS-B', ('glue', 'stsb', 'train')), #######not working
+    'xlnet-base-uncased-WNLI':  ('textattack/xlnet-base-cased-WNLI',  ('glue', 'wnli',  'train')),#######not working
     
 }
 

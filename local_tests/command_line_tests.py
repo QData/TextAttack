@@ -29,7 +29,7 @@ register_test(('printf "All that glitters is not gold\nq\n"',
 #
 # test: run_attack on HuggingFace ``transformers`` model & ``nlp`` dataset
 #
-register_test(('python -m textattack --model_from_huggingface '
+register_test(('python -m textattack --model-from-huggingface '
     'distilbert-base-uncased-finetuned-sst-2-english '
     '--dataset_from_nlp glue:sst2 --recipe deepwordbug --num-examples 5'),
     name='huggingface_model_dataset',
@@ -39,8 +39,8 @@ register_test(('python -m textattack --model_from_huggingface '
 #
 # test: run_attack on model and dataset loaded from file
 #
-register_test(('python -m textattack --model_from_file local_tests/sample_inputs/sst_model_and_dataset.py '
-    '--dataset_from_file local_tests/sample_inputs/sst_model_and_dataset.py '
+register_test(('python -m textattack --model-from-file local_tests/sample_inputs/sst_model_and_dataset.py '
+    '--dataset-from-file local_tests/sample_inputs/sst_model_and_dataset.py '
     '--recipe deepwordbug --num-examples 5'),
     name='load_model_and_dataset_from_file',
     output_file='local_tests/sample_outputs/run_attack_transformers_nlp.txt',
