@@ -74,7 +74,7 @@ class MetropolisHastingsSampling(SearchMethod):
             original_label
         Returns: lm_score(x) * prob_model(wrong|x)
         """
-        model_result = self.get_goal_results([x], original_label)[0]
+        model_result = self.get_goal_results([x], original_label)[0][0]
         lm_score = self._lm_score(x.text)
         return lm_score * model_result.score
 
@@ -88,7 +88,7 @@ class MetropolisHastingsSampling(SearchMethod):
         Returns: list of floats representing lm_score(x) * prob_model(wrong|x)
         """
         batch_size = len(x_list)
-        model_results = self.get_goal_results(x_list, original_label)
+        model_results = self.get_goal_results(x_list, original_label)[0]
         lm_scores = [self._lm_score(x.text) for x in x_list]
         scores = [lm_scores[i] * model_results[i].score for i in range(batch_size)]
 
