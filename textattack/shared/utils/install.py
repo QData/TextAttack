@@ -121,7 +121,6 @@ def config(key):
     
 config_dict = {
     'CACHE_DIR': os.environ.get('TA_CACHE_DIR', os.path.expanduser('~/.cache/textattack')),
-    'MAX_SEQ_LEN': 512
 }
 config_path = download_if_needed('config.yaml')
 with open(config_path, 'r') as f:

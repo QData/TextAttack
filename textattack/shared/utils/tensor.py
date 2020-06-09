@@ -1,14 +1,36 @@
 import textattack
 import torch
 
+from textattack.shared import utils
+
+def batch_model_predict(model, inputs, batch_size=utils.config('MODEL_BATCH_SIZE')):
+    outputs = []
+    i = 0
+    while i < len(inputs):
+        batch = inputs[i:i+batch_size]
+        batch_preds = model_predict(self.model, batch)
+        outputs.append(batch_preds)
+        i += batch_size
+    
+    return torch.cat(outputs)
+
+def get_model_device(model):
+    if hasattr(model, 'model'):
+        model_device = next(self.model.model.parameters()).device
+    else:
+        model_device = next(self.model.parameters()).device
+    return model_device
+    
 def model_predict(model, inputs):
     try:
         return try_model_predict(model, inputs)
     except Exception as e:
-        textattack.shared.utils.logger.warn(f'Failed to predict with model {model}. Check tokenizer configuration.')
+        textattack.shared.utils.logger.error(f'Failed to predict with model {model}. Check tokenizer configuration.')
         raise e
 
 def try_model_predict(model, inputs):
+    model_device = get_model_device(model)
+    
     if isinstance(inputs[0], dict):
         # If ``inputs`` is a list of dicts, we convert them to a single dict
         # (now of tensors) and pass to the model as kwargs.
@@ -17,7 +39,7 @@ def try_model_predict(model, inputs):
         # Convert list keys to tensors.
         for key in input_dict:
             input_dict[key] = pad_lists(input_dict[key])
-            input_dict[key] = torch.tensor(input_dict[key]).to(textattack.shared.utils.device)
+            input_dict[key] = torch.tensor(input_dict[key]).to(model_device)
         # Do inference using keys as kwargs.
         outputs = model(**input_dict)
         
@@ -31,13 +53,13 @@ def try_model_predict(model, inputs):
         if input_dim == 2:
             # For models where the input is a single vector.
             inputs = pad_lists(inputs)
-            inputs = torch.tensor(inputs).to(textattack.shared.utils.device)
+            inputs = torch.tensor(inputs).to(model_device)
             outputs = model(inputs)
         elif input_dim == 3:
             # For models that take multiple vectors per input.
             inputs = map(list, zip(*inputs))
             inputs = map(pad_lists, inputs)
-            inputs = (torch.tensor(x).to(textattack.shared.utils.device) for x in inputs)
+            inputs = (torch.tensor(x).to(model_device) for x in inputs)
             outputs = model(*inputs)
         else:
             raise TypeError(f'Error: malformed inputs.ndim ({input_dim})')

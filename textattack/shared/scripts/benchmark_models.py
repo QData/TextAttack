@@ -10,6 +10,8 @@ def _cb(s): return textattack.shared.utils.color_text(str(s), color='blue', meth
 def get_num_successes(args, model, ids, true_labels):
     preds = textattack.shared.utils.model_predict(model, ids)
     true_labels = torch.tensor(true_labels).to(textattack.shared.utils.device)
+    # for t, p in zip(true_labels, preds):
+        # print(t, 'but guessed', p)
     guess_labels = preds.argmax(dim=1)
     successes = (guess_labels == true_labels).sum().item()
     return successes, true_labels, guess_labels
@@ -29,8 +31,6 @@ def test_model_on_dataset(args, model, dataset, batch_size=16):
         batch_labels.append(label)
         if len(batch_ids) == batch_size:
             batch_succ, true_labels, guess_labels = get_num_successes(args, model, batch_ids, batch_labels)
-            # for t, g in zip(true_labels, guess_labels):
-                # print(t, 'but guessed', g)
             batch_fail = batch_size - batch_succ
             succ += batch_succ
             fail += batch_fail

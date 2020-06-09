@@ -91,62 +91,47 @@ DATASET_BY_MODEL = {
 HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # bert-base-uncased
-    # #
-    # 'bert-base-uncased-cola':       ('textattack/bert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
-    # 'bert-base-uncased-mnli':       ('textattack/bert-base-uncased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
-    # 'bert-base-uncased-mrpc':       ('textattack/bert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
-    # 'bert-base-uncased-qnli':       ('textattack/bert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
-    # 'bert-base-uncased-qqp':        ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
-    # 'bert-base-uncased-rte':        ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
-    # 'bert-base-uncased-sst2':       ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'validation')), 
-    # 'bert-base-uncased-stsb':       ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'validation')), 
-    # 'bert-base-uncased-wnli':       ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
-    # #
-    # # distilbert-base-cased
-    # #
-    # 'distilbert-base-cased-cola':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'validation')),
-    # 'distilbert-base-cased-mrpc':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'validation')),
-    # 'distilbert-base-cased-qqp':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'validation')),
-    # 'distilbert-base-cased-sst2':   ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'validation')),
-    # 'distilbert-base-cased-stsb':   ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'validation')),
-    # #
-    # # distilbert-base-uncased
-    # #
-    # 'distilbert-base-uncased-cola':  ('textattack/distilbert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
-    # 'distilbert-base-uncased-mnli':  ('textattack/distilbert-base-uncased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
-    # 'distilbert-base-uncased-mrpc':  ('textattack/distilbert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
-    # 'distilbert-base-uncased-qnli':  ('textattack/distilbert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
-    # 'distilbert-base-uncased-qqp':   ('textattack/distilbert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
-    # 'distilbert-base-uncased-rte':   ('textattack/distilbert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
-    # 'distilbert-base-uncased-sst2':  ('textattack/distilbert-base-uncased-SST-2', ('glue', 'sst2',  'validation')),
-    # 'distilbert-base-uncased-stsb':  ('textattack/distilbert-base-uncased-STS-B', ('glue', 'stsb',  'validation')),
-    # 'distilbert-base-uncased-wnli':  ('textattack/distilbert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
-    # #
-    # # roberta-base (RoBERTa is cased by default)
-    # #
-    # 'roberta-base-cola':             ('textattack/roberta-base-CoLA',  ('glue', 'cola',  'validation')),
-    # 'roberta-base-mnli':             ('textattack/roberta-base-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
-    # 'roberta-base-mrpc':             ('textattack/roberta-base-MRPC',  ('glue', 'mrpc',  'validation')),
-    # 'roberta-base-qnli':             ('textattack/roberta-base-QNLI',  ('glue', 'qnli',  'validation')),
-    # 'roberta-base-rte':              ('textattack/roberta-base-RTE',   ('glue', 'rte',   'validation')),
-    # 'roberta-base-sst2':             ('textattack/roberta-base-SST-2', ('glue', 'sst2', 'validation')),
-    # 'roberta-base-stsb':             ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'validation')),
-    # 'roberta-base-wnli':             ('textattack/roberta-base-WNLI',  ('glue', 'wnli',  'validation')),
-    # #
-    # # xlnet-base-cased
-    # #
-    # 'xlnet-base-cased-cola':  ('textattack/xlnet-base-cased-CoLA',  ('glue', 'cola',  'validation')),
-    # 'xlnet-base-cased-mnli':  ('textattack/xlnet-base-cased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
-    # 'xlnet-base-cased-mrpc':  ('textattack/xlnet-base-cased-MRPC',  ('glue', 'mrpc',  'validation')),
-    # 'xlnet-base-cased-qnli':  ('textattack/xlnet-base-cased-QNLI',  ('glue', 'qnli',  'validation')),
-    # 'xlnet-base-cased-qqp':   ('textattack/xlnet-base-cased-QQP',   ('glue', 'qqp',   'validation')),
-    # 'xlnet-base-cased-rte':   ('textattack/xlnet-base-cased-RTE',   ('glue', 'rte',   'validation')),
-    # 'xlnet-base-cased-sst2':  ('textattack/xlnet-base-cased-SST-2', ('glue', 'sst2',  'validation')),
-    # 'xlnet-base-cased-stsb':  ('textattack/xlnet-base-cased-STS-B', ('glue', 'stsb',  'validation')), 
-    # 'xlnet-base-cased-wnli':  ('textattack/xlnet-base-cased-WNLI',  ('glue', 'wnli',  'validation')),
-    
-    ### fixed lines
-    'roberta-base-mnli':             ('textattack/roberta-base-MNLI',  ('glue', 'mnli',  'validation_matched')),
+    #
+    'bert-base-uncased-cola':       ('textattack/bert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
+    'bert-base-uncased-mnli':       ('textattack/bert-base-uncased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
+    'bert-base-uncased-mrpc':       ('textattack/bert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
+    'bert-base-uncased-qnli':       ('textattack/bert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
+    'bert-base-uncased-qqp':        ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
+    'bert-base-uncased-rte':        ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
+    'bert-base-uncased-sst2':       ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'validation')), 
+    'bert-base-uncased-stsb':       ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'validation')), 
+    'bert-base-uncased-wnli':       ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
+    #
+    # distilbert-base-cased
+    #
+    'distilbert-base-cased-cola':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'validation')),
+    'distilbert-base-cased-mrpc':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'validation')),
+    'distilbert-base-cased-qqp':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'validation')),
+    'distilbert-base-cased-sst2':   ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'validation')),
+    'distilbert-base-cased-stsb':   ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'validation')),
+    #
+    # distilbert-base-uncased
+    #
+    'distilbert-base-uncased-cola':  ('textattack/distilbert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
+    'distilbert-base-uncased-mnli':  ('textattack/distilbert-base-uncased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
+    'distilbert-base-uncased-mrpc':  ('textattack/distilbert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
+    'distilbert-base-uncased-qnli':  ('textattack/distilbert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
+    'distilbert-base-uncased-qqp':   ('textattack/distilbert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
+    'distilbert-base-uncased-rte':   ('textattack/distilbert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
+    'distilbert-base-uncased-sst2':  ('textattack/distilbert-base-uncased-SST-2', ('glue', 'sst2',  'validation')),
+    'distilbert-base-uncased-stsb':  ('textattack/distilbert-base-uncased-STS-B', ('glue', 'stsb',  'validation')),
+    'distilbert-base-uncased-wnli':  ('textattack/distilbert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
+    #
+    # roberta-base (RoBERTa is cased by default)
+    #
+    'roberta-base-cola':             ('textattack/roberta-base-CoLA',  ('glue', 'cola',  'validation')),
+    'roberta-base-mnli':             ('textattack/roberta-base-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
+    'roberta-base-mrpc':             ('textattack/roberta-base-MRPC',  ('glue', 'mrpc',  'validation')),
+    'roberta-base-qnli':             ('textattack/roberta-base-QNLI',  ('glue', 'qnli',  'validation')),
+    'roberta-base-rte':              ('textattack/roberta-base-RTE',   ('glue', 'rte',   'validation')),
+    'roberta-base-sst2':             ('textattack/roberta-base-SST-2', ('glue', 'sst2', 'validation')),
+    'roberta-base-stsb':             ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'validation')),
+    'roberta-base-wnli':             ('textattack/roberta-base-WNLI',  ('glue', 'wnli',  'validation')),
     
 }
 

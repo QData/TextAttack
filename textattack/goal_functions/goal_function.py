@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import math
 
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import batch_model_predict, default_class_repr
 from textattack.shared import utils, validators
 
 class GoalFunction:
@@ -91,11 +91,11 @@ class GoalFunction:
         Processes and validates a list of model outputs. 
         
         This is a task-dependent operation. For example, classification 
-        outputs need to have a softmax applied. 
+        outputs need to make sure they have a softmax applied. 
         """
         raise NotImplementedError()
 
-    def _call_model_uncached(self, tokenized_text_list, batch_size=utils.config('MODEL_BATCH_SIZE')):
+    def _call_model_uncached(self, tokenized_text_list):
         """ 
         Queries model and returns outputs for a list of TokenizedText 
         objects. 
@@ -103,46 +103,10 @@ class GoalFunction:
         if not len(tokenized_text_list):
             return []
         ids = [t.ids for t in tokenized_text_list]
-        if hasattr(self.model, 'model'):
-            model_device = next(self.model.model.parameters()).device
-        else:
-            model_device = next(self.model.parameters()).device
-        try:
-            ids = torch.tensor(ids).to(model_device) 
-        except ValueError:
-            # A ValueError is thrown if `ids` consists of a list of different-
-            # length lists of IDs. Handle this case automatically.
-            ids = utils.preprocess_ids(ids)
-            ids = torch.tensor(ids).to(model_device) 
         
-        # Add extra dimension if not present.
-        if ids.ndim == 2:
-            ids = ids.unsqueeze(dim=1)
+        with torch.no_grad():
+            outputs = batch_model_predict(self.model, ids)
         
-        # Truncate to maximum sequence length.
-        ids = ids[:, :, :utils.config('MAX_SEQ_LEN')]
-        
-        #
-        # shape of `ids` is (n, m, d)
-        #   - n: number of elements in `tokenized_text_list`
-        #   - m: number of vectors per element
-        #           ex: most classification models take a single vector, so m=1
-        #           ex: some entailment models take three vectors, so m=3
-        #   - d: dimensionality of each vector
-        #           (a typical model might set d=128 or d=256)
-        num_fields = ids.shape[1]
-        num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
-        outputs = []
-        for batch_i in range(num_batches):
-            batch_start = batch_i * batch_size
-            batch_stop  = (batch_i + 1) * batch_size
-            batch_ids = ids[batch_start:batch_stop]
-            batch = [batch_ids[:, x, :] for x in range(num_fields)]
-            with torch.no_grad():
-                preds = self.model(*batch)
-            if isinstance(preds, tuple):
-                preds = preds[0]
-            outputs.append(preds)
         return self._process_model_outputs(tokenized_text_list, outputs)
     
     def _call_model(self, tokenized_text_list):
