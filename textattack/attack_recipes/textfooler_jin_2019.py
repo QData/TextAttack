@@ -16,8 +16,7 @@ def TextFoolerJin2019(model):
         https://arxiv.org/abs/1907.11932 
     """
     #
-    # Swap words with their embedding nearest-neighbors. 
-    #
+    # Swap words with their 50 closest embedding nearest-neighbors. 
     # Embedding: Counter-fitted PARAGRAM-SL999 vectors.
     #
     transformation = WordSwapEmbedding(max_candidates=50)
@@ -32,10 +31,8 @@ def TextFoolerJin2019(model):
     ]
     #
     # Minimum word embedding cosine similarity of 0.5.
-    #
-    # 50 nearest-neighbors with a cosine similarity of at least 0.5.
-    # (The paper claims 0.7, but analysis of the code and some empirical
-    # results show that it's definitely 0.5.)
+    # (The paper claims 0.7, but analysis of the released code and some empirical
+    # results show that it's 0.5.)
     #
     constraints.append(
         WordEmbeddingDistance(min_cos_sim=0.5)
