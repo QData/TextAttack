@@ -1,24 +1,48 @@
 import textattack
 import torch
 
-def model_predict(model, ids):
-    import pdb; pdb.set_trace()
-    id_dim = get_list_dim(ids)
-    
-    if id_dim == 2:
-        # For models where the input is a single vector.
-        ids = pad_lists(ids)
-        ids = torch.tensor(ids).to(textattack.shared.utils.device)
-        outputs = model(ids)
-    elif id_dim == 3:
-        # For models that take multiple vectors per input.
-        ids = map(list, zip(*ids))
-        ids = map(pad_lists, ids)
-        ids = (torch.tensor(x).to(textattack.shared.utils.device) for x in ids)
+def model_predict(model, inputs):
+    try:
+        return try_model_predict(model, inputs)
+    except Exception as e:
+        textattack.shared.utils.logger.warn(f'Failed to predict with model {model}. Check tokenizer configuration.')
+        raise e
+
+def try_model_predict(model, inputs):
+    if isinstance(inputs[0], dict):
+        # If ``inputs`` is a list of dicts, we convert them to a single dict
+        # (now of tensors) and pass to the model as kwargs.
+        # Convert list of dicts to dict of lists.
+        input_dict = {k: [_dict[k] for _dict in inputs] for k in inputs[0]}
+        # Convert list keys to tensors.
+        for key in input_dict:
+            input_dict[key] = pad_lists(input_dict[key])
+            input_dict[key] = torch.tensor(input_dict[key]).to(textattack.shared.utils.device)
+        # Do inference using keys as kwargs.
+        outputs = model(**input_dict)
+        
     else:
-        raise TypeError(f'Error: malformed ids.ndim ({id_dim})')
+        # If ``inputs`` is not a list of dicts, it's either a list of tuples
+        # (model takes multiple inputs) or a list of ID lists (where the model
+        # takes a single input). In this case, we'll do our best to figure out
+        # the proper input to the model, anyway.
+        input_dim = get_list_dim(inputs)
+        
+        if input_dim == 2:
+            # For models where the input is a single vector.
+            inputs = pad_lists(inputs)
+            inputs = torch.tensor(inputs).to(textattack.shared.utils.device)
+            outputs = model(inputs)
+        elif input_dim == 3:
+            # For models that take multiple vectors per input.
+            inputs = map(list, zip(*inputs))
+            inputs = map(pad_lists, inputs)
+            inputs = (torch.tensor(x).to(textattack.shared.utils.device) for x in inputs)
+            outputs = model(*inputs)
+        else:
+            raise TypeError(f'Error: malformed inputs.ndim ({input_dim})')
     
-    outputs = model(*ids)
+    # If `outputs` is a tuple, take the first argument.
     if isinstance(outputs, tuple):
         outputs = outputs[0]
     return outputs
