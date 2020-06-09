@@ -1,19 +1,35 @@
-def preprocess_ids(lists_of_ids):
-    """ Tries to automatically aggregating lists of IDs produced by tokenizers. """
-    lists_of_ids = unroll_tuples(lists_of_ids)
-    return pad_and_truncate_lists(lists_of_ids)
+import textattack
+import torch
 
-def unroll_tuples(list_of_tuples):
-    """ Determines if a list is a list of tuples of length 1. If so, removes
-        each item from its tuple.
-    """
-    if not isinstance(list_of_tuples[0], tuple):
-        return list_of_tuples
-    elif not len(list_of_tuples[0]) == 1:
-        return list_of_tuples
-    return [l[0] for l in list_of_tuples]
+def model_predict(model, ids):
+    import pdb; pdb.set_trace()
+    id_dim = get_list_dim(ids)
+    
+    if id_dim == 2:
+        # For models where the input is a single vector.
+        ids = pad_lists(ids)
+        ids = torch.tensor(ids).to(textattack.shared.utils.device)
+        outputs = model(ids)
+    elif id_dim == 3:
+        # For models that take multiple vectors per input.
+        ids = map(list, zip(*ids))
+        ids = map(pad_lists, ids)
+        ids = (torch.tensor(x).to(textattack.shared.utils.device) for x in ids)
+    else:
+        raise TypeError(f'Error: malformed ids.ndim ({id_dim})')
+    
+    outputs = model(*ids)
+    if isinstance(outputs, tuple):
+        outputs = outputs[0]
+    return outputs
 
-def pad_and_truncate_lists(lists, pad_token=0):
+def get_list_dim(ids):
+    if isinstance(ids, tuple) or isinstance(ids, list) or isinstance(ids, torch.Tensor):
+        return 1 + get_list_dim(ids[0])
+    else:
+        return 0
+
+def pad_lists(lists, pad_token=0):
     """ Pads lists with trailing zeros to make them all the same length. """
     max_list_len = max(len(l) for l in lists)
     for i in range(len(lists)):

@@ -25,36 +25,36 @@ MODEL_CLASS_NAMES = {
     #
     
     # BERT models - default uncased
-    'bert-ag-news':             'textattack.models.classification.bert.BERTForAGNewsClassification',
-    'bert-imdb':                'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
-    'bert-mr':                  'textattack.models.classification.bert.BERTForMRSentimentClassification',
-    'bert-yelp-sentiment':      'textattack.models.classification.bert.BERTForYelpSentimentClassification',
+    'bert-base-uncased-ag-news':    'textattack.models.classification.bert.BERTForAGNewsClassification',
+    'bert-base-uncased-imdb':       'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
+    'bert-base-uncased-mr':         'textattack.models.classification.bert.BERTForMRSentimentClassification',
+    'bert-base-uncased-yelp':       'textattack.models.classification.bert.BERTForYelpSentimentClassification',
     # CNN models
-    'cnn-ag-news':              'textattack.models.classification.cnn.WordCNNForAGNewsClassification',
-    'cnn-imdb':                 'textattack.models.classification.cnn.WordCNNForIMDBSentimentClassification',
-    'cnn-mr':                   'textattack.models.classification.cnn.WordCNNForMRSentimentClassification',
-    'cnn-yelp-sentiment':       'textattack.models.classification.cnn.WordCNNForYelpSentimentClassification',
+    'cnn-ag-news':                  'textattack.models.classification.cnn.WordCNNForAGNewsClassification',
+    'cnn-imdb':                     'textattack.models.classification.cnn.WordCNNForIMDBSentimentClassification',
+    'cnn-mr':                       'textattack.models.classification.cnn.WordCNNForMRSentimentClassification',
+    'cnn-yelp-sentiment':           'textattack.models.classification.cnn.WordCNNForYelpSentimentClassification',
     # LSTM models
-    'lstm-ag-news':             'textattack.models.classification.lstm.LSTMForAGNewsClassification',
-    'lstm-imdb':                'textattack.models.classification.lstm.LSTMForIMDBSentimentClassification',
-    'lstm-mr':                  'textattack.models.classification.lstm.LSTMForMRSentimentClassification',
-    'lstm-yelp-sentiment':      'textattack.models.classification.lstm.LSTMForYelpSentimentClassification',
+    'lstm-ag-news':                 'textattack.models.classification.lstm.LSTMForAGNewsClassification',
+    'lstm-imdb':                    'textattack.models.classification.lstm.LSTMForIMDBSentimentClassification',
+    'lstm-mr':                      'textattack.models.classification.lstm.LSTMForMRSentimentClassification',
+    'lstm-yelp-sentiment':          'textattack.models.classification.lstm.LSTMForYelpSentimentClassification',
     #
     # Textual entailment models
     #
     # BERT models
-    'bert-mnli':                'textattack.models.entailment.bert.BERTForMNLI',
-    'bert-snli':                'textattack.models.entailment.bert.BERTForSNLI',
+    'bert-base-uncased-mnli':       'textattack.models.entailment.bert.BERTForMNLI',
+    'bert-base-uncased-snli':       'textattack.models.entailment.bert.BERTForSNLI',
     #
     # Translation models
     #
-    't5-en2fr':                 'textattack.models.translation.t5.T5EnglishToFrench',
-    't5-en2de':                 'textattack.models.translation.t5.T5EnglishToGerman',
-    't5-en2ro':                 'textattack.models.translation.t5.T5EnglishToRomanian',
+    't5-en2fr':                     'textattack.models.translation.t5.T5EnglishToFrench',
+    't5-en2de':                     'textattack.models.translation.t5.T5EnglishToGerman',
+    't5-en2ro':                     'textattack.models.translation.t5.T5EnglishToRomanian',
     #
     # Summarization models
     #
-    't5-summ':                  'textattack.models.summarization.T5Summarization',
+    't5-summ':                      'textattack.models.summarization.T5Summarization',
 }
 
 DATASET_BY_MODEL = {
@@ -62,88 +62,88 @@ DATASET_BY_MODEL = {
     # Text classification datasets
     #
     # AG News
-    'bert-ag-news':             textattack.datasets.classification.AGNews,
-    'cnn-ag-news':              textattack.datasets.classification.AGNews,
-    'lstm-ag-news':             textattack.datasets.classification.AGNews,
+    'bert-base-uncased-ag-news':    textattack.datasets.classification.AGNews,
+    'cnn-ag-news':                  textattack.datasets.classification.AGNews,
+    'lstm-ag-news':                 textattack.datasets.classification.AGNews,
     # IMDB 
-    'bert-imdb':                textattack.datasets.classification.IMDBSentiment,
-    'cnn-imdb':                 textattack.datasets.classification.IMDBSentiment,
-    'lstm-imdb':                textattack.datasets.classification.IMDBSentiment,
+    'bert-base-uncased-imdb':       textattack.datasets.classification.IMDBSentiment,
+    'cnn-imdb':                     textattack.datasets.classification.IMDBSentiment,
+    'lstm-imdb':                    textattack.datasets.classification.IMDBSentiment,
     # MR
-    'bert-mr':                  textattack.datasets.classification.MovieReviewSentiment,
-    'cnn-mr':                   textattack.datasets.classification.MovieReviewSentiment,
-    'lstm-mr':                  textattack.datasets.classification.MovieReviewSentiment,
+    'bert-base-uncased-mr':         textattack.datasets.classification.MovieReviewSentiment,
+    'cnn-mr':                       textattack.datasets.classification.MovieReviewSentiment,
+    'lstm-mr':                      textattack.datasets.classification.MovieReviewSentiment,
     # Yelp
-    'bert-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
-    'cnn-yelp-sentiment':       textattack.datasets.classification.YelpSentiment,
-    'lstm-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
+    'bert-base-uncased-yelp':       textattack.datasets.classification.YelpSentiment,
+    'cnn-yelp-sentiment':           textattack.datasets.classification.YelpSentiment,
+    'lstm-yelp-sentiment':          textattack.datasets.classification.YelpSentiment,
     #
     # Textual entailment datasets
     #
-    'bert-mnli':                textattack.datasets.entailment.MNLI,
-    'bert-snli':                textattack.datasets.entailment.SNLI,
+    'bert-base-uncased-mnli':       textattack.datasets.entailment.MNLI,
+    'bert-base-uncased-snli':       textattack.datasets.entailment.SNLI,
     #
     # Translation datasets
     #
-    't5-en2de':                 textattack.datasets.translation.NewsTest2013EnglishToGerman,
-}
+    't5-en2de':                     textattack.datasets.translation.NewsTest2013EnglishToGerman,
 
+}
 HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # bert-base-uncased
     #
-    'bert-base-uncased-CoLA':  ('textattack/bert-base-uncased-CoLA',  ('glue', 'cola',  'train')),
-    'bert-base-uncased-MNLI':  ('textattack/bert-base-uncased-MNLI',  ('glue', 'mnli',  'train', [1, 2, 0])),
-    'bert-base-uncased-MRPC':  ('textattack/bert-base-uncased-MRPC',  ('glue', 'mrpc',  'train')),
-    'bert-base-uncased-QNLI':  ('textattack/bert-base-uncased-QNLI',  ('glue', 'qnli',  'train')),
-    'bert-base-uncased-QQP':   ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'train')),
-    'bert-base-uncased-RTE':   ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'train')),
-    'bert-base-uncased-SST-2': ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'train')), #######not working
-    'bert-base-uncased-STS-B': ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'train')), #######not working
-    'bert-base-uncased-WNLI':  ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'train')),#######not working
+    'bert-base-uncased-cola':       ('textattack/bert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
+    'bert-base-uncased-mnli':       ('textattack/bert-base-uncased-MNLI',  ('glue', 'mnli',  'train', [1, 2, 0])),
+    'bert-base-uncased-mrpc':       ('textattack/bert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
+    'bert-base-uncased-qnli':       ('textattack/bert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
+    'bert-base-uncased-qqp':        ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
+    'bert-base-uncased-rte':        ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
+    'bert-base-uncased-sst2':       ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'validation')), 
+    'bert-base-uncased-stsb':       ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'validation')), #######outputs all zeros
+    'bert-base-uncased-wnli':       ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),#######works, but 40% accurate
     #
     # distilbert-base-cased
     #
-    'distilbert-base-cased-CoLA':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'train')),#######not working
-    'distilbert-base-cased-MRPC':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'train')),######actually broken
-    'distilbert-base-cased-QQP':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'train')),
-    'distilbert-base-cased-SST-2':  ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'train')),
-    'distilbert-base-cased-STS-B':  ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'train')),
+    'distilbert-base-cased-cola':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'validation')),
+    'distilbert-base-cased-mrpc':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'validation')),######actually broken
+    'distilbert-base-cased-qqp':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'validation')),######actually broken
+    'distilbert-base-cased-sst2':   ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'validation')),
+    'distilbert-base-cased-stsb':   ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'validation')),######actually broken
     #
     # distilbert-base-uncased
     #
-    'distilbert-base-uncased-CoLA':  ('textattack/distilbert-base-uncased-CoLA',  ('glue', 'cola',  'train')),
-    'distilbert-base-uncased-MNLI':  ('textattack/distilbert-base-uncased-MNLI',  ('glue', 'mnli',  'train')),
-    'distilbert-base-uncased-MRPC':  ('textattack/distilbert-base-uncased-MRPC',  ('glue', 'mrpc',  'train')),
-    'distilbert-base-uncased-QNLI':  ('textattack/distilbert-base-uncased-QNLI',  ('glue', 'qnli',  'train')),
-    'distilbert-base-uncased-QQP':   ('textattack/distilbert-base-uncased-QQP',   ('glue', 'qqp',   'train')),
-    'distilbert-base-uncased-RTE':   ('textattack/distilbert-base-uncased-RTE',   ('glue', 'rte',   'train')),
-    'distilbert-base-uncased-SST-2': ('textattack/distilbert-base-uncased-SST-2', ('glue', 'sst2', 'train')),
-    'distilbert-base-uncased-STS-B': ('textattack/distilbert-base-uncased-STS-B', ('glue', 'sstb', 'train')),
-    'distilbert-base-uncased-WNLI':  ('textattack/distilbert-base-uncased-WNLI',  ('glue', 'wnli',  'train')),
+    'distilbert-base-uncased-cola':  ('textattack/distilbert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
+    'distilbert-base-uncased-mnli':  ('textattack/distilbert-base-uncased-MNLI',  ('glue', 'mnli',  'validation')),
+    'distilbert-base-uncased-mrpc':  ('textattack/distilbert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
+    'distilbert-base-uncased-qnli':  ('textattack/distilbert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
+    'distilbert-base-uncased-qqp':   ('textattack/distilbert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
+    'distilbert-base-uncased-rte':   ('textattack/distilbert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
+    'distilbert-base-uncased-sst2':  ('textattack/distilbert-base-uncased-SST-2', ('glue', 'sst2', 'validation')),
+    'distilbert-base-uncased-stsb':  ('textattack/distilbert-base-uncased-STS-B', ('glue', 'sstb', 'validation')),
+    'distilbert-base-uncased-wnli':  ('textattack/distilbert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
     #
     # roberta-base (RoBERTa is cased by default)
     #
-    'roberta-base-CoLA':  ('textattack/roberta-base-CoLA',  ('glue', 'cola',  'train')),
-    'roberta-base-MNLI':  ('textattack/roberta-base-MNLI',  ('glue', 'mnli',  'train')),
-    'roberta-base-MRPC':  ('textattack/roberta-base-MRPC',  ('glue', 'mrpc',  'train')),
-    'roberta-base-QNLI':  ('textattack/roberta-base-QNLI',  ('glue', 'mnli',  'train')),
-    'roberta-base-RTE':   ('textattack/roberta-base-RTE',   ('glue', 'rte',   'train')),
-    'roberta-base-SST-2': ('textattack/roberta-base-SST-2', ('glue', 'sst2', 'train')),
-    'roberta-base-STS-B': ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'train')),
-    'roberta-base-WNLI':  ('textattack/roberta-base-WNLI',  ('glue', 'wnli',  'train')),
+    'roberta-base-cola':             ('textattack/roberta-base-CoLA',  ('glue', 'cola',  'validation')),
+    'roberta-base-mnli':             ('textattack/roberta-base-MNLI',  ('glue', 'mnli',  'validation')),
+    'roberta-base-mrpc':             ('textattack/roberta-base-MRPC',  ('glue', 'mrpc',  'validation')),
+    'roberta-base-qnli':             ('textattack/roberta-base-QNLI',  ('glue', 'mnli',  'validation')),
+    'roberta-base-rte':              ('textattack/roberta-base-RTE',   ('glue', 'rte',   'validation')),
+    'roberta-base-sst2':             ('textattack/roberta-base-SST-2', ('glue', 'sst2', 'validation')),
+    'roberta-base-stsb':             ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'validation')),
+    'roberta-base-wnli':             ('textattack/roberta-base-WNLI',  ('glue', 'wnli',  'validation')),
     #
     # xlnet-base-cased
     #
-    'xlnet-base-uncased-CoLA':  ('textattack/xlnet-base-cased-CoLA',  ('glue', 'cola',  'train')),
-    'xlnet-base-uncased-MNLI':  ('textattack/xlnet-base-cased-MNLI',  ('glue', 'mnli',  'train', [1, 2, 0])),
-    'xlnet-base-uncased-MRPC':  ('textattack/xlnet-base-cased-MRPC',  ('glue', 'mrpc',  'train')),
-    'xlnet-base-uncased-QNLI':  ('textattack/xlnet-base-cased-QNLI',  ('glue', 'qnli',  'train')),
-    'xlnet-base-uncased-QQP':   ('textattack/xlnet-base-cased-QQP',   ('glue', 'qqp',   'train')),
-    'xlnet-base-uncased-RTE':   ('textattack/xlnet-base-cased-RTE',   ('glue', 'rte',   'train')),
-    'xlnet-base-uncased-SST-2': ('textattack/xlnet-base-cased-SST-2', ('glue', 'sst2', 'train')), #######not working
-    'xlnet-base-uncased-STS-B': ('textattack/xlnet-base-cased-STS-B', ('glue', 'stsb', 'train')), #######not working
-    'xlnet-base-uncased-WNLI':  ('textattack/xlnet-base-cased-WNLI',  ('glue', 'wnli',  'train')),#######not working
+    'xlnet-base-cased-cola':  ('textattack/xlnet-base-cased-CoLA',  ('glue', 'cola',  'validation')),
+    'xlnet-base-cased-mnli':  ('textattack/xlnet-base-cased-MNLI',  ('glue', 'mnli',  'train', [1, 2, 0])),
+    'xlnet-base-cased-mrpc':  ('textattack/xlnet-base-cased-MRPC',  ('glue', 'mrpc',  'validation')),
+    'xlnet-base-cased-qnli':  ('textattack/xlnet-base-cased-QNLI',  ('glue', 'qnli',  'validation')),
+    'xlnet-base-cased-qqp':   ('textattack/xlnet-base-cased-QQP',   ('glue', 'qqp',   'validation')),
+    'xlnet-base-cased-rte':   ('textattack/xlnet-base-cased-RTE',   ('glue', 'rte',   'validation')),
+    'xlnet-base-cased-sst2':  ('textattack/xlnet-base-cased-SST-2', ('glue', 'sst2', 'validation')), #######not working
+    'xlnet-base-cased-stsb':  ('textattack/xlnet-base-cased-STS-B', ('glue', 'stsb', 'validation')), #######not working
+    'xlnet-base-cased-wnli':  ('textattack/xlnet-base-cased-WNLI',  ('glue', 'wnli',  'validation')),#######not working
     
 }
 
