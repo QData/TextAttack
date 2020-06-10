@@ -6,4 +6,4 @@ class BERTTokenizer(AutoTokenizer):
     for fine-tuned BERT models.
     """
     def __init__(self, name='bert-base-uncased', max_length=256):
-        super().__init__(name, max_length=max_seq_length)
+        super().__init__(name, max_length=max_length)

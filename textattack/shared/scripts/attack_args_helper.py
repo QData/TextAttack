@@ -19,7 +19,7 @@ RECIPE_NAMES = {
     'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
 }
 
-MODEL_CLASS_NAMES = {
+TEXTATTACK_MODEL_CLASS_NAMES = {
     #
     # Text classification models
     #
@@ -211,7 +211,7 @@ def get_args():
     
     model_group = parser.add_mutually_exclusive_group()
     
-    model_names = list(MODEL_CLASS_NAMES.keys()) + list(HUGGINGFACE_DATASET_BY_MODEL.keys())
+    model_names = list(TEXTATTACK_MODEL_CLASS_NAMES.keys()) + list(HUGGINGFACE_DATASET_BY_MODEL.keys())
     model_group.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
         choices=model_names, help='The pre-trained model to attack.')
         
@@ -448,11 +448,11 @@ def parse_model_from_args(args):
     else:
         if ':' in args.model:
             model_name, params = args.model.split(':')
-            if model_name not in MODEL_CLASS_NAMES:
+            if model_name not in TEXTATTACK_MODEL_CLASS_NAMES:
                 raise ValueError(f'Error: unsupported model {model_name}')
-            model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
-        elif args.model in MODEL_CLASS_NAMES:
-            model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
+            model = eval(f'{TEXTATTACK_MODEL_CLASS_NAMES[model_name]}({params})')
+        elif args.model in TEXTATTACK_MODEL_CLASS_NAMES:
+            model = eval(f'{TEXTATTACK_MODEL_CLASS_NAMES[args.model]}()')
         else: 
             raise ValueError(f'Error: unsupported model {args.model}')
     return model

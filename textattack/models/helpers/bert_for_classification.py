@@ -22,6 +22,9 @@ class BERTForClassification:
         self.model.eval()
         self.tokenizer = BERTTokenizer(model_file_path)
     
-    def __call__(self, *params):
-        pred = self.model(*params)[0]
+    def __call__(self, input_ids=None, **kwargs):
+        # The tokenizer will return ``input_ids`` along with ``token_type_ids``
+        # and an ``attention_mask``. Our pre-trained models only need the input
+        # IDs.
+        pred = self.model(input_ids=input_ids)[0]
         return torch.nn.functional.softmax(pred, dim=-1)

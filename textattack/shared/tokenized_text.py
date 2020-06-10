@@ -21,13 +21,7 @@ class TokenizedText:
         text = text.strip()
         self.tokenizer = tokenizer
         if tokenizer:
-            ids = tokenizer.encode(text)
-            if not isinstance(ids, tuple):
-                # Some tokenizers may tokenize text to a single vector.
-                # In this case, wrap the vector in a tuple to mirror the 
-                # format of other tokenizers.
-                ids = (ids,)
-            self.ids = ids
+            self.ids = tokenizer.encode(text)
         else:
             self.ids = None
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])

@@ -8,17 +8,22 @@ def batch_model_predict(model, inputs, batch_size=utils.config('MODEL_BATCH_SIZE
     i = 0
     while i < len(inputs):
         batch = inputs[i:i+batch_size]
-        batch_preds = model_predict(self.model, batch)
+        batch_preds = model_predict(model, batch)
         outputs.append(batch_preds)
         i += batch_size
-    
-    return torch.cat(outputs)
+    try:
+        return torch.cat(outputs, dim=0)
+    except TypeError:
+        # A TypeError occurs when the lists in ``outputs`` are full of strings
+        # instead of numbers. If this is the case, just return the regular
+        # list.
+        return outputs
 
 def get_model_device(model):
     if hasattr(model, 'model'):
-        model_device = next(self.model.model.parameters()).device
+        model_device = next(model.model.parameters()).device
     else:
-        model_device = next(self.model.parameters()).device
+        model_device = next(model.parameters()).device
     return model_device
     
 def model_predict(model, inputs):

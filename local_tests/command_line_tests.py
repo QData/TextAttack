@@ -21,7 +21,7 @@ def register_test(command, name=None, output_file=None, desc=None):
 # test: run_attack --interactive
 #
 register_test(('printf "All that glitters is not gold\nq\n"', 
-    'python -m textattack --recipe textfooler --model bert-imdb --interactive'), 
+    'python -m textattack --recipe textfooler --model bert-base-uncased-imdb --interactive'), 
     name='interactive_mode', 
     output_file='local_tests/sample_outputs/interactive_mode.txt', 
     desc='Runs textfooler attack on BERT trained on IMDB using interactive mode')
@@ -31,7 +31,7 @@ register_test(('printf "All that glitters is not gold\nq\n"',
 #
 register_test(('python -m textattack --model-from-huggingface '
     'distilbert-base-uncased-finetuned-sst-2-english '
-    '--dataset_from_nlp glue:sst2 --recipe deepwordbug --num-examples 5'),
+    '--dataset-from-nlp glue:sst2 --recipe deepwordbug --num-examples 5'),
     name='huggingface_model_dataset',
     output_file='local_tests/sample_outputs/run_attack_transformers_nlp.txt',
     desc='Runs DeepWordBug recipe against pre-trained model and dataset')
@@ -50,7 +50,7 @@ register_test(('python -m textattack --model-from-file local_tests/sample_inputs
 # test: run_attack_parallel textfooler attack on 10 samples from BERT MR
 #                   (takes about 81s)
 #
-register_test('python -m textattack --model bert-mr --recipe textfooler --num-examples 10', 
+register_test('python -m textattack --model bert-base-uncased-mr --recipe textfooler --num-examples 10', 
     name='run_attack_textfooler_bert_mr_10', 
     output_file='local_tests/sample_outputs/run_attack_textfooler_bert_mr_10.txt', 
     desc='Runs attack using TextFooler recipe on BERT using 10 examples from the MR dataset') 
@@ -59,7 +59,7 @@ register_test('python -m textattack --model bert-mr --recipe textfooler --num-ex
 # test: run_attack_parallel textfooler attack on 10 samples from BERT SNLI
 #                   (takes about 51s)
 #
-register_test('python -m textattack --model bert-snli --recipe deepwordbug --num-examples 10', 
+register_test('python -m textattack --model bert-base-uncased-snli --recipe deepwordbug --num-examples 10', 
     name='run_attack_deepwordbug_bert_snli_10', 
     output_file='local_tests/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt', 
     desc='Runs attack using DeepWordBug recipe on BERT using 10 examples from the SNLI dataset')
@@ -80,7 +80,7 @@ register_test('python -m textattack --model lstm-mr --recipe deepwordbug --num-e
 #                   (takes about 72s)
 #
 register_test(('python -m textattack --attack-n --goal-function targeted-classification:target_class=2 '
-    '--enable-csv --model bert-mnli --num-examples 4 --transformation word-swap-wordnet '
+    '--enable-csv --model bert-base-uncased-mnli --num-examples 4 --transformation word-swap-wordnet '
     '--constraints lang-tool repeat stopword --search beam-search:beam_width=2'), 
     name='run_attack_targeted2_bertmnli_wordnet_beamwidth_2_enablecsv_attackn', 
     output_file='local_tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n_4.txt', 
