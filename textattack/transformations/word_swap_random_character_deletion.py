@@ -30,7 +30,10 @@ class WordSwapRandomCharacterDeletion(WordSwap):
         candidate_words = []
         
         start_idx = 1 if self.skip_first_char else 0
-        end_idx = (len(word) - 13) if self.skip_last_char else len(word)
+        end_idx = (len(word) - 1) if self.skip_last_char else len(word)
+        
+        if start_idx >= end_idx:
+            return []
 
         if self.random_one:
             i = np.random.randint(start_idx, end_idx)

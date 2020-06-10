@@ -6,13 +6,12 @@ from textattack.transformations.word_swap import WordSwap
 class WordSwapRandomCharacterInsertion(WordSwap):
     """ Transforms an input by inserting a random character.
 
-        Args:
-            random_one (bool): Whether to return a single word with a random 
-                character deleted. If not, returns all possible options.
-            skip_first_char (bool): Whether to disregard inserting as the first 
-                character.
-            skip_last_char (bool): Whether to disregard inserting as the last 
-                character.
+        random_one (bool): Whether to return a single word with a random 
+            character deleted. If not, returns all possible options.
+        skip_first_char (bool): Whether to disregard inserting as the first 
+            character.
+        skip_last_char (bool): Whether to disregard inserting as the last 
+            character.
     """
     def __init__(self, random_one=True, skip_first_char=False, skip_last_char=False, **kwargs):
         super().__init__(**kwargs)
@@ -31,6 +30,9 @@ class WordSwapRandomCharacterInsertion(WordSwap):
         
         start_idx = 1 if self.skip_first_char else 0
         end_idx = (len(word) - 1) if self.skip_last_char else len(word)
+        
+        if start_idx >= end_idx:
+            return []
 
         if self.random_one:
             i = np.random.randint(start_idx, end_idx)

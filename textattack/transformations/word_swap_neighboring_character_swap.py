@@ -32,6 +32,9 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
         
         start_idx = 1 if self.skip_first_char else 0
         end_idx = (len(word) - 2) if self.skip_last_char else (len(word) - 1)
+        
+        if start_idx >= end_idx:
+            return []
 
         if self.random_one:
             i = np.random.randint(start_idx, end_idx)

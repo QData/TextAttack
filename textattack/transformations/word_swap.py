@@ -10,7 +10,6 @@ class WordSwap(Transformation):
     An abstract class that takes a sentence and transforms it by replacing
     some of its words.
     
-    Args:
         letters_to_insert (string): letters allowed for insertion into words
     """
     def __init__(self, letters_to_insert=None):

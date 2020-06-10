@@ -7,7 +7,6 @@ class WordDeletion(Transformation):
     An abstract class that takes a sentence and transforms it by replacing
     deleting a single word.
     
-    Args:
         letters_to_insert (string): letters allowed for insertion into words
     """
     def _get_transformations(self, current_text, indices_to_modify):

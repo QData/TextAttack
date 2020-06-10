@@ -35,7 +35,7 @@ def TextBuggerLi2018(model):
         # (4) Substitute-C (Sub-C): Replace characters with visually similar
         # characters (e.g., replacing “o” with “0”, “l” with “1”, “a” with “@”) 
         # or adjacent characters in the keyboard (e.g., replacing “m” with “n”).
-        WordSwapHomoglyphSwap(random_one=True),
+        WordSwapHomoglyphSwap(),
         # (5) Substitute-W
         # (Sub-W): Replace a word with its topk nearest neighbors in a 
         # context-aware word vector space. Specifically, we use the pre-trained 

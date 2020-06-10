@@ -43,7 +43,8 @@ class AttackResult:
 
     def str_lines(self, color_method=None):
         """ A list of the lines to be printed for this result's string
-            representation. """
+            representation. 
+        """
         lines = [self.goal_function_result_str(color_method=color_method)]
         lines.extend(self.diff_color(color_method))
         return lines
@@ -60,8 +61,7 @@ class AttackResult:
         return orig_colored + '-->' + pert_colored
 
     def diff_color(self, color_method=None):
-        """ 
-        Highlights the difference between two texts using color.
+        """ Highlights the difference between two texts using color.
         """
         t1 = self.original_result.tokenized_text
         t2 = self.perturbed_result.tokenized_text
@@ -73,20 +73,24 @@ class AttackResult:
         color_2 = self.perturbed_result.get_text_color_perturbed()
         
         words_1 = []
+        words_1_idxs = []
+        
         words_2 = []
+        words_2_idxs = []
+        
         i1 = 0
         i2 = 0
-        
-        deletion_indices = t2.get_deletion_indices()
         
         while i1 < len(t1.words) and i2 < len(t2.words):
             # show deletions
             while t2.attack_attrs['original_index_map'][i1] == -1:
                 words_1.append(utils.color_text(t1.words[i1], color_1, color_method))
+                words_1_idxs.append(i1)
                 i1 += 1
             # show insertions
             while i2 < t2.attack_attrs['original_index_map'][i1]:
-                words_1.append(utils.color_text(t1.words[i2], color_2, color_method))
+                words_2.append(utils.color_text(t1.words[i2], color_2, color_method))
+                words_2_idxs.append(i2)
                 i2 += 1
             # show swaps
             word_1 = t1.words[i1]
@@ -94,16 +98,15 @@ class AttackResult:
             if word_1 != word_2:
                 words_1.append(utils.color_text(word_1, color_1, color_method))
                 words_2.append(utils.color_text(word_2, color_2, color_method))
-            else:
-                words_1.append(word_1)
-                words_2.append(word_2)
+                words_1_idxs.append(i1)
+                words_2_idxs.append(i2)
             i1 += 1
             i2 += 1
         
-        t1 = self.original_result.tokenized_text.replace_words_at_indices(range(len(words_1)), 
-            words_1)
-        t2 = self.perturbed_result.tokenized_text.replace_words_at_indices(range(len(words_2)), 
-            words_2)
+        t1 = self.original_result.tokenized_text.replace_words_at_indices(
+            words_1_idxs, words_1)
+        t2 = self.perturbed_result.tokenized_text.replace_words_at_indices(
+            words_2_idxs, words_2)
                 
         return t1.clean_text(), t2.clean_text()
         

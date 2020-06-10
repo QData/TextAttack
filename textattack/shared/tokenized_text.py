@@ -34,8 +34,8 @@ class TokenizedText:
         self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs or dict()
-        # Indices of deleted words from the *original* text. Allows us to map
-        # insertions/deletions back to their locations in the original text.
+        # Indices of words from the *original* text. Allows us to map
+        # indices between original text and this text, and vice-versa.
         self.attack_attrs.setdefault('original_index_map', np.arange(len(self.words)))
         # A list of all indices in *this* text that have been modified.
         self.attack_attrs.setdefault('modified_indices', set())
@@ -160,8 +160,8 @@ class TokenizedText:
         """ Takes indices of words from original string and converts them to 
             indices of the same words in the current string.
             
-            Uses information from ``self.attack_attrs['original_index_map'],
-            which is a list of (insertion, num_words_inserted) tuples.
+            Uses information from ``self.attack_attrs['original_index_map'], 
+            which maps word indices from the original to perturbed text.
         """
         if len(self.attack_attrs['original_index_map']) == 0:
             return idxs
@@ -171,8 +171,7 @@ class TokenizedText:
             idxs = torch.tensor(idxs)
         elif not isinstance(idxs, torch.Tensor):
             raise TypeError(f'convert_from_original_idxs got invalid idxs type {type(idxs)}')
-        idxs = [self.attack_attrs['original_index_map'][i] for i in idxs]
-        return idxs
+        return [self.attack_attrs['original_index_map'][i] for i in idxs]
 
     def replace_words_at_indices(self, indices, new_words):
         """ This code returns a new TokenizedText object where the word at 
