@@ -27,8 +27,8 @@ contains no wit , only labored gags
 
 --------------------------------------------- Result 3 ---------------------------------------------
 [92m1[0m-->[91m0[0m
-that [92mloves[0m its characters and [92mcommunicates[0m [92msomething[0m rather [92mbeautiful[0m about human nature
-that [91mloles[0m its characters and [91mcommunictaes[0m [91msqomething[0m rather [91mbeautifdul[0m about human nature
+that [92mloves[0m its characters and communicates [92msomething[0m [92mrather[0m [92mbeautiful[0m about human nature
+that [91mlodes[0m its characters and communicates [91msomethNng[0m [91mrathrer[0m [91mbeautifdul[0m about human nature
 
 
 --------------------------------------------- Result 4 ---------------------------------------------

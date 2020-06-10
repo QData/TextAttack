@@ -8,13 +8,14 @@ from attack_args_helper import get_args, parse_model_from_args, parse_dataset_fr
 def _cb(s): return textattack.shared.utils.color_text(str(s), color='blue', method='ansi')
 
 def get_num_successes(args, model, ids, true_labels):
-    preds = textattack.shared.utils.model_predict(model, ids)
+    with torch.no_grad():
+        preds = textattack.shared.utils.model_predict(model, ids)
     true_labels = torch.tensor(true_labels).to(textattack.shared.utils.device)
     guess_labels = preds.argmax(dim=1)
     successes = (guess_labels == true_labels).sum().item()
     return successes, true_labels, guess_labels
 
-def test_model_on_dataset(args, model, dataset, batch_size=16):
+def test_model_on_dataset(args, model, dataset, batch_size=128):
     num_examples = args.num_examples
     succ = 0
     fail = 0

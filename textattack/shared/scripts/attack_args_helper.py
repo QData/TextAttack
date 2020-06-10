@@ -99,7 +99,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     'bert-base-uncased-qqp':        ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
     'bert-base-uncased-rte':        ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
     'bert-base-uncased-sst2':       ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'validation')), 
-    'bert-base-uncased-stsb':       ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'validation')), 
+    'bert-base-uncased-stsb':       ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'validation', None, 5.0)), 
     'bert-base-uncased-wnli':       ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
     #
     # distilbert-base-cased
@@ -108,7 +108,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     'distilbert-base-cased-mrpc':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'validation')),
     'distilbert-base-cased-qqp':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'validation')),
     'distilbert-base-cased-sst2':   ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'validation')),
-    'distilbert-base-cased-stsb':   ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'validation')),
+    'distilbert-base-cased-stsb':   ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'validation', None, 5.0)),
     #
     # distilbert-base-uncased
     #
@@ -119,18 +119,17 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     'distilbert-base-uncased-qqp':   ('textattack/distilbert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
     'distilbert-base-uncased-rte':   ('textattack/distilbert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
     'distilbert-base-uncased-sst2':  ('textattack/distilbert-base-uncased-SST-2', ('glue', 'sst2',  'validation')),
-    'distilbert-base-uncased-stsb':  ('textattack/distilbert-base-uncased-STS-B', ('glue', 'stsb',  'validation')),
+    'distilbert-base-uncased-stsb':  ('textattack/distilbert-base-uncased-STS-B', ('glue', 'stsb',  'validation', None, 5.0)),
     'distilbert-base-uncased-wnli':  ('textattack/distilbert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
     #
     # roberta-base (RoBERTa is cased by default)
     #
     'roberta-base-cola':             ('textattack/roberta-base-CoLA',  ('glue', 'cola',  'validation')),
-    'roberta-base-mnli':             ('textattack/roberta-base-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
     'roberta-base-mrpc':             ('textattack/roberta-base-MRPC',  ('glue', 'mrpc',  'validation')),
     'roberta-base-qnli':             ('textattack/roberta-base-QNLI',  ('glue', 'qnli',  'validation')),
     'roberta-base-rte':              ('textattack/roberta-base-RTE',   ('glue', 'rte',   'validation')),
     'roberta-base-sst2':             ('textattack/roberta-base-SST-2', ('glue', 'sst2', 'validation')),
-    'roberta-base-stsb':             ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'validation')),
+    'roberta-base-stsb':             ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'validation', None, 5.0)),
     'roberta-base-wnli':             ('textattack/roberta-base-WNLI',  ('glue', 'wnli',  'validation')),
     
 }
@@ -266,7 +265,7 @@ def get_args():
         help='Run attack using multiple GPUs.')
 
     goal_function_choices = ', '.join(GOAL_FUNCTION_CLASS_NAMES.keys())
-    parser.add_argument('--goal-function', default='untargeted-classification',
+    parser.add_argument('--goal-function', '-g', default='untargeted-classification',
         help=f'The goal function to use. choices: {goal_function_choices}')
     
     def str_to_int(s): return sum((ord(c) for c in s))
@@ -281,17 +280,17 @@ def get_args():
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
-    attack_group.add_argument('--search', '--search-method', type=str, 
+    attack_group.add_argument('--search', '--search-method', '-s', type=str, 
         required=False, default='greedy-word-wir', 
         help=f'The search method to use. choices: {search_choices}')
     
-    attack_group.add_argument('--recipe', '--attack-recipe', type=str, required=False, default=None,
+    attack_group.add_argument('--recipe', '--attack-recipe', '-r', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
     
     attack_group.add_argument('--attack-from-file', type=str, required=False, default=None,
         help='attack to load from file (overrides provided goal function, transformation & constraints)',
-        choices=RECIPE_NAMES.keys())
+        )
 
     # Parser for parsing args for resume
     resume_parser = argparse.ArgumentParser(
@@ -403,10 +402,10 @@ def parse_attack_from_args(model, args):
             attack_file, attack_name = args.attack_from_file.split(':')
         else:
             attack_file, attack_name = args.attack_from_file, 'attack'
-        attack = attack_file.replace('.py', '').replace('/', '.')
-        attack = importlib.import_module(model_file)
-        attack_func = getattr(model_module, attack_name)
-        return attack(model)
+        attack_file = attack_file.replace('.py', '').replace('/', '.')
+        attack_module = importlib.import_module(attack_file)
+        attack_func = getattr(attack_module, attack_name)
+        return attack_func(model)
     else:
         raise ValueError('Could not parse attack from args - no recipe or filename specified')
 
@@ -448,10 +447,14 @@ def parse_model_from_args(args):
     else:
         if ':' in args.model:
             model_name, params = args.model.split(':')
+            colored_model_name = textattack.shared.utils.color_text(model_name, color='blue', method='ansi')
+            textattack.shared.logger.info(f'Loading pre-trained TextAttack model: {colored_model_name}')
             if model_name not in TEXTATTACK_MODEL_CLASS_NAMES:
                 raise ValueError(f'Error: unsupported model {model_name}')
             model = eval(f'{TEXTATTACK_MODEL_CLASS_NAMES[model_name]}({params})')
         elif args.model in TEXTATTACK_MODEL_CLASS_NAMES:
+            colored_model_name = textattack.shared.utils.color_text(args.model, color='blue', method='ansi')
+            textattack.shared.logger.info(f'Loading pre-trained TextAttack model: {colored_model_name}')
             model = eval(f'{TEXTATTACK_MODEL_CLASS_NAMES[args.model]}()')
         else: 
             raise ValueError(f'Error: unsupported model {args.model}')
@@ -513,7 +516,8 @@ def parse_logger_from_args(args):
     attack_log_manager = textattack.loggers.AttackLogManager()
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
-        outputs_dir = os.path.join(os.getcwd(), 'textattack_outputs')
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        outputs_dir = os.path.join(current_dir, os.pardir, os.pardir, os.pardir, 'outputs')
         args.out_dir = os.path.normpath(outputs_dir)
         
     # Output file.

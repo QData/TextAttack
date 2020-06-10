@@ -14,7 +14,7 @@ class BERTForClassification:
             prediction, if different than 2.
             
     """
-    def __init__(self, model_path, num_labels=2, entailment=False):
+    def __init__(self, model_path, num_labels=2):
         model_file_path = utils.download_if_needed(model_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_file_path, num_labels=num_labels)

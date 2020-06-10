@@ -54,9 +54,9 @@ We also have a command-line interface for running attacks. See help info and lis
 python -m textattack --recipe textfooler --model bert-mr --num-examples 100
 ```
 
-*DeepWordBug on BERT trained on the SNLI entailment dataset*: 
+*DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*: 
 ```
-python -m textattack --model bert-snli --recipe deepwordbug --num-examples 100
+python -m textattack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
 ```
 
 *Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
@@ -74,8 +74,6 @@ python -m textattack --attack-n --goal-function non-overlapping-output \
     --constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword \
     --search greedy
 ```
-
-#### Attack Examples
 
 ### Attacks and Papers Implemented ("Attack Recipes")
 
@@ -122,9 +120,22 @@ which maintains both a list of tokens and the original text, with punctuation. W
 
 TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that outputs IDs, tensors, or strings.
 
+#### Built-in Models
+
+TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
+dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
+tasks, as well as some common classification datasets (MR, IMDB, Yelp, AGNews), translation, and summarization. You can 
+see the full list of provided models & datasets via `python -m textattack --help`.
+
+Here's an example of using one of the built-in models:
+
+```
+pythom -m textattack --model roberta-base-sst2 --recipe textfooler --num-examples 10
+```
+
 #### HuggingFace `transformers` and `nlp`
 
-We now provide built-in support for [`transformers` pretrained models](https://huggingface.co/models) 
+We also provide built-in support for [`transformers` pretrained models](https://huggingface.co/models) 
 and datasets from the [`nlp` package](https://github.com/huggingface/nlp)! Here's an example of loading
 and attacking a pre-trained model and dataset:
 
@@ -164,23 +175,6 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 ```
 
 You can then run attacks on samples from this dataset by adding the argument `--dataset_from_file my_dataset.py`.
-
-#### TextAttack pre-Trained models
-
-TextAttack also comes with its own pre-trained models and dataset samples for various tasks:
-
-##### Classification:
-* AG News dataset topic classification
-* IMDB dataset sentiment classification
-* Movie Review dataset sentiment classification
-* Yelp dataset sentiment classification
-
-##### Entailment:
-* SNLI datastet
-* MNLI dataset (matched & unmatched)
-
-##### Translation:
-* newstest2013 English to German dataset
 
 ### Attacks
 

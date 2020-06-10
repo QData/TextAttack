@@ -52,8 +52,11 @@ LABEL_COLORS = [
 
 def color_from_label(label_num):
     """ Colors for labels (arbitrary). """
-    label_num %= len(LABEL_COLORS)
-    return LABEL_COLORS[label_num]
+    try:
+        label_num %= len(LABEL_COLORS)
+        return LABEL_COLORS[label_num]
+    except TypeError:
+        return 'purple'
 
 class ANSI_ESCAPE_CODES:
     """ Escape codes for printing color to the terminal. """

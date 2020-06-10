@@ -20,6 +20,7 @@ class AutoTokenizer(Tokenizer):
     def encode(self, input_text):
         if TokenizedText.SPLIT_TOKEN in input_text:
             input_text = input_text.split(TokenizedText.SPLIT_TOKEN)
-        encoded_text = self.tokenizer.encode_plus(input_text, max_length=self.max_length, \
-            add_special_tokens=True, pad_to_max_length=True)
+        encoded_text = self.tokenizer.encode_plus(input_text, 
+            max_length=self.max_length, add_special_tokens=True, 
+            pad_to_max_length=True)
         return dict(encoded_text)

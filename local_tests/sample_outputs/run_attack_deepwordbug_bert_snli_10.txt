@@ -63,12 +63,12 @@ a person is [94mrllaxing[0m on his [94mHay[0m off
 
 --------------------------------------------- Result 6 ---------------------------------------------
 [94m2[0m-->[91m0[0m
-pedestrian walking on the [94mstreet[0m
+pedestrian walking on the street
 
-A person walking inside a building .
-pedestrian walking on the [91mstret[0m
+A person walking [94minside[0m a building .
+pedestrian walking on the street
 
-A person walking inside a building .
+A person walking [91misnide[0m a building .
 
 
 --------------------------------------------- Result 7 ---------------------------------------------
@@ -78,7 +78,7 @@ A man on a bicycle , wearing cycle gear , riding at a fast past down paved trail
 He is [92mheading[0m to the cabin down the [92mtrail[0m .
 A man on a bicycle , wearing cycle gear , riding at a fast past down paved trail surrounded by tree 's and grass .
 
-He is [94mhezading[0m to the cabin down the [94mWrail[0m .
+He is [94mheNding[0m to the cabin down the [94mrail[0m .
 
 
 --------------------------------------------- Result 8 ---------------------------------------------

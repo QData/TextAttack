@@ -27,11 +27,19 @@ register_test(('printf "All that glitters is not gold\nq\n"',
     desc='Runs textfooler attack on BERT trained on IMDB using interactive mode')
 
 #
+# test: run_attack on model from file
+#
+register_test(('python -m textattack --model cnn-imdb --attack-from-file local_tests/sample_inputs/attack_from_file.py:Attack --num-examples 2 --attack-n'),
+    name='attack_from_file',
+    output_file='local_tests/sample_outputs/run_attack_from_file.txt',
+    desc='Runs DeepWordBug recipe against pre-trained model and dataset')
+
+#
 # test: run_attack on HuggingFace ``transformers`` model & ``nlp`` dataset
 #
 register_test(('python -m textattack --model-from-huggingface '
     'distilbert-base-uncased-finetuned-sst-2-english '
-    '--dataset-from-nlp glue:sst2 --recipe deepwordbug --num-examples 5'),
+    '--dataset-from-nlp glue:sst2:train --recipe deepwordbug --num-examples 5'),
     name='huggingface_model_dataset',
     output_file='local_tests/sample_outputs/run_attack_transformers_nlp.txt',
     desc='Runs DeepWordBug recipe against pre-trained model and dataset')
@@ -44,7 +52,7 @@ register_test(('python -m textattack --model-from-file local_tests/sample_inputs
     '--recipe deepwordbug --num-examples 5'),
     name='load_model_and_dataset_from_file',
     output_file='local_tests/sample_outputs/run_attack_transformers_nlp.txt',
-    desc='Runs DeepWordBug recipe against pre-trained model and dataset')
+    desc='Runs DeepWordBug recipe against pre-trained model and dataset specified in a file')
 
 #
 # test: run_attack_parallel textfooler attack on 10 samples from BERT MR

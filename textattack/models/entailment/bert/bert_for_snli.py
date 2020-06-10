@@ -1,3 +1,4 @@
+import torch
 from textattack.shared import utils
 from textattack.models.helpers import BERTForClassification
 
@@ -6,15 +7,13 @@ class BERTForSNLI(BERTForClassification):
     MODEL_PATH = 'models/entailment/bert/snli-uncased'
     
     def __init__(self):
-        path = BERTForSNLI.MODEL_PATH
-        utils.download_if_needed(path)
-        super().__init__(path, entailment=True, num_labels=3)
+        super().__init__(BERTForSNLI.MODEL_PATH, num_labels=3)
     
     def __call__(self, *args, **kwargs):
         # Remaps result of normal __call__ to fit the data labels. See below.
-        result = self.model(*args, **kwargs)[0]
-        return result[:, [1,2,0]]
-
+        pred = self.model(*args, **kwargs)[0]
+        pred = torch.nn.functional.softmax(pred, dim=-1)
+        return pred[:, [1,2,0]]
 
 """"
     BERT models are trained with label mapping:
