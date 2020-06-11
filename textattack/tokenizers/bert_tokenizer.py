@@ -23,8 +23,12 @@ class BERTTokenizer(AutoTokenizer):
         """
         tokens = self.tokenizer.tokenize(input_text)
         tokens = tokens[:self.max_seq_length-2]
-        tokens.insert(0, self.tokenizer.cls_token)
-        tokens.append(self.tokenizer.sep_token)
+        if tokens[0] != self.tokenizer.cls_token:
+            tokens.insert(0, self.tokenizer.cls_token)
+        if tokens[-1] != self.tokenizer.sep_token:
+            tokens.append(self.tokenizer.sep_token)
         pad_tokens_to_add = self.max_seq_length - len(tokens)
         tokens += [self.tokenizer.pad_token] * pad_tokens_to_add
+        assert tokens.count('[CLS]') == 1
+        assert tokens.count('[SEP]') == 1 
         return tokens
