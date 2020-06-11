@@ -4,9 +4,9 @@ from textattack.shared import utils
 class FailedAttackResult(AttackResult):
     '''The result of a failed attack.'''
 
-    def __init__(self, original_result, perturbed_result=None):
+    def __init__(self, original_result, perturbed_result=None, num_queries=0):
         perturbed_result = perturbed_result or original_result
-        super().__init__(original_result, perturbed_result)
+        super().__init__(original_result, perturbed_result, num_queries)
 
     def str_lines(self, color_method=None):
         lines = (self.goal_function_result_str(color_method), self.original_text())

@@ -16,6 +16,7 @@ RECIPE_NAMES = {
     'hotflip':          'textattack.attack_recipes.HotFlipEbrahimi2017',
     'kuleshov':         'textattack.attack_recipes.Kuleshov2017',
     'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textbugger':       'textattack.attack_recipes.TextBuggerLi2018',
     'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
 }
 
@@ -136,7 +137,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     'word-swap-embedding':                  'textattack.transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyph',
+    'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyphSwap',
     'word-swap-neighboring-char-swap':      'textattack.transformations.WordSwapNeighboringCharacterSwap',
     'word-swap-random-char-deletion':       'textattack.transformations.WordSwapRandomCharacterDeletion',
     'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',
@@ -206,7 +207,7 @@ def get_args():
     transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(WHITE_BOX_TRANSFORMATION_CLASS_NAMES.keys())
     parser.add_argument('--transformation', type=str, required=False,
         default='word-swap-embedding', choices=transformation_names,
-        help='The transformations to apply.')
+        help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Choices: ' + str(transformation_names))
     
     model_group = parser.add_mutually_exclusive_group()
     
@@ -229,7 +230,7 @@ def get_args():
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['repeat', 'stopword'],
-        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys())))
+        help='Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys()))
     
     parser.add_argument('--out-dir', type=str, required=False, default=None,
         help='A directory to output results to.')
@@ -267,7 +268,7 @@ def get_args():
     goal_function_choices = ', '.join(GOAL_FUNCTION_CLASS_NAMES.keys())
     parser.add_argument('--goal-function', '-g', default='untargeted-classification',
         help=f'The goal function to use. choices: {goal_function_choices}')
-    
+   
     def str_to_int(s): return sum((ord(c) for c in s))
     parser.add_argument('--random-seed', default=str_to_int('TEXTATTACK'))
 
@@ -276,7 +277,10 @@ def get_args():
 
     parser.add_argument('--checkpoint-interval', required=False, type=int, 
         help='If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.')
-    
+
+    parser.add_argument('--query-budget', '-q', type=int, default=float('inf'),
+        help='The maximum number of model queries allowed per example attacked.')
+
     attack_group = parser.add_mutually_exclusive_group(required=False)
     
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
@@ -364,6 +368,7 @@ def parse_goal_function_from_args(args, model):
         goal_function = eval(f'{GOAL_FUNCTION_CLASS_NAMES[goal_function]}(model)')
     else:
         raise ValueError(f'Error: unsupported goal_function {goal_function}')
+    goal_function.query_budget = args.query_budget
     return goal_function
 
 def parse_constraints_from_args(args):
@@ -396,6 +401,7 @@ def parse_attack_from_args(model, args):
             recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
         else:
             raise ValueError(f'Invalid recipe {args.recipe}')
+        recipe.goal_function.query_budget = args.query_budget
         return recipe
     elif args.attack_from_file:
         if ':' in args.attack_from_file:

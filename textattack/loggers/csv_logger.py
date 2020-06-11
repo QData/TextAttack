@@ -25,7 +25,8 @@ class CSVLogger(Logger):
             'original_score': result.original_result.score, 
             'perturbed_score': result.perturbed_result.score, 
             'original_output': result.original_result.output, 
-            'perturbed_output': result.perturbed_result.output
+            'perturbed_output': result.perturbed_result.output,
+            'num_queries': result.num_queries,
         } 
         self.df = self.df.append(row, ignore_index=True)
         self._flushed = False

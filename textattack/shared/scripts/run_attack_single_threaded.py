@@ -37,7 +37,7 @@ def run(args):
     
     start_time = time.time()
     
-    # Models and Attack
+    # Attack
     goal_function, attack = parse_goal_function_and_attack_from_args(args)
     print(attack, '\n')
     
@@ -69,7 +69,7 @@ def run(args):
             result = goal_function.get_result(tokenized_text, goal_function.get_output(tokenized_text))
             print('Attacking...')
 
-            result = next(attack.attack_dataset([(text, result.output)]))
+            result = next(attack.attack_dataset([(text, goal_function.get_output(tokenized_text))]))
             print(result.__str__(color_method='ansi'))
     
     else:
