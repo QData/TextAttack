@@ -40,7 +40,7 @@ class LSTMForClassification(nn.Module):
         self.load_state_dict(load_cached_state_dict(model_folder_path))
         self.word_embeddings = self.emb_layer.embedding
         self.lookup_table = self.emb_layer.embedding.weight.data
-        self.to(utils.get_device())
+        self.to(utils.device)
         self.eval()
 
     def forward(self, _input):

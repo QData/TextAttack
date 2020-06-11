@@ -8,13 +8,12 @@ class ClassificationGoalFunction(GoalFunction):
     
         model: The PyTorch or TensorFlow model used for evaluation.
     """
-    def _process_model_outputs(self, inputs, outputs):
+    def _process_model_outputs(self, inputs, scores):
         """ Processes and validates a list of model outputs. 
         
             This is a task-dependent operation. For example, classification 
             outputs need to have a softmax applied. 
         """
-        scores = torch.cat(outputs, dim=0)
         # Validation check on model score dimensions
         if scores.ndim == 1:
             # Unsqueeze prediction, if it's been squeezed by the model.

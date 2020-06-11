@@ -18,40 +18,47 @@ Attack(
 Logging to CSV at path /.*/.csv.
 Load time: /.*/s
 --------------------------------------------- Result 1 ---------------------------------------------
-[91m0[0m-->[94m2[0m
-In Temple Bar , the bookshop at the [91mGallery[0m of Photography carries a large selection of photographic publications , and the Flying Pig is a secondhand bookshop .
+[94m2[0m-->[37m[SKIPPED][0m
+The new rights are nice enough
 
-There is a bookshop at the gallery .
-In Temple Bar , the bookshop at the [94mdrift[0m of Photography carries a large selection of photographic publications , and the Flying Pig is a secondhand bookshop .
-
-There is a bookshop at the gallery .
+Everyone really likes the newest benefits
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[91m0[0m-->[94m2[0m
-On Naxos , you can walk through the pretty villages of the Tragea Valley and the foothills of Mount Zas , admiring [91mByzantine[0m churches and exploring olive groves at your leisure .
+[91m0[0m-->[91m[FAILED][0m
+This site includes a list of all award winners and a searchable database of Government Executive articles.
 
-Naxos is a [91mplace[0m with beautiful scenery for leisure .
-On Naxos , you can walk through the pretty villages of the Tragea Valley and the foothills of Mount Zas , admiring [94mconvoluted[0m churches and exploring olive groves at your leisure .
-
-Naxos is a [94mpiazza[0m with beautiful scenery for leisure .
+The Government Executive articles housed on the website are not able to be searched.
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92m1[0m-->[91m[FAILED][0m
-Impossible .
+[92m1[0m-->[94m2[0m
+uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
 
-Impossible , unless circumstances are met .
+I like him for the most [92mpart[0m, but would still enjoy seeing someone beat him.
+uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+
+I like him for the most [94moffice[0m, but would still enjoy seeing someone beat him.
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
 [91m0[0m-->[94m2[0m
-Expenses included in calculating net cost for education and training programs that are intended to increase or maintain national economic productive capacity shall be reported as investments in human capital as required supplementary stewardship information accompanying the financial statements of the Federal Government and its component units .
+yeah i i think my favorite restaurant is always been the one [91mclosest[0m  you know the closest as long as it's it meets the minimum criteria you know of good food
 
-Net cost for education programs can be calculated as a way to [91mincrease[0m productivity .
-Expenses included in calculating net cost for education and training programs that are intended to increase or maintain national economic productive capacity shall be reported as investments in human capital as required supplementary stewardship information accompanying the financial statements of the Federal Government and its component units .
+My favorite restaurants are always at least a hundred miles away from my house.
+yeah i i think my favorite restaurant is always been the one [94mstuffy[0m  you know the closest as long as it's it meets the minimum criteria you know of good food
 
-Net cost for education programs can be calculated as a way to [94mincrement[0m productivity .
+My favorite restaurants are always at least a hundred miles away from my house.
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+[91m0[0m-->[94m2[0m
+i don't know um do you do a lot of camping
+
+I [91mknow[0m [91mexactly[0m.
+i don't know um do you do a lot of camping
+
+I [94mexperience[0m [94mincisively[0m.
 
 
 
@@ -60,12 +67,12 @@ Net cost for education programs can be calculated as a way to [94mincrement[0m
 (0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
 (0x(B Number of successful attacks: (0x(B 3      (0x(B
 (0x(B Number of failed attacks:     (0x(B 1      (0x(B
-(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
-(0x(B Original accuracy:            (0x(B 100.0% (0x(B
-(0x(B Accuracy under attack:        (0x(B 25.0%  (0x(B
+(0x(B Number of skipped attacks:    (0x(B 1      (0x(B
+(0x(B Original accuracy:            (0x(B 80.0%  (0x(B
+(0x(B Accuracy under attack:        (0x(B 20.0%  (0x(B
 (0x(B Attack success rate:          (0x(B 75.0%  (0x(B
-(0x(B Average perturbed word %:     (0x(B 3.34%  (0x(B
-(0x(B Average num. words per input: (0x(B 34.25  (0x(B
-(0x(B Avg num queries:              (0x(B 127.25 (0x(B
+(0x(B Average perturbed word %:     (0x(B 5.93%  (0x(B
+(0x(B Average num. words per input: (0x(B 29.6   (0x(B
+(0x(B Avg num queries:              (0x(B 317.25 (0x(B
 (0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
 Attack time: /.*/s

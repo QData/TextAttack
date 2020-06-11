@@ -4,7 +4,7 @@ import pandas as pd
 import csv
 
 from textattack.attack_results import FailedAttackResult
-from textattack.shared.utils import get_logger
+from textattack.shared import logger
 from .logger import Logger
 
 class CSVLogger(Logger):
@@ -37,4 +37,4 @@ class CSVLogger(Logger):
     
     def __del__(self):
         if not self._flushed:
-            get_logger().warning('CSVLogger exiting without calling flush().')
+            logger.warning('CSVLogger exiting without calling flush().')

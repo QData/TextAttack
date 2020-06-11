@@ -16,7 +16,7 @@ class T5Tokenizer(AutoTokenizer):
         * english_to_romanian: translate English to Romanian (WMT dataset)
             
     """
-    def __init__(self, mode='english_to_german', max_seq_length=64):
+    def __init__(self, mode='english_to_german', max_length=64):
         if mode == 'english_to_german':
             self.tokenization_prefix = 'translate English to German: '
         elif mode == 'english_to_french':
@@ -28,7 +28,7 @@ class T5Tokenizer(AutoTokenizer):
         else:
             raise ValueError(f'Invalid t5 tokenizer mode {english_to_german}.')
 
-        super().__init__(name='t5-base', max_seq_length=max_seq_length)
+        super().__init__(name='t5-base', max_length=max_length)
 
     def encode(self, text):
         """ 

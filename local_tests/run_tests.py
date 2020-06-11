@@ -2,7 +2,6 @@ import argparse
 import os
 import time
 
-from test_lists import tests
 from test_models import color_text
 
 def log_sep():
@@ -11,7 +10,12 @@ def log_sep():
 def print_gray(s):
     print(color_text(s, 'light_gray'))
 
+CHANGED_TO_ROOT_DIR = False
 def change_to_root_dir():
+    global CHANGED_TO_ROOT_DIR
+    if CHANGED_TO_ROOT_DIR:
+        return
+    CHANGED_TO_ROOT_DIR = True
     # Change to TextAttack root directory.
     this_file_path = os.path.abspath(__file__)
     test_directory_name = os.path.dirname(this_file_path)
@@ -21,6 +25,7 @@ def change_to_root_dir():
     
 def run_all_tests(args):
     change_to_root_dir()
+    from test_lists import tests
     start_time = time.time()
     passed_tests = 0
     
@@ -36,6 +41,8 @@ def run_all_tests(args):
     
 
 def run_tests_by_name(args):
+    change_to_root_dir()
+    from test_lists import tests
     test_names = set(args.tests)
     start_time = time.time()
     passed_tests = 0
@@ -57,6 +64,8 @@ def run_tests_by_name(args):
         print(f'Tests not executed: {",".join(test_names)}')
 
 def parse_args():
+    change_to_root_dir()
+    from test_lists import tests
     all_test_names = [t.name for t in tests]
     parser = argparse.ArgumentParser(description='Run TextAttack local tests.')
     parser.add_argument('--tests', default=None, nargs='+', choices=all_test_names,

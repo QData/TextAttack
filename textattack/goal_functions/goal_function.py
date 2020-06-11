@@ -3,7 +3,7 @@ import numpy as np
 import torch
 import math
 
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import batch_model_predict, default_class_repr
 from textattack.shared import utils, validators
 
 class GoalFunction:
@@ -14,9 +14,17 @@ class GoalFunction:
         model: The PyTorch or TensorFlow model used for evaluation.
         query_budget: The maximum number of model queries allowed.
     """
-    def __init__(self, model, use_cache=True, query_budget=float('inf')):
+    def __init__(self, model, tokenizer=None, use_cache=True, query_budget=float('inf')):
         validators.validate_model_goal_function_compatibility(self.__class__, model.__class__)
         self.model = model
+        self.tokenizer = tokenizer
+        if not self.tokenizer:
+            if hasattr(self.model, 'tokenizer'):
+                self.tokenizer = self.model.tokenizer
+            else:
+                raise NameError('Cannot instantiate goal function without tokenizer')
+        if not hasattr(self.tokenizer, 'encode'):
+            raise TypeError('Tokenizer must contain `encode()` method')
         self.use_cache = use_cache
         self.num_queries = 0
         self.query_budget = query_budget
@@ -92,11 +100,11 @@ class GoalFunction:
         Processes and validates a list of model outputs. 
         
         This is a task-dependent operation. For example, classification 
-        outputs need to have a softmax applied. 
+        outputs need to make sure they have a softmax applied. 
         """
         raise NotImplementedError()
 
-    def _call_model_uncached(self, tokenized_text_list, batch_size=utils.config('MODEL_BATCH_SIZE')):
+    def _call_model_uncached(self, tokenized_text_list):
         """ 
         Queries model and returns outputs for a list of TokenizedText 
         objects. 
@@ -104,32 +112,10 @@ class GoalFunction:
         if not len(tokenized_text_list):
             return []
         ids = [t.ids for t in tokenized_text_list]
-        if hasattr(self.model, 'model'):
-            model_device = next(self.model.model.parameters()).device
-        else:
-            model_device = next(self.model.parameters()).device
-        ids = torch.tensor(ids).to(model_device) 
-        #
-        # shape of `ids` is (n, m, d)
-        #   - n: number of elements in `tokenized_text_list`
-        #   - m: number of vectors per element
-        #           ex: most classification models take a single vector, so m=1
-        #           ex: some entailment models take three vectors, so m=3
-        #   - d: dimensionality of each vector
-        #           (a typical model might set d=128 or d=256)
-        num_fields = ids.shape[1]
-        num_batches = int(math.ceil(len(tokenized_text_list) / float(batch_size)))
-        outputs = []
-        for batch_i in range(num_batches):
-            batch_start = batch_i * batch_size
-            batch_stop  = (batch_i + 1) * batch_size
-            batch_ids = ids[batch_start:batch_stop]
-            batch = [batch_ids[:, x, :] for x in range(num_fields)]
-            with torch.no_grad():
-                preds = self.model(*batch)
-            if isinstance(preds, tuple):
-                preds = preds[0]
-            outputs.append(preds)
+        
+        with torch.no_grad():
+            outputs = batch_model_predict(self.model, ids)
+        
         return self._process_model_outputs(tokenized_text_list, outputs)
     
     def _call_model(self, tokenized_text_list):

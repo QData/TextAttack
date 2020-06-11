@@ -12,7 +12,7 @@ class BERT(SentenceEncoder):
     def __init__(self, threshold=0.7, metric='cosine', **kwargs):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
         self.model = SentenceTransformer('bert-base-nli-stsb-mean-tokens')
-        self.model.to(utils.get_device())
+        self.model.to(utils.device)
     
     def encode(self, sentences):
         return self.model.encode(sentences)

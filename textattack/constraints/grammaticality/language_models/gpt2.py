@@ -14,7 +14,7 @@ class GPT2(LanguageModelConstraint):
     """
     def __init__(self, **kwargs):
         self.model = GPT2LMHeadModel.from_pretrained('gpt2')
-        self.model.to(utils.get_device())
+        self.model.to(utils.device)
         self.tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
         super().__init__(**kwargs)
     
@@ -33,7 +33,7 @@ class GPT2(LanguageModelConstraint):
         
         token_ids = self.tokenizer.encode(prefix)
         tokens_tensor = torch.tensor([token_ids])
-        tokens_tensor = tokens_tensor.to(utils.get_device())
+        tokens_tensor = tokens_tensor.to(utils.device)
         
         with torch.no_grad():
             outputs = self.model(tokens_tensor)

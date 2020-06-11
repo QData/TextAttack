@@ -8,9 +8,9 @@ import time
 import torch
 import tqdm
 
-from .run_attack_args_helper import *
+from .attack_args_helper import *
 
-logger = textattack.shared.utils.get_logger()
+logger = textattack.shared.logger
 
 def set_env_variables(gpu_id):
     # Set sharing strategy to file_system to avoid file descriptor leaks
@@ -73,7 +73,9 @@ def run(args):
     
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
-    dataset = DATASET_BY_MODEL[args.model](offset=num_examples_offset)
+    
+    args.num_examples_offset = num_examples_offset
+    dataset = parse_dataset_from_args(args)
     
     print(f'Running on {num_gpus} GPUs')
     load_time = time.time()

@@ -35,7 +35,7 @@ class FileLogger(Logger):
 
     def log_attack_result(self, result):
         self.num_results += 1
-        color_method = 'stdout' if self.stdout else 'file'
+        color_method = 'ansi' if self.stdout else 'file'
         self.fout.write('-'*45 + ' Result ' + str(self.num_results) + ' ' + '-'*45 + '\n')
         self.fout.write(result.__str__(color_method=color_method))
         self.fout.write('\n')

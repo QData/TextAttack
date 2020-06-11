@@ -8,9 +8,9 @@ import tqdm
 import os
 import datetime
 
-from .run_attack_args_helper import *
+from .attack_args_helper import *
 
-logger = textattack.shared.utils.get_logger()
+logger = textattack.shared.logger
 
 def run(args):
     # Only use one GPU, if we have one.
@@ -64,19 +64,17 @@ def run(args):
             if not text:
                 continue
 
-            tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, attack.goal_function.model.tokenizer)
-            
             print('Attacking...')
-
-            result = next(attack.attack_dataset([(text, attack.goal_function.get_output(tokenized_text))]))
-            print(result.__str__(color_method='stdout'))
+            
+            tokenized_text = textattack.shared.tokenized_text.TokenizedText(text, attack.goal_function.model.tokenizer)
+            initial_result = attack.goal_function.get_output(tokenized_text)
+            result = next(attack.attack_dataset([(text, initial_result)]))
+            print(result.__str__(color_method='ansi'))
     
     else:
         # Not interactive? Use default dataset.
-        if args.model in DATASET_BY_MODEL:
-            data = DATASET_BY_MODEL[args.model](offset=num_examples_offset)
-        else:
-            raise ValueError(f'Error: unsupported model {args.model}')
+        args.num_examples_offset = num_examples_offset
+        dataset = parse_dataset_from_args(args)
         
         pbar = tqdm.tqdm(total=num_examples, smoothing=0)
         if args.checkpoint_resume:
@@ -87,7 +85,7 @@ def run(args):
             num_results = 0
             num_failures = 0
             num_successes = 0
-        for result in attack.attack_dataset(data, 
+        for result in attack.attack_dataset(dataset, 
                                         num_examples=num_examples, 
                                         shuffle=args.shuffle, 
                                         attack_n=args.attack_n):

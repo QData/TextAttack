@@ -4,9 +4,7 @@ import torch
 import numpy as np
 import torch.nn as nn
 
-from textattack.shared import utils
-
-logger = utils.get_logger()
+from textattack.shared import logger, utils
 
 class EmbeddingLayer(nn.Module):
     """

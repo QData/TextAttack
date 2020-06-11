@@ -16,7 +16,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/QData/textattack",
-    packages=setuptools.find_namespace_packages(exclude=['wandb*', 'build*', 'docs*', 'dist*', 'outputs*', 'tests*', 'local_test*']),
+    packages=setuptools.find_namespace_packages(exclude=['build*', 'docs*', 'dist*', 'outputs*', 'tests*', 'local_test*', 'wandb*']),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

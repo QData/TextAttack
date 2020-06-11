@@ -78,8 +78,8 @@ class WordEmbeddingDistance(Constraint):
         except KeyError:
             e1 = self.word_embeddings[a]
             e2 = self.word_embeddings[b]
-            e1 = torch.tensor(e1).to(utils.get_device())
-            e2 = torch.tensor(e2).to(utils.get_device())
+            e1 = torch.tensor(e1).to(utils.device)
+            e2 = torch.tensor(e2).to(utils.device)
             cos_sim = torch.nn.CosineSimilarity(dim=0)(e1, e2)
             self.cos_sim_mat[a][b] = cos_sim
         return cos_sim
@@ -92,8 +92,8 @@ class WordEmbeddingDistance(Constraint):
         except KeyError:
             e1 = self.word_embeddings[a]
             e2 = self.word_embeddings[b]
-            e1 = torch.tensor(e1).to(utils.get_device())
-            e2 = torch.tensor(e2).to(utils.get_device())
+            e1 = torch.tensor(e1).to(utils.device)
+            e2 = torch.tensor(e2).to(utils.device)
             mse_dist = torch.sum((e1 - e2) ** 2)
             self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
