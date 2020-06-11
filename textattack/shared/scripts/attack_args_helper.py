@@ -87,8 +87,8 @@ DATASET_BY_MODEL = {
     # Translation datasets
     #
     't5-en2de':                     textattack.datasets.translation.NewsTest2013EnglishToGerman,
-
 }
+
 HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # bert-base-uncased
@@ -113,7 +113,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # distilbert-base-uncased
     #
-    'distilbert-base-uncased-cola':  ('textattack/distilbert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
     'distilbert-base-uncased-mnli':  ('textattack/distilbert-base-uncased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
     'distilbert-base-uncased-mrpc':  ('textattack/distilbert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
     'distilbert-base-uncased-qnli':  ('textattack/distilbert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
@@ -212,19 +211,16 @@ def get_args():
     model_group = parser.add_mutually_exclusive_group()
     
     model_names = list(TEXTATTACK_MODEL_CLASS_NAMES.keys()) + list(HUGGINGFACE_DATASET_BY_MODEL.keys())
-    model_group.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
+    model_group.add_argument('--model', type=str, required=False, default='bert-base-uncased-yelp-sentiment',
         choices=model_names, help='The pre-trained model to attack.')
-        
     model_group.add_argument('--model-from-file', type=str, required=False,
-        help='File of model and tokenizer to import.')
-        
+        help='File of model and tokenizer to import.')     
     model_group.add_argument('--model-from-huggingface', type=str, required=False,
         help='huggingface.co ID of pre-trained model to load')
         
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument('--dataset-from-nlp', type=str, required=False, default=None,
         help='Dataset to load from `nlp` repository.')
-    dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument('--dataset-from-file', type=str, required=False, default=None,
         help='Dataset to load from a file.')
     
@@ -282,16 +278,13 @@ def get_args():
         help='The maximum number of model queries allowed per example attacked.')
 
     attack_group = parser.add_mutually_exclusive_group(required=False)
-    
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
     attack_group.add_argument('--search', '--search-method', '-s', type=str, 
         required=False, default='greedy-word-wir', 
         help=f'The search method to use. choices: {search_choices}')
-    
     attack_group.add_argument('--recipe', '--attack-recipe', '-r', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
-    
     attack_group.add_argument('--attack-from-file', type=str, required=False, default=None,
         help='attack to load from file (overrides provided goal function, transformation & constraints)',
         )
@@ -453,9 +446,14 @@ def parse_model_from_args(args):
         setattr(model, 'tokenizer', tokenizer)
     elif args.model_from_huggingface:
         import transformers
-        colored_model_name = textattack.shared.utils.color_text(args.model_from_huggingface, color='blue', method='ansi')
+        if ':' in args.model_from_huggingface:
+            model_class, model_name = args.model_from_huggingface.split(':')
+            model_class = eval(f'transformers.{model_class}')
+        else:
+            model_class, model_name = transformers.AutoModelForSequenceClassification, args.model_from_huggingface
+        colored_model_name = textattack.shared.utils.color_text(model_name, color='blue', method='ansi')
         textattack.shared.logger.info(f'Loading pre-trained model from HuggingFace model repository: {colored_model_name}')
-        model = transformers.AutoModelForSequenceClassification.from_pretrained(args.model_from_huggingface)
+        model = model_class.from_pretrained(model_name)
         model = model.to(textattack.shared.utils.device)
         try:
             tokenizer = textattack.tokenizers.AutoTokenizer(args.model_from_huggingface)

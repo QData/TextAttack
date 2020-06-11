@@ -51,7 +51,7 @@ We also have a command-line interface for running attacks. See help info and lis
 
 *TextFooler on an LSTM trained on the MR sentiment classification dataset*: 
 ```
-python -m textattack --recipe textfooler --model bert-mr --num-examples 100
+python -m textattack --recipe textfooler --model bert-base-uncased-mr --num-examples 100
 ```
 
 *DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*: 

@@ -29,7 +29,8 @@ register_test(('printf "All that glitters is not gold\nq\n"',
 #
 # test: run_attack on model from file
 #
-register_test(('python -m textattack --model cnn-imdb --attack-from-file local_tests/sample_inputs/attack_from_file.py:Attack --num-examples 2 --attack-n'),
+register_test(('python -m textattack --model cnn-imdb --attack-from-file '
+    'local_tests/sample_inputs/attack_from_file.py:Attack --num-examples 2 --attack-n'),
     name='attack_from_file',
     output_file='local_tests/sample_outputs/run_attack_from_file.txt',
     desc='Runs DeepWordBug recipe against pre-trained model and dataset')
