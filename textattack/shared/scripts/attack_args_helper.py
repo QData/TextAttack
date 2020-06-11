@@ -390,7 +390,8 @@ def parse_constraints_from_args(args):
     
     return _constraints
 
-def parse_attack_from_args(model, args):
+def parse_attack_from_args(args):
+    model = parse_model_from_args(args)
     if args.recipe:
         if ':' in args.recipe:
             recipe_name, params = args.recipe.split(':')
@@ -413,7 +414,19 @@ def parse_attack_from_args(model, args):
         attack_func = getattr(attack_module, attack_name)
         return attack_func(model)
     else:
-        raise ValueError('Could not parse attack from args - no recipe or filename specified')
+        goal_function = parse_goal_function_from_args(args, model)
+        transformation = parse_transformation_from_args(args, model)
+        constraints = parse_constraints_from_args(args)
+        if ':' in args.search:
+            search_name, params = args.search.split(':')
+            if search_name not in SEARCH_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported search {search_name}')
+            search_method = eval(f'{SEARCH_CLASS_NAMES[search_name]}({params})')
+        elif args.search in SEARCH_CLASS_NAMES:
+            search_method = eval(f'{SEARCH_CLASS_NAMES[args.search]}()')
+        else:
+            raise ValueError(f'Error: unsupported attack {args.search}')
+    return textattack.shared.Attack(goal_function, constraints, transformation, search_method)
 
 def parse_model_from_args(args):
     if args.model_from_file:
@@ -495,27 +508,6 @@ def parse_dataset_from_args(args):
         else:
             raise ValueError(f'Error: unsupported model {args.model}')
     return dataset
-
-def parse_goal_function_and_attack_from_args(args):
-    model = parse_model_from_args(args)
-    if args.recipe or args.attack_from_file:
-        attack = parse_attack_from_args(model, args)
-        goal_function = attack.goal_function
-        return goal_function, attack
-    else:
-        goal_function = parse_goal_function_from_args(args, model)
-        transformation = parse_transformation_from_args(args, model)
-        constraints = parse_constraints_from_args(args)
-        if ':' in args.search:
-            search_name, params = args.search.split(':')
-            if search_name not in SEARCH_CLASS_NAMES:
-                raise ValueError(f'Error: unsupported search {search_name}')
-            search_method = eval(f'{SEARCH_CLASS_NAMES[search_name]}({params})')
-        elif args.search in SEARCH_CLASS_NAMES:
-            search_method = eval(f'{SEARCH_CLASS_NAMES[args.search]}()')
-        else:
-            raise ValueError(f'Error: unsupported attack {args.search}')
-    return goal_function, textattack.shared.Attack(goal_function, constraints, transformation, search_method)
 
 def parse_logger_from_args(args):
     # Create logger
