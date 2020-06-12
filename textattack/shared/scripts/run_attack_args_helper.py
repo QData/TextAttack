@@ -27,6 +27,7 @@ RECIPE_NAMES = {
     
     'greedy-wed-med':      'textattack.attack_recipes.Greedy_WED_Med',
     'greedyWIR-wed-med':   'textattack.attack_recipes.GreedyWIR_WED_Med',
+    'greedyWIRD-wed-med':   'textattack.attack_recipes.GreedyWIR_D_WED_Med',
     'beam4-wed-med':       'textattack.attack_recipes.BeamSearch4_WED_Med',
     'beam8-wed-med':       'textattack.attack_recipes.BeamSearch8_WED_Med',
     'mha-wed-med':         'textattack.attack_recipes.MHA_WED_Med',
@@ -35,6 +36,7 @@ RECIPE_NAMES = {
 
     'greedy-wed-strict':      'textattack.attack_recipes.Greedy_WED_Strict',
     'greedyWIR-wed-strict':   'textattack.attack_recipes.GreedyWIR_WED_Strict',
+    'greedyWIRD-wed-strict':   'textattack.attack_recipes.GreedyWIR_D_WED_Strict',
     'beam4-wed-strict':       'textattack.attack_recipes.BeamSearch4_WED_Strict',
     'beam8-wed-strict':       'textattack.attack_recipes.BeamSearch8_WED_Strict',
     'mha-wed-strict':         'textattack.attack_recipes.MHA_WED_Strict',
@@ -286,6 +288,9 @@ def get_args():
         help='If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.')
 
     resume_parser.add_argument('--parallel', action='store_true', default=False,
+        help='Run attack using multiple GPUs.')
+    
+    resume_parser.add_argument('--fix', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
 
     if sys.argv[1:] and sys.argv[1].lower() == 'resume':
