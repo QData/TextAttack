@@ -67,7 +67,7 @@ python -m textattack --model lstm-mr --num-examples 20 \
  --goal-function untargeted-classification
 ```
 
-*Non-overlapping output attack using a greedy word swap and WordNet word substitutionson T5 English-to-German translation:*
+*Non-overlapping output attack using a greedy word swap and WordNet word substitutions on T5 English-to-German translation:*
 ```
 python -m textattack --attack-n --goal-function non-overlapping-output \
     --model t5-en2de --num-examples 10 --transformation word-swap-wordnet \
