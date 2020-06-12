@@ -108,6 +108,7 @@ class WordEmbeddingDistance(Constraint):
         except KeyError:
             raise KeyError('Cannot apply part-of-speech constraint without `newly_modified_indices`')
         
+        
         for i in indices:
             cur_word = current_text.words[i]
             transformed_word = transformed_text.words[i]

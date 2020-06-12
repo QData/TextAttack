@@ -70,7 +70,7 @@ class WordSwapGradientBased(Transformation):
         for j, word_idx in enumerate(indices_to_replace):
             # Get the grad w.r.t the one-hot index of the word.
             b_grads = emb_grad[word_idx].view(1,-1).mm(lookup_table_transpose).squeeze()
-            a_grad = b_grads[text.ids[0][word_idx]]
+            a_grad = b_grads[text.ids[word_idx]]
             diffs[j] = b_grads-a_grad
         
         # Don't change to the pad token.
@@ -86,7 +86,7 @@ class WordSwapGradientBased(Transformation):
             idx_in_vocab = idx % (num_words_in_vocab)
             idx_in_sentence = indices_to_replace[idx_in_diffs]
             word = self.model.tokenizer.convert_id_to_word(idx_in_vocab)
-            if not utils.has_letter(word): 
+            if (not utils.has_letter(word)) or (len(utils.words_from_text(word)) != 1): 
                 # Do not consider words that are solely letters or punctuation.
                 continue
             candidates.append((word, idx_in_sentence))
@@ -99,10 +99,7 @@ class WordSwapGradientBased(Transformation):
     def _call_model(self, text):
         """ A helper function to query `self.model` with TokenizedText `text`.
         """
-        ids = torch.tensor(text.ids[0])
-        ids = ids.to(next(self.model.parameters()).device)
-        ids = ids.unsqueeze(0)
-        return self.model(ids)
+        return utils.model_predict(self.model, [text.ids])
 
     def _get_transformations(self, tokenized_text, indices_to_replace):
         """

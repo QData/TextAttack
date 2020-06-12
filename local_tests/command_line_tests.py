@@ -56,7 +56,17 @@ register_test(('python -m textattack --model-from-file local_tests/sample_inputs
     desc='Runs DeepWordBug recipe against pre-trained model and dataset specified in a file')
 
 #
-# test: run_attack_parallel textfooler attack on 10 samples from BERT MR
+# test: run_attack hotflip attack on 10 samples from LSTM MR
+#                   (takes about ??s)
+#
+register_test('python -m textattack --model lstm-mr --recipe hotflip '
+    '--num-examples 4 --num-examples-offset 13', 
+    name='run_attack_hotflip_lstm_mr_4', 
+    output_file='local_tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt', 
+    desc='Runs attack using HotFlip recipe on LSTM using 4 examples from the MR dataset')
+
+#
+# test: run_attack textfooler attack on 10 samples from BERT MR
 #                   (takes about 81s)
 #
 register_test('python -m textattack --model bert-base-uncased-mr --recipe textfooler --num-examples 10', 

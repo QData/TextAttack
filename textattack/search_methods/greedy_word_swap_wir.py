@@ -23,18 +23,17 @@ class GreedyWordSwapWIR(SearchMethod):
             ranking shows the most important word first.)
     """
 
-    WIR_TO_REPLACEMENT_STR = {
-        'unk': '[UNK]',
-        'delete': '[DELETE]',
-    }
-
     def __init__(self, wir_method='unk', ascending=False):
         self.wir_method = wir_method
         self.ascending = ascending
-        try: 
-            self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
-        except KeyError:
-            raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
+    
+    def _get_index_order(self, initial_result, texts):
+        """ Queries model for list of tokenized text objects ``text`` and
+            ranks in order of descending score.
+        """
+        leave_one_results, search_over = self.get_goal_results(texts, initial_result.output)
+        leave_one_scores = np.array([result.score for result in leave_one_results])
+        return leave_one_scores, search_over
         
     def _perform_search(self, initial_result):
         tokenized_text = initial_result.tokenized_text
@@ -43,10 +42,16 @@ class GreedyWordSwapWIR(SearchMethod):
         # Sort words by order of importance
         len_text = len(tokenized_text.words)
         
-        leave_one_texts = \
-            [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
-        leave_one_results, search_over = self.get_goal_results(leave_one_texts, initial_result.output)
-        leave_one_scores = np.array([result.score for result in leave_one_results])
+        if self.wir_method == 'unk':
+            leave_one_texts = [tokenized_text.replace_word_at_index(i, '[UNK]') for i in range(len_text)]
+            leave_one_scores, search_over = self._get_index_order(initial_result, leave_one_texts)
+        elif self.wir_method == 'delete':
+            leave_one_texts = [tokenized_text.delete_word_at_index(i) for i in range(len_text)]
+            leave_one_scores = self._get_index_order(initial_result, leave_one_texts)
+        elif self.wir_method == 'random':
+            leave_one_scores = torch.random(len_text)
+            search_over = False
+        
         if self.ascending:
             index_order = (leave_one_scores).argsort()
         else:
