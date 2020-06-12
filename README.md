@@ -75,6 +75,8 @@ python -m textattack --attack-n --goal-function non-overlapping-output \
     --search greedy
 ```
 
+> *Tip:* If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+
 ### Attacks and Papers Implemented ("Attack Recipes")
 
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python -m textattack --recipe [recipe_name]`
@@ -89,6 +91,20 @@ The first are for classification tasks, like sentiment classification and entail
 
 The final is for sequence-to-sequence models:
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)).
+
+#### Recipe Usage Examples
+
+Here are some exampes of testing attacks from the literature from the command-line:
+
+*TextFooler against BERT fine-tuned on SST-2:*
+```
+python -m textattack --model bert-base-uncased-sst2 --recipe textfooler --num-examples 10
+```
+
+*seq2sick (black-box) against T5 fine-tuned for English-German translation:*
+```
+python -m textattack --recipe seq2sick --model t5-en2de --num-examples 100
+```
 
 ### Augmenting Text
 
