@@ -102,13 +102,22 @@ def GreedyWIR_WED_Med(model):
     search_method = GreedyWordSwapWIR()
     return Attack(goal_function, constraints, WED_transformation, search_method)
 
-def GreedyWIR_D_WED_Med(model):
+def GreedyWIR_DEL_WED_Med(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
     constraints.append(
         WordEmbeddingDistance(min_cos_sim=COSINE_MED)
     )
     goal_function = UntargetedClassification(model)
     search_method = GreedyWordSwapWIR(wir_method='delete')
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def GreedyWIR_Random_WED_Med(model):
+    constraints = copy.deepcopy(BASIC_CONSTRAINTS)
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_MED)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GreedyWordSwapWIR(wir_method='random')
     return Attack(goal_function, constraints, WED_transformation, search_method)
 
 def BeamSearch4_WED_Med(model):
@@ -176,13 +185,22 @@ def GreedyWIR_WED_Strict(model):
     search_method = GreedyWordSwapWIR()
     return Attack(goal_function, constraints, WED_transformation, search_method)
 
-def GreedyWIR_D_WED_Strict(model):
+def GreedyWIR_DEL_WED_Strict(model):
     constraints = copy.deepcopy(BASIC_CONSTRAINTS)
     constraints.append(
         WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
     )
     goal_function = UntargetedClassification(model)
     search_method = GreedyWordSwapWIR(wir_method='delete')
+    return Attack(goal_function, constraints, WED_transformation, search_method)
+
+def GreedyWIR_Random_WED_Strict(model):
+    constraints = copy.deepcopy(BASIC_CONSTRAINTS)
+    constraints.append(
+        WordEmbeddingDistance(min_cos_sim=COSINE_STRICT)
+    )
+    goal_function = UntargetedClassification(model)
+    search_method = GreedyWordSwapWIR(wir_method='random')
     return Attack(goal_function, constraints, WED_transformation, search_method)
 
 def BeamSearch4_WED_Strict(model):

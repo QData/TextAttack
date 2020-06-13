@@ -8,6 +8,7 @@ See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
 
 
 import numpy as np
+import random
 
 from textattack.search_methods import SearchMethod
 from textattack.shared.validators import transformation_consists_of_word_swaps
@@ -28,8 +29,9 @@ class GreedyWordSwapWIR(SearchMethod):
 
     def __init__(self, wir_method='unk'):
         self.wir_method = wir_method
-        try: 
-            self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
+        try:
+            if wir_method != 'random': 
+                self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
         except KeyError:
             raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
         
@@ -37,14 +39,18 @@ class GreedyWordSwapWIR(SearchMethod):
         tokenized_text = initial_result.tokenized_text
         cur_result = initial_result
 
-        # Sort words by order of importance
         len_text = len(tokenized_text.words)
-        
-        leave_one_texts = \
-            [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
-        leave_one_results, search_over = self.get_goal_results(leave_one_texts, initial_result.output)
-        leave_one_scores = np.array([result.score for result in leave_one_results])
-        index_order = (-leave_one_scores).argsort()
+        if self.wir_method == 'random':
+            index_order = list(range(len_text))
+            search_over = False
+            random.shuffle(index_order)
+        else:
+            # Sort words by order of importance
+            leave_one_texts = \
+                [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
+            leave_one_results, search_over = self.get_goal_results(leave_one_texts, initial_result.output)
+            leave_one_scores = np.array([result.score for result in leave_one_results])
+            index_order = (-leave_one_scores).argsort()
 
         i = 0
         results = None
