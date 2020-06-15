@@ -3,6 +3,7 @@ import transformers
 from textattack.models.tokenizers import T5Tokenizer
 from textattack.shared import utils
 
+
 class T5ForTextToText:
     """ 
     A T5 model trained to generate text from text.

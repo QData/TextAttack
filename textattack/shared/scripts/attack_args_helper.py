@@ -730,7 +730,9 @@ def parse_model_from_args(args):
         model = model_class.from_pretrained(model_name)
         model = model.to(textattack.shared.utils.device)
         try:
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(args.model_from_huggingface)
+            tokenizer = textattack.models.tokenizers.AutoTokenizer(
+                args.model_from_huggingface
+            )
         except OSError:
             textattack.shared.logger.warn(
                 f"AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`"
