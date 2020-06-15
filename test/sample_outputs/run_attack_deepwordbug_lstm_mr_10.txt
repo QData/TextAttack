@@ -73,17 +73,17 @@ disappointingly , the characters are too strange and dysfunctional , tom include
 
 
 
-(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
-(0x(B Attack Results                (0x(B        (0x(B
-(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
-(0x(B Number of successful attacks: (0x(B 8      (0x(B
-(0x(B Number of failed attacks:     (0x(B 2      (0x(B
-(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
-(0x(B Original accuracy:            (0x(B 100.0% (0x(B
-(0x(B Accuracy under attack:        (0x(B 20.0%  (0x(B
-(0x(B Attack success rate:          (0x(B 80.0%  (0x(B
-(0x(B Average perturbed word %:     (0x(B 20.05% (0x(B
-(0x(B Average num. words per input: (0x(B 20.7   (0x(B
-(0x(B Avg num queries:              (0x(B 38.9   (0x(B
-(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 8      |
+| Number of failed attacks:     | 2      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 20.0%  |
+| Attack success rate:          | 80.0%  |
+| Average perturbed word %:     | 20.05% |
+| Average num. words per input: | 20.7   |
+| Avg num queries:              | 38.9   |
++-------------------------------+--------+
 Attack time: /.*/s

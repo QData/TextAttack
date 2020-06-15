@@ -3,6 +3,7 @@ import numpy as np
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
+
 class WordSwapRandomCharacterInsertion(WordSwap):
     """ Transforms an input by inserting a random character.
 
@@ -13,7 +14,10 @@ class WordSwapRandomCharacterInsertion(WordSwap):
         skip_last_char (bool): Whether to disregard inserting as the last 
             character.
     """
-    def __init__(self, random_one=True, skip_first_char=False, skip_last_char=False, **kwargs):
+
+    def __init__(
+        self, random_one=True, skip_first_char=False, skip_last_char=False, **kwargs
+    ):
         super().__init__(**kwargs)
         self.random_one = random_one
         self.skip_first_char = skip_first_char
@@ -25,12 +29,12 @@ class WordSwapRandomCharacterInsertion(WordSwap):
         """
         if len(word) <= 1:
             return []
-            
+
         candidate_words = []
-        
+
         start_idx = 1 if self.skip_first_char else 0
         end_idx = (len(word) - 1) if self.skip_last_char else len(word)
-        
+
         if start_idx >= end_idx:
             return []
 

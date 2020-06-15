@@ -62,17 +62,17 @@ I [94mexperience[0m [94mincisively[0m.
 
 
 
-(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
-(0x(B Attack Results                (0x(B        (0x(B
-(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
-(0x(B Number of successful attacks: (0x(B 3      (0x(B
-(0x(B Number of failed attacks:     (0x(B 1      (0x(B
-(0x(B Number of skipped attacks:    (0x(B 1      (0x(B
-(0x(B Original accuracy:            (0x(B 80.0%  (0x(B
-(0x(B Accuracy under attack:        (0x(B 20.0%  (0x(B
-(0x(B Attack success rate:          (0x(B 75.0%  (0x(B
-(0x(B Average perturbed word %:     (0x(B 5.93%  (0x(B
-(0x(B Average num. words per input: (0x(B 29.6   (0x(B
-(0x(B Avg num queries:              (0x(B 317.25 (0x(B
-(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 3      |
+| Number of failed attacks:     | 1      |
+| Number of skipped attacks:    | 1      |
+| Original accuracy:            | 80.0%  |
+| Accuracy under attack:        | 20.0%  |
+| Attack success rate:          | 75.0%  |
+| Average perturbed word %:     | 5.93%  |
+| Average num. words per input: | 29.6   |
+| Avg num queries:              | 317.25 |
++-------------------------------+--------+
 Attack time: /.*/s

@@ -49,17 +49,17 @@ In this sense, the measures will partially undermine the American democratic sys
 
 
 
-(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
-(0x(B Attack Results                (0x(B        (0x(B
-(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
-(0x(B Number of successful attacks: (0x(B 3      (0x(B
-(0x(B Number of failed attacks:     (0x(B 3      (0x(B
-(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
-(0x(B Original accuracy:            (0x(B 100.0% (0x(B
-(0x(B Accuracy under attack:        (0x(B 50.0%  (0x(B
-(0x(B Attack success rate:          (0x(B 50.0%  (0x(B
-(0x(B Average perturbed word %:     (0x(B 15.06% (0x(B
-(0x(B Average num. words per input: (0x(B 15.33  (0x(B
-(0x(B Avg num queries:              (0x(B 28.5   (0x(B
-(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 3      |
+| Number of failed attacks:     | 3      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 50.0%  |
+| Attack success rate:          | 50.0%  |
+| Average perturbed word %:     | 15.06% |
+| Average num. words per input: | 15.33  |
+| Avg num queries:              | 28.5   |
++-------------------------------+--------+
 Attack time: /.*/s

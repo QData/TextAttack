@@ -112,17 +112,17 @@ A kid climbing some [94mlyogs[0m
 
 
 
-(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
-(0x(B Attack Results                (0x(B        (0x(B
-(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
-(0x(B Number of successful attacks: (0x(B 9      (0x(B
-(0x(B Number of failed attacks:     (0x(B 0      (0x(B
-(0x(B Number of skipped attacks:    (0x(B 1      (0x(B
-(0x(B Original accuracy:            (0x(B 90.0%  (0x(B
-(0x(B Accuracy under attack:        (0x(B 0.0%   (0x(B
-(0x(B Attack success rate:          (0x(B 100.0% (0x(B
-(0x(B Average perturbed word %:     (0x(B 6.29%  (0x(B
-(0x(B Average num. words per input: (0x(B 21.6   (0x(B
-(0x(B Avg num queries:              (0x(B 28.22  (0x(B
-(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 9      |
+| Number of failed attacks:     | 0      |
+| Number of skipped attacks:    | 1      |
+| Original accuracy:            | 90.0%  |
+| Accuracy under attack:        | 0.0%   |
+| Attack success rate:          | 100.0% |
+| Average perturbed word %:     | 6.29%  |
+| Average num. words per input: | 21.6   |
+| Avg num queries:              | 28.22  |
++-------------------------------+--------+
 Attack time: /.*/s

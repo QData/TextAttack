@@ -1,5 +1,6 @@
 from textattack.models.helpers import T5ForTextToText
 
+
 class T5EnglishToGerman(T5ForTextToText):
     """ 
     A T5 model trained to translate English text to German. Trained on the 
@@ -12,9 +13,11 @@ class T5EnglishToGerman(T5ForTextToText):
     Appendix D contains information about the various tasks supported
     by T5.
     """
+
     def __init__(self, **kwargs):
-        super().__init__('english_to_german', **kwargs)
-        
+        super().__init__("english_to_german", **kwargs)
+
+
 class T5EnglishToFrench(T5ForTextToText):
     """ 
     A T5 model trained to translate English text to French. Trained on the 
@@ -26,9 +29,11 @@ class T5EnglishToFrench(T5ForTextToText):
     Appendix D contains information about the various tasks supported
     by T5.
     """
+
     def __init__(self, **kwargs):
-        super().__init__('english_to_french', **kwargs)
-        
+        super().__init__("english_to_french", **kwargs)
+
+
 class T5EnglishToRomanian(T5ForTextToText):
     """ 
     A T5 model trained to translate English text to Romanian. 
@@ -44,5 +49,6 @@ class T5EnglishToRomanian(T5ForTextToText):
     Appendix D contains information about the various tasks supported
     by T5.
     """
+
     def __init__(self, **kwargs):
-        super().__init__('english_to_romanian', **kwargs)
+        super().__init__("english_to_romanian", **kwargs)

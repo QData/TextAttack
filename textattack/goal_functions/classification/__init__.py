@@ -1,2 +1,2 @@
-from .untargeted_classification import UntargetedClassification
 from .targeted_classification import TargetedClassification
+from .untargeted_classification import UntargetedClassification

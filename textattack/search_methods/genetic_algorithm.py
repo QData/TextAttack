@@ -5,12 +5,14 @@ by Alzantot et. al
 `<github.com/nesl/nlp_adversarial_examples>`_
 """
 
+from copy import deepcopy
+
 import numpy as np
 import torch
-from copy import deepcopy
 
 from textattack.search_methods import SearchMethod
 from textattack.shared.validators import transformation_consists_of_word_swaps
+
 
 class GeneticAlgorithm(SearchMethod):
     """
@@ -21,7 +23,9 @@ class GeneticAlgorithm(SearchMethod):
         max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 50. 
     """
 
-    def __init__(self, pop_size=20, max_iters=50, temp=0.3, give_up_if_no_improvement=False):
+    def __init__(
+        self, pop_size=20, max_iters=50, temp=0.3, give_up_if_no_improvement=False
+    ):
         self.max_iters = max_iters
         self.pop_size = pop_size
         self.temp = temp
@@ -40,15 +44,21 @@ class GeneticAlgorithm(SearchMethod):
         Returns:
             Whether a replacement which increased the score was found.
         """
-        transformations = self.get_transformations(pop_member.tokenized_text,
-                                                   original_text=self.original_tokenized_text,
-                                                   indices_to_modify=[idx])
+        transformations = self.get_transformations(
+            pop_member.tokenized_text,
+            original_text=self.original_tokenized_text,
+            indices_to_modify=[idx],
+        )
         if not len(transformations):
             return False
-        orig_result, self.search_over = self.get_goal_results([pop_member.tokenized_text], self.correct_output)
+        orig_result, self.search_over = self.get_goal_results(
+            [pop_member.tokenized_text], self.correct_output
+        )
         if self.search_over:
             return False
-        new_x_results, self.search_over = self.get_goal_results(transformations, self.correct_output)
+        new_x_results, self.search_over = self.get_goal_results(
+            transformations, self.correct_output
+        )
         new_x_scores = torch.Tensor([r.score for r in new_x_results])
         new_x_scores = new_x_scores - orig_result[0].score
         if len(new_x_scores) and new_x_scores.max() > 0:
@@ -88,7 +98,9 @@ class GeneticAlgorithm(SearchMethod):
         """
         pop = []
         for _ in range(self.pop_size):
-            pop_member = PopulationMember(self.original_tokenized_text, deepcopy(neighbors_len), initial_result)
+            pop_member = PopulationMember(
+                self.original_tokenized_text, deepcopy(neighbors_len), initial_result
+            )
             self._perturb(pop_member)
             pop.append(pop_member)
         return pop
@@ -112,7 +124,9 @@ class GeneticAlgorithm(SearchMethod):
                 indices_to_replace.append(i)
                 words_to_replace.append(x2_words[i])
                 new_neighbors_len[i] = pop_member2.neighbors_len[i]
-        new_text = x1_text.replace_words_at_indices(indices_to_replace, words_to_replace)
+        new_text = x1_text.replace_words_at_indices(
+            indices_to_replace, words_to_replace
+        )
         return PopulationMember(new_text, deepcopy(new_neighbors_len))
 
     def _get_neighbors_len(self, tokenized_text):
@@ -125,8 +139,9 @@ class GeneticAlgorithm(SearchMethod):
         """
         words = tokenized_text.words
         neighbors_list = [[] for _ in range(len(words))]
-        transformations = self.get_transformations(tokenized_text,
-                                                   original_text=self.original_tokenized_text)
+        transformations = self.get_transformations(
+            tokenized_text, original_text=self.original_tokenized_text
+        )
         for transformed_text in transformations:
             diff_idx = tokenized_text.first_word_diff_index(transformed_text)
             neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
@@ -141,7 +156,9 @@ class GeneticAlgorithm(SearchMethod):
         pop = self._generate_population(neighbors_len, initial_result)
         cur_score = initial_result.score
         for i in range(self.max_iters):
-            pop_results, self.search_over = self.get_goal_results([pm.tokenized_text for pm in pop], self.correct_output)
+            pop_results, self.search_over = self.get_goal_results(
+                [pm.tokenized_text for pm in pop], self.correct_output
+            )
             if self.search_over:
                 if not len(pop_results):
                     return pop[0].result
@@ -153,7 +170,7 @@ class GeneticAlgorithm(SearchMethod):
             pop_scores = torch.Tensor([r.score for r in pop_results])
             logits = ((-pop_scores) / self.temp).exp()
             select_probs = (logits / logits.sum()).cpu().numpy()
-            
+
             if pop[0].result.succeeded:
                 return pop[0].result
 
@@ -164,12 +181,16 @@ class GeneticAlgorithm(SearchMethod):
 
             elite = [pop[0]]
             parent1_idx = np.random.choice(
-                self.pop_size, size=self.pop_size-1, p=select_probs)
+                self.pop_size, size=self.pop_size - 1, p=select_probs
+            )
             parent2_idx = np.random.choice(
-                self.pop_size, size=self.pop_size-1, p=select_probs)
+                self.pop_size, size=self.pop_size - 1, p=select_probs
+            )
 
-            children = [self._crossover(pop[parent1_idx[idx]], pop[parent2_idx[idx]])
-                                for idx in range(self.pop_size-1)]
+            children = [
+                self._crossover(pop[parent1_idx[idx]], pop[parent2_idx[idx]])
+                for idx in range(self.pop_size - 1)
+            ]
             for c in children:
                 self._perturb(c)
 
@@ -184,8 +205,9 @@ class GeneticAlgorithm(SearchMethod):
         return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
-        return ['pop_size', 'max_iters', 'temp', 'give_up_if_no_improvement']
-    
+        return ["pop_size", "max_iters", "temp", "give_up_if_no_improvement"]
+
+
 class PopulationMember:
     """
     A member of the population during the course of the genetic algorithm.
@@ -194,6 +216,7 @@ class PopulationMember:
         tokenized_text: The ``TokenizedText`` of the population member.
         neighbors_len: A list of the number of candidate neighbors list for each word.
     """
+
     def __init__(self, tokenized_text, neighbors_len, result=None):
         self.tokenized_text = tokenized_text
         self.neighbors_len = neighbors_len

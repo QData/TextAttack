@@ -1,7 +1,7 @@
 import torch
-from textattack.shared import utils
 
 from textattack.models.helpers import LSTMForClassification
+from textattack.shared import utils
 
 
 class LSTMForAGNewsClassification(LSTMForClassification):
@@ -17,9 +17,9 @@ class LSTMForAGNewsClassification(LSTMForClassification):
             Defaults to 128.
             
     """
-    
-    MODEL_PATH = 'models/classification/lstm/ag_news'
-    
+
+    MODEL_PATH = "models/classification/lstm/ag_news"
+
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length, nclasses=4)
         self.load_from_disk(LSTMForAGNewsClassification.MODEL_PATH)

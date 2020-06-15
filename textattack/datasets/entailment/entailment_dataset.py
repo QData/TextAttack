@@ -1,6 +1,7 @@
 from textattack.datasets import TextAttackDataset
 from textattack.shared import TokenizedText
 
+
 class EntailmentDataset(TextAttackDataset):
     """ 
     A generic class for loading entailment data. 
@@ -10,20 +11,20 @@ class EntailmentDataset(TextAttackDataset):
         1: Neutral
         2: Contradiction
     """
-    
+
     def map_label_str(self, label_str):
-        if label_str == 'entailment':
+        if label_str == "entailment":
             return 0
-        elif label_str == 'neutral':
+        elif label_str == "neutral":
             return 1
-        elif label_str == 'contradiction':
+        elif label_str == "contradiction":
             return 2
         else:
-            raise ValueError(f'Unknown entailment label {label_str}')
-    
+            raise ValueError(f"Unknown entailment label {label_str}")
+
     def _process_example_from_file(self, raw_line):
         line = raw_line.strip()
-        label, premise, hypothesis = line.split('\t')
+        label, premise, hypothesis = line.split("\t")
         try:
             label = int(label)
         except ValueError:

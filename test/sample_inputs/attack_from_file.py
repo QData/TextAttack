@@ -6,4 +6,6 @@ def Attack(model):
     search_method = textattack.search_methods.GreedyWordSwapWIR()
     transformation = textattack.transformations.WordSwapRandomCharacterSubstitution()
     constraints = []
-    return textattack.shared.Attack(goal_function, constraints, transformation, search_method)
+    return textattack.shared.Attack(
+        goal_function, constraints, transformation, search_method
+    )

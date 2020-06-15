@@ -1,5 +1,6 @@
 from .classification_dataset import ClassificationDataset
 
+
 class MovieReviewSentiment(ClassificationDataset):
     """
     Loads samples from the Movie Review Dataset. The "MR" dataset is comprised 
@@ -15,7 +16,11 @@ class MovieReviewSentiment(ClassificationDataset):
         offset (int): line to start reading from
     
     """
-    DATA_PATH = 'datasets/classification/mr.txt'
+
+    DATA_PATH = "datasets/classification/mr.txt"
+
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
-        self._load_classification_text_file(MovieReviewSentiment.DATA_PATH, offset=offset)
+        self._load_classification_text_file(
+            MovieReviewSentiment.DATA_PATH, offset=offset
+        )
