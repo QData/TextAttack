@@ -39,6 +39,7 @@ TEXTATTACK_MODEL_CLASS_NAMES = {
     'lstm-ag-news':                 'textattack.models.classification.lstm.LSTMForAGNewsClassification',
     'lstm-imdb':                    'textattack.models.classification.lstm.LSTMForIMDBSentimentClassification',
     'lstm-mr':                      'textattack.models.classification.lstm.LSTMForMRSentimentClassification',
+    'lstm-sst':                     'textattack.models.classification.lstm.LSTMForSSTSentimentClassification',
     'lstm-yelp-sentiment':          'textattack.models.classification.lstm.LSTMForYelpSentimentClassification',
     #
     # Textual entailment models
@@ -474,10 +475,12 @@ def parse_model_from_args(args):
             textattack.shared.logger.info(f'Loading pre-trained TextAttack model: {colored_model_name}')
             model = eval(f'{TEXTATTACK_MODEL_CLASS_NAMES[args.model]}()')
         else: 
-            raise ValueError(f'Error: unsupported model {args.model}')
+            args.dataset_from_nlp = ('glue', 'sst2', 'validation')
+            # raise ValueError(f'Error: unsupported model {args.model}')
     return model
 
 def parse_dataset_from_args(args):
+    args.dataset_from_nlp = ('glue', 'sst2', 'validation')
     if args.dataset_from_file:
         textattack.shared.logger.info(f'Loading model and tokenizer from file: {args.model_from_file}')
         if ':' in args.dataset_from_file:

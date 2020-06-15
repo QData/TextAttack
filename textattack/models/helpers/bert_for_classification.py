@@ -18,6 +18,7 @@ class BERTForClassification:
         model_file_path = utils.download_if_needed(model_path)
         self.model = BertForSequenceClassification.from_pretrained(
             model_file_path, num_labels=num_labels)
+        print('self', self,'to', utils.device)
         self.model.to(utils.device)
         self.model.eval()
         self.tokenizer = BERTTokenizer(model_file_path)

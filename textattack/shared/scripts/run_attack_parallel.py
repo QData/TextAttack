@@ -18,12 +18,24 @@ def set_env_variables(gpu_id):
     # Only use one GPU, if we have one.
     if 'CUDA_VISIBLE_DEVICES' not in os.environ:
         os.environ['CUDA_VISIBLE_DEVICES'] = str(gpu_id)
+        logger.info(f'thread using GPU {gpu_id}')
     # Disable tensorflow logs, except in the case of an error.
     if 'TF_CPP_MIN_LOG_LEVEL' not in os.environ:
         os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
     # Cache TensorFlow Hub models here, if not otherwise specified.
     if 'TFHUB_CACHE_DIR' not in os.environ:
         os.environ['TFHUB_CACHE_DIR'] = os.path.expanduser('~/.cache/tensorflow-hub')
+    # Disable tensorflow memory growth.
+    try:
+        gpus = tf.config.experimental.list_physical_devices('GPU')
+        if gpus:
+            for gpu in gpus:
+              tf.config.experimental.set_memory_growth(gpu, True)
+              print('set no growth on gpu /', gpu)
+            logical_gpus = tf.config.experimental.list_logical_devices('GPU')
+            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+    except:
+        pass
 
 def attack_from_queue(args, in_queue, out_queue):
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2

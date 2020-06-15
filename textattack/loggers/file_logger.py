@@ -43,7 +43,7 @@ class FileLogger(Logger):
     def log_summary_rows(self, rows, title, window_id):
         if self.stdout:
             table_rows = [[title, '']] + rows
-            table = terminaltables.SingleTable(table_rows)
+            table = terminaltables.AsciiTable(table_rows)
             self.fout.write(table.table)
         else:
             for row in rows:

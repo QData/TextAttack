@@ -1,0 +1,9 @@
+Running on 4 GPUs
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7fd5800368d0> to cuda
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7f3f91252110> to cuda
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7f609bb60b10> to cuda
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7f0069f6ea90> to cuda
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7f962fa67b10> to cuda
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7f53fb148cd0> to cuda
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7fb18c7ebbd0> to cuda
+self <textattack.models.classification.bert.bert_for_mr_sentiment_classification.BERTForMRSentimentClassification object at 0x7fdc6785a5d0> to cuda
