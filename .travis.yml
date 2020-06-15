@@ -5,5 +5,8 @@ before_install:
   - pip install -U pip
   - pip install -U pytest
 install:
+  - pip install black
   - pip install -e .
-script: pytest tests # run tests
+script:
+  - black . --check
+  - pytest test # run tests
