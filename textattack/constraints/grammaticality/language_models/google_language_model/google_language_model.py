@@ -1,11 +1,10 @@
-from collections import defaultdict
+import numpy as np
 import time
 
-import numpy as np
+from collections import defaultdict
 
-from textattack.constraints import Constraint
 from textattack.transformations import WordSwap
-
+from textattack.constraints import Constraint
 from .alzantot_goog_lm import GoogLMHelper
 
 

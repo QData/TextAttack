@@ -1,5 +1,5 @@
-from textattack.constraints.pre_transformation import PreTransformationConstraint
 from textattack.shared.utils import default_class_repr
+from textattack.constraints.pre_transformation import PreTransformationConstraint
 
 
 class RepeatModification(PreTransformationConstraint):

@@ -1,5 +1,4 @@
 import math
-
 from textattack.constraints import Constraint
 
 

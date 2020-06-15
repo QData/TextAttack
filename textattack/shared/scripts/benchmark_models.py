@@ -1,10 +1,9 @@
 import argparse
+import textattack
+import torch
 import sys
 
-import torch
-
-from attack_args_helper import get_args, parse_dataset_from_args, parse_model_from_args
-import textattack
+from attack_args_helper import get_args, parse_model_from_args, parse_dataset_from_args
 
 
 def _cb(s):

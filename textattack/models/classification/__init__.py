@@ -1,1 +1,3 @@
-from . import bert, cnn, lstm
+from . import bert
+from . import cnn
+from . import lstm

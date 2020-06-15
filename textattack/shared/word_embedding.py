@@ -1,8 +1,6 @@
+import numpy as np
 import os
 import pickle
-
-import numpy as np
-
 import textattack
 
 

@@ -1,7 +1,7 @@
 import torch
+from textattack.shared import utils
 
 from textattack.models.helpers import LSTMForClassification
-from textattack.shared import utils
 
 
 class LSTMForAGNewsClassification(LSTMForClassification):

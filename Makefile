@@ -1,8 +1,7 @@
-format: FORCE  ## Run isort and black (rewriting files)
-	 isort -rc --atomic .
+format: FORCE  ## Run black (rewriting files)
 	 black .
 
-lint: FORCE  ## Run flake8, mypy and black (in check mode)
+lint: FORCE  ## Run black (in check mode)
 	 black . --check
 
 test: FORCE ## Run tests using pytest

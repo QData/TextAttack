@@ -1,5 +1,4 @@
 from textattack.shared.utils import html_table_from_rows
-
 from .logger import Logger
 
 

@@ -1,10 +1,10 @@
-import os
-
 import numpy as np
+import os
 import torch
 
 from textattack.constraints import Constraint
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
+
 from textattack.shared import utils
 
 from .infer_sent_model import InferSentModel

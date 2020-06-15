@@ -1,7 +1,5 @@
 import functools
-
 import numpy as np
-
 from textattack.shared.utils import words_from_text
 
 from .text_to_text_goal_function import TextToTextGoalFunction

@@ -1,6 +1,6 @@
-import textattack
-
 from . import Augmenter
+
+import textattack
 
 DEFAULT_CONSTRAINTS = [
     textattack.constraints.pre_transformation.RepeatModification(),

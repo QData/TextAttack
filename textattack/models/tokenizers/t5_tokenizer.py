@@ -1,4 +1,4 @@
-from textattack.tokenizers import AutoTokenizer
+from textattack.models.tokenizers import AutoTokenizer
 
 
 class T5Tokenizer(AutoTokenizer):

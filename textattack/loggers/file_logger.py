@@ -1,7 +1,6 @@
-import copy
 import os
 import sys
-
+import copy
 import terminaltables
 
 from .logger import Logger

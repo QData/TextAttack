@@ -1,8 +1,7 @@
 import os
-
 from attack_args_helper import (
-    HUGGINGFACE_DATASET_BY_MODEL,
     TEXTATTACK_MODEL_CLASS_NAMES,
+    HUGGINGFACE_DATASET_BY_MODEL,
 )
 
 dir_path = os.path.dirname(os.path.realpath(__file__))

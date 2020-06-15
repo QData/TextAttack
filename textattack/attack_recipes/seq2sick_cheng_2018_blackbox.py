@@ -1,12 +1,12 @@
+from textattack.shared.attack import Attack
 from textattack.constraints.overlap import LevenshteinEditDistance
+from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
-from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import NonOverlappingOutput
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 

@@ -3,9 +3,8 @@
     All rights reserved.
 """
 import sys
-
-from google.protobuf import text_format
 import tensorflow as tf
+from google.protobuf import text_format
 
 tf.get_logger().setLevel("INFO")
 

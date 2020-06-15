@@ -1,5 +1,4 @@
 import numpy as np
-
 from textattack.transformations.transformation import Transformation
 
 

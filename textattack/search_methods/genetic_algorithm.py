@@ -5,10 +5,9 @@ by Alzantot et. al
 `<github.com/nesl/nlp_adversarial_examples>`_
 """
 
-from copy import deepcopy
-
 import numpy as np
 import torch
+from copy import deepcopy
 
 from textattack.search_methods import SearchMethod
 from textattack.shared.validators import transformation_consists_of_word_swaps

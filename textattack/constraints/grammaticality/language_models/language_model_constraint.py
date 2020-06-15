@@ -1,5 +1,4 @@
 import math
-
 import torch
 
 from textattack.constraints import Constraint

@@ -1,16 +1,15 @@
+import filelock
 import logging
 import logging.config
 import os
 import pathlib
+import requests
 import shutil
 import tempfile
-import zipfile
-
-import filelock
-import requests
 import torch
 import tqdm
 import yaml
+import zipfile
 
 
 def path_in_cache(file_path):

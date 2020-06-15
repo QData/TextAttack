@@ -1,7 +1,6 @@
 import transformers
-
+from textattack.models.tokenizers import Tokenizer
 from textattack.shared import TokenizedText
-from textattack.tokenizers import Tokenizer
 
 
 class AutoTokenizer(Tokenizer):

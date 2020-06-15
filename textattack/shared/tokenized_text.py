@@ -1,6 +1,5 @@
 import numpy as np
 import torch
-
 from .utils import device, words_from_text
 
 

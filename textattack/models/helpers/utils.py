@@ -1,5 +1,4 @@
 import os
-
 import torch
 
 from textattack.shared import utils

@@ -1,17 +1,18 @@
-from textattack.constraints.overlap import LevenshteinEditDistance
+from textattack.shared.attack import Attack
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
+from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
+from textattack.transformations import CompositeTransformation
 from textattack.transformations import (
-    CompositeTransformation,
     WordSwapNeighboringCharacterSwap,
     WordSwapRandomCharacterDeletion,
     WordSwapRandomCharacterInsertion,
     WordSwapRandomCharacterSubstitution,
+    WordSwapNeighboringCharacterSwap,
 )
 
 

@@ -4,7 +4,7 @@ import re
 import textattack
 from textattack.goal_functions import *
 
-from .utils import logger
+from . import logger
 
 # A list of goal functions and the corresponding available models.
 MODELS_BY_GOAL_FUNCTIONS = {

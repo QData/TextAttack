@@ -1,9 +1,8 @@
-import random
-
-import nlp
-
 from textattack.datasets import TextAttackDataset
 from textattack.shared import TokenizedText
+
+import nlp
+import random
 
 
 def get_nlp_dataset_columns(dataset):

@@ -1,7 +1,6 @@
 import torch
-
-from textattack.goal_function_results import ClassificationGoalFunctionResult
 from textattack.goal_functions import GoalFunction
+from textattack.goal_function_results import ClassificationGoalFunctionResult
 
 
 class ClassificationGoalFunction(GoalFunction):

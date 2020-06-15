@@ -1,11 +1,11 @@
+import textattack
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-import textattack
+from textattack.shared import utils
 from textattack.models.helpers import GloveEmbeddingLayer
 from textattack.models.helpers.utils import load_cached_state_dict
-from textattack.shared import utils
 
 
 class WordCNNForClassification(nn.Module):
@@ -25,7 +25,7 @@ class WordCNNForClassification(nn.Module):
         )
         d_out = 3 * hidden_size
         self.out = nn.Linear(d_out, nclasses)
-        self.tokenizer = textattack.tokenizers.SpacyTokenizer(
+        self.tokenizer = textattack.models.tokenizers.SpacyTokenizer(
             self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
         )
 

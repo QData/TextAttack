@@ -2,13 +2,11 @@
 A command line parser to run an attack from user specifications.
 """
 
-import datetime
-import os
-import time
-
-import tqdm
-
 import textattack
+import time
+import tqdm
+import os
+import datetime
 
 from .attack_args_helper import *
 

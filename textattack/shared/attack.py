@@ -1,17 +1,17 @@
+import lru
+import numpy as np
 import os
 import random
 
-import lru
-import numpy as np
-
-from textattack.attack_results import (
-    FailedAttackResult,
-    SkippedAttackResult,
-    SuccessfulAttackResult,
-)
+from textattack.shared import utils
 from textattack.constraints import Constraint
 from textattack.constraints.pre_transformation import PreTransformationConstraint
-from textattack.shared import TokenizedText, utils
+from textattack.shared import TokenizedText
+from textattack.attack_results import (
+    SkippedAttackResult,
+    SuccessfulAttackResult,
+    FailedAttackResult,
+)
 
 
 class Attack:

@@ -1,16 +1,14 @@
 import argparse
-import copy
 import importlib
+import numpy as np
 import os
-import pickle
 import random
 import sys
-import time
-
-import numpy as np
-import torch
-
 import textattack
+import time
+import torch
+import pickle
+import copy
 
 RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.Alzantot2018",
@@ -732,12 +730,12 @@ def parse_model_from_args(args):
         model = model_class.from_pretrained(model_name)
         model = model.to(textattack.shared.utils.device)
         try:
-            tokenizer = textattack.tokenizers.AutoTokenizer(args.model_from_huggingface)
+            tokenizer = textattack.models.tokenizers.AutoTokenizer(args.model_from_huggingface)
         except OSError:
             textattack.shared.logger.warn(
                 f"AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`"
             )
-            tokenizer = textattack.tokenizers.AutoTokenizer("bert-base-uncased")
+            tokenizer = textattack.models.tokenizers.AutoTokenizer("bert-base-uncased")
         setattr(model, "tokenizer", tokenizer)
     else:
         if ":" in args.model:
