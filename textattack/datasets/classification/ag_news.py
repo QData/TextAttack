@@ -1,5 +1,7 @@
 from textattack.shared import utils
+
 from .classification_dataset import ClassificationDataset
+
 
 class AGNews(ClassificationDataset):
     """
@@ -32,7 +34,9 @@ class AGNews(ClassificationDataset):
         offset (int): line to start reading from
     
     """
-    DATA_PATH = 'datasets/classification/ag_news.txt'
+
+    DATA_PATH = "datasets/classification/ag_news.txt"
+
     def __init__(self, offset=0):
         """ Loads a full dataset from disk. """
         self._load_classification_text_file(AGNews.DATA_PATH, offset=offset)

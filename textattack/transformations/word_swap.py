@@ -1,9 +1,11 @@
-import nltk
-from nltk.corpus import stopwords
 import random
 import string
 
+import nltk
+from nltk.corpus import stopwords
+
 from .transformation import Transformation
+
 
 class WordSwap(Transformation):
     """
@@ -12,9 +14,10 @@ class WordSwap(Transformation):
     
         letters_to_insert (string): letters allowed for insertion into words
     """
+
     def __init__(self, letters_to_insert=None):
         self.letters_to_insert = letters_to_insert
-        if not self.letters_to_insert: 
+        if not self.letters_to_insert:
             self.letters_to_insert = string.ascii_letters
 
     def _get_replacement_words(self, word):
@@ -26,7 +29,7 @@ class WordSwap(Transformation):
             word: The input word to find replacements for.
         """
         raise NotImplementedError()
-    
+
     def _get_random_letter(self):
         """ 
         Helper function that returns a random single letter from the English
@@ -37,7 +40,7 @@ class WordSwap(Transformation):
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
         transformed_texts = []
-        
+
         for i in indices_to_modify:
             word_to_replace = words[i]
             replacement_words = self._get_replacement_words(word_to_replace)
@@ -45,5 +48,5 @@ class WordSwap(Transformation):
             for r in replacement_words:
                 transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
             transformed_texts.extend(transformed_texts_idx)
-        
+
         return transformed_texts

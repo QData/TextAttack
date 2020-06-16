@@ -1,6 +1,8 @@
-from transformers import AutoModelWithLMHead
-from textattack.tokenizers import T5Tokenizer
+import transformers
+
+from textattack.models.tokenizers import T5Tokenizer
 from textattack.shared import utils
+
 
 class T5ForTextToText:
     """ 
@@ -25,19 +27,26 @@ class T5ForTextToText:
             least `num_beams` sentences finished per batch. Defaults to `True`.
         
     """
-    def __init__(self, mode='english_to_german', max_length=20, num_beams=1, early_stopping=True):
-        self.model = AutoModelWithLMHead.from_pretrained("t5-base")
+
+    def __init__(
+        self, mode="english_to_german", max_length=20, num_beams=1, early_stopping=True
+    ):
+        self.model = transformers.AutoModelWithLMHead.from_pretrained("t5-base")
         self.model.to(utils.device)
         self.model.eval()
         self.tokenizer = T5Tokenizer(mode)
         self.max_length = max_length
         self.num_beams = num_beams
         self.early_stopping = early_stopping
-    
+
     def __call__(self, *args, **kwargs):
         # Generate IDs from the model.
-        output_ids_list = self.model.generate(*args, **kwargs, 
-            max_length=self.max_length, 
-            num_beams=self.num_beams, early_stopping=self.early_stopping)
+        output_ids_list = self.model.generate(
+            *args,
+            **kwargs,
+            max_length=self.max_length,
+            num_beams=self.num_beams,
+            early_stopping=self.early_stopping
+        )
         # Convert ID tensor to string and return.
         return [self.tokenizer.decode(ids) for ids in output_ids_list]

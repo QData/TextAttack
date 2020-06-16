@@ -1,6 +1,8 @@
 import torch
+
 from textattack.models.helpers import WordCNNForClassification
 from textattack.shared import utils
+
 
 class WordCNNForMRSentimentClassification(WordCNNForClassification):
     """ 
@@ -18,9 +20,9 @@ class WordCNNForMRSentimentClassification(WordCNNForClassification):
             Defaults to 128.
             
     """
-    
-    MODEL_PATH = 'models/classification/cnn/mr'
-    
+
+    MODEL_PATH = "models/classification/cnn/mr"
+
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length)
         self.load_from_disk(WordCNNForMRSentimentClassification.MODEL_PATH)

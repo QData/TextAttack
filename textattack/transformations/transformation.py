@@ -1,13 +1,19 @@
 from textattack.shared.utils import default_class_repr
 
+
 class Transformation:
     """
     An abstract class for transforming a sequence of text to produce
     a potential adversarial example. 
     """
 
-    def __call__(self, current_text, pre_transformation_constraints=[], indices_to_modify=None,
-        shifted_idxs=True):
+    def __call__(
+        self,
+        current_text,
+        pre_transformation_constraints=[],
+        indices_to_modify=None,
+        shifted_idxs=True,
+    ):
         """ 
         Returns a list of all possible transformations for ``current_text``. Applies the
         ``pre_transformation_constraints`` then calles ``_get_transformations``.
@@ -25,17 +31,19 @@ class Transformation:
             indices_to_modify = set(range(len(current_text.words)))
         else:
             indices_to_modify = set(indices_to_modify)
-        
+
         if shifted_idxs:
-            indices_to_modify = set(current_text.convert_from_original_idxs(indices_to_modify))
-        
+            indices_to_modify = set(
+                current_text.convert_from_original_idxs(indices_to_modify)
+            )
+
         for constraint in pre_transformation_constraints:
             indices_to_modify = indices_to_modify & constraint(current_text, self)
         transformed_texts = self._get_transformations(current_text, indices_to_modify)
         for text in transformed_texts:
-            text.attack_attrs['last_transformation'] = self
+            text.attack_attrs["last_transformation"] = self
         return transformed_texts
-   
+
     def _get_transformations(self, current_text, indices_to_modify):
         """ 
         Returns a list of all possible transformations for ``current_text``, only modifying
@@ -47,7 +55,7 @@ class Transformation:
         """
         raise NotImplementedError()
 
-    def extra_repr_keys(self): 
+    def extra_repr_keys(self):
         return []
 
     __repr__ = __str__ = default_class_repr

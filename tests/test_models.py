@@ -1,5 +1,6 @@
 import textattack.datasets as datasets
 
+
 def test_ag_news_load():
 
     # Expected
@@ -24,16 +25,16 @@ def test_ag_news_load():
 
 def test_imdb_load():
 
-    # Expected 
+    # Expected
     expected_label = 0
     expected_text = (
-        "I bought this film on DVD so I could get an episode of Mystery Science Theater 3000. " 
-        "Thankfully, Mike, Crow, and Tom Servo are watchable, because the film itself is not. " 
-        "Although there is a plot, a story one can follow, and a few actors that can act, there isn't " 
-        "anything else. The movie was so boring, I have firmly confirmed that I will never watch it again " 
+        "I bought this film on DVD so I could get an episode of Mystery Science Theater 3000. "
+        "Thankfully, Mike, Crow, and Tom Servo are watchable, because the film itself is not. "
+        "Although there is a plot, a story one can follow, and a few actors that can act, there isn't "
+        "anything else. The movie was so boring, I have firmly confirmed that I will never watch it again "
         "without Tom, Crow and Mike. As summarized above, however, it was better than the film featured in "
         "the MST3K episode that preceded it; Mitchell."
-    )   
+    )
 
     # Actual
     data = datasets.classification.IMDBSentiment().__next__()
@@ -49,8 +50,10 @@ def test_movie_review_load():
 
     # Expected
     expected_label = 0
-    expected_text = "possibly the most irresponsible picture ever released by a major film studio ."
-    
+    expected_text = (
+        "possibly the most irresponsible picture ever released by a major film studio ."
+    )
+
     # Actual
     data = datasets.classification.MovieReviewSentiment().__next__()
     actual_label = data[1]
@@ -81,7 +84,7 @@ def test_yelp_load():
 
 def test_MNLI_load():
 
-    # Expected 
+    # Expected
     expected_label = 0
     expected_text = (
         "In Temple Bar , the bookshop at the Gallery of Photography carries a large selection "
@@ -96,9 +99,3 @@ def test_MNLI_load():
 
     assert expected_label == actual_label
     assert expected_text == actual_text
-
-
-
-
-
-

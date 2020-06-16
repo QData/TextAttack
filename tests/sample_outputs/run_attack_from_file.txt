@@ -27,17 +27,17 @@ The most moving and [91mtrulg[0m eye opening documentary ever created. I cried
 
 
 
-(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
-(0x(B Attack Results                (0x(B        (0x(B
-(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
-(0x(B Number of successful attacks: (0x(B 2      (0x(B
-(0x(B Number of failed attacks:     (0x(B 0      (0x(B
-(0x(B Number of skipped attacks:    (0x(B 1      (0x(B
-(0x(B Original accuracy:            (0x(B 66.67% (0x(B
-(0x(B Accuracy under attack:        (0x(B 0.0%   (0x(B
-(0x(B Attack success rate:          (0x(B 100.0% (0x(B
-(0x(B Average perturbed word %:     (0x(B 2.74%  (0x(B
-(0x(B Average num. words per input: (0x(B 128.33 (0x(B
-(0x(B Avg num queries:              (0x(B 128.5  (0x(B
-(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 0      |
+| Number of skipped attacks:    | 1      |
+| Original accuracy:            | 66.67% |
+| Accuracy under attack:        | 0.0%   |
+| Attack success rate:          | 100.0% |
+| Average perturbed word %:     | 2.74%  |
+| Average num. words per input: | 128.33 |
+| Avg num queries:              | 128.5  |
++-------------------------------+--------+
 Attack time: /.*/

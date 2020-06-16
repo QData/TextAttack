@@ -1,6 +1,8 @@
 import torch
+
 from textattack.models.helpers import WordCNNForClassification
 from textattack.shared import utils
+
 
 class WordCNNForYelpSentimentClassification(WordCNNForClassification):
     """ 
@@ -15,9 +17,9 @@ class WordCNNForYelpSentimentClassification(WordCNNForClassification):
             Defaults to 128.
             
     """
-    
-    MODEL_PATH = 'models/classification/cnn/yelp_polarity'
-    
+
+    MODEL_PATH = "models/classification/cnn/yelp_polarity"
+
     def __init__(self, max_seq_length=128):
         super().__init__(max_seq_length=max_seq_length)
         self.load_from_disk(WordCNNForYelpSentimentClassification.MODEL_PATH)
