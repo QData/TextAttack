@@ -34,6 +34,7 @@ TEXTATTACK_MODEL_CLASS_NAMES = {
     'cnn-ag-news':                  'textattack.models.classification.cnn.WordCNNForAGNewsClassification',
     'cnn-imdb':                     'textattack.models.classification.cnn.WordCNNForIMDBSentimentClassification',
     'cnn-mr':                       'textattack.models.classification.cnn.WordCNNForMRSentimentClassification',
+    'cnn-sst':                      'textattack.models.classification.cnn.WordCNNForSSTSentimentClassification',
     'cnn-yelp-sentiment':           'textattack.models.classification.cnn.WordCNNForYelpSentimentClassification',
     # LSTM models
     'lstm-ag-news':                 'textattack.models.classification.lstm.LSTMForAGNewsClassification',
