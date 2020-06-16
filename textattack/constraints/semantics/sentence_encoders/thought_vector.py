@@ -2,7 +2,7 @@ import functools
 
 import torch
 
-from textattack.shared import TokenizedText, WordEmbedding, utils
+from textattack.shared import AttackedText, WordEmbedding, utils
 
 from .sentence_encoder import SentenceEncoder
 

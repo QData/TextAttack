@@ -48,7 +48,7 @@ class WordSwapGradientBased(Transformation):
             `word` with, based off of the model's gradient.
             
             Arguments:
-                text (TokenizedText): The full text input to perturb
+                text (AttackedText): The full text input to perturb
                 word_index (int): index of the word to replace
         """
         self.model.train()
@@ -105,7 +105,7 @@ class WordSwapGradientBased(Transformation):
         return candidates
 
     def _call_model(self, text):
-        """ A helper function to query `self.model` with TokenizedText `text`.
+        """ A helper function to query `self.model` with AttackedText `text`.
         """
         return utils.model_predict(self.model, [text.ids])
 

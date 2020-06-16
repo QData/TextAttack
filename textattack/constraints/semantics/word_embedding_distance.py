@@ -5,7 +5,7 @@ import numpy as np
 import torch
 
 from textattack.constraints import Constraint
-from textattack.shared import TokenizedText, utils
+from textattack.shared import AttackedText, utils
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 

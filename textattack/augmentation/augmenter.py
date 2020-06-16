@@ -3,7 +3,7 @@ import random
 import tqdm
 
 from textattack.constraints.pre_transformation import PreTransformationConstraint
-from textattack.shared import TokenizedText
+from textattack.shared import AttackedText
 
 
 class Augmenter:
@@ -44,7 +44,7 @@ class Augmenter:
 
     def _filter_transformations(self, transformed_texts, current_text, original_text):
         """ 
-        Filters a list of ``TokenizedText`` objects to include only the ones 
+        Filters a list of ``AttackedText`` objects to include only the ones 
         that pass ``self.constraints``.
         """
         for C in self.constraints:
@@ -60,7 +60,7 @@ class Augmenter:
         Returns all possible augmentations of ``text`` according to 
         ``self.transformation``.
         """
-        tokenized_text = TokenizedText(text, DummyTokenizer())
+        tokenized_text = AttackedText(text, DummyTokenizer())
         original_text = tokenized_text
         all_transformed_texts = set()
         for _ in range(self.transformations_per_example):
@@ -130,7 +130,7 @@ class DummyTokenizer:
     """ 
     A dummy tokenizer class. Data augmentation applies a transformation
     without querying a model, which means that tokenization is unnecessary.
-    In this case, we pass a dummy tokenizer to `TokenizedText`. 
+    In this case, we pass a dummy tokenizer to `AttackedText`. 
     """
 
     def encode(self, _):

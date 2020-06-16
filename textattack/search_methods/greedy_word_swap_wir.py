@@ -29,7 +29,7 @@ class GreedyWordSwapWIR(SearchMethod):
         self.ascending = ascending
 
     def _get_index_order(self, initial_result, texts):
-        """ Queries model for list of tokenized text objects ``text`` and
+        """ Queries model for list of attacked text objects ``text`` and
             ranks in order of descending score.
         """
         leave_one_results, search_over = self.get_goal_results(

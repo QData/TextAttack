@@ -213,7 +213,7 @@ class PopulationMember:
     A member of the population during the course of the genetic algorithm.
     
     Args:
-        tokenized_text: The ``TokenizedText`` of the population member.
+        tokenized_text: The ``AttackedText`` of the population member.
         neighbors_len: A list of the number of candidate neighbors list for each word.
     """
 

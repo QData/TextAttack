@@ -1,7 +1,7 @@
 import transformers
 
 from textattack.models.tokenizers import Tokenizer
-from textattack.shared import TokenizedText
+from textattack.shared import AttackedText
 
 
 class AutoTokenizer(Tokenizer):
@@ -29,12 +29,24 @@ class AutoTokenizer(Tokenizer):
         self.max_length = max_length
 
     def encode(self, input_text):
-        if TokenizedText.SPLIT_TOKEN in input_text:
-            input_text = input_text.split(TokenizedText.SPLIT_TOKEN)
+        """ Encodes ``input_text``.
+        
+        ``input_text`` may be a string or a tuple of strings, depending if the
+        model takes 1 or multiple inputs. The ``transformers.AutoTokenizer``
+        will automatically handle either case.
+        """
         encoded_text = self.tokenizer.encode_plus(
             input_text,
             max_length=self.max_length,
             add_special_tokens=True,
             pad_to_max_length=True,
         )
-        return dict(encoded_text)
+        return encoded_text
+    
+    def encode_batch(self, input_text_list):
+        """ The batch equivalent of ``encode``."""
+        return self.tokenizer.encode_batch(input_text_list,
+            max_length=self.max_length,
+            add_special_tokens=True,
+            pad_to_max_length=True,
+        )

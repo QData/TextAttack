@@ -1,33 +1,42 @@
+import collections
 import numpy as np
 import torch
 
 from .utils import device, words_from_text
 
 
-class TokenizedText:
+class AttackedText:
 
     """ 
      A helper class that represents a string that can be attacked.
      
      Models that take multiple sentences as input separate them by ``SPLIT_TOKEN``. 
      Attacks "see" the entire input, joined into one string, without the split token. 
+     
+     ``AttackedText`` instances that were perturbed from other ``AttackedText``
+     objects contain a pointer to the previous text 
+     (``attack_attrs["previous_attacked_text"]``), so that the full chain of 
+     perturbations might be reconstructed by using this key to form a linked
+     list.
 
      Args:
-        text (string): The string that this TokenizedText represents
-        tokenizer (`TextAttack.Tokenizer`): An object that can encode text
+        text (string): The string that this AttackedText represents
+        attack_attrs (dict): Dictionary of various attributes stored
+            during the course of an attack.
         
     """
 
     SPLIT_TOKEN = ">>>>"
 
-    def __init__(self, text, tokenizer, attack_attrs=None):
-        text = text.strip()
-        self.tokenizer = tokenizer
-        if tokenizer:
-            self.ids = tokenizer.encode(text)
+    def __init__(self, text_input, attack_attrs=None):
+        if isinstance(text_input, str):
+            self._text_input = collections.OrderedDict(('text', text_input))
+        elif isinstance(text_input, collections.OrderedDict):
+            self._text_input = text_input
         else:
-            self.ids = None
-        self.words = words_from_text(text, words_to_ignore=[TokenizedText.SPLIT_TOKEN])
+            raise TypeError(f'Invalid text_input type {type(text_input)} (required str or OrderedDict)')
+        text = text.strip()
+        self.words = words_from_text(text, words_to_ignore=[AttackedText.SPLIT_TOKEN])
         self.text = text
         self.attack_attrs = attack_attrs or dict()
         # Indices of words from the *original* text. Allows us to map
@@ -64,10 +73,11 @@ class TokenizedText:
     def free_memory(self):
         """ Delete items that take up memory.
             
-            Can be called once the TokenizedText is only needed to display.
+            Can be called once the AttackedText is only needed to display.
         """
-        self.ids = None
         self.tokenizer = None
+        if "previous_attacked_text" in self.attack_attrs:
+            self.attack_attrs["previous_attacked_text"].free_memory()
         if "last_transformation" in self.attack_attrs:
             del self.attack_attrs["last_transformation"]
         for key in self.attack_attrs:
@@ -172,7 +182,7 @@ class TokenizedText:
         return [self.attack_attrs["original_index_map"][i] for i in idxs]
 
     def replace_words_at_indices(self, indices, new_words):
-        """ This code returns a new TokenizedText object where the word at 
+        """ This code returns a new AttackedText object where the word at 
             ``index`` is replaced with a new word."""
         if len(indices) != len(new_words):
             raise ValueError(
@@ -195,8 +205,9 @@ class TokenizedText:
         return self.replace_new_words(words)
 
     def replace_word_at_index(self, index, new_word):
-        """ This code returns a new TokenizedText object where the word at 
-            ``index`` is replaced with a new word."""
+        """ This code returns a new AttackedText object where the word at 
+            ``index`` is replaced with a new word.
+        """
         if not isinstance(index, int):
             try:
                 index = int(index)
@@ -211,9 +222,10 @@ class TokenizedText:
         return self.replace_words_at_indices([index], [new_word])
 
     def delete_word_at_index(self, index):
-        """ This code returns a new TokenizedText object where the word at 
-            ``index`` is removed."""
-        return self.replace_words_at_indices([index], [""])
+        """ This code returns a new AttackedText object where the word at 
+            ``index`` is removed.
+        """
+        return self.replace_words_at_indiex(index, "")
 
     def get_deletion_indices(self):
         return self.attack_attrs["original_index_map"][
@@ -221,7 +233,7 @@ class TokenizedText:
         ]
 
     def replace_new_words(self, new_words):
-        """ This code returns a new TokenizedText object and replaces old list 
+        """ This code returns a new AttackedText object and replaces old list 
             of words with a new list of words, but preserves the punctuation 
             and spacing of the original message.
             
@@ -231,10 +243,14 @@ class TokenizedText:
             with multiple space-separated words, representation an insertion
             of one or more words.
         """
-        final_sentence = ""
-        text = self.text
+        perturbed_text = ""
+        original_text = self._input_text.join(AttackedText.SPLIT_TOKEN)
         new_attack_attrs = dict()
         new_attack_attrs["newly_modified_indices"] = set()
+        # Point to previously monitored text.
+        new_attack_attrs["previous_attacked_text"] = self
+        # Use `new_attack_attrs` to track indices with respect to the original
+        # text.
         new_attack_attrs["modified_indices"] = self.attack_attrs[
             "modified_indices"
         ].copy()
@@ -242,13 +258,13 @@ class TokenizedText:
             "original_index_map"
         ].copy()
         new_i = 0
-        # Create the new tokenized text by swapping out words from the original
+        # Create the new attacked text by swapping out words from the original
         # text with a sequence of 0+ words in the new text.
         for i, (input_word, adv_word_seq) in enumerate(zip(self.words, new_words)):
             word_start = text.index(input_word)
             word_end = word_start + len(input_word)
-            final_sentence += text[:word_start]
-            text = text[word_end:]
+            perturbed_text += text[:word_start]
+            original_text = original_text[word_end:]
             adv_num_words = len(words_from_text(adv_word_seq))
             num_words_diff = adv_num_words - len(words_from_text(input_word))
             # Track indices on insertions and deletions.
@@ -277,7 +293,7 @@ class TokenizedText:
                     new_attack_attrs["modified_indices"].add(new_i)
                     new_attack_attrs["newly_modified_indices"].add(new_i)
                 new_i += 1
-            # Check spaces.
+            # Check spaces for deleted text.
             if adv_num_words == 0:
                 # Remove extra space (or else there would be two spaces for each
                 # deleted word).
@@ -288,20 +304,28 @@ class TokenizedText:
                         text = text[1:]
                 else:
                     # If a word other than the first was deleted, take a preceding space.
-                    if final_sentence[-1] == " ":
-                        final_sentence = final_sentence[:-1]
+                    if perturbed_text[-1] == " ":
+                        perturbed_text = perturbed_text[:-1]
             # Add substitute word(s) to new sentence.
-            final_sentence += adv_word_seq
-        final_sentence += text  # Add all of the ending punctuation.
-        return TokenizedText(
-            final_sentence, self.tokenizer, attack_attrs=new_attack_attrs
+            perturbed_text += adv_word_seq
+        perturbed_text += text  # Add all of the ending punctuation.
+        # Reform perturbed_text into an OrderedDict.
+        perturbed_input_texts = perturbed_text.split(AttackedText.SPLIT_TOKEN)
+        perturbed_input = OrderedDict(zip(self._text_input.keys(), perturbed_input_texts))
+        return AttackedText(
+            perturbed_text, self.tokenizer, attack_attrs=new_attack_attrs
         )
 
-    def clean_text(self):
-        """ Represents self in a clean, printable format. Joins text with multiple
-            inputs separated by ``TokenizedText.SPLIT_TOKEN`` with a line break.
+    @property
+    def text(self):
+        """ Represents full text input. Multiply inputs are joined with a line 
+            break.
         """
-        return self.text.replace(TokenizedText.SPLIT_TOKEN, "\n\n")
+        return '\n\n'.join(self._text_input.value())
+    
+    @property
+    def printable_text(self):
+        return '\n\n'.join(f'{key}: {value}' for key, value in enumerate(self._text_input))
 
     def __repr__(self):
-        return f'<TokenizedText "{self.text}">'
+        return f'<AttackedText "{self.text}">'

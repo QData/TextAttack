@@ -57,7 +57,7 @@ class GoalFunction:
     def get_result(self, tokenized_text, ground_truth_output):
         """ 
         A helper method that queries `self.get_results` with a single
-        ``TokenizedText`` object.
+        ``AttackedText`` object.
         """
         results, search_over = self.get_results([tokenized_text], ground_truth_output)
         result = results[0] if len(results) else None
@@ -113,12 +113,12 @@ class GoalFunction:
 
     def _call_model_uncached(self, tokenized_text_list):
         """ 
-        Queries model and returns outputs for a list of TokenizedText 
+        Queries model and returns outputs for a list of AttackedText 
         objects. 
         """
         if not len(tokenized_text_list):
             return []
-        ids = [t.ids for t in tokenized_text_list]
+        ids = utils.batch_tokenize(self.tokenizer, tokenized_text_list)
 
         with torch.no_grad():
             outputs = batch_model_predict(self.model, ids)
@@ -126,7 +126,7 @@ class GoalFunction:
         return self._process_model_outputs(tokenized_text_list, outputs)
 
     def _call_model(self, tokenized_text_list):
-        """ Gets predictions for a list of `TokenizedText` objects.
+        """ Gets predictions for a list of `AttackedText` objects.
         
             Gets prediction from cache if possible. If prediction is not in the 
             cache, queries model and stores prediction in cache.

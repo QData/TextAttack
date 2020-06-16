@@ -29,7 +29,7 @@ class AttackResult:
         self.perturbed_result = perturbed_result
         self.num_queries = num_queries
 
-        # We don't want the TokenizedText `ids` sticking around clogging up
+        # We don't want the AttackedText `ids` sticking around clogging up
         # space on our devices. Delete them here, if they're still present,
         # because we won't need them anymore anyway.
         self.original_result.tokenized_text.free_memory()

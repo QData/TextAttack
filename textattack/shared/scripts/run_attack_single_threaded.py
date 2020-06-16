@@ -73,7 +73,7 @@ def run(args):
 
             print("Attacking...")
 
-            tokenized_text = textattack.shared.tokenized_text.TokenizedText(
+            tokenized_text = textattack.shared.tokenized_text.AttackedText(
                 text, attack.goal_function.model.tokenizer
             )
             initial_result = attack.goal_function.get_output(tokenized_text)
