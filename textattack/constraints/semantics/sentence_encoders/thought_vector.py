@@ -1,8 +1,10 @@
 import functools
+
 import torch
 
+from textattack.shared import TokenizedText, WordEmbedding, utils
+
 from .sentence_encoder import SentenceEncoder
-from textattack.shared import utils, TokenizedText, WordEmbedding
 
 
 class ThoughtVector(SentenceEncoder):

@@ -1,5 +1,6 @@
-from textattack.shared import utils
 import pickle
+
+from textattack.shared import utils
 
 
 class TextAttackDataset:

@@ -1,15 +1,15 @@
-from textattack.shared.attack import Attack
-from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.grammaticality.language_models import (
     Google1BillionWordsLanguageModel,
 )
-from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
+from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 

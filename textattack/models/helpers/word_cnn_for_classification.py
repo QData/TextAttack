@@ -1,11 +1,11 @@
-import textattack
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from textattack.shared import utils
+import textattack
 from textattack.models.helpers import GloveEmbeddingLayer
 from textattack.models.helpers.utils import load_cached_state_dict
+from textattack.shared import utils
 
 
 class WordCNNForClassification(nn.Module):

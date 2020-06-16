@@ -1,11 +1,11 @@
-import numpy as np
 import os
 import pickle
+
+import numpy as np
 import torch
 
-from textattack.shared import utils
 from textattack.constraints import Constraint
-from textattack.shared import TokenizedText
+from textattack.shared import TokenizedText, utils
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 

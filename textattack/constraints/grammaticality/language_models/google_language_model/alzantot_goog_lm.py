@@ -2,18 +2,17 @@
     Author: Moustafa Alzantot (malzantot@ucla.edu)
     All rights reserved.
 """
-import lru
 import os
-import tensorflow as tf
 import sys
+
+from google.protobuf import text_format
+import lru
 import numpy as np
+import tensorflow as tf
 
 from textattack.shared import utils
 
-from google.protobuf import text_format
-
-from . import lm_utils
-from . import lm_data_utils
+from . import lm_data_utils, lm_utils
 
 tf.get_logger().setLevel("INFO")
 

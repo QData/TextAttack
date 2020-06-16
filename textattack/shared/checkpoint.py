@@ -1,14 +1,15 @@
+import copy
+import datetime
 import os
 import pickle
 import time
-import datetime
-import copy
-from textattack.shared import logger, utils
+
 from textattack.attack_results import (
-    SuccessfulAttackResult,
     FailedAttackResult,
     SkippedAttackResult,
+    SuccessfulAttackResult,
 )
+from textattack.shared import logger, utils
 
 
 class Checkpoint:

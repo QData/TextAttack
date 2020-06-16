@@ -9,9 +9,9 @@
 This file contains the definition of encoders used in https://arxiv.org/pdf/1705.02364.pdf
 """
 
-import numpy as np
 import time
 
+import numpy as np
 import torch
 import torch.nn as nn
 

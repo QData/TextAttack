@@ -39,7 +39,7 @@ attack_test_params = [
         (
             "python -m textattack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
-            "--dataset-from-nlp glue:sst2:train --recipe deepwordbug --num-examples 5"
+            "--dataset-from-nlp glue:sst2:train --recipe deepwordbug --num-examples 3"
         ),
         "test/sample_outputs/run_attack_transformers_nlp.txt",
     ),
@@ -51,7 +51,7 @@ attack_test_params = [
         (
             "python -m textattack --model-from-file test/sample_inputs/sst_model_and_dataset.py "
             "--dataset-from-file test/sample_inputs/sst_model_and_dataset.py "
-            "--recipe deepwordbug --num-examples 5"
+            "--recipe deepwordbug --num-examples 3"
         ),
         "test/sample_outputs/run_attack_transformers_nlp.txt",
     ),
@@ -68,22 +68,22 @@ attack_test_params = [
     ),
     #
     # test deepwordbug on 10 samples from BERT SNLI
-    #       (takes about 51s)
     #
     (
         "run_attack_deepwordbug_bert_snli_10",
         (
-            "python -m textattack --model bert-base-uncased-snli --recipe deepwordbug --num-examples 10"
+            "python -m textattack --model bert-base-uncased-snli --recipe deepwordbug --num-examples 2 --attack-n"
         ),
         "test/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt",
     ),
     #
     # test: run_attack deepwordbug attack on 10 samples from LSTM MR
-    #                   (takes about 41s)
     #
     (
         "run_attack_deepwordbug_lstm_mr_10",
-        ("python -m textattack --model lstm-mr --recipe deepwordbug --num-examples 10"),
+        (
+            "python -m textattack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n"
+        ),
         "test/sample_outputs/run_attack_deepwordbug_lstm_mr_10.txt",
     ),
     #
@@ -96,7 +96,7 @@ attack_test_params = [
         "run_attack_targeted_mnli_misc",
         (
             "python -m textattack --attack-n --goal-function targeted-classification:target_class=2 "
-            "--enable-csv --model bert-base-uncased-mnli --num-examples 4 --transformation word-swap-wordnet "
+            "--enable-csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation word-swap-wordnet "
             "--constraints lang-tool repeat stopword --search beam-search:beam_width=2"
         ),
         "test/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n_4.txt",
@@ -111,7 +111,7 @@ attack_test_params = [
         "run_attack_nonoverlapping_t5en2de_randomcharsub_editdistance_wordsperturbed_greedyword",
         (
             "python -m textattack --attack-n --goal-function non-overlapping-output "
-            "--model t5-en2de --num-examples 6 --transformation word-swap-random-char-substitution "
+            "--model t5-en2de --num-examples 2 --transformation word-swap-random-char-substitution "
             "--constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword "
             "--search greedy"
         ),

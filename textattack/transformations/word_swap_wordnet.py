@@ -1,4 +1,5 @@
 from nltk.corpus import wordnet
+
 from textattack.transformations.word_swap import WordSwap
 
 

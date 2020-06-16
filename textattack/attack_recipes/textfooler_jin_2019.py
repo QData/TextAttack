@@ -1,13 +1,13 @@
-from textattack.shared.attack import Attack
-from textattack.goal_functions import UntargetedClassification
 from textattack.constraints.grammaticality import PartOfSpeech
-from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
+from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
+from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 

@@ -3,10 +3,12 @@ A command line parser to run an attack from user specifications.
 """
 
 import os
-import textattack
 import time
+
 import torch
 import tqdm
+
+import textattack
 
 from .attack_args_helper import *
 

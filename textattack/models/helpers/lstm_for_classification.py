@@ -1,11 +1,10 @@
-import textattack
 import torch
 import torch.nn as nn
 
-from textattack.shared import utils
-
+import textattack
 from textattack.models.helpers import GloveEmbeddingLayer
 from textattack.models.helpers.utils import load_cached_state_dict
+from textattack.shared import utils
 
 
 class LSTMForClassification(nn.Module):

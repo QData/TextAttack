@@ -1,4 +1,5 @@
 import torch
+
 from textattack.models.helpers import WordCNNForClassification
 from textattack.shared import utils
 

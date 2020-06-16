@@ -1,10 +1,11 @@
+import math
+
 import lru
 import numpy as np
 import torch
-import math
 
-from textattack.shared.utils import batch_model_predict, default_class_repr
 from textattack.shared import utils, validators
+from textattack.shared.utils import batch_model_predict, default_class_repr
 
 
 class GoalFunction:

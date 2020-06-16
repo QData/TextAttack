@@ -1,6 +1,7 @@
 import math
-import numpy as np
 import os
+
+import numpy as np
 import torch
 
 from textattack.constraints import Constraint

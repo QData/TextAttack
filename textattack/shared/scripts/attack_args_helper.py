@@ -1,14 +1,16 @@
 import argparse
+import copy
 import importlib
-import numpy as np
 import os
+import pickle
 import random
 import sys
-import textattack
 import time
+
+import numpy as np
 import torch
-import pickle
-import copy
+
+import textattack
 
 RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.Alzantot2018",

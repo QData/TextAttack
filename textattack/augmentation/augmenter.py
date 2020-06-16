@@ -1,4 +1,5 @@
 import random
+
 import tqdm
 
 from textattack.constraints.pre_transformation import PreTransformationConstraint

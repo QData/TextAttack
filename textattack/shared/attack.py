@@ -1,17 +1,16 @@
-import lru
-import numpy as np
 import os
 import random
 
-from textattack.shared import utils
-from textattack.constraints import Constraint
-from textattack.constraints.pre_transformation import PreTransformationConstraint
-from textattack.shared import TokenizedText
+import lru
+import numpy as np
+
+import textattack
 from textattack.attack_results import (
+    FailedAttackResult,
     SkippedAttackResult,
     SuccessfulAttackResult,
-    FailedAttackResult,
 )
+from textattack.shared import TokenizedText, utils
 
 
 class Attack:
@@ -61,7 +60,10 @@ class Attack:
         self.constraints = []
         self.pre_transformation_constraints = []
         for constraint in constraints:
-            if isinstance(constraint, PreTransformationConstraint):
+            if isinstance(
+                constraint,
+                textattack.constraints.pre_transformation.PreTransformationConstraint,
+            ):
                 self.pre_transformation_constraints.append(constraint)
             else:
                 self.constraints.append(constraint)

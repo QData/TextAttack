@@ -1,6 +1,7 @@
 import torch
-from textattack.shared import utils
+
 from textattack.models.helpers import BERTForClassification
+from textattack.shared import utils
 
 
 class BERTForSNLI(BERTForClassification):
