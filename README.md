@@ -30,7 +30,7 @@ TextAttack is a Python framework for running adversarial attacks against NLP mod
 
 You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is optional but will greatly improve code speed. TextAttack is available through pip:
 
-```
+```bash
 pip install textattack
 ```
 
@@ -43,23 +43,68 @@ environment variable `TA_CACHE_DIR`.
 
 ### Running Attacks
 
-The [`examples/`](docs/examples/) folder contains notebooks walking through examples of basic usage of TextAttack, including building a custom transformation and a custom constraint. These examples can also be viewed through the [documentation website](https://textattack.readthedocs.io/en/latest).
+The [`examples/`](docs/examples/) folder contains notebooks explaining basic usage of TextAttack, including building a custom transformation and a custom constraint. These examples can also be viewed through the [documentation website](https://textattack.readthedocs.io/en/latest).
 
 We also have a command-line interface for running attacks. See help info and list of arguments with `python -m textattack --help`.
+
+#### Sample Attack Commands
+
+*TextFooler on an LSTM trained on the MR sentiment classification dataset*: 
+```bash
+python -m textattack --recipe textfooler --model bert-base-uncased-mr --num-examples 100
+```
+
+*DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*: 
+```bash
+python -m textattack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
+```
+
+*Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
+```bash
+python -m textattack --model lstm-mr --num-examples 20 \
+ --search-method beam-search:beam_width=4 --transformation word-swap-embedding \
+ --constraints repeat stopword max-words-perturbed:max_num_words=2 embedding:min_cos_sim=0.8 part-of-speech \
+ --goal-function untargeted-classification
+```
+
+*Non-overlapping output attack using a greedy word swap and WordNet word substitutions on T5 English-to-German translation:*
+```bash
+python -m textattack --attack-n --goal-function non-overlapping-output \
+    --model t5-en2de --num-examples 10 --transformation word-swap-wordnet \
+    --constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword \
+    --search greedy
+```
+
+> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
 
 ### Attacks and Papers Implemented ("Attack Recipes")
 
 We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python -m textattack --recipe [recipe_name]`
 
-The first are for classification and entailment attacks:
-- **textfooler**: Greedy attack with word importance ranking (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932)).
+The first are for classification tasks, like sentiment classification and entailment:
 - **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998)).
-- **deepwordbug**: Replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)).
+- **deepwordbug**: Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)).
 - **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751)).
 - **kuleshov**: Greedy search and counterfitted embedding swap (["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ)).
+- **textbugger**: Greedy attack with word importance ranking and character-based swaps ([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)).
+- **textfooler**: Greedy attack with word importance ranking and counter-fitted embedding swap (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932)).
 
-The final is for translation attacks:
+The final is for sequence-to-sequence models:
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)).
+
+#### Recipe Usage Examples
+
+Here are some exampes of testing attacks from the literature from the command-line:
+
+*TextFooler against BERT fine-tuned on SST-2:*
+```bash
+python -m textattack --model bert-base-uncased-sst2 --recipe textfooler --num-examples 10
+```
+
+*seq2sick (black-box) against T5 fine-tuned for English-German translation:*
+```bash
+python -m textattack --recipe seq2sick --model t5-en2de --num-examples 100
+```
 
 ### Augmenting Text
 
@@ -73,7 +118,7 @@ for data augmentation:
 All `Augmenter` objects implement `augment` and `augment_many` to generate augmentations
 of a string or a list of strings. Here's an example of how to use the `EmbeddingAugmenter`:
 
-```
+```python
 >>> from textattack.augmentation import EmbeddingAugmenter
 >>> augmenter = EmbeddingAugmenter()
 >>> s = 'What I cannot create, I do not understand.'
@@ -85,24 +130,68 @@ of a string or a list of strings. Here's an example of how to use the `Embedding
 
 ### TokenizedText
 
-To allow for word replacement after a sequence has been tokenized, we include a `TokenizedText` object which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
+To allow for word replacement after a sequence has been tokenized, we include a `TokenizedText` object
+which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
 
 ### Models and Datasets
 
-TextAttack is model-agnostic! Anything that overrides `__call__`, takes in `TokenizedText`, and correctly formats output works. However, TextAttack provides pre-trained models and samples for the following datasets:
+TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that outputs IDs, tensors, or strings.
 
-#### Classification:
-* AG News dataset topic classification
-* IMDB dataset sentiment classification
-* Movie Review dataset sentiment classification
-* Yelp dataset sentiment classification
+#### Built-in Models
 
-#### Entailment:
-* SNLI datastet
-* MNLI dataset (matched & unmatched)
+TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
+dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
+tasks, as well as some common classification datasets (MR, IMDB, Yelp, AGNews), translation, and summarization. You can 
+see the full list of provided models & datasets via `python -m textattack --help`.
 
-#### Translation:
-* newstest2013 English to German dataset
+Here's an example of using one of the built-in models:
+
+```bash
+python -m textattack --model roberta-base-sst2 --recipe textfooler --num-examples 10
+```
+
+#### HuggingFace support: `transformers` models and `nlp` datasets
+
+We also provide built-in support for [`transformers` pretrained models](https://huggingface.co/models) 
+and datasets from the [`nlp` package](https://github.com/huggingface/nlp)! Here's an example of loading
+and attacking a pre-trained model and dataset:
+
+```bash
+python -m textattack --model_from_huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset_from_nlp glue:sst2 --recipe deepwordbug --num-examples 10
+```
+
+You can explore other pre-trained models using the `--model_from_huggingface` argument, or other datasets by changing 
+`--dataset_from_nlp`.
+
+
+#### Loading a model or dataset from a file
+
+You can easily try out an attack on a local model or dataset sample. To attack a pre-trained model,
+create a short file that loads them as variables `model` and `tokenizer`.  The `tokenizer` must
+be able to transform string inputs to lists or tensors of IDs using a method called `encode()`. The
+model must take inputs via the `__call__` method.
+
+##### Model from a file
+To experiment with a model you've trained, you could create the following file
+and name it `my_model.py`:
+
+```python
+model = load_model()
+tokenizer = load_tokenizer()
+```
+
+Then, run an attack with the argument `--model_from_file my_model.py`. The model and tokenizer will be loaded automatically.
+
+#### Dataset from a file
+
+Loading a dataset from a file is very similar to loading a model from a file. A 'dataset' is any iterable of `(input, output)` pairs.
+The following example would load a sentiment classification dataset from file `my_dataset.py`:
+
+```python
+dataset = [('Today was....', 1), ('This movie is...', 0), ...]
+```
+
+You can then run attacks on samples from this dataset by adding the argument `--dataset_from_file my_dataset.py`.
 
 ### Attacks
 

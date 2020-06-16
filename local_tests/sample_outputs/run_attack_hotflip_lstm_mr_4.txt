@@ -1,0 +1,64 @@
+Attack(
+  (search_method): BeamSearch(
+    (beam_width):  10
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapGradientBased(
+    (top_n):  1
+  )
+  (constraints): 
+    (0): MaxWordsPerturbed(
+        (max_num_words):  2
+      )
+    (1): WordEmbeddingDistance(
+        (embedding_type):  paragramcf
+        (min_cos_sim):  0.8
+        (cased):  False
+        (include_unknown_words):  True
+      )
+    (2): PartOfSpeech(
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+      )
+    (3): RepeatModification
+    (4): StopwordModification
+  (is_black_box):  False
+) 
+
+Load time: /.*/
+--------------------------------------------- Result 1 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+lee jeong-hyang tells it so lovingly and films it so beautifully that i couldn't help being captivated by it .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+a [92mrespectable[0m venture on its own terms , lacking the broader vision that has seen certain trek films . . . cross over to a more mainstream audience .
+a [91mtakusaburō[0m venture on its own terms , lacking the broader vision that has seen certain trek films . . . cross over to a more mainstream audience .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[91m0[0m-->[91m[FAILED][0m
+gets bogged down by an overly sillified plot and stop-and-start pacing .
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+stanley kwan has directed not only one of the best gay love stories ever made , but one of the best love stories of any stripe .
+
+
+
+(0lqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqwqqqqqqqqk(B
+(0x(B Attack Results                (0x(B        (0x(B
+(0tqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqnqqqqqqqqu(B
+(0x(B Number of successful attacks: (0x(B 1      (0x(B
+(0x(B Number of failed attacks:     (0x(B 3      (0x(B
+(0x(B Number of skipped attacks:    (0x(B 0      (0x(B
+(0x(B Original accuracy:            (0x(B 100.0% (0x(B
+(0x(B Accuracy under attack:        (0x(B 75.0%  (0x(B
+(0x(B Attack success rate:          (0x(B 25.0%  (0x(B
+(0x(B Average perturbed word %:     (0x(B 4.17%  (0x(B
+(0x(B Average num. words per input: (0x(B 20.75  (0x(B
+(0x(B Avg num queries:              (0x(B 1.25   (0x(B
+(0mqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqvqqqqqqqqj(B
+Attack time: /.*/

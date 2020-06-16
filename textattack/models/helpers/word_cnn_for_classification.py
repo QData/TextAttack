@@ -30,7 +30,7 @@ class WordCNNForClassification(nn.Module):
     
     def load_from_disk(self, model_folder_path):
         self.load_state_dict(load_cached_state_dict(model_folder_path))
-        self.to(utils.get_device())
+        self.to(utils.device)
         self.eval()
 
     def forward(self, _input):

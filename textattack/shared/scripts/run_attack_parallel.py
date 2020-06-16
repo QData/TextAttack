@@ -8,9 +8,9 @@ import time
 import torch
 import tqdm
 
-from .run_attack_args_helper import *
+from .attack_args_helper import *
 
-logger = textattack.shared.utils.get_logger()
+logger = textattack.shared.logger
 
 def set_env_variables(gpu_id):
     # Set sharing strategy to file_system to avoid file descriptor leaks
@@ -28,13 +28,13 @@ def set_env_variables(gpu_id):
 def attack_from_queue(args, in_queue, out_queue):
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
     set_env_variables(gpu_id)
-    _, attack = parse_goal_function_and_attack_from_args(args)
+    attack = parse_attack_from_args(args)
     if gpu_id == 0:
         print(attack, '\n')
     while not in_queue.empty():
         try:
-            i, output, text = in_queue.get()
-            results_gen = attack.attack_dataset([(output, text)], num_examples=1)
+            i, text, output = in_queue.get()
+            results_gen = attack.attack_dataset([(text, output)], num_examples=1)
             result = next(results_gen)
             out_queue.put((i, result))
         except Exception as e:
@@ -77,7 +77,8 @@ def run(args):
     
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
-    dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+    
+    dataset = parse_dataset_from_args(args)
     
     print(f'Running on {num_gpus} GPUs')
     load_time = time.time()
@@ -89,8 +90,8 @@ def run(args):
     out_queue =  torch.multiprocessing.Queue()
     # Add stuff to queue.
     for i in worklist:
-        label, text = dataset[i]
-        in_queue.put((i, label, text))
+        text, output = dataset[i]
+        in_queue.put((i, text, output))
 
     # Start workers.
     pool = torch.multiprocessing.Pool(

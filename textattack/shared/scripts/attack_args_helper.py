@@ -1,4 +1,5 @@
 import argparse
+import importlib
 import numpy as np
 import os
 import random
@@ -15,45 +16,46 @@ RECIPE_NAMES = {
     'hotflip':          'textattack.attack_recipes.HotFlipEbrahimi2017',
     'kuleshov':         'textattack.attack_recipes.Kuleshov2017',
     'seq2sick':         'textattack.attack_recipes.Seq2SickCheng2018BlackBox',
+    'textbugger':       'textattack.attack_recipes.TextBuggerLi2018',
     'textfooler':       'textattack.attack_recipes.TextFoolerJin2019',
 }
 
-MODEL_CLASS_NAMES = {
+TEXTATTACK_MODEL_CLASS_NAMES = {
     #
     # Text classification models
     #
     
     # BERT models - default uncased
-    'bert-ag-news':             'textattack.models.classification.bert.BERTForAGNewsClassification',
-    'bert-imdb':                'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
-    'bert-mr':                  'textattack.models.classification.bert.BERTForMRSentimentClassification',
-    'bert-yelp-sentiment':      'textattack.models.classification.bert.BERTForYelpSentimentClassification',
+    'bert-base-uncased-ag-news':    'textattack.models.classification.bert.BERTForAGNewsClassification',
+    'bert-base-uncased-imdb':       'textattack.models.classification.bert.BERTForIMDBSentimentClassification',
+    'bert-base-uncased-mr':         'textattack.models.classification.bert.BERTForMRSentimentClassification',
+    'bert-base-uncased-yelp':       'textattack.models.classification.bert.BERTForYelpSentimentClassification',
     # CNN models
-    'cnn-ag-news':              'textattack.models.classification.cnn.WordCNNForAGNewsClassification',
-    'cnn-imdb':                 'textattack.models.classification.cnn.WordCNNForIMDBSentimentClassification',
-    'cnn-mr':                   'textattack.models.classification.cnn.WordCNNForMRSentimentClassification',
-    'cnn-yelp-sentiment':       'textattack.models.classification.cnn.WordCNNForYelpSentimentClassification',
+    'cnn-ag-news':                  'textattack.models.classification.cnn.WordCNNForAGNewsClassification',
+    'cnn-imdb':                     'textattack.models.classification.cnn.WordCNNForIMDBSentimentClassification',
+    'cnn-mr':                       'textattack.models.classification.cnn.WordCNNForMRSentimentClassification',
+    'cnn-yelp-sentiment':           'textattack.models.classification.cnn.WordCNNForYelpSentimentClassification',
     # LSTM models
-    'lstm-ag-news':             'textattack.models.classification.lstm.LSTMForAGNewsClassification',
-    'lstm-imdb':                'textattack.models.classification.lstm.LSTMForIMDBSentimentClassification',
-    'lstm-mr':                  'textattack.models.classification.lstm.LSTMForMRSentimentClassification',
-    'lstm-yelp-sentiment':      'textattack.models.classification.lstm.LSTMForYelpSentimentClassification',
+    'lstm-ag-news':                 'textattack.models.classification.lstm.LSTMForAGNewsClassification',
+    'lstm-imdb':                    'textattack.models.classification.lstm.LSTMForIMDBSentimentClassification',
+    'lstm-mr':                      'textattack.models.classification.lstm.LSTMForMRSentimentClassification',
+    'lstm-yelp-sentiment':          'textattack.models.classification.lstm.LSTMForYelpSentimentClassification',
     #
     # Textual entailment models
     #
     # BERT models
-    'bert-mnli':                'textattack.models.entailment.bert.BERTForMNLI',
-    'bert-snli':                'textattack.models.entailment.bert.BERTForSNLI',
+    'bert-base-uncased-mnli':       'textattack.models.entailment.bert.BERTForMNLI',
+    'bert-base-uncased-snli':       'textattack.models.entailment.bert.BERTForSNLI',
     #
     # Translation models
     #
-    't5-en2fr':                 'textattack.models.translation.t5.T5EnglishToFrench',
-    't5-en2de':                 'textattack.models.translation.t5.T5EnglishToGerman',
-    't5-en2ro':                 'textattack.models.translation.t5.T5EnglishToRomanian',
+    't5-en2fr':                     'textattack.models.translation.t5.T5EnglishToFrench',
+    't5-en2de':                     'textattack.models.translation.t5.T5EnglishToGerman',
+    't5-en2ro':                     'textattack.models.translation.t5.T5EnglishToRomanian',
     #
     # Summarization models
     #
-    't5-summ':                  'textattack.models.summarization.T5Summarization',
+    't5-summ':                      'textattack.models.summarization.T5Summarization',
 }
 
 DATASET_BY_MODEL = {
@@ -61,35 +63,80 @@ DATASET_BY_MODEL = {
     # Text classification datasets
     #
     # AG News
-    'bert-ag-news':             textattack.datasets.classification.AGNews,
-    'cnn-ag-news':              textattack.datasets.classification.AGNews,
-    'lstm-ag-news':             textattack.datasets.classification.AGNews,
+    'bert-base-uncased-ag-news':    textattack.datasets.classification.AGNews,
+    'cnn-ag-news':                  textattack.datasets.classification.AGNews,
+    'lstm-ag-news':                 textattack.datasets.classification.AGNews,
     # IMDB 
-    'bert-imdb':                textattack.datasets.classification.IMDBSentiment,
-    'cnn-imdb':                 textattack.datasets.classification.IMDBSentiment,
-    'lstm-imdb':                textattack.datasets.classification.IMDBSentiment,
+    'bert-base-uncased-imdb':       textattack.datasets.classification.IMDBSentiment,
+    'cnn-imdb':                     textattack.datasets.classification.IMDBSentiment,
+    'lstm-imdb':                    textattack.datasets.classification.IMDBSentiment,
     # MR
-    'bert-mr':                  textattack.datasets.classification.MovieReviewSentiment,
-    'cnn-mr':                   textattack.datasets.classification.MovieReviewSentiment,
-    'lstm-mr':                  textattack.datasets.classification.MovieReviewSentiment,
+    'bert-base-uncased-mr':         textattack.datasets.classification.MovieReviewSentiment,
+    'cnn-mr':                       textattack.datasets.classification.MovieReviewSentiment,
+    'lstm-mr':                      textattack.datasets.classification.MovieReviewSentiment,
     # Yelp
-    'bert-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
-    'cnn-yelp-sentiment':       textattack.datasets.classification.YelpSentiment,
-    'lstm-yelp-sentiment':      textattack.datasets.classification.YelpSentiment,
+    'bert-base-uncased-yelp':       textattack.datasets.classification.YelpSentiment,
+    'cnn-yelp-sentiment':           textattack.datasets.classification.YelpSentiment,
+    'lstm-yelp-sentiment':          textattack.datasets.classification.YelpSentiment,
     #
     # Textual entailment datasets
     #
-    'bert-mnli':                textattack.datasets.entailment.MNLI,
-    'bert-snli':                textattack.datasets.entailment.SNLI,
+    'bert-base-uncased-mnli':       textattack.datasets.entailment.MNLI,
+    'bert-base-uncased-snli':       textattack.datasets.entailment.SNLI,
     #
     # Translation datasets
     #
-    't5-en2de':                 textattack.datasets.translation.NewsTest2013EnglishToGerman,
+    't5-en2de':                     textattack.datasets.translation.NewsTest2013EnglishToGerman,
+}
+
+HUGGINGFACE_DATASET_BY_MODEL = {
+    #
+    # bert-base-uncased
+    #
+    'bert-base-uncased-cola':       ('textattack/bert-base-uncased-CoLA',  ('glue', 'cola',  'validation')),
+    'bert-base-uncased-mnli':       ('textattack/bert-base-uncased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
+    'bert-base-uncased-mrpc':       ('textattack/bert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
+    'bert-base-uncased-qnli':       ('textattack/bert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
+    'bert-base-uncased-qqp':        ('textattack/bert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
+    'bert-base-uncased-rte':        ('textattack/bert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
+    'bert-base-uncased-sst2':       ('textattack/bert-base-uncased-SST-2', ('glue', 'sst2', 'validation')), 
+    'bert-base-uncased-stsb':       ('textattack/bert-base-uncased-STS-B', ('glue', 'stsb', 'validation', None, 5.0)), 
+    'bert-base-uncased-wnli':       ('textattack/bert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
+    #
+    # distilbert-base-cased
+    #
+    'distilbert-base-cased-cola':   ('textattack/distilbert-base-cased-CoLA',   ('glue', 'cola',  'validation')),
+    'distilbert-base-cased-mrpc':   ('textattack/distilbert-base-cased-MRPC',   ('glue', 'mrpc',  'validation')),
+    'distilbert-base-cased-qqp':    ('textattack/distilbert-base-cased-QQP',    ('glue', 'qqp',   'validation')),
+    'distilbert-base-cased-sst2':   ('textattack/distilbert-base-cased-SST-2',  ('glue', 'sst2', 'validation')),
+    'distilbert-base-cased-stsb':   ('textattack/distilbert-base-cased-STS-B',  ('glue', 'stsb', 'validation', None, 5.0)),
+    #
+    # distilbert-base-uncased
+    #
+    'distilbert-base-uncased-mnli':  ('textattack/distilbert-base-uncased-MNLI',  ('glue', 'mnli',  'validation_matched', [1, 2, 0])),
+    'distilbert-base-uncased-mrpc':  ('textattack/distilbert-base-uncased-MRPC',  ('glue', 'mrpc',  'validation')),
+    'distilbert-base-uncased-qnli':  ('textattack/distilbert-base-uncased-QNLI',  ('glue', 'qnli',  'validation')),
+    'distilbert-base-uncased-qqp':   ('textattack/distilbert-base-uncased-QQP',   ('glue', 'qqp',   'validation')),
+    'distilbert-base-uncased-rte':   ('textattack/distilbert-base-uncased-RTE',   ('glue', 'rte',   'validation')),
+    'distilbert-base-uncased-sst2':  ('textattack/distilbert-base-uncased-SST-2', ('glue', 'sst2',  'validation')),
+    'distilbert-base-uncased-stsb':  ('textattack/distilbert-base-uncased-STS-B', ('glue', 'stsb',  'validation', None, 5.0)),
+    'distilbert-base-uncased-wnli':  ('textattack/distilbert-base-uncased-WNLI',  ('glue', 'wnli',  'validation')),
+    #
+    # roberta-base (RoBERTa is cased by default)
+    #
+    'roberta-base-cola':             ('textattack/roberta-base-CoLA',  ('glue', 'cola',  'validation')),
+    'roberta-base-mrpc':             ('textattack/roberta-base-MRPC',  ('glue', 'mrpc',  'validation')),
+    'roberta-base-qnli':             ('textattack/roberta-base-QNLI',  ('glue', 'qnli',  'validation')),
+    'roberta-base-rte':              ('textattack/roberta-base-RTE',   ('glue', 'rte',   'validation')),
+    'roberta-base-sst2':             ('textattack/roberta-base-SST-2', ('glue', 'sst2', 'validation')),
+    'roberta-base-stsb':             ('textattack/roberta-base-STS-B', ('glue', 'stsb', 'validation', None, 5.0)),
+    'roberta-base-wnli':             ('textattack/roberta-base-WNLI',  ('glue', 'wnli',  'validation')),
+    
 }
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     'word-swap-embedding':                  'textattack.transformations.WordSwapEmbedding',
-    'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyph',
+    'word-swap-homoglyph':                  'textattack.transformations.WordSwapHomoglyphSwap',
     'word-swap-neighboring-char-swap':      'textattack.transformations.WordSwapNeighboringCharacterSwap',
     'word-swap-random-char-deletion':       'textattack.transformations.WordSwapRandomCharacterDeletion',
     'word-swap-random-char-insertion':      'textattack.transformations.WordSwapRandomCharacterInsertion',
@@ -159,14 +206,27 @@ def get_args():
     transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(WHITE_BOX_TRANSFORMATION_CLASS_NAMES.keys())
     parser.add_argument('--transformation', type=str, required=False,
         default='word-swap-embedding', choices=transformation_names,
-        help='The transformations to apply.')
-
-    parser.add_argument('--model', type=str, required=False, default='bert-yelp-sentiment',
-        choices=MODEL_CLASS_NAMES.keys(), help='The classification model to attack.')
+        help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Choices: ' + str(transformation_names))
+    
+    model_group = parser.add_mutually_exclusive_group()
+    
+    model_names = list(TEXTATTACK_MODEL_CLASS_NAMES.keys()) + list(HUGGINGFACE_DATASET_BY_MODEL.keys())
+    model_group.add_argument('--model', type=str, required=False, default='bert-base-uncased-yelp-sentiment',
+        choices=model_names, help='The pre-trained model to attack.')
+    model_group.add_argument('--model-from-file', type=str, required=False,
+        help='File of model and tokenizer to import.')     
+    model_group.add_argument('--model-from-huggingface', type=str, required=False,
+        help='huggingface.co ID of pre-trained model to load')
+        
+    dataset_group = parser.add_mutually_exclusive_group()
+    dataset_group.add_argument('--dataset-from-nlp', type=str, required=False, default=None,
+        help='Dataset to load from `nlp` repository.')
+    dataset_group.add_argument('--dataset-from-file', type=str, required=False, default=None,
+        help='Dataset to load from a file.')
     
     parser.add_argument('--constraints', type=str, required=False, nargs='*',
         default=['repeat', 'stopword'],
-        help=('Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys())))
+        help='Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: ' + str(CONSTRAINT_CLASS_NAMES.keys()))
     
     parser.add_argument('--out-dir', type=str, required=False, default=None,
         help='A directory to output results to.')
@@ -204,7 +264,7 @@ def get_args():
     goal_function_choices = ', '.join(GOAL_FUNCTION_CLASS_NAMES.keys())
     parser.add_argument('--goal-function', '-g', default='untargeted-classification',
         help=f'The goal function to use. choices: {goal_function_choices}')
-    
+   
     def str_to_int(s): return sum((ord(c) for c in s))
     parser.add_argument('--random-seed', default=str_to_int('TEXTATTACK'))
 
@@ -213,17 +273,21 @@ def get_args():
 
     parser.add_argument('--checkpoint-interval', required=False, type=int, 
         help='If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.')
-    
+
+    parser.add_argument('--query-budget', '-q', type=int, default=float('inf'),
+        help='The maximum number of model queries allowed per example attacked.')
+
     attack_group = parser.add_mutually_exclusive_group(required=False)
-    
     search_choices = ', '.join(SEARCH_CLASS_NAMES.keys())
-    attack_group.add_argument('--search', '-s', '--search-method', type=str, 
+    attack_group.add_argument('--search', '--search-method', '-s', type=str, 
         required=False, default='greedy-word-wir', 
         help=f'The search method to use. choices: {search_choices}')
-    
-    attack_group.add_argument('--recipe', '-r', type=str, required=False, default=None,
+    attack_group.add_argument('--recipe', '--attack-recipe', '-r', type=str, required=False, default=None,
         help='full attack recipe (overrides provided goal function, transformation & constraints)',
         choices=RECIPE_NAMES.keys())
+    attack_group.add_argument('--attack-from-file', type=str, required=False, default=None,
+        help='attack to load from file (overrides provided goal function, transformation & constraints)',
+        )
 
     # Parser for parsing args for resume
     resume_parser = argparse.ArgumentParser(
@@ -241,7 +305,8 @@ def get_args():
 
     resume_parser.add_argument('--parallel', action='store_true', default=False,
         help='Run attack using multiple GPUs.')
-
+    
+    # Resume attack from checkpoint.
     if sys.argv[1:] and sys.argv[1].lower() == 'resume':
         args = resume_parser.parse_args(sys.argv[2:])
         setattr(args, 'checkpoint_resume', True)
@@ -255,6 +320,11 @@ def get_args():
             raise ValueError('Cannot use `--checkpoint-interval` with `--shuffle=True`')
         
         set_seed(args.random_seed)
+    
+    # Shortcuts for huggingface models using --model.
+    if args.model in HUGGINGFACE_DATASET_BY_MODEL:
+        args.model_from_huggingface, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
+        args.model = None
     
     return args
 
@@ -291,6 +361,7 @@ def parse_goal_function_from_args(args, model):
         goal_function = eval(f'{GOAL_FUNCTION_CLASS_NAMES[goal_function]}(model)')
     else:
         raise ValueError(f'Error: unsupported goal_function {goal_function}')
+    goal_function.query_budget = args.query_budget
     return goal_function
 
 def parse_constraints_from_args(args):
@@ -312,32 +383,29 @@ def parse_constraints_from_args(args):
     
     return _constraints
 
-def parse_recipe_from_args(model, args):
-    if ':' in args.recipe:
-        recipe_name, params = args.recipe.split(':')
-        if recipe_name not in RECIPE_NAMES:
-            raise ValueError(f'Error: unsupported recipe {recipe_name}')
-        recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model, {params})')
-    elif args.recipe in RECIPE_NAMES:
-        recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
-    else:
-        raise ValueError(f'Invalid recipe {args.recipe}')
-    return recipe
-
-def parse_goal_function_and_attack_from_args(args):
-    if ':' in args.model:
-        model_name, params = args.model.split(':')
-        if model_name not in MODEL_CLASS_NAMES:
-            raise ValueError(f'Error: unsupported model {model_name}')
-        model = eval(f'{MODEL_CLASS_NAMES[model_name]}({params})')
-    elif args.model in MODEL_CLASS_NAMES:
-        model = eval(f'{MODEL_CLASS_NAMES[args.model]}()')
-    else: 
-        raise ValueError(f'Error: unsupported model {args.model}')
+def parse_attack_from_args(args):
+    model = parse_model_from_args(args)
     if args.recipe:
-        attack = parse_recipe_from_args(model, args)
-        goal_function = attack.goal_function
-        return goal_function, attack
+        if ':' in args.recipe:
+            recipe_name, params = args.recipe.split(':')
+            if recipe_name not in RECIPE_NAMES:
+                raise ValueError(f'Error: unsupported recipe {recipe_name}')
+            recipe = eval(f'{RECIPE_NAMES[recipe_name]}(model, {params})')
+        elif args.recipe in RECIPE_NAMES:
+            recipe = eval(f'{RECIPE_NAMES[args.recipe]}(model)')
+        else:
+            raise ValueError(f'Invalid recipe {args.recipe}')
+        recipe.goal_function.query_budget = args.query_budget
+        return recipe
+    elif args.attack_from_file:
+        if ':' in args.attack_from_file:
+            attack_file, attack_name = args.attack_from_file.split(':')
+        else:
+            attack_file, attack_name = args.attack_from_file, 'attack'
+        attack_file = attack_file.replace('.py', '').replace('/', '.')
+        attack_module = importlib.import_module(attack_file)
+        attack_func = getattr(attack_module, attack_name)
+        return attack_func(model)
     else:
         goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args, model)
@@ -351,9 +419,96 @@ def parse_goal_function_and_attack_from_args(args):
             search_method = eval(f'{SEARCH_CLASS_NAMES[args.search]}()')
         else:
             raise ValueError(f'Error: unsupported attack {args.search}')
-    return goal_function, textattack.shared.Attack(goal_function, constraints, transformation, search_method)
+    return textattack.shared.Attack(goal_function, constraints, transformation, search_method)
 
-def parse_logger_from_args(args):# Create logger
+def parse_model_from_args(args):
+    if args.model_from_file:
+        colored_model_name = textattack.shared.utils.color_text(args.model_from_file, color='blue', method='ansi')
+        textattack.shared.logger.info(f'Loading model and tokenizer from file: {colored_model_name}')
+        if ':' in args.model_from_file:
+            model_file, model_name, tokenizer_name = args.model_from_file.split(':')
+        else:
+            model_file, model_name, tokenizer_name = args.model_from_file, 'model', 'tokenizer'
+        try:
+            model_file = args.model_from_file.replace('.py', '').replace('/', '.')
+            model_module = importlib.import_module(model_file)
+        except:
+            raise ValueError(f'Failed to import model or tokenizer from file {args.model_from_file}')
+        try:
+            model = getattr(model_module, model_name)
+        except AttributeError:
+            raise AttributeError(f'``{model_name}`` not found in module {args.model_from_file}')
+        try:
+            tokenizer = getattr(model_module, tokenizer_name)
+        except AttributeError:
+            raise AttributeError(f'``{tokenizer_name}`` not found in module {args.model_from_file}')
+        model = model.to(textattack.shared.utils.device)
+        setattr(model, 'tokenizer', tokenizer)
+    elif args.model_from_huggingface:
+        import transformers
+        if ':' in args.model_from_huggingface:
+            model_class, model_name = args.model_from_huggingface.split(':')
+            model_class = eval(f'transformers.{model_class}')
+        else:
+            model_class, model_name = transformers.AutoModelForSequenceClassification, args.model_from_huggingface
+        colored_model_name = textattack.shared.utils.color_text(model_name, color='blue', method='ansi')
+        textattack.shared.logger.info(f'Loading pre-trained model from HuggingFace model repository: {colored_model_name}')
+        model = model_class.from_pretrained(model_name)
+        model = model.to(textattack.shared.utils.device)
+        try:
+            tokenizer = textattack.tokenizers.AutoTokenizer(args.model_from_huggingface)
+        except OSError:
+            textattack.shared.logger.warn(f'AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`')
+            tokenizer = textattack.tokenizers.AutoTokenizer('bert-base-uncased')
+        setattr(model, 'tokenizer', tokenizer)
+    else:
+        if ':' in args.model:
+            model_name, params = args.model.split(':')
+            colored_model_name = textattack.shared.utils.color_text(model_name, color='blue', method='ansi')
+            textattack.shared.logger.info(f'Loading pre-trained TextAttack model: {colored_model_name}')
+            if model_name not in TEXTATTACK_MODEL_CLASS_NAMES:
+                raise ValueError(f'Error: unsupported model {model_name}')
+            model = eval(f'{TEXTATTACK_MODEL_CLASS_NAMES[model_name]}({params})')
+        elif args.model in TEXTATTACK_MODEL_CLASS_NAMES:
+            colored_model_name = textattack.shared.utils.color_text(args.model, color='blue', method='ansi')
+            textattack.shared.logger.info(f'Loading pre-trained TextAttack model: {colored_model_name}')
+            model = eval(f'{TEXTATTACK_MODEL_CLASS_NAMES[args.model]}()')
+        else: 
+            raise ValueError(f'Error: unsupported model {args.model}')
+    return model
+
+def parse_dataset_from_args(args):
+    if args.dataset_from_file:
+        textattack.shared.logger.info(f'Loading model and tokenizer from file: {args.model_from_file}')
+        if ':' in args.dataset_from_file:
+            dataset_file, dataset_name = args.dataset_from_file.split(':')
+        else:
+            dataset_file, dataset_name = args.dataset_from_file, 'dataset'
+        try:
+            dataset_file = dataset_file.replace('.py', '').replace('/', '.')
+            dataset_module = importlib.import_module(dataset_file)
+        except:
+            raise ValueError(f'Failed to import dataset from file {args.dataset_from_file}')
+        try:
+            dataset = getattr(dataset_module, dataset_name)
+        except AttributeError:
+            raise AttributeError(f'``dataset`` not found in module {args.dataset_from_file}')
+    elif args.dataset_from_nlp:
+        dataset_args = args.dataset_from_nlp
+        if ':' in dataset_args:
+            dataset_args = dataset_args.split(':')
+        dataset = textattack.datasets.HuggingFaceNLPDataset(*dataset_args, shuffle=args.shuffle)
+    else:
+        if not args.model:
+            raise ValueError('Must supply pretrained model or dataset')
+        elif args.model in DATASET_BY_MODEL:
+            dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+        else:
+            raise ValueError(f'Error: unsupported model {args.model}')
+    return dataset
+
+def parse_logger_from_args(args):
+    # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:

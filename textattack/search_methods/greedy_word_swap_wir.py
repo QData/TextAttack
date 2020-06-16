@@ -19,19 +19,21 @@ class GreedyWordSwapWIR(SearchMethod):
         
     Args:
         wir_method: method for ranking most important words
+        ascending: if True, ranks words from least-to-most important. (Default
+            ranking shows the most important word first.)
     """
 
-    WIR_TO_REPLACEMENT_STR = {
-        'unk': '[UNK]',
-        'delete': '[DELETE]',
-    }
-
-    def __init__(self, wir_method='unk'):
+    def __init__(self, wir_method='unk', ascending=False):
         self.wir_method = wir_method
-        try: 
-            self.replacement_str = self.WIR_TO_REPLACEMENT_STR[wir_method]
-        except KeyError:
-            raise KeyError(f'Word Importance Ranking method {wir_method} not recognized.') 
+        self.ascending = ascending
+    
+    def _get_index_order(self, initial_result, texts):
+        """ Queries model for list of tokenized text objects ``text`` and
+            ranks in order of descending score.
+        """
+        leave_one_results, search_over = self.get_goal_results(texts, initial_result.output)
+        leave_one_scores = np.array([result.score for result in leave_one_results])
+        return leave_one_scores, search_over
         
     def _perform_search(self, initial_result):
         tokenized_text = initial_result.tokenized_text
@@ -40,15 +42,24 @@ class GreedyWordSwapWIR(SearchMethod):
         # Sort words by order of importance
         len_text = len(tokenized_text.words)
         
-        leave_one_texts = \
-            [tokenized_text.replace_word_at_index(i,self.replacement_str) for i in range(len_text)]
-        leave_one_scores = np.array([result.score for result in \
-            self.get_goal_results(leave_one_texts, initial_result.output)])
-        index_order = (-leave_one_scores).argsort()
+        if self.wir_method == 'unk':
+            leave_one_texts = [tokenized_text.replace_word_at_index(i, '[UNK]') for i in range(len_text)]
+            leave_one_scores, search_over = self._get_index_order(initial_result, leave_one_texts)
+        elif self.wir_method == 'delete':
+            leave_one_texts = [tokenized_text.delete_word_at_index(i) for i in range(len_text)]
+            leave_one_scores = self._get_index_order(initial_result, leave_one_texts)
+        elif self.wir_method == 'random':
+            leave_one_scores = torch.random(len_text)
+            search_over = False
+        
+        if self.ascending:
+            index_order = (leave_one_scores).argsort()
+        else:
+            index_order = (-leave_one_scores).argsort()
 
         i = 0
         results = None
-        while i < len(index_order):
+        while i < len(index_order) and not search_over:
             transformed_text_candidates = self.get_transformations(
                 cur_result.tokenized_text,
                 original_text=initial_result.tokenized_text,
@@ -56,8 +67,8 @@ class GreedyWordSwapWIR(SearchMethod):
             i += 1
             if len(transformed_text_candidates) == 0:
                 continue
-            results = sorted(self.get_goal_results(transformed_text_candidates, initial_result.output), 
-                    key=lambda x: -x.score)
+            results, search_over = self.get_goal_results(transformed_text_candidates, initial_result.output)
+            results = sorted(results, key=lambda x: -x.score)
             # Skip swaps which don't improve the score
             if results[0].score > cur_result.score:
                 cur_result = results[0]
@@ -84,10 +95,8 @@ class GreedyWordSwapWIR(SearchMethod):
                         max_similarity = similarity_score
                         best_result = result
                 return best_result
-       
-        if results and len(results):
-            return results[0]
-        return initial_result
+      
+        return cur_result
 
     def check_transformation_compatibility(self, transformation):
         """

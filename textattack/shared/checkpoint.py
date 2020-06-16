@@ -3,10 +3,8 @@ import pickle
 import time
 import datetime
 import copy
-from textattack.shared import utils
+from textattack.shared import logger, utils
 from textattack.attack_results import SuccessfulAttackResult, FailedAttackResult, SkippedAttackResult
-
-logger = utils.get_logger()
 
 class Checkpoint:
     """ An object that stores necessary information for saving and loading checkpoints

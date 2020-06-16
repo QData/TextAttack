@@ -15,7 +15,7 @@ class TextAttackDataset:
     def __iter__(self):
         return self
     
-    def _process_example(self, raw_line):
+    def _process_example_from_file(self, raw_line):
         """ 
         Processes each example read from a file. Implemented on a dataset-
         by-dataset basis.
@@ -29,20 +29,20 @@ class TextAttackDataset:
         raise NotImplementedError()
     
     def __next__(self):
-        if self.i >= len(self.examples):
+        if self._i >= len(self.examples):
             raise StopIteration
-        example = self.examples[self.i]
-        self.i += 1
+        example = self.examples[self._i]
+        self._i += 1
         return example
-
+        
+    def __getitem__(self, i):
+        return self.examples[i]
+    
     def __len__(self):
         return len(self.examples)
     
-    def __getitem__(self, item):
-        return self.examples[item]
-    
     def _load_pickle_file(self, file_name, offset=0):
-        self.i = 0
+        self._i = 0
         file_path = utils.download_if_needed(file_name)
         with open(file_path, "rb") as f:
             self.examples = pickle.load(f)
@@ -67,7 +67,7 @@ class TextAttackDataset:
         raw_lines = text_file.readlines()[offset:]
         raw_lines = [self._clean_example(ex) for ex in raw_lines]
         self.examples = [self._process_example_from_file(ex) for ex in raw_lines]
-        self.i = 0
+        self._i = 0
         text_file.close()
     
     def _clean_example(self, ex):

@@ -42,7 +42,7 @@ def HotFlipEbrahimi2017(model):
     #   threshold (0.8)."
     #
     constraints.append(
-            WordEmbeddingDistance(min_cos_sim=0.8)
+        WordEmbeddingDistance(min_cos_sim=0.8)
     )
     #
     # 2. "The two words have the same part-of-speech."

@@ -47,7 +47,7 @@ class WordSwapGradientBased(Transformation):
         """
         self.model.train()
        
-        lookup_table = self.model.lookup_table.to(utils.get_device())
+        lookup_table = self.model.lookup_table.to(utils.device)
         lookup_table_transpose = lookup_table.transpose(0,1)
         
         # set backward hook on the word embeddings for input x
@@ -56,12 +56,12 @@ class WordSwapGradientBased(Transformation):
         self.model.zero_grad()
         predictions = self._call_model(text)
         original_label = predictions.argmax()
-        y_true = torch.Tensor([original_label]).long().to(utils.get_device())
+        y_true = torch.Tensor([original_label]).long().to(utils.device)
         loss = self.loss(predictions, y_true)
         loss.backward()
     
         # grad w.r.t to word embeddings
-        emb_grad = emb_hook.output[0].to(utils.get_device()).squeeze()
+        emb_grad = emb_hook.output[0].to(utils.device).squeeze()
     
         # grad differences between all flips and original word (eq. 1 from paper)
         vocab_size = lookup_table.size(0)
@@ -70,7 +70,7 @@ class WordSwapGradientBased(Transformation):
         for j, word_idx in enumerate(indices_to_replace):
             # Get the grad w.r.t the one-hot index of the word.
             b_grads = emb_grad[word_idx].view(1,-1).mm(lookup_table_transpose).squeeze()
-            a_grad = b_grads[text.ids[0][word_idx]]
+            a_grad = b_grads[text.ids[word_idx]]
             diffs[j] = b_grads-a_grad
         
         # Don't change to the pad token.
@@ -86,7 +86,7 @@ class WordSwapGradientBased(Transformation):
             idx_in_vocab = idx % (num_words_in_vocab)
             idx_in_sentence = indices_to_replace[idx_in_diffs]
             word = self.model.tokenizer.convert_id_to_word(idx_in_vocab)
-            if not utils.has_letter(word): 
+            if (not utils.has_letter(word)) or (len(utils.words_from_text(word)) != 1): 
                 # Do not consider words that are solely letters or punctuation.
                 continue
             candidates.append((word, idx_in_sentence))
@@ -99,10 +99,7 @@ class WordSwapGradientBased(Transformation):
     def _call_model(self, text):
         """ A helper function to query `self.model` with TokenizedText `text`.
         """
-        ids = torch.tensor(text.ids[0])
-        ids = ids.to(next(self.model.parameters()).device)
-        ids = ids.unsqueeze(0)
-        return self.model(ids)
+        return utils.model_predict(self.model, [text.ids])
 
     def _get_transformations(self, tokenized_text, indices_to_replace):
         """
@@ -127,8 +124,8 @@ class Hook:
             self.hook = module.register_forward_hook(self.hook_fn)
             
     def hook_fn(self, module, input, output):
-        self.input = [x.to(utils.get_device()) for x in input]
-        self.output = [x.to(utils.get_device()) for x in output]
+        self.input = [x.to(utils.device) for x in input]
+        self.output = [x.to(utils.device) for x in output]
         
     def close(self):
         self.hook.remove()
