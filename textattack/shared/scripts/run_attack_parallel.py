@@ -7,6 +7,7 @@ import textattack
 import time
 import torch
 import tqdm
+from collections import deque
 
 from .attack_args_helper import *
 
@@ -34,7 +35,7 @@ def attack_from_queue(args, in_queue, out_queue):
     while not in_queue.empty():
         try:
             i, text, output = in_queue.get()
-            results_gen = attack.attack_dataset([(text, output)], num_examples=1)
+            results_gen = attack.attack_dataset([(text, output)])
             result = next(results_gen)
             out_queue.put((i, result))
         except Exception as e:
@@ -49,7 +50,7 @@ def run(args):
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
         
-        num_remaining_examples = resume_checkpoint.num_remaining_attacks
+        num_remaining_attacks = resume_checkpoint.num_remaining_attacks
         num_total_examples = args.num_examples
         worklist = resume_checkpoint.worklist.copy()
         last_example = resume_checkpoint.last_example
@@ -58,8 +59,8 @@ def run(args):
         print(resume_checkpoint, '\n')
     else:
         num_total_examples = args.num_examples
-        num_remaining_examples = num_total_examples
-        worklist = list(range(0, num_total_examples))
+        num_remaining_attacks = num_total_examples
+        worklist = deque(range(0, num_total_examples))
         last_example = worklist[-1]
 
     # This makes `args` a namespace that's sharable between processes.
@@ -108,12 +109,13 @@ def run(args):
         num_results = 0
         num_failures = 0
         num_successes = 0
-    pbar = tqdm.tqdm(total=num_remaining_examples, smoothing=0)
+    pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
     while num_results < num_total_examples and worklist:
-        idx, result = out_queue.get(block=True)
+        result = out_queue.get(block=True)
 
         if isinstance(result, Exception):
             raise result
+        idx, result = result
         attack_log_manager.log_result(result)
         worklist.remove(idx)
 

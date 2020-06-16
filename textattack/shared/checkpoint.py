@@ -141,7 +141,7 @@ class Checkpoint:
         """ Check if our N results are N unique results (i.e. no duplicates)"""
         results_set = set()
         for result in self.log_manager.results:
-            results_set.add(result.orginal_result.tokenized_text)
+            results_set.add(result.original_result.tokenized_text)
         if len(results_set) == self.results_count:
             return True
         else:

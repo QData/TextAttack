@@ -211,7 +211,7 @@ def get_args():
     model_group = parser.add_mutually_exclusive_group()
     
     model_names = list(TEXTATTACK_MODEL_CLASS_NAMES.keys()) + list(HUGGINGFACE_DATASET_BY_MODEL.keys())
-    model_group.add_argument('--model', type=str, required=False, default='bert-base-uncased-yelp-sentiment',
+    model_group.add_argument('--model', type=str, required=False, default='bert-base-uncased-yelp',
         choices=model_names, help='The pre-trained model to attack.')
     model_group.add_argument('--model-from-file', type=str, required=False,
         help='File of model and tokenizer to import.')     
@@ -322,7 +322,7 @@ def get_args():
         set_seed(args.random_seed)
     
     # Shortcuts for huggingface models using --model.
-    if args.model in HUGGINGFACE_DATASET_BY_MODEL:
+    if not args.checkpoint_resume and args.model in HUGGINGFACE_DATASET_BY_MODEL:
         args.model_from_huggingface, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
         args.model = None
     
@@ -502,7 +502,7 @@ def parse_dataset_from_args(args):
         if not args.model:
             raise ValueError('Must supply pretrained model or dataset')
         elif args.model in DATASET_BY_MODEL:
-            dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+            dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset, shuffle=args.shuffle)
         else:
             raise ValueError(f'Error: unsupported model {args.model}')
     return dataset

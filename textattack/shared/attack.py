@@ -1,7 +1,6 @@
 import lru
 import numpy as np
 import os
-import random
 
 from textattack.shared import utils
 from textattack.constraints import Constraint
@@ -142,15 +141,14 @@ class Attack:
         else:
             return FailedAttackResult(initial_result, final_result, self.goal_function.num_queries)
  
-    def _get_examples_from_dataset(self, dataset, num_examples=None, shuffle=False,
+    def _get_examples_from_dataset(self, dataset, indicies=None,
             attack_n=False, attack_skippable_examples=False):
         """ 
         Gets examples from a dataset and tokenizes them.
 
         Args:
             dataset: An iterable of (text, ground_truth_output) pairs
-            num_examples (int): the number of examples to return
-            shuffle (:obj:`bool`, optional): Whether to shuffle the data
+            indicies (list[int]): List of i-th samples that we want to attack. If None, attack all samples in dataset.
             attack_n (bool): If `True`, returns `num_examples` non-skipped
                 examples. If `False`, returns `num_examples` total examples.
         
@@ -161,16 +159,18 @@ class Attack:
         examples = []
         n = 0
         
-        if shuffle:
-            random.shuffle(dataset.examples)
-        
-        num_examples = num_examples or len(dataset)        
+        num_examples = len(indicies) if indicies else len(dataset)         
 
         if num_examples <= 0:
             return
             yield
-            
+
+        i = 0
         for text, ground_truth_output in dataset:
+            if indicies and i not in indicies:
+                i += 1
+                continue
+            i+= 1
             tokenized_text = TokenizedText(text, self.goal_function.tokenizer)
             self.goal_function.num_queries = 0
             goal_function_result, _ = self.goal_function.get_result(tokenized_text, ground_truth_output)
@@ -189,22 +189,21 @@ class Attack:
             if num_examples is not None and (n >= num_examples):
                 break
 
-    def attack_dataset(self, dataset, num_examples=None, shuffle=False, attack_n=False):
+    def attack_dataset(self, dataset, indicies=None, attack_n=False):
         """ 
         Runs an attack on the given dataset and outputs the results to the 
         console and the output file.
 
         Args:
             dataset: An iterable of (text, ground_truth_output) pairs.
-            num_examples: The number of samples to attack.
-            shuffle (:obj:`bool`, optional): Whether to shuffle the data. Defaults to False.
+            indicies: List of indicies of samples that we want to attack. If None, attack all samples in dataset.
             attack_n: Whether or not to attack ``num_examples`` examples. If false, will process
                 ``num_examples`` examples including ones which are skipped due to the model 
                 mispredicting the original sample.
         """
         
         examples = self._get_examples_from_dataset(dataset, 
-            num_examples=num_examples, shuffle=shuffle, attack_n=attack_n)
+            indicies=indicies, attack_n=attack_n)
 
         for goal_function_result, was_skipped in examples:
             if was_skipped:

@@ -13,9 +13,11 @@ class YelpSentiment(ClassificationDataset):
     
     """
     DATA_PATH = 'datasets/classification/yelp_sentiment.txt'
-    def __init__(self, offset=0):
+    def __init__(self, offset=0, shuffle=False):
         """ Loads a full dataset from disk. """
         self._load_classification_text_file(YelpSentiment.DATA_PATH, offset=offset)
+        if shuffle:
+            self._shuffle_data()
 
     def _clean_example(self, ex):
         """ Applied to every text example loaded from disk. 

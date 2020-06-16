@@ -18,7 +18,9 @@ class MNLI(EntailmentDataset):
     """
     MATCHED_DATA_PATH = 'datasets/entailment/mnli_matched'
     MISMATCHED_DATA_PATH = 'datasets/entailment/mnli_mismatched'
-    def __init__(self, offset=0, mismatched=False):
+    def __init__(self, offset=0, mismatched=False, shuffle=False):
         """ Loads a full dataset from disk. """
         path = MNLI.MISMATCHED_DATA_PATH if mismatched else MNLI.MATCHED_DATA_PATH
         self._load_classification_text_file(path, offset=offset)
+        if shuffle:
+            self._shuffle_data()

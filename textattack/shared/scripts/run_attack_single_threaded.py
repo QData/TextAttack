@@ -7,6 +7,7 @@ import time
 import tqdm
 import os
 import datetime
+from collections import deque
 
 from .attack_args_helper import *
 
@@ -27,18 +28,17 @@ def run(args):
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
-
-        num_examples_offset = resume_checkpoint.dataset_offset
-        num_examples = resume_checkpoint.num_remaining_attacks
+        
+        num_remaining_attacks = resume_checkpoint.num_remaining_attacks
         worklist = resume_checkpoint.worklist.copy()
+        assert num_remaining_attacks == len(worklist), "Recorded number of remaining attacks and size of worklist are different."
         last_example = resume_checkpoint.last_example
 
         logger.info('Recovered from checkpoint previously saved at {}'.format(resume_checkpoint.datetime))
         print(resume_checkpoint, '\n')
     else:
-        num_examples_offset = args.num_examples_offset
-        num_examples = args.num_examples
-        worklist = list(range(0, num_examples))
+        num_remaining_attacks = args.num_examples
+        worklist = deque(range(0, args.num_examples))
         last_example = worklist[-1]
     
     start_time = time.time()
@@ -79,10 +79,9 @@ def run(args):
     
     else:
         # Not interactive? Use default dataset.
-        args.num_examples_offset = num_examples_offset
         dataset = parse_dataset_from_args(args)
         
-        pbar = tqdm.tqdm(total=num_examples, smoothing=0)
+        pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
         if args.checkpoint_resume:
             num_results = resume_checkpoint.results_count
             num_failures = resume_checkpoint.num_failed_attacks
@@ -91,12 +90,12 @@ def run(args):
             num_results = 0
             num_failures = 0
             num_successes = 0
-        idx = 0
-        for result in attack.attack_dataset(data, 
-                                        num_examples=num_examples, 
-                                        shuffle=args.shuffle, 
+        i = 0
+        for result in attack.attack_dataset(dataset, 
+                                        indicies=worklist,
                                         attack_n=args.attack_n):
             attack_log_manager.log_result(result)
+
             if not args.disable_stdout:
                 print('\n')
             if (not args.attack_n) or (not isinstance(result, textattack.attack_results.SkippedAttackResult)):
@@ -106,10 +105,10 @@ def run(args):
                 worklist.append(last_example)
             num_results += 1
             try:
-                worklist.remove(idx)
-                idx += 1
+                worklist.popleft()
+                i += 1
             except ValueError:
-                raise Exception('{} does not exist in the worklist.'.format(idx))
+                raise Exception('{} does not exist in the worklist.'.format(worklist[i]))
             if type(result) == textattack.attack_results.SuccessfulAttackResult:
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:

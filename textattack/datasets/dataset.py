@@ -1,5 +1,6 @@
 from textattack.shared import utils
 import pickle
+import random
 
 class TextAttackDataset:
     """
@@ -76,3 +77,9 @@ class TextAttackDataset:
         Only necessary for some datasets. 
         """
         return ex
+
+    def _shuffle_data(self):
+        """
+        Shuffle the loaded data
+        """
+        random.shuffle(self.examples)

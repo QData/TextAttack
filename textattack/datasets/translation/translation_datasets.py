@@ -11,5 +11,7 @@ class NewsTest2013EnglishToGerman(TextAttackDataset):
     
     """
     DATA_PATH = 'datasets/translation/NewsTest2013EnglishToGerman'
-    def __init__(self, offset=0):
+    def __init__(self, offset=0, shuffle=False):
         self._load_pickle_file(NewsTest2013EnglishToGerman.DATA_PATH, offset=offset)
+        if shuffle:
+            self._shuffle_data()
