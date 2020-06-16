@@ -1,11 +1,11 @@
 format: FORCE  ## Run black and isort (rewriting files)
 	black .
-	isort  --atomic --recursive test textattack
+	isort  --atomic --recursive tests textattack
 
 
 lint: FORCE  ## Run black (in check mode)
 	black . --check
-	isort --check-only --recursive test textattack
+	isort --check-only --recursive tests textattack
 
 test: FORCE ## Run tests using pytest
 	python -m pytest

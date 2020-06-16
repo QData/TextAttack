@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): BeamSearch(
     (beam_width):  2
   )
@@ -15,8 +15,8 @@ Attack(
   (is_black_box):  True
 ) 
 
-Logging to CSV at path /.*/.csv.
-Load time: /.*/s
+Logging to CSV at path /.*/.
+Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [94m2[0m-->[37m[SKIPPED][0m
 The new rights are nice enough
@@ -41,38 +41,18 @@ uh i don't know i i have mixed emotions about him uh sometimes i like him but at
 I like him for the most [94moffice[0m, but would still enjoy seeing someone beat him.
 
 
---------------------------------------------- Result 4 ---------------------------------------------
-[91m0[0m-->[94m2[0m
-yeah i i think my favorite restaurant is always been the one [91mclosest[0m  you know the closest as long as it's it meets the minimum criteria you know of good food
-
-My favorite restaurants are always at least a hundred miles away from my house.
-yeah i i think my favorite restaurant is always been the one [94mstuffy[0m  you know the closest as long as it's it meets the minimum criteria you know of good food
-
-My favorite restaurants are always at least a hundred miles away from my house.
-
-
---------------------------------------------- Result 5 ---------------------------------------------
-[91m0[0m-->[94m2[0m
-i don't know um do you do a lot of camping
-
-I [91mknow[0m [91mexactly[0m.
-i don't know um do you do a lot of camping
-
-I [94mexperience[0m [94mincisively[0m.
-
-
 
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 3      |
+| Number of successful attacks: | 1      |
 | Number of failed attacks:     | 1      |
 | Number of skipped attacks:    | 1      |
-| Original accuracy:            | 80.0%  |
-| Accuracy under attack:        | 20.0%  |
-| Attack success rate:          | 75.0%  |
-| Average perturbed word %:     | 5.93%  |
-| Average num. words per input: | 29.6   |
-| Avg num queries:              | 317.25 |
+| Original accuracy:            | 66.67% |
+| Accuracy under attack:        | 33.33% |
+| Attack success rate:          | 50.0%  |
+| Average perturbed word %:     | 2.27%  |
+| Average num. words per input: | 29.0   |
+| Avg num queries:              | /.*/|
 +-------------------------------+--------+
-Attack time: /.*/s
+Attack time: /.*/

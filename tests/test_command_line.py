@@ -15,10 +15,10 @@ attack_test_params = [
         "attack_from_file",
         (
             "python -m textattack --model cnn-imdb "
-            "--attack-from-file test/sample_inputs/attack_from_file.py:Attack "
+            "--attack-from-file tests/sample_inputs/attack_from_file.py:Attack "
             "--num-examples 2 --attack-n"
         ),
-        "test/sample_outputs/run_attack_from_file.txt",
+        "tests/sample_outputs/run_attack_from_file.txt",
     ),
     #
     # test interactive mode
@@ -29,7 +29,7 @@ attack_test_params = [
             'printf "All that glitters is not gold\nq\n"',
             "python -m textattack --recipe textfooler --model bert-base-uncased-imdb --interactive",
         ),
-        "test/sample_outputs/interactive_mode.txt",
+        "tests/sample_outputs/interactive_mode.txt",
     ),
     #
     # test loading an attack from the transformers model hub
@@ -41,7 +41,7 @@ attack_test_params = [
             "distilbert-base-uncased-finetuned-sst-2-english "
             "--dataset-from-nlp glue:sst2:train --recipe deepwordbug --num-examples 3"
         ),
-        "test/sample_outputs/run_attack_transformers_nlp.txt",
+        "tests/sample_outputs/run_attack_transformers_nlp.txt",
     ),
     #
     # test running an attack by loading a model and dataset from file
@@ -49,11 +49,11 @@ attack_test_params = [
     (
         "load_model_and_dataset_from_file",
         (
-            "python -m textattack --model-from-file test/sample_inputs/sst_model_and_dataset.py "
-            "--dataset-from-file test/sample_inputs/sst_model_and_dataset.py "
+            "python -m textattack --model-from-file tests/sample_inputs/sst_model_and_dataset.py "
+            "--dataset-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--recipe deepwordbug --num-examples 3"
         ),
-        "test/sample_outputs/run_attack_transformers_nlp.txt",
+        "tests/sample_outputs/run_attack_transformers_nlp.txt",
     ),
     #
     # test hotflip on 10 samples from LSTM MR
@@ -64,7 +64,7 @@ attack_test_params = [
             "python -m textattack --model lstm-mr --recipe hotflip "
             "--num-examples 4 --num-examples-offset 13"
         ),
-        "test/sample_outputs/run_attack_hotflip_lstm_mr_4.txt",
+        "tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt",
     ),
     #
     # test deepwordbug on 10 samples from BERT SNLI
@@ -74,7 +74,7 @@ attack_test_params = [
         (
             "python -m textattack --model bert-base-uncased-snli --recipe deepwordbug --num-examples 2 --attack-n"
         ),
-        "test/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt",
+        "tests/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt",
     ),
     #
     # test: run_attack deepwordbug attack on 10 samples from LSTM MR
@@ -84,7 +84,7 @@ attack_test_params = [
         (
             "python -m textattack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n"
         ),
-        "test/sample_outputs/run_attack_deepwordbug_lstm_mr_10.txt",
+        "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_10.txt",
     ),
     #
     # test: run_attack targeted classification of class 2 on BERT MNLI with enable_csv
@@ -99,7 +99,7 @@ attack_test_params = [
             "--enable-csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation word-swap-wordnet "
             "--constraints lang-tool repeat stopword --search beam-search:beam_width=2"
         ),
-        "test/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n_4.txt",
+        "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n.txt",
     ),
     #
     # test: run_attack non-overlapping output of class 2 on T5 en->de translation with
@@ -115,7 +115,7 @@ attack_test_params = [
             "--constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword "
             "--search greedy"
         ),
-        "test/sample_outputs/run_attack_nonoverlapping_t5ende_editdistance_bleu.txt",
+        "tests/sample_outputs/run_attack_nonoverlapping_t5ende_editdistance_bleu.txt",
     ),
     #
     #
@@ -129,9 +129,9 @@ def test_command_line_attack(capsys, name, command, sample_output_file):
     """
     # read in file and create regex
     desired_output = open(sample_output_file, "r").read()
+    print("desired_output =>", desired_output)
     # regex in sample file look like /.*/
     desired_re = re.escape(desired_output).replace("/\\.\\*/", ".*")
-    print("desired_output", desired_output)
     # run command
     if isinstance(command, tuple):
         # Support pipes via tuple of commands
@@ -156,11 +156,11 @@ def test_command_line_attack(capsys, name, command, sample_output_file):
     else:
         result = subprocess.run(shlex.split(command), capture_output=True)
     # get output and check match
-    print("result", result.stdout)
-    print("stderr:", result.stderr)
     assert result.stdout is not None
     stdout = result.stdout.decode()
+    print("stdout =>", stdout)
     assert result.stderr is not None
-    _ = result.stderr.decode()
+    stderr = result.stderr.decode()
+    print("stderr =>", stderr)
 
-    assert re.match(desired_re, stdout)
+    assert re.match(desired_re, stdout, flags=re.S)

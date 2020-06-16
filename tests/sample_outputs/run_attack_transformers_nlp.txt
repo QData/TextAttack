@@ -31,29 +31,18 @@ that [92mloves[0m its characters and communicates [92msomething[0m [92mrath
 that [91mlodes[0m its characters and communicates [91msomethNng[0m [91mrathrer[0m [91mbeautifdul[0m about human nature
 
 
---------------------------------------------- Result 4 ---------------------------------------------
-[91m0[0m-->[92m1[0m
-[91mremains[0m utterly [91msatisfied[0m to [91mremain[0m the same throughout
-[92mremans[0m utterly [92msatisfide[0m to [92mremaiyn[0m the same throughout
-
-
---------------------------------------------- Result 5 ---------------------------------------------
-[91m0[0m-->[91m[FAILED][0m
-on the worst revenge-of-the-nerds clichés the filmmakers could dredge up
-
-
 
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 3      |
-| Number of failed attacks:     | 2      |
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 1      |
 | Number of skipped attacks:    | 0      |
 | Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 40.0%  |
-| Attack success rate:          | 60.0%  |
-| Average perturbed word %:     | 33.13% |
-| Average num. words per input: | 9.2    |
-| Avg num queries:              | 27.8   |
+| Accuracy under attack:        | 33.33% |
+| Attack success rate:          | 66.67% |
+| Average perturbed word %:     | 30.95% |
+| Average num. words per input: | 8.33   |
+| Avg num queries:              | 22.67  |
 +-------------------------------+--------+
 Attack time: /.*/

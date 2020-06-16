@@ -147,7 +147,7 @@ see the full list of provided models & datasets via `python -m textattack --help
 Here's an example of using one of the built-in models:
 
 ```
-pythom -m textattack --model roberta-base-sst2 --recipe textfooler --num-examples 10
+python -m textattack --model roberta-base-sst2 --recipe textfooler --num-examples 10
 ```
 
 #### HuggingFace support: `transformers` models and `nlp` datasets
