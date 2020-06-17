@@ -10,9 +10,15 @@ class NewsTest2013EnglishToGerman(TextAttackDataset):
         
     Samples are loaded as (input, translation) tuples of string pairs.
     
+    Args:
+        offset (int): line to start reading from
+        shuffle (bool): If True, randomly shuffle loaded data
+
     """
 
     DATA_PATH = "datasets/translation/NewsTest2013EnglishToGerman"
 
-    def __init__(self, offset=0):
+    def __init__(self, offset=0, shuffle=False):
         self._load_pickle_file(NewsTest2013EnglishToGerman.DATA_PATH, offset=offset)
+        if shuffle:
+            self._shuffle_data()
