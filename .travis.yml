@@ -5,9 +5,9 @@ before_install:
   - python --version
   - python -m pip install --upgrade pip
   - pip install black pytest pytest-xdist
-  - rm -rf /home/travis/.cache/textattack
 install:
   - pip install -e .
 script:
   - black . --check
-  - travis_wait 20 pytest tests -vx --dist=loadfile -n auto
+  # Run the non-slow tests. (Slow tests run on Jenkins.)
+  - pytest tests -vx --dist=loadfile -n auto -k-slow

@@ -124,6 +124,7 @@ attack_test_params = [
 
 
 @pytest.mark.parametrize("name, command, sample_output_file", attack_test_params)
+@pytest.mark.slow
 def test_command_line_attack(capsys, name, command, sample_output_file):
     """ Runs attack tests and compares their outputs to a reference file.
     """
