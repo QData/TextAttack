@@ -1,13 +1,13 @@
 language: python
-python: '3.7'
+python: '3.8'
 cache: pip
 before_install:
   - python --version
-  - pip install -U pip
-  - pip install -U pytest
+  - python -m pip install --upgrade pip
+  - pip install black pytest pytest-xdist
+  - rm -rf /home/travis/.cache/textattack
 install:
-  - pip install black
   - pip install -e .
 script:
   - black . --check
-  - pytest tests -vx
+  - travis_wait 20 pytest tests -vx --dist=loadfile -n auto
