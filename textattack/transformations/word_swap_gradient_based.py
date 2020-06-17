@@ -57,7 +57,7 @@ class WordSwapGradientBased(Transformation):
         lookup_table_transpose = lookup_table.transpose(0, 1)
 
         # get word IDs
-        text_ids = self.model.tokenizer.encode(attacked_text.text)
+        text_ids = self.model.tokenizer.encode(attacked_text.tokenizer_input)
 
         # set backward hook on the word embeddings for input x
         emb_hook = Hook(self.model.word_embeddings, backward=True)

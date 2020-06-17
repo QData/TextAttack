@@ -1,4 +1,4 @@
-/.*/Attack(
+Attack(
   (search_method): BeamSearch(
     (beam_width):  2
   )
@@ -15,30 +15,30 @@
   (is_black_box):  True
 ) 
 
-Logging to CSV at path /.*/.
+Logging to CSV at path /.*/
 Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [94m2[0m-->[37m[SKIPPED][0m
-The new rights are nice enough
+Premise: The new rights are nice enough
 
-Everyone really likes the newest benefits
+Hypothesis: Everyone really likes the newest benefits
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
 [91m0[0m-->[91m[FAILED][0m
-This site includes a list of all award winners and a searchable database of Government Executive articles.
+Premise: This site includes a list of all award winners and a searchable database of Government Executive articles.
 
-The Government Executive articles housed on the website are not able to be searched.
+Hypothesis: The Government Executive articles housed on the website are not able to be searched.
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
 [92m1[0m-->[94m2[0m
-uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+Premise: uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
 
-I like him for the most [92mpart[0m, but would still enjoy seeing someone beat him.
-uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+Hypothesis: I like him for the most [92mpart[0m, but would still enjoy seeing someone beat him.
+Premise: uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
 
-I like him for the most [94moffice[0m, but would still enjoy seeing someone beat him.
+Hypothesis: I like him for the most [94moffice[0m, but would still enjoy seeing someone beat him.
 
 
 
@@ -53,6 +53,6 @@ I like him for the most [94moffice[0m, but would still enjoy seeing someone be
 | Attack success rate:          | 50.0%  |
 | Average perturbed word %:     | 2.27%  |
 | Average num. words per input: | 29.0   |
-| Avg num queries:              | /.*/|
+| Avg num queries:              | 447.5  |
 +-------------------------------+--------+
 Attack time: /.*/

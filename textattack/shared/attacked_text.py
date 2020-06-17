@@ -325,6 +325,11 @@ class AttackedText:
         return AttackedText(perturbed_input, attack_attrs=new_attack_attrs)
 
     @property
+    def tokenizer_input(self):
+        """ The tuple of inputs to be passed to the tokenizer. """
+        return tuple(self._text_input.values())
+
+    @property
     def text(self):
         """ Represents full text input. Multiply inputs are joined with a line 
             break.
@@ -347,7 +352,8 @@ class AttackedText:
         # For multiple-sequence inputs, show a prefix and a colon.
         else:
             return "\n\n".join(
-                f"{key}: {value}" for key, value in self._text_input.items()
+                f"{key.capitalize()}: {value}"
+                for key, value in self._text_input.items()
             )
 
     def __repr__(self):

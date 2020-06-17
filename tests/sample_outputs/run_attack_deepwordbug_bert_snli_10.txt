@@ -16,29 +16,29 @@ Attack(
 Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [91m0[0m-->[37m[SKIPPED][0m
-A person in a black and green outfit is riding a bicycle .
+Premise: A person in a black and green outfit is riding a bicycle .
 
-a colorfully dressed child rides a bike
+Hypothesis: a colorfully dressed child rides a bike
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
 [92m1[0m-->[91m0[0m
-A person rolls down a hill riding a wagon as another watches .
+Premise: A person rolls down a hill riding a wagon as another watches .
 
-A [92mchild[0m in a wagon rolls down a hill .
-A person rolls down a hill riding a wagon as another watches .
+Hypothesis: A [92mchild[0m in a wagon rolls down a hill .
+Premise: A person rolls down a hill riding a wagon as another watches .
 
-A [91mcihld[0m in a wagon rolls down a hill .
+Hypothesis: A [91mcihld[0m in a wagon rolls down a hill .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
 [94m2[0m-->[92m1[0m
-A man in a black tank top wearing a red plaid [94mhat[0m
+Premise: A man in a black tank top wearing a red plaid [94mhat[0m
 
-A man wearing football pads .
-A man in a black tank top wearing a red plaid [92mat[0m
+Hypothesis: A man wearing football pads .
+Premise: A man in a black tank top wearing a red plaid [92mat[0m
 
-A man wearing football pads .
+Hypothesis: A man wearing football pads .
 
 
 

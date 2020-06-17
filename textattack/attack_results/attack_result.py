@@ -114,4 +114,4 @@ class AttackResult:
             words_2_idxs, words_2
         )
 
-        return t1.printable_text, '\n', t2.printable_text
+        return t1.printable_text, t2.printable_text

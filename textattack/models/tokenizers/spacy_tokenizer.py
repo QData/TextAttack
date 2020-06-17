@@ -20,6 +20,12 @@ class SpacyTokenizer(Tokenizer):
         self.max_length = max_length
 
     def convert_text_to_tokens(self, text):
+        if isinstance(text, tuple):
+            text = text[0]
+        if not isinstance(text, str):
+            raise TypeError(
+                f"SpacyTokenizer can only tokenize `str`, got type {type(text)}"
+            )
         spacy_tokens = [t.text for t in self.tokenizer(text)]
         return spacy_tokens[: self.max_length]
 

@@ -1,5 +1,5 @@
 language: python
-python: '3.8'
+python: '3.6'
 cache: pip
 before_install:
   - python --version
@@ -10,4 +10,4 @@ install:
   - pip install -e .
 script:
   - black . --check
-  - travis_wait 30 pytest tests -vx
+  - pytest tests -vx
