@@ -1,12 +1,13 @@
 from textattack.shared.utils import default_class_repr
 
+
 class Constraint:
     """ 
     An abstract class that represents constraints on adversial text examples. 
     Constraints evaluate whether transformations from a ``TokenizedText`` to another 
     ``TokenizedText`` meet certain conditions.
     """
-     
+
     def call_many(self, transformed_texts, current_text, original_text=None):
         """
         Filters ``transformed_texts`` based on which transformations fulfill the constraint.
@@ -22,17 +23,24 @@ class Constraint:
         compatible_transformed_texts = []
         for transformed_text in transformed_texts:
             try:
-                if self.check_compatibility(transformed_text.attack_attrs['last_transformation']):
+                if self.check_compatibility(
+                    transformed_text.attack_attrs["last_transformation"]
+                ):
                     compatible_transformed_texts.append(transformed_text)
                 else:
                     incompatible_transformed_texts.append(transformed_text)
             except KeyError:
-                raise KeyError('transformed_text must have `last_transformation` attack_attr to apply constraint')
-        filtered_texts = self._check_constraint_many(compatible_transformed_texts, 
-                            current_text, original_text=original_text)
+                raise KeyError(
+                    "transformed_text must have `last_transformation` attack_attr to apply constraint"
+                )
+        filtered_texts = self._check_constraint_many(
+            compatible_transformed_texts, current_text, original_text=original_text
+        )
         return list(filtered_texts) + incompatible_transformed_texts
 
-    def _check_constraint_many(self, transformed_texts, current_text, original_text=None):
+    def _check_constraint_many(
+        self, transformed_texts, current_text, original_text=None
+    ):
         """
         Filters ``transformed_texts`` based on which transformations fulfill the constraint.
         Calls ``check_constraint``\.
@@ -42,9 +50,13 @@ class Constraint:
             current_text: The current ``TokenizedText``.
             original_text: The original ``TokenizedText`` from which the attack began.
         """
-        return [transformed_text for transformed_text in transformed_texts
-                if self._check_constraint(transformed_text, current_text, 
-                    original_text=original_text)]
+        return [
+            transformed_text
+            for transformed_text in transformed_texts
+            if self._check_constraint(
+                transformed_text, current_text, original_text=original_text
+            )
+        ]
 
     def __call__(self, transformed_text, current_text, original_text=None):
         """ 
@@ -57,16 +69,22 @@ class Constraint:
             original_text: The original ``TokenizedText`` from which the attack began.
         """
         if not isinstance(transformed_text, TokenizedText):
-            raise TypeError('transformed_text must be of type TokenizedText')
+            raise TypeError("transformed_text must be of type TokenizedText")
         if not isinstance(current_text, TokenizedText):
-            raise TypeError('current_text must be of type TokenizedText')
+            raise TypeError("current_text must be of type TokenizedText")
 
         try:
-            if not self.check_compatibility(transformed_text.attack_attrs['last_transformation']):
+            if not self.check_compatibility(
+                transformed_text.attack_attrs["last_transformation"]
+            ):
                 return True
         except KeyError:
-            raise KeyError('x_adv must have `last_transformation` attack_attr to apply constraint.')
-        return self._check_constraint(transformed_text, current_text, original_text=original_text)
+            raise KeyError(
+                "x_adv must have `last_transformation` attack_attr to apply constraint."
+            )
+        return self._check_constraint(
+            transformed_text, current_text, original_text=original_text
+        )
 
     def _check_constraint(self, transformed_text, current_text, original_text=None):
         """ 
@@ -99,7 +117,7 @@ class Constraint:
         To print customized extra information, you should reimplement
         this method in your own constraint. Both single-line and multi-line
         strings are acceptable.
-        """ 
+        """
         return []
-    
+
     __str__ = __repr__ = default_class_repr

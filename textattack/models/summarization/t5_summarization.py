@@ -1,5 +1,6 @@
 from textattack.models.helpers import T5ForTextToText
 
+
 class T5Summarization(T5ForTextToText):
     """ 
     A T5 model trained to summarize English text. Trained on the CNN/Daily 
@@ -10,5 +11,6 @@ class T5Summarization(T5ForTextToText):
     Appendix D contains information about the various tasks supported
     by T5.
     """
+
     def __init__(self, **kwargs):
-        super().__init__('summarization', **kwargs)
+        super().__init__("summarization", **kwargs)
