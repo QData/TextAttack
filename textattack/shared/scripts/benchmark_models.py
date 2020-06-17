@@ -3,7 +3,7 @@ import textattack
 import torch
 import sys
 
-from attack_args_helper import get_args, parse_model_from_args, parse_dataset_from_args
+from attack_args_parser import get_args, parse_model_from_args, parse_dataset_from_args
 
 def _cb(s): return textattack.shared.utils.color_text(str(s), color='blue', method='ansi')
 
