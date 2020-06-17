@@ -43,8 +43,8 @@ class GPT2(LanguageModelConstraint):
         predictions = outputs[0]
 
         probs = []
-        for tokenized_text in text_list:
-            nxt_word_ids = self.tokenizer.encode(tokenized_text.words[word_index])
+        for attacked_text in text_list:
+            nxt_word_ids = self.tokenizer.encode(attacked_text.words[word_index])
             next_word_prob = predictions[0, -1, next_word_ids[0]]
             probs.append(next_word_prob)
 

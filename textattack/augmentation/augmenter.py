@@ -60,13 +60,13 @@ class Augmenter:
         Returns all possible augmentations of ``text`` according to 
         ``self.transformation``.
         """
-        tokenized_text = AttackedText(text, DummyTokenizer())
-        original_text = tokenized_text
+        attacked_text = AttackedText(text)
+        original_text = attacked_text
         all_transformed_texts = set()
         for _ in range(self.transformations_per_example):
-            index_order = list(range(len(tokenized_text.words)))
+            index_order = list(range(len(attacked_text.words)))
             random.shuffle(index_order)
-            current_text = tokenized_text
+            current_text = attacked_text
             words_swapped = 0
             for i in index_order:
                 transformed_texts = self.transformation(
@@ -87,7 +87,7 @@ class Augmenter:
                 if words_swapped == self.num_words_to_swap:
                     break
             all_transformed_texts.add(current_text)
-        return [t.clean_text() for t in all_transformed_texts]
+        return [t.printable_text for t in all_transformed_texts]
 
     def augment_many(self, text_list, show_progress=False):
         """
@@ -124,14 +124,3 @@ class Augmenter:
             all_text_list.extend([text] + augmented_texts)
             all_id_list.extend([_id] * (1 + len(augmented_texts)))
         return all_text_list, all_id_list
-
-
-class DummyTokenizer:
-    """ 
-    A dummy tokenizer class. Data augmentation applies a transformation
-    without querying a model, which means that tokenization is unnecessary.
-    In this case, we pass a dummy tokenizer to `AttackedText`. 
-    """
-
-    def encode(self, _):
-        return []

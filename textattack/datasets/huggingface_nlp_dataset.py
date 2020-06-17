@@ -1,5 +1,6 @@
 import collections
 import random
+
 import nlp
 
 from textattack.datasets import TextAttackDataset
@@ -83,11 +84,13 @@ class HuggingFaceNLPDataset(TextAttackDataset):
             raise StopIteration
         raw_example = self.examples[self._i]
         self._i += 1
-        
+
         # Convert `raw_example` to an OrderedDict, so that we know which order
         # in which to pass examples to the model.
-        input_dict = collections.OrderedDict([raw_example[c] for c in raw_example])
-        
+        input_dict = collections.OrderedDict(
+            [(c, raw_example[c]) for c in self.input_columns]
+        )
+
         output = raw_example[self.output_column]
         if self.label_map:
             output = self.label_map[output]

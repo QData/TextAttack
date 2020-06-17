@@ -217,10 +217,10 @@ class Attack:
             yield
 
         for text, ground_truth_output in dataset:
-            tokenized_text = AttackedText(text, self.goal_function.tokenizer)
+            attacked_text = AttackedText(text)
             self.goal_function.num_queries = 0
             goal_function_result, _ = self.goal_function.get_result(
-                tokenized_text, ground_truth_output
+                attacked_text, ground_truth_output
             )
             # We can skip examples for which the goal is already succeeded,
             # unless `attack_skippable_examples` is True.

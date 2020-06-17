@@ -3,13 +3,15 @@ import torch
 import textattack
 from textattack.shared import utils
 
-def batch_tokenize(tokenizer, inputs):
+
+def batch_tokenize(tokenizer, attacked_text_list):
     """ Tokenizes a list of inputs and returns their tokenized forms in a list. """
-    if hasattr(tokenizer, 'encode_batch'):
-        encoded_inputs = tokenizer.encode_batch(inputs)
+    inputs = [at.text for at in attacked_text_list]
+    if hasattr(tokenizer, "encode_batch"):
+        return tokenizer.encode_batch(inputs)
     else:
-        encoded_inputs = [tokenizer.encode(x) for x in inputs]
-    return [x.ids for x in encoded_inputs]
+        return [tokenizer.encode(x) for x in inputs]
+
 
 def batch_model_predict(model, inputs, batch_size=utils.config("MODEL_BATCH_SIZE")):
     outputs = []

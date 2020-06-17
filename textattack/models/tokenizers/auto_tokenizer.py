@@ -1,3 +1,4 @@
+import torch
 import transformers
 
 from textattack.models.tokenizers import Tokenizer
@@ -41,12 +42,16 @@ class AutoTokenizer(Tokenizer):
             add_special_tokens=True,
             pad_to_max_length=True,
         )
-        return encoded_text
-    
+        return dict(encoded_text)
+
     def encode_batch(self, input_text_list):
         """ The batch equivalent of ``encode``."""
-        return self.tokenizer.encode_batch(input_text_list,
-            max_length=self.max_length,
-            add_special_tokens=True,
-            pad_to_max_length=True,
-        )
+        if hasattr(self.tokenizer, "encode_batch"):
+            return self.tokenizer.encode_batch(
+                input_text_list,
+                max_length=self.max_length,
+                add_special_tokens=True,
+                pad_to_max_length=True,
+            )
+        else:
+            return [dict(self.encode(input_text)) for input_text in input_text_list]

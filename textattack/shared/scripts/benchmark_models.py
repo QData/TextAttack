@@ -1,4 +1,5 @@
 import argparse
+import collections
 import sys
 
 import torch
@@ -13,7 +14,7 @@ def _cb(s):
 
 def get_num_successes(args, model, ids, true_labels):
     with torch.no_grad():
-        preds = textattack.shared.utils.model_predict(model, ids)
+        preds = textattack.shared.utils.model_predict(model, **ids)
     true_labels = torch.tensor(true_labels).to(textattack.shared.utils.device)
     guess_labels = preds.argmax(dim=1)
     successes = (guess_labels == true_labels).sum().item()
@@ -28,9 +29,8 @@ def test_model_on_dataset(args, model, dataset, batch_size=128):
     batch_labels = []
     all_true_labels = []
     all_guess_labels = []
-    for i, (text, label) in enumerate(dataset):
-        if i >= num_examples:
-            break
+    for i, (text_input, label) in enumerate(dataset):
+        text = textattack.shared.AttackedText(text_input).text
         ids = model.tokenizer.encode(text)
         batch_ids.append(ids)
         batch_labels.append(label)

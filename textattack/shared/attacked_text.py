@@ -1,4 +1,5 @@
-import collections
+from collections import OrderedDict
+
 import numpy as np
 import torch
 
@@ -29,16 +30,24 @@ class AttackedText:
     SPLIT_TOKEN = ">>>>"
 
     def __init__(self, text_input, attack_attrs=None):
+        # Read in ``text_input`` as a string or OrderedDict.
         if isinstance(text_input, str):
-            self._text_input = collections.OrderedDict(('text', text_input))
-        elif isinstance(text_input, collections.OrderedDict):
+            self._text_input = OrderedDict([("text", text_input)])
+        elif isinstance(text_input, OrderedDict):
             self._text_input = text_input
         else:
-            raise TypeError(f'Invalid text_input type {type(text_input)} (required str or OrderedDict)')
-        text = text.strip()
-        self.words = words_from_text(text, words_to_ignore=[AttackedText.SPLIT_TOKEN])
-        self.text = text
-        self.attack_attrs = attack_attrs or dict()
+            raise TypeError(
+                f"Invalid text_input type {type(text_input)} (required str or OrderedDict)"
+            )
+        # Format text inputs.
+        self._text_input = {k: v.strip() for k, v in self._text_input.items()}
+        self.words = words_from_text(self.text)
+        if attack_attrs is None:
+            self.attack_attrs = dict()
+        elif isinstance(attack_attrs, dict):
+            self.attack_attrs = attack_attrs
+        else:
+            raise TypeError(f"Invalid type for attack_attrs: {type(attack_attrs)}")
         # Indices of words from the *original* text. Allows us to map
         # indices between original text and this text, and vice-versa.
         self.attack_attrs.setdefault("original_index_map", np.arange(len(self.words)))
@@ -75,7 +84,6 @@ class AttackedText:
             
             Can be called once the AttackedText is only needed to display.
         """
-        self.tokenizer = None
         if "previous_attacked_text" in self.attack_attrs:
             self.attack_attrs["previous_attacked_text"].free_memory()
         if "last_transformation" in self.attack_attrs:
@@ -122,42 +130,42 @@ class AttackedText:
         look_after_index = self._text_index_of_word_index(i) + len(self.words[i])
         return self.text[look_after_index:]
 
-    def first_word_diff(self, other_tokenized_text):
+    def first_word_diff(self, other_attacked_text):
         """ Returns the first word in self.words that differs from 
-            other_tokenized_text. Useful for word swap strategies. """
+            other_attacked_text. Useful for word swap strategies. """
         w1 = self.words
-        w2 = other_tokenized_text.words
+        w2 = other_attacked_text.words
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
                 return w1
         return None
 
-    def first_word_diff_index(self, other_tokenized_text):
+    def first_word_diff_index(self, other_attacked_text):
         """ Returns the index of the first word in self.words that differs
-            from other_tokenized_text. Useful for word swap strategies. """
+            from other_attacked_text. Useful for word swap strategies. """
         w1 = self.words
-        w2 = other_tokenized_text.words
+        w2 = other_attacked_text.words
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
                 return i
         return None
 
-    def all_words_diff(self, other_tokenized_text):
-        """ Returns the set of indices for which this and other_tokenized_text
+    def all_words_diff(self, other_attacked_text):
+        """ Returns the set of indices for which this and other_attacked_text
         have different words. """
         indices = set()
         w1 = self.words
-        w2 = other_tokenized_text.words
+        w2 = other_attacked_text.words
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
                 indices.add(i)
         return indices
 
-    def ith_word_diff(self, other_tokenized_text, i):
-        """ Returns whether the word at index i differs from other_tokenized_text
+    def ith_word_diff(self, other_attacked_text, i):
+        """ Returns whether the word at index i differs from other_attacked_text
         """
         w1 = self.words
-        w2 = other_tokenized_text.words
+        w2 = other_attacked_text.words
         if len(w1) - 1 < i or len(w2) - 1 < i:
             return True
         return w1[i] != w2[i]
@@ -244,7 +252,7 @@ class AttackedText:
             of one or more words.
         """
         perturbed_text = ""
-        original_text = self._input_text.join(AttackedText.SPLIT_TOKEN)
+        original_text = AttackedText.SPLIT_TOKEN.join(self._text_input.values())
         new_attack_attrs = dict()
         new_attack_attrs["newly_modified_indices"] = set()
         # Point to previously monitored text.
@@ -261,9 +269,9 @@ class AttackedText:
         # Create the new attacked text by swapping out words from the original
         # text with a sequence of 0+ words in the new text.
         for i, (input_word, adv_word_seq) in enumerate(zip(self.words, new_words)):
-            word_start = text.index(input_word)
+            word_start = original_text.index(input_word)
             word_end = word_start + len(input_word)
-            perturbed_text += text[:word_start]
+            perturbed_text += original_text[:word_start]
             original_text = original_text[word_end:]
             adv_num_words = len(words_from_text(adv_word_seq))
             num_words_diff = adv_num_words - len(words_from_text(input_word))
@@ -300,32 +308,47 @@ class AttackedText:
                 # @TODO What to do with punctuation in this case? This behavior is undefined.
                 if i == 0:
                     # If the first word was deleted, take a subsequent space.
-                    if text[0] == " ":
-                        text = text[1:]
+                    if original_text[0] == " ":
+                        original_text = original_text[1:]
                 else:
                     # If a word other than the first was deleted, take a preceding space.
                     if perturbed_text[-1] == " ":
                         perturbed_text = perturbed_text[:-1]
             # Add substitute word(s) to new sentence.
             perturbed_text += adv_word_seq
-        perturbed_text += text  # Add all of the ending punctuation.
+        perturbed_text += original_text  # Add all of the ending punctuation.
         # Reform perturbed_text into an OrderedDict.
         perturbed_input_texts = perturbed_text.split(AttackedText.SPLIT_TOKEN)
-        perturbed_input = OrderedDict(zip(self._text_input.keys(), perturbed_input_texts))
-        return AttackedText(
-            perturbed_text, self.tokenizer, attack_attrs=new_attack_attrs
+        perturbed_input = OrderedDict(
+            zip(self._text_input.keys(), perturbed_input_texts)
         )
+        return AttackedText(perturbed_input, attack_attrs=new_attack_attrs)
 
     @property
     def text(self):
         """ Represents full text input. Multiply inputs are joined with a line 
             break.
         """
-        return '\n\n'.join(self._text_input.value())
-    
+        return "\n".join(self._text_input.values())
+
     @property
     def printable_text(self):
-        return '\n\n'.join(f'{key}: {value}' for key, value in enumerate(self._text_input))
+        """ Represents full text input. Adds field descriptions.
+        
+        For example, entailment inputs look like:
+            ```
+            premise: ...
+            hypothesis: ...
+            ```
+        """
+        # For single-sequence inputs, don't show a prefix.
+        if len(self._text_input) == 1:
+            return next(iter(self._text_input.values()))
+        # For multiple-sequence inputs, show a prefix and a colon.
+        else:
+            return "\n\n".join(
+                f"{key}: {value}" for key, value in self._text_input.items()
+            )
 
     def __repr__(self):
         return f'<AttackedText "{self.text}">'

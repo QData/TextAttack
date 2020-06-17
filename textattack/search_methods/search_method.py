@@ -24,7 +24,7 @@ class SearchMethod:
 
     def _perform_search(self, initial_result):
         """
-        Perturbs `tokenized_text` from ``initial_result`` until goal is reached or search is 
+        Perturbs `attacked_text` from ``initial_result`` until goal is reached or search is 
         exhausted. Must be overridden by specific search methods.
         """
         raise NotImplementedError()

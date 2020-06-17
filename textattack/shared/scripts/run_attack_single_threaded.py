@@ -73,10 +73,8 @@ def run(args):
 
             print("Attacking...")
 
-            tokenized_text = textattack.shared.tokenized_text.AttackedText(
-                text, attack.goal_function.model.tokenizer
-            )
-            initial_result = attack.goal_function.get_output(tokenized_text)
+            attacked_text = textattack.shared.attacked_text.AttackedText(text)
+            initial_result = attack.goal_function.get_output(attacked_text)
             result = next(attack.attack_dataset([(text, initial_result)]))
             print(result.__str__(color_method="ansi"))
 

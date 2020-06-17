@@ -19,13 +19,13 @@ class BeamSearch(SearchMethod):
         self.beam_width = beam_width
 
     def _perform_search(self, initial_result):
-        beam = [initial_result.tokenized_text]
+        beam = [initial_result.attacked_text]
         best_result = initial_result
         while not best_result.succeeded:
             potential_next_beam = []
             for text in beam:
                 transformations = self.get_transformations(
-                    text, original_text=initial_result.tokenized_text
+                    text, original_text=initial_result.attacked_text
                 )
                 for next_text in transformations:
                     potential_next_beam.append(next_text)

@@ -1,3 +1,5 @@
+import collections
+
 from textattack.datasets import TextAttackDataset
 from textattack.shared import AttackedText
 
@@ -30,8 +32,7 @@ class EntailmentDataset(TextAttackDataset):
         except ValueError:
             # If the label is not an integer, it's a label description.
             label = self._label_str_to_int(label)
-        text_input = collections.OrderedDict([
-            ('premise', premise),
-            ('hypothesis', hypothesis),
-        ])
+        text_input = collections.OrderedDict(
+            [("premise", premise), ("hypothesis", hypothesis),]
+        )
         return (text_input, label)
