@@ -18,19 +18,23 @@ class Checkpoint:
         Args:
             args: Command line arguments of the original attack
             log_manager (AttackLogManager): Object for storing attack results
-            worklist (list[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
-            last_example (int): Last example that will be attacked. Represented by its index within the dataset.
+            worklist (deque[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
+            worklist_tail (int): Highest index that had been in the worklist at any given time. Used to get the next dataset element
+                when attacking with `attack_n` = True. 
             chkpt_time (float): epoch time representing when checkpoint was made
     """
-    def __init__(self, args, log_manager, worklist, last_example, chkpt_time=None):
+
+    def __init__(self, args, log_manager, worklist, worklist_tail, chkpt_time=None):
         self.args = copy.deepcopy(args)
         self.log_manager = log_manager
         self.worklist = worklist
-        self.last_example = last_example
+        self.worklist_tail = worklist_tail
         if chkpt_time:
             self.time = chkpt_time
         else:
             self.time = time.time()
+
+        self._verify()
 
     def __repr__(self):
         main_str = "Checkpoint("
@@ -179,13 +183,14 @@ class Checkpoint:
 
         return checkpoint
 
-    def verify_no_duplicates(self):
-        """ Check if our N results are N unique results (i.e. no duplicates)"""
+    def _verify(self):
+        """ Check that the checkpoint has no duplicates and is consistent"""
+        assert self.num_remaining_attacks == len(
+            self.worklist
+        ), "Recorded number of remaining attacks and size of worklist are different."
+
         results_set = set()
         for result in self.log_manager.results:
             results_set.add(result.original_result.tokenized_text)
-        if len(results_set) == self.results_count:
-            return True
-        else:
-            return False
-        
+
+        assert len(results_set) == self.results_count, "Duplicate AttackResults found."

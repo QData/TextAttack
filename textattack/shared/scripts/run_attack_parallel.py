@@ -2,12 +2,12 @@
 A command line parser to run an attack from user specifications.
 """
 
+from collections import deque
 import os
 import time
 
 import torch
 import tqdm
-from collections import deque
 
 import textattack
 
@@ -54,11 +54,11 @@ def run(args):
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
-        
+
         num_remaining_attacks = resume_checkpoint.num_remaining_attacks
         num_total_examples = args.num_examples
-        worklist = resume_checkpoint.worklist.copy()
-        last_example = resume_checkpoint.last_example
+        worklist = resume_checkpoint.worklist
+        worklist_tail = resume_checkpoint.worklist_tail
         logger.info(
             "Recovered from checkpoint previously saved at {}".format(
                 resume_checkpoint.datetime
@@ -69,7 +69,7 @@ def run(args):
         num_total_examples = args.num_examples
         num_remaining_attacks = num_total_examples
         worklist = deque(range(0, num_total_examples))
-        last_example = worklist[-1]
+        worklist_tail = worklist[-1]
 
     # This makes `args` a namespace that's sharable between processes.
     # We could do the same thing with the model, but it's actually faster
@@ -84,7 +84,7 @@ def run(args):
 
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
-    
+
     dataset = parse_dataset_from_args(args)
 
     print(f"Running on {num_gpus} GPUs")
@@ -114,7 +114,7 @@ def run(args):
         num_failures = 0
         num_successes = 0
     pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
-    while num_results < num_total_examples and worklist:
+    while worklist:
         result = out_queue.get(block=True)
 
         if isinstance(result, Exception):
@@ -138,20 +138,29 @@ def run(args):
                 )
             )
         else:
-            last_example += 1
+            # worklist_tail keeps track of highest idx that has been part of worklist
+            # Used to get the next dataset element when attacking with `attack_n` = True.
+            worklist_tail += 1
             try:
-                label, text = dataset[last_example]
-                worklist.append(last_example)
-                in_queue.put((last_example, label, text))
+                text, output = dataset[worklist_tail]
+                worklist.append(worklist_tail)
+                in_queue.put((worklist_tail, text, output))
             except IndexError:
-                last_example -= 1
+                raise IndexError(
+                    "Out of bounds access of dataset. Size of data is {} but tried to access index {}".format(
+                        len(dataset), worklist_tail
+                    )
+                )
 
-        if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
-            attack_log_manager.flush()
-            checkpoint = textattack.shared.Checkpoint(args, attack_log_manager, worklist, last_example)
-            if not checkpoint.verify_no_duplicates():
-                logger.warning('Duplicate results processed.')
+        if (
+            args.checkpoint_interval
+            and len(attack_log_manager.results) % args.checkpoint_interval == 0
+        ):
+            checkpoint = textattack.shared.Checkpoint(
+                args, attack_log_manager, worklist, worklist_tail
+            )
             checkpoint.save()
+            attack_log_manager.flush()
 
     pbar.close()
     print()

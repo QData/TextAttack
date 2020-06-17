@@ -16,13 +16,13 @@ class MNLI(EntailmentDataset):
     Args:
         offset (int): line to start reading from
         mismatched (bool): whether to use mismatched dataset. Defaults to false.
+        shuffle (bool): If True, randomly shuffle loaded data
     """
-    MATCHED_DATA_PATH = 'datasets/entailment/mnli_matched'
-    MISMATCHED_DATA_PATH = 'datasets/entailment/mnli_mismatched'
-    
+
+    MATCHED_DATA_PATH = "datasets/entailment/mnli_matched"
+    MISMATCHED_DATA_PATH = "datasets/entailment/mnli_mismatched"
+
     def __init__(self, offset=0, mismatched=False, shuffle=False):
         """ Loads a full dataset from disk. """
         path = MNLI.MISMATCHED_DATA_PATH if mismatched else MNLI.MATCHED_DATA_PATH
-        self._load_classification_text_file(path, offset=offset)
-        if shuffle:
-            self._shuffle_data()
+        self._load_classification_text_file(path, offset=offset, shuffle=shuffle)
