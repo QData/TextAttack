@@ -1,4 +1,5 @@
 from collections import OrderedDict
+import math
 
 import numpy as np
 import torch
@@ -95,16 +96,16 @@ class AttackedText:
     def text_window_around_index(self, index, window_size):
         """ The text window of ``window_size`` words centered around ``index``. """
         length = len(self.words)
-        half_size = (window_size - 1) // 2
+        half_size = (window_size - 1) / 2.0
         if index - half_size < 0:
             start = 0
-            end = min(window_size, length - 1)
-        elif index + half_size > length - 1:
+            end = min(window_size - 1, length - 1)
+        elif index + half_size >= length:
             start = max(0, length - window_size)
             end = length - 1
         else:
-            start = index - half_size
-            end = index + half_size
+            start = index - math.ceil(half_size)
+            end = index + math.floor(half_size)
         text_idx_start = self._text_index_of_word_index(start)
         text_idx_end = self._text_index_of_word_index(end) + len(self.words[end])
         return self.text[text_idx_start:text_idx_end]
@@ -209,6 +210,8 @@ class AttackedText:
                 raise TypeError(
                     f"replace_words_at_indices requires ``str`` words, got {type(new_word)}"
                 )
+            if (i < 0) or (i > len(words)):
+                raise ValueError(f"Cannot assign word at index {i}")
             words[i] = new_word
         return self.replace_new_words(words)
 
@@ -233,7 +236,7 @@ class AttackedText:
         """ This code returns a new AttackedText object where the word at 
             ``index`` is removed.
         """
-        return self.replace_words_at_indiex(index, "")
+        return self.replace_word_at_index(index, "")
 
     def get_deletion_indices(self):
         return self.attack_attrs["original_index_map"][
