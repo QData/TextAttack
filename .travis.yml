@@ -9,5 +9,4 @@ install:
   - pip install -e .
 script:
   - black . --check
-  # Run the non-slow tests. (Slow tests run on Jenkins.)
-  - pytest tests -vx --dist=loadfile -n auto -k-slow
+  - pytest tests -vx --dist=loadfile -n auto

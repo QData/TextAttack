@@ -79,14 +79,7 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         if shuffle:
             random.shuffle(self.examples)
 
-    def __next__(self):
-        if self._i >= len(self.examples):
-            raise StopIteration
-        raw_example = self.examples[self._i]
-        self._i += 1
-
-        # Convert `raw_example` to an OrderedDict, so that we know which order
-        # in which to pass examples to the model.
+    def _format_raw_example(self, raw_example):
         input_dict = collections.OrderedDict(
             [(c, raw_example[c]) for c in self.input_columns]
         )
@@ -96,4 +89,15 @@ class HuggingFaceNLPDataset(TextAttackDataset):
             output = self.label_map[output]
         if self.output_scale_factor:
             output = output / self.output_scale_factor
+
         return (input_dict, output)
+
+    def __next__(self):
+        if self._i >= len(self.examples):
+            raise StopIteration
+        raw_example = self.examples[self._i]
+        self._i += 1
+        return self._format_raw_example(raw_example)
+
+    def __getitem__(self, i):
+        return self._format_raw_example(self.examples[i])

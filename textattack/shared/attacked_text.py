@@ -237,7 +237,7 @@ class AttackedText:
             ``index`` is removed.
         """
         if not isinstance(index, int):
-            raise TypeError(f'index must be an int, got type {type(index)}')
+            raise TypeError(f"index must be an int, got type {type(index)}")
         return self.replace_word_at_index(index, "")
 
     def insert_text_after_word_index(self, index, text):
@@ -245,11 +245,11 @@ class AttackedText:
             appropriate spacing.
         """
         if not isinstance(index, int):
-            raise TypeError(f'index must be an int, got type {type(index)}')
+            raise TypeError(f"index must be an int, got type {type(index)}")
         if not isinstance(text, str):
-            raise TypeError(f'text must be an str, got type {type(text)}')
+            raise TypeError(f"text must be an str, got type {type(text)}")
         word_at_index = self.words[index]
-        new_text = ' '.join((word_at_index, text))
+        new_text = " ".join((word_at_index, text))
         return self.replace_word_at_index(index, new_text)
 
     def insert_text_before_word_index(self, index, text):
@@ -257,13 +257,13 @@ class AttackedText:
             appropriate spacing.
         """
         if not isinstance(index, int):
-            raise TypeError(f'index must be an int, got type {type(index)}')
+            raise TypeError(f"index must be an int, got type {type(index)}")
         if not isinstance(text, str):
-            raise TypeError(f'text must be an str, got type {type(text)}')
+            raise TypeError(f"text must be an str, got type {type(text)}")
         word_at_index = self.words[index]
         # TODO if ``word_at_index`` is at the beginning of a sentence, we should
         # optionally capitalize ``text``.
-        new_text = ' '.join((text, word_at_index))
+        new_text = " ".join((text, word_at_index))
         return self.replace_word_at_index(index, new_text)
 
     def get_deletion_indices(self):

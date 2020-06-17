@@ -107,27 +107,52 @@ class TestAttackedText:
             new_text.text
             == "A person walks up into a room and sees beer poured from a keg and people."
         )
-        new_text = new_text.delete_word_at_index(0).delete_word_at_index(0).delete_word_at_index(0)
+        new_text = (
+            new_text.delete_word_at_index(0)
+            .delete_word_at_index(0)
+            .delete_word_at_index(0)
+        )
         assert (
             new_text.text
             == "up into a room and sees beer poured from a keg and people."
         )
-    
+
     def test_word_insertion(self, attacked_text):
-        new_text = attacked_text.insert_text_before_word_index(3, 'a long way')
-        assert new_text.text == "A person walks a long way up stairs into a room and sees beer poured from a keg and people talking."
-        new_text = new_text.insert_text_after_word_index(19, 'on the couch')
-        assert new_text.text == "A person walks a long way up stairs into a room and sees beer poured from a keg and people on the couch talking."
-            
+        new_text = attacked_text.insert_text_before_word_index(3, "a long way")
+        assert (
+            new_text.text
+            == "A person walks a long way up stairs into a room and sees beer poured from a keg and people talking."
+        )
+        new_text = new_text.insert_text_after_word_index(19, "on the couch")
+        assert (
+            new_text.text
+            == "A person walks a long way up stairs into a room and sees beer poured from a keg and people on the couch talking."
+        )
+
     def test_modified_indices(self, attacked_text):
-        new_text = attacked_text.insert_text_after_word_index(2, 'a very long way').insert_text_after_word_index(20, 'on the couch')
-        assert new_text.text == "A person walks a very long way up stairs into a room and sees beer poured from a keg and people on the couch talking."
-        for old_idx, new_idx in enumerate(new_text.attack_attrs['original_index_map']):
-            assert (attacked_text.words[old_idx] == new_text.words[new_idx]) or (new_i == -1)
-        new_text = new_text.delete_word_at_index(0).delete_word_at_index(15) \
-            .delete_word_at_index(15) \
-            .delete_word_at_index(15) \
+        new_text = attacked_text.insert_text_after_word_index(
+            2, "a very long way"
+        ).insert_text_after_word_index(20, "on the couch")
+        assert (
+            new_text.text
+            == "A person walks a very long way up stairs into a room and sees beer poured from a keg and people on the couch talking."
+        )
+        for old_idx, new_idx in enumerate(new_text.attack_attrs["original_index_map"]):
+            assert (attacked_text.words[old_idx] == new_text.words[new_idx]) or (
+                new_i == -1
+            )
+        new_text = (
+            new_text.delete_word_at_index(0)
+            .delete_word_at_index(15)
+            .delete_word_at_index(15)
+            .delete_word_at_index(15)
             .delete_word_at_index(20)
-        for old_idx, new_idx in enumerate(new_text.attack_attrs['original_index_map']):
-            assert (attacked_text.words[old_idx] == new_text.words[new_idx]) or (new_idx == -1)
-        assert new_text.text == "person walks a very long way up stairs into a room and sees beer poured and people on the couch."
+        )
+        for old_idx, new_idx in enumerate(new_text.attack_attrs["original_index_map"]):
+            assert (attacked_text.words[old_idx] == new_text.words[new_idx]) or (
+                new_idx == -1
+            )
+        assert (
+            new_text.text
+            == "person walks a very long way up stairs into a room and sees beer poured and people on the couch."
+        )

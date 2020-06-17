@@ -102,22 +102,6 @@ attack_test_params = [
         "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n.txt",
     ),
     #
-    # test: run_attack non-overlapping output of class 2 on T5 en->de translation with
-    #   attack_n set, using the WordSwapRandomCharacterSubstitution transformation
-    #   and greedy word swap, using edit distance constraint, on 6 samples
-    #                   (takes about 100s)
-    #
-    (
-        "run_attack_nonoverlapping_t5en2de_randomcharsub_editdistance_wordsperturbed_greedyword",
-        (
-            "python -m textattack --attack-n --goal-function non-overlapping-output "
-            "--model t5-en2de --num-examples 2 --transformation word-swap-random-char-substitution "
-            "--constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword "
-            "--search greedy"
-        ),
-        "tests/sample_outputs/run_attack_nonoverlapping_t5ende_editdistance_bleu.txt",
-    ),
-    #
     #
     #
 ]
