@@ -1,32 +1,37 @@
-from textattack.shared.utils import default_class_repr
-from textattack.constraints.pre_transformation import PreTransformationConstraint
-from textattack.shared.validators import transformation_consists_of_word_swaps
 import nltk
+
+from textattack.constraints.pre_transformation import PreTransformationConstraint
+from textattack.shared.utils import default_class_repr
+from textattack.shared.validators import transformation_consists_of_word_swaps
+
 
 class StopwordModification(PreTransformationConstraint):
     """ 
     A constraint disallowing the modification of stopwords
     """
-  
+
     def __init__(self, stopwords=None):
         if stopwords is not None:
             self.stopwords = set(stopwords)
         else:
-            self.stopwords = set(nltk.corpus.stopwords.words('english'))
+            self.stopwords = set(nltk.corpus.stopwords.words("english"))
 
-    def _get_modifiable_indices(self, tokenized_text):
-        """ Returns the word indices in x which are able to be deleted """
+    def _get_modifiable_indices(self, current_text):
+        """ 
+        Returns the word indices in ``current_text`` which are able to be modified.
+        """
         non_stopword_indices = set()
-        for i, word in enumerate(tokenized_text.words):
+        for i, word in enumerate(current_text.words):
             if word not in self.stopwords:
                 non_stopword_indices.add(i)
         return non_stopword_indices
 
     def check_compatibility(self, transformation):
         """ 
-        The stopword constraint only is concerned with word swaps since, paraphrasing phrases
+        The stopword constraint only is concerned with word swaps since paraphrasing phrases
         containing stopwords is OK.
+
         Args:
-            transformation: The transformation to check compatibility with.
+            transformation: The ``Transformation`` to check compatibility with.
         """
         return transformation_consists_of_word_swaps(transformation)

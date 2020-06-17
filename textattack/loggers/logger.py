@@ -1,4 +1,7 @@
 class Logger:
+    """ An abstract class for different methods of logging attack results. 
+    """
+
     def __init__(self):
         pass
 
@@ -16,4 +19,3 @@ class Logger:
 
     def flush(self):
         pass
-

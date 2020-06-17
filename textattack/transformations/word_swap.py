@@ -1,56 +1,52 @@
-import nltk
-from nltk.corpus import stopwords
 import random
 import string
 
+import nltk
+from nltk.corpus import stopwords
+
 from .transformation import Transformation
+
 
 class WordSwap(Transformation):
     """
     An abstract class that takes a sentence and transforms it by replacing
     some of its words.
-
-    Other classes can achieve this by inheriting from WordSwap and 
-    overriding self._get_replacement_words.
-
-    Args:
-        replace_stopwords(:obj:`bool`, optional): Whether to replace stopwords. Defaults to False. 
-
+    
+        letters_to_insert (string): letters allowed for insertion into words
     """
 
-    def _get_replacement_words(self, word):
-        raise NotImplementedError()
-    
-    def _get_random_letter(self):
-        """ Helper function that returns a random single letter from the English
-            alphabet that could be lowercase or uppercase. """
-        return random.choice(string.ascii_letters)
+    def __init__(self, letters_to_insert=None):
+        self.letters_to_insert = letters_to_insert
+        if not self.letters_to_insert:
+            self.letters_to_insert = string.ascii_letters
 
-    def _get_transformations(self, tokenized_text, indices_to_replace):
+    def _get_replacement_words(self, word):
         """
-        Returns a list of all possible transformations for `text`.
-            
-        If indices_to_replace is set, only replaces words at those indices.
-        
+        Returns a set of replacements given an input word. Must be overriden by specific
+        word swap transformations.
+
+        Args:
+            word: The input word to find replacements for.
         """
-        words = tokenized_text.words
-        transformations = []
-        word_swaps = []
-        for i in indices_to_replace:
+        raise NotImplementedError()
+
+    def _get_random_letter(self):
+        """ 
+        Helper function that returns a random single letter from the English
+        alphabet that could be lowercase or uppercase. 
+        """
+        return random.choice(self.letters_to_insert)
+
+    def _get_transformations(self, current_text, indices_to_modify):
+        words = current_text.words
+        transformed_texts = []
+
+        for i in indices_to_modify:
             word_to_replace = words[i]
             replacement_words = self._get_replacement_words(word_to_replace)
-            new_tokenized_texts = []
+            transformed_texts_idx = []
             for r in replacement_words:
-                # Don't replace with numbers, punctuation, or other non-letter characters.
-                if not is_word(r):
-                    continue
-                new_tokenized_texts.append(tokenized_text.replace_word_at_index(i, r))
-            transformations.extend(new_tokenized_texts)
-        
-        return transformations
+                transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
+            transformed_texts.extend(transformed_texts_idx)
 
-def is_word(s):
-    """ String `s` counts as a word if it has at least one letter. """
-    for c in s:
-        if c.isalpha(): return True
-    return False 
+        return transformed_texts
