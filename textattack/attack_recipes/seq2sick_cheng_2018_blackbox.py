@@ -1,12 +1,16 @@
-from textattack.shared.attack import Attack
 from textattack.constraints.overlap import LevenshteinEditDistance
+from textattack.constraints.pre_transformation import (
+    RepeatModification,
+    StopwordModification,
+)
 from textattack.constraints.semantics import WordEmbeddingDistance
-from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.goal_functions import NonOverlappingOutput
 from textattack.search_methods import GreedyWordSwapWIR
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
-def Seq2SickCheng2018BlackBox(model, goal_function='non_overlapping'):
+
+def Seq2SickCheng2018BlackBox(model, goal_function="non_overlapping"):
     """
         Cheng, Minhao, et al. 
         
@@ -29,20 +33,15 @@ def Seq2SickCheng2018BlackBox(model, goal_function='non_overlapping'):
     #
     # Don't modify the same word twice or stopwords
     #
-    constraints = [
-        RepeatModification(),
-        StopwordModification()
-    ]
+    constraints = [RepeatModification(), StopwordModification()]
     #
     # In these experiments, we hold the maximum difference
     # on edit distance (ϵ) to a constant 30 for each sample.
     #
-    constraints.append(
-        LevenshteinEditDistance(30)
-    )
+    constraints.append(LevenshteinEditDistance(30))
     #
     # Greedily swap words with "Word Importance Ranking".
     #
     search_method = GreedyWordSwapWIR()
-    
+
     return Attack(goal_function, constraints, transformation, search_method)

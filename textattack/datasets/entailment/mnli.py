@@ -1,5 +1,6 @@
 from .entailment_dataset import EntailmentDataset
 
+
 class MNLI(EntailmentDataset):
     """
     Loads samples from the MNLI dataset. The *mismatched* examples come from a 
@@ -18,6 +19,7 @@ class MNLI(EntailmentDataset):
     """
     MATCHED_DATA_PATH = 'datasets/entailment/mnli_matched'
     MISMATCHED_DATA_PATH = 'datasets/entailment/mnli_mismatched'
+    
     def __init__(self, offset=0, mismatched=False, shuffle=False):
         """ Loads a full dataset from disk. """
         path = MNLI.MISMATCHED_DATA_PATH if mismatched else MNLI.MATCHED_DATA_PATH
