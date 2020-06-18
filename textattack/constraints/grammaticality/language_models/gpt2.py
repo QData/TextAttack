@@ -1,5 +1,9 @@
 import torch
+
+import os # temporarily set W&B to silent to avoid log-in warning message
+os.environ["WANDB_SILENT"] = "1"
 import transformers
+os.environ["WANDB_SILENT"] = "0"
 
 from textattack.shared import utils
 
