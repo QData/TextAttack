@@ -10,4 +10,4 @@ install:
 script:
   - black . --check
   - echo "import textattack" | python # run textattack post-install hooks
-  - pytest tests -vx --dist=loadfile -n auto
+  - travis_wait 30 pytest tests -vx --dist=loadfile -n auto
