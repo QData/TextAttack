@@ -19,7 +19,7 @@ class Transformation:
         ``pre_transformation_constraints`` then calles ``_get_transformations``.
 
         Args:
-            current_text: The ``TokenizedText`` to transform.
+            current_text: The ``AttackedText`` to transform.
             pre_transformation_constraints: The ``PreTransformationConstraint``\s to apply before
                 beginning the transformation.
             indices_to_modify: Which word indices should be modified as dictated by the
@@ -50,7 +50,7 @@ class Transformation:
         ``indices_to_modify``. Must be overridden by specific transformations.
 
         Args:
-            current_text: The ``TokenizedText`` to transform.
+            current_text: The ``AttackedText`` to transform.
             indicies_to_modify: Which word indices can be modified.
         """
         raise NotImplementedError()

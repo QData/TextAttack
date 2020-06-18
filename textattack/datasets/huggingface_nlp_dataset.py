@@ -1,9 +1,10 @@
+import collections
 import random
 
 import nlp
 
 from textattack.datasets import TextAttackDataset
-from textattack.shared import TokenizedText
+from textattack.shared import AttackedText
 
 
 def get_nlp_dataset_columns(dataset):
@@ -79,8 +80,8 @@ class HuggingFaceNLPDataset(TextAttackDataset):
             random.shuffle(self.examples)
 
     def _format_raw_example(self, raw_example):
-        joined_input = TokenizedText.SPLIT_TOKEN.join(
-            raw_example[c] for c in self.input_columns
+        input_dict = collections.OrderedDict(
+            [(c, raw_example[c]) for c in self.input_columns]
         )
         output = raw_example[self.output_column]
         if self.label_map:
@@ -88,7 +89,7 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         if self.output_scale_factor:
             output = output / self.output_scale_factor
 
-        return (joined_input, output)
+        return (input_dict, output)
 
     def __next__(self):
         if self._i >= len(self.examples):

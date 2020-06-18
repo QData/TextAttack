@@ -22,7 +22,7 @@ class CompositeTransformation(Transformation):
         self.transformations = transformations
 
     def __call__(self, *args, **kwargs):
-        new_tokenized_texts = set()
+        new_attacked_texts = set()
         for transformation in self.transformations:
-            new_tokenized_texts.update(transformation(*args, **kwargs))
-        return list(new_tokenized_texts)
+            new_attacked_texts.update(transformation(*args, **kwargs))
+        return list(new_attacked_texts)

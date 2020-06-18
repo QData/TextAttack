@@ -16,13 +16,17 @@ Attack(
 Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [91m0[0m-->[92m1[0m
+
 [91mpossibly[0m the most [91mirresponsible[0m picture ever released by a major [91mfilm[0m [91mstudio[0m .
+
 [92mposibly[0m the most [92mirresEponsible[0m picture ever released by a major [92mfWlm[0m [92mptudio[0m .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
 [92m1[0m-->[91m0[0m
+
 the pain , loneliness and insecurity of the screenwriting process are [92mvividly[0m and [92mpainfully[0m brought to slovenly life in this self-deprecating , biting and [92mwitty[0m [92mfeature[0m [92mwritten[0m by charlie kaufman and his twin brother , donald , and directed by spike jonze .
+
 the pain , loneliness and insecurity of the screenwriting process are [91mvVividly[0m and [91mipainfully[0m brought to slovenly life in this self-deprecating , biting and [91miwtty[0m [91mfeatur[0m [91mwriYtten[0m by charlie kaufman and his twin brother , donald , and directed by spike jonze .
 
 

@@ -61,8 +61,8 @@ class SentenceEncoder(Constraint):
         transformed text.
 
         Args:
-            starting_text: The ``TokenizedText``to use as a starting point.
-            transformed_text: A transformed ``TokenizedText``\.
+            starting_text: The ``AttackedText``to use as a starting point.
+            transformed_text: A transformed ``AttackedText``\.
 
         Returns:
             The similarity between the starting and transformed text using the metric. 
@@ -99,8 +99,8 @@ class SentenceEncoder(Constraint):
         of transformed texts. 
 
         Args:
-            starting_text: The ``TokenizedText``to use as a starting point.
-            transformed_texts: A list of transformed ``TokenizedText``\s.
+            starting_text: The ``AttackedText``to use as a starting point.
+            transformed_texts: A list of transformed ``AttackedText``\s.
 
         Returns:
             A list with the similarity between the ``starting_text`` and each of 

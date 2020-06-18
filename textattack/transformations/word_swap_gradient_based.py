@@ -43,12 +43,12 @@ class WordSwapGradientBased(Transformation):
         self.top_n = top_n
         self.is_black_box = False
 
-    def _get_replacement_words_by_grad(self, text, indices_to_replace):
+    def _get_replacement_words_by_grad(self, attacked_text, indices_to_replace):
         """ Returns returns a list containing all possible words to replace
             `word` with, based off of the model's gradient.
             
             Arguments:
-                text (TokenizedText): The full text input to perturb
+                attacked_text (AttackedText): The full text input to perturb
                 word_index (int): index of the word to replace
         """
         self.model.train()
@@ -56,11 +56,14 @@ class WordSwapGradientBased(Transformation):
         lookup_table = self.model.lookup_table.to(utils.device)
         lookup_table_transpose = lookup_table.transpose(0, 1)
 
+        # get word IDs
+        text_ids = self.model.tokenizer.encode(attacked_text.tokenizer_input)
+
         # set backward hook on the word embeddings for input x
         emb_hook = Hook(self.model.word_embeddings, backward=True)
 
         self.model.zero_grad()
-        predictions = self._call_model(text)
+        predictions = self._call_model(text_ids)
         original_label = predictions.argmax()
         y_true = torch.Tensor([original_label]).long().to(utils.device)
         loss = self.loss(predictions, y_true)
@@ -78,7 +81,7 @@ class WordSwapGradientBased(Transformation):
             b_grads = (
                 emb_grad[word_idx].view(1, -1).mm(lookup_table_transpose).squeeze()
             )
-            a_grad = b_grads[text.ids[word_idx]]
+            a_grad = b_grads[text_ids[word_idx]]
             diffs[j] = b_grads - a_grad
 
         # Don't change to the pad token.
@@ -104,12 +107,12 @@ class WordSwapGradientBased(Transformation):
         self.model.eval()
         return candidates
 
-    def _call_model(self, text):
-        """ A helper function to query `self.model` with TokenizedText `text`.
+    def _call_model(self, text_ids):
+        """ A helper function to query `self.model` with AttackedText `text`.
         """
-        return utils.model_predict(self.model, [text.ids])
+        return utils.model_predict(self.model, [text_ids])
 
-    def _get_transformations(self, tokenized_text, indices_to_replace):
+    def _get_transformations(self, attacked_text, indices_to_replace):
         """
         Returns a list of all possible transformations for `text`.
             
@@ -118,9 +121,9 @@ class WordSwapGradientBased(Transformation):
         """
         transformations = []
         for word, idx in self._get_replacement_words_by_grad(
-            tokenized_text, indices_to_replace
+            attacked_text, indices_to_replace
         ):
-            transformations.append(tokenized_text.replace_word_at_index(idx, word))
+            transformations.append(attacked_text.replace_word_at_index(idx, word))
         return transformations
 
     def extra_repr_keys(self):

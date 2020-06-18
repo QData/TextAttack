@@ -37,6 +37,10 @@ class T5Tokenizer(AutoTokenizer):
         Encodes a string into IDs of tokens. This prepares an input to be
         passed into T5.
         """
+        if isinstance(text, tuple):
+            text = text[0]
+        if not isinstance(text, str):
+            raise TypeError(f"T5Tokenizer expects `str` input, got {type(text)}")
         text_to_encode = self.tokenization_prefix + text
         return super().encode(text_to_encode)
 
