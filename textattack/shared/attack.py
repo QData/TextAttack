@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import os
-import random
-
-import lru
-import numpy as np
-
-=======
 from collections import deque
 import os
 
@@ -13,17 +5,11 @@ import lru
 import numpy as np
 
 import textattack
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 from textattack.attack_results import (
     FailedAttackResult,
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
-<<<<<<< HEAD
-from textattack.constraints import Constraint
-from textattack.constraints.pre_transformation import PreTransformationConstraint
-=======
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 from textattack.shared import TokenizedText, utils
 
 
@@ -196,18 +182,7 @@ class Attack:
                 initial_result, final_result, self.goal_function.num_queries
             )
 
-<<<<<<< HEAD
-    def _get_examples_from_dataset(
-        self,
-        dataset,
-        num_examples=None,
-        shuffle=False,
-        attack_n=False,
-        attack_skippable_examples=False,
-    ):
-=======
     def _get_examples_from_dataset(self, dataset, indices=None):
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         """ 
         Gets examples from a dataset and tokenizes them.
 
@@ -218,47 +193,12 @@ class Attack:
         Returns:
             results (Iterable[GoalFunctionResult]): an iterable of GoalFunctionResults of the original examples
         """
-<<<<<<< HEAD
-        examples = []
-        n = 0
-
-        if shuffle:
-            random.shuffle(dataset.examples)
-
-        num_examples = num_examples or len(dataset)
-
-        if num_examples <= 0:
-            return
-            yield
-
-        for text, ground_truth_output in dataset:
-            tokenized_text = TokenizedText(text, self.goal_function.tokenizer)
-            self.goal_function.num_queries = 0
-            goal_function_result, _ = self.goal_function.get_result(
-                tokenized_text, ground_truth_output
-            )
-            # We can skip examples for which the goal is already succeeded,
-            # unless `attack_skippable_examples` is True.
-            if (not attack_skippable_examples) and (goal_function_result.succeeded):
-                if not attack_n:
-                    n += 1
-                # Store the true output on the goal function so that the
-                # SkippedAttackResult has the correct output, not the incorrect.
-                goal_function_result.output = ground_truth_output
-                yield (goal_function_result, True)
-            else:
-                n += 1
-                yield (goal_function_result, False)
-            if num_examples is not None and (n >= num_examples):
-                break
-=======
         indices = indices if indices else deque(range(len(dataset)))
         if not isinstance(indices, deque):
             indices = deque(indices)
         if not indices:
             return
             yield
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
         while indices:
             i = indices.popleft()
@@ -291,28 +231,15 @@ class Attack:
             dataset: An iterable of (text, ground_truth_output) pairs.
             indices: An iterable of indices of the dataset that we want to attack. If None, attack all samples in dataset.
         """
-<<<<<<< HEAD
-
-        examples = self._get_examples_from_dataset(
-            dataset, num_examples=num_examples, shuffle=shuffle, attack_n=attack_n
-        )
-=======
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
         examples = self._get_examples_from_dataset(dataset, indices=indices)
 
         for goal_function_result in examples:
             if goal_function_result.succeeded:
                 yield SkippedAttackResult(goal_function_result)
-<<<<<<< HEAD
-                continue
-            result = self.attack_one(goal_function_result)
-            yield result
-=======
             else:
                 result = self.attack_one(goal_function_result)
                 yield result
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
     def __repr__(self):
         """ 

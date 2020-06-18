@@ -1,7 +1,6 @@
 from textattack.models.tokenizers import AutoTokenizer
 
 
-
 class BERTTokenizer(AutoTokenizer):
     """ 
     A generic class that convert text to tokens and tokens to IDs. Intended

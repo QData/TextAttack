@@ -472,12 +472,12 @@ def parse_model_from_args(args):
         model = model_class.from_pretrained(model_name)
         model = model.to(textattack.shared.utils.device)
         try:
-            tokenizer = textattack.tokenizers.AutoTokenizer(args.model_from_huggingface)
+            tokenizer = textattack.models.tokenizers.AutoTokenizer(args.model_from_huggingface)
         except OSError:
             textattack.shared.logger.warn(
                 f"AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`"
             )
-            tokenizer = textattack.tokenizers.AutoTokenizer("bert-base-uncased")
+            tokenizer = textattack.models.tokenizers.AutoTokenizer("bert-base-uncased")
         setattr(model, "tokenizer", tokenizer)
     else:
         if ":" in args.model:
@@ -526,7 +526,6 @@ def parse_model_from_args(args):
 
 
 def parse_dataset_from_args(args):
-    args.dataset_from_nlp = ("glue", "sst2", "validation")
     if args.dataset_from_file:
         textattack.shared.logger.info(
             f"Loading model and tokenizer from file: {args.model_from_file}"

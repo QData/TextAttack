@@ -3,7 +3,6 @@ import spacy
 from textattack.models.tokenizers import Tokenizer
 
 
-
 class SpacyTokenizer(Tokenizer):
     """ A basic implementation of the spaCy English tokenizer. 
     

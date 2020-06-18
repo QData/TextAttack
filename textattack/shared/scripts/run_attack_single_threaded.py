@@ -2,10 +2,7 @@
 A command line parser to run an attack from user specifications.
 """
 
-<<<<<<< HEAD
-=======
 from collections import deque
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 import datetime
 import os
 import time
@@ -14,7 +11,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helper import *
+from .attack_args_parser import *
 
 logger = textattack.shared.logger
 
@@ -34,16 +31,11 @@ def run(args):
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
-<<<<<<< HEAD
-        num_examples_offset = resume_checkpoint.dataset_offset
-        num_examples = resume_checkpoint.num_remaining_attacks
-=======
 
         num_remaining_attacks = resume_checkpoint.num_remaining_attacks
         worklist = resume_checkpoint.worklist
         worklist_tail = resume_checkpoint.worklist_tail
 
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         logger.info(
             "Recovered from checkpoint previously saved at {}".format(
                 resume_checkpoint.datetime
@@ -51,14 +43,9 @@ def run(args):
         )
         print(resume_checkpoint, "\n")
     else:
-<<<<<<< HEAD
-        num_examples_offset = args.num_examples_offset
-        num_examples = args.num_examples
-=======
         num_remaining_attacks = args.num_examples
         worklist = deque(range(0, args.num_examples))
         worklist_tail = worklist[-1]
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
     start_time = time.time()
 
@@ -102,11 +89,7 @@ def run(args):
         # Not interactive? Use default dataset.
         dataset = parse_dataset_from_args(args)
 
-<<<<<<< HEAD
-        pbar = tqdm.tqdm(total=num_examples, smoothing=0)
-=======
         pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         if args.checkpoint_resume:
             num_results = resume_checkpoint.results_count
             num_failures = resume_checkpoint.num_failed_attacks
@@ -115,17 +98,8 @@ def run(args):
             num_results = 0
             num_failures = 0
             num_successes = 0
-<<<<<<< HEAD
-        for result in attack.attack_dataset(
-            dataset,
-            num_examples=num_examples,
-            shuffle=args.shuffle,
-            attack_n=args.attack_n,
-        ):
-=======
 
         for result in attack.attack_dataset(dataset, indices=worklist):
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
             attack_log_manager.log_result(result)
 
             if not args.disable_stdout:

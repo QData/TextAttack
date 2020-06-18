@@ -1,10 +1,6 @@
 import os
 
-<<<<<<< HEAD
 from attack_args_parser import (
-=======
-from attack_args_helper import (
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
     HUGGINGFACE_DATASET_BY_MODEL,
     TEXTATTACK_MODEL_CLASS_NAMES,
 )

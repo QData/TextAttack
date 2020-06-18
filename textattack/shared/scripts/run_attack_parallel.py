@@ -11,7 +11,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helper import *
+from .attack_args_parser import *
 
 logger = textattack.shared.logger
 
@@ -22,30 +22,13 @@ def set_env_variables(gpu_id):
     # Only use one GPU, if we have one.
     if "CUDA_VISIBLE_DEVICES" not in os.environ:
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
-<<<<<<< HEAD
-        logger.info(f"thread using GPU {gpu_id}")
-=======
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
+
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
     # Cache TensorFlow Hub models here, if not otherwise specified.
     if "TFHUB_CACHE_DIR" not in os.environ:
         os.environ["TFHUB_CACHE_DIR"] = os.path.expanduser("~/.cache/tensorflow-hub")
-<<<<<<< HEAD
-    # Disable tensorflow memory growth.
-    try:
-        gpus = tf.config.experimental.list_physical_devices("GPU")
-        if gpus:
-            for gpu in gpus:
-                tf.config.experimental.set_memory_growth(gpu, True)
-                print("set no growth on gpu /", gpu)
-            logical_gpus = tf.config.experimental.list_logical_devices("GPU")
-            print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
-    except:
-        pass
-=======
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
 
 def attack_from_queue(args, in_queue, out_queue):
@@ -75,11 +58,8 @@ def run(args):
 
         num_remaining_attacks = resume_checkpoint.num_remaining_attacks
         num_total_examples = args.num_examples
-<<<<<<< HEAD
-=======
         worklist = resume_checkpoint.worklist
         worklist_tail = resume_checkpoint.worklist_tail
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         logger.info(
             "Recovered from checkpoint previously saved at {}".format(
                 resume_checkpoint.datetime
@@ -106,10 +86,6 @@ def run(args):
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
 
-<<<<<<< HEAD
-    args.num_examples_offset = num_examples_offset
-=======
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
     dataset = parse_dataset_from_args(args)
 
     print(f"Running on {num_gpus} GPUs")
@@ -146,10 +122,7 @@ def run(args):
             raise result
         idx, result = result
         attack_log_manager.log_result(result)
-<<<<<<< HEAD
-=======
         worklist.remove(idx)
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         if (not args.attack_n) or (
             not isinstance(result, textattack.attack_results.SkippedAttackResult)
         ):

@@ -24,11 +24,7 @@ class Checkpoint:
             chkpt_time (float): epoch time representing when checkpoint was made
     """
 
-<<<<<<< HEAD
-    def __init__(self, args, log_manager, chkpt_time=None):
-=======
     def __init__(self, args, log_manager, worklist, worklist_tail, chkpt_time=None):
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         self.args = copy.deepcopy(args)
         self.log_manager = log_manager
         self.worklist = worklist
@@ -186,8 +182,6 @@ class Checkpoint:
         assert isinstance(checkpoint, Checkpoint)
 
         return checkpoint
-<<<<<<< HEAD
-=======
 
     def _verify(self):
         """ Check that the checkpoint has no duplicates and is consistent"""
@@ -200,4 +194,3 @@ class Checkpoint:
             results_set.add(result.original_result.tokenized_text)
 
         assert len(results_set) == self.results_count, "Duplicate AttackResults found."
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc

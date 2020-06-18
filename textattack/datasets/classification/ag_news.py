@@ -37,11 +37,7 @@ class AGNews(ClassificationDataset):
 
     DATA_PATH = "datasets/classification/ag_news.txt"
 
-<<<<<<< HEAD
-    def __init__(self, offset=0):
-=======
     def __init__(self, offset=0, shuffle=False):
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         """ Loads a full dataset from disk. """
         self._load_classification_text_file(
             AGNews.DATA_PATH, offset=offset, shuffle=shuffle

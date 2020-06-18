@@ -3,11 +3,7 @@ import sys
 
 import torch
 
-<<<<<<< HEAD
 from attack_args_parser import get_args, parse_dataset_from_args, parse_model_from_args
-=======
-from attack_args_helper import get_args, parse_dataset_from_args, parse_model_from_args
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 import textattack
 
 

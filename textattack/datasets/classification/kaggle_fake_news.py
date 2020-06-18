@@ -17,11 +17,7 @@ class KaggleFakeNews(ClassificationDataset):
 
     DATA_PATH = "datasets/classification/fake"
 
-<<<<<<< HEAD
-    def __init__(self, offset=0):
-=======
     def __init__(self, offset=0, shuffle=False):
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         """ Loads a full dataset from disk. """
         self._load_classification_text_file(
             KaggleFakeNews.DATA_PATH, offset=offset, shuffle=shuffle

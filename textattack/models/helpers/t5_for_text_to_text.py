@@ -1,14 +1,7 @@
-<<<<<<< HEAD
-from transformers import AutoModelWithLMHead
-
-=======
 import transformers
 
 from textattack.models.tokenizers import T5Tokenizer
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 from textattack.shared import utils
-from textattack.tokenizers import T5Tokenizer
-
 
 
 class T5ForTextToText:
@@ -38,11 +31,7 @@ class T5ForTextToText:
     def __init__(
         self, mode="english_to_german", max_length=20, num_beams=1, early_stopping=True
     ):
-<<<<<<< HEAD
-        self.model = AutoModelWithLMHead.from_pretrained("t5-base")
-=======
         self.model = transformers.AutoModelWithLMHead.from_pretrained("t5-base")
->>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         self.model.to(utils.device)
         self.model.eval()
         self.tokenizer = T5Tokenizer(mode)

@@ -1,7 +1,6 @@
 from textattack.models.tokenizers import AutoTokenizer
 
 
-
 class T5Tokenizer(AutoTokenizer):
     """ Uses the T5 tokenizer to convert an input for processing. 
         
