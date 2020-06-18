@@ -1,6 +1,7 @@
 # Version number is tracked in docs/conf.py.
-from docs import conf as docs_conf
 import setuptools
+
+from docs import conf as docs_conf
 
 with open("README.md", "r") as fh:
     long_description = fh.read()

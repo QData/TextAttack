@@ -2,6 +2,7 @@
 A command line parser to run an attack from user specifications.
 """
 
+from collections import deque
 import os
 import time
 
@@ -21,13 +22,17 @@ def set_env_variables(gpu_id):
     # Only use one GPU, if we have one.
     if "CUDA_VISIBLE_DEVICES" not in os.environ:
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+<<<<<<< HEAD
         logger.info(f"thread using GPU {gpu_id}")
+=======
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
     # Cache TensorFlow Hub models here, if not otherwise specified.
     if "TFHUB_CACHE_DIR" not in os.environ:
         os.environ["TFHUB_CACHE_DIR"] = os.path.expanduser("~/.cache/tensorflow-hub")
+<<<<<<< HEAD
     # Disable tensorflow memory growth.
     try:
         gpus = tf.config.experimental.list_physical_devices("GPU")
@@ -39,6 +44,8 @@ def set_env_variables(gpu_id):
             print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
     except:
         pass
+=======
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
 
 def attack_from_queue(args, in_queue, out_queue):
@@ -49,10 +56,10 @@ def attack_from_queue(args, in_queue, out_queue):
         print(attack, "\n")
     while not in_queue.empty():
         try:
-            output, text = in_queue.get()
-            results_gen = attack.attack_dataset([(output, text)], num_examples=1)
+            i, text, output = in_queue.get()
+            results_gen = attack.attack_dataset([(text, output)])
             result = next(results_gen)
-            out_queue.put(result)
+            out_queue.put((i, result))
         except Exception as e:
             out_queue.put(e)
             exit()
@@ -65,9 +72,14 @@ def run(args):
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
-        num_examples_offset = resume_checkpoint.dataset_offset
-        num_remaining_examples = resume_checkpoint.num_remaining_attacks
+
+        num_remaining_attacks = resume_checkpoint.num_remaining_attacks
         num_total_examples = args.num_examples
+<<<<<<< HEAD
+=======
+        worklist = resume_checkpoint.worklist
+        worklist_tail = resume_checkpoint.worklist_tail
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         logger.info(
             "Recovered from checkpoint previously saved at {}".format(
                 resume_checkpoint.datetime
@@ -75,9 +87,10 @@ def run(args):
         )
         print(resume_checkpoint, "\n")
     else:
-        num_examples_offset = args.num_examples_offset
         num_total_examples = args.num_examples
-        num_remaining_examples = num_total_examples
+        num_remaining_attacks = num_total_examples
+        worklist = deque(range(0, num_total_examples))
+        worklist_tail = worklist[-1]
 
     # This makes `args` a namespace that's sharable between processes.
     # We could do the same thing with the model, but it's actually faster
@@ -93,7 +106,10 @@ def run(args):
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
 
+<<<<<<< HEAD
     args.num_examples_offset = num_examples_offset
+=======
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
     dataset = parse_dataset_from_args(args)
 
     print(f"Running on {num_gpus} GPUs")
@@ -105,9 +121,10 @@ def run(args):
     in_queue = torch.multiprocessing.Queue()
     out_queue = torch.multiprocessing.Queue()
     # Add stuff to queue.
-    for _ in range(num_remaining_examples):
-        label, text = next(dataset)
-        in_queue.put((label, text))
+    for i in worklist:
+        text, output = dataset[i]
+        in_queue.put((i, text, output))
+
     # Start workers.
     pool = torch.multiprocessing.Pool(
         num_gpus, attack_from_queue, (args, in_queue, out_queue)
@@ -121,18 +138,24 @@ def run(args):
         num_results = 0
         num_failures = 0
         num_successes = 0
-    pbar = tqdm.tqdm(total=num_remaining_examples, smoothing=0)
-    while num_results < num_total_examples:
+    pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
+    while worklist:
         result = out_queue.get(block=True)
 
         if isinstance(result, Exception):
             raise result
+        idx, result = result
         attack_log_manager.log_result(result)
+<<<<<<< HEAD
+=======
+        worklist.remove(idx)
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         if (not args.attack_n) or (
             not isinstance(result, textattack.attack_results.SkippedAttackResult)
         ):
             pbar.update()
             num_results += 1
+
             if type(result) == textattack.attack_results.SuccessfulAttackResult:
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
@@ -143,13 +166,29 @@ def run(args):
                 )
             )
         else:
-            label, text = next(dataset)
-            in_queue.put((label, text))
+            # worklist_tail keeps track of highest idx that has been part of worklist
+            # Used to get the next dataset element when attacking with `attack_n` = True.
+            worklist_tail += 1
+            try:
+                text, output = dataset[worklist_tail]
+                worklist.append(worklist_tail)
+                in_queue.put((worklist_tail, text, output))
+            except IndexError:
+                raise IndexError(
+                    "Out of bounds access of dataset. Size of data is {} but tried to access index {}".format(
+                        len(dataset), worklist_tail
+                    )
+                )
 
-        if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
-            attack_log_manager.flush()
-            checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
+        if (
+            args.checkpoint_interval
+            and len(attack_log_manager.results) % args.checkpoint_interval == 0
+        ):
+            checkpoint = textattack.shared.Checkpoint(
+                args, attack_log_manager, worklist, worklist_tail
+            )
             checkpoint.save()
+            attack_log_manager.flush()
 
     pbar.close()
     print()

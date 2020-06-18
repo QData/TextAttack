@@ -15,6 +15,7 @@ class LSTMForClassification(nn.Module):
     """
 
     def __init__(
+<<<<<<< HEAD
         self,
         hidden_size=150,
         depth=1,
@@ -22,6 +23,9 @@ class LSTMForClassification(nn.Module):
         nclasses=2,
         max_seq_length=128,
         model_path=None,
+=======
+        self, hidden_size=150, depth=1, dropout=0.3, nclasses=2, max_seq_length=128
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
     ):
         super().__init__()
         if depth <= 1:
@@ -41,6 +45,7 @@ class LSTMForClassification(nn.Module):
         )
         d_out = hidden_size
         self.out = nn.Linear(d_out, nclasses)
+<<<<<<< HEAD
         self.tokenizer = textattack.tokenizers.SpacyTokenizer(
             self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
         )
@@ -50,6 +55,14 @@ class LSTMForClassification(nn.Module):
 
     def load_from_disk(self, model_path):
         self.load_state_dict(load_cached_state_dict(model_path))
+=======
+        self.tokenizer = textattack.models.tokenizers.SpacyTokenizer(
+            self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
+        )
+
+    def load_from_disk(self, model_folder_path):
+        self.load_state_dict(load_cached_state_dict(model_folder_path))
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         self.word_embeddings = self.emb_layer.embedding
         self.lookup_table = self.emb_layer.embedding.weight.data
         self.to(utils.device)

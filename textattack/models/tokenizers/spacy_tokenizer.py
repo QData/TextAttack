@@ -1,6 +1,7 @@
 import spacy
 
-from textattack.tokenizers import Tokenizer
+from textattack.models.tokenizers import Tokenizer
+
 
 
 class SpacyTokenizer(Tokenizer):

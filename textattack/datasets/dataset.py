@@ -1,4 +1,8 @@
 import pickle
+import random
+
+from textattack.shared import utils
+
 
 from textattack.shared import utils
 
@@ -51,7 +55,11 @@ class TextAttackDataset:
             self.examples = pickle.load(f)
         self.examples = self.examples[offset:]
 
+<<<<<<< HEAD
     def _load_classification_text_file(self, text_file_name, offset=0):
+=======
+    def _load_classification_text_file(self, text_file_name, offset=0, shuffle=False):
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         """ 
         Loads tuples from lines of a classification text file. 
         
@@ -62,8 +70,9 @@ class TextAttackDataset:
             0 "\""this world needs a ...
         
         Arguments:
-            n (int): number of samples to return
+            text_file_name (str): name of the text file to load from.
             offset (int): line to start reading from
+            shuffle (bool): If True, randomly shuffle loaded data
         """
         text_file_path = utils.download_if_needed(text_file_name)
         text_file = open(text_file_path, "r")
@@ -72,6 +81,11 @@ class TextAttackDataset:
         self.examples = [self._process_example_from_file(ex) for ex in raw_lines]
         self._i = 0
         text_file.close()
+<<<<<<< HEAD
+=======
+        if shuffle:
+            random.shuffle(self.examples)
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
     def _clean_example(self, ex):
         """ 

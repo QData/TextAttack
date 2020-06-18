@@ -1,4 +1,5 @@
-from textattack.tokenizers import AutoTokenizer
+from textattack.models.tokenizers import AutoTokenizer
+
 
 
 class BERTTokenizer(AutoTokenizer):

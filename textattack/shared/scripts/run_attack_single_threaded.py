@@ -2,6 +2,10 @@
 A command line parser to run an attack from user specifications.
 """
 
+<<<<<<< HEAD
+=======
+from collections import deque
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 import datetime
 import os
 import time
@@ -30,8 +34,16 @@ def run(args):
         # Override current args with checkpoint args
         resume_checkpoint = parse_checkpoint_from_args(args)
         args = merge_checkpoint_args(resume_checkpoint.args, args)
+<<<<<<< HEAD
         num_examples_offset = resume_checkpoint.dataset_offset
         num_examples = resume_checkpoint.num_remaining_attacks
+=======
+
+        num_remaining_attacks = resume_checkpoint.num_remaining_attacks
+        worklist = resume_checkpoint.worklist
+        worklist_tail = resume_checkpoint.worklist_tail
+
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         logger.info(
             "Recovered from checkpoint previously saved at {}".format(
                 resume_checkpoint.datetime
@@ -39,8 +51,14 @@ def run(args):
         )
         print(resume_checkpoint, "\n")
     else:
+<<<<<<< HEAD
         num_examples_offset = args.num_examples_offset
         num_examples = args.num_examples
+=======
+        num_remaining_attacks = args.num_examples
+        worklist = deque(range(0, args.num_examples))
+        worklist_tail = worklist[-1]
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
 
     start_time = time.time()
 
@@ -82,10 +100,13 @@ def run(args):
 
     else:
         # Not interactive? Use default dataset.
-        args.num_examples_offset = num_examples_offset
         dataset = parse_dataset_from_args(args)
 
+<<<<<<< HEAD
         pbar = tqdm.tqdm(total=num_examples, smoothing=0)
+=======
+        pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         if args.checkpoint_resume:
             num_results = resume_checkpoint.results_count
             num_failures = resume_checkpoint.num_failed_attacks
@@ -94,20 +115,33 @@ def run(args):
             num_results = 0
             num_failures = 0
             num_successes = 0
+<<<<<<< HEAD
         for result in attack.attack_dataset(
             dataset,
             num_examples=num_examples,
             shuffle=args.shuffle,
             attack_n=args.attack_n,
         ):
+=======
+
+        for result in attack.attack_dataset(dataset, indices=worklist):
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
             attack_log_manager.log_result(result)
+
             if not args.disable_stdout:
                 print("\n")
             if (not args.attack_n) or (
                 not isinstance(result, textattack.attack_results.SkippedAttackResult)
             ):
                 pbar.update(1)
+            else:
+                # worklist_tail keeps track of highest idx that has been part of worklist
+                # Used to get the next dataset element when attacking with `attack_n` = True.
+                worklist_tail += 1
+                worklist.append(worklist_tail)
+
             num_results += 1
+
             if type(result) == textattack.attack_results.SuccessfulAttackResult:
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
@@ -118,8 +152,13 @@ def run(args):
                 )
             )
 
-            if args.checkpoint_interval and num_results % args.checkpoint_interval == 0:
-                checkpoint = textattack.shared.Checkpoint(args, attack_log_manager)
+            if (
+                args.checkpoint_interval
+                and len(attack_log_manager.results) % args.checkpoint_interval == 0
+            ):
+                checkpoint = textattack.shared.Checkpoint(
+                    args, attack_log_manager, worklist, worklist_tail
+                )
                 checkpoint.save()
                 attack_log_manager.flush()
 

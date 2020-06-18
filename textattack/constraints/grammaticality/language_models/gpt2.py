@@ -1,5 +1,5 @@
 import torch
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+import transformers
 
 from textattack.shared import utils
 
@@ -16,9 +16,9 @@ class GPT2(LanguageModelConstraint):
     """
 
     def __init__(self, **kwargs):
-        self.model = GPT2LMHeadModel.from_pretrained("gpt2")
+        self.model = transformers.GPT2LMHeadModel.from_pretrained("gpt2")
         self.model.to(utils.device)
-        self.tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+        self.tokenizer = transformers.GPT2Tokenizer.from_pretrained("gpt2")
         super().__init__(**kwargs)
 
     def get_log_probs_at_index(self, text_list, word_index):

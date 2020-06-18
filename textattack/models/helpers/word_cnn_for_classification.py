@@ -15,6 +15,7 @@ class WordCNNForClassification(nn.Module):
         classification.
     """
 
+<<<<<<< HEAD
     def __init__(
         self,
         hidden_size=150,
@@ -23,6 +24,9 @@ class WordCNNForClassification(nn.Module):
         max_seq_length=128,
         model_path=None,
     ):
+=======
+    def __init__(self, hidden_size=150, dropout=0.3, nclasses=2, max_seq_length=128):
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
         super().__init__()
         self.drop = nn.Dropout(dropout)
         self.emb_layer = GloveEmbeddingLayer()
@@ -32,6 +36,7 @@ class WordCNNForClassification(nn.Module):
         )
         d_out = 3 * hidden_size
         self.out = nn.Linear(d_out, nclasses)
+<<<<<<< HEAD
         self.tokenizer = textattack.tokenizers.SpacyTokenizer(
             self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
         )
@@ -39,6 +44,12 @@ class WordCNNForClassification(nn.Module):
         if model_path is not None:
             self.load_from_disk(model_path)
 
+=======
+        self.tokenizer = textattack.models.tokenizers.SpacyTokenizer(
+            self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
+        )
+
+>>>>>>> 6953f0ee7d024957774d19d101175f0fa0176ccc
     def load_from_disk(self, model_folder_path):
         self.load_state_dict(load_cached_state_dict(model_folder_path))
         self.to(utils.device)

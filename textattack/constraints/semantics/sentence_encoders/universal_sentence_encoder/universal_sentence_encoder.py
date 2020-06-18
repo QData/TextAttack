@@ -18,7 +18,7 @@ class UniversalSentenceEncoder(SentenceEncoder):
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         else:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
-        print("tf devices", tf.config.list_physical_devices(device_type=None))
+
         self.model = hub.load(tfhub_url)
 
     def encode(self, sentences):

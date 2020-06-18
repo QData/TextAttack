@@ -1,8 +1,8 @@
 name = "textattack"
 
-from . import attack_recipes
-from . import attack_results
-from . import augmentation
+import textattack.attack_recipes
+import textattack.attack_results
+import textattack.augmentation
 
 from . import constraints
 from . import datasets
