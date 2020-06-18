@@ -12,15 +12,15 @@ class MovieReviewSentiment(ClassificationDataset):
         1: Positive
 
     Args:
-        n (int): The number of examples to load
         offset (int): line to start reading from
+        shuffle (bool): If True, randomly shuffle loaded data
     
     """
 
     DATA_PATH = "datasets/classification/mr.txt"
 
-    def __init__(self, offset=0):
+    def __init__(self, offset=0, shuffle=False):
         """ Loads a full dataset from disk. """
         self._load_classification_text_file(
-            MovieReviewSentiment.DATA_PATH, offset=offset
+            MovieReviewSentiment.DATA_PATH, offset=offset, shuffle=shuffle
         )
