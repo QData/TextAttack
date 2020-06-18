@@ -19,8 +19,8 @@ class LanguageTool(Constraint):
         self.grammar_error_threshold = grammar_error_threshold
         self.grammar_error_cache = {}
 
-    def get_errors(self, tokenized_text, use_cache=False):
-        text = tokenized_text.clean_text()
+    def get_errors(self, attacked_text, use_cache=False):
+        text = attacked_text.text
         if use_cache:
             if text not in self.grammar_error_cache:
                 self.grammar_error_cache[text] = len(self.lang_tool.check(text))

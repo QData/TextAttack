@@ -3,11 +3,10 @@ python: '3.8'
 cache: pip
 before_install:
   - python --version
-  - pip install -U pip
-  - pip install -U pytest
+  - python -m pip install --upgrade pip
+  - pip install black pytest pytest-xdist
 install:
-  - pip install black
   - pip install -e .
 script:
   - black . --check
-  - travis_wait 30 pytest tests -vx
+  - pytest tests -vx --dist=loadfile -n auto

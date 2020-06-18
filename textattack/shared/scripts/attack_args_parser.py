@@ -52,7 +52,7 @@ def get_args():
         "--model",
         type=str,
         required=False,
-        default="bert-base-uncased-yelp-sentiment",
+        default="bert-base-uncased-yelp",
         choices=model_names,
         help="The pre-trained model to attack.",
     )
@@ -294,7 +294,7 @@ def get_args():
         set_seed(args.random_seed)
 
     # Shortcuts for huggingface models using --model.
-    if args.model in HUGGINGFACE_DATASET_BY_MODEL:
+    if not args.checkpoint_resume and args.model in HUGGINGFACE_DATASET_BY_MODEL:
         (
             args.model_from_huggingface,
             args.dataset_from_nlp,
@@ -472,7 +472,9 @@ def parse_model_from_args(args):
         model = model_class.from_pretrained(model_name)
         model = model.to(textattack.shared.utils.device)
         try:
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(args.model_from_huggingface)
+            tokenizer = textattack.models.tokenizers.AutoTokenizer(
+                args.model_from_huggingface
+            )
         except OSError:
             textattack.shared.logger.warn(
                 f"AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`"
@@ -558,7 +560,9 @@ def parse_dataset_from_args(args):
         if not args.model:
             raise ValueError("Must supply pretrained model or dataset")
         elif args.model in DATASET_BY_MODEL:
-            dataset = DATASET_BY_MODEL[args.model](offset=args.num_examples_offset)
+            dataset = DATASET_BY_MODEL[args.model](
+                offset=args.num_examples_offset, shuffle=args.shuffle
+            )
         else:
             raise ValueError(f"Error: unsupported model {args.model}")
     return dataset

@@ -77,7 +77,7 @@ class AttackLogManager:
         successful_attacks = 0
         max_words_changed = None
         for i, result in enumerate(self.results):
-            all_num_words[i] = len(result.original_result.tokenized_text.words)
+            all_num_words[i] = len(result.original_result.attacked_text.words)
             if isinstance(result, FailedAttackResult):
                 failed_attacks += 1
                 continue
@@ -87,19 +87,19 @@ class AttackLogManager:
             else:
                 successful_attacks += 1
             num_words_changed = len(
-                result.original_result.tokenized_text.all_words_diff(
-                    result.perturbed_result.tokenized_text
+                result.original_result.attacked_text.all_words_diff(
+                    result.perturbed_result.attacked_text
                 )
             )
             num_words_changed_until_success[num_words_changed - 1] += 1
             max_words_changed = max(
                 max_words_changed or num_words_changed, num_words_changed
             )
-            if len(result.original_result.tokenized_text.words) > 0:
+            if len(result.original_result.attacked_text.words) > 0:
                 perturbed_word_percentage = (
                     num_words_changed
                     * 100.0
-                    / len(result.original_result.tokenized_text.words)
+                    / len(result.original_result.attacked_text.words)
                 )
             else:
                 perturbed_word_percentage = 0

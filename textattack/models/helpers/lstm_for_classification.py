@@ -15,8 +15,13 @@ class LSTMForClassification(nn.Module):
     """
 
     def __init__(
-        self, hidden_size=150, depth=1, dropout=0.3, nclasses=2, max_seq_length=128,
-        model_path=None
+        self,
+        hidden_size=150,
+        depth=1,
+        dropout=0.3,
+        nclasses=2,
+        max_seq_length=128,
+        model_path=None,
     ):
         super().__init__()
         if depth <= 1:
@@ -39,7 +44,7 @@ class LSTMForClassification(nn.Module):
         self.tokenizer = textattack.models.tokenizers.SpacyTokenizer(
             self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
         )
-        
+
         if model_path is not None:
             self.load_from_disk(model_path)
 

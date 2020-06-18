@@ -16,7 +16,7 @@ class PreTransformationConstraint(Constraint):
         First checks compatibility with ``transformation`` then calls ``_get_modifiable_indices``\.
 
         Args:
-            current_text: The ``TokenizedText`` input to consider.
+            current_text: The ``AttackedText`` input to consider.
             transformation: The ``Transformation`` which will be applied.
         """
         if not self.check_compatibility(transformation):
@@ -29,6 +29,6 @@ class PreTransformationConstraint(Constraint):
         Must be overridden by specific pre-transformation constraints.
 
         Args:
-            current_text: The ``TokenizedText`` input to consider.
+            current_text: The ``AttackedText`` input to consider.
         """
         raise NotImplementedError()

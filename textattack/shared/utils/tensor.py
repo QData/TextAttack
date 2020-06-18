@@ -4,6 +4,15 @@ import textattack
 from textattack.shared import utils
 
 
+def batch_tokenize(tokenizer, attacked_text_list):
+    """ Tokenizes a list of inputs and returns their tokenized forms in a list. """
+    inputs = [at.tokenizer_input for at in attacked_text_list]
+    if hasattr(tokenizer, "encode_batch"):
+        return tokenizer.encode_batch(inputs)
+    else:
+        return [tokenizer.encode(x) for x in inputs]
+
+
 def batch_model_predict(model, inputs, batch_size=utils.config("MODEL_BATCH_SIZE")):
     outputs = []
     i = 0
@@ -34,7 +43,7 @@ def model_predict(model, inputs):
         return try_model_predict(model, inputs)
     except Exception as e:
         textattack.shared.utils.logger.error(
-            f"Failed to predict with model {model}. Check tokenizer configuration."
+            f"Failed to predict with model {model.__class__}. Check tokenizer configuration."
         )
         raise e
 

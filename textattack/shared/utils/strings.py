@@ -63,7 +63,7 @@ LABEL_COLORS = [
 
 
 def color_from_label(label_num):
-    """ Colors for labels (arbitrary). """
+    """ Arbitrary colors for different labels. """
     try:
         label_num %= len(LABEL_COLORS)
         return LABEL_COLORS[label_num]
@@ -87,6 +87,13 @@ class ANSI_ESCAPE_CODES:
 
 
 def color_text(text, color=None, method=None):
+    if not (isinstance(color, str) or isinstance(color, tuple)):
+        raise TypeError(f"Cannot color text with provided color of type {type(color)}")
+    if isinstance(color, tuple):
+        if len(color) > 1:
+            text = color_text(text, color[1:], method)
+        color = color[0]
+
     if method is None:
         return text
     if method == "html":
@@ -100,8 +107,14 @@ def color_text(text, color=None, method=None):
             color = ANSI_ESCAPE_CODES.OKBLUE
         elif color == "gray":
             color = ANSI_ESCAPE_CODES.GRAY
-        else:
+        elif color == "bold":
             color = ANSI_ESCAPE_CODES.BOLD
+        elif color == "underline":
+            color = ANSI_ESCAPE_CODES.UNDERLINE
+        elif color == "warning":
+            color = ANSI_ESCAPE_CODES.WARNING
+        else:
+            raise ValueError(f"unknown text color {color}")
 
         return color + text + ANSI_ESCAPE_CODES.STOP
     elif method == "file":

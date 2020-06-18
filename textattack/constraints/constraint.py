@@ -4,8 +4,8 @@ from textattack.shared.utils import default_class_repr
 class Constraint:
     """ 
     An abstract class that represents constraints on adversial text examples. 
-    Constraints evaluate whether transformations from a ``TokenizedText`` to another 
-    ``TokenizedText`` meet certain conditions.
+    Constraints evaluate whether transformations from a ``AttackedText`` to another 
+    ``AttackedText`` meet certain conditions.
     """
 
     def call_many(self, transformed_texts, current_text, original_text=None):
@@ -15,9 +15,9 @@ class Constraint:
         ``_check_constraint_many``\.
 
         Args:
-            transformed_texts: The candidate transformed ``TokenizedText``\s.
-            current_text: The current ``TokenizedText``.
-            original_text: The original ``TokenizedText`` from which the attack began.
+            transformed_texts: The candidate transformed ``AttackedText``\s.
+            current_text: The current ``AttackedText``.
+            original_text: The original ``AttackedText`` from which the attack began.
         """
         incompatible_transformed_texts = []
         compatible_transformed_texts = []
@@ -46,9 +46,9 @@ class Constraint:
         Calls ``check_constraint``\.
 
         Args:
-            transformed_texts: The candidate transformed ``TokenizedText``\s.
-            current_text: The current ``TokenizedText``.
-            original_text: The original ``TokenizedText`` from which the attack began.
+            transformed_texts: The candidate transformed ``AttackedText``\s.
+            current_text: The current ``AttackedText``.
+            original_text: The original ``AttackedText`` from which the attack began.
         """
         return [
             transformed_text
@@ -64,14 +64,14 @@ class Constraint:
         compatibility with latest ``Transformation``, then calls ``_check_constraint``\.
         
         Args:
-            transformed_text: The candidate transformed ``TokenizedText``.
-            current_text: The current ``TokenizedText``.
-            original_text: The original ``TokenizedText`` from which the attack began.
+            transformed_text: The candidate transformed ``AttackedText``.
+            current_text: The current ``AttackedText``.
+            original_text: The original ``AttackedText`` from which the attack began.
         """
-        if not isinstance(transformed_text, TokenizedText):
-            raise TypeError("transformed_text must be of type TokenizedText")
-        if not isinstance(current_text, TokenizedText):
-            raise TypeError("current_text must be of type TokenizedText")
+        if not isinstance(transformed_text, AttackedText):
+            raise TypeError("transformed_text must be of type AttackedText")
+        if not isinstance(current_text, AttackedText):
+            raise TypeError("current_text must be of type AttackedText")
 
         try:
             if not self.check_compatibility(
@@ -92,9 +92,9 @@ class Constraint:
         the specific constraint.
         
         Args:
-            transformed_text: The candidate transformed ``TokenizedText``.
-            current_text: The current ``TokenizedText``.
-            original_text: The original ``TokenizedText`` from which the attack began.
+            transformed_text: The candidate transformed ``AttackedText``.
+            current_text: The current ``AttackedText``.
+            original_text: The original ``AttackedText`` from which the attack began.
         """
         raise NotImplementedError()
 

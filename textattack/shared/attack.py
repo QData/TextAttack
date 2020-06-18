@@ -10,7 +10,7 @@ from textattack.attack_results import (
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
-from textattack.shared import TokenizedText, utils
+from textattack.shared import AttackedText, utils
 
 
 class Attack:
@@ -80,8 +80,8 @@ class Attack:
         through the applicable constraints.
         
         Args:
-            current_text: The current ``TokenizedText`` on which to perform the transformations.
-            original_text: The original ``TokenizedText`` from which the attack started.
+            current_text: The current ``AttackedText`` on which to perform the transformations.
+            original_text: The original ``AttackedText`` from which the attack started.
             apply_constraints: Whether or not to apply post-transformation constraints.
 
         Returns:
@@ -111,9 +111,9 @@ class Attack:
         Filters a list of potential transformaed texts based on ``self.constraints``\.
         
         Args:
-            transformed_texts: A list of candidate transformed ``TokenizedText``\s to filter.
-            current_text: The current ``TokenizedText`` on which the transformation was applied.
-            original_text: The original ``TokenizedText`` from which the attack started.
+            transformed_texts: A list of candidate transformed ``AttackedText``\s to filter.
+            current_text: The current ``AttackedText`` on which the transformation was applied.
+            original_text: The original ``AttackedText`` from which the attack started.
         """
         filtered_texts = transformed_texts[:]
         for C in self.constraints:
@@ -138,9 +138,9 @@ class Attack:
         Checks cache first.
             
         Args:
-            transformed_texts: A list of candidate transformed ``TokenizedText``\s to filter.
-            current_text: The current ``TokenizedText`` on which the transformation was applied.
-            original_text: The original ``TokenizedText`` from which the attack started.
+            transformed_texts: A list of candidate transformed ``AttackedText``\s to filter.
+            current_text: The current ``AttackedText`` on which the transformation was applied.
+            original_text: The original ``AttackedText`` from which the attack started.
         """
         # Populate cache with transformed_texts
         uncached_texts = []
@@ -163,7 +163,7 @@ class Attack:
 
     def attack_one(self, initial_result):
         """
-        Calls the ``SearchMethod`` to perturb the ``TokenizedText`` stored in 
+        Calls the ``SearchMethod`` to perturb the ``AttackedText`` stored in 
         ``initial_result``.
 
         Args:
@@ -204,10 +204,10 @@ class Attack:
             i = indices.popleft()
             try:
                 text, ground_truth_output = dataset[i]
-                tokenized_text = TokenizedText(text, self.goal_function.tokenizer)
+                attacked_text = AttackedText(text)
                 self.goal_function.num_queries = 0
                 goal_function_result, _ = self.goal_function.get_result(
-                    tokenized_text, ground_truth_output
+                    attacked_text, ground_truth_output
                 )
                 if goal_function_result.succeeded:
                     # Store the true output on the goal function so that the
@@ -217,9 +217,7 @@ class Attack:
 
             except IndexError:
                 raise IndexError(
-                    "Out of bounds access of dataset. Size of data is {} but tried to access index {}".format(
-                        len(dataset), i
-                    )
+                    f"Out of bounds access of dataset. Size of data is {len(dataset)} but tried to access index {i}"
                 )
 
     def attack_dataset(self, dataset, indices=None):

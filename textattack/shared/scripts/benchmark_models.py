@@ -1,4 +1,5 @@
 import argparse
+import collections
 import sys
 
 import torch
@@ -28,10 +29,9 @@ def test_model_on_dataset(args, model, dataset, batch_size=128):
     batch_labels = []
     all_true_labels = []
     all_guess_labels = []
-    for i, (text, label) in enumerate(dataset):
-        if i >= num_examples:
-            break
-        ids = model.tokenizer.encode(text)
+    for i, (text_input, label) in enumerate(dataset):
+        attacked_text = textattack.shared.AttackedText(text_input)
+        ids = model.tokenizer.encode(attacked_text.tokenizer_input)
         batch_ids.append(ids)
         batch_labels.append(label)
         if len(batch_ids) == batch_size:
