@@ -1,13 +1,12 @@
-import torch
+import os
 
-import os # temporarily set W&B to silent to avoid log-in warning message
-os.environ["WANDB_SILENT"] = "1"
-import transformers
-os.environ["WANDB_SILENT"] = "0"
+import torch
 
 from textattack.shared import utils
 
 from .language_model_constraint import LanguageModelConstraint
+
+os.environ["WANDB_SILENT"] = "1"
 
 
 class GPT2(LanguageModelConstraint):
@@ -20,6 +19,9 @@ class GPT2(LanguageModelConstraint):
     """
 
     def __init__(self, **kwargs):
+        import transformers
+
+        os.environ["WANDB_SILENT"] = "0"
         self.model = transformers.GPT2LMHeadModel.from_pretrained("gpt2")
         self.model.to(utils.device)
         self.tokenizer = transformers.GPT2Tokenizer.from_pretrained("gpt2")
