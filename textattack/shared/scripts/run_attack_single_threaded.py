@@ -81,7 +81,7 @@ def run(args):
             attacked_text = textattack.shared.attacked_text.AttackedText(text)
             initial_result = attack.goal_function.get_output(attacked_text)
             result = next(attack.attack_dataset([(text, initial_result)]))
-            print(result.__str__(color_method="ansi"))
+            print(result.__str__(color_method="ansi") + "\n")
 
     else:
         # Not interactive? Use default dataset.

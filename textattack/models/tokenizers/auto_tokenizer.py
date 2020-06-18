@@ -54,4 +54,4 @@ class AutoTokenizer(Tokenizer):
                 pad_to_max_length=True,
             )
         else:
-            return [dict(self.encode(input_text)) for input_text in input_text_list]
+            return [self.encode(input_text) for input_text in input_text_list]

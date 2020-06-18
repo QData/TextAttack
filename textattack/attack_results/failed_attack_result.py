@@ -11,7 +11,10 @@ class FailedAttackResult(AttackResult):
         super().__init__(original_result, perturbed_result, num_queries)
 
     def str_lines(self, color_method=None):
-        lines = (self.goal_function_result_str(color_method), self.original_text())
+        lines = (
+            self.goal_function_result_str(color_method),
+            self.original_text(color_method),
+        )
         return tuple(map(str, lines))
 
     def goal_function_result_str(self, color_method=None):

@@ -8,7 +8,7 @@ lint: FORCE  ## Run black (in check mode)
 	isort --check-only --recursive tests textattack
 
 test: FORCE ## Run tests using pytest
-	python -m pytest -x --dist=loadfile -n auto
+	python -m pytest -qx --dist=loadfile -n auto
 
 docs: FORCE ## Build docs using Sphinx.
 	sphinx-build -b html docs docs/_build/html 

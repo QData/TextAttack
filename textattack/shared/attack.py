@@ -204,10 +204,10 @@ class Attack:
             i = indices.popleft()
             try:
                 text, ground_truth_output = dataset[i]
-                tokenized_text = AttackedText(text)
+                attacked_text = AttackedText(text)
                 self.goal_function.num_queries = 0
                 goal_function_result, _ = self.goal_function.get_result(
-                    tokenized_text, ground_truth_output
+                    attacked_text, ground_truth_output
                 )
                 if goal_function_result.succeeded:
                     # Store the true output on the goal function so that the
@@ -217,9 +217,7 @@ class Attack:
 
             except IndexError:
                 raise IndexError(
-                    "Out of bounds access of dataset. Size of data is {} but tried to access index {}".format(
-                        len(dataset), i
-                    )
+                    f"Out of bounds access of dataset. Size of data is {len(dataset)} but tried to access index {i}"
                 )
 
     def attack_dataset(self, dataset, indices=None):

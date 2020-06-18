@@ -70,13 +70,13 @@ class TestAttackedText:
         assert attacked_text_pair.text == "\n".join(raw_text_pair.values())
 
     def test_printable_text(self, attacked_text, attacked_text_pair):
-        assert attacked_text.printable_text == raw_text
+        assert attacked_text.printable_text() == raw_text
         desired_printed_pair_text = (
-            "Premise: " + premise + "\n\n" + "Hypothesis: " + hypothesis
+            "Premise: " + premise + "\n" + "Hypothesis: " + hypothesis
         )
-        print("p =>", attacked_text_pair.printable_text)
+        print("p =>", attacked_text_pair.printable_text())
         print("d =>", desired_printed_pair_text)
-        assert attacked_text_pair.printable_text == desired_printed_pair_text
+        assert attacked_text_pair.printable_text() == desired_printed_pair_text
 
     def test_tokenizer_input(self, attacked_text, attacked_text_pair):
         assert attacked_text.tokenizer_input == (raw_text,)
@@ -127,6 +127,26 @@ class TestAttackedText:
         assert (
             new_text.text
             == "A person walks a long way up stairs into a room and sees beer poured from a keg and people on the couch talking."
+        )
+
+    def test_pair_word_insertion(self, attacked_text_pair):
+        new_text = attacked_text_pair.insert_text_after_word_index(3, "old decrepit")
+        assert new_text.text == (
+            "Among these are the old decrepit red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes."
+            + "\n"
+            + "The Patan Museum is down the street from the red brick Royal Palace."
+        )
+        new_text = new_text.insert_text_after_word_index(38, "and shapes")
+        assert new_text.text == (
+            "Among these are the old decrepit red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes and shapes."
+            + "\n"
+            + "The Patan Museum is down the street from the red brick Royal Palace."
+        )
+        new_text = new_text.insert_text_after_word_index(41, "The")
+        assert new_text.text == (
+            "Among these are the old decrepit red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes and shapes."
+            + "\n"
+            + "The The Patan Museum is down the street from the red brick Royal Palace."
         )
 
     def test_modified_indices(self, attacked_text):

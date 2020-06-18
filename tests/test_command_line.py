@@ -4,6 +4,8 @@ import subprocess
 
 import pytest
 
+DEBUG = True
+
 """
 Attack command-line tests in the format (name, args, sample_output_file)
 """
@@ -113,7 +115,7 @@ def test_command_line_attack(capsys, name, command, sample_output_file):
     """ Runs attack tests and compares their outputs to a reference file.
     """
     # read in file and create regex
-    desired_output = open(sample_output_file, "r").read()
+    desired_output = open(sample_output_file, "r").read().strip()
     print("desired_output =>", desired_output)
     # regex in sample file look like /.*/
     desired_re = re.escape(desired_output).replace("/\\.\\*/", ".*")
@@ -142,10 +144,14 @@ def test_command_line_attack(capsys, name, command, sample_output_file):
         result = subprocess.run(shlex.split(command), capture_output=True)
     # get output and check match
     assert result.stdout is not None
-    stdout = result.stdout.decode()
+    stdout = result.stdout.decode().strip()
     print("stdout =>", stdout)
     assert result.stderr is not None
-    stderr = result.stderr.decode()
+    stderr = result.stderr.decode().strip()
     print("stderr =>", stderr)
 
+    if DEBUG and not re.match(desired_re, stdout, flags=re.S):
+        import pdb
+
+        pdb.set_trace()
     assert re.match(desired_re, stdout, flags=re.S)

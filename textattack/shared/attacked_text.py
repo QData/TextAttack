@@ -4,6 +4,8 @@ import math
 import numpy as np
 import torch
 
+import textattack
+
 from .utils import device, words_from_text
 
 
@@ -41,7 +43,7 @@ class AttackedText:
                 f"Invalid text_input type {type(text_input)} (required str or OrderedDict)"
             )
         # Format text inputs.
-        self._text_input = {k: v.strip() for k, v in self._text_input.items()}
+        self._text_input = OrderedDict([(k, v) for k, v in self._text_input.items()])
         self.words = words_from_text(self.text)
         if attack_attrs is None:
             self.attack_attrs = dict()
@@ -213,7 +215,7 @@ class AttackedText:
             if (i < 0) or (i > len(words)):
                 raise ValueError(f"Cannot assign word at index {i}")
             words[i] = new_word
-        return self.replace_new_words(words)
+        return self.generate_new_attacked_text(words)
 
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new AttackedText object where the word at 
@@ -271,10 +273,10 @@ class AttackedText:
             self.attack_attrs["original_index_map"] == -1
         ]
 
-    def replace_new_words(self, new_words):
-        """ This code returns a new AttackedText object and replaces old list 
-            of words with a new list of words, but preserves the punctuation 
-            and spacing of the original message.
+    def generate_new_attacked_text(self, new_words):
+        """ Returns a new AttackedText object and replaces old list of words 
+            with a new list of words, but preserves the punctuation and spacing 
+            of the original message.
             
             ``self.words`` is a list of the words in the current text with 
             punctuation removed. However, each "word" in ``new_words``
@@ -367,8 +369,7 @@ class AttackedText:
         """
         return "\n".join(self._text_input.values())
 
-    @property
-    def printable_text(self):
+    def printable_text(self, key_color="bold", key_color_method=None):
         """ Represents full text input. Adds field descriptions.
         
         For example, entailment inputs look like:
@@ -380,10 +381,17 @@ class AttackedText:
         # For single-sequence inputs, don't show a prefix.
         if len(self._text_input) == 1:
             return next(iter(self._text_input.values()))
-        # For multiple-sequence inputs, show a prefix and a colon.
+        # For multiple-sequence inputs, show a prefix and a colon. Optionally,
+        # color the key.
         else:
-            return "\n\n".join(
-                f"{key.capitalize()}: {value}"
+            if key_color_method:
+                ck = lambda k: textattack.shared.utils.color_text(
+                    k, key_color, key_color_method
+                )
+            else:
+                ck = lambda k: k
+            return "\n".join(
+                f"{ck(key.capitalize())}: {value}"
                 for key, value in self._text_input.items()
             )
 

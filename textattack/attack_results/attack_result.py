@@ -29,21 +29,25 @@ class AttackResult:
         self.perturbed_result = perturbed_result
         self.num_queries = num_queries
 
-        # We don't want the AttackedText `ids` sticking around clogging up
+        # We don't want the AttackedText attributes sticking around clogging up
         # space on our devices. Delete them here, if they're still present,
         # because we won't need them anymore anyway.
         self.original_result.attacked_text.free_memory()
         self.perturbed_result.attacked_text.free_memory()
 
-    def original_text(self):
+    def original_text(self, color_method=None):
         """ Returns the text portion of `self.original_result`. Helper method.
         """
-        return self.original_result.attacked_text.printable_text
+        return self.original_result.attacked_text.printable_text(
+            key_color=("bold", "underline"), key_color_method=color_method
+        )
 
-    def perturbed_text(self):
+    def perturbed_text(self, color_method=None):
         """ Returns the text portion of `self.perturbed_result`. Helper method.
         """
-        return self.original_result.attacked_text.printable_text
+        return self.original_result.attacked_text.printable_text(
+            key_color=("bold", "underline"), key_color_method=color_method
+        )
 
     def str_lines(self, color_method=None):
         """ A list of the lines to be printed for this result's string
@@ -54,7 +58,7 @@ class AttackResult:
         return lines
 
     def __str__(self, color_method=None):
-        return "\n".join(self.str_lines(color_method=color_method))
+        return "\n\n".join(self.str_lines(color_method=color_method))
 
     def goal_function_result_str(self, color_method=None):
         """
@@ -71,7 +75,7 @@ class AttackResult:
         t2 = self.perturbed_result.attacked_text
 
         if color_method is None:
-            return t1.printable_text, t2.printable_text
+            return t1.printable_text(), t2.printable_text()
 
         color_1 = self.original_result.get_text_color_input()
         color_2 = self.perturbed_result.get_text_color_perturbed()
@@ -114,4 +118,8 @@ class AttackResult:
             words_2_idxs, words_2
         )
 
-        return t1.printable_text, t2.printable_text
+        key_color = ("bold", "underline")
+        return (
+            t1.printable_text(key_color=key_color, key_color_method=color_method),
+            t2.printable_text(key_color=key_color, key_color_method=color_method),
+        )

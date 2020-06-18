@@ -16,19 +16,24 @@ Attack(
 Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [91m0[0m-->[92m1[0m
-[91mhide[0m [91mnew[0m secretions from the parental units
-[92mEhide[0m [92menw[0m secretions from the parental units
+
+[91mhide[0m [91mnew[0m secretions from the parental units 
+
+[92mEhide[0m [92menw[0m secretions from the parental units 
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
 [91m0[0m-->[91m[FAILED][0m
-contains no wit , only labored gags
+
+contains no wit , only labored gags 
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
 [92m1[0m-->[91m0[0m
-that [92mloves[0m its characters and communicates [92msomething[0m [92mrather[0m [92mbeautiful[0m about human nature
-that [91mlodes[0m its characters and communicates [91msomethNng[0m [91mrathrer[0m [91mbeautifdul[0m about human nature
+
+that [92mloves[0m its characters and communicates [92msomething[0m [92mrather[0m [92mbeautiful[0m about human nature 
+
+that [91mlodes[0m its characters and communicates [91msomethNng[0m [91mrathrer[0m [91mbeautifdul[0m about human nature 
 
 
 
