@@ -21,6 +21,7 @@ class BERTForClassification:
         self.model = BertForSequenceClassification.from_pretrained(
             model_file_path, num_labels=num_labels
         )
+
         self.model.to(utils.device)
         self.model.eval()
         self.tokenizer = BERTTokenizer(model_file_path)

@@ -18,7 +18,7 @@ attack_test_params = [
         (
             "python -m textattack --model cnn-imdb "
             "--attack-from-file tests/sample_inputs/attack_from_file.py:Attack "
-            "--num-examples 2 --attack-n"
+            "--num-examples 2  --num-examples-offset 18 --attack-n"
         ),
         "tests/sample_outputs/run_attack_from_file.txt",
     ),
@@ -64,29 +64,19 @@ attack_test_params = [
         "run_attack_hotflip_lstm_mr_4",
         (
             "python -m textattack --model lstm-mr --recipe hotflip "
-            "--num-examples 4 --num-examples-offset 13"
+            "--num-examples 4 --num-examples-offset 3"
         ),
         "tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt",
-    ),
-    #
-    # test deepwordbug on 10 samples from BERT SNLI
-    #
-    (
-        "run_attack_deepwordbug_bert_snli_10",
-        (
-            "python -m textattack --model bert-base-uncased-snli --recipe deepwordbug --num-examples 2 --attack-n"
-        ),
-        "tests/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt",
     ),
     #
     # test: run_attack deepwordbug attack on 10 samples from LSTM MR
     #
     (
-        "run_attack_deepwordbug_lstm_mr_10",
+        "run_attack_deepwordbug_lstm_mr_2",
         (
             "python -m textattack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n"
         ),
-        "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_10.txt",
+        "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt",
     ),
     #
     # test: run_attack targeted classification of class 2 on BERT MNLI with enable_csv
