@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 
-DEBUG = True
+DEBUG = True 
 
 """
 Attack command-line tests in the format (name, args, sample_output_file)
@@ -18,7 +18,7 @@ attack_test_params = [
         (
             "python -m textattack --model cnn-imdb "
             "--attack-from-file tests/sample_inputs/attack_from_file.py:Attack "
-            "--num-examples 2 --attack-n"
+            "--num-examples 2  --num-examples-offset 18 --attack-n"
         ),
         "tests/sample_outputs/run_attack_from_file.txt",
     ),

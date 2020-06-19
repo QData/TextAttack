@@ -26,6 +26,7 @@ class SpacyTokenizer(Tokenizer):
             raise TypeError(
                 f"SpacyTokenizer can only tokenize `str`, got type {type(text)}"
             )
+        return text.split()
         spacy_tokens = [t.text for t in self.tokenizer(text)]
         return spacy_tokens[: self.max_length]
 

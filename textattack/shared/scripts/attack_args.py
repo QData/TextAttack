@@ -10,47 +10,9 @@ RECIPE_NAMES = {
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
 }
 
-# AG News and MR are the last datasets self-hosted by textattack. Once they
-# join `nlp`, we'll remove them from our hosting.
-TEXTATTACK_MODEL_CLASS_NAMES = {
-    #
-    #
-    # BERT models - default uncased
-    "bert-base-uncased-ag-news": "textattack.models.classification.bert.BERTForAGNewsClassification",
-    "bert-base-uncased-mr": "textattack.models.classification.bert.BERTForMRSentimentClassification",
-    # CNN models
-    "cnn-ag-news": "textattack.models.classification.cnn.WordCNNForAGNewsClassification",
-    "cnn-mr": "textattack.models.classification.cnn.WordCNNForMRSentimentClassification",
-    # LSTM models
-    "lstm-ag-news": "textattack.models.classification.lstm.LSTMForAGNewsClassification",
-    "lstm-mr": "textattack.models.classification.lstm.LSTMForMRSentimentClassification",
-    #
-    # Translation models
-    #
-    "t5-en2fr": "textattack.models.translation.t5.T5EnglishToFrench",
-    "t5-en2de": "textattack.models.translation.t5.T5EnglishToGerman",
-    "t5-en2ro": "textattack.models.translation.t5.T5EnglishToRomanian",
-    #
-    # Summarization models
-    #
-    "t5-summ": "textattack.models.summarization.T5Summarization",
-    #
-    # Translation datasets
-    #
-    "t5-en2de": textattack.datasets.translation.NewsTest2013EnglishToGerman,
-}
-
-DATASET_BY_MODEL = {
-    # AG News
-    "bert-base-uncased-ag-news": textattack.datasets.classification.AGNews,
-    "cnn-ag-news": textattack.datasets.classification.AGNews,
-    "lstm-ag-news": textattack.datasets.classification.AGNews,
-    # MR
-    "bert-base-uncased-mr": textattack.datasets.classification.MovieReviewSentiment,
-    "cnn-mr": textattack.datasets.classification.MovieReviewSentiment,
-    "lstm-mr": textattack.datasets.classification.MovieReviewSentiment,
-}
-
+#
+# Models hosted on the huggingface model hub.
+#
 HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # bert-base-uncased
@@ -179,7 +141,12 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     ),
 }
 
+
+#
+# Models hosted by textattack.
+#
 TEXTATTACK_DATASET_BY_MODEL = {
+    # @TODO restore ag-news models after agnews joins `nlp` as a dataset.
     #
     # CNNs
     #
@@ -189,6 +156,10 @@ TEXTATTACK_DATASET_BY_MODEL = {
         ("yelp_polarity", None, "test"),
     ),
     "lstm-imdb": ("models/classification/lstm/imdb", ("imdb", None, "test")),
+    'lstm-mr': (
+        'models/classification/cnn/mr',
+        ('rotten_tomatoes', None, 'test'),
+    ),
     #
     # LSTMs
     #
@@ -198,14 +169,22 @@ TEXTATTACK_DATASET_BY_MODEL = {
         "models/classification/cnn/yelp_polarity",
         ("yelp", None, "test"),
     ),
+    'cnn-mr': (
+        'models/classification/cnn/mr',
+        ('rotten_tomatoes', None, 'tsxt'),
+    ),
     #
     # Textual entailment models
     #
     # BERT models
-    "bert-base-uncased-snli": ("snli", None, "test"),
+    "bert-base-uncased-snli": ("models/entailment/bert/snli-uncased", ("snli", None, "test")), # @TODO may need label maps here
     #
     # Text classification models
     #
+    'bert-base-uncased-mr': (
+        'models/classification/bert/mr-uncased',
+        ('rotten_tomatoes', None, 'train'),
+    ),
     "bert-base-cased-imdb": (
         "models/classification/bert/imdb-cased",
         ("imdb", None, "test"),
@@ -224,7 +203,7 @@ TEXTATTACK_DATASET_BY_MODEL = {
     ),
     #
     # Translation models
-    # TODO add proper datasets
+    # TODO add proper `nlp` datasets for translation & summarization
     #
     # Summarization models
     #

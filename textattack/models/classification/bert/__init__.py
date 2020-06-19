@@ -1,2 +1,0 @@
-from .bert_for_ag_news_classification import BERTForAGNewsClassification
-from .bert_for_mr_sentiment_classification import BERTForMRSentimentClassification

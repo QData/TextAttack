@@ -39,4 +39,4 @@ Actor [91mturWed[0m director Bill Paxton follows up his promising debut, the G
 | Average num. words per input: | 254.5  |
 | Avg num queries:              | 266.5  |
 +-------------------------------+--------+
-Attack time: /.*/
+Attack time: /.*/ 

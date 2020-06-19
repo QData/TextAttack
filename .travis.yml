@@ -9,4 +9,5 @@ install:
   - pip install -e .
 script:
   - black . --check
+  - echo "import textattack" | python # run textattack post-install hooks
   - pytest tests -vx --dist=loadfile -n auto
