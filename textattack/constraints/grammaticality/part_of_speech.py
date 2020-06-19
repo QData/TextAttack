@@ -40,18 +40,23 @@ class PartOfSpeech(Constraint):
         context_words = before_ctx + [word] + after_ctx
         context_key = " ".join(context_words)
         if context_key in self._pos_tag_cache:
-            pos_list = self._pos_tag_cache[context_key]
+            word_list, pos_list = self._pos_tag_cache[context_key]
         else:
             if self.tagger_type == "nltk":
-                _, pos_list = zip(*nltk.pos_tag(context_words, tagset=self.tagset))
+                word_list, pos_list = zip(
+                    *nltk.pos_tag(context_words, tagset=self.tagset)
+                )
 
             if self.tagger_type == "flair":
-                _, pos_list = zip_flair_result(self._flair_pos_tagger.predict(context_key)[0])
+                word_list, pos_list = zip_flair_result(
+                    self._flair_pos_tagger.predict(context_key)[0]
+                )
 
-            self._pos_tag_cache[context_key] = pos_list
+            self._pos_tag_cache[context_key] = (word_list, pos_list)
 
         # idx of `word` in `context_words`
         idx = len(before_ctx)
+        assert word_list[idx] == word, "POS list not matched with original word list."
         return pos_list[idx]
 
     def _check_constraint(self, transformed_text, current_text, original_text=None):
@@ -65,8 +70,8 @@ class PartOfSpeech(Constraint):
         for i in indices:
             current_word = current_text.words[i]
             transformed_word = transformed_text.words[i]
-            before_ctx = current_text.words[max(i - 8, 0) : i]
-            after_ctx = current_text.words[i + 1 : min(i + 8, len(current_text.words))]
+            before_ctx = current_text.words[max(i - 4, 0) : i]
+            after_ctx = current_text.words[i + 1 : min(i + 4, len(current_text.words))]
             cur_pos = self._get_pos(before_ctx, current_word, after_ctx)
             replace_pos = self._get_pos(before_ctx, transformed_word, after_ctx)
             if not self._can_replace_pos(cur_pos, replace_pos):
