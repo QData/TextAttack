@@ -64,6 +64,6 @@ stanley kwan has directed not only one of the best gay love stories ever made , 
 | Attack success rate:          | 25.0%  |
 | Average perturbed word %:     | 4.17%  |
 | Average num. words per input: | 20.75  |
-| Avg num queries:              | 1.25   |
+| Avg num queries:              | 1.5    |
 +-------------------------------+--------+
 Attack time: /.*/

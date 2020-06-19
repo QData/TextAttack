@@ -1,7 +1,7 @@
+from flair.data import Sentence
+from flair.models import SequenceTagger
 import lru
 import nltk
-from flair.models import SequenceTagger
-from flair.data import Sentence
 
 from textattack.constraints import Constraint
 from textattack.shared import AttackedText
@@ -17,7 +17,9 @@ class PartOfSpeech(Constraint):
         POS tagger from Flair `<https://github.com/flairNLP/flair>` also available
     """
 
-    def __init__(self, tagger_type="nltk", tagset="universal", allow_verb_noun_swap=True):
+    def __init__(
+        self, tagger_type="nltk", tagset="universal", allow_verb_noun_swap=True
+    ):
         self.tagger_type = tagger_type
         self.tagset = tagset
         self.allow_verb_noun_swap = allow_verb_noun_swap
@@ -25,9 +27,9 @@ class PartOfSpeech(Constraint):
         self._pos_tag_cache = lru.LRU(2 ** 14)
         if tagger_type == "flair":
             if tagset == "universal":
-                self._pos_tagger = SequenceTagger.load("upos-fast")
+                self._flair_pos_tagger = SequenceTagger.load("upos-fast")
             else:
-                self._pos_tagger = SequenceTagger.load("pos-fast")
+                self._flair_pos_tagger = SequenceTagger.load("pos-fast")
 
     def _can_replace_pos(self, pos_a, pos_b):
         return (pos_a == pos_b) or (
@@ -42,13 +44,13 @@ class PartOfSpeech(Constraint):
         else:
             if self.tagger_type == "nltk":
                 _, pos_list = zip(*nltk.pos_tag(context_words, tagset=self.tagset))
-        
+
             if self.tagger_type == "flair":
-                _, pos_list = zip_flair_result(self._pos_tagger.predict(context_key)[0])
+                _, pos_list = zip_flair_result(self._flair_pos_tagger.predict(context_key)[0])
 
             self._pos_tag_cache[context_key] = pos_list
 
-        # idx of `word` in `context_words`    
+        # idx of `word` in `context_words`
         idx = len(before_ctx)
         return pos_list[idx]
 
@@ -76,20 +78,18 @@ class PartOfSpeech(Constraint):
         return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
-        return ["tagset", "allow_verb_noun_swap"]
+        return ["tagger_type", "tagset", "allow_verb_noun_swap"]
 
 
 def zip_flair_result(pred):
-    if not sinstance(pred, Sentence):
+    if not isinstance(pred, Sentence):
         raise TypeError(f"Result from Flair POS tagger must be a `Sentence` object.")
-    
+
     tokens = pred.tokens
     word_list = []
     pos_list = []
     for token in tokens:
         word_list.append(token.text)
-        pos_list.append(token.annotation_layers['pos'][0]._value)
-    
+        pos_list.append(token.annotation_layers["pos"][0]._value)
+
     return word_list, pos_list
-
-
