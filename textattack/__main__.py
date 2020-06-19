@@ -13,9 +13,14 @@ from textattack.shared.scripts.run_attack_single_threaded import (
     run as run_single_threaded,
 )
 
-if __name__ == "__main__":
+
+def main():
     args = get_args()
     if args.parallel:
         run_parallel(args)
     else:
         run_single_threaded(args)
+
+
+if __name__ == "__main__":
+    main()
