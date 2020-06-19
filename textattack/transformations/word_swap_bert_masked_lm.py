@@ -1,5 +1,6 @@
-import torch
 from collections import deque
+
+import torch
 from transformers import BertForMaskedLM, BertTokenizerFast
 
 from textattack.shared import utils
@@ -24,8 +25,12 @@ class WordSwapBERTMaskedLM(WordSwap):
         self.max_length = max_length
         self.subword_expand_limit = 2
 
-        self._lm_tokenizer = BertTokenizerFast.from_pretrained("bert-large-uncased-whole-word-masking")
-        self._language_model = BertForMaskedLM.from_pretrained("bert-large-uncased-whole-word-masking")
+        self._lm_tokenizer = BertTokenizerFast.from_pretrained(
+            "bert-large-uncased-whole-word-masking"
+        )
+        self._language_model = BertForMaskedLM.from_pretrained(
+            "bert-large-uncased-whole-word-masking"
+        )
         self._language_model.to(utils.device)
         self._segment_tensor = (
             torch.zeros(self.max_length, dtype=torch.long).unsqueeze(0).to(utils.device)
@@ -97,7 +102,7 @@ class WordSwapBERTMaskedLM(WordSwap):
 
         masked_index = ids.index(self._lm_tokenizer.mask_token_id)
         top_ids = self._call_language_model(ids, masked_index, self.max_candidates)
-        replacement_words = [] 
+        replacement_words = []
         subword_tokens = []
         for id in top_ids:
             token = self._lm_tokenizer.convert_ids_to_tokens(id)
@@ -106,14 +111,14 @@ class WordSwapBERTMaskedLM(WordSwap):
             elif "##" in token:
                 subword_tokens.append(token)
 
-        '''
+        """
         for token in subword_tokens:
             expanded_tokens = self._expand_subword(ids, masked_index, token)
             print("expanded:",expanded_tokens)
             for expanded_token in expanded_tokens:
                 if check_if_word(expanded_token):
                     replacement_words.append(expanded_token)
-        '''
+        """
         return replacement_words
 
     def _get_transformations(self, current_text, indices_to_modify):
@@ -145,6 +150,7 @@ def recover_word_case(word, reference_word):
     else:
         # if other, just do not alter the word's case
         return word
+
 
 def check_if_word(word):
     for c in word:
