@@ -168,14 +168,6 @@ TEXTATTACK_DATASET_BY_MODEL = {
     ),
     "cnn-mr": ("models/classification/cnn/mr", ("rotten_tomatoes", None, "test"),),
     #
-    # Textual entailment models
-    #
-    # BERT models
-    "bert-base-uncased-snli": (
-        ("models/entailment/bert/snli-uncased", 3),
-        ("snli", None, "test", [1, 2, 0]),
-    ),
-    #
     # Text classification models
     #
     "bert-base-uncased-mr": (

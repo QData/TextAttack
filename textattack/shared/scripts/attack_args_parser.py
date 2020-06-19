@@ -11,8 +11,7 @@ import numpy as np
 import torch
 
 import textattack
-
-from .attack_args import *
+from textattack.shared.scripts.attack_args import *
 
 
 def set_seed(random_seed):
@@ -521,6 +520,7 @@ def parse_dataset_from_args(args):
         dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, shuffle=args.shuffle
         )
+        dataset.examples = dataset.examples[args.num_examples_offset :]
     else:
         raise ValueError("Must supply pretrained model or dataset")
     return dataset
