@@ -16,29 +16,29 @@ Attack(
 Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [91m0[0m-->[37m[SKIPPED][0m
-A person in a black and green outfit is riding a bicycle .
 
-a colorfully dressed child rides a bike
+[1m[4mPremise[0m[0m: A person in a black and green outfit is riding a bicycle .
+[1m[4mHypothesis[0m[0m: a colorfully dressed child rides a bike
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
 [92m1[0m-->[91m0[0m
-A person rolls down a hill riding a wagon as another watches .
 
-A [92mchild[0m in a wagon rolls down a hill .
-A person rolls down a hill riding a wagon as another watches .
+[1m[4mPremise[0m[0m: A person rolls down a hill riding a wagon as another watches .
+[1m[4mHypothesis[0m[0m: A [92mchild[0m in a wagon rolls down a hill .
 
-A [91mcihld[0m in a wagon rolls down a hill .
+[1m[4mPremise[0m[0m: A person rolls down a hill riding a wagon as another watches .
+[1m[4mHypothesis[0m[0m: A [91mcihld[0m in a wagon rolls down a hill .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
 [94m2[0m-->[92m1[0m
-A man in a black tank top wearing a red plaid [94mhat[0m
 
-A man wearing football pads .
-A man in a black tank top wearing a red plaid [92mat[0m
+[1m[4mPremise[0m[0m: A man in a black tank top wearing a red plaid [94mhat[0m
+[1m[4mHypothesis[0m[0m: A man wearing football pads .
 
-A man wearing football pads .
+[1m[4mPremise[0m[0m: A man in a black tank top wearing a red plaid [92mat[0m
+[1m[4mHypothesis[0m[0m: A man wearing football pads .
 
 
 

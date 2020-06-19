@@ -15,8 +15,10 @@ import yaml
 
 def path_in_cache(file_path):
     textattack_cache_dir = config("CACHE_DIR")
-    if not os.path.exists(textattack_cache_dir):
+    try:
         os.makedirs(textattack_cache_dir)
+    except FileExistsError:  # cache path exists
+        pass
     return os.path.join(textattack_cache_dir, file_path)
 
 

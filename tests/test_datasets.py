@@ -1,3 +1,5 @@
+import collections
+
 import textattack.datasets as datasets
 
 
@@ -86,10 +88,14 @@ def test_MNLI_load():
 
     # Expected
     expected_label = 0
-    expected_text = (
-        "In Temple Bar , the bookshop at the Gallery of Photography carries a large selection "
-        "of photographic publications , and the Flying Pig is a secondhand bookshop .>>>>"
-        "There is a bookshop at the gallery ."
+    expected_text = collections.OrderedDict(
+        [
+            (
+                "premise",
+                "In Temple Bar , the bookshop at the Gallery of Photography carries a large selection of photographic publications , and the Flying Pig is a secondhand bookshop .",
+            ),
+            ("hypothesis", "There is a bookshop at the gallery ."),
+        ]
     )
 
     # Actual

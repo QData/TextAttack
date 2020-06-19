@@ -29,7 +29,7 @@ class GreedyWordSwapWIR(SearchMethod):
         self.ascending = ascending
 
     def _get_index_order(self, initial_result, texts):
-        """ Queries model for list of tokenized text objects ``text`` and
+        """ Queries model for list of attacked text objects ``text`` and
             ranks in order of descending score.
         """
         leave_one_results, search_over = self.get_goal_results(
@@ -39,23 +39,22 @@ class GreedyWordSwapWIR(SearchMethod):
         return leave_one_scores, search_over
 
     def _perform_search(self, initial_result):
-        tokenized_text = initial_result.tokenized_text
+        attacked_text = initial_result.attacked_text
         cur_result = initial_result
 
         # Sort words by order of importance
-        len_text = len(tokenized_text.words)
+        len_text = len(attacked_text.words)
 
         if self.wir_method == "unk":
             leave_one_texts = [
-                tokenized_text.replace_word_at_index(i, "[UNK]")
-                for i in range(len_text)
+                attacked_text.replace_word_at_index(i, "[UNK]") for i in range(len_text)
             ]
             leave_one_scores, search_over = self._get_index_order(
                 initial_result, leave_one_texts
             )
         elif self.wir_method == "delete":
             leave_one_texts = [
-                tokenized_text.delete_word_at_index(i) for i in range(len_text)
+                attacked_text.delete_word_at_index(i) for i in range(len_text)
             ]
             leave_one_scores = self._get_index_order(initial_result, leave_one_texts)
         elif self.wir_method == "random":
@@ -71,8 +70,8 @@ class GreedyWordSwapWIR(SearchMethod):
         results = None
         while i < len(index_order) and not search_over:
             transformed_text_candidates = self.get_transformations(
-                cur_result.tokenized_text,
-                original_text=initial_result.tokenized_text,
+                cur_result.attacked_text,
+                original_text=initial_result.attacked_text,
                 indices_to_modify=[index_order[i]],
             )
             i += 1
@@ -95,7 +94,7 @@ class GreedyWordSwapWIR(SearchMethod):
                 for result in results:
                     if not result.succeeded:
                         break
-                    candidate = result.tokenized_text
+                    candidate = result.attacked_text
                     try:
                         similarity_score = candidate.attack_attrs["similarity_score"]
                     except KeyError:
