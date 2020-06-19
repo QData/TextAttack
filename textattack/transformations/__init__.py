@@ -11,7 +11,7 @@ from .word_swap_random_character_deletion import WordSwapRandomCharacterDeletion
 from .word_swap_random_character_insertion import WordSwapRandomCharacterInsertion
 from .word_swap_random_character_substitution import WordSwapRandomCharacterSubstitution
 from .word_swap_wordnet import WordSwapWordNet
-from .word_swap_language_model import WordSwapLanguageModel
+from .word_swap_bert_masked_lm import WordSwapBERTMaskedLM
 
 # White-box transformations
 from .word_swap_gradient_based import WordSwapGradientBased
