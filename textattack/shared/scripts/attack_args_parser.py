@@ -12,7 +12,7 @@ import torch
 
 import textattack
 
-from attack_args import *
+from .attack_args import *
 
 
 def set_seed(random_seed):
@@ -43,9 +43,8 @@ def get_args():
 
     model_group = parser.add_mutually_exclusive_group()
 
-    model_names = (
-        list(HUGGINGFACE_DATASET_BY_MODEL.keys())
-      + list(TEXTATTACK_DATASET_BY_MODEL.keys())
+    model_names = list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
+        TEXTATTACK_DATASET_BY_MODEL.keys()
     )
     model_group.add_argument(
         "--model",
@@ -291,7 +290,7 @@ def get_args():
             raise ValueError("Cannot use `--checkpoint-interval` with `--shuffle=True`")
 
         set_seed(args.random_seed)
-    
+
     # Shortcuts for huggingface models using --model.
     if not args.checkpoint_resume and args.model in HUGGINGFACE_DATASET_BY_MODEL:
         _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
@@ -451,8 +450,12 @@ def parse_model_from_args(args):
         setattr(model, "tokenizer", tokenizer)
     elif (args.model in HUGGINGFACE_DATASET_BY_MODEL) or args.model_from_huggingface:
         import transformers
-        
-        model_name = args.model if (args.model in HUGGINGFACE_DATASET_BY_MODEL) else args.model_from_huggingface
+
+        model_name = (
+            HUGGINGFACE_DATASET_BY_MODEL[args.model][0]
+            if (args.model in HUGGINGFACE_DATASET_BY_MODEL)
+            else args.model_from_huggingface
+        )
 
         if ":" in model_name:
             model_class, model_name = model_name
@@ -471,9 +474,7 @@ def parse_model_from_args(args):
         model = model_class.from_pretrained(model_name)
         model = model.to(textattack.shared.utils.device)
         try:
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(
-                args.model_from_huggingface
-            )
+            tokenizer = textattack.models.tokenizers.AutoTokenizer(model_name)
         except OSError:
             textattack.shared.logger.warn(
                 f"AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`"
@@ -483,7 +484,9 @@ def parse_model_from_args(args):
     else:
         if args.model in TEXTATTACK_DATASET_BY_MODEL:
             model_path, _ = TEXTATTACK_DATASET_BY_MODEL[args.model]
-            model = textattack.shared.utils.load_textattack_model_from_path(args.model, model_path)
+            model = textattack.shared.utils.load_textattack_model_from_path(
+                args.model, model_path
+            )
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
     return model

@@ -1,5 +1,6 @@
-import textattack
 import torch
+
+import textattack
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -48,31 +49,31 @@ def html_table_from_rows(rows, title=None, header=None, style_dict=None):
 
     return table_html
 
+
 def load_textattack_model_from_path(model_name, model_path):
     colored_model_name = textattack.shared.utils.color_text(
         model_name, color="blue", method="ansi"
     )
-    if model_name.startswith('lstm'):
+    if model_name.startswith("lstm"):
         textattack.shared.logger.info(
             f"Loading pre-trained TextAttack LSTM: {colored_model_name}"
         )
-        model = textattack.models.helpers.LSTMForClassification(
-            model_path=model_path
-        )
-    elif model_name.startswith('cnn'):
+        model = textattack.models.helpers.LSTMForClassification(model_path=model_path)
+    elif model_name.startswith("cnn"):
         textattack.shared.logger.info(
             f"Loading pre-trained TextAttack CNN: {colored_model_name}"
         )
         model = textattack.models.helpers.WordCNNForClassification(
             model_path=model_path
         )
-    elif model_name.startswith('bert'):
+    elif model_name.startswith("bert"):
+        model_path, num_labels = model_path
         textattack.shared.logger.info(
             f"Loading pre-trained TextAttack BERT model: {colored_model_name}"
         )
         model = textattack.models.helpers.BERTForClassification(
-            model_path=model_path
+            model_path=model_path, num_labels=num_labels
         )
     else:
-        raise ValueError(f'Unknown textattack model {model_path}')
+        raise ValueError(f"Unknown textattack model {model_path}")
     return model

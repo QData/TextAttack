@@ -13,7 +13,6 @@ Attack(
   (is_black_box):  True
 ) 
 
-Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [91m0[0m-->[92m1[0m
 
@@ -50,4 +49,3 @@ that [91mlodes[0m its characters and communicates [91msomethNng[0m [91mrath
 | Average num. words per input: | 8.33   |
 | Avg num queries:              | 22.67  |
 +-------------------------------+--------+
-Attack time: /.*/

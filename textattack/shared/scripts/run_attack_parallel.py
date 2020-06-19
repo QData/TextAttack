@@ -88,7 +88,7 @@ def run(args):
 
     dataset = parse_dataset_from_args(args)
 
-    print(f"Running on {num_gpus} GPUs")
+    textattack.shared.logger.info(f"Running on {num_gpus} GPUs")
     load_time = time.time()
 
     if args.interactive:
@@ -172,7 +172,7 @@ def run(args):
     attack_log_manager.flush()
     print()
     finish_time = time.time()
-    print(f"Attack time: {time.time() - load_time}s")
+    textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
 
 def pytorch_multiprocessing_workaround():

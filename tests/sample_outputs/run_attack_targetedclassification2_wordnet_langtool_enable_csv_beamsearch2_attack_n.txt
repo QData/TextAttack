@@ -15,8 +15,7 @@
   (is_black_box):  True
 ) 
 
-Logging to CSV at path /.*/.
-Load time: /.*/
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [94m2[0m-->[37m[SKIPPED][0m
 
@@ -55,4 +54,3 @@ Load time: /.*/
 | Average num. words per input: | 29.0   |
 | Avg num queries:              | 447.5  |
 +-------------------------------+--------+
-Attack time: /.*/

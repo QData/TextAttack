@@ -4,7 +4,7 @@ import subprocess
 
 import pytest
 
-DEBUG = True 
+DEBUG = False
 
 """
 Attack command-line tests in the format (name, args, sample_output_file)

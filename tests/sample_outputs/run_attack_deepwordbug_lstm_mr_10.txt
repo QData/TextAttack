@@ -13,21 +13,20 @@ Attack(
   (is_black_box):  True
 ) 
 
-Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[91m0[0m-->[92m1[0m
+[92m1[0m-->[91m0[0m
 
-[91mpossibly[0m the most [91mirresponsible[0m picture ever released by a major [91mfilm[0m [91mstudio[0m .
+[92mlovingly[0m [92mphotographed[0m in the [92mmanner[0m of a golden book sprung to [92mlife[0m , stuart little 2 manages sweetness largely without stickiness .
 
-[92mposibly[0m the most [92mirresEponsible[0m picture ever released by a major [92mfWlm[0m [92mptudio[0m .
+[91mcovingly[0m [91mphotographer[0m in the [91mpanner[0m of a golden book sprung to [91mife[0m , stuart little 2 manages sweetness largely without stickiness .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
 [92m1[0m-->[91m0[0m
 
-the pain , loneliness and insecurity of the screenwriting process are [92mvividly[0m and [92mpainfully[0m brought to slovenly life in this self-deprecating , biting and [92mwitty[0m [92mfeature[0m [92mwritten[0m by charlie kaufman and his twin brother , donald , and directed by spike jonze .
+[92mconsistently[0m [92mclever[0m and [92msuspenseful[0m .
 
-the pain , loneliness and insecurity of the screenwriting process are [91mvVividly[0m and [91mipainfully[0m brought to slovenly life in this self-deprecating , biting and [91miwtty[0m [91mfeatur[0m [91mwriYtten[0m by charlie kaufman and his twin brother , donald , and directed by spike jonze .
+[91mconsisVently[0m [91mHlever[0m and [91msupsenseful[0m .
 
 
 
@@ -40,8 +39,7 @@ the pain , loneliness and insecurity of the screenwriting process are [91mvVivi
 | Original accuracy:            | 100.0% |
 | Accuracy under attack:        | 0.0%   |
 | Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 23.08% |
-| Average num. words per input: | 25.5   |
-| Avg num queries:              | 54.5   |
+| Average perturbed word %:     | 48.03% |
+| Average num. words per input: | 11.5   |
+| Avg num queries:              | 26.5   |
 +-------------------------------+--------+
-Attack time: /.*/

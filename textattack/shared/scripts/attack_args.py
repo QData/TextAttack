@@ -156,10 +156,7 @@ TEXTATTACK_DATASET_BY_MODEL = {
         ("yelp_polarity", None, "test"),
     ),
     "lstm-imdb": ("models/classification/lstm/imdb", ("imdb", None, "test")),
-    'lstm-mr': (
-        'models/classification/cnn/mr',
-        ('rotten_tomatoes', None, 'test'),
-    ),
+    "lstm-mr": ("models/classification/lstm/mr", ("rotten_tomatoes", None, "test"),),
     #
     # LSTMs
     #
@@ -167,39 +164,39 @@ TEXTATTACK_DATASET_BY_MODEL = {
     "cnn-imdb": ("models/classification/cnn/imdb", ("imdb", None, "test")),
     "cnn-yelp-sentiment": (
         "models/classification/cnn/yelp_polarity",
-        ("yelp", None, "test"),
+        ("yelp_polarity", None, "test"),
     ),
-    'cnn-mr': (
-        'models/classification/cnn/mr',
-        ('rotten_tomatoes', None, 'tsxt'),
-    ),
+    "cnn-mr": ("models/classification/cnn/mr", ("rotten_tomatoes", None, "test"),),
     #
     # Textual entailment models
     #
     # BERT models
-    "bert-base-uncased-snli": ("models/entailment/bert/snli-uncased", ("snli", None, "test")), # @TODO may need label maps here
+    "bert-base-uncased-snli": (
+        ("models/entailment/bert/snli-uncased", 3),
+        ("snli", None, "test", [1, 2, 0]),
+    ),
     #
     # Text classification models
     #
-    'bert-base-uncased-mr': (
-        'models/classification/bert/mr-uncased',
-        ('rotten_tomatoes', None, 'train'),
+    "bert-base-uncased-mr": (
+        ("models/classification/bert/mr-uncased", 2),
+        ("rotten_tomatoes", None, "train"),
     ),
     "bert-base-cased-imdb": (
-        "models/classification/bert/imdb-cased",
+        ("models/classification/bert/imdb-cased", 2),
         ("imdb", None, "test"),
     ),
     "bert-base-uncased-imdb": (
-        "models/classification/bert/imdb-uncased",
+        ("models/classification/bert/imdb-uncased", 2),
         ("imdb", None, "test"),
     ),
     "bert-base-cased-yelp": (
-        "models/classification/bert/yelp-cased",
-        ("yelp", None, "test"),
+        ("models/classification/bert/yelp-cased", 2),
+        ("yelp_polarity", None, "test"),
     ),
     "bert-base-uncased-yelp": (
-        "models/classification/bert/yelp-uncased",
-        ("yelp", None, "test"),
+        ("models/classification/bert/yelp-uncased", 2),
+        ("yelp_polarity", None, "test"),
     ),
     #
     # Translation models

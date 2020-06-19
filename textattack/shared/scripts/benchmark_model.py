@@ -21,7 +21,7 @@ def get_num_successes(args, model, ids, true_labels):
     return successes, true_labels, guess_labels
 
 
-def test_model_on_dataset(args, model, dataset, batch_size=128):
+def test_model_on_dataset(args, model, dataset, num_examples=100, batch_size=128):
     num_examples = args.num_examples
     succ = 0
     fail = 0
@@ -30,6 +30,8 @@ def test_model_on_dataset(args, model, dataset, batch_size=128):
     all_true_labels = []
     all_guess_labels = []
     for i, (text_input, label) in enumerate(dataset):
+        if i >= num_examples:
+            break
         attacked_text = textattack.shared.AttackedText(text_input)
         ids = model.tokenizer.encode(attacked_text.tokenizer_input)
         batch_ids.append(ids)
@@ -68,4 +70,4 @@ if __name__ == "__main__":
     dataset = parse_dataset_from_args(args)
 
     with torch.no_grad():
-        test_model_on_dataset(args, model, dataset)
+        test_model_on_dataset(args, model, dataset, num_examples=args.num_examples)

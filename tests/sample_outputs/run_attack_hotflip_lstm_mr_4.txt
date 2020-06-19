@@ -25,31 +25,30 @@ Attack(
   (is_black_box):  False
 ) 
 
-Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [92m1[0m-->[91m[FAILED][0m
 
-lee jeong-hyang tells it so lovingly and films it so beautifully that i couldn't help being captivated by it .
+lovingly photographed in the manner of a golden book sprung to life , stuart little 2 manages sweetness largely without stickiness .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92m1[0m-->[91m0[0m
+[92m1[0m-->[91m[FAILED][0m
 
-a [92mrespectable[0m venture on its own terms , lacking the broader vision that has seen certain trek films . . . cross over to a more mainstream audience .
-
-a [91mtakusaburō[0m venture on its own terms , lacking the broader vision that has seen certain trek films . . . cross over to a more mainstream audience .
+consistently clever and suspenseful .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[91m0[0m-->[91m[FAILED][0m
+[92m1[0m-->[91m[FAILED][0m
 
-gets bogged down by an overly sillified plot and stop-and-start pacing .
+it's like a " big chill " reunion of the baader-meinhof gang , only these guys are more harmless pranksters than political activists .
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
-[92m1[0m-->[91m[FAILED][0m
+[92m1[0m-->[91m0[0m
 
-stanley kwan has directed not only one of the best gay love stories ever made , but one of the best love stories of any stripe .
+the story gives ample opportunity for large-scale action and suspense , which director shekhar [92mkapur[0m supplies with tremendous skill .
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar [91munwilling[0m supplies with tremendous skill .
 
 
 
@@ -62,8 +61,7 @@ stanley kwan has directed not only one of the best gay love stories ever made , 
 | Original accuracy:            | 100.0% |
 | Accuracy under attack:        | 75.0%  |
 | Attack success rate:          | 25.0%  |
-| Average perturbed word %:     | 4.17%  |
-| Average num. words per input: | 20.75  |
+| Average perturbed word %:     | 5.26%  |
+| Average num. words per input: | 16.0   |
 | Avg num queries:              | 1.25   |
 +-------------------------------+--------+
-Attack time: /.*/
