@@ -1,13 +1,29 @@
+from argparse import ArgumentParser
+
 import argparse
 import collections
 import sys
 
 import torch
 
-from attack_args_parser import get_args, parse_dataset_from_args, parse_model_from_args
+# from attack_args_parser import get_args, parse_dataset_from_args, parse_model_from_args
 import textattack
 
+from textattack.commands import TextAttackCommand
+class BenchmarkModelCommand(TextAttackCommand):
+    """
+    The TextAttack model benchmarking module:
+    
+        A command line parser to benchmark a model from user specifications.
+    """
+    
+    def run(self):
+        raise NotImplementedError('cant benchmark yet')
 
+    @staticmethod
+    def register_subcommand(main_parser: ArgumentParser):
+        parser = main_parser.add_parser("benchmark-model", help="Benchmark a model with TextAttack")
+        
 def _cb(s):
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
 
@@ -71,3 +87,21 @@ if __name__ == "__main__":
 
     with torch.no_grad():
         test_model_on_dataset(args, model, dataset, num_examples=args.num_examples)
+
+
+""" Old benchmark_all_models """
+# import os
+# from textattack.shared.scripts.attack_args import (
+#     HUGGINGFACE_DATASET_BY_MODEL,
+#     TEXTATTACK_DATASET_BY_MODEL,
+# )
+
+# if __name__ == "__main__":
+
+#     dir_path = os.path.dirname(os.path.realpath(__file__))
+#     for model in {**TEXTATTACK_DATASET_BY_MODEL, **HUGGINGFACE_DATASET_BY_MODEL}:
+#         print(model)
+#         os.system(
+#             f'python {os.path.join(dir_path, "benchmark_model.py")} --model {model} --num-examples 1000'
+#         )
+#         print()
