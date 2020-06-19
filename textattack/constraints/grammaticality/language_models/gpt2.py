@@ -20,9 +20,9 @@ class GPT2(LanguageModelConstraint):
     """
 
     def __init__(self, **kwargs):
-        import transformers #line that causes W&B log-in warning
+        import transformers
 
-        # re-enable W&B notifications
+        # re-enable notifications
         os.environ["WANDB_SILENT"] = "0"
         self.model = transformers.GPT2LMHeadModel.from_pretrained("gpt2")
         self.model.to(utils.device)
