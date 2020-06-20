@@ -5,7 +5,7 @@ from helpers import run_command_and_get_result
 list_test_params = [
     (
         "list_augmentation_recipes",
-        "textattack list augmentation_recipes",
+        "textattack list augmentation-recipes",
         "tests/sample_outputs/list_augmentation_recipes.txt",
     )
 ]
