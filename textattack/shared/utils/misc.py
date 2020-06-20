@@ -1,3 +1,5 @@
+import random
+import numpy as np
 import torch
 
 import textattack
@@ -77,3 +79,8 @@ def load_textattack_model_from_path(model_name, model_path):
     else:
         raise ValueError(f"Unknown textattack model {model_path}")
     return model
+
+def set_seed(random_seed):
+    random.seed(random_seed)
+    np.random.seed(random_seed)
+    torch.manual_seed(random_seed)

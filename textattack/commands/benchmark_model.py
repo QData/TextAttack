@@ -22,7 +22,8 @@ class BenchmarkModelCommand(TextAttackCommand):
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
-        parser = main_parser.add_parser("benchmark-model", help="Benchmark a model with TextAttack")
+        parser = main_parser.add_parser("benchmark-model", help="evaluate a model with TextAttack")
+        parser.set_defaults(func=BenchmarkModelCommand())
         
 def _cb(s):
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")

@@ -13,4 +13,5 @@ class BenchmarkRecipeCommand(TextAttackCommand):
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
-        parser = main_parser.add_parser("benchmark-recipe", help="Benchmark a model with TextAttack")
+        parser = main_parser.add_parser("benchmark-recipe", help="benchmark a recipe")
+        parser.set_defaults(func=BenchmarkRecipeCommand())

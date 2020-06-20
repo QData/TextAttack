@@ -2,32 +2,36 @@
 import argparse
 
 from textattack.commands.attack import AttackCommand
+from textattack.commands.attack import AttackResumeCommand
 from textattack.commands.augment import AugmentCommand
 from textattack.commands.benchmark_model import BenchmarkModelCommand
 from textattack.commands.benchmark_recipe import BenchmarkRecipeCommand
+from textattack.commands.train_model import TrainModelCommand
 
 def main():
+    print('main()')
     parser = argparse.ArgumentParser("TextAttack CLI", usage="[python -m] texattack <command> [<args>]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter
         )
-    commands_parser = parser.add_subparsers(help="transformers-cli command helpers")
+    subparsers = parser.add_subparsers(help="textattack command helpers")
 
     # Register commands
-    AttackCommand.register_subcommand(commands_parser)
-    AugmentCommand.register_subcommand(commands_parser)
-    BenchmarkModelCommand.register_subcommand(commands_parser)
-    BenchmarkRecipeCommand.register_subcommand(commands_parser)
+    AttackCommand.register_subcommand(subparsers)
+    AttackResumeCommand.register_subcommand(subparsers)
+    AugmentCommand.register_subcommand(subparsers)
+    BenchmarkModelCommand.register_subcommand(subparsers)
+    BenchmarkRecipeCommand.register_subcommand(subparsers)
+    TrainModelCommand.register_subcommand(subparsers)
 
     # Let's go
     args = parser.parse_args()
-
+    
     if not hasattr(args, "func"):
         parser.print_help()
         exit(1)
 
     # Run
-    service = args.func(args)
-    service.run()
+    args.func.run(args)
 
 
 if __name__ == "__main__":

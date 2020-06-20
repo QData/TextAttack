@@ -13,4 +13,5 @@ class AugmentCommand(TextAttackCommand):
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
-        parser = main_parser.add_parser("augment", help="Benchmark a model with TextAttack")
+        parser = main_parser.add_parser("augment", help="augment text data")
+        parser.set_defaults(func=AugmentCommand())

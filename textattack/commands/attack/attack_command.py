@@ -6,12 +6,6 @@ from textattack.commands import TextAttackCommand
 from textattack.commands.attack.attack_args import *
 from textattack.commands.attack.attack_args_helpers import *
 
-
-def set_seed(random_seed):
-    random.seed(random_seed)
-    np.random.seed(random_seed)
-    torch.manual_seed(random_seed)
-
 class AttackCommand(TextAttackCommand):
     """
     The TextAttack attack module:
@@ -19,15 +13,28 @@ class AttackCommand(TextAttackCommand):
         A command line parser to run an attack from user specifications.
     """
     
-    def run(self):
+    def run(self, args):
+        if args.checkpoint_interval and args.shuffle:
+            # Not allowed b/c we cannot recover order of shuffled data
+            raise ValueError("Cannot use `--checkpoint-interval` with `--shuffle=True`")
+        
+        textattack.shared.utils.set_seed(args.random_seed)
+        args.checkpoint_resume = False
+        
+        # Shortcuts for huggingface models using --model.
+        if not args.checkpoint_resume and args.model in HUGGINGFACE_DATASET_BY_MODEL:
+            _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
+        elif not args.checkpoint_resume and args.model in TEXTATTACK_DATASET_BY_MODEL:
+            _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
+        
         from textattack.commands.attack.run_attack_parallel import run as run_parallel
         from textattack.commands.attack.run_attack_single_threaded import (
             run as run_single_threaded,
         )
-        if self.parallel:
-            run_parallel(self)
+        if args.parallel:
+            run_parallel(args)
         else:
-            run_single_threaded(self)
+            run_single_threaded(args)
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
@@ -239,68 +246,6 @@ class AttackCommand(TextAttackCommand):
             default=None,
             help="attack to load from file (overrides provided goal function, transformation & constraints)",
         )
-    
-        # Parser for parsing args for resume
-        resume_parser = argparse.ArgumentParser(
-            description="A commandline parser for TextAttack",
-            formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        )
-        resume_parser.add_argument(
-            "--checkpoint-file",
-            "-f",
-            type=str,
-            required=True,
-            help='Path of checkpoint file to resume attack from. If "latest" (or "{directory path}/latest") is entered,'
-            "recover latest checkpoint from either current path or specified directory.",
-        )
-    
-        resume_parser.add_argument(
-            "--checkpoint-dir",
-            "-d",
-            required=False,
-            type=str,
-            default=None,
-            help="The directory to save checkpoint files. If not set, use directory from recovered arguments.",
-        )
-    
-        resume_parser.add_argument(
-            "--checkpoint-interval",
-            "-i",
-            required=False,
-            type=int,
-            help="If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.",
-        )
-    
-        resume_parser.add_argument(
-            "--parallel",
-            action="store_true",
-            default=False,
-            help="Run attack using multiple GPUs.",
-        )
-    
-        # Resume attack from checkpoint.
-        if sys.argv[1:] and sys.argv[1].lower() == "resume":
-            args = resume_parser.parse_args(sys.argv[2:])
-            setattr(args, "checkpoint_resume", True)
-        else:
-            command_line_args = (
-                None if sys.argv[1:] else ["-h"]
-            )  # Default to help with empty arguments.
-            args = parser.parse_args(command_line_args)
-            setattr(args, "checkpoint_resume", False)
-    
-            if args.checkpoint_interval and args.shuffle:
-                # Not allowed b/c we cannot recover order of shuffled data
-                raise ValueError("Cannot use `--checkpoint-interval` with `--shuffle=True`")
-    
-            set_seed(args.random_seed)
-    
-        # Shortcuts for huggingface models using --model.
-        if not args.checkpoint_resume and args.model in HUGGINGFACE_DATASET_BY_MODEL:
-            _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
-        elif not args.checkpoint_resume and args.model in TEXTATTACK_DATASET_BY_MODEL:
-            _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
-    
-        return args
-    
+        
+        parser.set_defaults(func=AttackCommand())
     

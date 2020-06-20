@@ -12,6 +12,8 @@ import torch
 
 import textattack
 
+from .attack_args import *
+
 def parse_transformation_from_args(args, model):
     # Transformations
     transformation_name = args.transformation
