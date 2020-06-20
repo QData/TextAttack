@@ -94,7 +94,20 @@ attack_test_params = [
         "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n.txt",
     ),
     #
+    # fmt: off
+    # test: run_attack untargeted classification on BERT MR using word embedding transformation and greedy-word-WIR search
+    #   using Flair's part-of-speech tagger as constraint.
     #
+    (
+        "run_attack_flair_pos_tagger",
+        (
+            "python -m textattack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding "
+            "--constraints repeat stopword embedding:min_cos_sim=0.8 part-of-speech:tagger_type=\\'flair\\' "
+            "--num-examples 4 --num-examples-offset 10"
+        ),
+        "tests/sample_outputs/run_attack_flair_pos_tagger.txt",
+    ),
+    # fmt: on
     #
 ]
 
