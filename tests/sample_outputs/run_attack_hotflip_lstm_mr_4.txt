@@ -17,6 +17,7 @@ Attack(
         (include_unknown_words):  True
       )
     (2): PartOfSpeech(
+        (tagger_type):  nltk
         (tagset):  universal
         (allow_verb_noun_swap):  True
       )
