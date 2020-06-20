@@ -93,6 +93,21 @@ def add_dataset_args(parser):
     )
 
 
+def load_module_from_file(file_path):
+    """ Uses ``importlib`` to dynamically open a file and load an object from
+        it. 
+    """
+    temp_module_name = f"temp_{time.time()}"
+    colored_file_path = textattack.shared.utils.color_text(
+        file_path, color="blue", method="ansi"
+    )
+    textattack.shared.logger.info(f"Loading module from `{colored_file_path}`.")
+    spec = importlib.util.spec_from_file_location(temp_module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 def parse_transformation_from_args(args, model):
     # Transformations
     transformation_name = args.transformation
@@ -182,8 +197,11 @@ def parse_attack_from_args(args):
             attack_file, attack_name = args.attack_from_file.split(":")
         else:
             attack_file, attack_name = args.attack_from_file, "attack"
-        attack_file = attack_file.replace(".py", "").replace("/", ".")
-        attack_module = importlib.import_module(attack_file)
+        attack_module = load_module_from_file(attack_file)
+        if not hasattr(attack_module, attack_name):
+            raise ValueError(
+                f"Loaded `{attack_file}` but could not find `{attack_name}`."
+            )
         attack_func = getattr(attack_module, attack_name)
         return attack_func(model)
     else:
@@ -221,12 +239,9 @@ def parse_model_from_args(args):
                 "tokenizer",
             )
         try:
-            model_file = args.model_from_file.replace(".py", "").replace("/", ".")
-            model_module = importlib.import_module(model_file)
+            model_module = load_module_from_file(args.model_from_file)
         except:
-            raise ValueError(
-                f"Failed to import model or tokenizer from file {args.model_from_file}"
-            )
+            raise ValueError(f"Failed to import file {args.model_from_file}")
         try:
             model = getattr(model_module, model_name)
         except AttributeError:
@@ -303,8 +318,7 @@ def parse_dataset_from_args(args):
         else:
             dataset_file, dataset_name = args.dataset_from_file, "dataset"
         try:
-            dataset_file = dataset_file.replace(".py", "").replace("/", ".")
-            dataset_module = importlib.import_module(dataset_file)
+            dataset_module = load_module_from_file(dataset_file)
         except:
             raise ValueError(
                 f"Failed to import dataset from file {args.dataset_from_file}"

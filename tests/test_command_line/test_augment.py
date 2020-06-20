@@ -1,14 +1,13 @@
 import pytest
-from tests.helpers import run_command_and_get_result
 
-
+from helpers import run_command_and_get_result
 
 augment_test_params = [
     (
         "simple_augment_test",
-        "textattack augment --csv tests/sample_inputs/augment.csv --input-column text --outfile augment_test.csv --overwrite",
+        "textattack augment --csv tests/sample_inputs/augment.csv.txt --input-column text --outfile augment_test.csv --overwrite",
         "augment_test.csv",
-        "tests/sample_outputs/augment_test.csv",
+        "tests/sample_outputs/augment_test.csv.txt",
     )
 ]
 
@@ -18,7 +17,9 @@ augment_test_params = [
 )
 @pytest.mark.slow
 def test_command_line_augmentation(name, command, outfile, sample_output_file):
-    desired_text = open(sample_output_file).read()
+    import os
+    
+    desired_text = open(sample_output_file).read().strip()
 
     # Run command and validate outputs.
     result = run_command_and_get_result(command)

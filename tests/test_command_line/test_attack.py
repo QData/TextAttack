@@ -3,14 +3,13 @@ import re
 
 import pytest
 
-from tests.helpers import run_command_and_get_result
+from helpers import run_command_and_get_result
 
 DEBUG = False
 
 """
 Attack command-line tests in the format (name, args, sample_output_file)
 """
-
 
 attack_test_params = [
     #
@@ -19,7 +18,7 @@ attack_test_params = [
     (
         "attack_from_file",
         (
-            "python -m textattack attack --model cnn-imdb "
+            "textattack attack --model cnn-imdb "
             "--attack-from-file tests/sample_inputs/attack_from_file.py:Attack "
             "--num-examples 2  --num-examples-offset 18 --attack-n"
         ),
@@ -54,7 +53,7 @@ attack_test_params = [
     (
         "load_model_and_dataset_from_file",
         (
-            "python -m textattack attack "
+            "textattack attack "
             "--model-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--dataset-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--recipe deepwordbug --num-examples 3"
@@ -125,4 +124,3 @@ def test_command_line_attack(name, command, sample_output_file):
     if DEBUG and not re.match(desired_re, stdout, flags=re.S):
         pdb.set_trace()
     assert re.match(desired_re, stdout, flags=re.S)
-
