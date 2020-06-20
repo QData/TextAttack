@@ -40,7 +40,7 @@ class AugmentCommand(TextAttackCommand):
         # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
         # try and automatically infer the correct CSV format.
         csv_file = open(args.csv, "r")
-        dialect = csv.Sniffer().sniff(csv_file.read(1024), delimiters=";,")
+        dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
         csv_file.seek(0)
         rows = [
             row
@@ -53,7 +53,7 @@ class AugmentCommand(TextAttackCommand):
                 f"Could not find input column {args.input_column} in CSV. Found keys: {row_keys}"
             )
         textattack.shared.logger.info(
-            f"Read {len(rows)} rows from {args.csv}. Found input columns {row_keys}."
+            f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
         )
         # Augment all examples.
         augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
@@ -114,7 +114,6 @@ class AugmentCommand(TextAttackCommand):
             help="words to swap out for each augmented example",
             type=int,
             default=2,
-            choices=AUGMENTATION_RECIPE_NAMES.keys(),
         )
         parser.add_argument(
             "--transformations-per-example",
@@ -122,7 +121,6 @@ class AugmentCommand(TextAttackCommand):
             help="number of augmentations to return for each input",
             type=int,
             default=2,
-            choices=AUGMENTATION_RECIPE_NAMES.keys(),
         )
         parser.add_argument(
             "--outfile", "--o", help="path to outfile", type=str, default="augment.csv"

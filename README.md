@@ -34,6 +34,9 @@ You should be running Python 3.6+ to use this package. A CUDA-compatible GPU is 
 pip install textattack
 ```
 
+Once TextAttack is installed, you can run it via command-line (`textattack ...`)
+or via the python module (`python -m textattack ...`).
+
 ### Configuration
 TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
 dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
@@ -41,27 +44,30 @@ environment variable `TA_CACHE_DIR`.
 
 ## Usage
 
+TextAttack's main features can all be accessed via the `textattack` command. Two very
+common commands are `textattack attack <args>`, and `textattack augment <args>`. You can see more
+information about all commands using `textattack --help`, or a specific command using, for example,
+`textattack attack --help`.
+
 ### Running Attacks
 
 The [`examples/`](docs/examples/) folder contains notebooks explaining basic usage of TextAttack, including building a custom transformation and a custom constraint. These examples can also be viewed through the [documentation website](https://textattack.readthedocs.io/en/latest).
 
-We also have a command-line interface for running attacks. See help info and list of arguments with `python -m textattack --help`.
-
-#### Sample Attack Commands
+The easiest way to try out an attack is via the command-line interface, `textattack attack`. Here are some concrete examples:
 
 *TextFooler on an LSTM trained on the MR sentiment classification dataset*: 
 ```bash
-python -m textattack --recipe textfooler --model bert-base-uncased-mr --num-examples 100
+textattack attack --recipe textfooler --model bert-base-uncased-mr --num-examples 100
 ```
 
 *DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*: 
 ```bash
-python -m textattack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
+textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
 ```
 
 *Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
 ```bash
-python -m textattack --model lstm-mr --num-examples 20 \
+textattack attack --model lstm-mr --num-examples 20 \
  --search-method beam-search:beam_width=4 --transformation word-swap-embedding \
  --constraints repeat stopword max-words-perturbed:max_num_words=2 embedding:min_cos_sim=0.8 part-of-speech \
  --goal-function untargeted-classification
@@ -69,7 +75,7 @@ python -m textattack --model lstm-mr --num-examples 20 \
 
 *Non-overlapping output attack using a greedy word swap and WordNet word substitutions on T5 English-to-German translation:*
 ```bash
-python -m textattack --attack-n --goal-function non-overlapping-output \
+textattack attack --attack-n --goal-function non-overlapping-output \
     --model t5-en2de --num-examples 10 --transformation word-swap-wordnet \
     --constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword \
     --search greedy
@@ -79,7 +85,9 @@ python -m textattack --attack-n --goal-function non-overlapping-output \
 
 ### Attacks and Papers Implemented ("Attack Recipes")
 
-We include attack recipes which build an attack such that only one command line argument has to be passed. To run an attack recipes, run `python -m textattack --recipe [recipe_name]`
+We include attack recipes which implement attacks from the literature. You can list attack recipes using `textattack list attack-recipes`.
+
+To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 The first are for classification tasks, like sentiment classification and entailment:
 - **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998)).
@@ -98,12 +106,12 @@ Here are some exampes of testing attacks from the literature from the command-li
 
 *TextFooler against BERT fine-tuned on SST-2:*
 ```bash
-python -m textattack --model bert-base-uncased-sst2 --recipe textfooler --num-examples 10
+textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examples 10
 ```
 
 *seq2sick (black-box) against T5 fine-tuned for English-German translation:*
 ```bash
-python -m textattack --recipe seq2sick --model t5-en2de --num-examples 100
+textattack attack --recipe seq2sick --model t5-en2de --num-examples 100
 ```
 
 ### Augmenting Text
@@ -115,8 +123,48 @@ for data augmentation:
 - `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
 - `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
 
-All `Augmenter` objects implement `augment` and `augment_many` to generate augmentations
-of a string or a list of strings. Here's an example of how to use the `EmbeddingAugmenter`:
+#### Augmentation Command-Line Interface
+The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
+takes an input CSV file and text column to augment, along with the number of words to change per augmentation
+and the number of augmentations per input example. It outputs a CSV in the same format with all the augmentation
+examples corresponding to the proper columns.
+
+For example, given the following as `examples.csv`:
+
+```csv
+"text",label
+"the rock is destined to be the 21st century's new conan and that he's going to make a splash even greater than arnold schwarzenegger , jean- claud van damme or steven segal.", 1
+"the gorgeously elaborate continuation of 'the lord of the rings' trilogy is so huge that a column of words cannot adequately describe co-writer/director peter jackson's expanded vision of j . r . r . tolkien's middle-earth .", 1
+"take care of my cat offers a refreshingly different slice of asian cinema .", 1
+"a technically well-made suspenser . . . but its abrupt drop in iq points as it races to the finish line proves simply too discouraging to let slide .", 0
+"it's a mystery how the movie could be released in this condition .", 0
+```
+
+The command `textattack augment --csv examples.csv --input-column text --recipe embedding --num-words-to-swap 4 --transformations-per-example 2 --exclude-original`
+will augment the `text` column with four swaps per augmentation, twice as many augmentations as original inputs, and exclude the original inputs from the
+output CSV. (All of this will be saved to `augment.csv` by default.)
+
+After augmentation, here are the contents of `augment.csv`:
+```csv
+text,label
+"the rock is destined to be the 21st century's newest conan and that he's gonna to make a splashing even stronger than arnold schwarzenegger , jean- claud van damme or steven segal.",1
+"the rock is destined to be the 21tk century's novel conan and that he's going to make a splat even greater than arnold schwarzenegger , jean- claud van damme or stevens segal.",1
+the gorgeously elaborate continuation of 'the lord of the rings' trilogy is so huge that a column of expression significant adequately describe co-writer/director pedro jackson's expanded vision of j . rs . r . tolkien's middle-earth .,1
+the gorgeously elaborate continuation of 'the lordy of the piercings' trilogy is so huge that a column of mots cannot adequately describe co-novelist/director peter jackson's expanded vision of j . r . r . tolkien's middle-earth .,1
+take care of my cat offerings a pleasantly several slice of asia cinema .,1
+taking care of my cat offers a pleasantly different slice of asiatic kino .,1
+a technically good-made suspenser . . . but its abrupt drop in iq points as it races to the finish bloodline proves straightforward too disheartening to let slide .,0
+a technically well-made suspenser . . . but its abrupt drop in iq dot as it races to the finish line demonstrates simply too disheartening to leave slide .,0
+it's a enigma how the film wo be releases in this condition .,0
+it's a enigma how the filmmaking wo be publicized in this condition .,0
+```
+
+The 'embedding' augmentation recipe uses counterfitted embedding nearest-neighbors to augment data.
+
+#### Augmentation Python Interface
+In addition to the command-line interface, you can augment text dynamically by importing the
+`Augmenter` in your own code. All `Augmenter` objects implement `augment` and `augment_many` to generate augmentations
+of a string or a list of strings. Here's an example of how to use the `EmbeddingAugmenter` in a python script:
 
 ```python
 >>> from textattack.augmentation import EmbeddingAugmenter
@@ -142,12 +190,12 @@ TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that
 TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
 dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
 tasks, as well as some common classification datasets, translation, and summarization. You can 
-see the full list of provided models & datasets via `python -m textattack --help`.
+see the full list of provided models & datasets via `textattack attack --help`.
 
 Here's an example of using one of the built-in models:
 
 ```bash
-python -m textattack --model roberta-base-sst2 --recipe textfooler --num-examples 10
+textattack attack --model roberta-base-sst2 --recipe textfooler --num-examples 10
 ```
 
 #### HuggingFace support: `transformers` models and `nlp` datasets
@@ -157,7 +205,7 @@ and datasets from the [`nlp` package](https://github.com/huggingface/nlp)! Here'
 and attacking a pre-trained model and dataset:
 
 ```bash
-python -m textattack --model_from_huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset_from_nlp glue:sst2 --recipe deepwordbug --num-examples 10
+textattack attack --model_from_huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset_from_nlp glue:sst2 --recipe deepwordbug --num-examples 10
 ```
 
 You can explore other pre-trained models using the `--model_from_huggingface` argument, or other datasets by changing 

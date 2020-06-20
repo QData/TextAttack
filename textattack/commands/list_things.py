@@ -35,15 +35,15 @@ class ListThingsCommand(TextAttackCommand):
         list_dict["models"] = list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
             TEXTATTACK_DATASET_BY_MODEL.keys()
         )
-        list_dict["search_methods"] = SEARCH_METHOD_CLASS_NAMES
+        list_dict["search-methods"] = SEARCH_METHOD_CLASS_NAMES
         list_dict["transformations"] = {
             **BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
             **WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
         }
         list_dict["constraints"] = CONSTRAINT_CLASS_NAMES
-        list_dict["goal_functions"] = GOAL_FUNCTION_CLASS_NAMES
-        list_dict["attack_recipes"] = ATTACK_RECIPE_NAMES
-        list_dict["augmentation_recipes"] = AUGMENTATION_RECIPE_NAMES
+        list_dict["goal-functions"] = GOAL_FUNCTION_CLASS_NAMES
+        list_dict["attack-recipes"] = ATTACK_RECIPE_NAMES
+        list_dict["augmentation-recipes"] = AUGMENTATION_RECIPE_NAMES
         return list_dict
 
     def run(self, args):
