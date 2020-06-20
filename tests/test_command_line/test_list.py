@@ -24,5 +24,4 @@ def test_command_line_list(name, command, sample_output_file):
     stdout = result.stdout.decode().strip()
     stderr = result.stderr.decode().strip()
 
-    assert stderr == ""
     assert stdout == desired_text
