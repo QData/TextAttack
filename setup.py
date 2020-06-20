@@ -28,7 +28,9 @@ setuptools.setup(
             "wandb*",
         ]
     ),
-    entry_points={"console_scripts": ["textattack=textattack.commands.textattack_cli:main"],},
+    entry_points={
+        "console_scripts": ["textattack=textattack.commands.textattack_cli:main"],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

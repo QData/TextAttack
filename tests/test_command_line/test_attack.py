@@ -1,14 +1,17 @@
+import pdb
 import re
-import shlex
-import subprocess
 
 import pytest
+
+from tests.helpers import run_command_and_get_result
 
 DEBUG = False
 
 """
 Attack command-line tests in the format (name, args, sample_output_file)
 """
+
+
 attack_test_params = [
     #
     # test loading an attack from file
@@ -16,7 +19,7 @@ attack_test_params = [
     (
         "attack_from_file",
         (
-            "python -m textattack --model cnn-imdb "
+            "python -m textattack attack --model cnn-imdb "
             "--attack-from-file tests/sample_inputs/attack_from_file.py:Attack "
             "--num-examples 2  --num-examples-offset 18 --attack-n"
         ),
@@ -29,7 +32,7 @@ attack_test_params = [
         "interactive_mode",
         (
             'printf "All that glitters is not gold\nq\n"',
-            "python -m textattack --recipe textfooler --model bert-base-uncased-imdb --interactive",
+            "textattack attack --recipe textfooler --model bert-base-uncased-imdb --interactive",
         ),
         "tests/sample_outputs/interactive_mode.txt",
     ),
@@ -39,7 +42,7 @@ attack_test_params = [
     (
         "attack_from_transformers",
         (
-            "python -m textattack --model-from-huggingface "
+            "textattack attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
             "--dataset-from-nlp glue:sst2:train --recipe deepwordbug --num-examples 3"
         ),
@@ -51,7 +54,8 @@ attack_test_params = [
     (
         "load_model_and_dataset_from_file",
         (
-            "python -m textattack --model-from-file tests/sample_inputs/sst_model_and_dataset.py "
+            "python -m textattack attack "
+            "--model-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--dataset-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--recipe deepwordbug --num-examples 3"
         ),
@@ -63,7 +67,7 @@ attack_test_params = [
     (
         "run_attack_hotflip_lstm_mr_4",
         (
-            "python -m textattack --model lstm-mr --recipe hotflip "
+            "textattack attack --model lstm-mr --recipe hotflip "
             "--num-examples 4 --num-examples-offset 3"
         ),
         "tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt",
@@ -74,7 +78,7 @@ attack_test_params = [
     (
         "run_attack_deepwordbug_lstm_mr_2",
         (
-            "python -m textattack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n"
+            "textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n"
         ),
         "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt",
     ),
@@ -87,7 +91,7 @@ attack_test_params = [
     (
         "run_attack_targeted_mnli_misc",
         (
-            "python -m textattack --attack-n --goal-function targeted-classification:target_class=2 "
+            "textattack attack --attack-n --goal-function targeted-classification:target_class=2 "
             "--enable-csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation word-swap-wordnet "
             "--constraints lang-tool repeat stopword --search beam-search:beam_width=2"
         ),
@@ -101,7 +105,7 @@ attack_test_params = [
 
 @pytest.mark.parametrize("name, command, sample_output_file", attack_test_params)
 @pytest.mark.slow
-def test_command_line_attack(capsys, name, command, sample_output_file):
+def test_command_line_attack(name, command, sample_output_file):
     """ Runs attack tests and compares their outputs to a reference file.
     """
     # read in file and create regex
@@ -109,29 +113,7 @@ def test_command_line_attack(capsys, name, command, sample_output_file):
     print("desired_output =>", desired_output)
     # regex in sample file look like /.*/
     desired_re = re.escape(desired_output).replace("/\\.\\*/", ".*")
-    # run command
-    if isinstance(command, tuple):
-        # Support pipes via tuple of commands
-        procs = []
-        for i in range(len(command) - 1):
-            if i == 0:
-                proc = subprocess.Popen(shlex.split(command[i]), stdout=subprocess.PIPE)
-            else:
-                proc = subprocess.Popen(
-                    shlex.split(command[i]),
-                    stdout=subprocess.PIPE,
-                    stdin=procs[-1].stdout,
-                )
-            procs.append(proc)
-        # Run last commmand
-        result = subprocess.run(
-            shlex.split(command[-1]), stdin=procs[-1].stdout, capture_output=True
-        )
-        # Wait for all intermittent processes
-        for proc in procs:
-            proc.wait()
-    else:
-        result = subprocess.run(shlex.split(command), capture_output=True)
+    result = run_command_and_get_result(command)
     # get output and check match
     assert result.stdout is not None
     stdout = result.stdout.decode().strip()
@@ -141,7 +123,6 @@ def test_command_line_attack(capsys, name, command, sample_output_file):
     print("stderr =>", stderr)
 
     if DEBUG and not re.match(desired_re, stdout, flags=re.S):
-        import pdb
-
         pdb.set_trace()
     assert re.match(desired_re, stdout, flags=re.S)
+

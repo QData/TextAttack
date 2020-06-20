@@ -14,6 +14,85 @@ import textattack
 
 from .attack_args import *
 
+
+def add_model_args(parser):
+    """ Adds model-related arguments to an argparser. This is useful because we
+        want to load pretrained models using multiple different parsers that
+        share these, but not all, arguments.
+    """
+    model_group = parser.add_mutually_exclusive_group()
+
+    model_names = list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
+        TEXTATTACK_DATASET_BY_MODEL.keys()
+    )
+    model_group.add_argument(
+        "--model",
+        type=str,
+        required=False,
+        default=None,
+        choices=model_names,
+        help="The pre-trained model to attack.",
+    )
+    model_group.add_argument(
+        "--model-from-file",
+        type=str,
+        required=False,
+        help="File of model and tokenizer to import.",
+    )
+    model_group.add_argument(
+        "--model-from-huggingface",
+        type=str,
+        required=False,
+        help="huggingface.co ID of pre-trained model to load",
+    )
+
+
+def add_dataset_args(parser):
+    """ Adds dataset-related arguments to an argparser. This is useful because we
+        want to load pretrained models using multiple different parsers that
+        share these, but not all, arguments.
+    """
+    dataset_group = parser.add_mutually_exclusive_group()
+    dataset_group.add_argument(
+        "--dataset-from-nlp",
+        type=str,
+        required=False,
+        default=None,
+        help="Dataset to load from `nlp` repository.",
+    )
+    dataset_group.add_argument(
+        "--dataset-from-file",
+        type=str,
+        required=False,
+        default=None,
+        help="Dataset to load from a file.",
+    )
+    dataset_group.add_argument(
+        "--shuffle",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Randomly shuffle the data before attacking",
+    )
+    parser.add_argument(
+        "--num-examples",
+        "-n",
+        type=int,
+        required=False,
+        default="5",
+        help="The number of examples to process.",
+    )
+
+    parser.add_argument(
+        "--num-examples-offset",
+        "-o",
+        type=int,
+        required=False,
+        default=0,
+        help="The offset to start at in the dataset.",
+    )
+
+
 def parse_transformation_from_args(args, model):
     # Transformations
     transformation_name = args.transformation
@@ -89,11 +168,11 @@ def parse_attack_from_args(args):
     if args.recipe:
         if ":" in args.recipe:
             recipe_name, params = args.recipe.split(":")
-            if recipe_name not in RECIPE_NAMES:
+            if recipe_name not in ATTACK_RECIPE_NAMES:
                 raise ValueError(f"Error: unsupported recipe {recipe_name}")
-            recipe = eval(f"{RECIPE_NAMES[recipe_name]}(model, {params})")
-        elif args.recipe in RECIPE_NAMES:
-            recipe = eval(f"{RECIPE_NAMES[args.recipe]}(model)")
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[recipe_name]}(model, {params})")
+        elif args.recipe in ATTACK_RECIPE_NAMES:
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[args.recipe]}(model)")
         else:
             raise ValueError(f"Invalid recipe {args.recipe}")
         recipe.goal_function.query_budget = args.query_budget
@@ -113,11 +192,11 @@ def parse_attack_from_args(args):
         constraints = parse_constraints_from_args(args)
         if ":" in args.search:
             search_name, params = args.search.split(":")
-            if search_name not in SEARCH_CLASS_NAMES:
+            if search_name not in SEARCH_METHOD_CLASS_NAMES:
                 raise ValueError(f"Error: unsupported search {search_name}")
-            search_method = eval(f"{SEARCH_CLASS_NAMES[search_name]}({params})")
-        elif args.search in SEARCH_CLASS_NAMES:
-            search_method = eval(f"{SEARCH_CLASS_NAMES[args.search]}()")
+            search_method = eval(f"{SEARCH_METHOD_CLASS_NAMES[search_name]}({params})")
+        elif args.search in SEARCH_METHOD_CLASS_NAMES:
+            search_method = eval(f"{SEARCH_METHOD_CLASS_NAMES[args.search]}()")
         else:
             raise ValueError(f"Error: unsupported attack {args.search}")
     return textattack.shared.Attack(
@@ -207,6 +286,14 @@ def parse_model_from_args(args):
 
 
 def parse_dataset_from_args(args):
+    # Automatically detect dataset for huggingface & textattack models.
+    # This allows us to use the --model shortcut without specifying a dataset.
+    if args.model in HUGGINGFACE_DATASET_BY_MODEL:
+        _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
+    elif args.model in TEXTATTACK_DATASET_BY_MODEL:
+        _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
+
+    # Get dataset from args.
     if args.dataset_from_file:
         textattack.shared.logger.info(
             f"Loading model and tokenizer from file: {args.model_from_file}"

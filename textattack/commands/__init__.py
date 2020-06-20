@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from argparse import ArgumentParser
+from argparse import ArgumentParser, HelpFormatter
 
 
 class TextAttackCommand(ABC):
@@ -11,5 +11,6 @@ class TextAttackCommand(ABC):
     @abstractmethod
     def run(self):
         raise NotImplementedError()
-        
+
+
 from . import textattack_cli
