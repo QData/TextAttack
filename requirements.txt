@@ -5,7 +5,7 @@ language_tool_python
 lru-dict
 nlp
 nltk
-numpy
+numpy>=1.18
 pandas
 pyyaml>=5.1
 scikit-learn
