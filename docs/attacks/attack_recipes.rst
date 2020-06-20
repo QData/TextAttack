@@ -3,7 +3,7 @@ Attack Recipes
 
 We provide a number of pre-built attack recipes. To run an attack recipe, run::
 
-    python -m textattack --recipe [recipe_name]
+    textattack attack --recipe [recipe_name]
     
 Alzantot
 ###########

@@ -6,7 +6,7 @@ from textattack.shared import utils
 
 from .language_model_constraint import LanguageModelConstraint
 
-# temporarily silent W&B to ignore log-in warning
+# temporarily silence W&B to ignore log-in warning
 os.environ["WANDB_SILENT"] = "1"
 
 
