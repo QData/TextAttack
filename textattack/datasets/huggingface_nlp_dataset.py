@@ -83,6 +83,7 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         input_dict = collections.OrderedDict(
             [(c, raw_example[c]) for c in self.input_columns]
         )
+
         output = raw_example[self.output_column]
         if self.label_map:
             output = self.label_map[output]

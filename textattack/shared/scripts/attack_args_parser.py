@@ -11,270 +11,7 @@ import numpy as np
 import torch
 
 import textattack
-
-RECIPE_NAMES = {
-    "alzantot": "textattack.attack_recipes.Alzantot2018",
-    "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
-    "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
-    "kuleshov": "textattack.attack_recipes.Kuleshov2017",
-    "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
-    "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
-    "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
-}
-
-TEXTATTACK_MODEL_CLASS_NAMES = {
-    #
-    # Text classification models
-    #
-    # BERT models - default uncased
-    "bert-base-uncased-ag-news": "textattack.models.classification.bert.BERTForAGNewsClassification",
-    "bert-base-uncased-imdb": "textattack.models.classification.bert.BERTForIMDBSentimentClassification",
-    "bert-base-uncased-mr": "textattack.models.classification.bert.BERTForMRSentimentClassification",
-    "bert-base-uncased-yelp": "textattack.models.classification.bert.BERTForYelpSentimentClassification",
-    # CNN models
-    "cnn-ag-news": "textattack.models.classification.cnn.WordCNNForAGNewsClassification",
-    "cnn-imdb": "textattack.models.classification.cnn.WordCNNForIMDBSentimentClassification",
-    "cnn-mr": "textattack.models.classification.cnn.WordCNNForMRSentimentClassification",
-    "cnn-yelp-sentiment": "textattack.models.classification.cnn.WordCNNForYelpSentimentClassification",
-    # LSTM models
-    "lstm-ag-news": "textattack.models.classification.lstm.LSTMForAGNewsClassification",
-    "lstm-imdb": "textattack.models.classification.lstm.LSTMForIMDBSentimentClassification",
-    "lstm-mr": "textattack.models.classification.lstm.LSTMForMRSentimentClassification",
-    "lstm-yelp-sentiment": "textattack.models.classification.lstm.LSTMForYelpSentimentClassification",
-    #
-    # Textual entailment models
-    #
-    # BERT models
-    "bert-base-uncased-mnli": "textattack.models.entailment.bert.BERTForMNLI",
-    "bert-base-uncased-snli": "textattack.models.entailment.bert.BERTForSNLI",
-    #
-    # Translation models
-    #
-    "t5-en2fr": "textattack.models.translation.t5.T5EnglishToFrench",
-    "t5-en2de": "textattack.models.translation.t5.T5EnglishToGerman",
-    "t5-en2ro": "textattack.models.translation.t5.T5EnglishToRomanian",
-    #
-    # Summarization models
-    #
-    "t5-summ": "textattack.models.summarization.T5Summarization",
-}
-
-DATASET_BY_MODEL = {
-    #
-    # Text classification datasets
-    #
-    # AG News
-    "bert-base-uncased-ag-news": textattack.datasets.classification.AGNews,
-    "cnn-ag-news": textattack.datasets.classification.AGNews,
-    "lstm-ag-news": textattack.datasets.classification.AGNews,
-    # IMDB
-    "bert-base-uncased-imdb": textattack.datasets.classification.IMDBSentiment,
-    "cnn-imdb": textattack.datasets.classification.IMDBSentiment,
-    "lstm-imdb": textattack.datasets.classification.IMDBSentiment,
-    # MR
-    "bert-base-uncased-mr": textattack.datasets.classification.MovieReviewSentiment,
-    "cnn-mr": textattack.datasets.classification.MovieReviewSentiment,
-    "lstm-mr": textattack.datasets.classification.MovieReviewSentiment,
-    # Yelp
-    "bert-base-uncased-yelp": textattack.datasets.classification.YelpSentiment,
-    "cnn-yelp-sentiment": textattack.datasets.classification.YelpSentiment,
-    "lstm-yelp-sentiment": textattack.datasets.classification.YelpSentiment,
-    #
-    # Textual entailment datasets
-    #
-    "bert-base-uncased-mnli": textattack.datasets.entailment.MNLI,
-    "bert-base-uncased-snli": textattack.datasets.entailment.SNLI,
-    #
-    # Translation datasets
-    #
-    "t5-en2de": textattack.datasets.translation.NewsTest2013EnglishToGerman,
-}
-
-HUGGINGFACE_DATASET_BY_MODEL = {
-    #
-    # bert-base-uncased
-    #
-    "bert-base-uncased-cola": (
-        "textattack/bert-base-uncased-CoLA",
-        ("glue", "cola", "validation"),
-    ),
-    "bert-base-uncased-mnli": (
-        "textattack/bert-base-uncased-MNLI",
-        ("glue", "mnli", "validation_matched", [1, 2, 0]),
-    ),
-    "bert-base-uncased-mrpc": (
-        "textattack/bert-base-uncased-MRPC",
-        ("glue", "mrpc", "validation"),
-    ),
-    "bert-base-uncased-qnli": (
-        "textattack/bert-base-uncased-QNLI",
-        ("glue", "qnli", "validation"),
-    ),
-    "bert-base-uncased-qqp": (
-        "textattack/bert-base-uncased-QQP",
-        ("glue", "qqp", "validation"),
-    ),
-    "bert-base-uncased-rte": (
-        "textattack/bert-base-uncased-RTE",
-        ("glue", "rte", "validation"),
-    ),
-    "bert-base-uncased-sst2": (
-        "textattack/bert-base-uncased-SST-2",
-        ("glue", "sst2", "validation"),
-    ),
-    "bert-base-uncased-stsb": (
-        "textattack/bert-base-uncased-STS-B",
-        ("glue", "stsb", "validation", None, 5.0),
-    ),
-    "bert-base-uncased-wnli": (
-        "textattack/bert-base-uncased-WNLI",
-        ("glue", "wnli", "validation"),
-    ),
-    #
-    # distilbert-base-cased
-    #
-    "distilbert-base-cased-cola": (
-        "textattack/distilbert-base-cased-CoLA",
-        ("glue", "cola", "validation"),
-    ),
-    "distilbert-base-cased-mrpc": (
-        "textattack/distilbert-base-cased-MRPC",
-        ("glue", "mrpc", "validation"),
-    ),
-    "distilbert-base-cased-qqp": (
-        "textattack/distilbert-base-cased-QQP",
-        ("glue", "qqp", "validation"),
-    ),
-    "distilbert-base-cased-sst2": (
-        "textattack/distilbert-base-cased-SST-2",
-        ("glue", "sst2", "validation"),
-    ),
-    "distilbert-base-cased-stsb": (
-        "textattack/distilbert-base-cased-STS-B",
-        ("glue", "stsb", "validation", None, 5.0),
-    ),
-    #
-    # distilbert-base-uncased
-    #
-    "distilbert-base-uncased-mnli": (
-        "textattack/distilbert-base-uncased-MNLI",
-        ("glue", "mnli", "validation_matched", [1, 2, 0]),
-    ),
-    "distilbert-base-uncased-mrpc": (
-        "textattack/distilbert-base-uncased-MRPC",
-        ("glue", "mrpc", "validation"),
-    ),
-    "distilbert-base-uncased-qnli": (
-        "textattack/distilbert-base-uncased-QNLI",
-        ("glue", "qnli", "validation"),
-    ),
-    "distilbert-base-uncased-qqp": (
-        "textattack/distilbert-base-uncased-QQP",
-        ("glue", "qqp", "validation"),
-    ),
-    "distilbert-base-uncased-rte": (
-        "textattack/distilbert-base-uncased-RTE",
-        ("glue", "rte", "validation"),
-    ),
-    "distilbert-base-uncased-sst2": (
-        "textattack/distilbert-base-uncased-SST-2",
-        ("glue", "sst2", "validation"),
-    ),
-    "distilbert-base-uncased-stsb": (
-        "textattack/distilbert-base-uncased-STS-B",
-        ("glue", "stsb", "validation", None, 5.0),
-    ),
-    "distilbert-base-uncased-wnli": (
-        "textattack/distilbert-base-uncased-WNLI",
-        ("glue", "wnli", "validation"),
-    ),
-    #
-    # roberta-base (RoBERTa is cased by default)
-    #
-    "roberta-base-cola": (
-        "textattack/roberta-base-CoLA",
-        ("glue", "cola", "validation"),
-    ),
-    "roberta-base-mrpc": (
-        "textattack/roberta-base-MRPC",
-        ("glue", "mrpc", "validation"),
-    ),
-    "roberta-base-qnli": (
-        "textattack/roberta-base-QNLI",
-        ("glue", "qnli", "validation"),
-    ),
-    "roberta-base-rte": ("textattack/roberta-base-RTE", ("glue", "rte", "validation")),
-    "roberta-base-sst2": (
-        "textattack/roberta-base-SST-2",
-        ("glue", "sst2", "validation"),
-    ),
-    "roberta-base-stsb": (
-        "textattack/roberta-base-STS-B",
-        ("glue", "stsb", "validation", None, 5.0),
-    ),
-    "roberta-base-wnli": (
-        "textattack/roberta-base-WNLI",
-        ("glue", "wnli", "validation"),
-    ),
-}
-
-BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
-    "word-swap-embedding": "textattack.transformations.WordSwapEmbedding",
-    "word-swap-homoglyph": "textattack.transformations.WordSwapHomoglyphSwap",
-    "word-swap-neighboring-char-swap": "textattack.transformations.WordSwapNeighboringCharacterSwap",
-    "word-swap-random-char-deletion": "textattack.transformations.WordSwapRandomCharacterDeletion",
-    "word-swap-random-char-insertion": "textattack.transformations.WordSwapRandomCharacterInsertion",
-    "word-swap-random-char-substitution": "textattack.transformations.WordSwapRandomCharacterSubstitution",
-    "word-swap-wordnet": "textattack.transformations.WordSwapWordNet",
-}
-
-WHITE_BOX_TRANSFORMATION_CLASS_NAMES = {
-    "word-swap-gradient": "textattack.transformations.WordSwapGradientBased"
-}
-
-CONSTRAINT_CLASS_NAMES = {
-    #
-    # Semantics constraints
-    #
-    "embedding": "textattack.constraints.semantics.WordEmbeddingDistance",
-    "bert": "textattack.constraints.semantics.sentence_encoders.BERT",
-    "infer-sent": "textattack.constraints.semantics.sentence_encoders.InferSent",
-    "thought-vector": "textattack.constraints.semantics.sentence_encoders.ThoughtVector",
-    "use": "textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder",
-    #
-    # Grammaticality constraints
-    #
-    "lang-tool": "textattack.constraints.grammaticality.LanguageTool",
-    "part-of-speech": "textattack.constraints.grammaticality.PartOfSpeech",
-    "goog-lm": "textattack.constraints.grammaticality.language_models.GoogleLanguageModel",
-    "gpt2": "textattack.constraints.grammaticality.language_models.GPT2",
-    #
-    # Overlap constraints
-    #
-    "bleu": "textattack.constraints.overlap.BLEU",
-    "chrf": "textattack.constraints.overlap.chrF",
-    "edit-distance": "textattack.constraints.overlap.LevenshteinEditDistance",
-    "meteor": "textattack.constraints.overlap.METEOR",
-    "max-words-perturbed": "textattack.constraints.overlap.MaxWordsPerturbed",
-    #
-    # Pre-transformation constraints
-    #
-    "repeat": "textattack.constraints.pre_transformation.RepeatModification",
-    "stopword": "textattack.constraints.pre_transformation.StopwordModification",
-}
-
-SEARCH_CLASS_NAMES = {
-    "beam-search": "textattack.search_methods.BeamSearch",
-    "greedy": "textattack.search_methods.GreedySearch",
-    "ga-word": "textattack.search_methods.GeneticAlgorithm",
-    "greedy-word-wir": "textattack.search_methods.GreedyWordSwapWIR",
-}
-
-GOAL_FUNCTION_CLASS_NAMES = {
-    "non-overlapping-output": "textattack.goal_functions.NonOverlappingOutput",
-    "targeted-classification": "textattack.goal_functions.TargetedClassification",
-    "untargeted-classification": "textattack.goal_functions.UntargetedClassification",
-}
+from textattack.shared.scripts.attack_args import *
 
 
 def set_seed(random_seed):
@@ -305,14 +42,14 @@ def get_args():
 
     model_group = parser.add_mutually_exclusive_group()
 
-    model_names = list(TEXTATTACK_MODEL_CLASS_NAMES.keys()) + list(
-        HUGGINGFACE_DATASET_BY_MODEL.keys()
+    model_names = list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
+        TEXTATTACK_DATASET_BY_MODEL.keys()
     )
     model_group.add_argument(
         "--model",
         type=str,
         required=False,
-        default="bert-base-uncased-yelp",
+        default=None,
         choices=model_names,
         help="The pre-trained model to attack.",
     )
@@ -555,11 +292,9 @@ def get_args():
 
     # Shortcuts for huggingface models using --model.
     if not args.checkpoint_resume and args.model in HUGGINGFACE_DATASET_BY_MODEL:
-        (
-            args.model_from_huggingface,
-            args.dataset_from_nlp,
-        ) = HUGGINGFACE_DATASET_BY_MODEL[args.model]
-        args.model = None
+        _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
+    elif not args.checkpoint_resume and args.model in TEXTATTACK_DATASET_BY_MODEL:
+        _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
 
     return args
 
@@ -712,16 +447,22 @@ def parse_model_from_args(args):
             )
         model = model.to(textattack.shared.utils.device)
         setattr(model, "tokenizer", tokenizer)
-    elif args.model_from_huggingface:
+    elif (args.model in HUGGINGFACE_DATASET_BY_MODEL) or args.model_from_huggingface:
         import transformers
 
-        if ":" in args.model_from_huggingface:
-            model_class, model_name = args.model_from_huggingface.split(":")
+        model_name = (
+            HUGGINGFACE_DATASET_BY_MODEL[args.model][0]
+            if (args.model in HUGGINGFACE_DATASET_BY_MODEL)
+            else args.model_from_huggingface
+        )
+
+        if ":" in model_name:
+            model_class, model_name = model_name
             model_class = eval(f"transformers.{model_class}")
         else:
             model_class, model_name = (
                 transformers.AutoModelForSequenceClassification,
-                args.model_from_huggingface,
+                model_name,
             )
         colored_model_name = textattack.shared.utils.color_text(
             model_name, color="blue", method="ansi"
@@ -732,9 +473,7 @@ def parse_model_from_args(args):
         model = model_class.from_pretrained(model_name)
         model = model.to(textattack.shared.utils.device)
         try:
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(
-                args.model_from_huggingface
-            )
+            tokenizer = textattack.models.tokenizers.AutoTokenizer(model_name)
         except OSError:
             textattack.shared.logger.warn(
                 f"AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`"
@@ -742,27 +481,13 @@ def parse_model_from_args(args):
             tokenizer = textattack.models.tokenizers.AutoTokenizer("bert-base-uncased")
         setattr(model, "tokenizer", tokenizer)
     else:
-        if ":" in args.model:
-            model_name, params = args.model.split(":")
-            colored_model_name = textattack.shared.utils.color_text(
-                model_name, color="blue", method="ansi"
+        if args.model in TEXTATTACK_DATASET_BY_MODEL:
+            model_path, _ = TEXTATTACK_DATASET_BY_MODEL[args.model]
+            model = textattack.shared.utils.load_textattack_model_from_path(
+                args.model, model_path
             )
-            textattack.shared.logger.info(
-                f"Loading pre-trained TextAttack model: {colored_model_name}"
-            )
-            if model_name not in TEXTATTACK_MODEL_CLASS_NAMES:
-                raise ValueError(f"Error: unsupported model {model_name}")
-            model = eval(f"{TEXTATTACK_MODEL_CLASS_NAMES[model_name]}({params})")
-        elif args.model in TEXTATTACK_MODEL_CLASS_NAMES:
-            colored_model_name = textattack.shared.utils.color_text(
-                args.model, color="blue", method="ansi"
-            )
-            textattack.shared.logger.info(
-                f"Loading pre-trained TextAttack model: {colored_model_name}"
-            )
-            model = eval(f"{TEXTATTACK_MODEL_CLASS_NAMES[args.model]}()")
         else:
-            raise ValueError(f"Error: unsupported model {args.model}")
+            raise ValueError(f"Error: unsupported TextAttack model {args.model}")
     return model
 
 
@@ -795,15 +520,9 @@ def parse_dataset_from_args(args):
         dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, shuffle=args.shuffle
         )
+        dataset.examples = dataset.examples[args.num_examples_offset :]
     else:
-        if not args.model:
-            raise ValueError("Must supply pretrained model or dataset")
-        elif args.model in DATASET_BY_MODEL:
-            dataset = DATASET_BY_MODEL[args.model](
-                offset=args.num_examples_offset, shuffle=args.shuffle
-            )
-        else:
-            raise ValueError(f"Error: unsupported model {args.model}")
+        raise ValueError("Must supply pretrained model or dataset")
     return dataset
 
 

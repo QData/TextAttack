@@ -31,7 +31,6 @@ Attack(
   (is_black_box):  True
 ) 
 
-Load time: /.*/s
 Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:

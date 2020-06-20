@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -13,46 +13,52 @@ Attack(
   (is_black_box):  True
 ) 
 
-Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[91m0[0m-->[37m[SKIPPED][0m
+[94m2[0m-->[37m[SKIPPED][0m
 
-[1m[4mPremise[0m[0m: A person in a black and green outfit is riding a bicycle .
-[1m[4mHypothesis[0m[0m: a colorfully dressed child rides a bike
+[1m[4mPremise[0m[0m: This church choir sings to the masses as they sing joyous songs from the book at a church.
+[1m[4mHypothesis[0m[0m: The church has cracks in the ceiling.
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92m1[0m-->[91m0[0m
+[92m1[0m-->[91m[FAILED][0m
 
-[1m[4mPremise[0m[0m: A person rolls down a hill riding a wagon as another watches .
-[1m[4mHypothesis[0m[0m: A [92mchild[0m in a wagon rolls down a hill .
-
-[1m[4mPremise[0m[0m: A person rolls down a hill riding a wagon as another watches .
-[1m[4mHypothesis[0m[0m: A [91mcihld[0m in a wagon rolls down a hill .
+[1m[4mPremise[0m[0m: This church choir sings to the masses as they sing joyous songs from the book at a church.
+[1m[4mHypothesis[0m[0m: The church is filled with song.
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[94m2[0m-->[92m1[0m
+[91m0[0m-->[37m[SKIPPED][0m
 
-[1m[4mPremise[0m[0m: A man in a black tank top wearing a red plaid [94mhat[0m
-[1m[4mHypothesis[0m[0m: A man wearing football pads .
-
-[1m[4mPremise[0m[0m: A man in a black tank top wearing a red plaid [92mat[0m
-[1m[4mHypothesis[0m[0m: A man wearing football pads .
+[1m[4mPremise[0m[0m: This church choir sings to the masses as they sing joyous songs from the book at a church.
+[1m[4mHypothesis[0m[0m: A choir singing at a baseball game.
 
 
+--------------------------------------------- Result 4 ---------------------------------------------
+[94m2[0m-->[37m[SKIPPED][0m
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 2      |
-| Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 1      |
-| Original accuracy:            | 66.67% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 5.32%  |
-| Average num. words per input: | 19.0   |
-| Avg num queries:              | 24.0   |
-+-------------------------------+--------+
-Attack time: /.*/
+[1m[4mPremise[0m[0m: A woman with a green headscarf, blue shirt and a very big grin.
+[1m[4mHypothesis[0m[0m: The woman is young.
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+
+[1m[4mPremise[0m[0m: A woman with a green headscarf, blue shirt and a very big grin.
+[1m[4mHypothesis[0m[0m: The woman is very happy.
+
+
+
++-------------------------------+-------+
+| Attack Results                |       |
++-------------------------------+-------+
+| Number of successful attacks: | 0     |
+| Number of failed attacks:     | 2     |
+| Number of skipped attacks:    | 3     |
+| Original accuracy:            | 40.0% |
+| Accuracy under attack:        | 40.0% |
+| Attack success rate:          | 0.0%  |
+| Average perturbed word %:     | nan%  |
+| Average num. words per input: | 21.8  |
+| Avg num queries:              | 70.0  |
++-------------------------------+-------+

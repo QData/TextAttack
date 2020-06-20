@@ -14,7 +14,6 @@ Attack(
   (is_black_box):  True
 ) 
 
-Load time: /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 Eine republikanische Strategie, um der Wiederwahl Obamas entgegenzuwirken-->[91m[FAILED][0m
 A Republican strategy to counter the re-election of Obama
@@ -40,4 +39,3 @@ Die republikanischen Führer rechtfertigten ihre Politik durch die Not-->Repuzli
 | Average num. words per input: | 11.0   |
 | Avg num queries:              | 19.0   |
 +-------------------------------+--------+
-Attack time: /.*/

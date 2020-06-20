@@ -25,32 +25,31 @@ Attack(
     (4): StopwordModification
   (is_black_box):  False
 ) 
-
-Load time: /.*/
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [92m1[0m-->[91m[FAILED][0m
 
-lee jeong-hyang tells it so lovingly and films it so beautifully that i couldn't help being captivated by it .
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92m1[0m-->[91m0[0m
+[92m1[0m-->[91m[FAILED][0m
 
-a [92mrespectable[0m venture on its own terms , lacking the broader vision that has seen certain trek films . . . cross over to a more mainstream audience .
-
-a [91mtakusaburō[0m venture on its own terms , lacking the broader vision that has seen certain trek films . . . cross over to a more mainstream audience .
+red dragon " never cuts corners .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[91m0[0m-->[91m[FAILED][0m
+[92m1[0m-->[91m0[0m
 
-gets bogged down by an overly sillified plot and stop-and-start pacing .
+[92mfresnadillo[0m has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
+
+[91mvain[0m has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
 [92m1[0m-->[91m[FAILED][0m
 
-stanley kwan has directed not only one of the best gay love stories ever made , but one of the best love stories of any stripe .
+throws in enough clever and unexpected twists to make the formula feel fresh .
 
 
 
@@ -63,8 +62,7 @@ stanley kwan has directed not only one of the best gay love stories ever made , 
 | Original accuracy:            | 100.0% |
 | Accuracy under attack:        | 75.0%  |
 | Attack success rate:          | 25.0%  |
-| Average perturbed word %:     | 4.17%  |
-| Average num. words per input: | 20.75  |
-| Avg num queries:              | 1.5    |
+| Average perturbed word %:     | 3.85%  |
+| Average num. words per input: | 15.75  |
+| Avg num queries:              | 1.25   |
 +-------------------------------+--------+
-Attack time: /.*/

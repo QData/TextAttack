@@ -11,7 +11,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helper import *
+from .attack_args_parser import *
 
 logger = textattack.shared.logger
 
@@ -60,7 +60,7 @@ def run(args):
         attack_log_manager = parse_logger_from_args(args)
 
     load_time = time.time()
-    print(f"Load time: {load_time - start_time}s")
+    textattack.shared.logger.info(f"Load time: {load_time - start_time}s")
 
     if args.interactive:
         print("Running in interactive mode")
@@ -143,7 +143,7 @@ def run(args):
         attack_log_manager.flush()
         print()
         finish_time = time.time()
-        print(f"Attack time: {time.time() - load_time}s")
+        textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
 
 if __name__ == "__main__":

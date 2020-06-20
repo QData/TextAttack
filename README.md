@@ -141,7 +141,7 @@ TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that
 
 TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
 dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
-tasks, as well as some common classification datasets (MR, IMDB, Yelp, AGNews), translation, and summarization. You can 
+tasks, as well as some common classification datasets, translation, and summarization. You can 
 see the full list of provided models & datasets via `python -m textattack --help`.
 
 Here's an example of using one of the built-in models:

@@ -11,7 +11,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helper import *
+from .attack_args_parser import *
 
 logger = textattack.shared.logger
 
@@ -22,6 +22,7 @@ def set_env_variables(gpu_id):
     # Only use one GPU, if we have one.
     if "CUDA_VISIBLE_DEVICES" not in os.environ:
         os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -87,7 +88,7 @@ def run(args):
 
     dataset = parse_dataset_from_args(args)
 
-    print(f"Running on {num_gpus} GPUs")
+    textattack.shared.logger.info(f"Running on {num_gpus} GPUs")
     load_time = time.time()
 
     if args.interactive:
@@ -171,7 +172,7 @@ def run(args):
     attack_log_manager.flush()
     print()
     finish_time = time.time()
-    print(f"Attack time: {time.time() - load_time}s")
+    textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
 
 def pytorch_multiprocessing_workaround():
