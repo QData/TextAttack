@@ -8,7 +8,7 @@ from textattack.commands.augment import AugmentCommand
 from textattack.commands.benchmark_model import BenchmarkModelCommand
 from textattack.commands.benchmark_recipe import BenchmarkRecipeCommand
 from textattack.commands.list_things import ListThingsCommand
-from textattack.commands.train_model import TrainModelCommand
+from textattack.commands.eval_model import EvalModelCommand
 
 
 def main():
