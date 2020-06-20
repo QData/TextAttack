@@ -15,7 +15,14 @@ class WordCNNForClassification(nn.Module):
         classification.
     """
 
-    def __init__(self, hidden_size=150, dropout=0.3, nclasses=2, max_seq_length=128):
+    def __init__(
+        self,
+        hidden_size=150,
+        dropout=0.3,
+        nclasses=2,
+        max_seq_length=128,
+        model_path=None,
+    ):
         super().__init__()
         self.drop = nn.Dropout(dropout)
         self.emb_layer = GloveEmbeddingLayer()
@@ -29,8 +36,11 @@ class WordCNNForClassification(nn.Module):
             self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
         )
 
-    def load_from_disk(self, model_folder_path):
-        self.load_state_dict(load_cached_state_dict(model_folder_path))
+        if model_path is not None:
+            self.load_from_disk(model_path)
+
+    def load_from_disk(self, model_path):
+        self.load_state_dict(load_cached_state_dict(model_path))
         self.to(utils.device)
         self.eval()
 
