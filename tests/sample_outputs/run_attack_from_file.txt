@@ -6,8 +6,7 @@ Attack(
   (transformation):  WordSwapRandomCharacterSubstitution
   (constraints): None
   (is_black_box):  True
-) 
-
+)/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [92m1[0m-->[37m[SKIPPED][0m
 

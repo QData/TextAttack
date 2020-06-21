@@ -51,7 +51,19 @@ def model_predict(model, inputs):
 def try_model_predict(model, inputs):
     model_device = get_model_device(model)
 
-    if isinstance(inputs[0], dict):
+    if isinstance(inputs, torch.Tensor):
+        # If `inputs` is a tensor, we'll assume it's been pre-processed, and send
+        # it to the model.
+        if model_device != inputs.device:
+            inputs = inputs.to(model_device)
+        outputs = model(inputs)
+
+    elif isinstance(inputs, dict):
+        # If `inputs` is a single dict, its values are assumed to be input
+        # tensors.
+        outputs = model(**inputs)
+
+    elif isinstance(inputs[0], dict):
         # If ``inputs`` is a list of dicts, we convert them to a single dict
         # (now of tensors) and pass to the model as kwargs.
         # Convert list of dicts to dict of lists.
