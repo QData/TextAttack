@@ -1,6 +1,6 @@
 import textattack
 
-RECIPE_NAMES = {
+ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.Alzantot2018",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
@@ -244,7 +244,7 @@ CONSTRAINT_CLASS_NAMES = {
     "stopword": "textattack.constraints.pre_transformation.StopwordModification",
 }
 
-SEARCH_CLASS_NAMES = {
+SEARCH_METHOD_CLASS_NAMES = {
     "beam-search": "textattack.search_methods.BeamSearch",
     "greedy": "textattack.search_methods.GreedySearch",
     "ga-word": "textattack.search_methods.GeneticAlgorithm",

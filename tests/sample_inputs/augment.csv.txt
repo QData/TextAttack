@@ -1,0 +1,4 @@
+text,label,another_column
+"For the last 8 years of his life, Galileo was under house arrest for espousing this man's theory", 5, "some text that needs to be preserved"
+"Signer of the Dec. of Indep., framer of the Constitution of Mass., second President of the United States", -13, "the answer to this question is John Adams"
+"In the title of an Aesop fable, this insect shared billing with a grasshopper", 1111, "these are from a jeopardy question, and this one is the ant"

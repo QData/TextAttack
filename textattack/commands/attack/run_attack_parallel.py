@@ -11,7 +11,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_parser import *
+from .attack_args_helpers import *
 
 logger = textattack.shared.logger
 
