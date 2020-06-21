@@ -1,5 +1,6 @@
 from collections import deque
 import itertools
+
 import numpy as np
 import torch
 from transformers import BertForMaskedLM, BertTokenizerFast
@@ -21,11 +22,11 @@ class WordSwapBERTMaskedLM(WordSwap):
 
     def __init__(
         self,
-        method_type="bae"
+        method_type="bert-attack",
         max_candidates=10,
         language_model="bert-base-uncased",
         max_length=256,
-        **kwargs
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.method_type = method_type
@@ -45,9 +46,6 @@ class WordSwapBERTMaskedLM(WordSwap):
             torch.zeros(self.max_length, dtype=torch.long).unsqueeze(0).to(utils.device)
         )
         self._language_model.eval()
-
-        if self.method_type = "bert-attack":
-            self._bert_attack_P = np.zeros((self.max_length, self.max_candidates), dtype=int)
 
     def _top_k_bert_pred(self, ids, masked_index, k):
         """
@@ -76,7 +74,7 @@ class WordSwapBERTMaskedLM(WordSwap):
             max_length=self.max_length,
             pad_to_max_length=True,
         )
-        
+
         try:
             masked_index = ids.index(self._lm_tokenizer.mask_token_id)
         except ValueError:
@@ -91,25 +89,36 @@ class WordSwapBERTMaskedLM(WordSwap):
 
         return replacement_words
 
-    def _bert_attack_replacement_words(self, current_text, index, current_ids, token2char_offset):
+    def _bert_attack_replacement_words(self, current_text, index):
+        tokenized_text = self._lm_tokenizer.encode_plus(
+            current_text.text, max_length=self.max_length, pad_to_max_length=True,
+            return_offsets_mapping=True
+        )
+    
+        current_ids = tokenized_text["input_ids"]
+        token2char_offset = tokenized_text["offset_mapping"]
         target_word = current_text.words[index]
         # Start and end position of word in the whole text
         word_start, word_end = current_text.words2char_offset[target_word]
         # We need to find which tokens belong to the word we want to replace
-        target_ids = []
-        i = 0
-        for id, offsets in zip(current_ids, token2char_offset):
-            token_start, token_end = offsets
-            if token_start >= word_start and token_end <= token_end:
-                target_ids.append((i, id))
+        target_ids_pos = []
 
-        if not target_ids:
+        for i in range(len(current_ids)):
+            id = current_ids[i]
+            token_start, token_end = token2char_offset[i]
+            token = self._lm_tokenizer.convert_ids_to_tokens(id).replace("##", "")
+            if (token_start >= word_start and token_end <= token_end) and token in target_word:
+                target_ids_pos.append(i)
+
+        if not target_ids_pos:
             return []
-        elif len(target_ids) == 1:
+        elif len(target_ids_pos) == 1:
             # Word to replace is tokenized as a single word
-            masked_pos = target_ids[0][0]
+            masked_pos = target_ids_pos[0]
             current_ids[masked_pos] = self._lm_tokenizer.mask_token_id
-            top_ids, _ = self._top_k_bert_pred(current_ids, masked_pos, self.max_candidates)
+            top_ids, _ = self._top_k_bert_pred(
+                current_ids, masked_pos, self.max_candidates
+            )
             replacement_words = []
             for id in top_ids:
                 token = self._lm_tokenizer.convert_ids_to_tokens(id)
@@ -119,15 +128,16 @@ class WordSwapBERTMaskedLM(WordSwap):
         else:
             # Word to replace is tokenized as multiple sub-words
             top_replacements = []
-            for t in target_ids:
+            for i in target_ids_pos:
                 ids = current_ids.copy()
-                masked_pos = t[0]
-                ids[t] = self._lm_tokenizer.mask_token_id
+                ids[i] = self._lm_tokenizer.mask_token_id
                 # `top_results` is tuple of (ids, logits)
-                top_results = self._top_k_bert_pred(ids, masked_pos, self.max_candidates)
-                top_replacements.append(top_results)
-            
-            productss = itertools.product(*top_replacements)
+                top_ids, top_logits = self._top_k_bert_pred(
+                    ids, i, self.max_candidates
+                )
+                top_replacements.append(list(zip(top_ids, top_logits)))
+
+            products = itertools.product(*top_replacements)
             combination_results = []
             for product in products:
                 word = []
@@ -136,38 +146,30 @@ class WordSwapBERTMaskedLM(WordSwap):
                     id, p = sub_word
                     word.append(i)
                     prob *= p
-                word = "".join(self._lm_tokenizer.convert_ids_to_tokens(word)).replace("##", "")
+                word = "".join(self._lm_tokenizer.convert_ids_to_tokens(word)).replace(
+                    "##", ""
+                )
                 if check_if_word(word):
                     combination_results.append((word, prob))
             # Sort to get top-K results
             sorted(combination_results, key=lambda x: x[1], reverse=True)
-            return combination_results[:self.max_candidates]
+            return combination_results[: self.max_candidates]
 
-    def _get_replacement_words(self, current_text, index, current_ids=None, token2char_offset=None):
+    def _get_replacement_words(self, current_text, index):
         if self.method_type == "bae":
             return self._bae_replacement_words(current_text, index)
         elif self.method_type == "bert-attack":
-            return self._bert_attack_replacement_words(current_text, index, current_ids, token2char_offset)
+            return self._bert_attack_replacement_words(current_text, index)
         else:
-            raise ValueError(f"Unrecognized value {self.method_type} for `self.method_type`.")
+            raise ValueError(
+                f"Unrecognized value {self.method_type} for `self.method_type`."
+            )
 
     def _get_transformations(self, current_text, indices_to_modify):
-        if self.method_type == "bert-attack":
-            tokenization_result = self._lm_tokenizer.encode_plus(
-                current_text.text,
-                max_length=self.max_length,
-                pad_to_max_length=True,
-            )
-            current_ids = tokenized_text["input_ids"]
-            token2char_offset = tokenized_text["offset_mapping"]
-
         transformed_texts = []
 
         for i in indices_to_modify:
-            if self.method_type == "bert-attack":
-                replacement_words = self._get_replacement_words(current_text, i, current_ids, token2char_offset)
-            else:
-                replacement_words = self._get_replacement_words(current_text, i)
+            replacement_words = self._get_replacement_words(current_text, i)
 
             print(replacement_words)
             transformed_texts_idx = []

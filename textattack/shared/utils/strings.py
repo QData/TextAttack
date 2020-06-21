@@ -41,7 +41,7 @@ def words_from_text(s, words_to_ignore=[], words2char=False):
         words.append(word)
         end = len(word) - 1
         words2char_offset[word] = (start, end)
-    
+
     if words2char:
         return words, words2char_offset
     else:
