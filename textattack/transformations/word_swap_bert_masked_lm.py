@@ -91,10 +91,12 @@ class WordSwapBERTMaskedLM(WordSwap):
 
     def _bert_attack_replacement_words(self, current_text, index):
         tokenized_text = self._lm_tokenizer.encode_plus(
-            current_text.text, max_length=self.max_length, pad_to_max_length=True,
-            return_offsets_mapping=True
+            current_text.text,
+            max_length=self.max_length,
+            pad_to_max_length=True,
+            return_offsets_mapping=True,
         )
-    
+
         current_ids = tokenized_text["input_ids"]
         token2char_offset = tokenized_text["offset_mapping"]
         target_word = current_text.words[index]
@@ -107,7 +109,9 @@ class WordSwapBERTMaskedLM(WordSwap):
             id = current_ids[i]
             token_start, token_end = token2char_offset[i]
             token = self._lm_tokenizer.convert_ids_to_tokens(id).replace("##", "")
-            if (token_start >= word_start and token_end <= token_end) and token in target_word:
+            if (
+                token_start >= word_start and token_end <= token_end
+            ) and token in target_word:
                 target_ids_pos.append(i)
 
         if not target_ids_pos:
@@ -132,9 +136,7 @@ class WordSwapBERTMaskedLM(WordSwap):
                 ids = current_ids.copy()
                 ids[i] = self._lm_tokenizer.mask_token_id
                 # `top_results` is tuple of (ids, logits)
-                top_ids, top_logits = self._top_k_bert_pred(
-                    ids, i, self.max_candidates
-                )
+                top_ids, top_logits = self._top_k_bert_pred(ids, i, self.max_candidates)
                 top_replacements.append(list(zip(top_ids, top_logits)))
 
             products = itertools.product(*top_replacements)
