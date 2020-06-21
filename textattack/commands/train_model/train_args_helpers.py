@@ -31,7 +31,7 @@ def dataset_from_args(args):
     except KeyError:
         raise KeyError(f"Error: no `train` split found in `{args.dataset}` dataset")
     train_text, train_labels = prepare_dataset_for_training(train_dataset)
-    
+
     if args.dataset_split:
         eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, split=args.dataset_split
@@ -57,23 +57,22 @@ def dataset_from_args(args):
                         f"Could not find `dev` or `test` split in dataset {args.dataset}."
                     )
     eval_text, eval_labels = prepare_dataset_for_training(eval_dataset)
-            
 
     return train_text, train_labels, eval_text, eval_labels
 
 
-def model_from_args(args):
+def model_from_args(args, num_labels):
     if args.model == "lstm":
         textattack.shared.logger.info("Loading textattack model: LSTMForClassification")
         model = textattack.models.helpers.LSTMForClassification(
-            max_seq_length=args.max_length
+            max_seq_length=args.max_length, num_labels=num_labels
         )
     elif args.model == "cnn":
         textattack.shared.logger.info(
             "Loading textattack model: WordCNNForClassification"
         )
         model = textattack.models.helpers.WordCNNForClassification(
-            max_seq_length=args.max_length
+            max_seq_length=args.max_length, num_labels=num_labels
         )
     else:
         import transformers
@@ -81,8 +80,11 @@ def model_from_args(args):
         textattack.shared.logger.info(
             f"Loading transformers AutoModelForSequenceClassification: {args.model}"
         )
+        config = transformers.AutoConfig.from_pretrained(
+            args.model, num_labels=num_labels, finetuning_task=args.dataset
+        )
         model = transformers.AutoModelForSequenceClassification.from_pretrained(
-            args.model
+            args.model, config=config,
         )
         tokenizer = textattack.models.tokenizers.AutoTokenizer(
             args.model, use_fast=False, max_length=args.max_length

@@ -174,6 +174,23 @@ of a string or a list of strings. Here's an example of how to use the `Embedding
 ['What I notable create, I do not understand.', 'What I significant create, I do not understand.', 'What I cannot engender, I do not understand.', 'What I cannot creating, I do not understand.', 'What I cannot creations, I do not understand.', 'What I cannot create, I do not comprehend.', 'What I cannot create, I do not fathom.', 'What I cannot create, I do not understanding.', 'What I cannot create, I do not understands.', 'What I cannot create, I do not understood.', 'What I cannot create, I do not realise.']
 ```
 
+### Training Models
+
+Our model training code is available via `textattack train` to help you train LSTMs,
+CNNs, and `transformers` models using TextAttack out-of-the-box. Datasets are
+automatically loaded using the `nlp` package.
+
+#### Training Examples
+*Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
+```bash
+textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 5
+```
+
+*Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
+```bash
+textattack train --model bert-base-uncased --dataset glue:cola --batch-size 32 --epochs 5
+```
+
 ## Design
 
 ### TokenizedText

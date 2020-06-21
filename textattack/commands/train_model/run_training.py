@@ -65,7 +65,7 @@ def train_model(args):
             f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_label_id_list)})"
         )
 
-    model = model_from_args(args)
+    model = model_from_args(args, num_labels)
 
     logger.info(f"Tokenizing training data. (len: {train_examples_len})")
     train_text_ids = encode_batch(model.tokenizer, train_text)
@@ -184,7 +184,7 @@ def train_model(args):
         model_to_save = model.module if hasattr(model, "module") else model
         model_to_save.save_pretrained(output_dir)
         torch.save(args, os.path.join(output_dir, "training_args.bin"))
-        logger.info("Checkpoint saved to %s.", output_dir)
+        logger.info(f"Checkpoint saved to {output_dir}.")
 
     model.train()
     best_eval_acc = 0
@@ -210,9 +210,7 @@ def train_model(args):
                 }
             logits = textattack.shared.utils.model_predict(model, input_ids)
             loss_fct = torch.nn.CrossEntropyLoss()
-            loss = torch.nn.CrossEntropyLoss()(
-                logits.view(-1, num_labels), labels.view(-1)
-            )
+            loss = torch.nn.CrossEntropyLoss()(logits, labels)
             if global_step % args.tb_writer_step == 0:
                 tb_writer.add_scalar("loss", loss, global_step)
                 tb_writer.add_scalar("lr", loss, global_step)
@@ -222,9 +220,8 @@ def train_model(args):
                 optimizer.step()
                 scheduler.step()
                 optimizer.zero_grad()
-                global_step += 1
             # Save model checkpoint to file.
-            if global_step % args.checkpoint_steps == 0:
+            if global_step > 0 and global_step % args.checkpoint_steps == 0:
                 save_model_checkpoint()
 
             model.zero_grad()

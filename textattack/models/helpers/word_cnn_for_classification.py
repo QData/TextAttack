@@ -19,7 +19,7 @@ class WordCNNForClassification(nn.Module):
         self,
         hidden_size=150,
         dropout=0.3,
-        nclasses=2,
+        num_classeses=2,
         max_seq_length=128,
         model_path=None,
     ):
@@ -31,7 +31,7 @@ class WordCNNForClassification(nn.Module):
             self.emb_layer.n_d, widths=[3, 4, 5], filters=hidden_size
         )
         d_out = 3 * hidden_size
-        self.out = nn.Linear(d_out, nclasses)
+        self.out = nn.Linear(d_out, num_classeses)
         self.tokenizer = textattack.models.tokenizers.SpacyTokenizer(
             self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
         )
