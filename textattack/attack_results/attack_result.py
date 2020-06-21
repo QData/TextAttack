@@ -66,7 +66,7 @@ class AttackResult:
         """
         orig_colored = self.original_result.get_colored_output(color_method)
         pert_colored = self.perturbed_result.get_colored_output(color_method)
-        return orig_colored + "-->" + pert_colored
+        return orig_colored + " --> " + pert_colored
 
     def diff_color(self, color_method=None):
         """ Highlights the difference between two texts using color.

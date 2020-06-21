@@ -12,11 +12,15 @@ class GoalFunctionResult:
         score: A score representing how close the model is to achieving its goal.
     """
 
-    def __init__(self, attacked_text, output, succeeded, score):
+    def __init__(self, attacked_text, raw_output, output, succeeded, score):
         self.attacked_text = attacked_text
+        self.raw_output = raw_output
         self.output = output
         self.score = score
         self.succeeded = succeeded
+
+        if isinstance(self.raw_output, torch.Tensor):
+            self.raw_output = self.raw_output.cpu()
 
         if isinstance(self.score, torch.Tensor):
             self.score = self.score.item()

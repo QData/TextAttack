@@ -35,7 +35,7 @@ Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:
 Attacking...
-[92m1[0m-->[91m0[0m
+[92m1 (59%)[0m --> [91m0 (72%)[0m
 
 All that [92mglitters[0m is not gold
 
