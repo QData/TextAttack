@@ -1,30 +1,50 @@
+import os
 import time
 import textattack
+import torch
+import tqdm
 
+from .train_args_helpers import dataset_from_args, model_from_args
+from torch.utils.data import (DataLoader, RandomSampler, TensorDataset)
+
+device = textattack.shared.utils.device
 logger = textattack.shared.logger
 
 def make_directories(output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
+    
+def encode_batch(tokenizer, text_list):
+    try:
+        return tokenizer.encode_batch(text_list)
+    except AttributeError:
+        return [tokenizer.encode(text) for text in text_list]
+    
 
-def main(args):
+def train_model(args):
+    from transformers.optimization import AdamW, get_linear_schedule_with_warmup
+    
     start_time = time.time()
-    args = parse_args()
     make_directories(args.output_dir)
     
-    # Start Tensorboard and log hyperparams.
-    tb_writer = SummaryWriter(args.output_dir)
-    tb_writer.add_hparams(vars(args), {})
+    num_gpus = torch.cuda.device_count()
     
-    file_log_handler = logging.FileHandler(os.path.join(args.output_dir, 'log.txt'))
-    logger.addHandler(file_log_handler)
+    # Start Tensorboard and log hyperparams.
+    from tensorboardX import SummaryWriter
+    tb_writer = SummaryWriter(args.output_dir)
+    args_dict = vars(args)
+    del args_dict['func']
+    tb_writer.add_hparams(args_dict, {})
+    
+    # Use Weights & Biases, if enabled.
+    if args.enable_wandb:
+        wandb.init(sync_tensorboard=True)
     
     # Get list of text and list of label (integers) from disk.
-    train_text, train_label_id_list, eval_text, eval_label_id_list = \
-        get_examples_and_labels(args.dataset)
+    train_text, train_label_id_list, eval_text, eval_label_id_list = dataset_from_args(args)
     label_id_len = len(train_label_id_list)
     num_labels = len(set(train_label_id_list))
-    logger.info('num_labels: %s', num_labels)
+    logger.info('Loaded dataset. num_labels: %s', num_labels)
     
     train_examples_len = len(train_text)
     
@@ -33,38 +53,20 @@ def main(args):
     if len(eval_label_id_list) != len(eval_text):
         raise ValueError(f'Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_label_id_list)})')
     
-    print_cuda_memory(args)
-     # old INFO:__main__:Loaded data and tokenized in 189.66675066947937s
-    
-        # @TODO support other vocabularies, or at least, support case
-    tokenizer = BertWordPieceTokenizer('bert-base-uncased-vocab.txt', lowercase=True)
-    tokenizer.enable_padding(max_length=args.max_seq_len)
-    tokenizer.enable_truncation(max_length=args.max_seq_len)
+    model = model_from_args(args)
     
     logger.info(f'Tokenizing training data. (len: {train_examples_len})')
-    train_text_ids = [encoding.ids for encoding in tokenizer.encode_batch(train_text)]
+    train_text_ids = encode_batch(model.tokenizer, train_text)
     logger.info(f'Tokenizing test data (len: {len(eval_label_id_list)})')
-    eval_text_ids = [encoding.ids for encoding in tokenizer.encode_batch(eval_text)]
+    eval_text_ids = encode_batch(model.tokenizer, eval_text)
     load_time = time.time()
     logger.info(f'Loaded data and tokenized in {load_time-start_time}s')
-    
-    print_cuda_memory(args)
-    
-    # Load pre-trained model tokenizer (vocabulary)
-    logger.info('Loading model: %s', args.model_dir)
-    # Load pre-trained model (weights)
-    logger.info(f'Model class: (vanilla) BertForSequenceClassification.')
-    model = BertForSequenceClassification.from_pretrained(args.model_dir, cache_dir=CACHE_DIR, num_labels=num_labels)
-    
-    if torch.cuda.is_available():
-        torch.cuda.empty_cache()
-    model.to(device)
     # print(model)
     
     # multi-gpu training
-    if args.num_gpus > 1:
+    if num_gpus > 1:
         model = torch.nn.DataParallel(model)
-    logger.info(f'Training model across {args.num_gpus} GPUs')
+    logger.info(f'Training model across {num_gpus} GPUs')
     
     num_train_optimization_steps = int(
         train_examples_len / args.batch_size / args.grad_accum_steps) * args.num_train_epochs
@@ -88,7 +90,7 @@ def main(args):
     logger.info("***** Running training *****")
     logger.info("  Num examples = %d", train_examples_len)
     logger.info("  Batch size = %d", args.batch_size)
-    logger.info("  Max sequence length = %d", args.max_seq_len)
+    logger.info("  Max sequence length = %d", args.max_length)
     logger.info("  Num steps = %d", num_train_optimization_steps)
     
     train_input_ids = torch.tensor(train_text_ids, dtype=torch.long)
@@ -129,7 +131,7 @@ def main(args):
         torch.save(model_to_save.state_dict(), output_model_file)
         model_to_save.config.to_json_file(output_config_file)
         
-        logger.info(f'Best acc found. Saved tokenizer, model config, and model to {args.output_dir}.')
+        logger.info(f'Best acc found. Saved model to {args.output_dir}.')
     
     global_step = 0
     def save_model_checkpoint():
@@ -143,13 +145,12 @@ def main(args):
         torch.save(args, os.path.join(output_dir, 'training_args.bin'))
         logger.info('Checkpoint saved to %s.', output_dir)
     
-    print_cuda_memory(args)
     model.train()
     best_eval_acc = 0
     steps_since_best_eval_acc = 0
     
     def loss_backward(loss):
-        if args.num_gpus > 1:
+        if num_gpus > 1:
             loss = loss.mean() # mean() to average on multi-gpu parallel training
         if args.grad_accum_steps > 1:
             loss = loss / args.grad_accum_steps
@@ -158,7 +159,6 @@ def main(args):
     for _ in tqdm.trange(int(args.num_train_epochs), desc="Epoch"):
         prog_bar = tqdm.tqdm(train_dataloader, desc="Iteration")
         for step, batch in enumerate(prog_bar):
-            print_cuda_memory(args)
             batch = tuple(t.to(device) for t in batch)
             input_ids, labels = batch
             logits = model(input_ids)[0]
@@ -202,5 +202,3 @@ def main(args):
                 logger.info(f'Stopping early since it\'s been {args.early_stopping_epochs} steps since validation acc increased')
                 break
 
-
-if __name__ == '__main__': main()

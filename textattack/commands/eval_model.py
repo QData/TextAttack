@@ -83,7 +83,7 @@ class EvalModelCommand(TextAttackCommand):
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
         parser = main_parser.add_parser(
-            "eval-model",
+            "eval",
             help="evaluate a model with TextAttack",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
@@ -97,4 +97,4 @@ class EvalModelCommand(TextAttackCommand):
             default=256,
             help="Batch size for model inference.",
         )
-        parser.set_defaults(func=BenchmarkModelCommand())
+        parser.set_defaults(func=EvalModelCommand())

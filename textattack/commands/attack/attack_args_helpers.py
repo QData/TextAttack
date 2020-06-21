@@ -349,7 +349,7 @@ def parse_logger_from_args(args):
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
         outputs_dir = os.path.join(
-            current_dir, os.pardir, os.pardir, os.pardir, "outputs"
+            current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
         )
         args.out_dir = os.path.normpath(outputs_dir)
 
