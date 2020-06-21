@@ -45,7 +45,7 @@ class AttackResult:
     def perturbed_text(self, color_method=None):
         """ Returns the text portion of `self.perturbed_result`. Helper method.
         """
-        return self.original_result.attacked_text.printable_text(
+        return self.perturbed_result.attacked_text.printable_text(
             key_color=("bold", "underline"), key_color_method=color_method
         )
 
