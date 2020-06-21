@@ -44,7 +44,7 @@ class AttackedText:
             )
         # Format text inputs.
         self._text_input = OrderedDict([(k, v) for k, v in self._text_input.items()])
-        self.words = words_from_text(self.text)
+        self.words, self.words2char_offset = words_from_text(self.text, words2char=True)
         if attack_attrs is None:
             self.attack_attrs = dict()
         elif isinstance(attack_attrs, dict):

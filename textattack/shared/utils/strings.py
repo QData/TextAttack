@@ -18,21 +18,34 @@ def add_indent(s_, numSpaces):
     return s
 
 
-def words_from_text(s, words_to_ignore=[]):
+def words_from_text(s, words_to_ignore=[], words2char=False):
     """ Lowercases a string, removes all non-alphanumeric characters,
         and splits into words. """
     words = []
+    words2char_offset = {}
     word = ""
-    for c in " ".join(s.split()):
+    start = 0
+    end = 0
+    for i, c in enumerate(s):
         if c.isalpha():
             word += c
+            if start < end:
+                start = i
         elif word:
             if word not in words_to_ignore:
                 words.append(word)
+                end = i - 1
+                words2char_offset[word] = (start, end)
             word = ""
     if len(word) and (word not in words_to_ignore):
         words.append(word)
-    return words
+        end = len(word) - 1
+        words2char_offset[word] = (start, end)
+    
+    if words2char:
+        return words, words2char_offset
+    else:
+        return words
 
 
 def default_class_repr(self):
