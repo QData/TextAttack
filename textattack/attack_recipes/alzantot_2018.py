@@ -1,11 +1,17 @@
-from textattack.shared.attack import Attack
+from textattack.constraints.grammaticality.language_models import (
+    Google1BillionWordsLanguageModel,
+)
 from textattack.constraints.overlap import MaxWordsPerturbed
-from textattack.constraints.grammaticality.language_models import Google1BillionWordsLanguageModel
+from textattack.constraints.pre_transformation import (
+    RepeatModification,
+    StopwordModification,
+)
 from textattack.constraints.semantics import WordEmbeddingDistance
-from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
+
 
 def Alzantot2018(model):
     """
@@ -16,7 +22,7 @@ def Alzantot2018(model):
         https://arxiv.org/abs/1801.00554 
     """
     #
-    # Swap words with their embedding nearest-neighbors. 
+    # Swap words with their embedding nearest-neighbors.
     #
     # Embedding: Counter-fitted Paragram Embeddings.
     #
@@ -26,28 +32,19 @@ def Alzantot2018(model):
     #
     # Don't modify the same word twice or stopwords
     #
-    constraints = [
-        RepeatModification(),
-        StopwordModification()
-    ]
+    constraints = [RepeatModification(), StopwordModification()]
     #
     # Maximum words perturbed percentage of 20%
     #
-    constraints.append(
-            MaxWordsPerturbed(max_percent=0.2)
-    )
+    constraints.append(MaxWordsPerturbed(max_percent=0.2))
     #
     # Maximum word embedding euclidean distance of 0.5.
     #
-    constraints.append(
-            WordEmbeddingDistance(max_mse_dist=0.5)
-    )
+    constraints.append(WordEmbeddingDistance(max_mse_dist=0.5))
     #
     # Language Model
     #
-    constraints.append(
-            Google1BillionWordsLanguageModel(top_n_per_index=4)
-    )
+    constraints.append(Google1BillionWordsLanguageModel(top_n_per_index=4))
     #
     # Goal is untargeted classification
     #

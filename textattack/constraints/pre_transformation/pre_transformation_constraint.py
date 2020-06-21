@@ -1,5 +1,6 @@
-from textattack.shared.utils import default_class_repr
 from textattack.constraints import Constraint
+from textattack.shared.utils import default_class_repr
+
 
 class PreTransformationConstraint(Constraint):
     """ 
@@ -8,14 +9,14 @@ class PreTransformationConstraint(Constraint):
     during the transformation. For example, we might not allow stopwords to be
     modified.
     """
-   
+
     def __call__(self, current_text, transformation):
         """ 
         Returns the word indices in ``current_text`` which are able to be modified. 
         First checks compatibility with ``transformation`` then calls ``_get_modifiable_indices``\.
 
         Args:
-            current_text: The ``TokenizedText`` input to consider.
+            current_text: The ``AttackedText`` input to consider.
             transformation: The ``Transformation`` which will be applied.
         """
         if not self.check_compatibility(transformation):
@@ -28,6 +29,6 @@ class PreTransformationConstraint(Constraint):
         Must be overridden by specific pre-transformation constraints.
 
         Args:
-            current_text: The ``TokenizedText`` input to consider.
+            current_text: The ``AttackedText`` input to consider.
         """
         raise NotImplementedError()

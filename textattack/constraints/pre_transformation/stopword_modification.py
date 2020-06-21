@@ -1,18 +1,20 @@
-from textattack.shared.utils import default_class_repr
-from textattack.constraints.pre_transformation import PreTransformationConstraint
-from textattack.shared.validators import transformation_consists_of_word_swaps
 import nltk
+
+from textattack.constraints.pre_transformation import PreTransformationConstraint
+from textattack.shared.utils import default_class_repr
+from textattack.shared.validators import transformation_consists_of_word_swaps
+
 
 class StopwordModification(PreTransformationConstraint):
     """ 
     A constraint disallowing the modification of stopwords
     """
-  
+
     def __init__(self, stopwords=None):
         if stopwords is not None:
             self.stopwords = set(stopwords)
         else:
-            self.stopwords = set(nltk.corpus.stopwords.words('english'))
+            self.stopwords = set(nltk.corpus.stopwords.words("english"))
 
     def _get_modifiable_indices(self, current_text):
         """ 

@@ -4,21 +4,19 @@ import re
 import textattack
 from textattack.goal_functions import *
 
-from .utils import get_logger
-
-logger = get_logger()
+from . import logger
 
 # A list of goal functions and the corresponding available models.
 MODELS_BY_GOAL_FUNCTIONS = {
     (TargetedClassification, UntargetedClassification): [
-            r'^textattack.models.classification.*',
-            r'^textattack.models.entailment.*',
-        ],
-    (NonOverlappingOutput, ): [ # @todo add TargetedKeywordsOutput
-            r'^textattack.models.translation.*',
-            r'^textattack.models.summarization.*',
-        ],
-    
+        r"^textattack.models.classification.*",
+        r"^textattack.models.entailment.*",
+        r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
+    ],
+    (NonOverlappingOutput,): [
+        r"^textattack.models.translation.*",
+        r"^textattack.models.summarization.*",
+    ],
 }
 
 # Unroll the `MODELS_BY_GOAL_FUNCTIONS` dictionary into a dictionary that has
@@ -28,6 +26,7 @@ MODELS_BY_GOAL_FUNCTION = {}
 for goal_functions, matching_model_globs in MODELS_BY_GOAL_FUNCTIONS.items():
     for goal_function in goal_functions:
         MODELS_BY_GOAL_FUNCTION[goal_function] = matching_model_globs
+
 
 def validate_model_goal_function_compatibility(goal_function_class, model_class):
     """
@@ -41,27 +40,35 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     try:
         matching_model_globs = MODELS_BY_GOAL_FUNCTION[goal_function_class]
     except KeyError:
-        raise ValueError(f'No entry found for goal function {goal_function_class}.')
+        raise ValueError(f"No entry found for goal function {goal_function_class}.")
     # Get options for this goal function.
     model_module = model_class.__module__
+    model_module_path = ".".join((model_class.__module__, model_class.__name__))
     # Ensure the model matches one of these options.
     for glob in matching_model_globs:
-        if re.match(glob, model_module):
-            logger.info(f'Goal function {goal_function_class} matches model {model_class.__name__}.')
+        if re.match(glob, model_module_path):
+            logger.info(
+                f"Goal function {goal_function_class} compatible with model {model_class.__name__}."
+            )
             return True
     # If we got here, the model does not match the intended goal function.
     for goal_functions, globs in MODELS_BY_GOAL_FUNCTIONS.items():
         for glob in globs:
-            if re.match(glob, model_module):
-                raise ValueError(f'Model {model_class.__name__} does not match provided goal function {goal_function_class}.'
-                    ' Found match with other goal functions: {goal_functions}.')
+            if re.match(glob, model_module_path):
+                raise ValueError(
+                    f"Unknown if model {model_class.__name__} compatible with provided goal function {goal_function_class}."
+                    " Found match with other goal functions: {goal_functions}."
+                )
     # If it matches another goal function, throw an error.
-    
+
     # Otherwise, this is an unknown model–perhaps user-provided, or we forgot to
     # update the corresponding dictionary. Warn user and return.
-    logger.warn(f'Unknown if model {model} compatible with goal function {goal_function}.')
+    logger.warn(
+        f"Unknown if model of class {model_class} compatible with goal function {goal_function_class}."
+    )
     return True
-    
+
+
 def validate_model_gradient_word_swap_compatibility(model):
     """
         Determines if ``model`` is task-compatible with ``radientBasedWordSwap``. 
@@ -72,7 +79,8 @@ def validate_model_gradient_word_swap_compatibility(model):
     if isinstance(model, textattack.models.helpers.LSTMForClassification):
         return True
     else:
-        raise ValueError(f'Cannot perform GradientBasedWordSwap on model {model}.')
+        raise ValueError(f"Cannot perform GradientBasedWordSwap on model {model}.")
+
 
 def transformation_consists_of(transformation, transformation_classes):
     """
@@ -80,6 +88,7 @@ def transformation_consists_of(transformation, transformation_classes):
         instances of a class in ``transformation_classes``
     """
     from textattack.transformations import CompositeTransformation
+
     if isinstance(transformation, CompositeTransformation):
         for t in transformation.transformations:
             if not transformation_consists_of(t, transformation_classes):
@@ -91,9 +100,11 @@ def transformation_consists_of(transformation, transformation_classes):
                 return True
         return False
 
+
 def transformation_consists_of_word_swaps(transformation):
     """
         Determines if ``transformation`` is a word swap or consists of only word swaps
     """
     from textattack.transformations import WordSwap, WordSwapGradientBased
+
     return transformation_consists_of(transformation, [WordSwap, WordSwapGradientBased])

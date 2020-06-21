@@ -1,8 +1,9 @@
-from textattack.shared import utils
 import torch
-
-from textattack.tokenizers import BERTTokenizer, BERTEntailmentTokenizer
 from transformers.modeling_bert import BertForSequenceClassification
+
+from textattack.models.tokenizers import BERTTokenizer
+from textattack.shared import utils
+
 
 class BERTForClassification:
     """ 
@@ -14,17 +15,20 @@ class BERTForClassification:
             prediction, if different than 2.
             
     """
-    def __init__(self, model_path, num_labels=2, entailment=False):
+
+    def __init__(self, model_path, num_labels=2):
         model_file_path = utils.download_if_needed(model_path)
         self.model = BertForSequenceClassification.from_pretrained(
-            model_file_path, num_labels=num_labels)
-        self.model.to(utils.get_device())
+            model_file_path, num_labels=num_labels
+        )
+
+        self.model.to(utils.device)
         self.model.eval()
-        if entailment:
-            self.tokenizer = BERTEntailmentTokenizer()
-        else:
-            self.tokenizer = BERTTokenizer(model_file_path)
-    
-    def __call__(self, *params):
-        pred = self.model(*params)[0]
+        self.tokenizer = BERTTokenizer(model_file_path)
+
+    def __call__(self, input_ids=None, **kwargs):
+        # The tokenizer will return ``input_ids`` along with ``token_type_ids``
+        # and an ``attention_mask``. Our pre-trained models only need the input
+        # IDs.
+        pred = self.model(input_ids=input_ids)[0]
         return torch.nn.functional.softmax(pred, dim=-1)

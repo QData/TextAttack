@@ -1,9 +1,13 @@
 language: python
-python: '3.8'
+python: '3.8.2'
+cache: pip
 before_install:
   - python --version
-  - pip install -U pip
-  - pip install -U pytest
+  - python -m pip install --upgrade pip
+  - pip install black pytest pytest-xdist
 install:
   - pip install -e .
-script: pytest tests # run tests
+script:
+  - black . --check
+  - echo "import textattack" | python # run textattack post-install hooks
+  - travis_wait 30 pytest tests -vx --dist=loadfile -n auto

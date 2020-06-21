@@ -1,0 +1,68 @@
+Attack(
+  (search_method): BeamSearch(
+    (beam_width):  10
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapGradientBased(
+    (top_n):  1
+  )
+  (constraints): 
+    (0): MaxWordsPerturbed(
+        (max_num_words):  2
+      )
+    (1): WordEmbeddingDistance(
+        (embedding_type):  paragramcf
+        (min_cos_sim):  0.8
+        (cased):  False
+        (include_unknown_words):  True
+      )
+    (2): PartOfSpeech(
+        (tagger_type):  nltk
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+      )
+    (3): RepeatModification
+    (4): StopwordModification
+  (is_black_box):  False
+) 
+/.*/
+--------------------------------------------- Result 1 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+
+red dragon " never cuts corners .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92m1[0m-->[91m0[0m
+
+[92mfresnadillo[0m has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
+
+[91mvain[0m has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+
+throws in enough clever and unexpected twists to make the formula feel fresh .
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 1      |
+| Number of failed attacks:     | 3      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 75.0%  |
+| Attack success rate:          | 25.0%  |
+| Average perturbed word %:     | 3.85%  |
+| Average num. words per input: | 15.75  |
+| Avg num queries:              | 1.25   |
++-------------------------------+--------+

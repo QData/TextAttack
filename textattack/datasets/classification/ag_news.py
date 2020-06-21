@@ -1,5 +1,7 @@
 from textattack.shared import utils
+
 from .classification_dataset import ClassificationDataset
+
 
 class AGNews(ClassificationDataset):
     """
@@ -28,11 +30,15 @@ class AGNews(ClassificationDataset):
         3: Sci/Tech
 
     Args:
-        n (int): The number of examples to load
         offset (int): line to start reading from
+        shuffle (bool): If True, randomly shuffle loaded data
     
     """
-    DATA_PATH = 'datasets/classification/ag_news.txt'
-    def __init__(self, offset=0):
+
+    DATA_PATH = "datasets/classification/ag_news.txt"
+
+    def __init__(self, offset=0, shuffle=False):
         """ Loads a full dataset from disk. """
-        self._load_classification_text_file(AGNews.DATA_PATH, offset=offset)
+        self._load_classification_text_file(
+            AGNews.DATA_PATH, offset=offset, shuffle=shuffle
+        )

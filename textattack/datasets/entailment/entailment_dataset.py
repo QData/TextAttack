@@ -1,5 +1,8 @@
+import collections
+
 from textattack.datasets import TextAttackDataset
-from textattack.shared import TokenizedText
+from textattack.shared import AttackedText
+
 
 class EntailmentDataset(TextAttackDataset):
     """ 
@@ -10,24 +13,26 @@ class EntailmentDataset(TextAttackDataset):
         1: Neutral
         2: Contradiction
     """
-    
-    def map_label_str(self, label_str):
-        if label_str == 'entailment':
+
+    def _label_str_to_int(self, label_str):
+        if label_str == "entailment":
             return 0
-        elif label_str == 'neutral':
+        elif label_str == "neutral":
             return 1
-        elif label_str == 'contradiction':
+        elif label_str == "contradiction":
             return 2
         else:
-            raise ValueError(f'Unknown entailment label {label_str}')
-    
+            raise ValueError(f"Unknown entailment label {label_str}")
+
     def _process_example_from_file(self, raw_line):
         line = raw_line.strip()
-        label, premise, hypothesis = line.split('\t')
+        label, premise, hypothesis = line.split("\t")
         try:
             label = int(label)
         except ValueError:
             # If the label is not an integer, it's a label description.
-            label = self.map_label_str(label)
-        text = TokenizedText.SPLIT_TOKEN.join([premise, hypothesis])
-        return (text, label)
+            label = self._label_str_to_int(label)
+        text_input = collections.OrderedDict(
+            [("premise", premise), ("hypothesis", hypothesis),]
+        )
+        return (text_input, label)

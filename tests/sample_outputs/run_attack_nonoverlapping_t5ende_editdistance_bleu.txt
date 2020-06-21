@@ -1,0 +1,41 @@
+Attack(
+  (search_method): GreedySearch
+  (goal_function):  NonOverlappingOutput
+  (transformation):  WordSwapRandomCharacterSubstitution
+  (constraints): 
+    (0): LevenshteinEditDistance(
+        (max_edit_distance):  12
+      )
+    (1): MaxWordsPerturbed(
+        (max_percent):  0.75
+      )
+    (2): RepeatModification
+    (3): StopwordModification
+  (is_black_box):  True
+) 
+
+--------------------------------------------- Result 1 ---------------------------------------------
+Eine republikanische Strategie, um der Wiederwahl Obamas entgegenzuwirken-->[91m[FAILED][0m
+A Republican strategy to counter the re-election of Obama
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+Die republikanischen Führer rechtfertigten ihre Politik durch die Not-->Repuzlican leaders justifZed their policy by the need to coq
+[91mRepublican[0m leaders [91mjustified[0m their policy by the need to [91mcombat[0m electoral fraud.
+[94mRepuzlican[0m leaders [94mjustifZed[0m their policy by the need to [94mcoqbat[0m electoral fraud.
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 1      |
+| Number of failed attacks:     | 1      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 50.0%  |
+| Attack success rate:          | 50.0%  |
+| Average perturbed word %:     | 25.0%  |
+| Average num. words per input: | 11.0   |
+| Avg num queries:              | 19.0   |
++-------------------------------+--------+

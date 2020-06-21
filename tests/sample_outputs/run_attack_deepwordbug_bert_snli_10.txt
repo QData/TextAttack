@@ -1,0 +1,64 @@
+/.*/Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  CompositeTransformation
+  (constraints): 
+    (0): LevenshteinEditDistance(
+        (max_edit_distance):  30
+      )
+    (1): RepeatModification
+    (2): StopwordModification
+  (is_black_box):  True
+) 
+
+--------------------------------------------- Result 1 ---------------------------------------------
+[94m2[0m-->[37m[SKIPPED][0m
+
+[1m[4mPremise[0m[0m: This church choir sings to the masses as they sing joyous songs from the book at a church.
+[1m[4mHypothesis[0m[0m: The church has cracks in the ceiling.
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+
+[1m[4mPremise[0m[0m: This church choir sings to the masses as they sing joyous songs from the book at a church.
+[1m[4mHypothesis[0m[0m: The church is filled with song.
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[91m0[0m-->[37m[SKIPPED][0m
+
+[1m[4mPremise[0m[0m: This church choir sings to the masses as they sing joyous songs from the book at a church.
+[1m[4mHypothesis[0m[0m: A choir singing at a baseball game.
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[94m2[0m-->[37m[SKIPPED][0m
+
+[1m[4mPremise[0m[0m: A woman with a green headscarf, blue shirt and a very big grin.
+[1m[4mHypothesis[0m[0m: The woman is young.
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+[92m1[0m-->[91m[FAILED][0m
+
+[1m[4mPremise[0m[0m: A woman with a green headscarf, blue shirt and a very big grin.
+[1m[4mHypothesis[0m[0m: The woman is very happy.
+
+
+
++-------------------------------+-------+
+| Attack Results                |       |
++-------------------------------+-------+
+| Number of successful attacks: | 0     |
+| Number of failed attacks:     | 2     |
+| Number of skipped attacks:    | 3     |
+| Original accuracy:            | 40.0% |
+| Accuracy under attack:        | 40.0% |
+| Attack success rate:          | 0.0%  |
+| Average perturbed word %:     | nan%  |
+| Average num. words per input: | 21.8  |
+| Avg num queries:              | 70.0  |
++-------------------------------+-------+
