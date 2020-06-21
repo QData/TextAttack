@@ -73,6 +73,13 @@ class AttackCommand(TextAttackCommand):
         )
 
         parser.add_argument(
+            "--log-to-file",
+            "-l",
+            help="Save logs to TextAttack/outputs/~",
+            action="store_true",
+        )
+        
+        parser.add_argument(
             "--enable-visdom", action="store_true", help="Enable logging to visdom."
         )
 
