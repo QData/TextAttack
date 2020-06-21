@@ -51,7 +51,7 @@ class TrainModelCommand(TextAttackCommand):
         parser.add_argument(
             "--dataset-split",
             type=str,
-            default="",
+            default='',
             help="dataset split, if non-standard "
             "(can automatically detect 'dev', 'validation', 'eval')",
         )
@@ -102,7 +102,7 @@ class TrainModelCommand(TextAttackCommand):
         parser.add_argument(
             "--learning-rate",
             "--lr",
-            type=int,
+            type=float,
             default=2e-5,
             help="Learning rate for Adam Optimization",
         )
@@ -117,7 +117,7 @@ class TrainModelCommand(TextAttackCommand):
 
         parser.add_argument(
             "--warmup-proportion",
-            type=int,
+            type=float,
             default=0.1,
             help="Warmup proportion for linear scheduling",
         )

@@ -118,6 +118,7 @@ def train_model(args):
     logger.info("  Max sequence length = %d", args.max_length)
     logger.info("  Num steps = %d", num_train_optimization_steps)
     logger.info("  Num epochs = %d", args.num_train_epochs)
+    logger.info("  Learning rate = %d", args.learning_rate)
 
     train_input_ids = np.array(train_text_ids)
     train_labels = np.array(train_label_id_list)
@@ -136,6 +137,7 @@ def train_model(args):
     )
 
     def get_eval_acc():
+        model.eval()
         correct = 0
         total = 0
         for input_ids, labels in tqdm.tqdm(eval_dataloader, desc="Evaluating accuracy"):
@@ -152,7 +154,8 @@ def train_model(args):
 
             correct += (logits.argmax(dim=1) == labels).sum()
             total += len(labels)
-
+        
+        model.train()
         return float(correct) / total
 
     def save_model():

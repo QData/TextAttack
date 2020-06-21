@@ -183,7 +183,7 @@ automatically loaded using the `nlp` package.
 #### Training Examples
 *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
 ```bash
-textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 5
+textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
 ```
 
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:

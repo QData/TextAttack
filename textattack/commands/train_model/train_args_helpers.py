@@ -8,12 +8,15 @@ def prepare_dataset_for_training(nlp_dataset):
         """ Returns the values in order corresponding to the data.
         
             ex:
-                ('Some text input',)
+                'Some text input'
             or in the case of multi-sequence inputs:
                 ('The premise', 'the hypothesis',)
             etc.
         """
-        return list(ex.values())
+        values = list(ex.values())
+        if len(values) == 1:
+            return values[0]
+        return values
 
     return zip(*((prepare_example_dict(x[0]), x[1]) for x in nlp_dataset))
 
@@ -31,7 +34,7 @@ def dataset_from_args(args):
     except KeyError:
         raise KeyError(f"Error: no `train` split found in `{args.dataset}` dataset")
     train_text, train_labels = prepare_dataset_for_training(train_dataset)
-
+    
     if args.dataset_split:
         eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, split=args.dataset_split
@@ -57,6 +60,7 @@ def dataset_from_args(args):
                         f"Could not find `dev` or `test` split in dataset {args.dataset}."
                     )
     eval_text, eval_labels = prepare_dataset_for_training(eval_dataset)
+            
 
     return train_text, train_labels, eval_text, eval_labels
 
@@ -81,10 +85,13 @@ def model_from_args(args, num_labels):
             f"Loading transformers AutoModelForSequenceClassification: {args.model}"
         )
         config = transformers.AutoConfig.from_pretrained(
-            args.model, num_labels=num_labels, finetuning_task=args.dataset
+            args.model,
+            num_labels=num_labels,
+            finetuning_task=args.dataset
         )
         model = transformers.AutoModelForSequenceClassification.from_pretrained(
-            args.model, config=config,
+            args.model,
+            config=config,
         )
         tokenizer = textattack.models.tokenizers.AutoTokenizer(
             args.model, use_fast=False, max_length=args.max_length
