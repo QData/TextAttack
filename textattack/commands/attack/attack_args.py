@@ -242,6 +242,7 @@ CONSTRAINT_CLASS_NAMES = {
     #
     "repeat": "textattack.constraints.pre_transformation.RepeatModification",
     "stopword": "textattack.constraints.pre_transformation.StopwordModification",
+    "max-word-index": "textattack.constraints.pre_transformation.MaxWordIndexModification",
 }
 
 SEARCH_METHOD_CLASS_NAMES = {

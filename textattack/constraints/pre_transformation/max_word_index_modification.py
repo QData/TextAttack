@@ -2,7 +2,7 @@ from textattack.constraints.pre_transformation import PreTransformationConstrain
 from textattack.shared.utils import default_class_repr
 
 
-class MaxLengthModification(PreTransformationConstraint):
+class MaxWordIndexModification(PreTransformationConstraint):
     """ 
     A constraint disallowing the modification of words which are past some maximum length limit
     """
