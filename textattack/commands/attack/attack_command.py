@@ -71,14 +71,14 @@ class AttackCommand(TextAttackCommand):
             default=None,
             help="A directory to output results to.",
         )
-        
+
         parser.add_argument(
             "--log-to-file",
             "-l",
-            help="Save logs to TextAttack/outputs/~",
+            help="Save attack logs to <install-dir>/outputs/~",
             action="store_true",
         )
-        
+
         parser.add_argument(
             "--enable-visdom", action="store_true", help="Enable logging to visdom."
         )
