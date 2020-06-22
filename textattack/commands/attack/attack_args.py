@@ -207,7 +207,7 @@ BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     "word-swap-random-char-insertion": "textattack.transformations.WordSwapRandomCharacterInsertion",
     "word-swap-random-char-substitution": "textattack.transformations.WordSwapRandomCharacterSubstitution",
     "word-swap-wordnet": "textattack.transformations.WordSwapWordNet",
-    "word-swap-bert": "textattack.transformations.WordSwapBERTMaskedLM",
+    "word-swap-masked-LM": "textattack.transformations.WordSwapMaskedLM",
 }
 
 WHITE_BOX_TRANSFORMATION_CLASS_NAMES = {

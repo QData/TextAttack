@@ -1,15 +1,13 @@
 import itertools
-import math
-
 import numpy as np
 import torch
-from transformers import BertForMaskedLM, BertTokenizerFast
+from transformers import AutoTokenizer, AutoModelWithLMHead
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 
-class WordSwapBERTMaskedLM(WordSwap):
+class WordSwapMaskedLM(WordSwap):
     """
     Generate potential replacements for a word using BERT-Masked LM.
 
@@ -34,8 +32,8 @@ class WordSwapBERTMaskedLM(WordSwap):
         self.max_length = max_length
         self.max_candidates = max_candidates
 
-        self._lm_tokenizer = BertTokenizerFast.from_pretrained(masked_language_model)
-        self._language_model = BertForMaskedLM.from_pretrained(masked_language_model)
+        self._lm_tokenizer = AutoTokenizer.from_pretrained(masked_language_model, use_fast=True)
+        self._language_model = AutoModelWithLMHead.from_pretrained(masked_language_model)
         self._language_model.to(utils.device)
         self._segment_tensor = (
             torch.zeros(self.max_length, dtype=torch.long).unsqueeze(0).to(utils.device)
@@ -78,7 +76,8 @@ class WordSwapBERTMaskedLM(WordSwap):
         return replacement_words
 
     def _bert_attack_replacement_words(self, current_text, index, extra_args):
-        P = extra_args["P_matrix"]
+        top_pred_ids = extra_args["top_pred_ids"]
+        masked_lm_logits = extra_args["masked_lm_logits"]
         current_ids = extra_args["current_ids"]
         token2char_offset = extra_args["token2char_offset"]
 
@@ -104,7 +103,7 @@ class WordSwapBERTMaskedLM(WordSwap):
             return []
         elif len(target_ids_pos) == 1:
             # Word to replace is tokenized as a single word
-            top_preds = [x[0] for x in P[target_ids_pos[0]]]
+            top_preds = top_pred_ids[target_ids_pos[0]].tolist()
             replacement_words = []
             for id in top_preds:
                 token = self._lm_tokenizer.convert_ids_to_tokens(id)
@@ -113,27 +112,29 @@ class WordSwapBERTMaskedLM(WordSwap):
             return replacement_words
         else:
             # Word to replace is tokenized as multiple sub-words
-            top_preds = [P[i] for i in target_ids_pos]
+            top_preds = [top_pred_ids[i] for i in target_ids_pos]
             products = itertools.product(*top_preds)
             combination_results = []
-
-            for product in products:
-                word = []
-                # Original BERT-Attack implement uses cross-entropy loss
-                loss = 0
-                for sub_word in product:
-                    id, p = sub_word
-                    word.append(i)
-                    loss += -1 * math.log(p)
-                loss = math.exp(loss / len(product))
-                word = "".join(self._lm_tokenizer.convert_ids_to_tokens(word)).replace(
+            # Original BERT-Attack implement uses cross-entropy loss
+            cross_entropy_loss = torch.nn.CrossEntropyLoss(reduction='none')
+            target_ids_pos_tensor = torch.Tensor(target_ids_pos).long()
+            word_tensor = torch.zeros(len(target_ids_pos), dtype=torch.long)
+            for bpe_tokens in products:
+                for i in range(len(bpe_tokens)):
+                    word_tensor[i] = bpe_tokens[i]
+        
+                logits = torch.index_select(masked_lm_logits, 0, target_ids_pos_tensor)
+                loss = cross_entropy_loss(logits, word_tensor)
+                perplexity = torch.exp(torch.mean(loss, dim=0)).item()
+                word = "".join(self._lm_tokenizer.convert_ids_to_tokens(word_tensor)).replace(
                     "##", ""
                 )
                 if check_if_word(word):
-                    combination_results.append((word, prob))
+                    combination_results.append((word, perplexity))
             # Sort to get top-K results
-            sorted(combination_results, key=lambda x: x[1], reverse=True)
-            return combination_results[: self.max_candidates]
+            sorted(combination_results, key=lambda x: x[1])
+            top_replacements = [x[0] for x in combination_results[:self.max_candidates]]
+            return top_replacements
 
     def _get_replacement_words(self, current_text, index, extra_args=None):
         if self.method == "bae":
@@ -160,15 +161,8 @@ class WordSwapBERTMaskedLM(WordSwap):
                     current_ids, token_type_ids=self._segment_tensor
                 )[0][0]
             top_probs, top_ids = torch.topk(pred_probs, self.max_candidates)
-            dim = top_probs.size()
-            # P is `self.max_length` x `self.max_candidates` tensor representing top-k preds for each token.
-            # Each element of P is (id, prob) tuple.
-            # We would like to use torch.stack, but ids are int while probs are float, so not possible.
-            P_matrix = [
-                [(top_ids[i][j].item(), top_probs[i][j].item()) for j in range(dim[1])]
-                for i in range(dim[0])
-            ]
-            extra_args["P_matrix"] = P_matrix
+            extra_args["top_pred_ids"] = top_ids.cpu()
+            extra_args["masked_lm_logits"] = pred_probs.cpu()
             extra_args["current_ids"] = tokenized_text["input_ids"]
             extra_args["token2char_offset"] = token2char_offset
 
