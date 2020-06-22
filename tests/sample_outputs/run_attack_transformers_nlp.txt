@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -12,7 +12,7 @@ Attack(
     (2): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 [91mNegative (100%)[0m --> [92mPositive (71%)[0m
 

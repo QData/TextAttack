@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GreedySearch
   (goal_function):  NonOverlappingOutput
   (transformation):  WordSwapRandomCharacterSubstitution

@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): BeamSearch(
     (beam_width):  2
   )
