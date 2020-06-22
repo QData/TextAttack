@@ -1,5 +1,6 @@
 import itertools
 import math
+
 import numpy as np
 import torch
 from transformers import BertForMaskedLM, BertTokenizerFast
@@ -77,23 +78,25 @@ class WordSwapBERTMaskedLM(WordSwap):
         return replacement_words
 
     def _bert_attack_replacement_words(self, current_text, index, extra_args):
-        P = extra_args['P_matrix']
-        current_ids = extra_args['current_ids']
-        token2char_offset = extra_args['token2char_offset']
+        P = extra_args["P_matrix"]
+        current_ids = extra_args["current_ids"]
+        token2char_offset = extra_args["token2char_offset"]
 
         target_word = current_text.words[index]
         # Start and end position of word we want to replace in the whole text
         word_start, word_end = current_text.words2char_offset[target_word]
 
         # We need to find which BPE tokens belong to the word we want to replace
-        # List of indices of tokens that are part of the target word 
+        # List of indices of tokens that are part of the target word
         target_ids_pos = []
 
         for i in range(len(current_ids)):
             token_start, token_end = token2char_offset[i]
-            token = self._lm_tokenizer.convert_ids_to_tokens(current_ids[i]).replace("##", "")
+            token = self._lm_tokenizer.convert_ids_to_tokens(current_ids[i]).replace(
+                "##", ""
+            )
             if (
-                token_start >= word_start and token_end-1 <= word_end
+                token_start >= word_start and token_end - 1 <= word_end
             ) and token in target_word:
                 target_ids_pos.append(i)
 
@@ -113,7 +116,7 @@ class WordSwapBERTMaskedLM(WordSwap):
             top_preds = [P[i] for i in target_ids_pos]
             products = itertools.product(*top_preds)
             combination_results = []
-        
+
             for product in products:
                 word = []
                 # Original BERT-Attack implement uses cross-entropy loss
@@ -138,9 +141,7 @@ class WordSwapBERTMaskedLM(WordSwap):
         elif self.method == "bert-attack":
             return self._bert_attack_replacement_words(current_text, index, extra_args)
         else:
-            raise ValueError(
-                f"Unrecognized value {self.method} for `self.method`."
-            )
+            raise ValueError(f"Unrecognized value {self.method} for `self.method`.")
 
     def _get_transformations(self, current_text, indices_to_modify):
         extra_args = {}
@@ -162,11 +163,14 @@ class WordSwapBERTMaskedLM(WordSwap):
             dim = top_probs.size()
             # P is `self.max_length` x `self.max_candidates` tensor representing top-k preds for each token.
             # Each element of P is (id, prob) tuple.
-            # We would like to use torch.stack, but ids are int while probs are float, so not possible. 
-            P_matrix = [[(top_ids[i][j].item(), top_probs[i][j].item()) for j in range(dim[1])] for i in range(dim[0])]
-            extra_args['P_matrix'] = P_matrix
-            extra_args['current_ids'] = tokenized_text["input_ids"]
-            extra_args['token2char_offset'] = token2char_offset
+            # We would like to use torch.stack, but ids are int while probs are float, so not possible.
+            P_matrix = [
+                [(top_ids[i][j].item(), top_probs[i][j].item()) for j in range(dim[1])]
+                for i in range(dim[0])
+            ]
+            extra_args["P_matrix"] = P_matrix
+            extra_args["current_ids"] = tokenized_text["input_ids"]
+            extra_args["token2char_offset"] = token2char_offset
 
         transformed_texts = []
 
