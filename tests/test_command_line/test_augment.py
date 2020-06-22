@@ -26,10 +26,12 @@ def test_command_line_augmentation(name, command, outfile, sample_output_file):
 
     assert result.stdout is not None
     stdout = result.stdout.decode().strip()
+    print("stdout =>", stdout)
     assert stdout == ""
 
     assert result.stderr is not None
     stderr = result.stderr.decode().strip()
+    print("stderr =>", stderr)
     assert "Wrote 9 augmentations to augment_test.csv" in stderr
 
     # Ensure CSV file exists, then delete it.

@@ -22,6 +22,8 @@ def test_command_line_list(name, command, sample_output_file):
     assert result.stderr is not None
 
     stdout = result.stdout.decode().strip()
+    print("stdout =>", stdout)
     stderr = result.stderr.decode().strip()
+    print("stderr =>", stderr)
 
     assert stdout == desired_text
