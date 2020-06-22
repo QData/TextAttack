@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GreedySearch
   (goal_function):  NonOverlappingOutput
   (transformation):  WordSwapRandomCharacterSubstitution
@@ -13,7 +13,7 @@ Attack(
     (3): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
 Eine republikanische Strategie, um der Wiederwahl Obamas entgegenzuwirken-->[91m[FAILED][0m
 A Republican strategy to counter the re-election of Obama
