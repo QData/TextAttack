@@ -10,7 +10,7 @@ before_install:
   - pip install black pytest pytest-xdist --upgrade
 install:
   - python setup.py install_egg_info
-  - pip install -e .
+  - pip install -e . ".[full]"
   - pip freeze # print all pip packages & versions
 script:
   - black . --check

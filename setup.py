@@ -6,6 +6,20 @@ from docs import conf as docs_conf
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+extras = {}
+
+# Optionally allow installation of all optional dependencies at one time.
+extras["full"] = [
+    "editdistance",
+    "language_tool_python",
+    "tensorflow>=2",
+    "tensorflow_hub",
+    "visdom",
+]
+
+# For developers, install development tools along with all optional dependencies.
+extras["dev"] = ["black", "isort", "pytest", "pytest-xdist"] + extras["full"]
+
 setuptools.setup(
     name="textattack",
     version=docs_conf.release,

@@ -1,11 +1,17 @@
-from flair.data import Sentence
-from flair.models import SequenceTagger
 import lru
 import nltk
 
+import textattack
 from textattack.constraints import Constraint
 from textattack.shared import AttackedText
 from textattack.shared.validators import transformation_consists_of_word_swaps
+
+
+def import_flair():
+    # Import `flair`, an optional TextAttack dependency.
+    textattack.shared.utils.import_optional("flair")
+    global flair
+    import flair
 
 
 class PartOfSpeech(Constraint):
@@ -26,10 +32,11 @@ class PartOfSpeech(Constraint):
 
         self._pos_tag_cache = lru.LRU(2 ** 14)
         if tagger_type == "flair":
+            import_flair()
             if tagset == "universal":
-                self._flair_pos_tagger = SequenceTagger.load("upos-fast")
+                self._flair_pos_tagger = flair.models.SequenceTagger.load("upos-fast")
             else:
-                self._flair_pos_tagger = SequenceTagger.load("pos-fast")
+                self._flair_pos_tagger = flair.models.SequenceTagger.load("pos-fast")
 
     def _can_replace_pos(self, pos_a, pos_b):
         return (pos_a == pos_b) or (
@@ -87,8 +94,11 @@ class PartOfSpeech(Constraint):
 
 
 def zip_flair_result(pred):
-    if not isinstance(pred, Sentence):
-        raise TypeError(f"Result from Flair POS tagger must be a `Sentence` object.")
+    import_flair()
+    if not isinstance(pred, flair.data.Sentence):
+        raise TypeError(
+            f"Result from Flair POS tagger must be a `flair.Sentence` object."
+        )
 
     tokens = pred.tokens
     word_list = []

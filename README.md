@@ -37,6 +37,7 @@ pip install textattack
 Once TextAttack is installed, you can run it via command-line (`textattack ...`)
 or via the python module (`python -m textattack ...`).
 
+> Note on dependencies: TextAttack consists of different modules, many of which require their own specific dependencies. For this reason, we leave it up to the user to install specific required packages on their own. If you'd like to install all of the optional dependencies at once, clone the repository and install with `pip install -e . "[.full]"` 
 ### Configuration
 TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
 dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 

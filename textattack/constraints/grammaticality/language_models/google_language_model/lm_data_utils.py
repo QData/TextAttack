@@ -18,7 +18,8 @@
 import random
 
 import numpy as np
-import tensorflow as tf
+
+import textattack
 
 
 class Vocabulary(object):
@@ -26,12 +27,18 @@ class Vocabulary(object):
 
     def __init__(self, filename):
         """
-    Initialize vocabulary.
+        Initialize vocabulary.
+    
+        Args:
+          filename (str): Vocabulary file name.
+    
+        """
+        # Import `tensorflow`, an optional TextAttack dependency.
+        textattack.shared.utils.import_optional("tensorflow")
+        global tf
+        import tensorflow as tf
 
-    Args:
-      filename (str): Vocabulary file name.
-
-    """
+        tf.get_logger().setLevel("INFO")
 
         self._id_to_word = []
         self._word_to_id = {}

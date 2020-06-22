@@ -1,5 +1,4 @@
-import editdistance
-
+import textattack
 from textattack.constraints import Constraint
 
 
@@ -8,6 +7,11 @@ class LevenshteinEditDistance(Constraint):
     """
 
     def __init__(self, max_edit_distance):
+        # Import `editdistance`, an optional TextAttack dependency.
+        textattack.shared.utils.import_optional("editdistance")
+        global editdistance
+        import editdistance
+
         if not isinstance(max_edit_distance, int):
             raise TypeError("max_edit_distance must be an int")
         self.max_edit_distance = max_edit_distance

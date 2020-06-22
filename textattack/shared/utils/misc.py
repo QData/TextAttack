@@ -21,6 +21,7 @@ def html_style_from_dict(style_dict):
 
 
 def html_table_from_rows(rows, title=None, header=None, style_dict=None):
+    """ Constructs an HTML table from a list of rows. """
     # Stylize the container div.
     if style_dict:
         table_html = "<div {}>".format(style_from_dict(style_dict))
@@ -54,6 +55,7 @@ def html_table_from_rows(rows, title=None, header=None, style_dict=None):
 
 
 def load_textattack_model_from_path(model_name, model_path):
+    """ Loads a model from the path to its containing folder. """
     colored_model_name = textattack.shared.utils.color_text(
         model_name, color="blue", method="ansi"
     )
@@ -83,6 +85,32 @@ def load_textattack_model_from_path(model_name, model_path):
 
 
 def set_seed(random_seed):
+    """ Sets a global random seed. """
     random.seed(random_seed)
     np.random.seed(random_seed)
     torch.manual_seed(random_seed)
+
+
+def import_optional(module_name):
+    """ Tries to import a module that's optional. If not found, throws a 
+        helpful warning message.
+        
+        In the TextAttack sense, an 'optional' module is one that isn't 
+        necessary for core functionality, and thus isn't a part of the
+        requirements.txt.
+    """
+    try:
+        import importlib
+
+        importlib.import_module(module_name)
+    except ImportError:
+        colored_module_name = colored_model_name = textattack.shared.utils.color_text(
+            module_name, color="blue", method="ansi"
+        )
+        raise ImportError(
+            "Failed to import optional module "
+            f"{colored_module_name}. \n\nTo use this module, "
+            "either install it manually, or install all TextAttack optional "
+            "modules using  pipenv install -e '.[full]' in the TextAttack "
+            "root directory."
+        )

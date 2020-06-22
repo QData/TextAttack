@@ -1,8 +1,7 @@
 import copy
 import socket
 
-from visdom import Visdom
-
+import textattack
 from textattack.shared.utils import html_table_from_rows
 
 from .logger import Logger
@@ -21,9 +20,14 @@ class VisdomLogger(Logger):
     """ Logs attack results to Visdom. """
 
     def __init__(self, env="main", port=8097, hostname="localhost"):
+        # Import `visdom`, an optional TextAttack dependency.
+        textattack.shared.utils.import_optional("visdom")
+        global visdom
+        import visdom
+
         if not port_is_open(port, hostname=hostname):
             raise socket.error(f"Visdom not running on {hostname}:{port}")
-        self.vis = Visdom(port=port, server=hostname, env=env)
+        self.vis = visdom.Visdom(port=port, server=hostname, env=env)
         self.env = env
         self.port = port
         self.hostname = hostname

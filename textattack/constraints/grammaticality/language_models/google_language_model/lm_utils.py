@@ -7,19 +7,28 @@ import sys
 from google.protobuf import text_format
 import tensorflow as tf
 
+import textattack
+
 tf.get_logger().setLevel("INFO")
 
 
 def LoadModel(sess, graph, gd_file, ckpt_file):
     """Load the model from GraphDef and Checkpoint.
+    
+      Args:
+        gd_file: GraphDef proto text file.
+        ckpt_file: TensorFlow Checkpoint file.
+    
+      Returns:
+        TensorFlow session and tensors dict.
+     """
 
-  Args:
-    gd_file: GraphDef proto text file.
-    ckpt_file: TensorFlow Checkpoint file.
+    # Import `tensorflow`, an optional TextAttack dependency.
+    textattack.shared.utils.import_optional("tensorflow")
+    global tf
+    import tensorflow as tf
 
-  Returns:
-    TensorFlow session and tensors dict.
-  """
+    tf.get_logger().setLevel("INFO")
     with graph.as_default():
         sys.stderr.write("Recovering graph.\n")
         with tf.io.gfile.GFile(gd_file) as f:
