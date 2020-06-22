@@ -46,7 +46,6 @@ class AttackCommand(TextAttackCommand):
             type=str,
             required=False,
             default="word-swap-embedding",
-            choices=transformation_names,
             help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Choices: '
             + str(transformation_names),
         )

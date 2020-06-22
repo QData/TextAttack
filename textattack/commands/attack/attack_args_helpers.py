@@ -30,7 +30,6 @@ def add_model_args(parser):
         type=str,
         required=False,
         default=None,
-        choices=model_names,
         help="The pre-trained model to attack.",
     )
     model_group.add_argument(
