@@ -41,4 +41,4 @@ class BERTScore(Constraint):
             return False
 
     def extra_repr_keys(self):
-        return ["min_bert_score"]
+        return ["min_bert_score", "model", "score_type"]
