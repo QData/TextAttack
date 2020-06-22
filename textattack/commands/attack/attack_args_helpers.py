@@ -30,8 +30,8 @@ def add_model_args(parser):
         type=str,
         required=False,
         default=None,
-        choices=model_names,
-        help="The pre-trained model to attack.",
+        help='The pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
+        + str(model_names),
     )
     model_group.add_argument(
         "--model-from-file",
