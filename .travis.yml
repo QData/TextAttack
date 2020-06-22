@@ -1,12 +1,17 @@
 language: python
-python: '3.8.2'
+python: 
+  - '3.8.3'
+  - '3.7.7'
 cache: pip
 before_install:
   - python --version
   - python -m pip install --upgrade pip
-  - pip install black pytest pytest-xdist
+  - pip install black pytest pytest-xdist --upgrade
+  - pip install tensorflow numpy scipy==1.4.1 --upgrade 
 install:
+  - python setup.py install_egg_info
   - pip install -e .
+  - pip freeze # print all pip packages & versions
 script:
   - black . --check
   - echo "import textattack" | python # run textattack post-install hooks
