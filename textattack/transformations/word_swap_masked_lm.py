@@ -1,7 +1,8 @@
 import itertools
+
 import numpy as np
 import torch
-from transformers import AutoTokenizer, AutoModelWithLMHead
+from transformers import AutoModelWithLMHead, AutoTokenizer
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
@@ -32,8 +33,12 @@ class WordSwapMaskedLM(WordSwap):
         self.max_length = max_length
         self.max_candidates = max_candidates
 
-        self._lm_tokenizer = AutoTokenizer.from_pretrained(masked_language_model, use_fast=True)
-        self._language_model = AutoModelWithLMHead.from_pretrained(masked_language_model)
+        self._lm_tokenizer = AutoTokenizer.from_pretrained(
+            masked_language_model, use_fast=True
+        )
+        self._language_model = AutoModelWithLMHead.from_pretrained(
+            masked_language_model
+        )
         self._language_model.to(utils.device)
         self._segment_tensor = (
             torch.zeros(self.max_length, dtype=torch.long).unsqueeze(0).to(utils.device)
@@ -116,24 +121,26 @@ class WordSwapMaskedLM(WordSwap):
             products = itertools.product(*top_preds)
             combination_results = []
             # Original BERT-Attack implement uses cross-entropy loss
-            cross_entropy_loss = torch.nn.CrossEntropyLoss(reduction='none')
+            cross_entropy_loss = torch.nn.CrossEntropyLoss(reduction="none")
             target_ids_pos_tensor = torch.Tensor(target_ids_pos).long()
             word_tensor = torch.zeros(len(target_ids_pos), dtype=torch.long)
             for bpe_tokens in products:
                 for i in range(len(bpe_tokens)):
                     word_tensor[i] = bpe_tokens[i]
-        
+
                 logits = torch.index_select(masked_lm_logits, 0, target_ids_pos_tensor)
                 loss = cross_entropy_loss(logits, word_tensor)
                 perplexity = torch.exp(torch.mean(loss, dim=0)).item()
-                word = "".join(self._lm_tokenizer.convert_ids_to_tokens(word_tensor)).replace(
-                    "##", ""
-                )
+                word = "".join(
+                    self._lm_tokenizer.convert_ids_to_tokens(word_tensor)
+                ).replace("##", "")
                 if check_if_word(word):
                     combination_results.append((word, perplexity))
             # Sort to get top-K results
             sorted(combination_results, key=lambda x: x[1])
-            top_replacements = [x[0] for x in combination_results[:self.max_candidates]]
+            top_replacements = [
+                x[0] for x in combination_results[: self.max_candidates]
+            ]
             return top_replacements
 
     def _get_replacement_words(self, current_text, index, extra_args=None):
