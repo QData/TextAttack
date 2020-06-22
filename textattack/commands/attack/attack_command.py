@@ -71,6 +71,13 @@ class AttackCommand(TextAttackCommand):
             default=None,
             help="A directory to output results to.",
         )
+        
+        parser.add_argument(
+            "--log-to-file",
+            "-l",
+            help="Save logs to TextAttack/outputs/~",
+            action="store_true",
+        )
 
         parser.add_argument(
             "--log-to-file",
