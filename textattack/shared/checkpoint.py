@@ -191,6 +191,6 @@ class Checkpoint:
 
         results_set = set()
         for result in self.log_manager.results:
-            results_set.add(result.original_result.tokenized_text)
+            results_set.add(result.original_text)
 
         assert len(results_set) == self.results_count, "Duplicate AttackResults found."
