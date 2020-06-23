@@ -33,7 +33,7 @@ class TrainModelCommand(TextAttackCommand):
     def register_subcommand(main_parser: ArgumentParser):
         parser = main_parser.add_parser(
             "train",
-            help="train a model",
+            help="train a model for sequence classification",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
@@ -80,6 +80,10 @@ class TrainModelCommand(TextAttackCommand):
             type=int,
             default=100,
             help="Total number of epochs to train for",
+        )
+        parser.add_argument(
+            '--allowed-labels', type=int, nargs='*', default=[],
+            help="Labels allowed for training (examples with other labels will be discarded)",
         )
         parser.add_argument(
             "--early-stopping-epochs",

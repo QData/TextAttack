@@ -47,29 +47,49 @@ def train_model(args):
         wandb.init(sync_tensorboard=True)
 
     # Get list of text and list of label (integers) from disk.
-    train_text, train_label_id_list, eval_text, eval_label_id_list = dataset_from_args(
+    train_text, train_labels, eval_text, eval_labels = dataset_from_args(
         args
     )
-    label_id_len = len(train_label_id_list)
-    num_labels = len(set(train_label_id_list))
-    logger.info("Loaded dataset. num_labels: %s", num_labels)
+    
+    # Filter labels
+    if args.allowed_labels:
+        logger.info(f"Filtering samples with labels outside of {args.allowed_labels}.")
+        final_train_text, final_train_labels = [], []
+        for text, label in zip(train_text, train_labels):
+            if label in args.allowed_labels:
+                final_train_text.append(text)
+                final_train_labels.append(label)
+        logger.info(f"Filtered {len(train_text)} train samples to {len(final_train_text)} points.")
+        train_text, train_labels = final_train_text, final_train_labels
+        final_eval_text, final_eval_labels = [], []
+        for text, label in zip(eval_text, eval_labels):
+            if label in args.allowed_labels:
+                final_eval_text.append(text)
+                final_eval_labels.append(label)
+        logger.info(f"Filtered {len(eval_text)} dev samples to {len(final_eval_text)} points.")
+        eval_text, eval_labels = final_eval_text, final_eval_labels
+    
+    label_id_len = len(train_labels)
+    label_set = set(train_labels)
+    num_labels = len(label_set)
+    logger.info(f"Loaded dataset. Found: {num_labels} labels: ({sorted(label_set)})")
 
     train_examples_len = len(train_text)
 
-    if len(train_label_id_list) != train_examples_len:
+    if len(train_labels) != train_examples_len:
         raise ValueError(
-            f"Number of train examples ({train_examples_len}) does not match number of labels ({len(train_label_id_list)})"
+            f"Number of train examples ({train_examples_len}) does not match number of labels ({len(train_labels)})"
         )
-    if len(eval_label_id_list) != len(eval_text):
+    if len(eval_labels) != len(eval_text):
         raise ValueError(
-            f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_label_id_list)})"
+            f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_labels)})"
         )
 
     model = model_from_args(args, num_labels)
 
     logger.info(f"Tokenizing training data. (len: {train_examples_len})")
     train_text_ids = encode_batch(model.tokenizer, train_text)
-    logger.info(f"Tokenizing test data (len: {len(eval_label_id_list)})")
+    logger.info(f"Tokenizing test data (len: {len(eval_labels)})")
     eval_text_ids = encode_batch(model.tokenizer, eval_text)
     load_time = time.time()
     logger.info(f"Loaded data and tokenized in {load_time-start_time}s")
@@ -121,7 +141,7 @@ def train_model(args):
     logger.info("  Learning rate = %d", args.learning_rate)
 
     train_input_ids = np.array(train_text_ids)
-    train_labels = np.array(train_label_id_list)
+    train_labels = np.array(train_labels)
     train_data = list((ids, label) for ids, label in zip(train_input_ids, train_labels))
     train_sampler = RandomSampler(train_data)
     train_dataloader = DataLoader(
@@ -129,7 +149,7 @@ def train_model(args):
     )
 
     eval_input_ids = np.array(eval_text_ids)
-    eval_labels = np.array(eval_label_id_list)
+    eval_labels = np.array(eval_labels)
     eval_data = list((ids, label) for ids, label in zip(eval_input_ids, eval_labels))
     eval_sampler = RandomSampler(eval_data)
     eval_dataloader = DataLoader(
