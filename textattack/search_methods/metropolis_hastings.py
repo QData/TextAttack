@@ -1,11 +1,14 @@
-import torch
-import math
-import numpy as np
 import functools
+import math
+
+import numpy as np
+import torch
+from transformers import AutoModelWithLMHead, AutoTokenizer
+
 import textattack
-from textattack.shared import utils
 from textattack.search_methods import SearchMethod
-from transformers import AutoTokenizer, AutoModelWithLMHead
+from textattack.shared import utils
+
 
 class MetropolisHastingsSampling(SearchMethod):
     """ 
@@ -20,7 +23,7 @@ class MetropolisHastingsSampling(SearchMethod):
             Currently supported LM is "gpt-2"
     """
 
-    def __init__(self, max_iter = 200, lm_type = "gpt2"):
+    def __init__(self, max_iter=200, lm_type="gpt2"):
         self.max_iter = max_iter
         self.lm_type = lm_type
 
@@ -29,21 +32,23 @@ class MetropolisHastingsSampling(SearchMethod):
 
         try:
             # Try to use GPU, but sometimes we might have out-of-memory issue
-            # Having the below line prevents CUBLAS error when we try to switch to CPU 
+            # Having the below line prevents CUBLAS error when we try to switch to CPU
             torch.cuda.current_blas_handle()
             self._lm_device = utils.get_device()
             self._language_model = self._language_model.to(self._lm_device)
         except RuntimeError as error:
             if "CUDA out of memory" in str(error):
-                textattack.shared.utils.get_logger().warn("CUDA out of memory. Running GPT-2 for Metropolis Hastings on CPU.")
-                self._lm_device = torch.device('cpu')
+                textattack.shared.utils.get_logger().warn(
+                    "CUDA out of memory. Running GPT-2 for Metropolis Hastings on CPU."
+                )
+                self._lm_device = torch.device("cpu")
                 self._language_model = self._language_model.to(self._lm_device)
             else:
                 raise error
-        
+
         self._language_model.eval()
 
-    @functools.lru_cache(maxsize=2**14)
+    @functools.lru_cache(maxsize=2 ** 14)
     def _lm_score(self, text):
         """
         Assigns likelihood of a text as 1/perplexity(text)
@@ -52,23 +57,25 @@ class MetropolisHastingsSampling(SearchMethod):
         Returns: 1/perplexity(text)
         """
 
-        input_tokens = self._lm_tokenizer.tokenize(text, max_length=self._lm_tokenizer.model_max_length-2)
+        input_tokens = self._lm_tokenizer.tokenize(
+            text, max_length=self._lm_tokenizer.model_max_length - 2
+        )
         # Occasionally, len(input_tokens) != 1022, so we have to check it
-        if len(input_tokens) != self._lm_tokenizer.model_max_length-2:
-            input_tokens = input_tokens[:self._lm_tokenizer.model_max_length-2]
+        if len(input_tokens) != self._lm_tokenizer.model_max_length - 2:
+            input_tokens = input_tokens[: self._lm_tokenizer.model_max_length - 2]
         input_tokens.insert(0, self._lm_tokenizer.bos_token)
         input_tokens.append(self._lm_tokenizer.eos_token_id)
         input_ids = self._lm_tokenizer.convert_tokens_to_ids(input_tokens)
         input_ids = torch.tensor(input_ids)
         input_ids = input_ids.to(self._lm_device)
-        
+
         with torch.no_grad():
             loss = self._language_model(input_ids, labels=input_ids)[0].item()
             del input_ids
-        
+
         perplexity = math.exp(loss)
-        return 1/perplexity
-        
+        return 1 / perplexity
+
     def _stationary_dist(self, x, original_output):
         """
         Unnormalized estimation of the distribution that we want to sample from.
@@ -103,9 +110,9 @@ class MetropolisHastingsSampling(SearchMethod):
         """
         s = sum(values)
         if s == 0:
-            return [1/len(values) for v in values]
+            return [1 / len(values) for v in values]
         else:
-            return [v/s for v in values]
+            return [v / s for v in values]
 
     def _perform_search(self, initial_result):
         text_len = len(initial_result.tokenized_text.words)
@@ -114,30 +121,33 @@ class MetropolisHastingsSampling(SearchMethod):
         current_result = initial_result
         current_text = initial_result.tokenized_text
         current_score = self._stationary_dist(current_text, initial_result.output)
-        
+
         for n in range(max_iter):
             # i-th word we want to transform
             i = n % text_len
 
             transformations = self.get_transformations(
-                        current_text, 
-                        indices_to_modify=[i],
-                        original_text=initial_result.tokenized_text
-                    )
+                current_text,
+                indices_to_modify=[i],
+                original_text=initial_result.tokenized_text,
+            )
 
-            if len(transformations) == 0:                
+            if len(transformations) == 0:
                 continue
 
-            scores, model_results = self._batch_stationary_dist(transformations, initial_result.output) 
+            scores, model_results = self._batch_stationary_dist(
+                transformations, initial_result.output
+            )
             proposal_dist = self._normalize(scores)
             # Choose one transformation randomly according to proposal distribution
             jump = np.random.choice(list(range(len(transformations))), p=proposal_dist)
 
             # Now we have calculate probability of return proposal g(x'|x)
             reverse_transformations = self.get_transformations(
-                        transformations[jump], indices_to_modify=[i],
-                        original_text=initial_result.tokenized_text
-                    )
+                transformations[jump],
+                indices_to_modify=[i],
+                original_text=initial_result.tokenized_text,
+            )
 
             reverse_jump = None
             for k in range(len(reverse_transformations)):
@@ -148,7 +158,9 @@ class MetropolisHastingsSampling(SearchMethod):
             if not reverse_jump:
                 return_prob = 0
             else:
-                ret_scores, _ = self._batch_stationary_dist(reverse_transformations, initial_result.output)
+                ret_scores, _ = self._batch_stationary_dist(
+                    reverse_transformations, initial_result.output
+                )
                 return_prob = self._normalize(ret_scores)[reverse_jump]
 
             """
@@ -159,7 +171,9 @@ class MetropolisHastingsSampling(SearchMethod):
             """
             if current_score == 0.0:
                 current_score += 1e-9
-            acceptance_ratio = (scores[jump] * return_prob) / (current_score * proposal_dist[jump])
+            acceptance_ratio = (scores[jump] * return_prob) / (
+                current_score * proposal_dist[jump]
+            )
             acceptance_ratio = min(1, acceptance_ratio)
             u = np.random.uniform(low=0.0, high=1.0)
 
@@ -175,4 +189,4 @@ class MetropolisHastingsSampling(SearchMethod):
         return current_result
 
     def extra_repr_keys(self):
-        return ['max_iter', 'lm_type']
+        return ["max_iter", "lm_type"]

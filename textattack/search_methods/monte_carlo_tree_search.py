@@ -1,8 +1,10 @@
+import collections
 import math
 import random
 import statistics
-import collections
+
 from textattack.search_methods import SearchMethod
+
 
 class Node:
     """
@@ -43,6 +45,7 @@ class Node:
         else:
             return statistics.variance(self.value_history, self.value)
 
+
 class SearchTree:
     """
         Tree used to hold states/variables for MCTS.
@@ -56,7 +59,7 @@ class SearchTree:
         max_depth (int): max depth of search tree
     """
 
-    NOOP_ACTION = (-1, '<noop>')
+    NOOP_ACTION = (-1, "<noop>")
 
     def __init__(self, original_text, original_label, max_depth):
         self.root = Node(original_text, None)
@@ -67,7 +70,7 @@ class SearchTree:
         self.available_words_to_transform = set(range(len(self.original_text.words)))
         self.words_to_skip = set()
         self.action_history = []
-        self.iteration = 0 
+        self.iteration = 0
         self.global_rave_values = {}
 
     def clear_single_iteration_history(self):
@@ -85,6 +88,7 @@ class SearchTree:
                 child.dept = node.depth + 1
                 queue.append(child)
 
+
 class MonteCarloTreeSearch(SearchMethod):
     """ 
     Uses Monte Carlo Tree Search (MCTS) to attempt to find the most important words in an input.
@@ -101,8 +105,17 @@ class MonteCarloTreeSearch(SearchMethod):
         max_words_changed (int) : Maximum number of words we change during MCTS.
     """
 
-    def __init__(self, num_rollouts=200, rollout_anneal_rate = 0.8, selection_policy='UCB_G_RAVE_tuned',
-        max_tree_depth=10, step_size=2, ucb_C=2, global_RAVE_C=30, max_words_changed=32):
+    def __init__(
+        self,
+        num_rollouts=200,
+        rollout_anneal_rate=0.8,
+        selection_policy="UCB_G_RAVE_tuned",
+        max_tree_depth=10,
+        step_size=2,
+        ucb_C=2,
+        global_RAVE_C=30,
+        max_words_changed=32,
+    ):
 
         # MCTS Hyper-parameters
         self.num_rollouts = num_rollouts
@@ -113,8 +126,8 @@ class MonteCarloTreeSearch(SearchMethod):
         self.ucb_C = ucb_C
         self.global_RAVE_C = global_RAVE_C
         self.local_RAVE_C = global_RAVE_C
-        
-        self._selection_policy = getattr(self, '_' + selection_policy)
+
+        self._selection_policy = getattr(self, "_" + selection_policy)
 
     def _backprop(self, current_node, search_value):
         """
@@ -127,9 +140,14 @@ class MonteCarloTreeSearch(SearchMethod):
         for action in self.search_tree.action_history:
             if action in self.search_tree.global_rave_values:
                 old_rave = self.search_tree.global_rave_values[action]
-                new_value = (old_rave[0] * old_rave[1] + search_value) / (old_rave[1] + 1)
+                new_value = (old_rave[0] * old_rave[1] + search_value) / (
+                    old_rave[1] + 1
+                )
 
-                self.search_tree.global_rave_values[action] = (new_value, old_rave[1] + 1)
+                self.search_tree.global_rave_values[action] = (
+                    new_value,
+                    old_rave[1] + 1,
+                )
             else:
                 self.search_tree.global_rave_values[action] = (search_value, 1)
 
@@ -142,8 +160,9 @@ class MonteCarloTreeSearch(SearchMethod):
             # Update local RAVE values
             for action in self.search_tree.action_history:
                 if action in current_node.local_rave_values:
-                    current_node.local_rave_values[action] = (current_node.local_rave_values[action] \
-                        * n + search_value) / (n + 1)
+                    current_node.local_rave_values[action] = (
+                        current_node.local_rave_values[action] * n + search_value
+                    ) / (n + 1)
                 else:
                     current_node.local_rave_values[action] = search_value
 
@@ -155,33 +174,46 @@ class MonteCarloTreeSearch(SearchMethod):
         Returns: New node that we expand to. If no such node exists, return None
         """
         available_transformations = []
-        available_words_to_transform = list(self.search_tree.available_words_to_transform)
+        available_words_to_transform = list(
+            self.search_tree.available_words_to_transform
+        )
         while len(available_transformations) == 0 and available_words_to_transform:
             # Randomly sample one word and find transformations.
-            words_to_transform = random.sample(available_words_to_transform, k=min(3, len(available_words_to_transform)))
+            words_to_transform = random.sample(
+                available_words_to_transform,
+                k=min(3, len(available_words_to_transform)),
+            )
             available_transformations = self.get_transformations(
                 current_node.text,
                 original_text=self.search_tree.original_text,
-                indices_to_modify=words_to_transform
+                indices_to_modify=words_to_transform,
             )
-            available_words_to_transform = [w for w in available_words_to_transform if w not in words_to_transform]
+            available_words_to_transform = [
+                w for w in available_words_to_transform if w not in words_to_transform
+            ]
 
         if len(available_words_to_transform) == 0:
             # No transformations available
             return current_node
         else:
-            modified_indicies = [next(iter(t.attack_attrs['newly_modified_indices']))
-                for t in available_transformations]
+            modified_indicies = [
+                next(iter(t.attack_attrs["newly_modified_indices"]))
+                for t in available_transformations
+            ]
 
-            available_actions = [(i, t.words[i]) for (t, i) in zip(available_transformations, modified_indicies)]
+            available_actions = [
+                (i, t.words[i])
+                for (t, i) in zip(available_transformations, modified_indicies)
+            ]
 
             for i in range(len(available_actions)):
                 current_node.children[available_actions[i]] = Node(
-                    available_transformations[i],
-                    current_node
+                    available_transformations[i], current_node
                 )
             # Add no-op node
-            current_node.children[SearchTree.NOOP_ACTION] = Node(current_node.text, current_node)
+            current_node.children[SearchTree.NOOP_ACTION] = Node(
+                current_node.text, current_node
+            )
 
             random_action = random.choice(available_actions)
             if random_action != SearchTree.NOOP_ACTION:
@@ -192,42 +224,76 @@ class MonteCarloTreeSearch(SearchMethod):
 
     def _UCB(self, node, action):
         return node.children[action].value + math.sqrt(
-            self.ucb_C * math.log(node.num_visits) / max(1, node.children[action].num_visits)
+            self.ucb_C
+            * math.log(node.num_visits)
+            / max(1, node.children[action].num_visits)
         )
 
     def _UCB_tuned(self, node, action):
-        return  node.children[action].value + math.sqrt(
-            self.ucb_C * math.log(node.num_visits) /  max(1, node.children[action].num_visits)
-            * min(0.25, node.children[action].variance + math.sqrt(2 * math.log(node.num_visits) / max(1, node.children[action].num_visits)))
+        return node.children[action].value + math.sqrt(
+            self.ucb_C
+            * math.log(node.num_visits)
+            / max(1, node.children[action].num_visits)
+            * min(
+                0.25,
+                node.children[action].variance
+                + math.sqrt(
+                    2
+                    * math.log(node.num_visits)
+                    / max(1, node.children[action].num_visits)
+                ),
+            )
         )
 
     def _UCB_G_RAVE_tuned(self, node, action):
         ucb = math.sqrt(
-            self.ucb_C * math.log(node.num_visits) / max(1, node.children[action].num_visits)
-            * min(0.25, node.children[action].variance
-            + math.sqrt(2 * math.log(node.num_visits) / max(1, node.children[action].num_visits)))
+            self.ucb_C
+            * math.log(node.num_visits)
+            / max(1, node.children[action].num_visits)
+            * min(
+                0.25,
+                node.children[action].variance
+                + math.sqrt(
+                    2
+                    * math.log(node.num_visits)
+                    / max(1, node.children[action].num_visits)
+                ),
+            )
         )
 
         global_rave = 0.0
         beta = 0.0
         if action in self.search_tree.global_rave_values:
             global_rave = self.search_tree.global_rave_values[action][0]
-            beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
+            beta = self.global_RAVE_C / (
+                self.global_RAVE_C + self.search_tree.global_rave_values[action][1]
+            )
 
         return (1 - beta) * node.children[action].value + beta * global_rave + ucb
 
     def _UCB_G_RAVE_tuned(self, node, action):
         ucb = math.sqrt(
-            self.ucb_C * math.log(node.num_visits) / max(1, node.children[action].num_visits)
-            * min(0.25, node.children[action].variance
-            + math.sqrt(2 * math.log(node.num_visits) / max(1, node.children[action].num_visits)))
+            self.ucb_C
+            * math.log(node.num_visits)
+            / max(1, node.children[action].num_visits)
+            * min(
+                0.25,
+                node.children[action].variance
+                + math.sqrt(
+                    2
+                    * math.log(node.num_visits)
+                    / max(1, node.children[action].num_visits)
+                ),
+            )
         )
 
         global_rave = 0.0
         beta = 0.0
         if action in self.search_tree.global_rave_values:
             global_rave = self.search_tree.global_rave_values[action][0]
-            beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
+            beta = self.global_RAVE_C / (
+                self.global_RAVE_C + self.search_tree.global_rave_values[action][1]
+            )
 
         return (1 - beta) * node.children[action].value + beta * global_rave + ucb
 
@@ -241,7 +307,7 @@ class MonteCarloTreeSearch(SearchMethod):
 
         while not current_node.is_leaf():
             best_next_node = None
-            best_ucb_value = float('-inf')
+            best_ucb_value = float("-inf")
             best_action = None
 
             for action in current_node.children.keys():
@@ -266,17 +332,22 @@ class MonteCarloTreeSearch(SearchMethod):
         """
 
         for i in range(num_rollouts):
-            #print(f'Iteration {i+1}')
+            # print(f'Iteration {i+1}')
             self.search_tree.iteration += 1
             self.search_tree.clear_single_iteration_history()
             current_node = self._selection()
 
             previous_node = None
-            while previous_node != current_node and current_node.depth < self.search_tree.max_depth:
+            while (
+                previous_node != current_node
+                and current_node.depth < self.search_tree.max_depth
+            ):
                 previous_node = current_node
                 current_node = self._expansion(current_node)
 
-            result = self.get_goal_results([current_node.text], self.search_tree.original_label)[0]
+            result = self.get_goal_results(
+                [current_node.text], self.search_tree.original_label
+            )[0]
             search_value = 1 + result.score if result.score < 0 else result.score
             self._backprop(current_node, search_value)
 
@@ -285,15 +356,15 @@ class MonteCarloTreeSearch(SearchMethod):
         Select the best move using statistics from search tree
         """
         best_action = None
-        best_value = float('-inf')
+        best_value = float("-inf")
         for action in node.children:
             value = node.children[action].value
             global_rave = 0.0
-            #beta = 0.0
+            # beta = 0.0
             if action in self.search_tree.global_rave_values:
                 global_rave += self.search_tree.global_rave_values[action][0]
-                #beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
-            #value = (1 - beta) * value + beta * global_rave     
+                # beta = self.global_RAVE_C / (self.global_RAVE_C + self.search_tree.global_rave_values[action][1])
+            # value = (1 - beta) * value + beta * global_rave
             value = value + global_rave
 
             if value > best_value:
@@ -306,11 +377,17 @@ class MonteCarloTreeSearch(SearchMethod):
             return node.children[best_action], best_action
 
     def _perform_search(self, initial_result):
-        max_tree_depth = min(self.max_tree_depth, len(initial_result.tokenized_text.words))
-        max_words_changed = min(self.max_words_changed, len(initial_result.tokenized_text.words))
+        max_tree_depth = min(
+            self.max_tree_depth, len(initial_result.tokenized_text.words)
+        )
+        max_words_changed = min(
+            self.max_words_changed, len(initial_result.tokenized_text.words)
+        )
         num_rollouts = self.num_rollouts
 
-        self.search_tree = SearchTree(initial_result.tokenized_text, initial_result.output, max_tree_depth)
+        self.search_tree = SearchTree(
+            initial_result.tokenized_text, initial_result.output, max_tree_depth
+        )
         current_result = initial_result
         words_changed = 0
 
@@ -324,16 +401,18 @@ class MonteCarloTreeSearch(SearchMethod):
 
                 if not root:
                     break
-            
-                current_result = self.get_goal_results([root.text], self.search_tree.original_label)[0]
+
+                current_result = self.get_goal_results(
+                    [root.text], self.search_tree.original_label
+                )[0]
 
                 if current_result.output != initial_result.output:
                     break
 
                 if action != SearchTree.NOOP_ACTION:
                     words_changed += 1
-                i+=1
-            
+                i += 1
+
             if not root:
                 break
             if current_result.output != initial_result.output:
@@ -348,5 +427,12 @@ class MonteCarloTreeSearch(SearchMethod):
         return current_result
 
     def extra_repr_keys(self):
-        return ['num_rollouts', 'rollout_anneal_rate', 'max_tree_depth', 
-        'step_size', 'ucb_C', 'global_RAVE_C', 'max_words_changed']
+        return [
+            "num_rollouts",
+            "rollout_anneal_rate",
+            "max_tree_depth",
+            "step_size",
+            "ucb_C",
+            "global_RAVE_C",
+            "max_words_changed",
+        ]

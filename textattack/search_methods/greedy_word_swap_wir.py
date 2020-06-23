@@ -7,8 +7,9 @@ See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
 """
 
 
-import numpy as np
 import random
+
+import numpy as np
 
 from textattack.search_methods import SearchMethod
 from textattack.shared.validators import transformation_consists_of_word_swaps
