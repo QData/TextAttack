@@ -21,3 +21,4 @@ tqdm
 visdom
 wandb
 flair
+bert-score

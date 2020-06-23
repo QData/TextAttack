@@ -207,6 +207,7 @@ BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     "word-swap-random-char-insertion": "textattack.transformations.WordSwapRandomCharacterInsertion",
     "word-swap-random-char-substitution": "textattack.transformations.WordSwapRandomCharacterSubstitution",
     "word-swap-wordnet": "textattack.transformations.WordSwapWordNet",
+    "word-swap-masked-lm": "textattack.transformations.WordSwapMaskedLM",
 }
 
 WHITE_BOX_TRANSFORMATION_CLASS_NAMES = {
@@ -222,6 +223,7 @@ CONSTRAINT_CLASS_NAMES = {
     "infer-sent": "textattack.constraints.semantics.sentence_encoders.InferSent",
     "thought-vector": "textattack.constraints.semantics.sentence_encoders.ThoughtVector",
     "use": "textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder",
+    "bert-score": "textattack.constraints.semantics.BERTScore",
     #
     # Grammaticality constraints
     #
