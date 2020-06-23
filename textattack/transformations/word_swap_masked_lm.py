@@ -29,7 +29,7 @@ class WordSwapMaskedLM(WordSwap):
         method="bae",
         masked_language_model="bert-base-uncased",
         max_length=256,
-        max_candidates=20,
+        max_candidates=50,
         **kwargs,
     ):
         super().__init__(**kwargs)
