@@ -20,5 +20,5 @@ class FailedAttackResult(AttackResult):
     def goal_function_result_str(self, color_method=None):
         failed_str = utils.color_text("[FAILED]", "red", color_method)
         return (
-            self.original_result.get_colored_output(color_method) + "-->" + failed_str
+            self.original_result.get_colored_output(color_method) + " --> " + failed_str
         )

@@ -46,8 +46,7 @@ class AttackCommand(TextAttackCommand):
             type=str,
             required=False,
             default="word-swap-embedding",
-            choices=transformation_names,
-            help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Choices: '
+            help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}". Choices: '
             + str(transformation_names),
         )
 
@@ -70,6 +69,13 @@ class AttackCommand(TextAttackCommand):
             required=False,
             default=None,
             help="A directory to output results to.",
+        )
+
+        parser.add_argument(
+            "--log-to-file",
+            "-l",
+            help="Save attack logs to <install-dir>/outputs/~",
+            action="store_true",
         )
 
         parser.add_argument(

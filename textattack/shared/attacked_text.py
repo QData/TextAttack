@@ -287,6 +287,8 @@ class AttackedText:
         perturbed_text = ""
         original_text = AttackedText.SPLIT_TOKEN.join(self._text_input.values())
         new_attack_attrs = dict()
+        if "label_names" in self.attack_attrs:
+            new_attack_attrs["label_names"] = self.attack_attrs["label_names"]
         new_attack_attrs["newly_modified_indices"] = set()
         # Point to previously monitored text.
         new_attack_attrs["previous_attacked_text"] = self

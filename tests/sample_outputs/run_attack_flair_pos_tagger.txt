@@ -23,15 +23,15 @@
     (3): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92m1[0m-->[91m[FAILED][0m
+[92mPositive (100%)[0m --> [91m[FAILED][0m
 
 this is a film well worth seeing , talking and singing heads and all .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92m1[0m-->[91m0[0m
+[92mPositive (100%)[0m --> [91mNegative (57%)[0m
 
 what really [92msurprises[0m about wisegirls is its low-[92mkey[0m quality and [92mgenuine[0m [92mtenderness[0m .
 
@@ -39,13 +39,13 @@ what really [91mdumbfounded[0m about wisegirls is its low-[91mvital[0m quali
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92m1[0m-->[91m[FAILED][0m
+[92mPositive (100%)[0m --> [91m[FAILED][0m
 
 ( wendigo is ) why we go to the cinema : to be fed through the eye , the heart , the mind .
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
-[92m1[0m-->[91m[FAILED][0m
+[92mPositive (99%)[0m --> [91m[FAILED][0m
 
 one of the greatest family-oriented , fantasy-adventure movies ever .
 

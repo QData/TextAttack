@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -14,7 +14,7 @@ Attack(
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92m1[0m-->[91m0[0m
+[92mPositive (100%)[0m --> [91mNegative (73%)[0m
 
 [92mlovingly[0m photographed in the manner of a golden book sprung to life , stuart little 2 manages [92msweetness[0m largely without stickiness .
 
@@ -22,7 +22,7 @@ Attack(
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92m1[0m-->[91m0[0m
+[92mPositive (100%)[0m --> [91mNegative (62%)[0m
 
 consistently [92mclever[0m and [92msuspenseful[0m .
 
