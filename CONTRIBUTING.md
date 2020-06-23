@@ -114,7 +114,7 @@ Follow these steps to start contributing:
    ```bash
    $ cd TextAttack
    $ pip install -e .
-   $ pip install black isort
+   $ pip install black isort pytest pytest-xdist
    ```
    
    This will install `textattack` in editable mode and install `black` and 
