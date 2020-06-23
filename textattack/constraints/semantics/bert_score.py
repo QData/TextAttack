@@ -22,6 +22,7 @@ class BERTScore(Constraint):
             - "recall": match words from reference text to candidate text
             - "f1": harmonic mean of precision and recall (recommended)
     """
+    SCORE_TYPE2IDX = {"precision": 0, "recall": 1, "f1": 2}
 
     def __init__(self, min_bert_score, model="bert-base-uncased", score_type="f1"):
         if not isinstance(min_bert_score, float):
@@ -36,13 +37,12 @@ class BERTScore(Constraint):
         self._bert_scorer = bert_score.BERTScorer(
             model_type=model, idf=False, device=utils.device
         )
-        self._score_type2idx = {"precision": 0, "recall": 1, "f1": 2}
 
     def _check_constraint(self, transformed_text, current_text, original_text=None):
         cand = transformed_text.text
         ref = original_text.text if original_text else current_text.text
         result = self._bert_scorer.score([cand], [ref])
-        score = result[self._score_type2idx[self.score_type]].item()
+        score = result[BERTScore.SCORE_TYPE2IDX[self.score_type]].item()
         if score >= self.min_bert_score:
             return True
         else:

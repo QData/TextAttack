@@ -102,10 +102,10 @@ attack_test_params = [
     #   using Flair's part-of-speech tagger as constraint.
     #
     (
-        "run_attack_flair_pos_tagger",
+        "run_attack_flair_pos_tagger_bert_score",
         (
             "textattack attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding "
-            "--constraints repeat stopword embedding:min_cos_sim=0.8 part-of-speech:tagger_type=\\'flair\\' "
+            "--constraints repeat stopword bert-score:min_bert_score=0.8 part-of-speech:tagger_type=\\'flair\\' "
             "--num-examples 4 --num-examples-offset 10"
         ),
         "tests/sample_outputs/run_attack_flair_pos_tagger.txt",
