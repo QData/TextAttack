@@ -30,8 +30,8 @@ def add_model_args(parser):
         type=str,
         required=False,
         default=None,
-        choices=model_names,
-        help="The pre-trained model to attack.",
+        help='The pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
+        + str(model_names),
     )
     model_group.add_argument(
         "--model-from-file",
@@ -345,6 +345,7 @@ def parse_dataset_from_args(args):
 def parse_logger_from_args(args):
     # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
+    out_time = int(time.time() * 1000)  # Output file
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -353,10 +354,11 @@ def parse_logger_from_args(args):
         )
         args.out_dir = os.path.normpath(outputs_dir)
 
-    # Output file.
-    out_time = int(time.time() * 1000)  # Output file
-    outfile_name = "attack-{}.txt".format(out_time)
-    attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
+    # if "--log-to-file" specified in terminal command, then save it to a txt file
+    if args.log_to_file:
+        # Output file.
+        outfile_name = "attack-{}.txt".format(out_time)
+        attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
 
     # CSV
     if args.enable_csv:

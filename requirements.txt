@@ -9,7 +9,7 @@ numpy
 pandas
 pyyaml>=5.1
 scikit-learn
-scipy
+scipy==1.4.1
 sentence_transformers
 spacy
 torch

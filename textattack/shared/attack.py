@@ -204,7 +204,14 @@ class Attack:
             i = indices.popleft()
             try:
                 text, ground_truth_output = dataset[i]
-                attacked_text = AttackedText(text)
+                try:
+                    # get label names from dataset, if possible
+                    label_names = dataset.label_names
+                except AttributeError:
+                    label_names = None
+                attacked_text = AttackedText(
+                    text, attack_attrs={"label_names": label_names}
+                )
                 self.goal_function.num_queries = 0
                 goal_function_result, _ = self.goal_function.get_result(
                     attacked_text, ground_truth_output

@@ -1,3 +1,6 @@
+import torch
+
+import textattack
 from textattack.shared import utils
 
 from .goal_function_result import GoalFunctionResult
@@ -24,5 +27,17 @@ class ClassificationGoalFunctionResult(GoalFunctionResult):
         """ Returns a string representation of this result's output, colored 
             according to `color_method`.
         """
-        color = utils.color_from_label(self.output)
-        return utils.color_text(str(self.output), color=color, method=color_method)
+        output_label = self.raw_output.argmax()
+        confidence_score = self.raw_output[output_label]
+        if isinstance(confidence_score, torch.Tensor):
+            confidence_score = confidence_score.item()
+        output = self.output
+        if self.attacked_text.attack_attrs.get("label_names"):
+            output = self.attacked_text.attack_attrs["label_names"][output]
+            output = textattack.shared.utils.process_label_name(output)
+            color = textattack.shared.utils.color_from_output(output, output_label)
+        else:
+            color = textattack.shared.utils.color_from_label(output_label)
+        # concatenate with label and convert confidence score to percent, like '33%'
+        output_str = f"{output} ({confidence_score:.0%})"
+        return utils.color_text(output_str, color=color, method=color_method)

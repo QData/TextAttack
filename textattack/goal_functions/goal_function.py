@@ -82,7 +82,11 @@ class GoalFunction:
             goal_function_score = self._get_score(raw_output, ground_truth_output)
             results.append(
                 self._goal_function_result_type()(
-                    attacked_text, displayed_output, succeeded, goal_function_score
+                    attacked_text,
+                    raw_output,
+                    displayed_output,
+                    succeeded,
+                    goal_function_score,
                 )
             )
         return results, self.num_queries == self.query_budget
