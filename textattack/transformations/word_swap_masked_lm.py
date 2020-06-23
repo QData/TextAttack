@@ -112,7 +112,7 @@ class WordSwapMaskedLM(WordSwap):
             masked_text.text, max_length=self.max_length, pad_to_max_length=True,
         )
         word_tokens = self._lm_tokenizer.tokenize(current_text.words[index])
- 
+
         try:
             # Need try-except b/c mask-token located past max_length might be truncated by tokenizer
             masked_index = current_ids.index(self._lm_tokenizer.mask_token_id)
