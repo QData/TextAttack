@@ -57,7 +57,6 @@ class WordSwapMaskedLM(WordSwap):
             current_text (AttackedText): Text we want to get replacements for.
             index (int): index of word we want to replace
         """
-        # TODO: is it necessary to create a new AttackedText to recover case and punctuation?
         masked_attacked_text = current_text.replace_word_at_index(
             index, self._lm_tokenizer.mask_token
         )
@@ -68,6 +67,7 @@ class WordSwapMaskedLM(WordSwap):
         )
 
         try:
+            # Need try-except b/c mask-token located past max_length might be truncated by tokenizer
             masked_index = ids.index(self._lm_tokenizer.mask_token_id)
         except ValueError:
             return []
@@ -92,43 +92,39 @@ class WordSwapMaskedLM(WordSwap):
         return replacement_words
 
     def _bert_attack_replacement_words(
-        self,
-        current_text,
-        index,
-        current_ids,
-        token_positions_in_text,
-        id_preds,
-        masked_lm_logits,
+        self, current_text, index, id_preds, masked_lm_logits,
     ):
         """
         Get replacement words for the word we want to replace using BERT-Attack method.
         Args:
             current_text (AttackedText): Text we want to get replacements for.
             index (int): index of word we want to replace
-            current_ids (torch.Tensor): Tensor of ids obtained by tokenizing `current_text.text`
-            token_positions_in_text (list[tuple[int, int]]): Positions of tokens in `current_text.text`. Elements are tuple of (start_pos, end_poss).
             id_preds (torch.Tensor): N x K tensor of top-K ids for each token-position predicted by the masked language model. 
                 N is equivalent to `self.max_length`.
             masked_lm_logits (torch.Tensor): N x V tensor of the raw logits outputted by the masked language model. 
                 N is equivlaent to `self.max_length` and V is dictionary size of masked language model.
         """
-        target_word = current_text.words[index]
-        # Start and end position of word we want to replace in the whole text
-        word_start, word_end = current_text.word_positions_in_text[target_word]
-
         # We need to find which BPE tokens belong to the word we want to replace
+        masked_text = current_text.replace_word_at_index(
+            index, self._lm_tokenizer.mask_token
+        )
+        current_ids = self._lm_tokenizer.encode(
+            masked_text.text, max_length=self.max_length, pad_to_max_length=True,
+        )
+        word_tokens = self._lm_tokenizer.tokenize(current_text.words[index])
+ 
+        try:
+            # Need try-except b/c mask-token located past max_length might be truncated by tokenizer
+            masked_index = current_ids.index(self._lm_tokenizer.mask_token_id)
+        except ValueError:
+            return []
+
         # List of indices of tokens that are part of the target word
         target_ids_pos = []
-
-        for i in range(len(current_ids)):
-            token_start, token_end = token_positions_in_text[i]
-            token = self._lm_tokenizer.convert_ids_to_tokens(current_ids[i]).replace(
-                "##", ""
-            )
-            if (
-                token_start >= word_start and token_end - 1 <= word_end
-            ) and token in target_word:
-                target_ids_pos.append(i)
+        for i in range(len(word_tokens)):
+            loc = masked_index + i
+            if loc < self.max_length:
+                target_ids_pos.append(loc)
 
         if not target_ids_pos:
             return []
@@ -180,15 +176,11 @@ class WordSwapMaskedLM(WordSwap):
     def _get_transformations(self, current_text, indices_to_modify):
         extra_args = {}
         if self.method == "bert-attack":
-            tokenized_text = self._lm_tokenizer.encode_plus(
-                current_text.text,
-                max_length=self.max_length,
-                pad_to_max_length=True,
-                return_offsets_mapping=True,
+            current_ids = self._lm_tokenizer.encode(
+                current_text.text, max_length=self.max_length, pad_to_max_length=True
             )
 
-            current_ids = torch.tensor([tokenized_text["input_ids"]]).to(utils.device)
-            token_positions_in_text = tokenized_text["offset_mapping"]
+            current_ids = torch.tensor([current_ids]).to(utils.device)
             with torch.no_grad():
                 pred_probs = self._language_model(
                     current_ids, token_type_ids=self._segment_tensor
@@ -204,8 +196,6 @@ class WordSwapMaskedLM(WordSwap):
                 replacement_words = self._get_replacement_words(
                     current_text,
                     i,
-                    current_ids=tokenized_text["input_ids"],
-                    token_positions_in_text=token_positions_in_text,
                     id_preds=id_preds,
                     masked_lm_logits=masked_lm_logits,
                 )
