@@ -222,6 +222,7 @@ CONSTRAINT_CLASS_NAMES = {
     "infer-sent": "textattack.constraints.semantics.sentence_encoders.InferSent",
     "thought-vector": "textattack.constraints.semantics.sentence_encoders.ThoughtVector",
     "use": "textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder",
+    "bert-score": "textattack.constraints.semantics.BERTScore",
     #
     # Grammaticality constraints
     #
