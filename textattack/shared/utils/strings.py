@@ -22,7 +22,7 @@ def words_from_text(s, words_to_ignore=[], words2char=False):
     """ Lowercases a string, removes all non-alphanumeric characters,
         and splits into words. """
     words = []
-    words2char_offset = {}
+    word_positions_in_text = {}
     word = ""
     start = 0
     end = 0
@@ -35,15 +35,15 @@ def words_from_text(s, words_to_ignore=[], words2char=False):
             if word not in words_to_ignore:
                 words.append(word)
                 end = i - 1
-                words2char_offset[word] = (start, end)
+                word_positions_in_text[word] = (start, end)
             word = ""
     if len(word) and (word not in words_to_ignore):
         words.append(word)
         end = len(word) - 1
-        words2char_offset[word] = (start, end)
+        word_positions_in_text[word] = (start, end)
 
     if words2char:
-        return words, words2char_offset
+        return words, word_positions_in_text
     else:
         return words
 

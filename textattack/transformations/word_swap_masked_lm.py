@@ -16,7 +16,12 @@ class WordSwapMaskedLM(WordSwap):
         - "BAE: BERT-based Adversarial Examples for Text Classification" (Garg et al., 2020) https://arxiv.org/abs/2004.01970
         - "BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al, 2020) https://arxiv.org/abs/2004.09984
 
-    Choose which method to use by specifying "bae" or "bert-attack" for `method` argument
+    BAE simple masks the word we want to replace and selects top-K replacements predicted by the masked language model.
+    BERT-Attack instead performs replacement on token level. For words that are consisted of two or more sub-word tokens,
+        it takes the top-K replacements for seach sub-word token and produces all possible combinations of the top replacments.
+        Then, it selects the top-K combinations based on their perplexity calculated using the masked language model.
+
+    Choose which method to use by specifying "bae" or "bert-attack" for `method` argument.
     """
 
     def __init__(
@@ -24,7 +29,7 @@ class WordSwapMaskedLM(WordSwap):
         method="bae",
         masked_language_model="bert-base-uncased",
         max_length=256,
-        max_candidates=50,
+        max_candidates=20,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -46,6 +51,12 @@ class WordSwapMaskedLM(WordSwap):
         self._language_model.eval()
 
     def _bae_replacement_words(self, current_text, index):
+        """
+        Get replacement words for the word we want to replace using BAE method.
+        Args:
+            current_text (AttackedText): Text we want to get replacements for.
+            index (int): index of word we want to replace
+        """
         # TODO: is it necessary to create a new AttackedText to recover case and punctuation?
         masked_attacked_text = current_text.replace_word_at_index(
             index, self._lm_tokenizer.mask_token
@@ -80,22 +91,37 @@ class WordSwapMaskedLM(WordSwap):
 
         return replacement_words
 
-    def _bert_attack_replacement_words(self, current_text, index, extra_args):
-        top_pred_ids = extra_args["top_pred_ids"]
-        masked_lm_logits = extra_args["masked_lm_logits"]
-        current_ids = extra_args["current_ids"]
-        token2char_offset = extra_args["token2char_offset"]
-
+    def _bert_attack_replacement_words(
+        self,
+        current_text,
+        index,
+        current_ids,
+        token_positions_in_text,
+        id_preds,
+        masked_lm_logits,
+    ):
+        """
+        Get replacement words for the word we want to replace using BERT-Attack method.
+        Args:
+            current_text (AttackedText): Text we want to get replacements for.
+            index (int): index of word we want to replace
+            current_ids (torch.Tensor): Tensor of ids obtained by tokenizing `current_text.text`
+            token_positions_in_text (list[tuple[int, int]]): Positions of tokens in `current_text.text`. Elements are tuple of (start_pos, end_poss).
+            id_preds (torch.Tensor): N x K tensor of top-K ids for each token-position predicted by the masked language model. 
+                N is equivalent to `self.max_length`.
+            masked_lm_logits (torch.Tensor): N x V tensor of the raw logits outputted by the masked language model. 
+                N is equivlaent to `self.max_length` and V is dictionary size of masked language model.
+        """
         target_word = current_text.words[index]
         # Start and end position of word we want to replace in the whole text
-        word_start, word_end = current_text.words2char_offset[target_word]
+        word_start, word_end = current_text.word_positions_in_text[target_word]
 
         # We need to find which BPE tokens belong to the word we want to replace
         # List of indices of tokens that are part of the target word
         target_ids_pos = []
 
         for i in range(len(current_ids)):
-            token_start, token_end = token2char_offset[i]
+            token_start, token_end = token_positions_in_text[i]
             token = self._lm_tokenizer.convert_ids_to_tokens(current_ids[i]).replace(
                 "##", ""
             )
@@ -108,7 +134,7 @@ class WordSwapMaskedLM(WordSwap):
             return []
         elif len(target_ids_pos) == 1:
             # Word to replace is tokenized as a single word
-            top_preds = top_pred_ids[target_ids_pos[0]].tolist()
+            top_preds = id_preds[target_ids_pos[0]].tolist()
             replacement_words = []
             for id in top_preds:
                 token = self._lm_tokenizer.convert_ids_to_tokens(id)
@@ -117,12 +143,12 @@ class WordSwapMaskedLM(WordSwap):
             return replacement_words
         else:
             # Word to replace is tokenized as multiple sub-words
-            top_preds = [top_pred_ids[i] for i in target_ids_pos]
+            top_preds = [id_preds[i] for i in target_ids_pos]
             products = itertools.product(*top_preds)
             combination_results = []
             # Original BERT-Attack implement uses cross-entropy loss
             cross_entropy_loss = torch.nn.CrossEntropyLoss(reduction="none")
-            target_ids_pos_tensor = torch.Tensor(target_ids_pos).long()
+            target_ids_pos_tensor = torch.tensor(target_ids_pos)
             word_tensor = torch.zeros(len(target_ids_pos), dtype=torch.long)
             for bpe_tokens in products:
                 for i in range(len(bpe_tokens)):
@@ -143,11 +169,11 @@ class WordSwapMaskedLM(WordSwap):
             ]
             return top_replacements
 
-    def _get_replacement_words(self, current_text, index, extra_args=None):
+    def _get_replacement_words(self, current_text, index, **kwargs):
         if self.method == "bae":
             return self._bae_replacement_words(current_text, index)
         elif self.method == "bert-attack":
-            return self._bert_attack_replacement_words(current_text, index, extra_args)
+            return self._bert_attack_replacement_words(current_text, index, **kwargs)
         else:
             raise ValueError(f"Unrecognized value {self.method} for `self.method`.")
 
@@ -162,21 +188,29 @@ class WordSwapMaskedLM(WordSwap):
             )
 
             current_ids = torch.tensor([tokenized_text["input_ids"]]).to(utils.device)
-            token2char_offset = tokenized_text["offset_mapping"]
+            token_positions_in_text = tokenized_text["offset_mapping"]
             with torch.no_grad():
                 pred_probs = self._language_model(
                     current_ids, token_type_ids=self._segment_tensor
                 )[0][0]
             top_probs, top_ids = torch.topk(pred_probs, self.max_candidates)
-            extra_args["top_pred_ids"] = top_ids.cpu()
-            extra_args["masked_lm_logits"] = pred_probs.cpu()
-            extra_args["current_ids"] = tokenized_text["input_ids"]
-            extra_args["token2char_offset"] = token2char_offset
+            id_preds = top_ids.cpu()
+            masked_lm_logits = pred_probs.cpu()
 
         transformed_texts = []
 
         for i in indices_to_modify:
-            replacement_words = self._get_replacement_words(current_text, i, extra_args)
+            if self.method == "bert-attack":
+                replacement_words = self._get_replacement_words(
+                    current_text,
+                    i,
+                    current_ids=tokenized_text["input_ids"],
+                    token_positions_in_text=token_positions_in_text,
+                    id_preds=id_preds,
+                    masked_lm_logits=masked_lm_logits,
+                )
+            else:
+                replacement_words = self._get_replacement_words(current_text, i)
             transformed_texts_idx = []
             for r in replacement_words:
                 transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
