@@ -1,3 +1,9 @@
+"""
+BERT-Score is introduced in this paper "BERTScore: Evaluating Text Generation with BERT" (Zhang et al, 2019)  https://arxiv.org/abs/1904.09675
+BERT-Score measures token similarity between two text using contextual embedding. 
+To decide which two tokens to compare, it greedily chooses the most similar token from one text and matches it to a token in the second text.
+"""
+
 import bert_score
 import nltk
 
@@ -7,12 +13,14 @@ from textattack.shared import utils
 
 class BERTScore(Constraint):
     """ 
-    A constraint on BERTScore difference. BERTScore is introduced in this paper 
-        "BERTScore: Evaluating Text Generation with BERT" (Zhang et al, 2019)  https://arxiv.org/abs/1904.09675
+    A constraint on BERT-Score difference. 
     Args:
-        min_bert_score (float): minimum threshold value for BERTScore
+        min_bert_score (float): minimum threshold value for BERT-Score
         model (str): name of model to use for scoring
-        score_type (str): Pick one of three choices: (1) "precision", (2) "recall", (3) "f1"
+        score_type (str): Pick one of following three choices (1) "precision", (2) "recall", (3) "f1"
+            - "precision": match words from candidate text to reference text
+            - "recall": match words from reference text to candidate text
+            - "f1": harmonic mean of precision and recall (recommended)
     """
 
     def __init__(self, min_bert_score, model="bert-base-uncased", score_type="f1"):
