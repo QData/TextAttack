@@ -50,7 +50,7 @@ def attack_from_queue(args, in_queue, out_queue):
 
 def run(args, checkpoint=None):
     pytorch_multiprocessing_workaround()
-    
+
     num_total_examples = args.num_examples
 
     if args.checkpoint_resume:

@@ -4,6 +4,7 @@ import textattack
 from textattack.commands import TextAttackCommand
 from textattack.commands.attack.attack_args_helpers import *
 
+
 class AttackResumeCommand(TextAttackCommand):
     """
     The TextAttack attack resume recipe module:
