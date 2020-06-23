@@ -48,26 +48,22 @@ def attack_from_queue(args, in_queue, out_queue):
             exit()
 
 
-def run(args):
+def run(args, checkpoint=None):
     pytorch_multiprocessing_workaround()
+    
+    num_total_examples = args.num_examples
 
     if args.checkpoint_resume:
-        # Override current args with checkpoint args
-        resume_checkpoint = parse_checkpoint_from_args(args)
-        args = merge_checkpoint_args(resume_checkpoint.args, args)
-
-        num_remaining_attacks = resume_checkpoint.num_remaining_attacks
-        num_total_examples = args.num_examples
-        worklist = resume_checkpoint.worklist
-        worklist_tail = resume_checkpoint.worklist_tail
+        num_remaining_attacks = checkpoint.num_remaining_attacks
+        worklist = checkpoint.worklist
+        worklist_tail = checkpoint.worklist_tail
         logger.info(
             "Recovered from checkpoint previously saved at {}".format(
-                resume_checkpoint.datetime
+                checkpoint.datetime
             )
         )
-        print(resume_checkpoint, "\n")
+        print(checkpoint, "\n")
     else:
-        num_total_examples = args.num_examples
         num_remaining_attacks = num_total_examples
         worklist = deque(range(0, num_total_examples))
         worklist_tail = worklist[-1]
@@ -79,7 +75,7 @@ def run(args):
     start_time = time.time()
 
     if args.checkpoint_resume:
-        attack_log_manager = resume_checkpoint.log_manager
+        attack_log_manager = checkpoint.log_manager
     else:
         attack_log_manager = parse_logger_from_args(args)
 
@@ -107,9 +103,9 @@ def run(args):
     )
     # Log results asynchronously and update progress bar.
     if args.checkpoint_resume:
-        num_results = resume_checkpoint.results_count
-        num_failures = resume_checkpoint.num_failed_attacks
-        num_successes = resume_checkpoint.num_successful_attacks
+        num_results = checkpoint.results_count
+        num_failures = checkpoint.num_failed_attacks
+        num_successes = checkpoint.num_successful_attacks
     else:
         num_results = 0
         num_failures = 0
@@ -157,10 +153,10 @@ def run(args):
             args.checkpoint_interval
             and len(attack_log_manager.results) % args.checkpoint_interval == 0
         ):
-            checkpoint = textattack.shared.Checkpoint(
+            new_checkpoint = textattack.shared.Checkpoint(
                 args, attack_log_manager, worklist, worklist_tail
             )
-            checkpoint.save()
+            new_checkpoint.save()
             attack_log_manager.flush()
 
     pbar.close()

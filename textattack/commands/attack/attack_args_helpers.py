@@ -395,7 +395,6 @@ def parse_checkpoint_from_args(args):
         checkpoint_path = args.checkpoint_file
 
     checkpoint = textattack.shared.Checkpoint.load(checkpoint_path)
-    set_seed(checkpoint.args.random_seed)
 
     return checkpoint
 
@@ -412,7 +411,6 @@ def merge_checkpoint_args(saved_args, cmdline_args):
     """ Merge previously saved arguments for checkpoint and newly entered arguments """
     args = copy.deepcopy(saved_args)
     # Newly entered arguments take precedence
-    args.checkpoint_resume = cmdline_args.checkpoint_resume
     args.parallel = cmdline_args.parallel
     # If set, replace
     if cmdline_args.checkpoint_dir:
