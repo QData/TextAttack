@@ -22,6 +22,7 @@ class BERTScore(Constraint):
             - "recall": match words from reference text to candidate text
             - "f1": harmonic mean of precision and recall (recommended)
     """
+
     SCORE_TYPE2IDX = {"precision": 0, "recall": 1, "f1": 2}
 
     def __init__(self, min_bert_score, model="bert-base-uncased", score_type="f1"):

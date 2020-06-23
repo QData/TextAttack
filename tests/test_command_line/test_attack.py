@@ -108,7 +108,7 @@ attack_test_params = [
             "--constraints repeat stopword bert-score:min_bert_score=0.8 part-of-speech:tagger_type=\\'flair\\' "
             "--num-examples 4 --num-examples-offset 10"
         ),
-        "tests/sample_outputs/run_attack_flair_pos_tagger.txt",
+        "tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt",
     ),
     # fmt: on
     #
