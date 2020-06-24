@@ -72,11 +72,11 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         dataset_columns=None,
         shuffle=False,
     ):
+        self._dataset = nlp.load_dataset(name, subset)[split]
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
         textattack.shared.logger.info(
             f"Loading {_cb('nlp')} dataset {_cb(name)}{subset_print_str}, split {_cb(split)}."
         )
-        self._dataset = nlp.load_dataset(name, subset)[split]
         # Input/output column order, like (('premise', 'hypothesis'), 'label')
         (
             self.input_columns,
@@ -89,7 +89,12 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         try:
             self.label_names = self._dataset.features["label"].names
         except KeyError:
+            # This happens when the dataset doesn't have 'features' or a 'label' column.
             self.label_names = None
+        except AttributeError:
+            # This happens when self._dataset.features["label"] exists
+            # but is a single value.
+            self.label_names = ("label",)
         if shuffle:
             random.shuffle(self.examples)
 

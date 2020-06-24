@@ -37,7 +37,10 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx_rtd_theme",
+    # Enable .ipynb doc files
     "nbsphinx",
+    # Enable .md doc files
+    "recommonmark",
 ]
 
 # Add any paths that contain templates here, relative to this directory.

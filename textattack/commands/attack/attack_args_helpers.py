@@ -1,6 +1,7 @@
 import argparse
 import copy
 import importlib
+import json
 import os
 import pickle
 import random
@@ -30,7 +31,7 @@ def add_model_args(parser):
         type=str,
         required=False,
         default=None,
-        help='The pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
+        help='Name of or path to a pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
         + str(model_names),
     )
     model_group.add_argument(
@@ -295,6 +296,22 @@ def parse_model_from_args(args):
             model = textattack.shared.utils.load_textattack_model_from_path(
                 args.model, model_path
             )
+        elif args.model and os.path.exists(args.model):
+            # If `args.model` is a path/directory, let's assume it was a model
+            # trained with textattack, and try and load it.
+            model_args_json_path = os.path.join(args.model, "train_args.json")
+            if not os.path.exists(model_args_json_path):
+                raise FileNotFoundError(
+                    f"Tried to load model from path {args.model} - could not find train_args.json."
+                )
+            model_train_args = json.loads(open(model_args_json_path).read())
+            model_train_args["model"] = args.model
+            num_labels = model_train_args["num_labels"]
+            from textattack.commands.train_model.train_args_helpers import (
+                model_from_args,
+            )
+
+            model = model_from_args(argparse.Namespace(**model_train_args), num_labels)
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
     return model
@@ -307,6 +324,25 @@ def parse_dataset_from_args(args):
         _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
     elif args.model in TEXTATTACK_DATASET_BY_MODEL:
         _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
+
+    # Automatically detect dataset for models trained with textattack.
+    if args.model and os.path.exists(args.model):
+        model_args_json_path = os.path.join(args.model, "train_args.json")
+        if not os.path.exists(model_args_json_path):
+            raise FileNotFoundError(
+                f"Tried to load model from path {args.model} - could not find train_args.json."
+            )
+        model_train_args = json.loads(open(model_args_json_path).read())
+        try:
+            args.dataset_from_nlp = (
+                model_train_args["dataset"],
+                None,
+                model_train_args["dataset_dev_split"],
+            )
+        except KeyError:
+            raise KeyError(
+                f"Tried to load model from path {args.model} but can't initialize dataset from train_args.json."
+            )
 
     # Get dataset from args.
     if args.dataset_from_file:

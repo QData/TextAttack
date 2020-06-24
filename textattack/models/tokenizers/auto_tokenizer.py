@@ -28,7 +28,6 @@ class AutoTokenizer(Tokenizer):
             name, use_fast=use_fast
         )
         self.max_length = max_length
-        print(f'AutoTokenizer using {"fast" if use_fast else "slow"} tokenizer')
         self.save_pretrained = self.tokenizer.save_pretrained
 
     def encode(self, input_text):

@@ -40,6 +40,7 @@ def dataset_from_args(args):
             train_dataset = textattack.datasets.HuggingFaceNLPDataset(
                 *dataset_args, split="train"
             )
+            args.dataset_train_split = "train"
         except KeyError:
             raise KeyError(f"Error: no `train` split found in `{args.dataset}` dataset")
     train_text, train_labels = prepare_dataset_for_training(train_dataset)
@@ -54,16 +55,19 @@ def dataset_from_args(args):
             eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
                 *dataset_args, split="dev"
             )
+            args.dataset_dev_split = "dev"
         except KeyError:
             try:
                 eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
                     *dataset_args, split="eval"
                 )
+                args.dataset_dev_split = "eval"
             except KeyError:
                 try:
                     eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
                         *dataset_args, split="validation"
                     )
+                    args.dataset_dev_split = "validation"
                 except KeyError:
                     raise KeyError(
                         f"Could not find `dev` or `test` split in dataset {args.dataset}."
@@ -115,7 +119,9 @@ def write_readme(args, best_eval_score, best_eval_score_epoch):
     task_name = "regression" if args.do_regression else "classification"
     loss_func = "mean squared error" if args.do_regression else "cross-entropy"
     metric_name = "pearson correlation" if args.do_regression else "accuracy"
-    epoch_info = f"{best_eval_score_epoch} epoch" + ("s" if best_eval_score_epoch > 1 else "")
+    epoch_info = f"{best_eval_score_epoch} epoch" + (
+        "s" if best_eval_score_epoch > 1 else ""
+    )
     readme_text = f""" 
     ## {args.model} fine-tuned with TextAttack on the {dataset_name} dataset
     
@@ -125,7 +131,7 @@ def write_readme(args, best_eval_score, best_eval_score_epoch):
     rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}. 
     Since this was a {task_name} task, the model was trained with a {loss_func} loss function. 
     The best score the model achieved on this task was {best_eval_score}, as measured by the 
-    eval set {metric_name}.
+    eval set {metric_name}, found after {epoch_info}.
     
     For more information, check out [TextAttack on Github](https://github.com/QData/TextAttack).
     

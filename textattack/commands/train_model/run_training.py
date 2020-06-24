@@ -163,12 +163,6 @@ def train_model(args):
 
     tb_writer.add_hparams(args_dict, {})
 
-    # Save args to file
-    args_save_path = os.path.join(args.output_dir, "train_args.json")
-    with open(args_save_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(args_dict, indent=2) + "\n")
-    logger.info(f"Wrote training args to {args_save_path}.")
-
     # Start training
     logger.info("***** Running training *****")
     logger.info(f"\tNum examples = {train_examples_len}")
@@ -245,7 +239,6 @@ def train_model(args):
             # no config
             pass
 
-
     global_step = 0
 
     def save_model_checkpoint():
@@ -260,9 +253,9 @@ def train_model(args):
         logger.info(f"Checkpoint saved to {output_dir}.")
 
     model.train()
-    best_eval_score = 0
-    best_eval_score_epoch = 0
-    epochs_since_best_eval_score = 0
+    args.best_eval_score = 0
+    args.best_eval_score_epoch = 0
+    args.epochs_since_best_eval_score = 0
 
     def loss_backward(loss):
         if num_gpus > 1:
@@ -322,17 +315,19 @@ def train_model(args):
         if args.checkpoint_every_epoch:
             save_model_checkpoint()
 
-        logger.info(f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%")
-        if eval_score > best_eval_score:
-            best_eval_score = eval_score
-            best_eval_score_epoch = epoch
-            epochs_since_best_eval_score = 0
+        logger.info(
+            f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
+        )
+        if eval_score > args.best_eval_score:
+            args.best_eval_score = eval_score
+            args.best_eval_score_epoch = epoch
+            args.epochs_since_best_eval_score = 0
             save_model()
             logger.info(f"Best acc found. Saved model to {args.output_dir}.")
         else:
-            epochs_since_best_eval_score += 1
+            args.epochs_since_best_eval_score += 1
             if (args.early_stopping_epochs > 0) and (
-                epochs_since_best_eval_score > args.early_stopping_epochs
+                args.epochs_since_best_eval_score > args.early_stopping_epochs
             ):
                 logger.info(
                     f"Stopping early since it's been {args.early_stopping_epochs} steps since validation acc increased"
@@ -349,4 +344,11 @@ def train_model(args):
         )
 
     # Save a little readme with model info
-    write_readme(args, best_eval_score, best_eval_score_epoch)
+    write_readme(args, args.best_eval_score, args.best_eval_score_epoch)
+
+    # Save args to file
+    args_save_path = os.path.join(args.output_dir, "train_args.json")
+    final_args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
+    with open(args_save_path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(final_args_dict, indent=2) + "\n")
+    logger.info(f"Wrote training args to {args_save_path}.")
