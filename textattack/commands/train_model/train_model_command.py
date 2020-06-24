@@ -56,7 +56,7 @@ class TrainModelCommand(TextAttackCommand):
             "(can automatically detect 'train'",
         )
         parser.add_argument(
-            "--dataset-dev-split", '--dataset-val-split', '--dev-split',
+            "--dataset-dev-split", '--dataset-eval-split', '--dev-split',
             type=str,
             default='',
             help="val dataset split, if non-standard "

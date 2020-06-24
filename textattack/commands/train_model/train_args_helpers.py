@@ -1,5 +1,7 @@
+import os
 import textattack
 
+logger = textattack.shared.logger
 
 def prepare_dataset_for_training(nlp_dataset):
     """ Changes an `nlp` dataset into the proper format for tokenization. """
@@ -105,3 +107,30 @@ def model_from_args(args, num_labels):
     model = model.to(textattack.shared.utils.device)
 
     return model
+
+
+def write_readme(args, best_eval_score):
+    # Save args to file
+    readme_save_path = os.path.join(args.output_dir, "README.md")
+    dataset_name = args.dataset.split(':')[0] if ':' in args.dataset else args.dataset
+    task_name = "regression" if args.do_regression else "classification"
+    loss_func = "mean squared error" if args.do_regression else "cross-entropy"
+    metric_name = "pearson correlation" if args.do_regression else "accuracy"
+    readme_text = f""" 
+    ## {args.model} fine-tuned with TextAttack on the {dataset_name} dataset
+    
+    This `{args.model}` model was fine-tuned for sequence classificationusing TextAttack 
+    and the {dataset_name} dataset loaded using the `nlp` library. The model was fine-tuned 
+    for {args.num_train_epochs} epochs with a batch size of {args.batch_size}, a learning 
+    rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}. 
+    Since this was a {task_name} task, the model was trained with a {loss_func} loss function. 
+    The best score the model achieved on this task was {best_eval_score}, as measured by the 
+    eval set {metric_name}.
+    
+    For more information, check out [TextAttack on Github](https://github.com/QData/TextAttack).
+    
+    """
+    with open(readme_save_path, "w", encoding="utf-8") as f:
+        f.write(readme_text.strip() + "\n")
+    logger.info(f"Wrote README to {readme_save_path}.")
+    

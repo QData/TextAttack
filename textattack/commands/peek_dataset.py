@@ -1,5 +1,5 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-
+import collections
 import textattack
 import numpy as np
 import re
@@ -58,9 +58,13 @@ class PeekDatasetCommand(TextAttackCommand):
         logger.info('Last sample:')
         print(attacked_texts[-1].printable_text(), '\n')
         
-        outputs = set(outputs)
-        logger.info(f'Found {len(outputs)} distinct outputs:')
-        print(sorted(outputs))
+        logger.info(f'Found {len(set(outputs))} distinct outputs.')
+        if len(outputs) < 20:
+            print(sorted(set(outputs)))
+        
+        logger.info(f'Most common outputs:')
+        for i, (key, value) in enumerate(collections.Counter(outputs).most_common(20)):
+            print('\t', str(key)[:5].ljust(5), f' ({value})')
         
 
     @staticmethod
