@@ -1,3 +1,5 @@
+import json
+import logging
 import os
 import time
 
@@ -45,6 +47,18 @@ def train_model(args):
     args_dict = {k: v for k,v in vars(args).items() if is_writable_type(v)}
     
     tb_writer.add_hparams(args_dict, {})
+    
+    # Save logger writes to file
+    log_txt_path = os.path.join(args.output_dir, "log.txt")
+    fh = logging.FileHandler(log_txt_path)
+    fh.setLevel(logging.DEBUG)
+    logger.info(f"Writing logs to {log_txt_path}.")
+    
+    # Save args to file
+    args_save_path = os.path.join(args.output_dir, "train_args.json")
+    with open(args_save_path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(args_dict, indent=2) + "\n")
+    logger.info(f"Wrote training args to {args_save_path}.")
 
     # Use Weights & Biases, if enabled.
     if args.enable_wandb:
@@ -90,11 +104,12 @@ def train_model(args):
         )
 
     model = model_from_args(args, num_labels)
+    tokenizer = model.tokenizer
 
     logger.info(f"Tokenizing training data. (len: {train_examples_len})")
-    train_text_ids = batch_encode(model.tokenizer, train_text)
+    train_text_ids = batch_encode(tokenizer, train_text)
     logger.info(f"Tokenizing eval data (len: {len(eval_labels)})")
-    eval_text_ids = batch_encode(model.tokenizer, eval_text)
+    eval_text_ids = batch_encode(tokenizer, eval_text)
     load_time = time.time()
     logger.info(f"Loaded data and tokenized in {load_time-start_time}s")
     # print(model)
@@ -236,8 +251,10 @@ def train_model(args):
                 input_ids = {
                     k: torch.stack(v).T.to(device) for k, v in input_ids.items()
                 }
-            input_ids['labels'] = labels # @TODO change this back to calculate loss in this body
-            loss = model(**input_ids)[0] 
+            logits = textattack.shared.utils.model_predict(model, input_ids)
+            
+            loss_fct = torch.nn.CrossEntropyLoss()
+            loss = torch.nn.CrossEntropyLoss()(logits, labels)
             loss = loss_backward(loss)
             
             if global_step % args.tb_writer_step == 0:

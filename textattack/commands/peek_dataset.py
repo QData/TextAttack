@@ -9,7 +9,7 @@ from textattack.commands.attack.attack_args_helpers import add_dataset_args, par
 
 
 def _cb(s):
-    return textattack.shared.utils.color_text(str(s), color="red", method="ansi")
+    return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
 
 logger = textattack.shared.logger
 

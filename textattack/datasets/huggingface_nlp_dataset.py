@@ -8,6 +8,9 @@ from textattack.datasets import TextAttackDataset
 from textattack.shared import AttackedText
 
 
+def _cb(s):
+    return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
+
 def get_nlp_dataset_columns(dataset):
     schema = set(dataset.schema.names)
     if {"premise", "hypothesis", "label"} <= schema:
@@ -69,8 +72,8 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         shuffle=False,
     ):
         
-        subset_print_str = f", subset `{subset}`" if subset else ""
-        textattack.shared.logger.info(f"Loading `nlp` dataset `{name}`{subset_print_str}, split `{split}`.")
+        subset_print_str = f", subset `{_cb(subset)}`" if subset else ""
+        textattack.shared.logger.info(f"Loading {_cb('nlp')} dataset {_cb(name)}{subset_print_str}, split {_cb(split)}.")
         dataset = nlp.load_dataset(name, subset)
         (
             self.input_columns,
