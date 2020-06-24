@@ -38,7 +38,7 @@ pip install textattack
 Once TextAttack is installed, you can run it via command-line (`textattack ...`)
 or via the python module (`python -m textattack ...`).
 
-> TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
+> **Tip**: TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
 > dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
 > environment variable `TA_CACHE_DIR`. (for example: `TA_CACHE_DIR=/tmp/ textattack attack ...`).
 
@@ -76,6 +76,8 @@ textattack attack --model lstm-mr --num-examples 20 \
 ```
 
 > **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+
+> **Tip:** Instead of specifying a dataset and number of examples, you can pass `--interactive` to attack samples inputted by the user.
 
 ### Attacks and Papers Implemented ("Attack Recipes")
 
