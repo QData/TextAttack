@@ -1,7 +1,9 @@
 import os
+
 import textattack
 
 logger = textattack.shared.logger
+
 
 def prepare_dataset_for_training(nlp_dataset):
     """ Changes an `nlp` dataset into the proper format for tokenization. """
@@ -30,9 +32,9 @@ def dataset_from_args(args):
     dataset_args = args.dataset.split(":")
     # TODO `HuggingFaceNLPDataset` -> `HuggingFaceDataset`
     if args.dataset_train_split:
-            train_dataset = textattack.datasets.HuggingFaceNLPDataset(
-                *dataset_args, split=args.dataset_train_split
-            )
+        train_dataset = textattack.datasets.HuggingFaceNLPDataset(
+            *dataset_args, split=args.dataset_train_split
+        )
     else:
         try:
             train_dataset = textattack.datasets.HuggingFaceNLPDataset(
@@ -41,7 +43,7 @@ def dataset_from_args(args):
         except KeyError:
             raise KeyError(f"Error: no `train` split found in `{args.dataset}` dataset")
     train_text, train_labels = prepare_dataset_for_training(train_dataset)
-    
+
     if args.dataset_dev_split:
         eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, split=args.dataset_dev_split
@@ -91,13 +93,10 @@ def model_from_args(args, num_labels):
             f"Loading transformers AutoModelForSequenceClassification: {args.model}"
         )
         config = transformers.AutoConfig.from_pretrained(
-            args.model,
-            num_labels=num_labels,
-            finetuning_task=args.dataset
+            args.model, num_labels=num_labels, finetuning_task=args.dataset
         )
         model = transformers.AutoModelForSequenceClassification.from_pretrained(
-            args.model,
-            config=config,
+            args.model, config=config,
         )
         tokenizer = textattack.models.tokenizers.AutoTokenizer(
             args.model, use_fast=True, max_length=args.max_length
@@ -112,7 +111,7 @@ def model_from_args(args, num_labels):
 def write_readme(args, best_eval_score):
     # Save args to file
     readme_save_path = os.path.join(args.output_dir, "README.md")
-    dataset_name = args.dataset.split(':')[0] if ':' in args.dataset else args.dataset
+    dataset_name = args.dataset.split(":")[0] if ":" in args.dataset else args.dataset
     task_name = "regression" if args.do_regression else "classification"
     loss_func = "mean squared error" if args.do_regression else "cross-entropy"
     metric_name = "pearson correlation" if args.do_regression else "accuracy"
@@ -133,4 +132,3 @@ def write_readme(args, best_eval_score):
     with open(readme_save_path, "w", encoding="utf-8") as f:
         f.write(readme_text.strip() + "\n")
     logger.info(f"Wrote README to {readme_save_path}.")
-    

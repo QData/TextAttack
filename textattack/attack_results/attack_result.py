@@ -45,7 +45,7 @@ class AttackResult:
     def perturbed_text(self, color_method=None):
         """ Returns the text portion of `self.perturbed_result`. Helper method.
         """
-        return self.original_result.attacked_text.printable_text(
+        return self.perturbed_result.attacked_text.printable_text(
             key_color=("bold", "underline"), key_color_method=color_method
         )
 
@@ -66,7 +66,7 @@ class AttackResult:
         """
         orig_colored = self.original_result.get_colored_output(color_method)
         pert_colored = self.perturbed_result.get_colored_output(color_method)
-        return orig_colored + "-->" + pert_colored
+        return orig_colored + " --> " + pert_colored
 
     def diff_color(self, color_method=None):
         """ Highlights the difference between two texts using color.

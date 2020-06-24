@@ -102,13 +102,13 @@ attack_test_params = [
     #   using Flair's part-of-speech tagger as constraint.
     #
     (
-        "run_attack_flair_pos_tagger",
+        "run_attack_flair_pos_tagger_bert_score",
         (
             "textattack attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding "
-            "--constraints repeat stopword embedding:min_cos_sim=0.8 part-of-speech:tagger_type=\\'flair\\' "
+            "--constraints repeat stopword bert-score:min_bert_score=0.8 part-of-speech:tagger_type=\\'flair\\' "
             "--num-examples 4 --num-examples-offset 10"
         ),
-        "tests/sample_outputs/run_attack_flair_pos_tagger.txt",
+        "tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt",
     ),
     # fmt: on
     #
@@ -122,13 +122,20 @@ def test_command_line_attack(name, command, sample_output_file):
     """
     # read in file and create regex
     desired_output = open(sample_output_file, "r").read().strip()
+    print("desired_output.encoded =>", desired_output.encode())
     print("desired_output =>", desired_output)
     # regex in sample file look like /.*/
-    desired_re = re.escape(desired_output).replace("/\\.\\*/", ".*")
+    # / is escaped in python 3.6, but not 3.7+, so we support both
+    desired_re = (
+        re.escape(desired_output)
+        .replace("/\\.\\*/", ".*")
+        .replace("\\/\\.\\*\\/", ".*")
+    )
     result = run_command_and_get_result(command)
     # get output and check match
     assert result.stdout is not None
     stdout = result.stdout.decode().strip()
+    print("stdout.encoded =>", result.stdout)
     print("stdout =>", stdout)
     assert result.stderr is not None
     stderr = result.stderr.decode().strip()

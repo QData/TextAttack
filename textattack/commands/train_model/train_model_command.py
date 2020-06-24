@@ -49,16 +49,19 @@ class TrainModelCommand(TextAttackCommand):
             " ex: `glue:sst2` or `rotten_tomatoes`",
         )
         parser.add_argument(
-            "--dataset-train-split", '--train-split',
+            "--dataset-train-split",
+            "--train-split",
             type=str,
-            default='',
+            default="",
             help="train dataset split, if non-standard "
             "(can automatically detect 'train'",
         )
         parser.add_argument(
-            "--dataset-dev-split", '--dataset-eval-split', '--dev-split',
+            "--dataset-dev-split",
+            "--dataset-eval-split",
+            "--dev-split",
             type=str,
-            default='',
+            default="",
             help="val dataset split, if non-standard "
             "(can automatically detect 'dev', 'validation', 'eval')",
         )
@@ -88,7 +91,10 @@ class TrainModelCommand(TextAttackCommand):
             help="Total number of epochs to train for",
         )
         parser.add_argument(
-            '--allowed-labels', type=int, nargs='*', default=[],
+            "--allowed-labels",
+            type=int,
+            nargs="*",
+            default=[],
             help="Labels allowed for training (examples with other labels will be discarded)",
         )
         parser.add_argument(

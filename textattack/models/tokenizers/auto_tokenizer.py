@@ -39,20 +39,20 @@ class AutoTokenizer(Tokenizer):
         will automatically handle either case.
         """
         if isinstance(input_text, str):
-            input_text = (input_text, )
+            input_text = (input_text,)
         encoded_text = self.tokenizer.encode_plus(
             *input_text,
             max_length=self.max_length,
             add_special_tokens=True,
             pad_to_max_length=True,
-            truncation=True
+            truncation=True,
         )
         return dict(encoded_text)
 
     def batch_encode(self, input_text_list):
         """ The batch equivalent of ``encode``."""
         if hasattr(self.tokenizer, "batch_encode_plus"):
-            print('utilizing batch encode')
+            print("utilizing batch encode")
             return self.tokenizer.batch_encode_plus(
                 input_text_list,
                 truncation=True,

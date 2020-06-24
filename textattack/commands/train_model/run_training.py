@@ -1,16 +1,16 @@
 import json
 import logging
 import os
-import scipy
 import time
 
 import numpy as np
+import scipy
 import torch
 from torch.utils.data import DataLoader, Dataset, RandomSampler
 import tqdm
+import transformers
 
 import textattack
-import transformers
 
 from .train_args_helpers import dataset_from_args, model_from_args, write_readme
 
@@ -26,18 +26,20 @@ def make_directories(output_dir):
 def batch_encode(tokenizer, text_list):
     return [tokenizer.encode(text_input) for text_input in text_list]
     # try:
-        # return tokenizer.batch_encode(text_list) # TODO get batch encoding to work with fast tokenizer
+    # return tokenizer.batch_encode(text_list) # TODO get batch encoding to work with fast tokenizer
     # except AttributeError:
-        # return [tokenizer.encode(text_input) for text_input in text_list]
+    # return [tokenizer.encode(text_input) for text_input in text_list]
 
 
 def train_model(args):
-    logger.warn("WARNING: TextAttack's model training feature is in beta. Please report any issues on our Github page, https://github.com/QData/TextAttack/issues.")
+    logger.warn(
+        "WARNING: TextAttack's model training feature is in beta. Please report any issues on our Github page, https://github.com/QData/TextAttack/issues."
+    )
     start_time = time.time()
     make_directories(args.output_dir)
 
     num_gpus = torch.cuda.device_count()
-    
+
     # Save logger writes to file
     log_txt_path = os.path.join(args.output_dir, "log.txt")
     fh = logging.FileHandler(log_txt_path)
@@ -49,10 +51,8 @@ def train_model(args):
         wandb.init(sync_tensorboard=True)
 
     # Get list of text and list of label (integers) from disk.
-    train_text, train_labels, eval_text, eval_labels = dataset_from_args(
-        args
-    )
-    
+    train_text, train_labels, eval_text, eval_labels = dataset_from_args(args)
+
     # Filter labels
     if args.allowed_labels:
         logger.info(f"Filtering samples with labels outside of {args.allowed_labels}.")
@@ -61,21 +61,27 @@ def train_model(args):
             if label in args.allowed_labels:
                 final_train_text.append(text)
                 final_train_labels.append(label)
-        logger.info(f"Filtered {len(train_text)} train samples to {len(final_train_text)} points.")
+        logger.info(
+            f"Filtered {len(train_text)} train samples to {len(final_train_text)} points."
+        )
         train_text, train_labels = final_train_text, final_train_labels
         final_eval_text, final_eval_labels = [], []
         for text, label in zip(eval_text, eval_labels):
             if label in args.allowed_labels:
                 final_eval_text.append(text)
                 final_eval_labels.append(label)
-        logger.info(f"Filtered {len(eval_text)} dev samples to {len(final_eval_text)} points.")
+        logger.info(
+            f"Filtered {len(eval_text)} dev samples to {len(final_eval_text)} points."
+        )
         eval_text, eval_labels = final_eval_text, final_eval_labels
-    
+
     label_id_len = len(train_labels)
     label_set = set(train_labels)
     args.num_labels = len(label_set)
-    logger.info(f"Loaded dataset. Found: {args.num_labels} labels: ({sorted(label_set)})")
-    
+    logger.info(
+        f"Loaded dataset. Found: {args.num_labels} labels: ({sorted(label_set)})"
+    )
+
     if isinstance(train_labels[0], float):
         # TODO come up with a more sophisticated scheme for when to do regression
         logger.warn(f"Detected float labels. Doing regression.")
@@ -132,7 +138,9 @@ def train_model(args):
         },
     ]
 
-    optimizer = transformers.optimization.AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
+    optimizer = transformers.optimization.AdamW(
+        optimizer_grouped_parameters, lr=args.learning_rate
+    )
 
     scheduler = transformers.optimization.get_linear_schedule_with_warmup(
         optimizer,
@@ -146,21 +154,23 @@ def train_model(args):
     from tensorboardX import SummaryWriter
 
     tb_writer = SummaryWriter(args.output_dir)
+
     def is_writable_type(obj):
         for ok_type in [bool, int, str, float]:
-            if isinstance(obj, ok_type): return True
+            if isinstance(obj, ok_type):
+                return True
         return False
-    args_dict = {k: v for k,v in vars(args).items() if is_writable_type(v)}
-    
+
+    args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
+
     tb_writer.add_hparams(args_dict, {})
-    
+
     # Save args to file
     args_save_path = os.path.join(args.output_dir, "train_args.json")
     with open(args_save_path, "w", encoding="utf-8") as f:
         f.write(json.dumps(args_dict, indent=2) + "\n")
     logger.info(f"Wrote training args to {args_save_path}.")
-    
-    
+
     # Start training
     logger.info("***** Running training *****")
     logger.info(f"\tNum examples = {train_examples_len}")
@@ -192,7 +202,9 @@ def train_model(args):
         total = 0
         logits = []
         labels = []
-        for input_ids, batch_labels in tqdm.tqdm(eval_dataloader, desc="Evaluating accuracy"):
+        for input_ids, batch_labels in tqdm.tqdm(
+            eval_dataloader, desc="Evaluating accuracy"
+        ):
             if isinstance(input_ids, dict):
                 ## HACK: dataloader collates dict backwards. This is a temporary
                 # workaround to get ids in the right shape
@@ -203,14 +215,14 @@ def train_model(args):
 
             with torch.no_grad():
                 batch_logits = textattack.shared.utils.model_predict(model, input_ids)
-            
+
             logits.extend(batch_logits.cpu().squeeze().tolist())
             labels.extend(batch_labels)
-        
+
         model.train()
         logits = torch.tensor(logits)
         labels = torch.tensor(labels)
-        
+
         if args.do_regression:
             pearson_correlation, pearson_p_value = scipy.stats.pearsonr(logits, labels)
             return pearson_correlation
@@ -274,7 +286,7 @@ def train_model(args):
                     k: torch.stack(v).T.to(device) for k, v in input_ids.items()
                 }
             logits = textattack.shared.utils.model_predict(model, input_ids)
-            
+
             if args.do_regression:
                 # TODO integrate with textattack `metrics` package
                 loss_fct = torch.nn.MSELoss()
@@ -283,7 +295,7 @@ def train_model(args):
                 loss_fct = torch.nn.CrossEntropyLoss()
                 loss = loss_fct(logits, labels)
             loss = loss_backward(loss)
-            
+
             if global_step % args.tb_writer_step == 0:
                 tb_writer.add_scalar("loss", loss.item(), global_step)
                 tb_writer.add_scalar("lr", scheduler.get_last_lr()[0], global_step)
@@ -293,7 +305,11 @@ def train_model(args):
                 scheduler.step()
                 optimizer.zero_grad()
             # Save model checkpoint to file.
-            if global_step > 0 and (args.checkpoint_steps > 0) and (global_step % args.checkpoint_steps) == 0:
+            if (
+                global_step > 0
+                and (args.checkpoint_steps > 0)
+                and (global_step % args.checkpoint_steps) == 0
+            ):
                 save_model_checkpoint()
 
             model.zero_grad()
@@ -322,14 +338,15 @@ def train_model(args):
                     f"Stopping early since it's been {args.early_stopping_epochs} steps since validation acc increased"
                 )
                 break
-    
+
     # end of training, save tokenizer
     try:
         tokenizer.save_pretrained(args.output_dir)
         logger.info(f"Saved tokenizer {tokenizer} to {args.output_dir}.")
     except AttributeError:
-        logger.warn(f"Error: could not save tokenizer {tokenizer} to {args.output_dir}.")
-    
+        logger.warn(
+            f"Error: could not save tokenizer {tokenizer} to {args.output_dir}."
+        )
+
     # Save a little readme with model info
     write_readme(args, best_eval_score)
-    

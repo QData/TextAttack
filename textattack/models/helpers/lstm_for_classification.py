@@ -54,10 +54,10 @@ class LSTMForClassification(nn.Module):
         self.lookup_table = self.emb_layer.embedding.weight.data
         self.to(utils.device)
         self.eval()
-
-    def forward(self, _input):
         # ensure RNN module weights are part of single contiguous chunk of memory
         self.encoder.flatten_parameters()
+
+    def forward(self, _input):
         emb = self.emb_layer(_input.t())
         emb = self.drop(emb)
 
