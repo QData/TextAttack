@@ -136,6 +136,8 @@ def set_cache_dir(cache_dir):
 def _post_install_if_needed(cache_dir):
     """ Runs _post_install if hasn't been run since install. """
     # Check for post-install file.
+    if not os.path.exists(cache_dir):
+        raise NotADirectoryError(f"Cannot find cache directory {cache_dir}")
     post_install_file_path = os.path.join(cache_dir, "post_install_check")
     post_install_file_lock_path = post_install_file_path + ".lock"
     post_install_file_lock = filelock.FileLock(post_install_file_lock_path)
