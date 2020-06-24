@@ -3,8 +3,8 @@
 <p align="center">Generating adversarial examples for NLP models</p>
 
 <p align="center">
-  <a href="https://textattack.readthedocs.io/">Docs</a> 
-  <br>
+  <a href="https://textattack.readthedocs.io/">[TextAttack Documentation on ReadTheDocs]</a> 
+  <br> <br>
   <a href="#about">About</a> •
   <a href="#setup">Setup</a> •
   <a href="#usage">Usage</a> •
@@ -16,7 +16,6 @@
   <a href="https://badge.fury.io/py/textattack">
     <img src="https://badge.fury.io/py/textattack.svg" alt="PyPI version" height="18">
   </a>
-
 </p>
 
 <img src="https://github.com/jxmorris12/jxmorris12.github.io/blob/master/files/render1593035135238.gif?raw=true" style="display: block; margin: 0 auto;" />
@@ -45,7 +44,7 @@ pip install textattack
 ```
 
 Once TextAttack is installed, you can run it via command-line (`textattack ...`)
-or via the python module (`python -m textattack ...`).
+or via python module (`python -m textattack ...`).
 
 > **Tip**: TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
 > dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
@@ -58,13 +57,15 @@ common commands are `textattack attack <args>`, and `textattack augment <args>`.
 information about all commands using `textattack --help`, or a specific command using, for example,
 `textattack attack --help`.
 
+The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The[documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+
 ### Running Attacks
 
-The [`examples/`](docs/examples/) folder contains notebooks explaining basic usage of TextAttack, 
-including building a custom transformation and a custom constraint. These examples can also be viewed 
-through the [documentation website](https://textattack.readthedocs.io/en/latest).
+The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
 
-The easiest way to try out an attack is via the command-line interface, `textattack attack`. Here are some concrete examples:
+> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+
+Here are some concrete examples:
 
 *TextFooler on an LSTM trained on the MR sentiment classification dataset*: 
 ```bash
@@ -83,8 +84,6 @@ textattack attack --model lstm-mr --num-examples 20 \
  --constraints repeat stopword max-words-perturbed:max_num_words=2 embedding:min_cos_sim=0.8 part-of-speech \
  --goal-function untargeted-classification
 ```
-
-> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
 
 > **Tip:** Instead of specifying a dataset and number of examples, you can pass `--interactive` to attack samples inputted by the user.
 
@@ -196,6 +195,15 @@ textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 5
 textattack train --model bert-base-uncased --dataset glue:cola --batch-size 32 --epochs 5
 ```
 
+## `textattack peek-dataset`
+
+To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-nlp snli` will show information about the SNLI dataset from the NLP package.
+
+
+## `textattack list`
+
+There are lots of pieces in TextAttack, and it can be difficult to keep track of all of them. You can use `textattack list` to list components, for example, pretrained models (`textattack list models`) or available search methods (`textattack list search-methods`).
+
 ## Design
 
 ### AttackedText
@@ -211,10 +219,10 @@ TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that
 
 TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
 dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
-tasks, as well as some common classification datasets, translation, and summarization. You can 
+tasks, as well as some common datasets for classification, translation, and summarization. You can 
 see the full list of provided models & datasets via `textattack attack --help`.
 
-Here's an example of using one of the built-in models:
+Here's an example of using one of the built-in models (the SST-2 dataset is automatically loaded):
 
 ```bash
 textattack attack --model roberta-base-sst2 --recipe textfooler --num-examples 10
@@ -282,6 +290,7 @@ A `Transformation` takes as input an `AttackedText` and returns a list of possib
 ### Search Methods
 
 A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input an `AttackedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
+
 
 ## Contributing to TextAttack
 
