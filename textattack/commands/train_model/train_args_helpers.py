@@ -108,13 +108,14 @@ def model_from_args(args, num_labels):
     return model
 
 
-def write_readme(args, best_eval_score):
+def write_readme(args, best_eval_score, best_eval_score_epoch):
     # Save args to file
     readme_save_path = os.path.join(args.output_dir, "README.md")
     dataset_name = args.dataset.split(":")[0] if ":" in args.dataset else args.dataset
     task_name = "regression" if args.do_regression else "classification"
     loss_func = "mean squared error" if args.do_regression else "cross-entropy"
     metric_name = "pearson correlation" if args.do_regression else "accuracy"
+    epoch_info = f"{best_eval_score_epoch} epoch" + ("s" if best_eval_score_epoch > 1 else "")
     readme_text = f""" 
     ## {args.model} fine-tuned with TextAttack on the {dataset_name} dataset
     

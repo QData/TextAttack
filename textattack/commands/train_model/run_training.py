@@ -24,11 +24,8 @@ def make_directories(output_dir):
 
 
 def batch_encode(tokenizer, text_list):
+    # TODO configure batch encoding to work with fast tokenizer
     return [tokenizer.encode(text_input) for text_input in text_list]
-    # try:
-    # return tokenizer.batch_encode(text_list) # TODO get batch encoding to work with fast tokenizer
-    # except AttributeError:
-    # return [tokenizer.encode(text_input) for text_input in text_list]
 
 
 def train_model(args):
@@ -44,6 +41,7 @@ def train_model(args):
     log_txt_path = os.path.join(args.output_dir, "log.txt")
     fh = logging.FileHandler(log_txt_path)
     fh.setLevel(logging.DEBUG)
+    logger.addHandler(fh)
     logger.info(f"Writing logs to {log_txt_path}.")
 
     # Use Weights & Biases, if enabled.
@@ -229,7 +227,7 @@ def train_model(args):
         else:
             preds = logits.argmax(dim=1)
             correct = (preds == labels).sum()
-            return float(correct) / len(eval_dataloader)
+            return float(correct) / len(labels)
 
     def save_model():
         model_to_save = (
@@ -247,7 +245,6 @@ def train_model(args):
             # no config
             pass
 
-        tqdm.tqdm.write(f"Best acc found. Saved model to {args.output_dir}.")
 
     global_step = 0
 
@@ -260,11 +257,12 @@ def train_model(args):
         model_to_save = model.module if hasattr(model, "module") else model
         model_to_save.save_pretrained(output_dir)
         torch.save(args, os.path.join(output_dir, "training_args.bin"))
-        tqdm.tqdm.write(f"Checkpoint saved to {output_dir}.")
+        logger.info(f"Checkpoint saved to {output_dir}.")
 
     model.train()
     best_eval_score = 0
-    steps_since_best_eval_score = 0
+    best_eval_score_epoch = 0
+    epochs_since_best_eval_score = 0
 
     def loss_backward(loss):
         if num_gpus > 1:
@@ -274,7 +272,7 @@ def train_model(args):
         loss.backward()
         return loss
 
-    for _ in tqdm.trange(int(args.num_train_epochs), desc="Epoch"):
+    for epoch in tqdm.trange(int(args.num_train_epochs), desc="Epoch"):
         prog_bar = tqdm.tqdm(train_dataloader, desc="Iteration")
         for step, batch in enumerate(prog_bar):
             input_ids, labels = batch
@@ -324,15 +322,17 @@ def train_model(args):
         if args.checkpoint_every_epoch:
             save_model_checkpoint()
 
-        tqdm.tqdm.write(f"Eval acc: {eval_score*100}%")
+        logger.info(f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%")
         if eval_score > best_eval_score:
             best_eval_score = eval_score
-            steps_since_best_eval_score = 0
+            best_eval_score_epoch = epoch
+            epochs_since_best_eval_score = 0
             save_model()
+            logger.info(f"Best acc found. Saved model to {args.output_dir}.")
         else:
-            steps_since_best_eval_score += 1
+            epochs_since_best_eval_score += 1
             if (args.early_stopping_epochs > 0) and (
-                steps_since_best_eval_score > args.early_stopping_epochs
+                epochs_since_best_eval_score > args.early_stopping_epochs
             ):
                 logger.info(
                     f"Stopping early since it's been {args.early_stopping_epochs} steps since validation acc increased"
@@ -349,4 +349,4 @@ def train_model(args):
         )
 
     # Save a little readme with model info
-    write_readme(args, best_eval_score)
+    write_readme(args, best_eval_score, best_eval_score_epoch)
