@@ -1,6 +1,8 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
+import textattack
 from textattack.commands import TextAttackCommand
+from textattack.commands.attack.attack_args_helpers import *
 
 
 class AttackResumeCommand(TextAttackCommand):
@@ -10,9 +12,11 @@ class AttackResumeCommand(TextAttackCommand):
         A command line parser to resume a checkpointed attack from user specifications.
     """
 
-    def run(self):
-        textattack.shared.utils.set_seed(self.random_seed)
-        self.checkpoint_resume = True
+    def run(self, args):
+        checkpoint = parse_checkpoint_from_args(args)
+        args = merge_checkpoint_args(checkpoint.args, args)
+        textattack.shared.utils.set_seed(args.random_seed)
+        args.checkpoint_resume = True
 
         # Run attack from checkpoint.
         from textattack.commands.attack.run_attack_parallel import run as run_parallel
@@ -20,10 +24,10 @@ class AttackResumeCommand(TextAttackCommand):
             run as run_single_threaded,
         )
 
-        if self.parallel:
-            run_parallel(self)
+        if args.parallel:
+            run_parallel(args, checkpoint=checkpoint)
         else:
-            run_single_threaded(self)
+            run_single_threaded(args, checkpoint=checkpoint)
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):

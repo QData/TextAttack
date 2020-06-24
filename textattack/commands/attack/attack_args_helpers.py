@@ -154,6 +154,8 @@ def parse_goal_function_from_args(args, model):
     else:
         raise ValueError(f"Error: unsupported goal_function {goal_function}")
     goal_function.query_budget = args.query_budget
+    goal_function.model_batch_size = args.model_batch_size
+    goal_function.model_cache_size = args.model_cache_size
     return goal_function
 
 
@@ -192,6 +194,9 @@ def parse_attack_from_args(args):
         else:
             raise ValueError(f"Invalid recipe {args.recipe}")
         recipe.goal_function.query_budget = args.query_budget
+        recipe.goal_function.model_batch_size = args.model_batch_size
+        recipe.goal_function.model_cache_size = args.model_cache_size
+        recipe.constraint_cache_size = args.constraint_cache_size
         return recipe
     elif args.attack_from_file:
         if ":" in args.attack_from_file:
@@ -219,7 +224,11 @@ def parse_attack_from_args(args):
         else:
             raise ValueError(f"Error: unsupported attack {args.search}")
     return textattack.shared.Attack(
-        goal_function, constraints, transformation, search_method
+        goal_function,
+        constraints,
+        transformation,
+        search_method,
+        constraint_cache_size=args.constraint_cache_size,
     )
 
 
@@ -434,7 +443,6 @@ def parse_checkpoint_from_args(args):
         checkpoint_path = args.checkpoint_file
 
     checkpoint = textattack.shared.Checkpoint.load(checkpoint_path)
-    set_seed(checkpoint.args.random_seed)
 
     return checkpoint
 
@@ -451,7 +459,6 @@ def merge_checkpoint_args(saved_args, cmdline_args):
     """ Merge previously saved arguments for checkpoint and newly entered arguments """
     args = copy.deepcopy(saved_args)
     # Newly entered arguments take precedence
-    args.checkpoint_resume = cmdline_args.checkpoint_resume
     args.parallel = cmdline_args.parallel
     # If set, replace
     if cmdline_args.checkpoint_dir:

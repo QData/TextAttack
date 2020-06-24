@@ -1,11 +1,10 @@
-
-
 <h1 align="center">TextAttack 🐙</h1>
 
 <p align="center">Generating adversarial examples for NLP models</p>
 
 <p align="center">
-  <a href="https://textattack.readthedocs.io/">Docs</a> •
+  <a href="https://textattack.readthedocs.io/">Docs</a> 
+  <br>
   <a href="#about">About</a> •
   <a href="#setup">Setup</a> •
   <a href="#usage">Usage</a> •
@@ -46,10 +45,9 @@ pip install textattack
 Once TextAttack is installed, you can run it via command-line (`textattack ...`)
 or via the python module (`python -m textattack ...`).
 
-### Configuration
-TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
-dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
-environment variable `TA_CACHE_DIR`.
+> TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
+> dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
+> environment variable `TA_CACHE_DIR`. (for example: `TA_CACHE_DIR=/tmp/ textattack attack ...`).
 
 ## Usage
 
@@ -60,7 +58,9 @@ information about all commands using `textattack --help`, or a specific command 
 
 ### Running Attacks
 
-The [`examples/`](docs/examples/) folder contains notebooks explaining basic usage of TextAttack, including building a custom transformation and a custom constraint. These examples can also be viewed through the [documentation website](https://textattack.readthedocs.io/en/latest).
+The [`examples/`](docs/examples/) folder contains notebooks explaining basic usage of TextAttack, 
+including building a custom transformation and a custom constraint. These examples can also be viewed 
+through the [documentation website](https://textattack.readthedocs.io/en/latest).
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. Here are some concrete examples:
 
@@ -194,9 +194,9 @@ textattack train --model bert-base-uncased --dataset glue:cola --batch-size 32 -
 
 ## Design
 
-### TokenizedText
+### AttackedText
 
-To allow for word replacement after a sequence has been tokenized, we include a `TokenizedText` object
+To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
 which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
 
 ### Models and Datasets
@@ -261,23 +261,23 @@ You can then run attacks on samples from this dataset by adding the argument `--
 
 ### Attacks
 
-The `attack_one` method in an `Attack` takes as input a `TokenizedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
+The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
 
 ### Goal Functions
 
-A `GoalFunction` takes as input a `TokenizedText` object and the ground truth output, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
+A `GoalFunction` takes as input an `AttackedText` object and the ground truth output, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
 
 ### Constraints
 
-A `Constraint` takes as input a current `TokenizedText`, and a list of transformed `TokenizedText`s. For each transformed option, it returns a boolean representing whether the constraint is met.
+A `Constraint` takes as input a current `AttackedText`, and a list of transformed `AttackedText`s. For each transformed option, it returns a boolean representing whether the constraint is met.
 
 ### Transformations
 
-A `Transformation` takes as input a `TokenizedText` and returns a list of possible transformed `TokenizedText`s. For example, a transformation might return all possible synonym replacements.
+A `Transformation` takes as input an `AttackedText` and returns a list of possible transformed `AttackedText`s. For example, a transformation might return all possible synonym replacements.
 
 ### Search Methods
 
-A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input a `TokenizedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
+A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input an `AttackedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
 ## Contributing to TextAttack
 
