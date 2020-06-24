@@ -157,6 +157,24 @@ class AttackCommand(TextAttackCommand):
             default=float("inf"),
             help="The maximum number of model queries allowed per example attacked.",
         )
+        parser.add_argument(
+            "--model-batch-size",
+            type=int,
+            default=32,
+            help="The batch size for making calls to the model.",
+        )
+        parser.add_argument(
+            "--model-cache-size",
+            type=int,
+            default=2 ** 18,
+            help="The maximum number of items to keep in the model results cache at once.",
+        )
+        parser.add_argument(
+            "--constraint-cache-size",
+            type=int,
+            default=2 ** 18,
+            help="The maximum number of items to keep in the constraints cache at once.",
+        )
 
         attack_group = parser.add_mutually_exclusive_group(required=False)
         search_choices = ", ".join(SEARCH_METHOD_CLASS_NAMES.keys())
