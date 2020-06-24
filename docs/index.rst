@@ -31,12 +31,13 @@ TextAttack has some other features that make it a pleasure to use:
 .. toctree::
    :maxdepth: 1
    :hidden:
-   :caption: Quickstart
+   :caption: Getting Started
 
 
    Installation <quickstart/installation>
    Overview <quickstart/overview>
    Command-Line Usage <quickstart/command_line_usage>
+   Tutorial 0: TextAttack End-To-End (Train, Eval, Attack) <examples/0_End_to_End.ipynb>
    Tutorial 1: Transformations <examples/1_Introduction_and_Transformations.ipynb>
    Tutorial 2: Constraints <examples/2_Constraints.ipynb>
 

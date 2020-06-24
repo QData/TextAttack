@@ -23,7 +23,16 @@
   
 ## About
 
-TextAttack is a Python framework for running adversarial attacks against NLP models. TextAttack builds attacks from four components: a search method, goal function, transformation, and set of constraints. TextAttack's modular design makes it easily extensible to new NLP tasks, models, and attack strategies. TextAttack currently supports attacks on models trained for classification, entailment, and translation.
+TextAttack is a Python framework for adversarial attacks, data augmentation, and model training in NLP.
+
+### *Why TextAttack?*
+
+There are lots of reasons to use TextAttack:
+
+1. **Understand NLP models better** by running different adversarial attacks on them and examining the output
+2. **Research and develop different NLP adversarial attacks** using the TextAttack framework and library of components
+3. **Augment your dataset** to increase model generalization and robustness downstream
+3. **Train NLP models** using just a single command (all downloads included!)
 
 ## Setup
 
