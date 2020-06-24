@@ -19,7 +19,7 @@ class LSTMForClassification(nn.Module):
         hidden_size=150,
         depth=1,
         dropout=0.3,
-        nclasses=2,
+        num_labels=2,
         max_seq_length=128,
         model_path=None,
     ):
@@ -40,7 +40,7 @@ class LSTMForClassification(nn.Module):
             bidirectional=True,
         )
         d_out = hidden_size
-        self.out = nn.Linear(d_out, nclasses)
+        self.out = nn.Linear(d_out, num_labels)
         self.tokenizer = textattack.models.tokenizers.SpacyTokenizer(
             self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
         )
@@ -56,6 +56,9 @@ class LSTMForClassification(nn.Module):
         self.eval()
 
     def forward(self, _input):
+        # ensure RNN module weights are part of single contiguous chunk of memory
+        self.encoder.flatten_parameters()
+
         emb = self.emb_layer(_input.t())
         emb = self.drop(emb)
 

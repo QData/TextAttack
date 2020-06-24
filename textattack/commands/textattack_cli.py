@@ -5,9 +5,10 @@ import sys
 
 from textattack.commands.attack import AttackCommand, AttackResumeCommand
 from textattack.commands.augment import AugmentCommand
-from textattack.commands.benchmark_model import BenchmarkModelCommand
 from textattack.commands.benchmark_recipe import BenchmarkRecipeCommand
+from textattack.commands.eval_model import EvalModelCommand
 from textattack.commands.list_things import ListThingsCommand
+from textattack.commands.peek_dataset import PeekDatasetCommand
 from textattack.commands.train_model import TrainModelCommand
 
 
@@ -23,10 +24,11 @@ def main():
     AttackCommand.register_subcommand(subparsers)
     AttackResumeCommand.register_subcommand(subparsers)
     AugmentCommand.register_subcommand(subparsers)
-    BenchmarkModelCommand.register_subcommand(subparsers)
     BenchmarkRecipeCommand.register_subcommand(subparsers)
+    EvalModelCommand.register_subcommand(subparsers)
     ListThingsCommand.register_subcommand(subparsers)
     TrainModelCommand.register_subcommand(subparsers)
+    PeekDatasetCommand.register_subcommand(subparsers)
 
     # Let's go
     args = parser.parse_args()

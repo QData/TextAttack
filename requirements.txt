@@ -1,3 +1,4 @@
+bert-score
 editdistance
 filelock
 language_tool_python
@@ -14,9 +15,9 @@ torch
 transformers>=2.5.1
 tensorflow>=2
 tensorflow_hub
+tensorboardX
 terminaltables
 tqdm
 visdom
 wandb
 flair
-bert-score

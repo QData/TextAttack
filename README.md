@@ -73,14 +73,6 @@ textattack attack --model lstm-mr --num-examples 20 \
  --goal-function untargeted-classification
 ```
 
-*Non-overlapping output attack using a greedy word swap and WordNet word substitutions on T5 English-to-German translation:*
-```bash
-textattack attack --attack-n --goal-function non-overlapping-output \
-    --model t5-en2de --num-examples 10 --transformation word-swap-wordnet \
-    --constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword \
-    --search greedy
-```
-
 > **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
 
 ### Attacks and Papers Implemented ("Attack Recipes")
@@ -174,6 +166,23 @@ of a string or a list of strings. Here's an example of how to use the `Embedding
 ['What I notable create, I do not understand.', 'What I significant create, I do not understand.', 'What I cannot engender, I do not understand.', 'What I cannot creating, I do not understand.', 'What I cannot creations, I do not understand.', 'What I cannot create, I do not comprehend.', 'What I cannot create, I do not fathom.', 'What I cannot create, I do not understanding.', 'What I cannot create, I do not understands.', 'What I cannot create, I do not understood.', 'What I cannot create, I do not realise.']
 ```
 
+### Training Models
+
+Our model training code is available via `textattack train` to help you train LSTMs,
+CNNs, and `transformers` models using TextAttack out-of-the-box. Datasets are
+automatically loaded using the `nlp` package.
+
+#### Training Examples
+*Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
+```bash
+textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
+```
+
+*Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
+```bash
+textattack train --model bert-base-uncased --dataset glue:cola --batch-size 32 --epochs 5
+```
+
 ## Design
 
 ### AttackedText
@@ -205,11 +214,11 @@ and datasets from the [`nlp` package](https://github.com/huggingface/nlp)! Here'
 and attacking a pre-trained model and dataset:
 
 ```bash
-textattack attack --model_from_huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset_from_nlp glue:sst2 --recipe deepwordbug --num-examples 10
+textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-nlp glue:sst2 --recipe deepwordbug --num-examples 10
 ```
 
-You can explore other pre-trained models using the `--model_from_huggingface` argument, or other datasets by changing 
-`--dataset_from_nlp`.
+You can explore other pre-trained models using the `--model-from-huggingface` argument, or other datasets by changing 
+`--dataset-from-nlp`.
 
 
 #### Loading a model or dataset from a file
@@ -228,7 +237,7 @@ model = load_model()
 tokenizer = load_tokenizer()
 ```
 
-Then, run an attack with the argument `--model_from_file my_model.py`. The model and tokenizer will be loaded automatically.
+Then, run an attack with the argument `--model-from-file my_model.py`. The model and tokenizer will be loaded automatically.
 
 #### Dataset from a file
 
@@ -239,7 +248,7 @@ The following example would load a sentiment classification dataset from file `m
 dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 ```
 
-You can then run attacks on samples from this dataset by adding the argument `--dataset_from_file my_dataset.py`.
+You can then run attacks on samples from this dataset by adding the argument `--dataset-from-file my_dataset.py`.
 
 ### Attacks
 

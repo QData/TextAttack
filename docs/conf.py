@@ -22,7 +22,7 @@ copyright = "2020, UVA QData Lab"
 author = "UVA QData Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.3.1"
+release = "0.1.0"
 
 # Set master doc to `index.rst`.
 master_doc = "index"
@@ -37,7 +37,10 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
     "sphinx_rtd_theme",
+    # Enable .ipynb doc files
     "nbsphinx",
+    # Enable .md doc files
+    "recommonmark",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
