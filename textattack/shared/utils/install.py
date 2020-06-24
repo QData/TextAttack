@@ -132,12 +132,10 @@ def set_cache_dir(cache_dir):
     os.environ["XDG_CACHE_HOME"] = cache_dir
 
 
-def _post_install_if_needed(cache_dir):
+def _post_install_if_needed():
     """ Runs _post_install if hasn't been run since install. """
     # Check for post-install file.
-    if not os.path.exists(cache_dir):
-        raise NotADirectoryError(f"Cannot find cache directory {cache_dir}")
-    post_install_file_path = os.path.join(cache_dir, "post_install_check")
+    post_install_file_path = path_in_cache("post_install_check")
     post_install_file_lock_path = post_install_file_path + ".lock"
     post_install_file_lock = filelock.FileLock(post_install_file_lock_path)
     post_install_file_lock.acquire()
@@ -157,4 +155,4 @@ TEXTATTACK_CACHE_DIR = os.environ.get(
 if "TA_CACHE_DIR" in os.environ:
     set_cache_dir(os.environ["TA_CACHE_DIR"])
 
-_post_install_if_needed(TEXTATTACK_CACHE_DIR)
+_post_install_if_needed()
