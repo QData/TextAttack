@@ -7,6 +7,7 @@ from torch.utils.data import DataLoader, Dataset, RandomSampler
 import tqdm
 
 import textattack
+import transformers
 
 from .train_args_helpers import dataset_from_args, model_from_args
 
@@ -19,16 +20,15 @@ def make_directories(output_dir):
         os.makedirs(output_dir)
 
 
-def encode_batch(tokenizer, text_list):
-    try:
-        return tokenizer.encode_batch(text_list)
-    except AttributeError:
-        return [tokenizer.encode(text) for text in text_list]
+def batch_encode(tokenizer, text_list):
+    return [tokenizer.encode(text_input) for text_input in text_list]
+    # try:
+        # return tokenizer.batch_encode(text_list) # TODO get batch encoding to work with fast tokenizer
+    # except AttributeError:
+        # return [tokenizer.encode(text_input) for text_input in text_list]
 
 
 def train_model(args):
-    from transformers.optimization import AdamW, get_linear_schedule_with_warmup
-
     start_time = time.time()
     make_directories(args.output_dir)
 
@@ -38,8 +38,12 @@ def train_model(args):
     from tensorboardX import SummaryWriter
 
     tb_writer = SummaryWriter(args.output_dir)
-    args_dict = vars(args)
-    del args_dict["func"]
+    def is_writable_type(obj):
+        for ok_type in [bool, int, str, float]:
+            if isinstance(obj, ok_type): return True
+        return False
+    args_dict = {k: v for k,v in vars(args).items() if is_writable_type(v)}
+    
     tb_writer.add_hparams(args_dict, {})
 
     # Use Weights & Biases, if enabled.
@@ -88,9 +92,9 @@ def train_model(args):
     model = model_from_args(args, num_labels)
 
     logger.info(f"Tokenizing training data. (len: {train_examples_len})")
-    train_text_ids = encode_batch(model.tokenizer, train_text)
-    logger.info(f"Tokenizing test data (len: {len(eval_labels)})")
-    eval_text_ids = encode_batch(model.tokenizer, eval_text)
+    train_text_ids = batch_encode(model.tokenizer, train_text)
+    logger.info(f"Tokenizing eval data (len: {len(eval_labels)})")
+    eval_text_ids = batch_encode(model.tokenizer, eval_text)
     load_time = time.time()
     logger.info(f"Loaded data and tokenized in {load_time-start_time}s")
     # print(model)
@@ -122,9 +126,9 @@ def train_model(args):
         },
     ]
 
-    optimizer = AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
+    optimizer = transformers.optimization.AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
 
-    scheduler = get_linear_schedule_with_warmup(
+    scheduler = transformers.optimization.get_linear_schedule_with_warmup(
         optimizer,
         num_warmup_steps=args.warmup_proportion,
         num_training_steps=num_train_optimization_steps,
@@ -133,12 +137,12 @@ def train_model(args):
     global_step = 0
 
     logger.info("***** Running training *****")
-    logger.info("  Num examples = %d", train_examples_len)
-    logger.info("  Batch size = %d", args.batch_size)
-    logger.info("  Max sequence length = %d", args.max_length)
-    logger.info("  Num steps = %d", num_train_optimization_steps)
-    logger.info("  Num epochs = %d", args.num_train_epochs)
-    logger.info("  Learning rate = %d", args.learning_rate)
+    logger.info(f"\tNum examples = {train_examples_len}")
+    logger.info(f"\tBatch size = {args.batch_size}")
+    logger.info(f"\tMax sequence length = {args.max_length}")
+    logger.info(f"\tNum steps = {num_train_optimization_steps}")
+    logger.info(f"\tNum epochs = {args.num_train_epochs}")
+    logger.info(f"\tLearning rate = {args.learning_rate}")
 
     train_input_ids = np.array(train_text_ids)
     train_labels = np.array(train_labels)
@@ -219,6 +223,7 @@ def train_model(args):
         if args.grad_accum_steps > 1:
             loss = loss / args.grad_accum_steps
         loss.backward()
+        return loss
 
     for _ in tqdm.trange(int(args.num_train_epochs), desc="Epoch"):
         prog_bar = tqdm.tqdm(train_dataloader, desc="Iteration")
@@ -231,20 +236,20 @@ def train_model(args):
                 input_ids = {
                     k: torch.stack(v).T.to(device) for k, v in input_ids.items()
                 }
-            logits = textattack.shared.utils.model_predict(model, input_ids)
-            loss_fct = torch.nn.CrossEntropyLoss()
-            loss = torch.nn.CrossEntropyLoss()(logits, labels)
+            input_ids['labels'] = labels # @TODO change this back to calculate loss in this body
+            loss = model(**input_ids)[0] 
+            loss = loss_backward(loss)
+            
             if global_step % args.tb_writer_step == 0:
-                tb_writer.add_scalar("loss", loss, global_step)
-                tb_writer.add_scalar("lr", loss, global_step)
-            loss_backward(loss)
+                tb_writer.add_scalar("loss", loss.item(), global_step)
+                tb_writer.add_scalar("lr", scheduler.get_last_lr()[0], global_step)
             prog_bar.set_description(f"Loss {loss.item()}")
             if (step + 1) % args.grad_accum_steps == 0:
                 optimizer.step()
                 scheduler.step()
                 optimizer.zero_grad()
             # Save model checkpoint to file.
-            if global_step > 0 and global_step % args.checkpoint_steps == 0:
+            if global_step > 0 and (args.checkpoint_steps > 0) and (global_step % args.checkpoint_steps) == 0:
                 save_model_checkpoint()
 
             model.zero_grad()
@@ -273,3 +278,10 @@ def train_model(args):
                     f"Stopping early since it's been {args.early_stopping_epochs} steps since validation acc increased"
                 )
                 break
+    
+    # end of training, save tokenizer
+    try:
+        tokenizer.save_pretrained(args.output_dir)
+        logger.info(f"Saved tokenizer {tokenizer} to {args.output_dir}.")
+    except AttributeError:
+        logger.warn(f"Error: could not save tokenizer {tokenizer} to {args.output_dir}.")

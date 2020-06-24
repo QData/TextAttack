@@ -27,17 +27,22 @@ def dataset_from_args(args):
     """
     dataset_args = args.dataset.split(":")
     # TODO `HuggingFaceNLPDataset` -> `HuggingFaceDataset`
-    try:
-        train_dataset = textattack.datasets.HuggingFaceNLPDataset(
-            *dataset_args, split="train"
-        )
-    except KeyError:
-        raise KeyError(f"Error: no `train` split found in `{args.dataset}` dataset")
+    if args.dataset_train_split:
+            train_dataset = textattack.datasets.HuggingFaceNLPDataset(
+                *dataset_args, split=args.dataset_train_split
+            )
+    else:
+        try:
+            train_dataset = textattack.datasets.HuggingFaceNLPDataset(
+                *dataset_args, split="train"
+            )
+        except KeyError:
+            raise KeyError(f"Error: no `train` split found in `{args.dataset}` dataset")
     train_text, train_labels = prepare_dataset_for_training(train_dataset)
     
-    if args.dataset_split:
+    if args.dataset_dev_split:
         eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
-            *dataset_args, split=args.dataset_split
+            *dataset_args, split=args.dataset_dev_split
         )
     else:
         # try common dev split names
@@ -60,7 +65,6 @@ def dataset_from_args(args):
                         f"Could not find `dev` or `test` split in dataset {args.dataset}."
                     )
     eval_text, eval_labels = prepare_dataset_for_training(eval_dataset)
-            
 
     return train_text, train_labels, eval_text, eval_labels
 
@@ -94,7 +98,7 @@ def model_from_args(args, num_labels):
             config=config,
         )
         tokenizer = textattack.models.tokenizers.AutoTokenizer(
-            args.model, use_fast=False, max_length=args.max_length
+            args.model, use_fast=True, max_length=args.max_length
         )
         setattr(model, "tokenizer", tokenizer)
 

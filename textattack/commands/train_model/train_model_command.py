@@ -49,10 +49,17 @@ class TrainModelCommand(TextAttackCommand):
             " ex: `glue:sst2` or `rotten_tomatoes`",
         )
         parser.add_argument(
-            "--dataset-split",
+            "--dataset-train-split", '--train-split',
             type=str,
             default='',
-            help="dataset split, if non-standard "
+            help="train dataset split, if non-standard "
+            "(can automatically detect 'train'",
+        )
+        parser.add_argument(
+            "--dataset-dev-split", '--dataset-val-split', '--dev-split',
+            type=str,
+            default='',
+            help="val dataset split, if non-standard "
             "(can automatically detect 'dev', 'validation', 'eval')",
         )
         parser.add_argument(
@@ -64,10 +71,9 @@ class TrainModelCommand(TextAttackCommand):
         parser.add_argument(
             "--checkpoint-steps",
             type=int,
-            default=5000,
-            help="save model after this many steps",
+            default=-1,
+            help="save model after this many steps (-1 for no checkpointing)",
         )
-
         parser.add_argument(
             "--checkpoint-every_epoch",
             action="store_true",
@@ -102,7 +108,6 @@ class TrainModelCommand(TextAttackCommand):
             help="Maximum length of a sequence (anything beyond this will "
             "be truncated)",
         )
-
         parser.add_argument(
             "--learning-rate",
             "--lr",
@@ -110,7 +115,6 @@ class TrainModelCommand(TextAttackCommand):
             default=2e-5,
             help="Learning rate for Adam Optimization",
         )
-
         parser.add_argument(
             "--grad-accum-steps",
             type=int,
@@ -118,33 +122,28 @@ class TrainModelCommand(TextAttackCommand):
             help="Number of steps to accumulate gradients before optimizing, "
             "advancing scheduler, etc.",
         )
-
         parser.add_argument(
             "--warmup-proportion",
             type=float,
             default=0.1,
             help="Warmup proportion for linear scheduling",
         )
-
         parser.add_argument(
             "--config-name",
             type=str,
             default="config.json",
             help="Filename to save BERT config as",
         )
-
         parser.add_argument(
             "--weights-name",
             type=str,
             default="pytorch_model.bin",
             help="Filename to save model weights as",
         )
-
         parser.add_argument(
             "--enable-wandb",
             default=False,
             action="store_true",
             help="log metrics to Weights & Biases",
         )
-
         parser.set_defaults(func=TrainModelCommand())

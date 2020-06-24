@@ -8,8 +8,8 @@ from textattack.commands.augment import AugmentCommand
 from textattack.commands.benchmark_recipe import BenchmarkRecipeCommand
 from textattack.commands.eval_model import EvalModelCommand
 from textattack.commands.list_things import ListThingsCommand
+from textattack.commands.peek_dataset import PeekDatasetCommand
 from textattack.commands.train_model import TrainModelCommand
-
 
 def main():
     parser = argparse.ArgumentParser(
@@ -27,6 +27,7 @@ def main():
     EvalModelCommand.register_subcommand(subparsers)
     ListThingsCommand.register_subcommand(subparsers)
     TrainModelCommand.register_subcommand(subparsers)
+    PeekDatasetCommand.register_subcommand(subparsers)
 
     # Let's go
     args = parser.parse_args()

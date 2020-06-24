@@ -21,6 +21,8 @@ class SpacyTokenizer(Tokenizer):
 
     def convert_text_to_tokens(self, text):
         if isinstance(text, tuple):
+            if len(text) > 1:
+                raise TypeError('Cannot train LSTM/CNN models with multi-sequence inputs.')
             text = text[0]
         if not isinstance(text, str):
             raise TypeError(

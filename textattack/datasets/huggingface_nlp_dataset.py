@@ -2,6 +2,7 @@ import collections
 import random
 
 import nlp
+import textattack
 
 from textattack.datasets import TextAttackDataset
 from textattack.shared import AttackedText
@@ -67,6 +68,9 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         dataset_columns=None,
         shuffle=False,
     ):
+        
+        subset_print_str = f", subset `{subset}`" if subset else ""
+        textattack.shared.logger.info(f"Loading `nlp` dataset `{name}`{subset_print_str}, split `{split}`.")
         dataset = nlp.load_dataset(name, subset)
         (
             self.input_columns,

@@ -333,6 +333,8 @@ def parse_dataset_from_args(args):
         dataset_args = args.dataset_from_nlp
         if ":" in dataset_args:
             dataset_args = dataset_args.split(":")
+        else:
+            dataset_args = (dataset_args,)
         dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, shuffle=args.shuffle
         )
