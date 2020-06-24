@@ -13,7 +13,7 @@ def batch_tokenize(tokenizer, attacked_text_list):
         return [tokenizer.encode(x) for x in inputs]
 
 
-def batch_model_predict(model, inputs, batch_size=utils.config("MODEL_BATCH_SIZE")):
+def batch_model_predict(model, inputs, batch_size=32):
     outputs = []
     i = 0
     while i < len(inputs):

@@ -71,7 +71,7 @@ class AttackLogManager:
         # Count things about attacks.
         all_num_words = np.zeros(len(self.results))
         perturbed_word_percentages = np.zeros(len(self.results))
-        num_words_changed_until_success = np.zeros(self.max_seq_len)
+        num_words_changed_until_success = np.zeros(2**16) # @ TODO: be smarter about this
         failed_attacks = 0
         skipped_attacks = 0
         successful_attacks = 0
