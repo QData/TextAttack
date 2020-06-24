@@ -93,7 +93,7 @@ def color_from_output(label_name, label):
     elif label_name in {"contradiction", "negative"}:
         return "red"
     elif label_name in {"neutral"}:
-        return "purple"
+        return "gray"
     else:
         # if no color pre-stored for label name, return color corresponding to
         # the label number (so, even for unknown datasets, we can give each
