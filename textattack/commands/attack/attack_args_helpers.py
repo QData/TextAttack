@@ -153,6 +153,8 @@ def parse_goal_function_from_args(args, model):
     else:
         raise ValueError(f"Error: unsupported goal_function {goal_function}")
     goal_function.query_budget = args.query_budget
+    goal_function.model_batch_size = args.model_batch_size
+    goal_function.model_cache_size = args.model_cache_size
     return goal_function
 
 
@@ -191,6 +193,9 @@ def parse_attack_from_args(args):
         else:
             raise ValueError(f"Invalid recipe {args.recipe}")
         recipe.goal_function.query_budget = args.query_budget
+        recipe.goal_function.model_batch_size = args.model_batch_size
+        recipe.goal_function.model_cache_size = args.model_cache_size
+        recipe.constraint_cache_size = args.constraint_cache_size
         return recipe
     elif args.attack_from_file:
         if ":" in args.attack_from_file:
@@ -218,7 +223,11 @@ def parse_attack_from_args(args):
         else:
             raise ValueError(f"Error: unsupported attack {args.search}")
     return textattack.shared.Attack(
-        goal_function, constraints, transformation, search_method
+        goal_function,
+        constraints,
+        transformation,
+        search_method,
+        constraint_cache_size=args.constraint_cache_size,
     )
 
 

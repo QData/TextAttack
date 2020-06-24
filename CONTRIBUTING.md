@@ -113,7 +113,7 @@ Follow these steps to start contributing:
    
    ```bash
    $ cd TextAttack
-   $ pip install -e .
+   $ pip install -e . ".[dev]"
    $ pip install black isort pytest pytest-xdist
    ```
    

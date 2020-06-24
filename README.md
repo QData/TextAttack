@@ -1,11 +1,10 @@
-
-
 <h1 align="center">TextAttack 🐙</h1>
 
 <p align="center">Generating adversarial examples for NLP models</p>
 
 <p align="center">
-  <a href="https://textattack.readthedocs.io/">Docs</a> •
+  <a href="https://textattack.readthedocs.io/">Docs</a> 
+  <br>
   <a href="#about">About</a> •
   <a href="#setup">Setup</a> •
   <a href="#usage">Usage</a> •
@@ -37,10 +36,9 @@ pip install textattack
 Once TextAttack is installed, you can run it via command-line (`textattack ...`)
 or via the python module (`python -m textattack ...`).
 
-### Configuration
-TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
-dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
-environment variable `TA_CACHE_DIR`.
+> TextAttack downloads files to `~/.cache/textattack/` by default. This includes pretrained models, 
+> dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
+> environment variable `TA_CACHE_DIR`. (for example: `TA_CACHE_DIR=/tmp/ textattack attack ...`).
 
 ## Usage
 
@@ -51,7 +49,9 @@ information about all commands using `textattack --help`, or a specific command 
 
 ### Running Attacks
 
-The [`examples/`](docs/examples/) folder contains notebooks explaining basic usage of TextAttack, including building a custom transformation and a custom constraint. These examples can also be viewed through the [documentation website](https://textattack.readthedocs.io/en/latest).
+The [`examples/`](docs/examples/) folder contains notebooks explaining basic usage of TextAttack, 
+including building a custom transformation and a custom constraint. These examples can also be viewed 
+through the [documentation website](https://textattack.readthedocs.io/en/latest).
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. Here are some concrete examples:
 
