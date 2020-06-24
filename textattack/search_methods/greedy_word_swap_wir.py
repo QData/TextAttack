@@ -9,6 +9,7 @@ See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
 
 import numpy as np
 
+from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
@@ -33,7 +34,7 @@ class GreedyWordSwapWIR(SearchMethod):
             ranks in order of descending score.
         """
         leave_one_results, search_over = self.get_goal_results(
-            texts, initial_result.output
+            texts
         )
         leave_one_scores = np.array([result.score for result in leave_one_results])
         return leave_one_scores, search_over
@@ -78,7 +79,7 @@ class GreedyWordSwapWIR(SearchMethod):
             if len(transformed_text_candidates) == 0:
                 continue
             results, search_over = self.get_goal_results(
-                transformed_text_candidates, initial_result.output
+                transformed_text_candidates
             )
             results = sorted(results, key=lambda x: -x.score)
             # Skip swaps which don't improve the score
@@ -87,12 +88,12 @@ class GreedyWordSwapWIR(SearchMethod):
             else:
                 continue
             # If we succeeded, return the index with best similarity.
-            if cur_result.succeeded:
+            if cur_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
                 best_result = cur_result
                 # @TODO: Use vectorwise operations
                 max_similarity = -float("inf")
                 for result in results:
-                    if not result.succeeded:
+                    if result.goal_status != GoalFunctionResultStatus.SUCCEEDED:
                         break
                     candidate = result.attacked_text
                     try:

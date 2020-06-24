@@ -20,9 +20,8 @@ class CSVLogger(Logger):
         self._flushed = True
 
     def log_attack_result(self, result):
-        if isinstance(result, FailedAttackResult):
-            return
         original_text, perturbed_text = result.diff_color(self.color_method)
+        result_type = result.__class__.__name__[:-12]
         row = {
             "original_text": original_text,
             "perturbed_text": perturbed_text,
@@ -30,7 +29,9 @@ class CSVLogger(Logger):
             "perturbed_score": result.perturbed_result.score,
             "original_output": result.original_result.output,
             "perturbed_output": result.perturbed_result.output,
+            "ground_truth_output": result.original_result.ground_truth_output,
             "num_queries": result.num_queries,
+            "result_type": result_type
         }
         self.df = self.df.append(row, ignore_index=True)
         self._flushed = False

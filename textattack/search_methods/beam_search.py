@@ -1,5 +1,6 @@
 import numpy as np
 
+from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
 
 
@@ -21,7 +22,7 @@ class BeamSearch(SearchMethod):
     def _perform_search(self, initial_result):
         beam = [initial_result.attacked_text]
         best_result = initial_result
-        while not best_result.succeeded:
+        while not best_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
             potential_next_beam = []
             for text in beam:
                 transformations = self.get_transformations(
@@ -33,7 +34,7 @@ class BeamSearch(SearchMethod):
                 # If we did not find any possible perturbations, give up.
                 return best_result
             results, search_over = self.get_goal_results(
-                potential_next_beam, initial_result.output
+                potential_next_beam
             )
             scores = np.array([r.score for r in results])
             best_result = results[scores.argmax()]

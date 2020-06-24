@@ -13,7 +13,7 @@ class AttackResult:
             perturbed text. May or may not have been successful.
     """
 
-    def __init__(self, original_result, perturbed_result, num_queries=0):
+    def __init__(self, original_result, perturbed_result):
         if original_result is None:
             raise ValueError("Attack original result cannot be None")
         elif not isinstance(original_result, GoalFunctionResult):
@@ -27,7 +27,7 @@ class AttackResult:
 
         self.original_result = original_result
         self.perturbed_result = perturbed_result
-        self.num_queries = num_queries
+        self.num_queries = perturbed_result.num_queries
 
         # We don't want the AttackedText attributes sticking around clogging up
         # space on our devices. Delete them here, if they're still present,
