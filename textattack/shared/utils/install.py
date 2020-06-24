@@ -10,7 +10,6 @@ import filelock
 import requests
 import torch
 import tqdm
-import yaml
 
 
 def path_in_cache(file_path):

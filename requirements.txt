@@ -6,7 +6,6 @@ nlp
 nltk
 numpy
 pandas
-pyyaml>=5.1
 scikit-learn
 scipy==1.4.1
 sentence_transformers
