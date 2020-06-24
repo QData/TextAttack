@@ -18,6 +18,8 @@
   </a>
 
 </p>
+
+<img src="https://github.com/jxmorris12/jxmorris12.github.io/blob/master/files/render1593035135238.gif?raw=true" style="display: block; margin: 0 auto;" />
   
 ## About
 
