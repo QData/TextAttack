@@ -56,7 +56,9 @@ class GreedyWordSwapWIR(SearchMethod):
             leave_one_texts = [
                 attacked_text.delete_word_at_index(i) for i in range(len_text)
             ]
-            leave_one_scores = self._get_index_order(initial_result, leave_one_texts)
+            leave_one_scores, search_over = self._get_index_order(
+                initial_result, leave_one_texts
+            )
         elif self.wir_method == "random":
             leave_one_scores = torch.random(len_text)
             search_over = False
