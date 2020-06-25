@@ -20,14 +20,15 @@ def set_env_variables(gpu_id):
     # Set sharing strategy to file_system to avoid file descriptor leaks
     torch.multiprocessing.set_sharing_strategy("file_system")
     # Only use one GPU, if we have one.
+    # For Tensorflow
+    # TODO: Using USE with `--parallel` raises similar issue as https://github.com/tensorflow/tensorflow/issues/38518#
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    # For PyTorch
     textattack.shared.utils.set_device(gpu_id)
 
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-    # Cache TensorFlow Hub models here, if not otherwise specified.
-    if "TFHUB_CACHE_DIR" not in os.environ:
-        os.environ["TFHUB_CACHE_DIR"] = os.path.expanduser("~/.cache/tensorflow-hub")
 
 
 def attack_from_queue(args, in_queue, out_queue):
