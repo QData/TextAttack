@@ -34,4 +34,4 @@ jobs:
         isort --check-only --recursive tests textattack
     - name: Test with pytest
       run: |
-        pytest tests -vx --dist=loadfile
+        pytest tests -vx --dist=loadfile -n auto
