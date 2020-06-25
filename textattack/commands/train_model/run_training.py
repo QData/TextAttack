@@ -194,9 +194,7 @@ def train_model(args):
         total = 0
         logits = []
         labels = []
-        for input_ids, batch_labels in tqdm.tqdm(
-            eval_dataloader, desc="Evaluating accuracy"
-        ):
+        for input_ids, batch_labels in eval_dataloader:
             if isinstance(input_ids, dict):
                 ## HACK: dataloader collates dict backwards. This is a temporary
                 # workaround to get ids in the right shape
@@ -265,8 +263,8 @@ def train_model(args):
         loss.backward()
         return loss
 
-    for epoch in tqdm.trange(int(args.num_train_epochs), desc="Epoch"):
-        prog_bar = tqdm.tqdm(train_dataloader, desc="Iteration")
+    for epoch in tqdm.trange(int(args.num_train_epochs), desc="Epoch", position=0, leave=True):
+        prog_bar = tqdm.tqdm(train_dataloader, desc="Iteration", position=0, leave=False)
         for step, batch in enumerate(prog_bar):
             input_ids, labels = batch
             labels = labels.to(device)
