@@ -20,8 +20,7 @@ def set_env_variables(gpu_id):
     # Set sharing strategy to file_system to avoid file descriptor leaks
     torch.multiprocessing.set_sharing_strategy("file_system")
     # Only use one GPU, if we have one.
-    if "CUDA_VISIBLE_DEVICES" not in os.environ:
-        os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
+    textattack.shared.utils.set_device(gpu_id)
 
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:

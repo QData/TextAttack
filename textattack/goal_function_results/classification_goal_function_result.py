@@ -22,6 +22,7 @@ class ClassificationGoalFunctionResult(GoalFunctionResult):
             output = textattack.shared.utils.process_label_name(output)
             color = textattack.shared.utils.color_from_output(output, output_label)
         else:
+            output = output_label
             color = textattack.shared.utils.color_from_label(output_label)
         return output, color
 
