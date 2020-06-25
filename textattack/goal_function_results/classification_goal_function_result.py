@@ -21,10 +21,10 @@ class ClassificationGoalFunctionResult(GoalFunctionResult):
             output = self.attacked_text.attack_attrs["label_names"][self.output]
             output = textattack.shared.utils.process_label_name(output)
             color = textattack.shared.utils.color_from_output(output, output_label)
+            return output, color
         else:
-            output = output_label
             color = textattack.shared.utils.color_from_label(output_label)
-        return output, color
+            return output_label, color
 
     def get_text_color_input(self):
         """ A string representing the color this result's changed
