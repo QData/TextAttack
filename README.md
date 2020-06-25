@@ -24,6 +24,10 @@
 
 TextAttack is a Python framework for adversarial attacks, data augmentation, and model training in NLP.
 
+## Slack Channel
+
+For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-ez3ts03b-Nr55tDiqgAvCkRbbz8zz9g)!
+
 ### *Why TextAttack?*
 
 There are lots of reasons to use TextAttack:
