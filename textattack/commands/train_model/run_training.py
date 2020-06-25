@@ -263,8 +263,12 @@ def train_model(args):
         loss.backward()
         return loss
 
-    for epoch in tqdm.trange(int(args.num_train_epochs), desc="Epoch", position=0, leave=True):
-        prog_bar = tqdm.tqdm(train_dataloader, desc="Iteration", position=0, leave=False)
+    for epoch in tqdm.trange(
+        int(args.num_train_epochs), desc="Epoch", position=0, leave=True
+    ):
+        prog_bar = tqdm.tqdm(
+            train_dataloader, desc="Iteration", position=0, leave=False
+        )
         for step, batch in enumerate(prog_bar):
             input_ids, labels = batch
             labels = labels.to(device)
