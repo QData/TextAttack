@@ -70,7 +70,7 @@ def dataset_from_args(args):
                     args.dataset_dev_split = "validation"
                 except KeyError:
                     raise KeyError(
-                        f"Could not find `dev` or `test` split in dataset {args.dataset}."
+                        f"Could not find `dev`, `eval`, or `validation` split in dataset {args.dataset}."
                     )
     eval_text, eval_labels = prepare_dataset_for_training(eval_dataset)
 
@@ -123,19 +123,20 @@ def write_readme(args, best_eval_score, best_eval_score_epoch):
         "s" if best_eval_score_epoch > 1 else ""
     )
     readme_text = f""" 
-    ## {args.model} fine-tuned with TextAttack on the {dataset_name} dataset
-    
-    This `{args.model}` model was fine-tuned for sequence classificationusing TextAttack 
-    and the {dataset_name} dataset loaded using the `nlp` library. The model was fine-tuned 
-    for {args.num_train_epochs} epochs with a batch size of {args.batch_size}, a learning 
-    rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}. 
-    Since this was a {task_name} task, the model was trained with a {loss_func} loss function. 
-    The best score the model achieved on this task was {best_eval_score}, as measured by the 
-    eval set {metric_name}, found after {epoch_info}.
-    
-    For more information, check out [TextAttack on Github](https://github.com/QData/TextAttack).
-    
-    """
+## {args.model} fine-tuned with TextAttack on the {dataset_name} dataset
+
+This `{args.model}` model was fine-tuned for sequence classification using TextAttack 
+and the {dataset_name} dataset loaded using the `nlp` library. The model was fine-tuned 
+for {args.num_train_epochs} epochs with a batch size of {args.batch_size}, a learning 
+rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}. 
+Since this was a {task_name} task, the model was trained with a {loss_func} loss function. 
+The best score the model achieved on this task was {best_eval_score}, as measured by the 
+eval set {metric_name}, found after {epoch_info}.
+
+For more information, check out [TextAttack on Github](https://github.com/QData/TextAttack).
+
+"""
+
     with open(readme_save_path, "w", encoding="utf-8") as f:
         f.write(readme_text.strip() + "\n")
     logger.info(f"Wrote README to {readme_save_path}.")

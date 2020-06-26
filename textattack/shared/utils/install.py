@@ -107,10 +107,6 @@ def _post_install():
     logger.info(
         "First time running textattack: downloading remaining required packages."
     )
-    logger.info("Downloading spaCy required packages.")
-    import spacy
-
-    spacy.cli.download("en")
     logger.info("Downloading NLTK required packages.")
     import nltk
 
