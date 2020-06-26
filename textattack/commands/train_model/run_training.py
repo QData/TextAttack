@@ -24,8 +24,11 @@ def make_directories(output_dir):
 
 
 def batch_encode(tokenizer, text_list):
-    # TODO configure batch encoding to work with fast tokenizer
-    return [tokenizer.encode(text_input) for text_input in text_list]
+    if hasattr(tokenizer, 'batch_encode'):
+        print('batch_encode')
+        return tokenizer.batch_encode(text_list)
+    else:
+        return [tokenizer.encode(text_input) for text_input in text_list]
 
 
 def train_model(args):
@@ -264,10 +267,10 @@ def train_model(args):
         return loss
 
     for epoch in tqdm.trange(
-        int(args.num_train_epochs), desc="Epoch", position=0, leave=True
+        int(args.num_train_epochs), desc="Epoch", position=0, leave=False
     ):
         prog_bar = tqdm.tqdm(
-            train_dataloader, desc="Iteration", position=0, leave=False
+            train_dataloader, desc="Iteration", position=1, leave=False
         )
         for step, batch in enumerate(prog_bar):
             input_ids, labels = batch

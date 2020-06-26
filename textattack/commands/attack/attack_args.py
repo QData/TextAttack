@@ -53,6 +53,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/bert-base-uncased-WNLI",
         ("glue", "wnli", "validation"),
     ),
+    "bert-base-uncased-mr": (
+        "textattack/bert-base-uncased-rotten_tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
     #
     # distilbert-base-cased
     #
@@ -139,6 +143,17 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/roberta-base-WNLI",
         ("glue", "wnli", "validation"),
     ),
+    "roberta-base-mr": (
+        "textattack/roberta-base-rotten_tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
+    #
+    # albert-base-v2 (ALBERT is cased by default)
+    #
+    "albert-base-v2-mr": (
+        "textattack/albert-base-v2-rotten_tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
 }
 
 
@@ -170,10 +185,6 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     # Text classification models
     #
-    "bert-base-uncased-mr": (
-        ("models/classification/bert/mr-uncased", 2),
-        ("rotten_tomatoes", None, "train"),
-    ),
     "bert-base-cased-imdb": (
         ("models/classification/bert/imdb-cased", 2),
         ("imdb", None, "test"),
