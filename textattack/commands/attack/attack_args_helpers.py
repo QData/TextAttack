@@ -400,6 +400,8 @@ def parse_logger_from_args(args):
         outputs_dir = os.path.join(
             current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
         )
+        if not os.path.exists(outputs_dir):
+            os.makedirs(outputs_dir)
         args.out_dir = os.path.normpath(outputs_dir)
 
     # if "--log-to-file" specified in terminal command, then save it to a txt file
