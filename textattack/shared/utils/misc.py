@@ -1,3 +1,4 @@
+import importlib
 import random
 
 import numpy as np
@@ -5,7 +6,14 @@ import torch
 
 import textattack
 
+# TODO: Change back to get_device() method if issues are raised
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+def set_device(gpu_id):
+    global device
+    device = torch.device(f"cuda:{gpu_id}" if torch.cuda.is_available() else "cpu")
+    importlib.reload(textattack.shared.utils)
 
 
 def html_style_from_dict(style_dict):

@@ -18,14 +18,12 @@ logger = textattack.shared.logger
 
 def run(args, checkpoint=None):
     # Only use one GPU, if we have one.
+    # TODO: Running Universal Sentence Encoder uses multiple GPUs
     if "CUDA_VISIBLE_DEVICES" not in os.environ:
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-    # Cache TensorFlow Hub models here, if not otherwise specified.
-    if "TFHUB_CACHE_DIR" not in os.environ:
-        os.environ["TFHUB_CACHE_DIR"] = os.path.expanduser("~/.cache/tensorflow-hub")
 
     if args.checkpoint_resume:
         num_remaining_attacks = checkpoint.num_remaining_attacks
