@@ -58,7 +58,7 @@ class AutoTokenizer:
                 input_text_list,
                 truncation=True,
                 max_length=self.max_length,
-                add_special_tokens=False,
+                add_special_tokens=True,
                 pad_to_max_length=True,
             )
             # Encodings is a `transformers.utils.BatchEncode` object, which
