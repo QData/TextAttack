@@ -1,4 +1,5 @@
-/.*/Attack(
+/.*/
+Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -21,47 +22,4 @@
     (2): RepeatModification
     (3): StopwordModification
   (is_black_box):  True
-) 
-/.*/
---------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (100%)[0m --> [91m[FAILED][0m
-
-this is a film well worth seeing , talking and singing heads and all .
-
-
---------------------------------------------- Result 2 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (57%)[0m
-
-what really [92msurprises[0m about wisegirls is its low-[92mkey[0m quality and [92mgenuine[0m [92mtenderness[0m .
-
-what really [91mdumbfounded[0m about wisegirls is its low-[91mvital[0m quality and [91mveritable[0m [91msensibility[0m .
-
-
---------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (84%)[0m
-
-( wendigo is ) why we go to the [92mcinema[0m : to be [92mfed[0m through the [92meye[0m , the [92mheart[0m , the [92mmind[0m .
-
-( wendigo is ) why we go to the [91mmovie[0m : to be [91mstoked[0m through the [91meyelids[0m , the [91mcoeur[0m , the [91mbother[0m .
-
-
---------------------------------------------- Result 4 ---------------------------------------------
-[92mPositive (99%)[0m --> [91m[FAILED][0m
-
-one of the greatest family-oriented , fantasy-adventure movies ever .
-
-
-
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 2      |
-| Number of failed attacks:     | 2      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 50.0%  |
-| Attack success rate:          | 50.0%  |
-| Average perturbed word %:     | 29.27% |
-| Average num. words per input: | 13.5   |
-| Avg num queries:              | 63.25  |
-+-------------------------------+--------+
+)

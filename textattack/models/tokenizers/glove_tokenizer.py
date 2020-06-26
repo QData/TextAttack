@@ -103,24 +103,35 @@ class GloveTokenizer(WordLevelTokenizer):
     def __init__(self, word_id_map={}, pad_token_id=None, unk_token_id=None, max_length=256):
         super().__init__(word_id_map=word_id_map, unk_token_id=unk_token_id,
         pad_token_id=pad_token_id, lowercase=True)
-        print('pad_token_id:', pad_token_id)
+        self.pad_id = pad_token_id
+        self.oov_id = unk_token_id
+        self.convert_id_to_word = self.id_to_token
         # Set defaults.
         self.enable_padding(max_length=max_length, pad_id=pad_token_id)
         self.enable_truncation(max_length=max_length)
     
-    def convert_id_to_word(word):
-        """ Returns the `id` associated with `word`. If not found, returns
-            None. 
+    def _process_text(self, text_input):
+        """ A text input may be a single-input tuple (text,) or multi-input
+            tuple (text, text, ...). 
+            
+            In the single-input case, unroll the tuple. In the multi-input
+            case, raise an error.
         """
-        return gt2.token_to_id(word)
+        if isinstance(text_input, tuple):
+            if len(text_input) > 1:
+                raise TypeError(f'Cannot use `GloveTokenizer` to encode multiple inputs')
+            text_input = text_input[0]
+        return text_input
     
     def encode(self, text):
+        text = self._process_text(text)
         return super().encode(text, add_special_tokens=False).ids
     
     def batch_encode(self, input_text_list):
         """ The batch equivalent of ``encode``."""
+        input_text_list = list(map(self._process_text, input_text_list))
         encodings = self.encode_batch(
-            list(input_text_list),
+            input_text_list,
             add_special_tokens=False,
         )
         return [x.ids for x in encodings]

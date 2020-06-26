@@ -7,8 +7,8 @@ from textattack.shared import utils
 def batch_tokenize(tokenizer, attacked_text_list):
     """ Tokenizes a list of inputs and returns their tokenized forms in a list. """
     inputs = [at.tokenizer_input for at in attacked_text_list]
-    if hasattr(tokenizer, "encode_batch"):
-        return tokenizer.encode_batch(inputs)
+    if hasattr(tokenizer, "batch_encode"):
+        return tokenizer.batch_encode(inputs)
     else:
         return [tokenizer.encode(x) for x in inputs]
 

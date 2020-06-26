@@ -42,8 +42,10 @@ class LSTMForClassification(nn.Module):
         d_out = hidden_size
         self.out = nn.Linear(d_out, num_labels)
         self.tokenizer = textattack.models.tokenizers.GloveTokenizer(
-            word_id_map=self.word2id, unk_token_id=self.emb_layer.oovid, 
-            pad_token_id=self.emb_layer.padid, max_length=max_seq_length
+            word_id_map=self.word2id,
+            unk_token_id=self.emb_layer.oovid,
+            pad_token_id=self.emb_layer.padid,
+            max_length=max_seq_length,
         )
 
         if model_path is not None:

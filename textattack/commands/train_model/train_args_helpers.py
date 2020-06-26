@@ -122,8 +122,7 @@ def write_readme(args, best_eval_score, best_eval_score_epoch):
     epoch_info = f"{best_eval_score_epoch} epoch" + (
         "s" if best_eval_score_epoch > 1 else ""
     )
-    readme_text = \
-f""" 
+    readme_text = f""" 
 ## {args.model} fine-tuned with TextAttack on the {dataset_name} dataset
 
 This `{args.model}` model was fine-tuned for sequence classificationusing TextAttack 

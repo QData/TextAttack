@@ -62,8 +62,10 @@ class AutoTokenizer:
             # is basically a big dictionary that contains a key for all input
             # IDs, a key for all attention masks, etc.
             dict_of_lists = {k: list(v) for k, v in encodings.data.items()}
-            list_of_dicts = [{key:value[index] for key,value in dict_of_lists.items()}
-                for index in range(max(map(len, dict_of_lists.values())))]
+            list_of_dicts = [
+                {key: value[index] for key, value in dict_of_lists.items()}
+                for index in range(max(map(len, dict_of_lists.values())))
+            ]
             # We need to turn this dict of lists into a dict of lists.
             return list_of_dicts
         else:
