@@ -1,9 +1,12 @@
 import json
-import numpy as np
 import os
-import textattack
 import tempfile
+
+import numpy as np
 import tokenizers as hf_tokenizers
+
+import textattack
+
 
 class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
     """ WordLevelTokenizer. 
@@ -16,15 +19,15 @@ class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
 
     def __init__(
         self,
-        word_id_map = {},
-        pad_token_id = None,
-        unk_token_id = None,
-        unk_token = "[UNK]",
-        sep_token = "[SEP]",
-        cls_token = "[CLS]",
-        pad_token = "[PAD]",
+        word_id_map={},
+        pad_token_id=None,
+        unk_token_id=None,
+        unk_token="[UNK]",
+        sep_token="[SEP]",
+        cls_token="[CLS]",
+        pad_token="[PAD]",
         lowercase: bool = False,
-        unicode_normalizer = None,
+        unicode_normalizer=None,
     ):
         if pad_token_id:
             word_id_map[pad_token] = pad_token_id
@@ -39,8 +42,10 @@ class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
         # we write the vocab to a temporary file before initialization.
         word_list_file = tempfile.NamedTemporaryFile()
         word_list_file.write(json.dumps(word_id_map).encode())
-        
-        word_level = hf_tokenizers.models.WordLevel(word_list_file.name, unk_token=str(unk_token))
+
+        word_level = hf_tokenizers.models.WordLevel(
+            word_list_file.name, unk_token=str(unk_token)
+        )
         tokenizer = hf_tokenizers.Tokenizer(word_level)
 
         # Let the tokenizer know about special tokens if they are part of the vocab
@@ -93,23 +98,30 @@ class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
         }
 
         super().__init__(tokenizer, parameters)
-    
+
 
 class GloveTokenizer(WordLevelTokenizer):
     """ A word-level tokenizer with GloVe 200-dimensional vectors. 
     
         Lowercased, since GloVe vectors are lowercased.
     """
-    def __init__(self, word_id_map={}, pad_token_id=None, unk_token_id=None, max_length=256):
-        super().__init__(word_id_map=word_id_map, unk_token_id=unk_token_id,
-        pad_token_id=pad_token_id, lowercase=True)
+
+    def __init__(
+        self, word_id_map={}, pad_token_id=None, unk_token_id=None, max_length=256
+    ):
+        super().__init__(
+            word_id_map=word_id_map,
+            unk_token_id=unk_token_id,
+            pad_token_id=pad_token_id,
+            lowercase=True,
+        )
         self.pad_id = pad_token_id
         self.oov_id = unk_token_id
         self.convert_id_to_word = self.id_to_token
         # Set defaults.
         self.enable_padding(max_length=max_length, pad_id=pad_token_id)
         self.enable_truncation(max_length=max_length)
-    
+
     def _process_text(self, text_input):
         """ A text input may be a single-input tuple (text,) or multi-input
             tuple (text, text, ...). 
@@ -119,19 +131,18 @@ class GloveTokenizer(WordLevelTokenizer):
         """
         if isinstance(text_input, tuple):
             if len(text_input) > 1:
-                raise TypeError(f'Cannot use `GloveTokenizer` to encode multiple inputs')
+                raise ValueError(
+                    f"Cannot use `GloveTokenizer` to encode multiple inputs"
+                )
             text_input = text_input[0]
         return text_input
-    
+
     def encode(self, text):
         text = self._process_text(text)
         return super().encode(text, add_special_tokens=False).ids
-    
+
     def batch_encode(self, input_text_list):
         """ The batch equivalent of ``encode``."""
         input_text_list = list(map(self._process_text, input_text_list))
-        encodings = self.encode_batch(
-            input_text_list,
-            add_special_tokens=False,
-        )
+        encodings = self.encode_batch(input_text_list, add_special_tokens=False,)
         return [x.ids for x in encodings]
