@@ -125,7 +125,7 @@ def write_readme(args, best_eval_score, best_eval_score_epoch):
     readme_text = f""" 
 ## {args.model} fine-tuned with TextAttack on the {dataset_name} dataset
 
-This `{args.model}` model was fine-tuned for sequence classificationusing TextAttack 
+This `{args.model}` model was fine-tuned for sequence classification using TextAttack 
 and the {dataset_name} dataset loaded using the `nlp` library. The model was fine-tuned 
 for {args.num_train_epochs} epochs with a batch size of {args.batch_size}, a learning 
 rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}. 
