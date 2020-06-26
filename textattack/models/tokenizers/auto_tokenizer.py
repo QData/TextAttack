@@ -51,6 +51,9 @@ class AutoTokenizer:
     def batch_encode(self, input_text_list):
         """ The batch equivalent of ``encode``."""
         if hasattr(self.tokenizer, "batch_encode_plus"):
+            if isinstance(input_text_list[0], tuple) and len(input_text_list[0]) == 1:
+                # Unroll tuples of length 1.
+                input_text_list = [t[0] for t in input_text_list]
             encodings = self.tokenizer.batch_encode_plus(
                 input_text_list,
                 truncation=True,

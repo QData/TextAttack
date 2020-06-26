@@ -1,4 +1,4 @@
-/.*/Attack(
+Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -11,4 +11,39 @@
     (1): RepeatModification
     (2): StopwordModification
   (is_black_box):  True
-)
+) 
+
+--------------------------------------------- Result 1 ---------------------------------------------
+[91mNegative (100%)[0m --> [91m[FAILED][0m
+
+hide new secretions from the parental units 
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[91mNegative (100%)[0m --> [91m[FAILED][0m
+
+contains no wit , only labored gags 
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92mPositive (100%)[0m --> [91mNegative (99%)[0m
+
+that [92mloves[0m its characters and communicates something rather [92mbeautiful[0m about human nature 
+
+that [91mloUes[0m its characters and communicates something rather [91mbaeutiful[0m about human nature 
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 1      |
+| Number of failed attacks:     | 2      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 66.67% |
+| Attack success rate:          | 33.33% |
+| Average perturbed word %:     | 16.67% |
+| Average num. words per input: | 8.33   |
+| Avg num queries:              | 24.0   |
++-------------------------------+--------+
