@@ -1,6 +1,7 @@
 import argparse
 import copy
 import importlib
+import json
 import os
 import pickle
 import random
@@ -11,35 +12,15 @@ import numpy as np
 import torch
 
 import textattack
-from textattack.shared.scripts.attack_args import *
+
+from .attack_args import *
 
 
-def set_seed(random_seed):
-    random.seed(random_seed)
-    np.random.seed(random_seed)
-    torch.manual_seed(random_seed)
-
-
-def get_args():
-    # Parser for regular arguments
-    parser = argparse.ArgumentParser(
-        description="A commandline parser for TextAttack",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-
-    transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(
-        WHITE_BOX_TRANSFORMATION_CLASS_NAMES.keys()
-    )
-    parser.add_argument(
-        "--transformation",
-        type=str,
-        required=False,
-        default="word-swap-embedding",
-        choices=transformation_names,
-        help='The transformation to apply. Usage: "--transformation {transformation}:{arg_1}={value_1},{arg_3}={value_3}. Choices: '
-        + str(transformation_names),
-    )
-
+def add_model_args(parser):
+    """ Adds model-related arguments to an argparser. This is useful because we
+        want to load pretrained models using multiple different parsers that
+        share these, but not all, arguments.
+    """
     model_group = parser.add_mutually_exclusive_group()
 
     model_names = list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
@@ -50,8 +31,8 @@ def get_args():
         type=str,
         required=False,
         default=None,
-        choices=model_names,
-        help="The pre-trained model to attack.",
+        help='Name of or path to a pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
+        + str(model_names),
     )
     model_group.add_argument(
         "--model-from-file",
@@ -66,6 +47,12 @@ def get_args():
         help="huggingface.co ID of pre-trained model to load",
     )
 
+
+def add_dataset_args(parser):
+    """ Adds dataset-related arguments to an argparser. This is useful because we
+        want to load pretrained models using multiple different parsers that
+        share these, but not all, arguments.
+    """
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument(
         "--dataset-from-nlp",
@@ -81,48 +68,13 @@ def get_args():
         default=None,
         help="Dataset to load from a file.",
     )
-
-    parser.add_argument(
-        "--constraints",
-        type=str,
-        required=False,
-        nargs="*",
-        default=["repeat", "stopword"],
-        help='Constraints to add to the attack. Usage: "--constraints {constraint}:{arg_1}={value_1},{arg_3}={value_3}". Choices: '
-        + str(CONSTRAINT_CLASS_NAMES.keys()),
-    )
-
-    parser.add_argument(
-        "--out-dir",
-        type=str,
-        required=False,
-        default=None,
-        help="A directory to output results to.",
-    )
-
-    parser.add_argument(
-        "--enable-visdom", action="store_true", help="Enable logging to visdom."
-    )
-
-    parser.add_argument(
-        "--enable-wandb",
+    dataset_group.add_argument(
+        "--shuffle",
         action="store_true",
-        help="Enable logging to Weights & Biases.",
+        required=False,
+        default=False,
+        help="Randomly shuffle the data before attacking",
     )
-
-    parser.add_argument(
-        "--disable-stdout", action="store_true", help="Disable logging to stdout"
-    )
-
-    parser.add_argument(
-        "--enable-csv",
-        nargs="?",
-        default=None,
-        const="fancy",
-        type=str,
-        help="Enable logging to csv. Use --enable-csv plain to remove [[]] around words.",
-    )
-
     parser.add_argument(
         "--num-examples",
         "-n",
@@ -141,162 +93,20 @@ def get_args():
         help="The offset to start at in the dataset.",
     )
 
-    parser.add_argument(
-        "--shuffle",
-        action="store_true",
-        required=False,
-        default=False,
-        help="Randomly shuffle the data before attacking",
+
+def load_module_from_file(file_path):
+    """ Uses ``importlib`` to dynamically open a file and load an object from
+        it. 
+    """
+    temp_module_name = f"temp_{time.time()}"
+    colored_file_path = textattack.shared.utils.color_text(
+        file_path, color="blue", method="ansi"
     )
-
-    parser.add_argument(
-        "--interactive",
-        action="store_true",
-        default=False,
-        help="Whether to run attacks interactively.",
-    )
-
-    parser.add_argument(
-        "--attack-n",
-        action="store_true",
-        default=False,
-        help="Whether to run attack until `n` examples have been attacked (not skipped).",
-    )
-
-    parser.add_argument(
-        "--parallel",
-        action="store_true",
-        default=False,
-        help="Run attack using multiple GPUs.",
-    )
-
-    goal_function_choices = ", ".join(GOAL_FUNCTION_CLASS_NAMES.keys())
-    parser.add_argument(
-        "--goal-function",
-        "-g",
-        default="untargeted-classification",
-        help=f"The goal function to use. choices: {goal_function_choices}",
-    )
-
-    def str_to_int(s):
-        return sum((ord(c) for c in s))
-
-    parser.add_argument("--random-seed", default=str_to_int("TEXTATTACK"))
-
-    parser.add_argument(
-        "--checkpoint-dir",
-        required=False,
-        type=str,
-        default=default_checkpoint_dir(),
-        help="The directory to save checkpoint files.",
-    )
-
-    parser.add_argument(
-        "--checkpoint-interval",
-        required=False,
-        type=int,
-        help="If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.",
-    )
-
-    parser.add_argument(
-        "--query-budget",
-        "-q",
-        type=int,
-        default=float("inf"),
-        help="The maximum number of model queries allowed per example attacked.",
-    )
-
-    attack_group = parser.add_mutually_exclusive_group(required=False)
-    search_choices = ", ".join(SEARCH_CLASS_NAMES.keys())
-    attack_group.add_argument(
-        "--search",
-        "--search-method",
-        "-s",
-        type=str,
-        required=False,
-        default="greedy-word-wir",
-        help=f"The search method to use. choices: {search_choices}",
-    )
-    attack_group.add_argument(
-        "--recipe",
-        "--attack-recipe",
-        "-r",
-        type=str,
-        required=False,
-        default=None,
-        help="full attack recipe (overrides provided goal function, transformation & constraints)",
-        choices=RECIPE_NAMES.keys(),
-    )
-    attack_group.add_argument(
-        "--attack-from-file",
-        type=str,
-        required=False,
-        default=None,
-        help="attack to load from file (overrides provided goal function, transformation & constraints)",
-    )
-
-    # Parser for parsing args for resume
-    resume_parser = argparse.ArgumentParser(
-        description="A commandline parser for TextAttack",
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-    )
-    resume_parser.add_argument(
-        "--checkpoint-file",
-        "-f",
-        type=str,
-        required=True,
-        help='Path of checkpoint file to resume attack from. If "latest" (or "{directory path}/latest") is entered,'
-        "recover latest checkpoint from either current path or specified directory.",
-    )
-
-    resume_parser.add_argument(
-        "--checkpoint-dir",
-        "-d",
-        required=False,
-        type=str,
-        default=None,
-        help="The directory to save checkpoint files. If not set, use directory from recovered arguments.",
-    )
-
-    resume_parser.add_argument(
-        "--checkpoint-interval",
-        "-i",
-        required=False,
-        type=int,
-        help="If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.",
-    )
-
-    resume_parser.add_argument(
-        "--parallel",
-        action="store_true",
-        default=False,
-        help="Run attack using multiple GPUs.",
-    )
-
-    # Resume attack from checkpoint.
-    if sys.argv[1:] and sys.argv[1].lower() == "resume":
-        args = resume_parser.parse_args(sys.argv[2:])
-        setattr(args, "checkpoint_resume", True)
-    else:
-        command_line_args = (
-            None if sys.argv[1:] else ["-h"]
-        )  # Default to help with empty arguments.
-        args = parser.parse_args(command_line_args)
-        setattr(args, "checkpoint_resume", False)
-
-        if args.checkpoint_interval and args.shuffle:
-            # Not allowed b/c we cannot recover order of shuffled data
-            raise ValueError("Cannot use `--checkpoint-interval` with `--shuffle=True`")
-
-        set_seed(args.random_seed)
-
-    # Shortcuts for huggingface models using --model.
-    if not args.checkpoint_resume and args.model in HUGGINGFACE_DATASET_BY_MODEL:
-        _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
-    elif not args.checkpoint_resume and args.model in TEXTATTACK_DATASET_BY_MODEL:
-        _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
-
-    return args
+    textattack.shared.logger.info(f"Loading module from `{colored_file_path}`.")
+    spec = importlib.util.spec_from_file_location(temp_module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
 
 
 def parse_transformation_from_args(args, model):
@@ -344,6 +154,8 @@ def parse_goal_function_from_args(args, model):
     else:
         raise ValueError(f"Error: unsupported goal_function {goal_function}")
     goal_function.query_budget = args.query_budget
+    goal_function.model_batch_size = args.model_batch_size
+    goal_function.model_cache_size = args.model_cache_size
     return goal_function
 
 
@@ -374,22 +186,28 @@ def parse_attack_from_args(args):
     if args.recipe:
         if ":" in args.recipe:
             recipe_name, params = args.recipe.split(":")
-            if recipe_name not in RECIPE_NAMES:
+            if recipe_name not in ATTACK_RECIPE_NAMES:
                 raise ValueError(f"Error: unsupported recipe {recipe_name}")
-            recipe = eval(f"{RECIPE_NAMES[recipe_name]}(model, {params})")
-        elif args.recipe in RECIPE_NAMES:
-            recipe = eval(f"{RECIPE_NAMES[args.recipe]}(model)")
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[recipe_name]}(model, {params})")
+        elif args.recipe in ATTACK_RECIPE_NAMES:
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[args.recipe]}(model)")
         else:
             raise ValueError(f"Invalid recipe {args.recipe}")
         recipe.goal_function.query_budget = args.query_budget
+        recipe.goal_function.model_batch_size = args.model_batch_size
+        recipe.goal_function.model_cache_size = args.model_cache_size
+        recipe.constraint_cache_size = args.constraint_cache_size
         return recipe
     elif args.attack_from_file:
         if ":" in args.attack_from_file:
             attack_file, attack_name = args.attack_from_file.split(":")
         else:
             attack_file, attack_name = args.attack_from_file, "attack"
-        attack_file = attack_file.replace(".py", "").replace("/", ".")
-        attack_module = importlib.import_module(attack_file)
+        attack_module = load_module_from_file(attack_file)
+        if not hasattr(attack_module, attack_name):
+            raise ValueError(
+                f"Loaded `{attack_file}` but could not find `{attack_name}`."
+            )
         attack_func = getattr(attack_module, attack_name)
         return attack_func(model)
     else:
@@ -398,15 +216,19 @@ def parse_attack_from_args(args):
         constraints = parse_constraints_from_args(args)
         if ":" in args.search:
             search_name, params = args.search.split(":")
-            if search_name not in SEARCH_CLASS_NAMES:
+            if search_name not in SEARCH_METHOD_CLASS_NAMES:
                 raise ValueError(f"Error: unsupported search {search_name}")
-            search_method = eval(f"{SEARCH_CLASS_NAMES[search_name]}({params})")
-        elif args.search in SEARCH_CLASS_NAMES:
-            search_method = eval(f"{SEARCH_CLASS_NAMES[args.search]}()")
+            search_method = eval(f"{SEARCH_METHOD_CLASS_NAMES[search_name]}({params})")
+        elif args.search in SEARCH_METHOD_CLASS_NAMES:
+            search_method = eval(f"{SEARCH_METHOD_CLASS_NAMES[args.search]}()")
         else:
             raise ValueError(f"Error: unsupported attack {args.search}")
     return textattack.shared.Attack(
-        goal_function, constraints, transformation, search_method
+        goal_function,
+        constraints,
+        transformation,
+        search_method,
+        constraint_cache_size=args.constraint_cache_size,
     )
 
 
@@ -427,12 +249,9 @@ def parse_model_from_args(args):
                 "tokenizer",
             )
         try:
-            model_file = args.model_from_file.replace(".py", "").replace("/", ".")
-            model_module = importlib.import_module(model_file)
+            model_module = load_module_from_file(args.model_from_file)
         except:
-            raise ValueError(
-                f"Failed to import model or tokenizer from file {args.model_from_file}"
-            )
+            raise ValueError(f"Failed to import file {args.model_from_file}")
         try:
             model = getattr(model_module, model_name)
         except AttributeError:
@@ -486,12 +305,55 @@ def parse_model_from_args(args):
             model = textattack.shared.utils.load_textattack_model_from_path(
                 args.model, model_path
             )
+        elif args.model and os.path.exists(args.model):
+            # If `args.model` is a path/directory, let's assume it was a model
+            # trained with textattack, and try and load it.
+            model_args_json_path = os.path.join(args.model, "train_args.json")
+            if not os.path.exists(model_args_json_path):
+                raise FileNotFoundError(
+                    f"Tried to load model from path {args.model} - could not find train_args.json."
+                )
+            model_train_args = json.loads(open(model_args_json_path).read())
+            model_train_args["model"] = args.model
+            num_labels = model_train_args["num_labels"]
+            from textattack.commands.train_model.train_args_helpers import (
+                model_from_args,
+            )
+
+            model = model_from_args(argparse.Namespace(**model_train_args), num_labels)
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
     return model
 
 
 def parse_dataset_from_args(args):
+    # Automatically detect dataset for huggingface & textattack models.
+    # This allows us to use the --model shortcut without specifying a dataset.
+    if args.model in HUGGINGFACE_DATASET_BY_MODEL:
+        _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
+    elif args.model in TEXTATTACK_DATASET_BY_MODEL:
+        _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
+
+    # Automatically detect dataset for models trained with textattack.
+    if args.model and os.path.exists(args.model):
+        model_args_json_path = os.path.join(args.model, "train_args.json")
+        if not os.path.exists(model_args_json_path):
+            raise FileNotFoundError(
+                f"Tried to load model from path {args.model} - could not find train_args.json."
+            )
+        model_train_args = json.loads(open(model_args_json_path).read())
+        try:
+            args.dataset_from_nlp = (
+                model_train_args["dataset"],
+                None,
+                model_train_args["dataset_dev_split"],
+            )
+        except KeyError:
+            raise KeyError(
+                f"Tried to load model from path {args.model} but can't initialize dataset from train_args.json."
+            )
+
+    # Get dataset from args.
     if args.dataset_from_file:
         textattack.shared.logger.info(
             f"Loading model and tokenizer from file: {args.model_from_file}"
@@ -501,8 +363,7 @@ def parse_dataset_from_args(args):
         else:
             dataset_file, dataset_name = args.dataset_from_file, "dataset"
         try:
-            dataset_file = dataset_file.replace(".py", "").replace("/", ".")
-            dataset_module = importlib.import_module(dataset_file)
+            dataset_module = load_module_from_file(dataset_file)
         except:
             raise ValueError(
                 f"Failed to import dataset from file {args.dataset_from_file}"
@@ -515,8 +376,11 @@ def parse_dataset_from_args(args):
             )
     elif args.dataset_from_nlp:
         dataset_args = args.dataset_from_nlp
-        if ":" in dataset_args:
-            dataset_args = dataset_args.split(":")
+        if isinstance(dataset_args, str):
+            if ":" in dataset_args:
+                dataset_args = dataset_args.split(":")
+            else:
+                dataset_args = (dataset_args,)
         dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, shuffle=args.shuffle
         )
@@ -529,18 +393,22 @@ def parse_dataset_from_args(args):
 def parse_logger_from_args(args):
     # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
+    out_time = int(time.time() * 1000)  # Output file
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
         outputs_dir = os.path.join(
-            current_dir, os.pardir, os.pardir, os.pardir, "outputs"
+            current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
         )
+        if not os.path.exists(outputs_dir):
+            os.makedirs(outputs_dir)
         args.out_dir = os.path.normpath(outputs_dir)
 
-    # Output file.
-    out_time = int(time.time() * 1000)  # Output file
-    outfile_name = "attack-{}.txt".format(out_time)
-    attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
+    # if "--log-to-file" specified in terminal command, then save it to a txt file
+    if args.log_to_file:
+        # Output file.
+        outfile_name = "attack-{}.txt".format(out_time)
+        attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
 
     # CSV
     if args.enable_csv:
@@ -577,7 +445,6 @@ def parse_checkpoint_from_args(args):
         checkpoint_path = args.checkpoint_file
 
     checkpoint = textattack.shared.Checkpoint.load(checkpoint_path)
-    set_seed(checkpoint.args.random_seed)
 
     return checkpoint
 
@@ -594,7 +461,6 @@ def merge_checkpoint_args(saved_args, cmdline_args):
     """ Merge previously saved arguments for checkpoint and newly entered arguments """
     args = copy.deepcopy(saved_args)
     # Newly entered arguments take precedence
-    args.checkpoint_resume = cmdline_args.checkpoint_resume
     args.parallel = cmdline_args.parallel
     # If set, replace
     if cmdline_args.checkpoint_dir:

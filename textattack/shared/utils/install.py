@@ -10,16 +10,14 @@ import filelock
 import requests
 import torch
 import tqdm
-import yaml
 
 
 def path_in_cache(file_path):
-    textattack_cache_dir = config("CACHE_DIR")
     try:
-        os.makedirs(textattack_cache_dir)
+        os.makedirs(TEXTATTACK_CACHE_DIR)
     except FileExistsError:  # cache path exists
         pass
-    return os.path.join(textattack_cache_dir, file_path)
+    return os.path.join(TEXTATTACK_CACHE_DIR, file_path)
 
 
 def s3_url(uri):
@@ -48,7 +46,7 @@ def download_if_needed(folder_name):
         return cache_dest_path
     # If the file isn't found yet, download the zip file to the cache.
     downloaded_file = tempfile.NamedTemporaryFile(
-        dir=config("CACHE_DIR"), suffix=".zip", delete=False
+        dir=TEXTATTACK_CACHE_DIR, suffix=".zip", delete=False
     )
     http_get(folder_name, downloaded_file)
     # Move or unzip the file.
@@ -107,12 +105,8 @@ logger.propagate = False
 
 def _post_install():
     logger.info(
-        "First time importing textattack: downloading remaining required packages."
+        "First time running textattack: downloading remaining required packages."
     )
-    logger.info("Downloading spaCy required packages.")
-    import spacy
-
-    spacy.cli.download("en")
     logger.info("Downloading NLTK required packages.")
     import nltk
 
@@ -122,28 +116,39 @@ def _post_install():
     nltk.download("stopwords")
 
 
+def set_cache_dir(cache_dir):
+    """ Sets all relevant cache directories to ``TA_CACHE_DIR``. """
+    # Tensorflow Hub cache directory
+    os.environ["TFHUB_CACHE_DIR"] = cache_dir
+    # HuggingFace `transformers` cache directory
+    os.environ["PYTORCH_TRANSFORMERS_CACHE"] = cache_dir
+    # HuggingFace `nlp` cache directory
+    os.environ["HF_HOME"] = cache_dir
+    # Basic directory for Linux user-specific non-data files
+    os.environ["XDG_CACHE_HOME"] = cache_dir
+
+
 def _post_install_if_needed():
     """ Runs _post_install if hasn't been run since install. """
     # Check for post-install file.
-    post_install_file_path = os.path.join(config("CACHE_DIR"), "post_install_check")
+    post_install_file_path = path_in_cache("post_install_check")
+    post_install_file_lock_path = post_install_file_path + ".lock"
+    post_install_file_lock = filelock.FileLock(post_install_file_lock_path)
+    post_install_file_lock.acquire()
     if os.path.exists(post_install_file_path):
+        post_install_file_lock.release()
         return
     # Run post-install.
     _post_install()
     # Create file that indicates post-install completed.
     open(post_install_file_path, "w").close()
+    post_install_file_lock.release()
 
 
-def config(key):
-    return config_dict[key]
+TEXTATTACK_CACHE_DIR = os.environ.get(
+    "TA_CACHE_DIR", os.path.expanduser("~/.cache/textattack")
+)
+if "TA_CACHE_DIR" in os.environ:
+    set_cache_dir(os.environ["TA_CACHE_DIR"])
 
-
-config_dict = {
-    "CACHE_DIR": os.environ.get(
-        "TA_CACHE_DIR", os.path.expanduser("~/.cache/textattack")
-    ),
-}
-config_path = download_if_needed("config.yaml")
-with open(config_path, "r") as f:
-    config_dict.update(yaml.load(f, Loader=yaml.FullLoader))
 _post_install_if_needed()

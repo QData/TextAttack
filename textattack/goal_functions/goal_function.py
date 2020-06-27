@@ -13,12 +13,21 @@ class GoalFunction:
     Evaluates how well a perturbed attacked_text object is achieving a specified goal.
     
     Args:
-        model: The PyTorch or TensorFlow model used for evaluation.
-        query_budget: The maximum number of model queries allowed.
+        model: The model used for evaluation.
+        query_budget (float): The maximum number of model queries allowed.
+        model_batch_size (int): The batch size for making calls to the model
+        model_cache_size (int): The maximum number of items to keep in the model
+            results cache at once
     """
 
     def __init__(
-        self, model, tokenizer=None, use_cache=True, query_budget=float("inf")
+        self,
+        model,
+        tokenizer=None,
+        use_cache=True,
+        query_budget=float("inf"),
+        model_batch_size=32,
+        model_cache_size=2 ** 18,
     ):
         validators.validate_model_goal_function_compatibility(
             self.__class__, model.__class__
@@ -35,14 +44,15 @@ class GoalFunction:
         self.use_cache = use_cache
         self.num_queries = 0
         self.query_budget = query_budget
+        self.model_batch_size = model_batch_size
         if self.use_cache:
-            self._call_model_cache = lru.LRU(utils.config("MODEL_CACHE_SIZE"))
+            self._call_model_cache = lru.LRU(model_cache_size)
         else:
             self._call_model_cache = None
 
     def should_skip(self, attacked_text, ground_truth_output):
         """
-        Returns whether or not the goal has already been completed for ``attacked_text``\,
+        Returns whether or not the goal has already been completed for ``attacked_text``,
         due to misprediction by the model.
         """
         model_outputs = self._call_model([attacked_text])
@@ -82,7 +92,11 @@ class GoalFunction:
             goal_function_score = self._get_score(raw_output, ground_truth_output)
             results.append(
                 self._goal_function_result_type()(
-                    attacked_text, displayed_output, succeeded, goal_function_score
+                    attacked_text,
+                    raw_output,
+                    displayed_output,
+                    succeeded,
+                    goal_function_score,
                 )
             )
         return results, self.num_queries == self.query_budget
@@ -121,7 +135,9 @@ class GoalFunction:
         ids = utils.batch_tokenize(self.tokenizer, attacked_text_list)
 
         with torch.no_grad():
-            outputs = batch_model_predict(self.model, ids)
+            outputs = batch_model_predict(
+                self.model, ids, batch_size=self.model_batch_size
+            )
 
         return self._process_model_outputs(attacked_text_list, outputs)
 

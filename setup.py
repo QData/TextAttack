@@ -6,6 +6,11 @@ from docs import conf as docs_conf
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+extras = {}
+# For developers, install development tools along with all optional dependencies.
+extras["dev"] = ["black", "isort", "pytest", "pytest-xdist"]
+
+
 setuptools.setup(
     name="textattack",
     version=docs_conf.release,
@@ -28,7 +33,10 @@ setuptools.setup(
             "wandb*",
         ]
     ),
-    entry_points={"console_scripts": ["textattack=textattack.__main__:main"],},
+    extras_require=extras,
+    entry_points={
+        "console_scripts": ["textattack=textattack.commands.textattack_cli:main"],
+    },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

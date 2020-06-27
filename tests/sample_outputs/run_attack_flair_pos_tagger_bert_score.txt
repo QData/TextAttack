@@ -1,0 +1,67 @@
+/.*/Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  15
+    (embedding_type):  paragramcf
+  )
+  (constraints): 
+    (0): BERTScore(
+        (min_bert_score):  0.8
+        (model):  bert-base-uncased
+        (score_type):  f1
+      )
+    (1): PartOfSpeech(
+        (tagger_type):  flair
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+      )
+    (2): RepeatModification
+    (3): StopwordModification
+  (is_black_box):  True
+) 
+/.*/
+--------------------------------------------- Result 1 ---------------------------------------------
+[92mPositive (100%)[0m --> [91m[FAILED][0m
+
+exposing the ways we fool ourselves is one hour photo's real strength .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92mPositive (99%)[0m --> [91mNegative (100%)[0m
+
+it's up to you to decide whether to [92madmire[0m these people's dedication to their cause or be [92mrepelled[0m by their dogmatism , manipulativeness and narrow , [92mfearful[0m view of american life .
+
+it's up to you to decide whether to [91mstare[0m these people's dedication to their cause or be [91mpostponing[0m by their dogmatism , manipulativeness and narrow , [91mshitless[0m view of american life .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92mPositive (67%)[0m --> [91mNegative (100%)[0m
+
+mostly , [goldbacher] just lets her complicated characters be unruly , confusing and , through it all , [92mhuman[0m .
+
+mostly , [goldbacher] just lets her complicated characters be unruly , confusing and , through it all , [91mhumanistic[0m .
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[92mPositive (100%)[0m --> [91m[FAILED][0m
+
+. . . quite good at providing some good old fashioned spooks .
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 2      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 50.0%  |
+| Attack success rate:          | 50.0%  |
+| Average perturbed word %:     | 8.17%  |
+| Average num. words per input: | 17.0   |
+| Avg num queries:              | 53.0   |
++-------------------------------+--------+

@@ -1,6 +1,6 @@
 import textattack
 
-RECIPE_NAMES = {
+ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.Alzantot2018",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
@@ -52,6 +52,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "bert-base-uncased-wnli": (
         "textattack/bert-base-uncased-WNLI",
         ("glue", "wnli", "validation"),
+    ),
+    "bert-base-uncased-mr": (
+        "textattack/bert-base-uncased-rotten_tomatoes",
+        ("rotten_tomatoes", None, "test"),
     ),
     #
     # distilbert-base-cased
@@ -139,6 +143,17 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/roberta-base-WNLI",
         ("glue", "wnli", "validation"),
     ),
+    "roberta-base-mr": (
+        "textattack/roberta-base-rotten_tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
+    #
+    # albert-base-v2 (ALBERT is cased by default)
+    #
+    "albert-base-v2-mr": (
+        "textattack/albert-base-v2-rotten_tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
 }
 
 
@@ -170,10 +185,6 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     # Text classification models
     #
-    "bert-base-uncased-mr": (
-        ("models/classification/bert/mr-uncased", 2),
-        ("rotten_tomatoes", None, "train"),
-    ),
     "bert-base-cased-imdb": (
         ("models/classification/bert/imdb-cased", 2),
         ("imdb", None, "test"),
@@ -207,6 +218,7 @@ BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     "word-swap-random-char-insertion": "textattack.transformations.WordSwapRandomCharacterInsertion",
     "word-swap-random-char-substitution": "textattack.transformations.WordSwapRandomCharacterSubstitution",
     "word-swap-wordnet": "textattack.transformations.WordSwapWordNet",
+    "word-swap-masked-lm": "textattack.transformations.WordSwapMaskedLM",
 }
 
 WHITE_BOX_TRANSFORMATION_CLASS_NAMES = {
@@ -222,6 +234,7 @@ CONSTRAINT_CLASS_NAMES = {
     "infer-sent": "textattack.constraints.semantics.sentence_encoders.InferSent",
     "thought-vector": "textattack.constraints.semantics.sentence_encoders.ThoughtVector",
     "use": "textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder",
+    "bert-score": "textattack.constraints.semantics.BERTScore",
     #
     # Grammaticality constraints
     #
@@ -242,9 +255,10 @@ CONSTRAINT_CLASS_NAMES = {
     #
     "repeat": "textattack.constraints.pre_transformation.RepeatModification",
     "stopword": "textattack.constraints.pre_transformation.StopwordModification",
+    "max-word-index": "textattack.constraints.pre_transformation.MaxWordIndexModification",
 }
 
-SEARCH_CLASS_NAMES = {
+SEARCH_METHOD_CLASS_NAMES = {
     "beam-search": "textattack.search_methods.BeamSearch",
     "greedy": "textattack.search_methods.GreedySearch",
     "ga-word": "textattack.search_methods.GeneticAlgorithm",

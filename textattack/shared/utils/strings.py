@@ -62,13 +62,43 @@ LABEL_COLORS = [
 ]
 
 
+def process_label_name(label_name):
+    """ Takes a label name from a dataset and makes it nice. Meant to correct
+        different abbreviations and automatically capitalize.
+    """
+    label_name = label_name.lower()
+    if label_name == "neg":
+        label_name = "negative"
+    elif label_name == "pos":
+        label_name = "positive"
+    return label_name.capitalize()
+
+
 def color_from_label(label_num):
     """ Arbitrary colors for different labels. """
     try:
         label_num %= len(LABEL_COLORS)
         return LABEL_COLORS[label_num]
     except TypeError:
-        return "purple"
+        return "blue"
+
+
+def color_from_output(label_name, label):
+    """ Returns the correct color for a label name, like 'positive', 'medicine',
+    or 'entailment'.
+    """
+    label_name = label_name.lower()
+    if label_name in {"entailment", "positive"}:
+        return "green"
+    elif label_name in {"contradiction", "negative"}:
+        return "red"
+    elif label_name in {"neutral"}:
+        return "gray"
+    else:
+        # if no color pre-stored for label name, return color corresponding to
+        # the label number (so, even for unknown datasets, we can give each
+        # class a distinct color)
+        return color_from_label(label)
 
 
 class ANSI_ESCAPE_CODES:
@@ -79,6 +109,7 @@ class ANSI_ESCAPE_CODES:
     OKGREEN = "\033[92m"
     WARNING = "\033[93m"
     GRAY = "\033[37m"
+    PURPLE = "\033[35m"
     FAIL = "\033[91m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
@@ -105,6 +136,8 @@ def color_text(text, color=None, method=None):
             color = ANSI_ESCAPE_CODES.FAIL
         elif color == "blue":
             color = ANSI_ESCAPE_CODES.OKBLUE
+        elif color == "purple":
+            color = ANSI_ESCAPE_CODES.PURPLE
         elif color == "gray":
             color = ANSI_ESCAPE_CODES.GRAY
         elif color == "bold":

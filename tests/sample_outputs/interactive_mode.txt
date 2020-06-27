@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -15,6 +15,7 @@ Attack(
         (include_unknown_words):  True
       )
     (1): PartOfSpeech(
+        (tagger_type):  nltk
         (tagset):  universal
         (allow_verb_noun_swap):  True
       )
@@ -29,15 +30,8 @@ Attack(
     (4): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:
 Attacking...
-[92m1[0m-->[91m0[0m
-
-All that [92mglitters[0m is not gold
-
-All that [91mglisten[0m is not gold
-
-Enter a sentence to attack or "q" to quit:
