@@ -31,7 +31,7 @@ class LanguageModelConstraint(ABC, Constraint):
     def _check_constraint(self, transformed_text, current_text, original_text=None):
         if self.compare_against_original:
             current_text = original_text
-        
+
         try:
             indices = transformed_text.attack_attrs["newly_modified_indices"]
         except KeyError:

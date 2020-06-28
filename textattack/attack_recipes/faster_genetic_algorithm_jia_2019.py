@@ -104,11 +104,14 @@ def FasterGeneticAlgorithmJia2019(model):
     #
     # Language Model
     #
-    # 
-    # 
-    constraints.append(LearningToWriteLanguageModel(window_size=6, max_log_prob_diff=5.,
-        compare_against_original=True))
-    # constraints.append(LearningToWriteLanguageModel(window_size=5)) 
+    #
+    #
+    constraints.append(
+        LearningToWriteLanguageModel(
+            window_size=6, max_log_prob_diff=5.0, compare_against_original=True
+        )
+    )
+    # constraints.append(LearningToWriteLanguageModel(window_size=5))
     #
     # Goal is untargeted classification
     #

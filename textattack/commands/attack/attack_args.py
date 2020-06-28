@@ -243,6 +243,7 @@ CONSTRAINT_CLASS_NAMES = {
     "part-of-speech": "textattack.constraints.grammaticality.PartOfSpeech",
     "goog-lm": "textattack.constraints.grammaticality.language_models.GoogleLanguageModel",
     "gpt2": "textattack.constraints.grammaticality.language_models.GPT2",
+    "gpt2": "textattack.constraints.grammaticality.language_models.LearningToWriteLanguageModel",
     #
     # Overlap constraints
     #

@@ -1,7 +1,9 @@
-import textattack
 import torch
 
-from textattack.constraints.grammaticality.language_models import LanguageModelConstraint
+import textattack
+from textattack.constraints.grammaticality.language_models import (
+    LanguageModelConstraint,
+)
 
 from .language_model_helpers import load_model
 
@@ -24,10 +26,13 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
         https://worksheets.codalab.org/worksheets/0x79feda5f1998497db75422eca8fcd689
     """
 
-    CACHE_PATH = 'constraints/grammaticality/language-models/learning-to-write'
+    CACHE_PATH = "constraints/grammaticality/language-models/learning-to-write"
+
     def __init__(self, window_size=5, **kwargs):
         self.window_size = window_size
-        lm_folder_path = textattack.shared.utils.download_if_needed(LearningToWriteLanguageModel.CACHE_PATH)
+        lm_folder_path = textattack.shared.utils.download_if_needed(
+            LearningToWriteLanguageModel.CACHE_PATH
+        )
         self.query_handler = load_model(lm_folder_path, textattack.shared.utils.device)
         super().__init__(**kwargs)
 
@@ -39,7 +44,9 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
         query_words = []
         for attacked_text in text_list:
             word = attacked_text.words[word_index]
-            window_text = attacked_text.text_window_around_index(word_index, self.window_size)
+            window_text = attacked_text.text_window_around_index(
+                word_index, self.window_size
+            )
             query = textattack.shared.utils.words_from_text(window_text)
             queries.append(query)
             query_words.append(word)

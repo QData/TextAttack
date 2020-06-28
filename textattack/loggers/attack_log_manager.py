@@ -75,7 +75,7 @@ class AttackLogManager:
         failed_attacks = 0
         skipped_attacks = 0
         successful_attacks = 0
-        max_words_changed = 0 
+        max_words_changed = 0
         for i, result in enumerate(self.results):
             all_num_words[i] = len(result.original_result.attacked_text.words)
             if isinstance(result, FailedAttackResult):
