@@ -16,6 +16,16 @@ from textattack.transformations import WordSwapEmbedding
 def AlzantotFasterJia2019(model):
     """
        add citation here
+       
+       @TODO benchmark attacks
+       
+       @TODO add warning printed at beginning of alzantot attack :-)
+       
+       
+       @TODO rename alzantot to genetic-algorithm + add warning that name is being changed
+       
+       
+       @TODO rename this to faster-genetic-algorithm
     """
     # # @TODO update all this stuff
     # Swap words with their embedding nearest-neighbors.
@@ -40,7 +50,9 @@ def AlzantotFasterJia2019(model):
     #
     # Language Model
     #
-    constraints.append(LearningToWriteLanguageModel(window_size=5)) ## @TODO window size?
+    ## @TODO window size, maybe?
+    constraints.append(LearningToWriteLanguageModel(max_log_prob_diff=10.))
+    # constraints.append(LearningToWriteLanguageModel(window_size=5)) 
     #
     # Goal is untargeted classification
     #

@@ -2,6 +2,7 @@ import textattack
 
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.Alzantot2018",
+    "faster-alzantot": "textattack.attack_recipes.AlzantotFasterJia2019",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
     "kuleshov": "textattack.attack_recipes.Kuleshov2017",
