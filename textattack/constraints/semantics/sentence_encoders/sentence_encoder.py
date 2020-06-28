@@ -126,6 +126,10 @@ class SentenceEncoder(Constraint):
                     raise KeyError(
                         "Cannot apply sentence encoder constraint without `newly_modified_indices`"
                     )
+                except StopIteration:
+                    raise RuntimeError(
+                        "Cannot apply sentence encoder constraint with empty `newly_modified_indices`"
+                    )
                 starting_text_windows.append(
                     starting_text.text_window_around_index(
                         modified_index, self.window_size

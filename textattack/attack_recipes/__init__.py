@@ -1,4 +1,6 @@
 from .alzantot_2018 import Alzantot2018
+from .bae_garg_2019 import BAEGarg2019
+from .bert_attack_li_2020 import BERTAttackLi2020
 from .deepwordbug_gao_2018 import DeepWordBugGao2018
 from .hotflip_ebrahimi_2017 import HotFlipEbrahimi2017
 from .kuleshov_2017 import Kuleshov2017
