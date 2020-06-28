@@ -30,87 +30,59 @@ class GeneticAlgorithm(SearchMethod):
         self.pop_size = pop_size
         self.temp = temp
         self.give_up_if_no_improvement = give_up_if_no_improvement
-        self.search_over = False
 
-    def _replace_at_index(self, pop_member, idx):
+    def _perturb(self, pop_member, original_result):
         """
-        Select the best replacement for word at position (idx) 
-        in (pop_member) to maximize score.
-
+        Replaces a word in pop_member that has not been modified in place.
         Args:
-            pop_member: The population member being perturbed.
-            idx: The index at which to replace a word.
-
-        Returns:
-            Whether a replacement which increased the score was found.
+            pop_member (PopulationMember): The population member being perturbed.
+            original_result (GoalFunctionResult): Result of original sample being attacked
+            
+        Returns: None
         """
-        transformations = self.get_transformations(
-            pop_member.attacked_text,
-            original_text=self.original_attacked_text,
-            indices_to_modify=[idx],
-        )
-        if not len(transformations):
-            return False
-        orig_result, self.search_over = self.get_goal_results(
-            [pop_member.attacked_text], self.correct_output
-        )
-        if self.search_over:
-            return False
-        new_x_results, self.search_over = self.get_goal_results(
-            transformations, self.correct_output
-        )
-        new_x_scores = torch.Tensor([r.score for r in new_x_results])
-        new_x_scores = new_x_scores - orig_result[0].score
-        if len(new_x_scores) and new_x_scores.max() > 0:
-            pop_member.attacked_text = transformations[new_x_scores.argmax()]
-            return True
-        return False
-
-    def _perturb(self, pop_member):
-        """
-        Replaces a word in pop_member that has not been modified. 
-        Args:
-            pop_member: The population member being perturbed.
-        """
-        x_len = pop_member.neighbors_len.shape[0]
-        neighbors_len = deepcopy(pop_member.neighbors_len)
-        non_zero_indices = np.sum(np.sign(pop_member.neighbors_len))
+        num_words = pop_member.num_neighbors_list.shape[0]
+        num_neighbors_list = np.copy(pop_member.num_neighbors_list)
+        non_zero_indices = np.sum(np.sign(pop_member.num_neighbors_list))
         if non_zero_indices == 0:
             return
         iterations = 0
-        while iterations < non_zero_indices and not self.search_over:
-            w_select_probs = neighbors_len / np.sum(neighbors_len)
-            rand_idx = np.random.choice(x_len, 1, p=w_select_probs)[0]
-            if self._replace_at_index(pop_member, rand_idx):
-                pop_member.neighbors_len[rand_idx] = 0
-                break
-            neighbors_len[rand_idx] = 0
-            iterations += 1
+        while iterations < non_zero_indices:
+            w_select_probs = num_neighbors_list / np.sum(num_neighbors_list)
+            rand_idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
 
-    def _generate_population(self, neighbors_len, initial_result):
-        """
-        Generates a population of texts each with one word replaced
-        Args:
-            neighbors_len: A list of the number of candidate neighbors for each word.
-            initial_result: The result to instantiate the population with
-        Returns:
-            The population.
-        """
-        pop = []
-        for _ in range(self.pop_size):
-            pop_member = PopulationMember(
-                self.original_attacked_text, deepcopy(neighbors_len), initial_result
+            transformations = self.get_transformations(
+                pop_member.attacked_text,
+                original_text=original_result.attacked_text,
+                indices_to_modify=[rand_idx],
             )
-            self._perturb(pop_member)
-            pop.append(pop_member)
-        return pop
+
+            if not len(transformations):
+                continue
+
+            new_results, search_over = self.get_goal_results(
+                ransformations, self.correct_output
+            )
+
+            if search_over:
+                break
+
+            diff_scores = (
+                torch.Tensor([r.score for r in new_results]) - original_result.score
+            )
+            if len(diff_scores) and diff_scores.max() > 0:
+                pop_member.attacked_text = transformations[diff_scores.argmax()]
+                pop_member.num_neighbors_list[rand_idx] = 0
+                break
+
+            num_neighbors_list[rand_idx] = 0
+            iterations += 1
 
     def _crossover(self, pop_member1, pop_member2):
         """
         Generates a crossover between pop_member1 and pop_member2.
         Args:
-            pop_member1: The first population member.
-            pop_member2: The second population member.
+            pop_member1 (PopulationMember): The first population member.
+            pop_member2 (PopulationMember): The second population member.
         Returns:
             A population member containing the crossover.
         """
@@ -118,68 +90,75 @@ class GeneticAlgorithm(SearchMethod):
         words_to_replace = []
         x1_text = pop_member1.attacked_text
         x2_words = pop_member2.attacked_text.words
-        new_neighbors_len = deepcopy(pop_member1.neighbors_len)
+        num_neighbors_list = np.copy(pop_member1.num_neighbors_list)
         for i in range(len(x1_text.words)):
             if np.random.uniform() < 0.5:
                 indices_to_replace.append(i)
                 words_to_replace.append(x2_words[i])
-                new_neighbors_len[i] = pop_member2.neighbors_len[i]
+                num_neighbors_list[i] = pop_member2.num_neighbors_list[i]
         new_text = x1_text.replace_words_at_indices(
             indices_to_replace, words_to_replace
         )
-        return PopulationMember(new_text, deepcopy(new_neighbors_len))
+        return PopulationMember(new_text, num_neighbors_list)
 
-    def _get_neighbors_len(self, attacked_text):
+    def _initalize_population(self, initial_result):
         """
-        Generates this neighbors_len list
+        Initialize a population of texts each with one word replaced
         Args:
-            attacked_text: The original text
+            initial_result (GaolFunctionResult): The result to instantiate the population with
         Returns:
-            A list of number of candidate neighbors for each word
+            The population.
         """
-        words = attacked_text.words
-        neighbors_list = [[] for _ in range(len(words))]
+        words = initial_result.attacked_text.words
+        num_neighbors_list = np.zeros(len(words))
         transformations = self.get_transformations(
-            attacked_text, original_text=self.original_attacked_text
+            initial_result.attacked_text, original_text=initial_result.attacked_text
         )
         for transformed_text in transformations:
             diff_idx = attacked_text.first_word_diff_index(transformed_text)
-            neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
-        neighbors_list = [np.array(x) for x in neighbors_list]
-        neighbors_len = np.array([len(x) for x in neighbors_list])
-        return neighbors_len
+            num_neighbors_list[diff_idx] += 1
+
+        population = []
+        for _ in range(self.pop_size):
+            pop_member = PopulationMember(
+                initial_result.attacked_text,
+                np.copy(num_neighbors_list),
+                initial_result,
+            )
+            # Perturb `pop_member` in-place
+            self._perturb(pop_member, initial_result)
+            population.append(pop_member)
+        return population
 
     def _perform_search(self, initial_result):
-        self.original_attacked_text = initial_result.attacked_text
-        self.correct_output = initial_result.output
-        neighbors_len = self._get_neighbors_len(self.original_attacked_text)
-        pop = self._generate_population(neighbors_len, initial_result)
-        cur_score = initial_result.score
+        population = self._initialize_population(initial_result)
+        current_score = initial_result.score
         for i in range(self.max_iters):
-            pop_results, self.search_over = self.get_goal_results(
+            pop_results, search_over = self.get_goal_results(
                 [pm.attacked_text for pm in pop], self.correct_output
             )
-            if self.search_over:
-                if not len(pop_results):
-                    return pop[0].result
+            if search_over:
+                if len(pop_results) == 0:
+                    return population[0].result
                 return max(pop_results, key=lambda x: x.score)
+
             for idx, result in enumerate(pop_results):
-                pop[idx].result = pop_results[idx]
-            pop = sorted(pop, key=lambda x: -x.result.score)
+                population[idx].result = result
+            population = sorted(population, key=lambda x: -x.result.score)
 
             pop_scores = torch.Tensor([r.score for r in pop_results])
             logits = ((-pop_scores) / self.temp).exp()
             select_probs = (logits / logits.sum()).cpu().numpy()
 
-            if pop[0].result.succeeded:
-                return pop[0].result
+            if population[0].result.succeeded:
+                return population[0].result
 
-            if pop[0].result.score > cur_score:
-                cur_score = pop[0].result.score
+            if population[0].result.score > current_score:
+                current_score = population[0].result.score
             elif self.give_up_if_no_improvement:
                 break
 
-            elite = [pop[0]]
+            best_member = population[0]
             parent1_idx = np.random.choice(
                 self.pop_size, size=self.pop_size - 1, p=select_probs
             )
@@ -187,16 +166,17 @@ class GeneticAlgorithm(SearchMethod):
                 self.pop_size, size=self.pop_size - 1, p=select_probs
             )
 
-            children = [
-                self._crossover(pop[parent1_idx[idx]], pop[parent2_idx[idx]])
-                for idx in range(self.pop_size - 1)
-            ]
-            for c in children:
-                self._perturb(c)
+            children = []
+            for idx in range(self.pop_size - 1):
+                child = self._crossover(
+                    population[parent1_idx[idx]], population[parent2_idx[idx]]
+                )
+                self._perturb(child, initial_result)
+                children.append(child)
 
-            pop = elite + children
+            population = [best_member] + children
 
-        return pop[0].result
+        return population[0].result
 
     def check_transformation_compatibility(self, transformation):
         """
@@ -214,10 +194,10 @@ class PopulationMember:
     
     Args:
         attacked_text: The ``AttackedText`` of the population member.
-        neighbors_len: A list of the number of candidate neighbors list for each word.
+        num_neighbors_list: A list of the number of candidate neighbors list for each word.
     """
 
-    def __init__(self, attacked_text, neighbors_len, result=None):
+    def __init__(self, attacked_text, num_neighbors_list, result=None):
         self.attacked_text = attacked_text
-        self.neighbors_len = neighbors_len
+        self.num_neighbors_list = num_neighbors_list
         self.result = result
