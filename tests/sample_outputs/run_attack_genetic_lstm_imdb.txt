@@ -1,0 +1,77 @@
+Attack(
+  (search_method): GeneticAlgorithm(
+    (pop_size):  20
+    (max_iters):  50
+    (temp):  0.3
+    (give_up_if_no_improvement):  False
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  15
+    (embedding_type):  paragramcf
+  )
+  (constraints): 
+    (0): WordEmbeddingDistance(
+        (embedding_type):  paragramcf
+        (max_mse_dist):  None
+        (cased):  False
+        (include_unknown_words):  True
+      )
+    (1): BERT(
+        (metric):  cosine
+        (threshold):  0.7
+        (compare_with_original):  False
+        (window_size):  None
+        (skip_text_shorter_than_window):  False
+      )
+    (2): RepeatModification
+    (3): StopwordModification
+  (is_black_box):  True
+) 
+
+--------------------------------------------- Result 1 ---------------------------------------------
+[92mPositive (98%)[0m --> [91mNegative (66%)[0m
+
+Since this cartoon was made in the old days, Felix talks using cartoon bubbles and the animation style is very crude when compared to today. However, compared to its contemporaries, it's a pretty [92mgood[0m cartoon and still holds up well. That's because despite its age, the [92mcartoon[0m is very creative and funny.<br /><br />Felix meets a guy whose shoe business is folding because he can't sell any shoes. Well, Felix needs money so he can go to Hollywood, so he tells the guy at the shop he'll get every shoe sold. Felix spreads chewing gum all over town and soon people are stuck and leave their shoes--rushing to buy new ones from the shoe store. In gratitude, the guy gives Felix $500! However, Felix's owner wants to take the money and go alone, so Felix figures out a way to sneak along.<br /><br />Once there, Felix barges into a studio and makes a bit of a nuisance of himself. Along the way, he meets cartoon versions of comics Ben Turpin and Charlie Chaplin. In the end, though, through luck, Felix is discovered and offered a movie contract. Hurray!
+
+Since this cartoon was made in the old days, Felix talks using cartoon bubbles and the animation style is very crude when compared to today. However, compared to its contemporaries, it's a pretty [91malright[0m cartoon and still holds up well. That's because despite its age, the [91mcaricature[0m is very creative and funny.<br /><br />Felix meets a guy whose shoe business is folding because he can't sell any shoes. Well, Felix needs money so he can go to Hollywood, so he tells the guy at the shop he'll get every shoe sold. Felix spreads chewing gum all over town and soon people are stuck and leave their shoes--rushing to buy new ones from the shoe store. In gratitude, the guy gives Felix $500! However, Felix's owner wants to take the money and go alone, so Felix figures out a way to sneak along.<br /><br />Once there, Felix barges into a studio and makes a bit of a nuisance of himself. Along the way, he meets cartoon versions of comics Ben Turpin and Charlie Chaplin. In the end, though, through luck, Felix is discovered and offered a movie contract. Hurray!
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92mPositive (98%)[0m --> [91mNegative (69%)[0m
+
+Despite the title and unlike some other stories about love and war, this film isn't too sticky and pink, because love is as a rose: With thorns, that is. [92mThe[0m four leading actors set their characters [92mrealistic[0m and with a good [92msense[0m and balance between the tragic and the down-to-[92mearth[0m. <br /><br />[92mThe[0m music and lyrics of the cabaret/chanson-esquire songs (sung b Keira Knightley herself) drag the [92mviewer[0m deeper and deeper in the film, from one place to [92manother[0m, between the [92mbrutal[0m war and amongst the peaceful love. Some people may find it too much a biopic, but it [92mís[0m [92mmostly[0m a romantic [92mstory[0m, even though it consequently [92mfollows[0m the life of Dylan Thomas and the triangular relationship which is steeped by joy and jealousy. <[92mbr[0m /><[92mbr[0m />[92mLondon[0m gets visualized from another angle for once, the bohemian life of Dylan during the bombings of the Germans is set in a floating atmosphere of small bedrooms, pubs and bars. The independent women, the soldier and the charismatic poet are constantly swept in both feelings of love and anger. <br /><br />[92mMaybe[0m the end is too twisted and hangs somewhat loosely to the [92mrest[0m of the film, but all in all this is a great romantic story.
+
+Despite the title and unlike some other stories about love and war, this film isn't too sticky and pink, because love is as a rose: With thorns, that is. [91mPer[0m four leading actors set their characters [91mpragmatist[0m and with a good [91mmeanings[0m and balance between the tragic and the down-to-[91mtierra[0m. <br /><br />[91mTo[0m music and lyrics of the cabaret/chanson-esquire songs (sung b Keira Knightley herself) drag the [91mpasserby[0m deeper and deeper in the film, from one place to [91mrecent[0m, between the [91mheartless[0m war and amongst the peaceful love. Some people may find it too much a biopic, but it [91mî[0m [91messentially[0m a romantic [91mtales[0m, even though it consequently [91mpersisted[0m the life of Dylan Thomas and the triangular relationship which is steeped by joy and jealousy. <[91mre[0m /><[91mre[0m />[91mUk[0m gets visualized from another angle for once, the bohemian life of Dylan during the bombings of the Germans is set in a floating atmosphere of small bedrooms, pubs and bars. The independent women, the soldier and the charismatic poet are constantly swept in both feelings of love and anger. <br /><br />[91mProbably[0m the end is too twisted and hangs somewhat loosely to the [91mstopover[0m of the film, but all in all this is a great romantic story.
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92mPositive (97%)[0m --> [91mNegative (52%)[0m
+
+Felix in Hollywood is a [92mgreat[0m film. The version I viewed was very well restored, which is sometimes a problem with these silent era animated films. It has some of Hollywood's most famous stars making cameo [92manimated[0m appearances. A must for any silent film or animation enthusiast.
+
+Felix in Hollywood is a [91mwhopping[0m film. The version I viewed was very well restored, which is sometimes a problem with these silent era animated films. It has some of Hollywood's most famous stars making cameo [91mliven[0m appearances. A must for any silent film or animation enthusiast.
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[92mPositive (97%)[0m --> [91mNegative (59%)[0m
+
+A gem of a [92mcartoon[0m from the silent era---it was re-discovered by CARTOON [92mNETWORK[0m, and was broadcast for [92mlikely[0m the first time in decades, if [92mever[0m.<br /><br />What makes this so enjoyable are the [92mvaried[0m cameos...Douglas Fairbanks is attacked by giant mosquitos; [92mWill[0m Hays pays a visit as '[92mboss[0m' of Static Studios; as [92mwell[0m as appearances by Chaplin, Keaton, and [92mWilliam[0m S. Hart. The image of chewing gum decimating the shoes of the populace (a money-making idea for Felix's near-bankrupt [92mshoe[0m-=salesman boss) [92mcannot[0m be described--it must be viewed. A terrific cultural gem.
+
+A gem of a [91mtravesty[0m from the silent era---it was re-discovered by CARTOON [91mWISP[0m, and was broadcast for [91mpresumably[0m the first time in decades, if [91munceasingly[0m.<br /><br />What makes this so enjoyable are the [91massorted[0m cameos...Douglas Fairbanks is attacked by giant mosquitos; [91mGonna[0m Hays pays a visit as '[91mpattern[0m' of Static Studios; as [91malright[0m as appearances by Chaplin, Keaton, and [91mCatharine[0m S. Hart. The image of chewing gum decimating the shoes of the populace (a money-making idea for Felix's near-bankrupt [91mzapata[0m-=salesman boss) [91mdiscernible[0m be described--it must be viewed. A terrific cultural gem.
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 4      |
+| Number of failed attacks:     | 0      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 0.0%   |
+| Attack success rate:          | 100.0% |
+| Average perturbed word %:     | 6.04%  |
+| Average num. words per input: | 138.5  |
+| Avg num queries:              | 2910.0 |
++-------------------------------+--------+
