@@ -12,21 +12,38 @@ class QueryHandler():
     self.mapto = mapto
     self.device = device
 
-  def query(self, sentences, swapped_words):
-    T = len(sentences[0])
-    if any(len(s) != T for s in sentences):
+  def query(self, sentences, swapped_words, batch_size=32):
+    """ Since we don't filter prefixes for OOV ahead of time, it's possible that 
+        some of them will have different lengths. When this is the case,
+        we can't do RNN prediction in batch.
+        
+        This method _tries_ to do prediction in batch, and, when it fails, 
+        just does prediction sequentially and concatenates all of the results.
+    """
+    try:
+      return self.try_query(sentences, swapped_words, batch_size=batch_size)
+    except:
+      probs = []
+      for s, w in zip(sentences, swapped_words):
+        probs.append(self.try_query([s], [w], batch_size=1)[0])
+      return probs
+    
+  def try_query(self, sentences, swapped_words, batch_size=32):
+    # TODO use caching
+    sentence_length = len(sentences[0])
+    if any(len(s) != sentence_length for s in sentences):
       raise ValueError('Only same length batches are allowed')
 
     log_probs = []
-    for start in range(0, len(sentences)):
-      swapped_words_batch = swapped_words[start:min(len(sentences), start + 1)]
-      batch = sentences[start:min(len(sentences), start + 1)]
-      raw_idx_list = [[] for i in range(T+1)]
+    for start in range(0, len(sentences), batch_size):
+      swapped_words_batch = swapped_words[start:min(len(sentences), start + batch_size)]
+      batch = sentences[start:min(len(sentences), start + batch_size)]
+      raw_idx_list = [[] for i in range(sentence_length+1)]
       for i, s in enumerate(batch):
         s = [word for word in s if word in self.word_to_idx]
         words = ['<S>'] + s
         word_idxs = [self.word_to_idx[w] for w in words]
-        for t in range(T+1):
+        for t in range(sentence_length+1):
           if t < len(word_idxs):
             raw_idx_list[t].append(word_idxs[t])
       orig_num_idxs = len(raw_idx_list)
@@ -39,12 +56,12 @@ class QueryHandler():
       source = word_idxs[:-1,:]
       target = word_idxs[1:,:]
       decode, hidden = self.model(source, hidden)
-      decode = decode.view(T - num_idxs_dropped, len(batch), -1)
+      decode = decode.view(sentence_length - num_idxs_dropped, len(batch), -1)
       for i in range(len(batch)):
         if swapped_words_batch[i] not in self.word_to_idx:
           log_probs.append(float('-inf'))
         else:  
-          log_probs.append(sum([decode[t, i, target[t, i]].item() for t in range(T-num_idxs_dropped)]))
+          log_probs.append(sum([decode[t, i, target[t, i]].item() for t in range(sentence_length-num_idxs_dropped)]))
     return log_probs
 
 def util_reverse(item):

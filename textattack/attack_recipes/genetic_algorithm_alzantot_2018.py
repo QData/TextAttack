@@ -1,5 +1,5 @@
 from textattack.constraints.grammaticality.language_models import (
-    LearningToWriteLanguageModel,
+    Google1BillionWordsLanguageModel,
 )
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
@@ -13,21 +13,15 @@ from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 
-def AlzantotFasterJia2019(model):
+def GeneticAlgorithmAlzantot2018(model):
     """
-       add citation here
-       
-       @TODO benchmark attacks
-       
-       @TODO add warning printed at beginning of alzantot attack :-)
-       
-       
-       @TODO rename alzantot to genetic-algorithm + add warning that name is being changed
-       
-       
-       @TODO rename this to faster-genetic-algorithm
+        Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, K. (2018). 
+        
+        Generating Natural Language Adversarial Examples. 
+        
+        https://arxiv.org/abs/1801.00554 
     """
-    # # @TODO update all this stuff
+    #
     # Swap words with their embedding nearest-neighbors.
     #
     # Embedding: Counter-fitted Paragram Embeddings.
@@ -50,9 +44,7 @@ def AlzantotFasterJia2019(model):
     #
     # Language Model
     #
-    ## @TODO window size, maybe?
-    constraints.append(LearningToWriteLanguageModel(max_log_prob_diff=10.))
-    # constraints.append(LearningToWriteLanguageModel(window_size=5)) 
+    constraints.append(Google1BillionWordsLanguageModel(top_n_per_index=4))
     #
     # Goal is untargeted classification
     #

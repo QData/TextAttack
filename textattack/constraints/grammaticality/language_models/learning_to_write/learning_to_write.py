@@ -13,6 +13,7 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
         Discriminators'' (Holtzman et al, 2018).
         
         https://arxiv.org/pdf/1805.06087.pdf
+        
         https://github.com/windweller/l2w
         
         
@@ -25,7 +26,6 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
 
     CACHE_PATH = 'constraints/grammaticality/language-models/learning-to-write'
     def __init__(self, window_size=5, **kwargs):
-        # TODO add window size for all LMs
         self.window_size = window_size
         lm_folder_path = textattack.shared.utils.download_if_needed(LearningToWriteLanguageModel.CACHE_PATH)
         self.query_handler = load_model(lm_folder_path, textattack.shared.utils.device)
@@ -33,14 +33,15 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
 
     def get_log_probs_at_index(self, text_list, word_index):
         """ Gets the probability of the word at index `word_index` according
-            to GPT-2. Assumes that all items in `text_list`
-            have the same prefix up until `word_index`.
+            to the language model.
         """
-        log_probs = []
+        queries = []
+        query_words = []
         for attacked_text in text_list:
             word = attacked_text.words[word_index]
             window_text = attacked_text.text_window_around_index(word_index, self.window_size)
-            query_words = textattack.shared.utils.words_from_text(window_text)
-            log_prob = self.query_handler.query([query_words], [word])
-            log_probs.append(log_prob)
+            query = textattack.shared.utils.words_from_text(window_text)
+            queries.append(query)
+            query_words.append(word)
+        log_probs = self.query_handler.query(queries, query_words)
         return torch.tensor(log_probs)
