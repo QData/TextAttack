@@ -88,10 +88,13 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         self.output_scale_factor = output_scale_factor
         try:
             self.label_names = self._dataset.features["label"].names
-            # If labels are remapped, the label names have to be remapped as 
+            # If labels are remapped, the label names have to be remapped as
             # well.
             if label_map:
-                self.label_names = [self.label_names[self.label_map[i]] for i in range(len(self.label_map))]
+                self.label_names = [
+                    self.label_names[self.label_map[i]]
+                    for i in range(len(self.label_map))
+                ]
         except KeyError:
             # This happens when the dataset doesn't have 'features' or a 'label' column.
             self.label_names = None
