@@ -333,8 +333,6 @@ def parse_dataset_from_args(args):
         _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
     elif args.model in TEXTATTACK_DATASET_BY_MODEL:
         _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
-    
-    
     # Automatically detect dataset for models trained with textattack.
     elif args.model and os.path.exists(args.model):
         model_args_json_path = os.path.join(args.model, "train_args.json")
