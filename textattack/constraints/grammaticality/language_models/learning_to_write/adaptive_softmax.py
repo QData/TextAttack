@@ -3,6 +3,8 @@ from torch import nn
 from torch.autograd import Variable
 from torch.nn.functional import log_softmax
 
+import textattack
+
 
 class AdaptiveSoftmax(nn.Module):
     def __init__(self, input_size, cutoffs, scale_down=4):
@@ -48,7 +50,7 @@ class AdaptiveSoftmax(nn.Module):
         assert len(inp.size()) == 2
         head_out = self.head(inp)
         n = inp.size(0)
-        prob = torch.zeros(n, self.cutoffs[-1]).cuda()
+        prob = torch.zeros(n, self.cutoffs[-1]).to(textattack.shared.utils.device)
         lsm_head = log_softmax(head_out, dim=head_out.dim() - 1)
         prob.narrow(1, 0, self.output_size).add_(
             lsm_head.narrow(1, 0, self.output_size).data

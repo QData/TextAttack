@@ -5,7 +5,7 @@ from textattack.constraints.grammaticality.language_models import (
     LanguageModelConstraint,
 )
 
-from .language_model_helpers import load_model
+from .language_model_helpers import QueryHandler
 
 
 class LearningToWriteLanguageModel(LanguageModelConstraint):
@@ -33,7 +33,9 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
         lm_folder_path = textattack.shared.utils.download_if_needed(
             LearningToWriteLanguageModel.CACHE_PATH
         )
-        self.query_handler = load_model(lm_folder_path, textattack.shared.utils.device)
+        self.query_handler = QueryHandler.load_model(
+            lm_folder_path, textattack.shared.utils.device
+        )
         super().__init__(**kwargs)
 
     def get_log_probs_at_index(self, text_list, word_index):

@@ -15,7 +15,7 @@ class LanguageModelConstraint(ABC, Constraint):
             text or the most recent
     """
 
-    def __init__(self, max_log_prob_diff=None, compare_against_original=False):
+    def __init__(self, max_log_prob_diff=None, compare_against_original=True):
         if max_log_prob_diff is None:
             raise ValueError("Must set max_log_prob_diff")
         self.max_log_prob_diff = max_log_prob_diff
