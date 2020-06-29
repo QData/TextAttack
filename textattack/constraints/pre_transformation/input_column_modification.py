@@ -38,3 +38,6 @@ class InputColumnModification(PreTransformationConstraint):
                 indices_to_modify |= set(range(idx, idx + num_words))
             idx += num_words
         return indices_to_modify
+
+    def extra_repr_keys(self):
+        return ["matching_column_labels", "columns_to_ignore"]
