@@ -1,4 +1,5 @@
-from .alzantot_2018 import Alzantot2018
+from .genetic_algorithm_alzantot_2018 import GeneticAlgorithmAlzantot2018
+from .faster_genetic_algorithm_jia_2019 import FasterGeneticAlgorithmJia2019
 from .deepwordbug_gao_2018 import DeepWordBugGao2018
 from .hotflip_ebrahimi_2017 import HotFlipEbrahimi2017
 from .kuleshov_2017 import Kuleshov2017
