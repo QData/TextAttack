@@ -9,6 +9,10 @@ It also helps us if you spread the word: reference the library from blog posts
 on the awesome projects it made possible, shout out on Twitter every time it has
 helped you, or simply star the repo to say "thank you".
 
+## Slack Channel
+
+For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-ez3ts03b-Nr55tDiqgAvCkRbbz8zz9g)!
+
 ## Ways to contribute
 
 There are lots of ways you can contribute to TextAttack:
@@ -113,8 +117,8 @@ Follow these steps to start contributing:
    
    ```bash
    $ cd TextAttack
-   $ pip install -e .
-   $ pip install black isort
+   $ pip install -e . ".[dev]"
+   $ pip install black isort pytest pytest-xdist
    ```
    
    This will install `textattack` in editable mode and install `black` and 
@@ -193,7 +197,7 @@ Follow these steps to start contributing:
    consulting the issue know you are working on it);
 3. To indicate a work in progress please mark it as a draft on Github.
 4. Make sure existing tests pass.
-5. Add relevant tests tests. No quality testing = no merge.
+5. Add relevant tests. No quality testing = no merge.
 6. All public methods must have informative docstrings that work nicely with sphinx.
 
 ### Tests

@@ -1,3 +1,4 @@
+import importlib
 import random
 
 import numpy as np
@@ -86,3 +87,4 @@ def set_seed(random_seed):
     random.seed(random_seed)
     np.random.seed(random_seed)
     torch.manual_seed(random_seed)
+    torch.cuda.manual_seed(random_seed)

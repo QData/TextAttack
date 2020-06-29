@@ -1,13 +1,14 @@
 """
 When WIR method is set to ``unk``, this is a
-reimplementation of the search method from thepaper: 
+reimplementation of the search method from the paper: 
 Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and 
 Entailment by Jin et. al, 2019. 
 See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
 """
 
-
 import numpy as np
+import torch
+from torch.nn.functional import softmax
 
 from textattack.search_methods import SearchMethod
 from textattack.shared.validators import transformation_consists_of_word_swaps
@@ -52,19 +53,55 @@ class GreedyWordSwapWIR(SearchMethod):
             leave_one_scores, search_over = self._get_index_order(
                 initial_result, leave_one_texts
             )
+        elif self.wir_method == "pwws":
+            # first, compute word saliency
+            leave_one_texts = [
+                attacked_text.replace_word_at_index(i, "[UNK]") for i in range(len_text)
+            ]
+            saliency_scores, search_over = self._get_index_order(
+                initial_result, leave_one_texts
+            )
+
+            softmax_saliency_scores = softmax(torch.Tensor(saliency_scores)).numpy()
+
+            # compute the largest change in score we can find by swapping each word
+            delta_ps = []
+            for idx in range(len_text):
+                transformed_text_candidates = self.get_transformations(
+                    cur_result.attacked_text,
+                    original_text=initial_result.attacked_text,
+                    indices_to_modify=[idx],
+                )
+                if not transformed_text_candidates:
+                    # no valid synonym substitutions for this word
+                    delta_ps.append(0.0)
+                    continue
+                swap_results, _ = self.get_goal_results(
+                    transformed_text_candidates, initial_result.output
+                )
+                score_change = [result.score for result in swap_results]
+                max_score_change = np.max(score_change)
+                delta_ps.append(max_score_change)
+
+            leave_one_scores = softmax_saliency_scores * np.array(delta_ps)
+
         elif self.wir_method == "delete":
             leave_one_texts = [
                 attacked_text.delete_word_at_index(i) for i in range(len_text)
             ]
-            leave_one_scores = self._get_index_order(initial_result, leave_one_texts)
+            leave_one_scores, search_over = self._get_index_order(
+                initial_result, leave_one_texts
+            )
         elif self.wir_method == "random":
-            leave_one_scores = torch.random(len_text)
+            index_order = np.arange(len_text)
+            np.random.shuffle(index_order)
             search_over = False
 
-        if self.ascending:
-            index_order = (leave_one_scores).argsort()
-        else:
-            index_order = (-leave_one_scores).argsort()
+        if self.wir_method != "random":
+            if self.ascending:
+                index_order = (leave_one_scores).argsort()
+            else:
+                index_order = (-leave_one_scores).argsort()
 
         i = 0
         results = None

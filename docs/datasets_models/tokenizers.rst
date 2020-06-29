@@ -2,20 +2,14 @@
 Tokenizers
 ===========
 
-.. automodule:: textattack.tokenizers.tokenizer
+.. automodule:: textattack.models.tokenizers.auto_tokenizer
    :members:
 
-.. automodule:: textattack.tokenizers.auto_tokenizer
+.. automodule:: textattack.models.tokenizers.glove_tokenizer
    :members:
 
-.. automodule:: textattack.tokenizers.spacy_tokenizer
+.. automodule:: textattack.models.tokenizers.t5_tokenizer
    :members:
 
-.. automodule:: textattack.tokenizers.t5_tokenizer
-   :members:
-
-.. automodule:: textattack.tokenizers.bert_tokenizer
-   :members:
-
-.. automodule:: textattack.tokenizers.bert_entailment_tokenizer
+.. automodule:: textattack.models.tokenizers.bert_tokenizer
    :members:
