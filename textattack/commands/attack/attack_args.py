@@ -8,6 +8,7 @@ ATTACK_RECIPE_NAMES = {
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
+    "pwws": "textattack.attack_recipes.PWWSRen2019",
 }
 
 #

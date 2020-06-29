@@ -43,6 +43,13 @@ TextFooler
    :members:
 
 
+PWWS
+###########
+
+.. automodule:: textattack.attack_recipes.pwws_ren_2019
+    :members:
+
+
 TextBugger
 ###########
 
