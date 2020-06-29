@@ -16,7 +16,6 @@ class WordSwapWordNet(WordSwap):
                 if l.name() != word and check_if_one_word(l.name()):
                     # WordNet can suggest phrases that are joined by '_' but we ignore phrases.
                     synonyms.add(l.name())
-        print(synonyms)
         return list(synonyms)
 
 
