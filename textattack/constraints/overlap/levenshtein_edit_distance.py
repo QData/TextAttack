@@ -1,5 +1,4 @@
 import editdistance
-
 from textattack.constraints import Constraint
 
 

@@ -2,10 +2,10 @@ import itertools
 
 import numpy as np
 import torch
-from transformers import AutoModelWithLMHead, AutoTokenizer
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
+from transformers import AutoModelWithLMHead, AutoTokenizer
 
 
 class WordSwapMaskedLM(WordSwap):

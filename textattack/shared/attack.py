@@ -1,9 +1,9 @@
 from collections import deque
 import os
 
-import lru
 import numpy as np
 
+import lru
 import textattack
 from textattack.attack_results import (
     FailedAttackResult,

@@ -1,8 +1,8 @@
 import torch
-import transformers
 
 from textattack.models.tokenizers import Tokenizer
 from textattack.shared import AttackedText
+import transformers
 
 
 class AutoTokenizer(Tokenizer):

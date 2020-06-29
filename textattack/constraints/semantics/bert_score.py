@@ -4,9 +4,9 @@ BERT-Score measures token similarity between two text using contextual embedding
 To decide which two tokens to compare, it greedily chooses the most similar token from one text and matches it to a token in the second text.
 """
 
-import bert_score
 import nltk
 
+import bert_score
 from textattack.constraints import Constraint
 from textattack.shared import utils
 

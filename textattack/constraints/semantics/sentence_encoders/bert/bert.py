@@ -1,5 +1,4 @@
 from sentence_transformers import SentenceTransformer
-
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 from textattack.shared import utils
 

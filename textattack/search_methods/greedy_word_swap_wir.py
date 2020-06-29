@@ -57,21 +57,29 @@ class GreedyWordSwapWIR(SearchMethod):
         elif self.wir_method == "pwws":
             # first, compute word saliency
             leave_one_texts = [
-                attacked_text.replace_word_at_index(i, "[UNK]") for i in range(len_text)]
+                attacked_text.replace_word_at_index(i, "[UNK]") for i in range(len_text)
+            ]
             saliency_scores, search_over = self._get_index_order(
                 initial_result, leave_one_texts
             )
 
             softmax_saliency_scores = softmax(torch.Tensor(saliency_scores)).numpy()
 
+            # compute the largest change in score we can find by swapping each word
             delta_ps = []
             for idx in range(len_text):
-                transformed_text_candidates = self.get_transformations(cur_result.attacked_text, original_text=initial_result.attacked_text, indices_to_modify=[idx])
+                transformed_text_candidates = self.get_transformations(
+                    cur_result.attacked_text,
+                    original_text=initial_result.attacked_text,
+                    indices_to_modify=[idx],
+                )
                 if not transformed_text_candidates:
                     # no valid synonym substitutions for this word
-                    delta_ps.append(0.)
+                    delta_ps.append(0.0)
                     continue
-                swap_results, _ = self.get_goal_results(transformed_text_candidates, initial_result.output)
+                swap_results, _ = self.get_goal_results(
+                    transformed_text_candidates, initial_result.output
+                )
                 score_change = [result.score for result in swap_results]
                 max_score_change = np.max(score_change)
                 delta_ps.append(max_score_change)
