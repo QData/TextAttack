@@ -57,10 +57,9 @@ class AugmentCommand(TextAttackCommand):
             f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
         )
 
-        if args.recipe == 'eda':
+        if args.recipe == "eda":
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                alpha=args.alpha,
-                n_aug=args.transformations_per_example,
+                alpha=args.alpha, n_aug=args.transformations_per_example,
             )
 
         else:
@@ -130,7 +129,7 @@ class AugmentCommand(TextAttackCommand):
             "--a",
             help="fraction of words to modify (EasyDataAugmenter)",
             type=float,
-            default=.1,
+            default=0.1,
         )
 
         parser.add_argument(
