@@ -5,3 +5,4 @@ from .kuleshov_2017 import Kuleshov2017
 from .seq2sick_cheng_2018_blackbox import Seq2SickCheng2018BlackBox
 from .textbugger_li_2018 import TextBuggerLi2018
 from .textfooler_jin_2019 import TextFoolerJin2019
+from .PSO_zang_2020 import PSOZang2020
