@@ -31,7 +31,7 @@ class CSVLogger(Logger):
             "perturbed_output": result.perturbed_result.output,
             "ground_truth_output": result.original_result.ground_truth_output,
             "num_queries": result.num_queries,
-            "result_type": result_type
+            "result_type": result_type,
         }
         self.df = self.df.append(row, ignore_index=True)
         self._flushed = False

@@ -57,9 +57,7 @@ class GeneticAlgorithm(SearchMethod):
         )
         if self.search_over:
             return False
-        new_x_results, self.search_over = self.get_goal_results(
-            transformations
-        )
+        new_x_results, self.search_over = self.get_goal_results(transformations)
         new_x_scores = torch.Tensor([r.score for r in new_x_results])
         new_x_scores = new_x_scores - orig_result[0].score
         if len(new_x_scores) and new_x_scores.max() > 0:

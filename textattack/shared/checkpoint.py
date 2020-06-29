@@ -5,8 +5,8 @@ import pickle
 import time
 
 from textattack.attack_results import (
-    MaximizedAttackResult,
     FailedAttackResult,
+    MaximizedAttackResult,
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
@@ -151,7 +151,7 @@ class Checkpoint:
         return sum(
             isinstance(r, MaximizedAttackResult) for r in self.log_manager.results
         )
-    
+
     @property
     def num_remaining_attacks(self):
         if self.args.attack_n:

@@ -4,26 +4,21 @@ import lru
 import numpy as np
 import torch
 
-from textattack.goal_function_results.goal_function_result import GoalFunctionResultStatus
+from textattack.goal_function_results.goal_function_result import (
+    GoalFunctionResultStatus,
+)
 from textattack.shared import utils, validators
 from textattack.shared.utils import batch_model_predict, default_class_repr
+
 
 class GoalFunction:
     """
     Evaluates how well a perturbed attacked_text object is achieving a specified goal.
     
     Args:
-<<<<<<< HEAD
-        model: The PyTorch or TensorFlow model used for evaluation.
+        model: The model used for evaluation.
         maximizable: Whether the goal function is maximizable, as opposed to a boolean result
             of success or failure.
-        query_budget: The maximum number of model queries allowed.
-    """
-
-    def __init__(
-        self, model, maximizable=False, tokenizer=None, use_cache=True, query_budget=float("inf")
-=======
-        model: The model used for evaluation.
         query_budget (float): The maximum number of model queries allowed.
         model_batch_size (int): The batch size for making calls to the model
         model_cache_size (int): The maximum number of items to keep in the model
@@ -33,12 +28,12 @@ class GoalFunction:
     def __init__(
         self,
         model,
+        maximizable=False,
         tokenizer=None,
         use_cache=True,
         query_budget=float("inf"),
         model_batch_size=32,
         model_cache_size=2 ** 18,
->>>>>>> master
     ):
         validators.validate_model_goal_function_compatibility(
             self.__class__, model.__class__

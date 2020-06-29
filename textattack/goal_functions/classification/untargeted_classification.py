@@ -19,7 +19,9 @@ class UntargetedClassification(ClassificationGoalFunction):
     def _is_goal_complete(self, model_output):
         if self.target_max_score:
             return model_output[self.ground_truth_output] < self.target_max_score
-        elif (model_output.numel() == 1) and isinstance(self.ground_truth_output, float):
+        elif (model_output.numel() == 1) and isinstance(
+            self.ground_truth_output, float
+        ):
             return abs(self.ground_truth_output - model_output.item()) >= (
                 self.target_max_score or 0.5
             )

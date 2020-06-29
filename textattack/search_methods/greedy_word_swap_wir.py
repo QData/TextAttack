@@ -32,9 +32,7 @@ class GreedyWordSwapWIR(SearchMethod):
         """ Queries model for list of attacked text objects ``text`` and
             ranks in order of descending score.
         """
-        leave_one_results, search_over = self.get_goal_results(
-            texts
-        )
+        leave_one_results, search_over = self.get_goal_results(texts)
         leave_one_scores = np.array([result.score for result in leave_one_results])
         return leave_one_scores, search_over
 
@@ -81,9 +79,7 @@ class GreedyWordSwapWIR(SearchMethod):
             i += 1
             if len(transformed_text_candidates) == 0:
                 continue
-            results, search_over = self.get_goal_results(
-                transformed_text_candidates
-            )
+            results, search_over = self.get_goal_results(transformed_text_candidates)
             results = sorted(results, key=lambda x: -x.score)
             # Skip swaps which don't improve the score
             if results[0].score > cur_result.score:

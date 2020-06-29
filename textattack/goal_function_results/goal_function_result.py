@@ -1,9 +1,11 @@
 import torch
 
+
 class GoalFunctionResultStatus:
     SUCCEEDED = 0
-    SEARCHING = 1 # In process of searching for a success
+    SEARCHING = 1  # In process of searching for a success
     MAXIMIZING = 2
+
 
 class GoalFunctionResult:
     """
@@ -18,7 +20,16 @@ class GoalFunctionResult:
         ground_truth_output: The ground truth output
     """
 
-    def __init__(self, attacked_text, raw_output, output, goal_status, score, num_queries, ground_truth_output):
+    def __init__(
+        self,
+        attacked_text,
+        raw_output,
+        output,
+        goal_status,
+        score,
+        num_queries,
+        ground_truth_output,
+    ):
         self.attacked_text = attacked_text
         self.raw_output = raw_output
         self.output = output
