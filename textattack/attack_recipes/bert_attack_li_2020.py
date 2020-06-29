@@ -40,8 +40,8 @@ def BERTAttackLi2020(model):
     # perturbations minimum."
     #
     # [from correspondence with the author]
-    # "Word percentage allowed to change is set to 0.4 for most data-sets, this 
-    # parameter is trivial since most attacks only need a few changes. This 
+    # "Word percentage allowed to change is set to 0.4 for most data-sets, this
+    # parameter is trivial since most attacks only need a few changes. This
     # epsilon is only used to avoid too much queries on those very hard samples."
     constraints.append(MaxWordsPerturbed(max_percent=0.4))
 
@@ -52,21 +52,18 @@ def BERTAttackLi2020(model):
     # similarity score to filter the less similar examples."
     #
     # [from correspondence with author]
-    # "Over the full texts, after generating all the adversarial samples, we filter 
-    # out low USE score samples. Thus the success rate is lower but the USE score 
-    # can be higher. (actually USE score is not a golden metric, so we simply 
+    # "Over the full texts, after generating all the adversarial samples, we filter
+    # out low USE score samples. Thus the success rate is lower but the USE score
+    # can be higher. (actually USE score is not a golden metric, so we simply
     # measure the USE score over the final texts for a comparison with TextFooler).
-    # For datasets like IMDB, we set a higher threshold between 0.4-0.7; for 
+    # For datasets like IMDB, we set a higher threshold between 0.4-0.7; for
     # datasets like MNLI, we set threshold between 0-0.2."
     #
     # Since the threshold in the real world can't be determined from the training
     # data, the TextAttack implementation uses a fixed threshold - determined to
     # be 0.2 to be most fair.
     use_constraint = UniversalSentenceEncoder(
-        threshold=0.2,
-        metric="cosine",
-        compare_with_original=True,
-        window_size=None,
+        threshold=0.2, metric="cosine", compare_with_original=True, window_size=None,
     )
     constraints.append(use_constraint)
     #

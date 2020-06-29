@@ -38,7 +38,7 @@ class SentenceEncoder(Constraint):
         self.compare_with_original = compare_with_original
         self.window_size = window_size
         self.skip_text_shorter_than_window = skip_text_shorter_than_window
-        
+
         if not self.window_size:
             self.window_size = float("inf")
 
@@ -240,4 +240,3 @@ def get_neg_euclidean_dist(emb1, emb2):
         vectors. 
     """
     return -torch.sum((emb1 - emb2) ** 2, dim=1)
-
