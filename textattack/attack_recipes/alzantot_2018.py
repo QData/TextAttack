@@ -3,6 +3,7 @@ from textattack.constraints.grammaticality.language_models import (
 )
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
+    InputColumnModification,
     RepeatModification,
     StopwordModification,
 )
@@ -33,6 +34,14 @@ def Alzantot2018(model):
     # Don't modify the same word twice or stopwords
     #
     constraints = [RepeatModification(), StopwordModification()]
+    #
+    # During entailment, we should only edit the hypothesis - keep the premise
+    # the same.
+    #
+    input_column_modification = InputColumnModification(
+        ["premise", "hypothesis"], {"premise"}
+    )
+    constraints.append(input_column_modification)
     #
     # Maximum words perturbed percentage of 20%
     #
