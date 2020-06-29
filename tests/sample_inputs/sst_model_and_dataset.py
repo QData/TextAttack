@@ -1,5 +1,6 @@
-import textattack
 import transformers
+
+import textattack
 
 model_path = "distilbert-base-uncased-finetuned-sst-2-english"
 

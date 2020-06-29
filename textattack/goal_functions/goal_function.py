@@ -1,9 +1,9 @@
 import math
 
+import lru
 import numpy as np
 import torch
 
-import lru
 from textattack.shared import utils, validators
 from textattack.shared.utils import batch_model_predict, default_class_repr
 

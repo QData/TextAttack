@@ -1,6 +1,7 @@
+import transformers
+
 from textattack.models.tokenizers import T5Tokenizer
 from textattack.shared import utils
-import transformers
 
 
 class T5ForTextToText:

@@ -2,6 +2,7 @@ import collections
 import random
 
 import nlp
+
 from textattack.datasets import TextAttackDataset
 from textattack.shared import AttackedText
 

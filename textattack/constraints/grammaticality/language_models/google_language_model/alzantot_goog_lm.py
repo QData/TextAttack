@@ -6,10 +6,10 @@ import os
 import sys
 
 from google.protobuf import text_format
+import lru
 import numpy as np
 import tensorflow as tf
 
-import lru
 from textattack.shared import utils
 
 from . import lm_data_utils, lm_utils
