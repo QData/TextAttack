@@ -6,7 +6,6 @@ Entailment by Jin et. al, 2019.
 See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
 """
 
-
 import numpy as np
 
 from textattack.goal_function_results import GoalFunctionResultStatus
@@ -57,15 +56,19 @@ class GreedyWordSwapWIR(SearchMethod):
             leave_one_texts = [
                 attacked_text.delete_word_at_index(i) for i in range(len_text)
             ]
-            leave_one_scores = self._get_index_order(initial_result, leave_one_texts)
+            leave_one_scores, search_over = self._get_index_order(
+                initial_result, leave_one_texts
+            )
         elif self.wir_method == "random":
-            leave_one_scores = torch.random(len_text)
+            index_order = np.arange(len_text)
+            np.random.shuffle(index_order)
             search_over = False
 
-        if self.ascending:
-            index_order = (leave_one_scores).argsort()
-        else:
-            index_order = (-leave_one_scores).argsort()
+        if self.wir_method != "random":
+            if self.ascending:
+                index_order = (leave_one_scores).argsort()
+            else:
+                index_order = (-leave_one_scores).argsort()
 
         i = 0
         results = None

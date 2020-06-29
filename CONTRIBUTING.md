@@ -9,6 +9,10 @@ It also helps us if you spread the word: reference the library from blog posts
 on the awesome projects it made possible, shout out on Twitter every time it has
 helped you, or simply star the repo to say "thank you".
 
+## Slack Channel
+
+For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-ez3ts03b-Nr55tDiqgAvCkRbbz8zz9g)!
+
 ## Ways to contribute
 
 There are lots of ways you can contribute to TextAttack:
@@ -113,7 +117,7 @@ Follow these steps to start contributing:
    
    ```bash
    $ cd TextAttack
-   $ pip install -e .
+   $ pip install -e . ".[dev]"
    $ pip install black isort pytest pytest-xdist
    ```
    

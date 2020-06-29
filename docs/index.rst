@@ -16,7 +16,7 @@ TextAttack provides a framework for constructing and thinking about attacks via 
 TextAttack provides a set of `Attack Recipes <attacks/attack_recipes.html>`__ that assemble attacks from the literature from these four components.
 
 Data Augmentation
--------------
+--------------------
 Data augmentation is easy and extremely common in computer vision but harder and less common in NLP. We provide a `Data Augmentation <augmentation/augmenter.html>`__ module using transformations and constraints.
 
 Features
@@ -31,12 +31,15 @@ TextAttack has some other features that make it a pleasure to use:
 .. toctree::
    :maxdepth: 1
    :hidden:
-   :caption: Quickstart
+   :caption: Getting Started
 
-   quickstart/installation
-   quickstart/overview
-   Example 1: Transformations <examples/1_Introduction_and_Transformations.ipynb>
-   Example 2: Constraints <examples/2_Constraints.ipynb>
+
+   Installation <quickstart/installation>
+   Overview <quickstart/overview>
+   Command-Line Usage <quickstart/command_line_usage>
+   Tutorial 0: TextAttack End-To-End (Train, Eval, Attack) <examples/0_End_to_End.ipynb>
+   Tutorial 1: Transformations <examples/1_Introduction_and_Transformations.ipynb>
+   Tutorial 2: Constraints <examples/2_Constraints.ipynb>
 
 .. toctree::
    :maxdepth: 3

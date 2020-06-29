@@ -10,18 +10,28 @@ from test_augment import augment_test_params
 from test_list import list_test_params
 
 
-def update_test(command, outfile):
+def update_test(command, outfile, add_magic_str=False):
     if isinstance(command, str):
-        command = (command,)
-    command = command + (f"tee {outfile}",)
-    print("\n".join(f"> {c}" for c in command))
-    run_command_and_get_result(command)
+        print(">", command)
+    else:
+        print("\n".join(f"> {c}" for c in command))
+    result = run_command_and_get_result(command)
+    stdout = result.stdout.decode().strip()
+    if add_magic_str:
+        # add magic string to beginning
+        magic_str = "/.*/"
+        stdout = magic_str + stdout
+        # add magic string after attack
+        mid_attack_str = "\n--------------------------------------------- Result 1"
+        stdout.replace(mid_attack_str, magic_str + mid_attack_str)
+    # write to file
+    open(outfile, "w").write(stdout + "\n")
 
 
 def main():
     #### `textattack attack` tests ####
     for _, command, outfile in attack_test_params:
-        update_test(command, outfile)
+        update_test(command, outfile, add_magic_str=True)
     #### `textattack augment` tests ####
     for _, command, outfile, __ in augment_test_params:
         update_test(command, outfile)

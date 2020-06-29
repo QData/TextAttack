@@ -16,32 +16,26 @@ from .attack_args_helpers import *
 logger = textattack.shared.logger
 
 
-def run(args):
+def run(args, checkpoint=None):
     # Only use one GPU, if we have one.
+    # TODO: Running Universal Sentence Encoder uses multiple GPUs
     if "CUDA_VISIBLE_DEVICES" not in os.environ:
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-    # Cache TensorFlow Hub models here, if not otherwise specified.
-    if "TFHUB_CACHE_DIR" not in os.environ:
-        os.environ["TFHUB_CACHE_DIR"] = os.path.expanduser("~/.cache/tensorflow-hub")
 
     if args.checkpoint_resume:
-        # Override current args with checkpoint args
-        resume_checkpoint = parse_checkpoint_from_args(args)
-        args = merge_checkpoint_args(resume_checkpoint.args, args)
-
-        num_remaining_attacks = resume_checkpoint.num_remaining_attacks
-        worklist = resume_checkpoint.worklist
-        worklist_tail = resume_checkpoint.worklist_tail
+        num_remaining_attacks = checkpoint.num_remaining_attacks
+        worklist = checkpoint.worklist
+        worklist_tail = checkpoint.worklist_tail
 
         logger.info(
             "Recovered from checkpoint previously saved at {}".format(
-                resume_checkpoint.datetime
+                checkpoint.datetime
             )
         )
-        print(resume_checkpoint, "\n")
+        print(checkpoint, "\n")
     else:
         num_remaining_attacks = args.num_examples
         worklist = deque(range(0, args.num_examples))
@@ -55,7 +49,7 @@ def run(args):
 
     # Logger
     if args.checkpoint_resume:
-        attack_log_manager = resume_checkpoint.log_manager
+        attack_log_manager = checkpoint.log_manager
     else:
         attack_log_manager = parse_logger_from_args(args)
 
@@ -89,9 +83,9 @@ def run(args):
 
         pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
         if args.checkpoint_resume:
-            num_results = resume_checkpoint.results_count
-            num_failures = resume_checkpoint.num_failed_attacks
-            num_successes = resume_checkpoint.num_successful_attacks
+            num_results = checkpoint.results_count
+            num_failures = checkpoint.num_failed_attacks
+            num_successes = checkpoint.num_successful_attacks
         else:
             num_results = 0
             num_failures = 0
@@ -128,10 +122,10 @@ def run(args):
                 args.checkpoint_interval
                 and len(attack_log_manager.results) % args.checkpoint_interval == 0
             ):
-                checkpoint = textattack.shared.Checkpoint(
+                new_checkpoint = textattack.shared.Checkpoint(
                     args, attack_log_manager, worklist, worklist_tail
                 )
-                checkpoint.save()
+                new_checkpoint.save()
                 attack_log_manager.flush()
 
         pbar.close()

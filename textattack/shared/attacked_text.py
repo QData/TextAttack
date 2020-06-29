@@ -6,7 +6,7 @@ import torch
 
 import textattack
 
-from .utils import device, words_from_text
+from .utils import words_from_text
 
 
 class AttackedText:

@@ -13,6 +13,7 @@ class GoalFunction:
     Evaluates how well a perturbed attacked_text object is achieving a specified goal.
     
     Args:
+<<<<<<< HEAD
         model: The PyTorch or TensorFlow model used for evaluation.
         maximizable: Whether the goal function is maximizable, as opposed to a boolean result
             of success or failure.
@@ -21,6 +22,23 @@ class GoalFunction:
 
     def __init__(
         self, model, maximizable=False, tokenizer=None, use_cache=True, query_budget=float("inf")
+=======
+        model: The model used for evaluation.
+        query_budget (float): The maximum number of model queries allowed.
+        model_batch_size (int): The batch size for making calls to the model
+        model_cache_size (int): The maximum number of items to keep in the model
+            results cache at once
+    """
+
+    def __init__(
+        self,
+        model,
+        tokenizer=None,
+        use_cache=True,
+        query_budget=float("inf"),
+        model_batch_size=32,
+        model_cache_size=2 ** 18,
+>>>>>>> master
     ):
         validators.validate_model_goal_function_compatibility(
             self.__class__, model.__class__
@@ -37,8 +55,9 @@ class GoalFunction:
             raise TypeError("Tokenizer must contain `encode()` method")
         self.use_cache = use_cache
         self.query_budget = query_budget
+        self.model_batch_size = model_batch_size
         if self.use_cache:
-            self._call_model_cache = lru.LRU(utils.config("MODEL_CACHE_SIZE"))
+            self._call_model_cache = lru.LRU(model_cache_size)
         else:
             self._call_model_cache = None
 
@@ -133,7 +152,9 @@ class GoalFunction:
         ids = utils.batch_tokenize(self.tokenizer, attacked_text_list)
 
         with torch.no_grad():
-            outputs = batch_model_predict(self.model, ids)
+            outputs = batch_model_predict(
+                self.model, ids, batch_size=self.model_batch_size
+            )
 
         return self._process_model_outputs(attacked_text_list, outputs)
 

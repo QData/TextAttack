@@ -1,4 +1,4 @@
-click
+bert-score
 editdistance
 filelock
 language_tool_python
@@ -7,18 +7,16 @@ nlp
 nltk
 numpy
 pandas
-pyyaml>=5.1
 scikit-learn
 scipy==1.4.1
 sentence_transformers
-spacy
 torch
 transformers>=2.5.1
 tensorflow>=2
 tensorflow_hub
+tensorboardX
 terminaltables
 tqdm
 visdom
 wandb
 flair
-bert-score

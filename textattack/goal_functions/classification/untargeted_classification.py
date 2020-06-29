@@ -19,7 +19,7 @@ class UntargetedClassification(ClassificationGoalFunction):
     def _is_goal_complete(self, model_output):
         if self.target_max_score:
             return model_output[self.ground_truth_output] < self.target_max_score
-        elif (model_output.numel() is 1) and isinstance(self.ground_truth_output, float):
+        elif (model_output.numel() == 1) and isinstance(self.ground_truth_output, float):
             return abs(self.ground_truth_output - model_output.item()) >= (
                 self.target_max_score or 0.5
             )
@@ -29,7 +29,7 @@ class UntargetedClassification(ClassificationGoalFunction):
     def _get_score(self, model_output):
         # If the model outputs a single number and the ground truth output is
         # a float, we assume that this is a regression task.
-        if (model_output.numel() is 1) and isinstance(self.ground_truth_output, float):
+        if (model_output.numel() == 1) and isinstance(self.ground_truth_output, float):
             return abs(model_output.item() - self.ground_truth_output)
         else:
             return 1 - model_output[self.ground_truth_output]
