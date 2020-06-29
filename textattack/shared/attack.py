@@ -76,9 +76,7 @@ class Attack:
         # Give search method access to functions for getting transformations and evaluating them
         self.search_method.get_transformations = self.get_transformations
         self.search_method.get_goal_results = self.goal_function.get_results
-
-        if isinstance(self.search_method, textattack.search_methods.GeneticAlgorithm):
-            self.search_method.filter_transformations = self.filter_transformations
+        self.search_method.filter_transformations = self.filter_transformations
 
     def get_transformations(self, current_text, original_text=None, **kwargs):
         """

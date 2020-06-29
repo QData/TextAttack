@@ -117,7 +117,7 @@ attack_test_params = [
         "run_attack_genetic_lstm_imdb",
         (
             "textattack attack --model lstm-imdb --search ga-word --transformation word-swap-embedding "
-            "--constraints repeat stopword embedding bert --num-examples 4 --num-examples-offset 21"
+            "--constraints repeat stopword embedding:min_cos_sim=0.7 bert --num-examples 4 --num-examples-offset 21"
         ),
         "tests/sample_outputs/run_attack_genetic_lstm_imdb.txt",
     ),
