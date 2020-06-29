@@ -28,8 +28,9 @@ def BERTAttackLi2020(model):
         " did not include any hyperparameters. Attack reuslts are likely to"
         " change."
     )
-    #
-    transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=50)
+    # [from correspondence with the author]
+    # Candidate size K is set to 48 for all data-sets.
+    transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=48)
     #
     # Don't modify the same word twice or stopwords.
     #
@@ -37,8 +38,12 @@ def BERTAttackLi2020(model):
 
     # "We only take ε percent of the most important words since we tend to keep
     # perturbations minimum."
-    # TODO what is eps?
-    constraints.append(MaxWordsPerturbed(max_percent=0.2))
+    #
+    # [from correspondence with the author]
+    # "Word percentage allowed to change is set to 0.4 for most data-sets, this 
+    # parameter is trivial since most attacks only need a few changes. This 
+    # epsilon is only used to avoid too much queries on those very hard samples."
+    constraints.append(MaxWordsPerturbed(max_percent=0.4))
 
     # "As used in TextFooler (Jin et al., 2019), we also use Universal Sentence
     # Encoder (Cer et al., 2018) to measure the semantic consistency between the
@@ -46,19 +51,26 @@ def BERTAttackLi2020(model):
     # preservation and attack success rate, we set up a threshold of semantic
     # similarity score to filter the less similar examples."
     #
-    # TODO what is the threshold?
-    # TODO what window size should be set?
-    # TODO should we skip text shorter than the window?
+    # [from correspondence with author]
+    # "Over the full texts, after generating all the adversarial samples, we filter 
+    # out low USE score samples. Thus the success rate is lower but the USE score 
+    # can be higher. (actually USE score is not a golden metric, so we simply 
+    # measure the USE score over the final texts for a comparison with TextFooler).
+    # For datasets like IMDB, we set a higher threshold between 0.4-0.7; for 
+    # datasets like MNLI, we set threshold between 0-0.2."
+    #
+    # Since the threshold in the real world can't be determined from the training
+    # data, the TextAttack implementation uses a fixed threshold - determined to
+    # be 0.2 to be most fair.
     use_constraint = UniversalSentenceEncoder(
-        threshold=0.8,
+        threshold=0.2,
         metric="cosine",
         compare_with_original=True,
-        window_size=15,
-        skip_text_shorter_than_window=True,
+        window_size=None,
     )
     constraints.append(use_constraint)
     #
-    # Goal us untargeted classification.
+    # Goal is untargeted classification.
     #
     goal_function = UntargetedClassification(model)
     #

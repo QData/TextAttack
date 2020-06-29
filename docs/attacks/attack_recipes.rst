@@ -39,6 +39,12 @@ Kuleshov (Adversarial Examples for Natural Language Classification Problems)
 .. automodule:: textattack.attack_recipes.kuleshov_2017
    :members:
 
+PWWS (Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency)
+###########
+
+.. automodule:: textattack.attack_recipes.pwws_ren_2019
+    :members:
+
 Seq2Sick (Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples)
 ###########
 

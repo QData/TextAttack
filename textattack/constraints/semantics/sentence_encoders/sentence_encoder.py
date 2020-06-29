@@ -21,7 +21,8 @@ class SentenceEncoder(Constraint):
         compare_with_original (bool): Whether to compare `x_adv` to the previous `x_adv`
             or the original `x`.
         window_size (int): The number of words to use in the similarity 
-            comparison.
+            comparison. `None` indicates no windowing (encoding is based on the
+            full input).
     """
 
     def __init__(
@@ -37,6 +38,9 @@ class SentenceEncoder(Constraint):
         self.compare_with_original = compare_with_original
         self.window_size = window_size
         self.skip_text_shorter_than_window = skip_text_shorter_than_window
+        
+        if not self.window_size:
+            self.window_size = float("inf")
 
         if metric == "cosine":
             self.sim_metric = torch.nn.CosineSimilarity(dim=1)
@@ -125,10 +129,6 @@ class SentenceEncoder(Constraint):
                 except KeyError:
                     raise KeyError(
                         "Cannot apply sentence encoder constraint without `newly_modified_indices`"
-                    )
-                except StopIteration:
-                    raise RuntimeError(
-                        "Cannot apply sentence encoder constraint with empty `newly_modified_indices`"
                     )
                 starting_text_windows.append(
                     starting_text.text_window_around_index(
@@ -240,3 +240,4 @@ def get_neg_euclidean_dist(emb1, emb2):
         vectors. 
     """
     return -torch.sum((emb1 - emb2) ** 2, dim=1)
+

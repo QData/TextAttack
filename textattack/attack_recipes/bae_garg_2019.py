@@ -73,7 +73,7 @@ def BAEGarg2019(model):
     )
     constraints.append(use_constraint)
     #
-    # Goal us untargeted classification.
+    # Goal s untargeted classification.
     #
     goal_function = UntargetedClassification(model)
     #

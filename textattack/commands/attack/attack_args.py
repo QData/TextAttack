@@ -10,6 +10,7 @@ ATTACK_RECIPE_NAMES = {
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
+    "pwws": "textattack.attack_recipes.PWWSRen2019",
 }
 
 #
@@ -56,8 +57,12 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         ("glue", "wnli", "validation"),
     ),
     "bert-base-uncased-mr": (
-        "textattack/bert-base-uncased-rotten_tomatoes",
+        "textattack/bert-base-uncased-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
+    ),
+    "bert-base-uncased-snli": (
+        "textattack/bert-base-uncased-snli",
+        ("snli", None, "test", [1, 2, 0]),
     ),
     #
     # distilbert-base-cased
@@ -146,14 +151,21 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         ("glue", "wnli", "validation"),
     ),
     "roberta-base-mr": (
-        "textattack/roberta-base-rotten_tomatoes",
+        "textattack/roberta-base-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
     #
     # albert-base-v2 (ALBERT is cased by default)
     #
     "albert-base-v2-mr": (
-        "textattack/albert-base-v2-rotten_tomatoes",
+        "textattack/albert-base-v2-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
+    #
+    # xlnet-base-cased
+    #
+    "xlnet-base-cased-mr": (
+        "textattack/xlnet-base-cased-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
 }
