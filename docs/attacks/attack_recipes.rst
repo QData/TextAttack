@@ -5,10 +5,16 @@ We provide a number of pre-built attack recipes. To run an attack recipe, run::
 
     textattack attack --recipe [recipe_name]
     
-Alzantot (Generating Natural Language Adversarial Examples)
+Alzantot Genetic Algorithm (Generating Natural Language Adversarial Examples)
 ###########
 
-.. automodule:: textattack.attack_recipes.alzantot_2018
+.. automodule:: textattack.attack_recipes.genetic_algorithm_alzantot_2018
+   :members:
+       
+Faster Alzantot Genetic Algorithm (Certified Robustness to Adversarial Word Substitutions)
+###########
+
+.. automodule:: textattack.attack_recipes.faster_genetic_algorithm_jia_2019
    :members:
    
 BAE (BAE: BERT-Based Adversarial Examples)
@@ -16,7 +22,7 @@ BAE (BAE: BERT-Based Adversarial Examples)
 
 .. automodule:: textattack.attack_recipes.deepwordbug_gao_2018
 
-BERT-Attack: (BERT-Attack: Adversarial Attack Against BERT Using BERT
+BERT-Attack: (BERT-Attack: Adversarial Attack Against BERT Using BERT)
 ############
 
 .. automodule:: textattack.attack_recipes.deepwordbug_gao_2018

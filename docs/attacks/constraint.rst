@@ -83,6 +83,12 @@ GPT-2
 
 .. automodule:: textattack.constraints.grammaticality.language_models.gpt2
    :members:
+   
+"Learning To Write" Language Model
+*******
+
+.. automodule:: textattack.constraints.grammaticality.language_models.learning_to_write.learning_to_write
+   :members:
 
 
 Google 1-Billion Words Language Model
