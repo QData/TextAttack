@@ -16,9 +16,13 @@ class EasyDataAugmenter(Augmenter):
         An implementation of Easy Data Augmentation, which combines:
 
         - WordNet synonym replacement
+            - Randomly replace words with their synonyms.
         - Word deletion
+            - Randomly remove words from the sentence.
         - Word order swaps
-        - Synonym insertion
+            - Randomly swap the position of words in the sentence.
+        - Random synonym insertion
+            - Insert a random synonym of a random word at a random location.
 
         in one augmentation method.
 
