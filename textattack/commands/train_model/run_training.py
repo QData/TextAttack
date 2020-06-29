@@ -50,6 +50,7 @@ def train_model(args):
     if args.enable_wandb:
         global wandb
         import wandb
+
         wandb.init(sync_tensorboard=True)
 
     # Get list of text and list of label (integers) from disk.

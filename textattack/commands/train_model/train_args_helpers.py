@@ -22,10 +22,8 @@ def prepare_dataset_for_training(nlp_dataset):
             return values[0]
         return tuple(values)
 
-    train_text, train_labels = zip(
-        *((prepare_example_dict(x[0]), x[1]) for x in nlp_dataset)
-    )
-    return list(train_text), list(train_labels)
+    text, outputs = zip(*((prepare_example_dict(x[0]), x[1]) for x in nlp_dataset))
+    return list(text), list(outputs)
 
 
 def dataset_from_args(args):
