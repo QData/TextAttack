@@ -119,7 +119,7 @@ class GloveTokenizer(WordLevelTokenizer):
         self.oov_id = unk_token_id
         self.convert_id_to_word = self.id_to_token
         # Set defaults.
-        self.enable_padding(max_length=max_length, pad_id=pad_token_id)
+        self.enable_padding(length=max_length, pad_id=pad_token_id)
         self.enable_truncation(max_length=max_length)
 
     def _process_text(self, text_input):

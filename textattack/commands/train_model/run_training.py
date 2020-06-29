@@ -48,6 +48,9 @@ def train_model(args):
 
     # Use Weights & Biases, if enabled.
     if args.enable_wandb:
+        global wandb
+        import wandb
+
         wandb.init(sync_tensorboard=True)
 
     # Get list of text and list of label (integers) from disk.
