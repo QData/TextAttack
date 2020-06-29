@@ -1,3 +1,5 @@
+import random
+
 import textattack
 
 from . import Augmenter
@@ -7,6 +9,32 @@ DEFAULT_CONSTRAINTS = [
     textattack.constraints.pre_transformation.StopwordModification(),
 ]
 
+class EasyDataAugmenter(Augmenter):
+    def __init__(self, alpha, n_aug):
+        from textattack.transformations import CompositeTransformation, \
+                WordSwapWordNet, RandomSynonymInsertion, RandomSwap, \
+                WordDeletion
+
+        self.alpha = alpha
+        self.n_aug = n_aug
+
+        n_aug_each = int(n_aug/4) + 1
+        transformation = CompositeTransformation([
+                            WordSwapWordNet(),
+                            RandomSynonymInsertion(),
+                            RandomSwap(),
+                            WordDeletion()
+                        ])
+        super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, transformations_per_example=n_aug)
+
+    def augment(self, text):
+        attacked_text = textattack.shared.AttackedText(text)
+        num_words_to_swap = max(1, int(self.alpha*len(attacked_text.words)))
+        self.num_words_to_swap = num_words_to_swap
+        augmented_text = super().augment(text)
+        return augmented_text
+
+
 
 class WordNetAugmenter(Augmenter):
     """ Augments text by replacing with synonyms from the WordNet thesaurus. """
@@ -15,6 +43,12 @@ class WordNetAugmenter(Augmenter):
         from textattack.transformations import WordSwapWordNet
 
         transformation = WordSwapWordNet()
+        super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
+
+class RandomDeletionAugmenter(Augmenter):
+    def __init__(self, **kwargs):
+        from textattack.transformations import WordDeletion
+        transformation = WordDeletion()
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
 

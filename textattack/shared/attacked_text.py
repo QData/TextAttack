@@ -201,13 +201,6 @@ class AttackedText:
             )
         words = self.words[:]
         for i, new_word in zip(indices, new_words):
-            if not isinstance(i, int):
-                try:
-                    i = int(i)
-                except:
-                    raise TypeError(
-                        f"replace_words_at_indices requires ``int`` indices, got {type(i)}"
-                    )
             if not isinstance(new_word, str):
                 raise TypeError(
                     f"replace_words_at_indices requires ``str`` words, got {type(new_word)}"
@@ -216,38 +209,25 @@ class AttackedText:
                 raise ValueError(f"Cannot assign word at index {i}")
             words[i] = new_word
         return self.generate_new_attacked_text(words)
-
+    
     def replace_word_at_index(self, index, new_word):
         """ This code returns a new AttackedText object where the word at 
             ``index`` is replaced with a new word.
         """
-        if not isinstance(index, int):
-            try:
-                index = int(index)
-            except:
-                raise TypeError(
-                    f"replace_word_at_index requires ``int`` index, got {type(index)}"
-                )
         if not isinstance(new_word, str):
-            raise TypeError(
-                f"replace_word_at_index requires ``str`` new_word, got {type(new_word)}"
-            )
+            raise TypeError(f"replace_word_at_index requires ``str`` new_word, got {type(new_word)}")
         return self.replace_words_at_indices([index], [new_word])
 
     def delete_word_at_index(self, index):
         """ This code returns a new AttackedText object where the word at 
             ``index`` is removed.
         """
-        if not isinstance(index, int):
-            raise TypeError(f"index must be an int, got type {type(index)}")
         return self.replace_word_at_index(index, "")
 
     def insert_text_after_word_index(self, index, text):
         """ Inserts a string before word at index ``index`` and attempts to add
             appropriate spacing.
         """
-        if not isinstance(index, int):
-            raise TypeError(f"index must be an int, got type {type(index)}")
         if not isinstance(text, str):
             raise TypeError(f"text must be an str, got type {type(text)}")
         word_at_index = self.words[index]
@@ -258,8 +238,6 @@ class AttackedText:
         """ Inserts a string before word at index ``index`` and attempts to add
             appropriate spacing.
         """
-        if not isinstance(index, int):
-            raise TypeError(f"index must be an int, got type {type(index)}")
         if not isinstance(text, str):
             raise TypeError(f"text must be an str, got type {type(text)}")
         word_at_index = self.words[index]
