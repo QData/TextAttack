@@ -44,7 +44,7 @@ class GeneticAlgorithm(SearchMethod):
         self.temp = temp
         self.give_up_if_no_improvement = give_up_if_no_improvement
         self.max_crossover_retries = max_crossover_retries
-        self.compare_to_original = True
+        self.compare_against_original = compare_against_original
 
         # internal flag to indicate if search should end immediately
         self._search_over = False
@@ -68,7 +68,7 @@ class GeneticAlgorithm(SearchMethod):
             w_select_probs = num_candidates_per_word / np.sum(num_candidates_per_word)
             rand_idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
 
-            if self.compare_to_original:
+            if self.compare_against_original:
                 transformations = self.get_transformations(
                     pop_member.attacked_text,
                     original_text=original_result.attacked_text,
