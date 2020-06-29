@@ -9,31 +9,69 @@ DEFAULT_CONSTRAINTS = [
     textattack.constraints.pre_transformation.StopwordModification(),
 ]
 
+
+
 class EasyDataAugmenter(Augmenter):
+    """
+
+        An implementation of Easy Data Augmentation, which combines:
+
+        - WordNet synonym replacement
+        - Word deletion
+        - Word order swaps
+        - Synonym insertion
+
+        in one augmentation method.
+
+        "EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks" (Wei and Zou, 2019)
+        https://arxiv.org/abs/1901.11196
+
+    :param alpha: fraction of words to modify each iteration.
+    :param n_aug: how many augmented examples to create from each existing input.
+
+    """
+
     def __init__(self, alpha, n_aug):
-        from textattack.transformations import CompositeTransformation, \
-                WordSwapWordNet, RandomSynonymInsertion, RandomSwap, \
-                WordDeletion
-
         self.alpha = alpha
-        self.n_aug = n_aug
+        self.transformations_per_example = n_aug
+        n_aug_each = max(n_aug // 4, 1)
 
-        n_aug_each = int(n_aug/4) + 1
-        transformation = CompositeTransformation([
-                            WordSwapWordNet(),
-                            RandomSynonymInsertion(),
-                            RandomSwap(),
-                            WordDeletion()
-                        ])
-        super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, transformations_per_example=n_aug)
+        self.synonym_replacement = WordNetAugmenter(transformations_per_example=n_aug_each)
+        self.random_deletion = DeletionAugmenter(transformations_per_example=n_aug_each)
+        self.random_swap = SwapAugmenter(transformations_per_example=n_aug_each)
+        self.random_insertion = SynonymInsertionAugmenter(transformations_per_example=n_aug_each)
+
+    def _set_words_to_swap(self, num):
+        self.synonym_replacement.num_words_to_swap = num
+        self.random_deletion.num_words_to_swap = num
+        self.random_swap.num_words_to_swap = num
+        self.random_insertion.num_words_to_swap = num
 
     def augment(self, text):
         attacked_text = textattack.shared.AttackedText(text)
         num_words_to_swap = max(1, int(self.alpha*len(attacked_text.words)))
-        self.num_words_to_swap = num_words_to_swap
-        augmented_text = super().augment(text)
-        return augmented_text
+        self._set_words_to_swap(num_words_to_swap)
+        
+        augmented_text = [attacked_text.printable_text()]
+        augmented_text += self.synonym_replacement.augment(text)
+        augmented_text += self.random_deletion.augment(text)
+        augmented_text += self.random_swap.augment(text)
+        augmented_text += self.random_insertion.augment(text)
 
+        random.shuffle(augmented_text)
+        return augmented_text[:self.transformations_per_example]
+
+class SwapAugmenter(Augmenter):
+    def __init__(self, **kwargs):
+        from textattack.transformations import RandomSwap
+        transformation = RandomSwap()
+        super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
+
+class SynonymInsertionAugmenter(Augmenter):
+    def __init__(self, **kwargs):
+        from textattack.transformations import RandomSynonymInsertion
+        transformation = RandomSynonymInsertion()
+        super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
 
 class WordNetAugmenter(Augmenter):
@@ -45,7 +83,7 @@ class WordNetAugmenter(Augmenter):
         transformation = WordSwapWordNet()
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
-class RandomDeletionAugmenter(Augmenter):
+class DeletionAugmenter(Augmenter):
     def __init__(self, **kwargs):
         from textattack.transformations import WordDeletion
         transformation = WordDeletion()
