@@ -22,6 +22,8 @@ class WordEmbeddingDistance(Constraint):
         max_mse_dist: The maximum euclidean distance between word embeddings.
         cased (bool): Whether embedding supports uppercase & lowercase
             (defaults to False, or just lowercase).
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
     """
 
     PATH = "word_embeddings"
@@ -33,7 +35,9 @@ class WordEmbeddingDistance(Constraint):
         min_cos_sim=None,
         max_mse_dist=None,
         cased=False,
+        compare_against_original=True,
     ):
+        super().__init__(compare_against_original)
         self.include_unknown_words = include_unknown_words
         self.cased = cased
         self.min_cos_sim = min_cos_sim

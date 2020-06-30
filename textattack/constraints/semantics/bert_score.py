@@ -21,11 +21,20 @@ class BERTScore(Constraint):
             - "precision": match words from candidate text to reference text
             - "recall": match words from reference text to candidate text
             - "f1": harmonic mean of precision and recall (recommended)
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
     """
 
     SCORE_TYPE2IDX = {"precision": 0, "recall": 1, "f1": 2}
 
-    def __init__(self, min_bert_score, model="bert-base-uncased", score_type="f1"):
+    def __init__(
+        self,
+        min_bert_score,
+        model="bert-base-uncased",
+        score_type="f1",
+        compare_against_original=True,
+    ):
+        super.__init__(compare_against_original)
         if not isinstance(min_bert_score, float):
             raise TypeError("max_bleu_score must be a float")
         if min_bert_score < 0.0 or min_bert_score > 1.0:

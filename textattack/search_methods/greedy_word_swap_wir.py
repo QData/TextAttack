@@ -20,8 +20,8 @@ class GreedyWordSwapWIR(SearchMethod):
     order of index, after ranking indices by importance.
         
     Args:
-        wir_method: method for ranking most important words
-        ascending: if True, ranks words from least-to-most important. (Default
+        wir_method (str): Method for ranking most important words. Available choices: `unk`, `delete`, `pwws`, and `random`.
+        ascending (bool): if True, ranks words from least-to-most important. (Default
             ranking shows the most important word first.)
     """
 

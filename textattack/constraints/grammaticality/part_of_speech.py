@@ -15,11 +15,23 @@ class PartOfSpeech(Constraint):
         adapted from `<https://github.com/jind11/TextFooler>`_.
 
         POS tagger from Flair `<https://github.com/flairNLP/flair>` also available
+
+        Args:
+            tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair").
+            tagset (str): tagset to use for POS tagging
+            allow_verb_noun_swap (bool): If `True`, allow verbs to be swapped with nouns and vice versa. 
+            compare_against_original (bool): If `True`, compare against the original text. 
+                Otherwise, compare against the most recent text.
     """
 
     def __init__(
-        self, tagger_type="nltk", tagset="universal", allow_verb_noun_swap=True
+        self,
+        tagger_type="nltk",
+        tagset="universal",
+        allow_verb_noun_swap=True,
+        compare_against_original=True,
     ):
+        super().__init__(compare_against_original)
         self.tagger_type = tagger_type
         self.tagset = tagset
         self.allow_verb_noun_swap = allow_verb_noun_swap

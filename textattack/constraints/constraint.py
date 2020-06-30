@@ -1,12 +1,22 @@
+from abc import ABC, abstractmethod
+
 from textattack.shared.utils import default_class_repr
 
 
-class Constraint:
+class Constraint(ABC):
     """ 
     An abstract class that represents constraints on adversial text examples. 
     Constraints evaluate whether transformations from a ``AttackedText`` to another 
     ``AttackedText`` meet certain conditions.
+
+    Args:
+        compare_against_original (bool): If `True`, the reference text should be the original text under attack. 
+            If `False`, the reference text is the most recent text from which the transformed text was generated.
+            All constraints must have this attribute.
     """
+
+    def __init__(self, compare_against_original):
+        self.compare_against_original = compare_against_original
 
     def call_many(self, transformed_texts, current_text, original_text=None):
         """
@@ -86,6 +96,7 @@ class Constraint:
             transformed_text, current_text, original_text=original_text
         )
 
+    @abstractmethod
     def _check_constraint(self, transformed_text, current_text, original_text=None):
         """ 
         Returns True if the constraint is fulfilled, False otherwise. Must be overridden by

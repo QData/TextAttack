@@ -15,18 +15,13 @@ class GoogleLanguageModel(Constraint):
     determine the difference in perplexity between x and x_adv. 
 
     Args:
-        top_n (int):
+        top_n (int): 
         top_n_per_index (int):
-        print_step (:obj:`bool`, optional): Whether to print each step. Defaults to False. 
-        
-    Returns:
-        The :obj:`top_n` sentences.
-
-    Raises:
-        ValueError: If :obj:`top_n` or :obj:`top_n_per_index` are not provided. 
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, top_n=None, top_n_per_index=None, print_step=False):
+    def __init__(self, top_n=None, top_n_per_index=None, compare_against_original=True):
         if not (top_n or top_n_per_index):
             raise ValueError(
                 "Cannot instantiate GoogleLanguageModel without top_n or top_n_per_index"
@@ -34,7 +29,7 @@ class GoogleLanguageModel(Constraint):
         self.lm = GoogLMHelper()
         self.top_n = top_n
         self.top_n_per_index = top_n_per_index
-        self.print_step = print_step
+        super().__init__(compare_against_original)
 
     def check_compatibility(self, transformation):
         return isinstance(transformation, WordSwap)
@@ -103,9 +98,6 @@ class GoogleLanguageModel(Constraint):
         max_el_indices.sort()
 
         return [transformed_texts[i] for i in max_el_indices]
-
-    def __call__(self, x, x_adv):
-        raise NotImplementedError()
 
     def extra_repr_keys(self):
         return ["top_n", "top_n_per_index"]

@@ -10,11 +10,14 @@ class LanguageTool(Constraint):
         (https://languagetool.org/)
         
         Args:
-            grammar_error_threshold (int): the number of additional errors permitted in x_adv
-                relative to x
+            grammar_error_threshold (int): the number of additional errors permitted in `x_adv`
+                relative to `x`
+            compare_against_original (bool): If `True`, compare against the original text. 
+                Otherwise, compare against the most recent text.
     """
 
-    def __init__(self, grammar_error_threshold=0):
+    def __init__(self, grammar_error_threshold=0, compare_against_original=True):
+        super().__init__(compare_against_original)
         self.lang_tool = language_tool_python.LanguageTool("en-US")
         self.grammar_error_threshold = grammar_error_threshold
         self.grammar_error_cache = {}

@@ -18,8 +18,8 @@ class SentenceEncoder(Constraint):
             Defaults to 0.8
         metric (:obj:`str`, optional): The similarity metric to use. Defaults to 
             cosine. Options: ['cosine, 'angular']
-        compare_with_original (bool): Whether to compare `x_adv` to the previous `x_adv`
-            or the original `x`.
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
         window_size (int): The number of words to use in the similarity 
             comparison. `None` indicates no windowing (encoding is based on the
             full input).
@@ -29,7 +29,7 @@ class SentenceEncoder(Constraint):
         self,
         threshold=0.8,
         metric="cosine",
-        compare_with_original=False,
+        compare_against_original=True,
         window_size=None,
         skip_text_shorter_than_window=False,
     ):

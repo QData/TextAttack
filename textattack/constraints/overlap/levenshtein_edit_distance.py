@@ -4,10 +4,16 @@ from textattack.constraints import Constraint
 
 
 class LevenshteinEditDistance(Constraint):
-    """ A constraint on edit distance (Levenshtein Distance).
+    """ 
+    A constraint on edit distance (Levenshtein Distance).
+    Args:
+        max_edit_distance (int): Maximum edit distance allowed.
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, max_edit_distance):
+    def __init__(self, max_edit_distance, compare_against_original=True):
+        super().__init__(compare_against_original)
         if not isinstance(max_edit_distance, int):
             raise TypeError("max_edit_distance must be an int")
         self.max_edit_distance = max_edit_distance

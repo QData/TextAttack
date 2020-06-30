@@ -4,11 +4,23 @@ from textattack.constraints import Constraint
 
 
 class MaxWordsPerturbed(Constraint):
-    """ A constraint representing a maximum allowed perturbed words. """
+    """ 
+    A constraint representing a maximum allowed perturbed words. 
+    
+    Args:
+        max_num_words (:obj:`int`, optional): Maximum number of perturbed words allowed.
+        max_percent (:obj: `float`, optional): Maximum percentage of words allowed to be perturbed.
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
+    """
 
-    def __init__(self, max_num_words=None, max_percent=None):
+    def __init__(
+        self, max_num_words=None, max_percent=None, compare_against_original=True
+    ):
+        super().__init__(compare_against_original)
+
         if (max_num_words is None) and (max_percent is None):
-            raise ValueError("must set either max perc or max num words")
+            raise ValueError("must set either `max_percent` or `max_num_words`")
         if max_percent and not (0 <= max_percent <= 1):
             raise ValueError("max perc must be between 0 and 1")
         self.max_num_words = max_num_words
