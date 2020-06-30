@@ -1,5 +1,4 @@
-from textattack.constraints.pre_transformation import (
-    # InputColumnModification,
+from textattack.constraints.pre_transformation import (  # InputColumnModification,
     RepeatModification,
     StopwordModification,
 )

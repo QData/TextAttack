@@ -6,6 +6,7 @@ by Zang et. al
 """
 
 from copy import deepcopy
+
 import numpy as np
 
 from textattack.search_methods import SearchMethod
