@@ -9,7 +9,7 @@ numpy
 pandas>=1.0.1
 scikit-learn
 scipy==1.4.1
-sentence_transformers
+sentence_transformers==0.2.6.1
 torch
 transformers>=3
 tensorflow>=2
