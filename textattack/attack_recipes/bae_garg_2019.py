@@ -54,16 +54,32 @@ def BAEGarg2019(model):
     # original token t_i in the sentence.
     constraints.append(PartOfSpeech(allow_verb_noun_swap=True))
 
-    # To ensure semantic similarity on introducing perturbations in the input
+    # "To ensure semantic similarity on introducing perturbations in the input
     # text, we filter the set of top-K masked tokens (K is a pre-defined
     # constant) predicted by BERT-MLM using a Universal Sentence Encoder (USE)
-    # (Cer et al., 2018)-based sentence similarity scorer.
+    # (Cer et al., 2018)-based sentence similarity scorer."
     #
-    # [We] set a threshold of 0.8 for the cosine similarity between USE-based
-    # embeddings of the adversarial and input text.
+    # "[We] set a threshold of 0.8 for the cosine similarity between USE-based
+    # embeddings of the adversarial and input text."
     #
-    # TODO what window size should be set?
-    # TODO should we skip text shorter than the window?
+    # [from email correspondence with the author]
+    # "For a fair comparison of the benefits of using a BERT-MLM in our paper,
+    # we retained the majority of TextFooler's specifications. Thus we:
+    # 1. Use the USE for comparison within a window of size 15 around the word
+    # being replaced/inserted.
+    # 2. Set the similarity score threshold to 0.1 for inputs shorter than the
+    # window size (this translates roughly to almost always accepting the new text).
+    # 3. Perform the USE similarity thresholding of 0.8 with respect to the text
+    # just before the replacement/insertion and not the original text (For
+    # example: at the 3rd R/I operation, we compute the USE score on a window
+    # of size 15 of the text obtained after the first 2 R/I operations and not
+    # the original text).
+    # ...
+    # To address point (3) from above, compare the USE with the original text
+    # at each iteration instead of the current one (While doing this change
+    # for the R-operation is trivial, doing it for the I-operation with the
+    # window based USE comparison might be more involved)."
+
     use_constraint = UniversalSentenceEncoder(
         threshold=0.8,
         metric="cosine",
