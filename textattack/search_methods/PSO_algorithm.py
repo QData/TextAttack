@@ -88,9 +88,14 @@ class PSOAlgorithm(SearchMethod):
             new_x_list, self.correct_output
         )
         new_x_scores = np.array([r.score for r in new_x_results])
-        new_x_scores = new_x_scores - orig_result[0].score  # minimize the score of ground truth
+        new_x_scores = (
+            new_x_scores - orig_result[0].score
+        )  # minimize the score of ground truth
         if len(new_x_scores):
-            return np.max(new_x_scores), new_x_list[np.argsort(new_x_scores)[-1]].words[pos]
+            return (
+                np.max(new_x_scores),
+                new_x_list[np.argsort(new_x_scores)[-1]].words[pos],
+            )
         else:
             return 0, x_cur.words[pos]
 
@@ -113,7 +118,12 @@ class PSOAlgorithm(SearchMethod):
                 neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
             except:
                 assert len(attacked_text.words) == len(transformed_text.words)
-                assert all([w1 == w2 for w1, w2 in zip(attacked_text.words, transformed_text.words)])
+                assert all(
+                    [
+                        w1 == w2
+                        for w1, w2 in zip(attacked_text.words, transformed_text.words)
+                    ]
+                )
         neighbors_list = [np.array(x) for x in neighbors_list]
         return neighbors_list
 
@@ -131,9 +141,7 @@ class PSOAlgorithm(SearchMethod):
             if np.random.uniform() < prob[i]:
                 indices_to_replace.append(i)
                 words_to_replace.append(x2_words[i])
-        new_text = x1.replace_words_at_indices(
-            indices_to_replace, words_to_replace
-        )
+        new_text = x1.replace_words_at_indices(indices_to_replace, words_to_replace)
         return new_text
 
     def count_change_ratio(self, x1, x2, x_len):
@@ -151,12 +159,12 @@ class PSOAlgorithm(SearchMethod):
         # get word substitute candidates and generate population
         neighbors_list = self._get_neighbors_list(self.original_attacked_text)
         neighbors_len = [len(x) for x in neighbors_list]
-        pop = self.generate_population(self.original_attacked_text, neighbors_list, neighbors_len)
+        pop = self.generate_population(
+            self.original_attacked_text, neighbors_list, neighbors_len
+        )
 
         # test population against target model
-        pop_results, self.search_over = self.get_goal_results(
-            pop, self.correct_output
-        )
+        pop_results, self.search_over = self.get_goal_results(pop, self.correct_output)
         if self.search_over:
             return max(pop_results, key=lambda x: x.score)
         pop_scores = np.array([r.score for r in pop_results])
@@ -181,7 +189,9 @@ class PSOAlgorithm(SearchMethod):
         # start iterations
         for i in range(self.max_iters):
 
-            Omega = (Omega_1 - Omega_2) * (self.max_iters - i) / self.max_iters + Omega_2
+            Omega = (Omega_1 - Omega_2) * (
+                self.max_iters - i
+            ) / self.max_iters + Omega_2
             C1 = C1_origin - i / self.max_iters * (C1_origin - C2_origin)
             C2 = C2_origin + i / self.max_iters * (C1_origin - C2_origin)
             P1 = C1
@@ -195,8 +205,9 @@ class PSOAlgorithm(SearchMethod):
                 part_elites_words = part_elites[id].words
                 for dim in range(x_len):
                     V_P[id][dim] = Omega * V_P[id][dim] + (1 - Omega) * (
-                            self.equal(pop_words[dim], part_elites_words[dim]) +
-                            self.equal(pop_words[dim], all_elite_words[dim]))
+                        self.equal(pop_words[dim], part_elites_words[dim])
+                        + self.equal(pop_words[dim], all_elite_words[dim])
+                    )
                 turn_prob = [self.sigmod(V_P[id][d]) for d in range(x_len)]
 
                 if np.random.uniform() < P1:
@@ -218,10 +229,14 @@ class PSOAlgorithm(SearchMethod):
             # mutation based on the current change rate
             new_pop = []
             for x in pop:
-                change_ratio = self.count_change_ratio(x, self.original_attacked_text, x_len)
+                change_ratio = self.count_change_ratio(
+                    x, self.original_attacked_text, x_len
+                )
                 p_change = 1 - 2 * change_ratio
                 if np.random.uniform() < p_change:
-                    new_h, new_w_list = self.gen_h_score(x, neighbors_len, neighbors_list)
+                    new_h, new_w_list = self.gen_h_score(
+                        x, neighbors_len, neighbors_list
+                    )
                     new_pop.append(self.mutate(x, new_h, new_w_list))
                 else:
                     new_pop.append(x)

@@ -19,15 +19,15 @@ class WordSwapHowNet(WordSwap):
 
         # Download embeddings if they're not cached.
         cache_path = utils.download_if_needed(
-            "{}/{}".format(WordSwapHowNet.PATH, 'word_candidates_sense.pkl')
+            "{}/{}".format(WordSwapHowNet.PATH, "word_candidates_sense.pkl")
         )
 
         # Actually load the files from disk.
-        with open(cache_path, 'rb') as fp:
+        with open(cache_path, "rb") as fp:
             self.candidates_bank = pickle.load(fp)
 
         self._flair_pos_tagger = SequenceTagger.load("pos-fast")
-        self.pos_dict = {'JJ': 'adj', 'NN': 'noun', 'RB': 'adv', 'VB': 'verb'}
+        self.pos_dict = {"JJ": "adj", "NN": "noun", "RB": "adv", "VB": "verb"}
 
     def _get_replacement_words(self, word, word_pos):
         """ Returns a list of possible 'candidate words' to replace a word in a sentence 
@@ -40,15 +40,18 @@ class WordSwapHowNet(WordSwap):
         try:
             candidate_words = self.candidates_bank[word.lower()][word_pos]
             if self.max_candidates > 0:
-                candidate_words = candidate_words[:self.max_candidates]
-            return [recover_word_case(candidate_word, word) for candidate_word in candidate_words]
+                candidate_words = candidate_words[: self.max_candidates]
+            return [
+                recover_word_case(candidate_word, word)
+                for candidate_word in candidate_words
+            ]
         except KeyError:
             # This word is not in our synonym bank, so return an empty list.
             return []
 
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
-        words_str = ' '.join(words)
+        words_str = " ".join(words)
         word_list, pos_list = zip_flair_result(
             self._flair_pos_tagger.predict(words_str)[0]
         )
@@ -57,8 +60,10 @@ class WordSwapHowNet(WordSwap):
 
         for i in indices_to_modify:
             word_to_replace = words[i]
-            word_to_replace_pos = pos_list[i][:2] # get the root POS
-            replacement_words = self._get_replacement_words(word_to_replace, word_to_replace_pos)
+            word_to_replace_pos = pos_list[i][:2]  # get the root POS
+            replacement_words = self._get_replacement_words(
+                word_to_replace, word_to_replace_pos
+            )
             transformed_texts_idx = []
             for r in replacement_words:
                 transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
