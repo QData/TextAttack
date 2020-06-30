@@ -53,6 +53,10 @@ class TestAttackedText:
         assert attacked_text.text_window_around_index(5, 3) == "stairs into a"
         assert attacked_text.text_window_around_index(5, 4) == "up stairs into a"
         assert attacked_text.text_window_around_index(5, 5) == "up stairs into a room"
+        assert (
+            attacked_text.text_window_around_index(5, float("inf"))
+            == "A person walks up stairs into a room and sees beer poured from a keg and people talking"
+        )
 
     def test_big_window_around_index(self, attacked_text):
         assert (
