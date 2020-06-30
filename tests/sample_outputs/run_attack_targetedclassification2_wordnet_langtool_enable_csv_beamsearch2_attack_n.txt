@@ -49,7 +49,7 @@
 | Original accuracy:            | 66.67% |
 | Accuracy under attack:        | 33.33% |
 | Attack success rate:          | 50.0%  |
-| Average perturbed word %:     | 2.27%  |
-| Average num. words per input: | 29.0   |
+| Average perturbed word %:     | 2.33%  |
+| Average num. words per input: | 28.67  |
 | Avg num queries:              | 447.5  |
 +-------------------------------+--------+

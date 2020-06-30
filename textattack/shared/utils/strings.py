@@ -26,6 +26,10 @@ def words_from_text(s, words_to_ignore=[]):
     for c in " ".join(s.split()):
         if c.isalpha():
             word += c
+        elif c in "'-" and len(word) > 0:
+            # Allow apostrophes and hyphens as long as they don't begin the
+            # word.
+            word += c
         elif word:
             if word not in words_to_ignore:
                 words.append(word)

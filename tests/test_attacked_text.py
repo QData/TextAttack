@@ -19,6 +19,14 @@ raw_text_pair = collections.OrderedDict(
 )
 
 
+raw_hyphenated_text = "It's a run-of-the-mill kind of farmer's tan."
+
+
+@pytest.fixture
+def hyphenated_text():
+    return textattack.shared.AttackedText(raw_hyphenated_text)
+
+
 @pytest.fixture
 def attacked_text_pair():
     return textattack.shared.AttackedText(raw_text_pair)
@@ -136,13 +144,13 @@ class TestAttackedText:
             + "\n"
             + "The Patan Museum is down the street from the red brick Royal Palace."
         )
-        new_text = new_text.insert_text_after_word_index(38, "and shapes")
+        new_text = new_text.insert_text_after_word_index(37, "and shapes")
         assert new_text.text == (
             "Among these are the old decrepit red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes and shapes."
             + "\n"
             + "The Patan Museum is down the street from the red brick Royal Palace."
         )
-        new_text = new_text.insert_text_after_word_index(41, "The")
+        new_text = new_text.insert_text_after_word_index(40, "The")
         assert new_text.text == (
             "Among these are the old decrepit red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes and shapes."
             + "\n"
@@ -176,3 +184,14 @@ class TestAttackedText:
             new_text.text
             == "person walks a very long way up stairs into a room and sees beer poured and people on the couch."
         )
+
+    def test_hyphen_apostrophe_words(self, hyphenated_text):
+        assert hyphenated_text.words == [
+            "It's",
+            "a",
+            "run-of-the-mill",
+            "kind",
+            "of",
+            "farmer's",
+            "tan",
+        ]
