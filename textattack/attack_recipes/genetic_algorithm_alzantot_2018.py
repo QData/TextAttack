@@ -13,7 +13,7 @@ from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 
-def Alzantot2018(model):
+def GeneticAlgorithmAlzantot2018(model):
     """
         Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, K. (2018). 
         

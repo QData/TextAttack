@@ -25,7 +25,6 @@ def make_directories(output_dir):
 
 def batch_encode(tokenizer, text_list):
     if hasattr(tokenizer, "batch_encode"):
-        print("batch_encode")
         return tokenizer.batch_encode(text_list)
     else:
         return [tokenizer.encode(text_input) for text_input in text_list]
@@ -49,6 +48,9 @@ def train_model(args):
 
     # Use Weights & Biases, if enabled.
     if args.enable_wandb:
+        global wandb
+        import wandb
+
         wandb.init(sync_tensorboard=True)
 
     # Get list of text and list of label (integers) from disk.

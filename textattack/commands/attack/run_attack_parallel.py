@@ -24,7 +24,7 @@ def set_env_variables(gpu_id):
     # TODO: Using USE with `--parallel` raises similar issue as https://github.com/tensorflow/tensorflow/issues/38518#
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     # For PyTorch
-    textattack.shared.utils.set_device(gpu_id)
+    torch.cuda.set_device(gpu_id)
 
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
