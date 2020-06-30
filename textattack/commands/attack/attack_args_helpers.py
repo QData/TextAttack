@@ -333,12 +333,12 @@ def parse_dataset_from_args(args):
         _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
     elif args.model in TEXTATTACK_DATASET_BY_MODEL:
         _, dataset = TEXTATTACK_DATASET_BY_MODEL[args.model]
-        if dataset[0].startswith('textattack'):
-            # unsavory way to pass custom dataset classes 
+        if dataset[0].startswith("textattack"):
+            # unsavory way to pass custom dataset classes
             # ex: dataset = ('textattack.datasets.translation.TedMultiTranslationDataset', 'en', 'de')
             dataset = eval(f"{dataset[0]}")(*dataset[1:])
             return dataset
-        else: 
+        else:
             args.dataset_from_nlp = dataset
     # Automatically detect dataset for models trained with textattack.
     elif args.model and os.path.exists(args.model):

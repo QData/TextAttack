@@ -39,22 +39,26 @@ class T5Tokenizer(AutoTokenizer):
         """
         if isinstance(text, tuple):
             if len(text) > 1:
-                raise ValueError(f'T5Tokenizer tuple inputs must have length 1; got {len(text)}')
+                raise ValueError(
+                    f"T5Tokenizer tuple inputs must have length 1; got {len(text)}"
+                )
             text = text[0]
         if not isinstance(text, str):
             raise TypeError(f"T5Tokenizer expects `str` input, got {type(text)}")
         text_to_encode = self.tokenization_prefix + text
         return super().encode(text_to_encode)
-    
+
     def batch_encode(self, input_text_list):
         new_input_text_list = []
         for text in input_text_list:
             if isinstance(text, tuple):
                 if len(text) > 1:
-                    raise ValueError(f'T5Tokenizer tuple inputs must have length 1; got {len(text)}')
+                    raise ValueError(
+                        f"T5Tokenizer tuple inputs must have length 1; got {len(text)}"
+                    )
                 text = text[0]
             new_input_text_list.append(self.tokenization_prefix + text)
-        
+
         return super().batch_encode(new_input_text_list)
 
     def decode(self, ids):

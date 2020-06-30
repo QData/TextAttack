@@ -122,7 +122,7 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
 
 *seq2sick (black-box) against T5 fine-tuned for English-German translation:*
 ```bash
-textattack attack --recipe seq2sick --model t5-en2de --num-examples 100
+ textattack attack --model t5-en-de --recipe seq2sick --num-examples 100
 ```
 
 ### Augmenting Text
