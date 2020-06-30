@@ -58,6 +58,7 @@ class WordSwapMaskedLM(WordSwap):
         encoding = self._lm_tokenizer.encode_plus(
             text,
             max_length=self.max_length,
+            truncation=True,
             pad_to_max_length=True,
             return_tensors="pt",
         )

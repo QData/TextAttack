@@ -218,11 +218,22 @@ TEXTATTACK_DATASET_BY_MODEL = {
     ),
     #
     # Translation models
-    # TODO add proper `nlp` datasets for translation & summarization
+    "t5-en-de": (
+        "english_to_german",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+    ),
+    "t5-en-fr": (
+        "english_to_french",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "fr"),
+    ),
+    "t5-en-ro": (
+        "english_to_romanian",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+    ),
     #
     # Summarization models
     #
-    #'t5-summ':                      'textattack.models.summarization.T5Summarization',
+    "t5-summarization": ("summarization", ("gigaword", None, "test")),
 }
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
