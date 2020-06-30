@@ -108,8 +108,12 @@ class PSOAlgorithm(SearchMethod):
             attacked_text, original_text=self.original_attacked_text
         )
         for transformed_text in transformations:
-            diff_idx = attacked_text.first_word_diff_index(transformed_text)
-            neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
+            try:
+                diff_idx = attacked_text.first_word_diff_index(transformed_text)
+                neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
+            except:
+                assert len(attacked_text.words) == len(transformed_text.words)
+                assert all([w1 == w2 for w1, w2 in zip(attacked_text.words, transformed_text.words)])
         neighbors_list = [np.array(x) for x in neighbors_list]
         return neighbors_list
 

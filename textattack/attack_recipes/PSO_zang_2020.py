@@ -1,10 +1,8 @@
-from textattack.constraints.grammaticality import PartOfSpeech
-from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
+    # InputColumnModification,
     RepeatModification,
     StopwordModification,
 )
-from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import PSOAlgorithm
 from textattack.shared.attack import Attack
@@ -20,27 +18,22 @@ def PSOZang2020(model):
         https://www.aclweb.org/anthology/2020.acl-main.540.pdf
     """
     #
-    # Swap words with their embedding nearest-neighbors.
+    # Swap words with their synonyms extracted based on the HowNet.
     #
-    # Embedding: Counter-fitted Paragram Embeddings.
-    #
-    # "[We] fix the hyperparameter values to S = 60, N = 8, K = 4, and δ = 0.5"
-    #
-    # transformation = WordSwapEmbedding(max_candidates=20)
     transformation = WordSwapHowNet()
     #
-
     # Don't modify the same word twice or stopwords
     #
     constraints = [RepeatModification(), StopwordModification()]
     #
     #
-    # constraints.append(MaxWordsPerturbed(max_percent=0.20))
+    # During entailment, we should only edit the hypothesis - keep the premise
+    # the same.
     #
-    # Maximum word embedding euclidean distance of 0.5.
-    #
-    # constraints.append(WordEmbeddingDistance(max_mse_dist=0.5))
-    # constraints.append(PartOfSpeech(tagger_type='flair', allow_verb_noun_swap=True))
+    # input_column_modification = InputColumnModification(
+    #     ["premise", "hypothesis"], {"premise"}
+    # )
+    # constraints.append(input_column_modification)
     #
     # Goal is untargeted classification
     #

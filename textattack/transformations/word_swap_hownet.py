@@ -19,7 +19,7 @@ class WordSwapHowNet(WordSwap):
 
         # Download embeddings if they're not cached.
         cache_path = utils.download_if_needed(
-            "{}/{}".format(WordSwapHowNet.PATH, 'word_candidates_sense_imdb_sst_snli.pkl')
+            "{}/{}".format(WordSwapHowNet.PATH, 'word_candidates_sense.pkl')
         )
 
         # Actually load the files from disk.
