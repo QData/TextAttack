@@ -1,13 +1,15 @@
 import textattack
 
 ATTACK_RECIPE_NAMES = {
-    "alzantot": "textattack.attack_recipes.Alzantot2018",
+    "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
+    "faster-alzantot": "textattack.attack_recipes.FasterGeneticAlgorithmJia2019",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
     "kuleshov": "textattack.attack_recipes.Kuleshov2017",
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
+    "pwws": "textattack.attack_recipes.PWWSRen2019",
 }
 
 #
@@ -253,6 +255,7 @@ CONSTRAINT_CLASS_NAMES = {
     "part-of-speech": "textattack.constraints.grammaticality.PartOfSpeech",
     "goog-lm": "textattack.constraints.grammaticality.language_models.GoogleLanguageModel",
     "gpt2": "textattack.constraints.grammaticality.language_models.GPT2",
+    "learning-to-write": "textattack.constraints.grammaticality.language_models.LearningToWriteLanguageModel",
     #
     # Overlap constraints
     #

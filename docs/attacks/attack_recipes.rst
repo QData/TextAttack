@@ -5,10 +5,16 @@ We provide a number of pre-built attack recipes. To run an attack recipe, run::
 
     textattack attack --recipe [recipe_name]
     
-Alzantot
+Alzantot Genetic Algorithm
 ###########
 
-.. automodule:: textattack.attack_recipes.alzantot_2018
+.. automodule:: textattack.attack_recipes.genetic_algorithm_alzantot_2018
+   :members:
+       
+Faster Alzantot Genetic Algorithm
+###########
+
+.. automodule:: textattack.attack_recipes.faster_genetic_algorithm_jia_2019
    :members:
 
 DeepWordBug
@@ -41,6 +47,13 @@ TextFooler
 
 .. automodule:: textattack.attack_recipes.textfooler_jin_2019
    :members:
+
+
+PWWS
+###########
+
+.. automodule:: textattack.attack_recipes.pwws_ren_2019
+    :members:
 
 
 TextBugger

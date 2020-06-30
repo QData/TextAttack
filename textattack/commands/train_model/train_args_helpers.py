@@ -20,9 +20,10 @@ def prepare_dataset_for_training(nlp_dataset):
         values = list(ex.values())
         if len(values) == 1:
             return values[0]
-        return values
+        return tuple(values)
 
-    return zip(*((prepare_example_dict(x[0]), x[1]) for x in nlp_dataset))
+    text, outputs = zip(*((prepare_example_dict(x[0]), x[1]) for x in nlp_dataset))
+    return list(text), list(outputs)
 
 
 def dataset_from_args(args):
