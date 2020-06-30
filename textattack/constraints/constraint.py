@@ -18,7 +18,7 @@ class Constraint(ABC):
     def __init__(self, compare_against_original):
         self.compare_against_original = compare_against_original
 
-    def call_many(self, transformed_texts, reference_texts):
+    def call_many(self, transformed_texts, reference_text):
         """
         Filters ``transformed_texts`` based on which transformations fulfill the constraint.
         First checks compatibility with latest ``Transformation``, then calls 
@@ -121,5 +121,6 @@ class Constraint(ABC):
         strings are acceptable.
         """
         return []
+        #return ["compare_against_original"]
 
     __str__ = __repr__ = default_class_repr

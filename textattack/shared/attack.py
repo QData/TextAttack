@@ -63,8 +63,7 @@ class Attack:
         self.pre_transformation_constraints = []
         for constraint in constraints:
             if isinstance(
-                constraint,
-                textattack.constraints.pre_transformation.PreTransformationConstraint,
+                constraint, textattack.constraints.PreTransformationConstraint,
             ):
                 self.pre_transformation_constraints.append(constraint)
             else:

@@ -1,4 +1,3 @@
-from .pre_transformation_constraint import PreTransformationConstraint
 from .stopword_modification import StopwordModification
 from .repeat_modification import RepeatModification
 from .max_word_index_modification import MaxWordIndexModification

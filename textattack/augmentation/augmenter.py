@@ -2,7 +2,7 @@ import random
 
 import tqdm
 
-from textattack.constraints.pre_transformation import PreTransformationConstraint
+from textattack.constraints import PreTransformationConstraint
 from textattack.shared import AttackedText
 
 
@@ -59,7 +59,7 @@ class Augmenter:
                 transformed_texts = C.call_many(transformed_texts, original_text)
             else:
                 transformed_texts = C.call_many(transformed_texts, current_text)
-        return filtered_texts
+        return transformed_texts
 
     def augment(self, text):
         """ 
