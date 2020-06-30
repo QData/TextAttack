@@ -112,14 +112,13 @@ attack_test_params = [
     ),
     # fmt: on
     #
-    # test: run_attack on LSTM IMDB using word embedding transformation and genetic algorithm. Simulate alzantot recipe without using expensive LM
+    # test: run_attack on LSTM MR using word embedding transformation and genetic algorithm. Simulate alzantot recipe without using expensive LM
     (
-        "run_attack_genetic_lstm_imdb",
+        "run_attack_faster_alzantot_recipe",
         (
-            "textattack attack --model lstm-imdb --search ga-word --transformation word-swap-embedding "
-            "--constraints repeat stopword embedding:min_cos_sim=0.7 bert --num-examples 4 --num-examples-offset 21"
+            "textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 --num-examples-offset 20"
         ),
-        "tests/sample_outputs/run_attack_genetic_lstm_imdb.txt",
+        "tests/sample_outputs/run_attack_faster_alzantot_recipe.txt",
     ),
 ]
 

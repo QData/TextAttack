@@ -35,7 +35,6 @@ class GeneticAlgorithm(SearchMethod):
         temp=0.3,
         give_up_if_no_improvement=False,
         max_crossover_retries=20,
-        compare_against_original=True,
     ):
         self.max_iters = max_iters
         self.pop_size = pop_size
@@ -68,7 +67,7 @@ class GeneticAlgorithm(SearchMethod):
             transformations = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
-                indices_to_modify=[rand_idx]
+                indices_to_modify=[rand_idx],
             )
 
             if not len(transformations):
@@ -175,8 +174,8 @@ class GeneticAlgorithm(SearchMethod):
         # Therefore, we give small non-zero probability for words with no candidates
         # Epsilon is some small number to approximately assign 1% probability
         total_candidates = np.sum(num_candidates_per_word)
-        num_zero_elements = len(words) - np.count_zero(num_candidates_per_word)
-        epsilon = min(1, int(total_candidates / (100 - num_zero_elements)))
+        num_zero_elements = len(words) - np.count_nonzero(num_candidates_per_word)
+        epsilon = max(1, int(total_candidates / (100 - num_zero_elements)))
         for i in range(len(num_candidates_per_word)):
             if num_candidates_per_word[i] == 0:
                 num_candidates_per_word[i] = epsilon
