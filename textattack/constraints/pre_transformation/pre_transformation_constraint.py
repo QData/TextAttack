@@ -1,5 +1,4 @@
 from textattack.constraints import Constraint
-from textattack.shared.utils import default_class_repr
 
 
 class PreTransformationConstraint(Constraint):

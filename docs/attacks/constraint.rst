@@ -166,3 +166,17 @@ Repeat Modification
 ########################
 .. automodule:: textattack.constraints.pre_transformation.repeat_modification
    :members:
+
+Input Column Modification
+#############################
+.. automodule:: textattack.constraints.pre_transformation.input_column_modification
+   :members: 
+ 
+Repeat Modification
+########################
+.. automodule:: textattack.constraints.pre_transformation.repeat_modification
+   :members:
+Repeat Modification
+########################
+.. automodule:: textattack.constraints.pre_transformation.repeat_modification
+   :members:
