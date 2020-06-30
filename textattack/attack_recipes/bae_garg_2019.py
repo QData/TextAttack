@@ -98,9 +98,6 @@ def BAEGarg2019(model):
     # decrease in probability of predicting the correct label y, similar
     # to (Jin et al., 2019).
     #
-    # [Note that this isn't what (Jin et al., 2019) did, since the WIR method
-    # is `delete` instead of `unk`.]
-    #
     # • "If there are multiple tokens can cause C to misclassify S when they
     # replace the mask, we choose the token which makes Sadv most similar to
     # the original S based on the USE score."

@@ -2,7 +2,7 @@ import itertools
 
 import numpy as np
 import torch
-from transformers import AutoModelWithLMHead, AutoTokenizer
+from transformers import AutoModelForMaskedLM, AutoTokenizer
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
@@ -41,7 +41,7 @@ class WordSwapMaskedLM(WordSwap):
         self._lm_tokenizer = AutoTokenizer.from_pretrained(
             masked_language_model, use_fast=True
         )
-        self._language_model = AutoModelWithLMHead.from_pretrained(
+        self._language_model = AutoModelForMaskedLM.from_pretrained(
             masked_language_model
         )
         self._language_model.to(utils.device)
