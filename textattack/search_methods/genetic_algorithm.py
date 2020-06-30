@@ -110,7 +110,7 @@ class GeneticAlgorithm(SearchMethod):
 
         num_tries = 0
         passed_constraints = False
-        while num_tries < self.max_crossover_retries:
+        while num_tries < self.max_crossover_retries + 1:
             indices_to_replace = []
             words_to_replace = []
             num_candidates_per_word = np.copy(pop_member1.num_candidates_per_word)
