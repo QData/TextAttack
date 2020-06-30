@@ -16,7 +16,7 @@ class UntargetedClassification(ClassificationGoalFunction):
         self.target_max_score = target_max_score
         super().__init__(*args, **kwargs)
 
-    def _is_goal_complete(self, model_output):
+    def _is_goal_complete(self, model_output, _):
         if self.target_max_score:
             return model_output[self.ground_truth_output] < self.target_max_score
         elif (model_output.numel() == 1) and isinstance(
@@ -28,7 +28,7 @@ class UntargetedClassification(ClassificationGoalFunction):
         else:
             return model_output.argmax() != self.ground_truth_output
 
-    def _get_score(self, model_output):
+    def _get_score(self, model_output, _):
         # If the model outputs a single number and the ground truth output is
         # a float, we assume that this is a regression task.
         if (model_output.numel() == 1) and isinstance(self.ground_truth_output, float):

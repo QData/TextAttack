@@ -11,12 +11,12 @@ class TargetedClassification(ClassificationGoalFunction):
         super().__init__(*args, **kwargs)
         self.target_class = target_class
 
-    def _is_goal_complete(self, model_output):
+    def _is_goal_complete(self, model_output, _):
         return (
             self.target_class == model_output.argmax()
         ) or self.ground_truth_output == self.target_class
 
-    def _get_score(self, model_output):
+    def _get_score(self, model_output, _):
         if self.target_class < 0 or self.target_class >= len(model_output):
             raise ValueError(
                 f"target class set to {self.target_class} with {len(model_output)} classes."

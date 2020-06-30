@@ -5,6 +5,7 @@ class GoalFunctionResultStatus:
     SUCCEEDED = 0
     SEARCHING = 1  # In process of searching for a success
     MAXIMIZING = 2
+    SKIPPED = 3
 
 
 class GoalFunctionResult:

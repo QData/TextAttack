@@ -12,7 +12,9 @@ from torch.nn.functional import softmax
 
 from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
-from textattack.shared.validators import transformation_consists_of_word_swaps
+from textattack.shared.validators import (
+    transformation_consists_of_word_swaps_and_deletions,
+)
 
 
 class GreedyWordSwapWIR(SearchMethod):
@@ -22,13 +24,10 @@ class GreedyWordSwapWIR(SearchMethod):
         
     Args:
         wir_method: method for ranking most important words
-        ascending: if True, ranks words from least-to-most important. (Default
-            ranking shows the most important word first.)
     """
 
-    def __init__(self, wir_method="unk", ascending=False):
+    def __init__(self, wir_method="unk"):
         self.wir_method = wir_method
-        self.ascending = ascending
 
     def _get_index_order(self, initial_result, texts):
         """ Queries model for list of attacked text objects ``text`` and
@@ -97,10 +96,7 @@ class GreedyWordSwapWIR(SearchMethod):
             search_over = False
 
         if self.wir_method != "random":
-            if self.ascending:
-                index_order = (leave_one_scores).argsort()
-            else:
-                index_order = (-leave_one_scores).argsort()
+            index_order = (-leave_one_scores).argsort()
 
         i = 0
         results = None
@@ -148,7 +144,7 @@ class GreedyWordSwapWIR(SearchMethod):
         """
             Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swaps transformations.
         """
-        return transformation_consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps_and_deletions(transformation)
 
     def extra_repr_keys(self):
         return ["wir_method"]

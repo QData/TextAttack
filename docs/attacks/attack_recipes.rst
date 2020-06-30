@@ -26,6 +26,12 @@ DeepWordBug
 HotFlip
 ###########
 
+.. automodule:: textattack.attack_recipes.hotflip_ebrahimi_2017.py
+   :members:
+
+Input Reduction
+###########
+
 .. automodule:: textattack.attack_recipes.input_reduction_feng_2018
    :members:
 
