@@ -29,19 +29,19 @@ Attack(
 ) 
 
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (72%)[0m
+[92mPositive (100%)[0m --> [91mNegative (66%)[0m
 
-this [92mkind[0m of hands-on [92mstorytelling[0m is ultimately what makes shanghai ghetto move beyond a good , dry , reliable [92mtextbook[0m and what [92mallows[0m it to rank with its worthy [92mpredecessors[0m .
+this [92mkind[0m of hands-on [92mstorytelling[0m is ultimately what makes shanghai ghetto move beyond a good , dry , reliable [92mtextbook[0m and what allows it to rank with its [92mworthy[0m predecessors .
 
-this [91mtype[0m of hands-on [91mtale[0m is ultimately what makes shanghai ghetto move beyond a good , dry , reliable [91mmanuals[0m and what [91mallowed[0m it to rank with its worthy [91mancestors[0m .
+this [91msort[0m of hands-on [91mtale[0m is ultimately what makes shanghai ghetto move beyond a good , dry , reliable [91mmanuals[0m and what allows it to rank with its [91mcreditable[0m predecessors .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92mPositive (80%)[0m --> [91mNegative (99%)[0m
+[92mPositive (80%)[0m --> [91mNegative (98%)[0m
 
-making such a [92mtragedy[0m the backdrop to a love story risks trivializing it , [92mthough[0m chouraqui no doubt intended the film to affirm love's power to help people endure almost unimaginable horror .
+making such a tragedy the [92mbackdrop[0m to a love story risks trivializing it , [92mthough[0m chouraqui no doubt intended the film to affirm love's power to help people endure almost unimaginable horror .
 
-making such a [91mdramas[0m the backdrop to a love story risks trivializing it , [91mnotwithstanding[0m chouraqui no doubt intended the film to affirm love's power to help people endure almost unimaginable horror .
+making such a tragedy the [91mbackground[0m to a love story risks trivializing it , [91mnotwithstanding[0m chouraqui no doubt intended the film to affirm love's power to help people endure almost unimaginable horror .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
@@ -62,7 +62,7 @@ making such a [91mdramas[0m the backdrop to a love story risks trivializing it
 | Original accuracy:            | 100.0% |
 | Accuracy under attack:        | 0.0%   |
 | Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 11.16% |
+| Average perturbed word %:     | 10.01% |
 | Average num. words per input: | 27.0   |
-| Avg num queries:              | 766.0  |
+| Avg num queries:              | 752.33 |
 +-------------------------------+--------+
