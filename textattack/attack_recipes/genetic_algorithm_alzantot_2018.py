@@ -14,7 +14,7 @@ from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 
-def Alzantot2018(model):
+def GeneticAlgorithmAlzantot2018(model):
     """
         Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, K. (2018). 
         
@@ -61,6 +61,6 @@ def Alzantot2018(model):
     #
     # Perform word substitution with a genetic algorithm.
     #
-    search_method = GeneticAlgorithm(pop_size=60, max_iters=20)
+    search_method = GeneticAlgorithm(pop_size=60, max_iters=20, max_crossover_retries=0)
 
     return Attack(goal_function, constraints, transformation, search_method)
