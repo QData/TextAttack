@@ -72,6 +72,7 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         dataset_columns=None,
         shuffle=False,
     ):
+        self._name = name
         self._dataset = nlp.load_dataset(name, subset)[split]
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
         textattack.shared.logger.info(

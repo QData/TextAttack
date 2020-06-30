@@ -138,6 +138,8 @@ def run(args, checkpoint=None):
         print()
         finish_time = time.time()
         textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
+        
+        return attack_log_manager.results
 
 
 if __name__ == "__main__":

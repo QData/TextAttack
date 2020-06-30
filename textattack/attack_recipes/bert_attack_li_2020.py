@@ -20,14 +20,6 @@ def BERTAttackLi2020(model):
         
         This is "attack mode" 1 from the paper, BAE-R, word replacement.
     """
-    from textattack.shared.utils import logger
-
-    logger.warn(
-        "WARNING: This BERT-Attack implementation is based off of a"
-        " preliminary draft of the paper, which lacked source code and"
-        " did not include any hyperparameters. Attack reuslts are likely to"
-        " change."
-    )
     # [from correspondence with the author]
     # Candidate size K is set to 48 for all data-sets.
     transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=48)
