@@ -18,16 +18,15 @@ class Constraint(ABC):
     def __init__(self, compare_against_original):
         self.compare_against_original = compare_against_original
 
-    def call_many(self, transformed_texts, current_text, original_text=None):
+    def call_many(self, transformed_texts, reference_texts):
         """
         Filters ``transformed_texts`` based on which transformations fulfill the constraint.
         First checks compatibility with latest ``Transformation``, then calls 
         ``_check_constraint_many``\.
 
         Args:
-            transformed_texts: The candidate transformed ``AttackedText``\s.
-            current_text: The current ``AttackedText``.
-            original_text: The original ``AttackedText`` from which the attack began.
+            transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``'s.
+            reference_text (AttackedText): The ``AttackedText`` to compare against.
         """
         incompatible_transformed_texts = []
         compatible_transformed_texts = []
@@ -44,44 +43,38 @@ class Constraint(ABC):
                     "transformed_text must have `last_transformation` attack_attr to apply constraint"
                 )
         filtered_texts = self._check_constraint_many(
-            compatible_transformed_texts, current_text, original_text=original_text
+            compatible_transformed_texts, reference_text
         )
         return list(filtered_texts) + incompatible_transformed_texts
 
-    def _check_constraint_many(
-        self, transformed_texts, current_text, original_text=None
-    ):
+    def _check_constraint_many(self, transformed_texts, reference_text):
         """
         Filters ``transformed_texts`` based on which transformations fulfill the constraint.
         Calls ``check_constraint``\.
 
         Args:
-            transformed_texts: The candidate transformed ``AttackedText``\s.
-            current_text: The current ``AttackedText``.
-            original_text: The original ``AttackedText`` from which the attack began.
+            transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``\s.
+            reference_texts (AttackedText): The ``AttackedText`` to compare against.
         """
         return [
             transformed_text
             for transformed_text in transformed_texts
-            if self._check_constraint(
-                transformed_text, current_text, original_text=original_text
-            )
+            if self._check_constraint(transformed_text, reference_text)
         ]
 
-    def __call__(self, transformed_text, current_text, original_text=None):
+    def __call__(self, transformed_text, reference_text):
         """ 
         Returns True if the constraint is fulfilled, False otherwise. First checks
         compatibility with latest ``Transformation``, then calls ``_check_constraint``\.
         
         Args:
-            transformed_text: The candidate transformed ``AttackedText``.
-            current_text: The current ``AttackedText``.
-            original_text: The original ``AttackedText`` from which the attack began.
+            transformed_text (AttackedText): The candidate transformed ``AttackedText``.
+            reference_text (AttackedText): The ``AttackedText`` to compare against.
         """
         if not isinstance(transformed_text, AttackedText):
             raise TypeError("transformed_text must be of type AttackedText")
-        if not isinstance(current_text, AttackedText):
-            raise TypeError("current_text must be of type AttackedText")
+        if not isinstance(reference_text, AttackedText):
+            raise TypeError("reference_text must be of type AttackedText")
 
         try:
             if not self.check_compatibility(
@@ -90,14 +83,12 @@ class Constraint(ABC):
                 return True
         except KeyError:
             raise KeyError(
-                "x_adv must have `last_transformation` attack_attr to apply constraint."
+                "`transformed_text` must have `last_transformation` attack_attr to apply constraint."
             )
-        return self._check_constraint(
-            transformed_text, current_text, original_text=original_text
-        )
+        return self._check_constraint(transformed_text, reference_text)
 
     @abstractmethod
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
+    def _check_constraint(self, transformed_text, reference_text):
         """ 
         Returns True if the constraint is fulfilled, False otherwise. Must be overridden by
         the specific constraint.
@@ -105,7 +96,7 @@ class Constraint(ABC):
         Args:
             transformed_text: The candidate transformed ``AttackedText``.
             current_text: The current ``AttackedText``.
-            original_text: The original ``AttackedText`` from which the attack began.
+            reference_text (AttackedText): The ``AttackedText`` to compare against.
         """
         raise NotImplementedError()
 

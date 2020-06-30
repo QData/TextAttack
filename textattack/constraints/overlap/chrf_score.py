@@ -18,10 +18,8 @@ class chrF(Constraint):
             raise TypeError("max_chrf must be an int")
         self.max_chrf = max_chrf
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        if not original_text:
-            return True
-        ref = original_text.words
+    def _check_constraint(self, transformed_text, reference_text):
+        ref = reference_text.words
         hyp = transformed_text.words
         chrf = nltk.translate.chrf_score.sentence_chrf(ref, hyp)
         return chrf <= self.max_chrf

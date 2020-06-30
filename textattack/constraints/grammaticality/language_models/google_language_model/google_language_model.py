@@ -34,9 +34,7 @@ class GoogleLanguageModel(Constraint):
     def check_compatibility(self, transformation):
         return isinstance(transformation, WordSwap)
 
-    def _check_constraint_many(
-        self, transformed_texts, current_text, original_text=None
-    ):
+    def _check_constraint_many(self, transformed_texts, reference_text):
         """
         Returns the `top_n` of transformed_texts, as evaluated by the language 
         model. 
@@ -44,9 +42,9 @@ class GoogleLanguageModel(Constraint):
         if not len(transformed_texts):
             return []
 
-        def get_probs(current_text, transformed_texts):
-            word_swap_index = current_text.first_word_diff_index(transformed_texts[0])
-            prefix = current_text.words[word_swap_index - 1]
+        def get_probs(reference_text, transformed_texts):
+            word_swap_index = reference_text.first_word_diff_index(transformed_texts[0])
+            prefix = reference_text.words[word_swap_index - 1]
             swapped_words = np.array(
                 [t.words[word_swap_index] for t in transformed_texts]
             )
@@ -59,7 +57,7 @@ class GoogleLanguageModel(Constraint):
         word_swap_index_map = defaultdict(list)
 
         for idx, transformed_text in enumerate(transformed_texts):
-            word_swap_index = current_text.first_word_diff_index(transformed_text)
+            word_swap_index = reference_text.first_word_diff_index(transformed_text)
             word_swap_index_map[word_swap_index].append((idx, transformed_text))
 
         probs = []
@@ -68,7 +66,7 @@ class GoogleLanguageModel(Constraint):
             item_indices, this_transformed_texts = zip(*item_list)
             t1 = time.time()
             probs_of_swaps_at_index = list(
-                zip(item_indices, get_probs(current_text, this_transformed_texts))
+                zip(item_indices, get_probs(reference_text, this_transformed_texts))
             )
             # Sort by probability in descending order and take the top n for this index.
             probs_of_swaps_at_index.sort(key=lambda x: -x[1])
@@ -98,6 +96,9 @@ class GoogleLanguageModel(Constraint):
         max_el_indices.sort()
 
         return [transformed_texts[i] for i in max_el_indices]
+
+    def _check_constraint(self, transformed_text, reference_text):
+        return self._check_constraint_many([transformed_text], reference_text)
 
     def extra_repr_keys(self):
         return ["top_n", "top_n_per_index"]

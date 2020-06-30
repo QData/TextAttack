@@ -19,10 +19,8 @@ class BLEU(Constraint):
             raise TypeError("max_bleu_score must be an int")
         self.max_bleu_score = max_bleu_score
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        if not original_text:
-            return True
-        ref = original_text.words
+    def _check_constraint(self, transformed_text, reference_text):
+        ref = reference_text.words
         hyp = transformed_text.words
         bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
         return bleu_score <= self.max_bleu_score

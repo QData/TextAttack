@@ -122,9 +122,15 @@ class Attack:
         for C in self.constraints:
             if len(filtered_texts) == 0:
                 break
-            filtered_texts = C.call_many(
-                filtered_texts, current_text, original_text=original_text
-            )
+            if C.compare_against_original:
+                if not original_text:
+                    raise ValueError(
+                        f"Missing `original_text` argument when constraint {type(C)} is set to compare against `original_text`"
+                    )
+
+                filtered_texts = C.call_many(filtered_texts, original_text)
+            else:
+                filtered_texts = C.call_many(filtered_texts, current_text)
         # Default to false for all original transformations.
         for original_transformed_text in transformed_texts:
             self.constraints_cache[(current_text, original_transformed_text)] = False

@@ -31,8 +31,8 @@ class LanguageTool(Constraint):
         else:
             return len(self.lang_tool.check(text))
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        original_num_errors = self.get_errors(original_text, use_cache=True)
+    def _check_constraint(self, transformed_text, reference_text):
+        original_num_errors = self.get_errors(reference_text, use_cache=True)
         errors_added = self.get_errors(transformed_text) - original_num_errors
         return errors_added <= self.grammar_error_threshold
 

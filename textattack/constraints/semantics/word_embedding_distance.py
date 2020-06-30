@@ -115,9 +115,9 @@ class WordEmbeddingDistance(Constraint):
             self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
+    def _check_constraint(self, transformed_text, reference_text):
         """ 
-        Returns true if (``current_text, ``transformed_text``) are closer than 
+        Returns true if (``transformed_text`` and ``reference_text``) are closer than 
         ``self.min_cos_sim`` and ``self.max_mse_dist``. 
         """
         try:
@@ -128,16 +128,16 @@ class WordEmbeddingDistance(Constraint):
             )
 
         for i in indices:
-            cur_word = current_text.words[i]
+            ref_word = reference_text.words[i]
             transformed_word = transformed_text.words[i]
 
             if not self.cased:
                 # If embedding vocabulary is all lowercase, lowercase words.
-                cur_word = cur_word.lower()
+                ref_word = ref_word.lower()
                 transformed_word = transformed_word.lower()
 
             try:
-                cur_id = self.word_embedding_word2index[cur_word]
+                ref_id = self.word_embedding_word2index[ref_word]
                 transformed_id = self.word_embedding_word2index[transformed_word]
             except KeyError:
                 # This error is thrown if x or x_adv has no corresponding ID.
@@ -147,12 +147,12 @@ class WordEmbeddingDistance(Constraint):
 
             # Check cosine distance.
             if self.min_cos_sim:
-                cos_sim = self.get_cos_sim(cur_id, transformed_id)
+                cos_sim = self.get_cos_sim(ref_id, transformed_id)
                 if cos_sim < self.min_cos_sim:
                     return False
             # Check MSE distance.
             if self.max_mse_dist:
-                mse_dist = self.get_mse_dist(cur_id, transformed_id)
+                mse_dist = self.get_mse_dist(ref_id, transformed_id)
                 if mse_dist > self.max_mse_dist:
                     return False
 

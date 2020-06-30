@@ -19,10 +19,8 @@ class METEOR(Constraint):
             raise TypeError("max_meteor must be an int")
         self.max_meteor = max_meteor
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        if not original_text:
-            return True
-        meteor = nltk.translate.meteor([original_text], transformed_text)
+    def _check_constraint(self, transformed_text, reference_text):
+        meteor = nltk.translate.meteor([reference_text], transformed_text)
         return meteor <= self.max_meteor
 
     def extra_repr_keys(self):

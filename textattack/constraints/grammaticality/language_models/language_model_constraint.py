@@ -28,10 +28,7 @@ class LanguageModelConstraint(Constraint):
         """
         raise NotImplementedError()
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        if self.compare_against_original:
-            current_text = original_text
-
+    def _check_constraint(self, transformed_text, reference_text):
         try:
             indices = transformed_text.attack_attrs["newly_modified_indices"]
         except KeyError:
@@ -40,13 +37,13 @@ class LanguageModelConstraint(Constraint):
             )
 
         for i in indices:
-            probs = self.get_log_probs_at_index((current_text, transformed_text), i)
+            probs = self.get_log_probs_at_index((reference_text, transformed_text), i)
             if len(probs) != 2:
                 raise ValueError(
                     f"Error: get_log_probs_at_index returned {len(probs)} values for 2 inputs"
                 )
-            cur_prob, transformed_prob = probs
-            if transformed_prob <= cur_prob - self.max_log_prob_diff:
+            ref_prob, transformed_prob = probs
+            if transformed_prob <= ref_prob - self.max_log_prob_diff:
                 return False
 
         return True

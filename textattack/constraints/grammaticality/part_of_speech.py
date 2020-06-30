@@ -71,7 +71,7 @@ class PartOfSpeech(Constraint):
         assert word_list[idx] == word, "POS list not matched with original word list."
         return pos_list[idx]
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
+    def _check_constraint(self, transformed_text, reference_text):
         try:
             indices = transformed_text.attack_attrs["newly_modified_indices"]
         except KeyError:
@@ -80,13 +80,15 @@ class PartOfSpeech(Constraint):
             )
 
         for i in indices:
-            current_word = current_text.words[i]
+            reference_word = reference_text.words[i]
             transformed_word = transformed_text.words[i]
-            before_ctx = current_text.words[max(i - 4, 0) : i]
-            after_ctx = current_text.words[i + 1 : min(i + 4, len(current_text.words))]
-            cur_pos = self._get_pos(before_ctx, current_word, after_ctx)
+            before_ctx = reference_text.words[max(i - 4, 0) : i]
+            after_ctx = reference_text.words[
+                i + 1 : min(i + 4, len(reference_text.words))
+            ]
+            ref_pos = self._get_pos(before_ctx, reference_word, after_ctx)
             replace_pos = self._get_pos(before_ctx, transformed_word, after_ctx)
-            if not self._can_replace_pos(cur_pos, replace_pos):
+            if not self._can_replace_pos(ref_pos, replace_pos):
                 return False
 
         return True

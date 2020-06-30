@@ -48,9 +48,13 @@ class BERTScore(Constraint):
             model_type=model, idf=False, device=utils.device
         )
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
+    def _check_constraint(self, transformed_text, reference_text):
+        """
+        Return `True` if BERT Score between `transformed_text` and `reference_text`
+            is lower than minimum BERT Score. 
+        """
         cand = transformed_text.text
-        ref = original_text.text if original_text else current_text.text
+        ref = reference_text.text
         result = self._bert_scorer.score([cand], [ref])
         score = result[BERTScore.SCORE_TYPE2IDX[self.score_type]].item()
         if score >= self.min_bert_score:

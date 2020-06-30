@@ -171,22 +171,13 @@ class SentenceEncoder(Constraint):
 
         return self.sim_metric(starting_embeddings, transformed_embeddings)
 
-    def _check_constraint_many(
-        self, transformed_texts, current_text, original_text=None
-    ):
+    def _check_constraint_many(self, transformed_texts, reference_text):
         """
         Filters the list ``transformed_texts`` so that the similarity between the ``current_text``
         and the transformed text is greater than the ``self.threshold``.
         """
-        if self.compare_with_original:
-            if original_text:
-                scores = self._score_list(original_text, transformed_texts)
-            else:
-                raise ValueError(
-                    "Must provide original text when compare_with_original is true."
-                )
-        else:
-            scores = self._score_list(current_text, transformed_texts)
+        scores = self._score_list(reference_text, transformed_texts)
+
         for i, transformed_text in enumerate(transformed_texts):
             # Optionally ignore similarity score for sentences shorter than the
             # window size.
@@ -199,21 +190,15 @@ class SentenceEncoder(Constraint):
         mask = (scores >= self.threshold).cpu().numpy().nonzero()
         return np.array(transformed_texts)[mask]
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
+    def _check_constraint(self, transformed_text, reference_text):
         if (
             self.skip_text_shorter_than_window
             and len(transformed_text.words) < self.window_size
         ):
             score = 1
-        elif self.compare_with_original:
-            if original_text:
-                score = self._sim_score(original_text, transformed_text)
-            else:
-                raise ValueError(
-                    "Must provide original text when compare_with_original is true."
-                )
         else:
-            scores = self._sim_score(current_text, transformed_texts)
+            score = self._sim_score(reference_text, transformed_text)
+
         transformed_text.attack_attrs["similarity_score"] = score
         return score >= self.threshold
 
