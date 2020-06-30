@@ -18,7 +18,6 @@ class InputReduction(ClassificationGoalFunction):
         )
 
     def _should_skip(self, model_output, attacked_text):
-        print(f'gt: {self.ground_truth_output}')
         return self.ground_truth_output != model_output.argmax()
 
     def _get_score(self, model_output, attacked_text):
