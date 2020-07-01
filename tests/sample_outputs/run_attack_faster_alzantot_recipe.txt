@@ -64,5 +64,5 @@ making such a tragedy the [91mbackground[0m to a love story risks trivializing
 | Attack success rate:          | 100.0% |
 | Average perturbed word %:     | 10.01% |
 | Average num. words per input: | 27.0   |
-| Avg num queries:              | 752.33 |
+| Avg num queries:              | 522.33 |
 +-------------------------------+--------+

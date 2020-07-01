@@ -235,8 +235,6 @@ class GeneticAlgorithm(SearchMethod):
                 # `crossover` method and `perturb` method.
                 if self._search_over:
                     break
-            if self._search_over:
-                break
 
             population = [population[0]] + children
 
