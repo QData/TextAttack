@@ -170,6 +170,8 @@ def run(args, checkpoint=None):
     finish_time = time.time()
     textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
+    return attack_log_manager.results
+
 
 def pytorch_multiprocessing_workaround():
     # This is a fix for a known bug

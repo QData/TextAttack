@@ -7,9 +7,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 extras = {}
+# Packages required for installing docs.
+extras["docs"] = ["recommonmark", "nbsphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
+# Packages required for formatting code & running tests.
+extras["test"] = ["black", "isort", "pytest", "pytest-xdist"]
 # For developers, install development tools along with all optional dependencies.
-extras["dev"] = ["black", "isort", "pytest", "pytest-xdist"]
-
+extras["dev"] = extras["docs"] + extras["test"]
 
 setuptools.setup(
     name="textattack",
@@ -23,15 +26,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/QData/textattack",
     packages=setuptools.find_namespace_packages(
-        exclude=[
-            "build*",
-            "docs*",
-            "dist*",
-            "outputs*",
-            "tests*",
-            "local_test*",
-            "wandb*",
-        ]
+        exclude=["build*", "docs*", "dist*", "outputs*", "tests*", "wandb*",]
     ),
     extras_require=extras,
     entry_points={

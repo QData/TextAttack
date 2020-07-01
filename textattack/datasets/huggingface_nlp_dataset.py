@@ -35,6 +35,12 @@ def get_nlp_dataset_columns(dataset):
     elif {"sentence", "label"} <= schema:
         input_columns = ("sentence",)
         output_column = "label"
+    elif {"document", "summary"} <= schema:
+        input_columns = ("document",)
+        output_column = "summary"
+    elif {"content", "summary"} <= schema:
+        input_columns = ("content",)
+        output_column = "summary"
     else:
         raise ValueError(
             f"Unsupported dataset schema {schema}. Try loading dataset manually (from a file) instead."
@@ -72,6 +78,7 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         dataset_columns=None,
         shuffle=False,
     ):
+        self._name = name
         self._dataset = nlp.load_dataset(name, subset)[split]
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
         textattack.shared.logger.info(

@@ -21,7 +21,8 @@ class SentenceEncoder(Constraint):
         compare_with_original (bool): Whether to compare `x_adv` to the previous `x_adv`
             or the original `x`.
         window_size (int): The number of words to use in the similarity 
-            comparison.
+            comparison. `None` indicates no windowing (encoding is based on the
+            full input).
     """
 
     def __init__(
@@ -37,6 +38,9 @@ class SentenceEncoder(Constraint):
         self.compare_with_original = compare_with_original
         self.window_size = window_size
         self.skip_text_shorter_than_window = skip_text_shorter_than_window
+
+        if not self.window_size:
+            self.window_size = float("inf")
 
         if metric == "cosine":
             self.sim_metric = torch.nn.CosineSimilarity(dim=1)
@@ -153,7 +157,7 @@ class SentenceEncoder(Constraint):
                 # If the embedding is not yet a tensor, make it one.
                 starting_embedding = torch.tensor(embeddings[0]).to(utils.device)
 
-            if isinstance(embeddings, list):
+            if isinstance(embeddings[1], torch.Tensor):
                 # If `encode` did not return a Tensor of all embeddings, combine
                 # into a tensor.
                 transformed_embeddings = torch.stack(embeddings[1:]).to(utils.device)
