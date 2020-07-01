@@ -58,7 +58,7 @@ class GoalFunction:
 
     def init_attack_example(self, attacked_text, ground_truth_output):
         """
-        Called before attacking ``attacked_text``to "reset" the goal
+        Called before attacking ``attacked_text`` to 'reset' the goal
         function and set properties for this example.
         """
         self.initial_attacked_text = attacked_text
@@ -168,7 +168,7 @@ class GoalFunction:
         return self._process_model_outputs(attacked_text_list, outputs)
 
     def _call_model(self, attacked_text_list):
-        """ Gets predictions for a list of `AttackedText` objects.
+        """ Gets predictions for a list of ``AttackedText`` objects.
         
             Gets prediction from cache if possible. If prediction is not in the 
             cache, queries model and stores prediction in cache.

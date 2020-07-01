@@ -54,13 +54,13 @@ grown-up quibbles are beside the point here . the little girls understand , and 
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 3      |
-| Number of failed attacks:     | 0      |
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 1      |
 | Number of skipped attacks:    | 0      |
 | Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 10.01% |
-| Average num. words per input: | 27.0   |
-| Avg num queries:              | 522.33 |
+| Accuracy under attack:        | 33.33% |
+| Attack success rate:          | 66.67% |
+| Average perturbed word %:     | 8.58%  |
+| Average num. words per input: | 25.67  |
+| Avg num queries:              | 859.0  |
 +-------------------------------+--------+

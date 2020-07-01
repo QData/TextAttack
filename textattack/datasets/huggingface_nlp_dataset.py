@@ -53,18 +53,17 @@ class HuggingFaceNLPDataset(TextAttackDataset):
     """ Loads a dataset from HuggingFace ``nlp`` and prepares it as a
         TextAttack dataset.
         
-        name: the dataset name
-        subset: the subset of the main dataset. Dataset will be loaded as
-            ``nlp.load_dataset(name, subset)``.
-        label_map: Mapping if output labels should be re-mapped. Useful
-            if model was trained with a different label arrangement than
-            provided in the ``nlp`` version of the dataset.
-        output_scale_factor (float): Factor to divide ground-truth outputs by.
+        - name: the dataset name
+        - subset: the subset of the main dataset. Dataset will be loaded as ``nlp.load_dataset(name, subset)``.
+        - label_map: Mapping if output labels should be re-mapped. Useful
+          if model was trained with a different label arrangement than
+          provided in the ``nlp`` version of the dataset.
+        - output_scale_factor (float): Factor to divide ground-truth outputs by.
             Generally, TextAttack goal functions require model outputs
-            between 0 and 1. Some datasets test the model's *correlation*
+            between 0 and 1. Some datasets test the model's \*correlation\*
             with ground-truth output, instead of its accuracy, so these
             outputs may be scaled arbitrarily. 
-        shuffle (bool): Whether to shuffle the dataset on load.
+        - shuffle (bool): Whether to shuffle the dataset on load.
                 
     """
 
