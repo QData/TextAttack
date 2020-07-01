@@ -1,5 +1,7 @@
 def has_letter(word):
-    """ Returns true if `word` contains at least one character in [A-Za-z]. """
+    """ Returns true if `word` contains at least one character in [A-Za-z]. 
+    """
+    # TODO implement w regex
     for c in word:
         if c.isalpha():
             return True
@@ -21,10 +23,11 @@ def add_indent(s_, numSpaces):
 def words_from_text(s, words_to_ignore=[]):
     """ Lowercases a string, removes all non-alphanumeric characters,
         and splits into words. """
+    # TODO implement w regex
     words = []
     word = ""
     for c in " ".join(s.split()):
-        if c.isalpha():
+        if c.isalnum():
             word += c
         elif c in "'-" and len(word) > 0:
             # Allow apostrophes and hyphens as long as they don't begin the

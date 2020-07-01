@@ -12,12 +12,19 @@ def attacked_text():
     return textattack.shared.AttackedText(raw_text)
 
 
+raw_pokemon_text = "the threat implied in the title pokémon 4ever is terrifying  like locusts in a horde these things will keep coming ."
+
+
+@pytest.fixture
+def pokemon_attacked_text():
+    return textattack.shared.AttackedText(raw_pokemon_text)
+
+
 premise = "Among these are the red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes."
 hypothesis = "The Patan Museum is down the street from the red brick Royal Palace."
 raw_text_pair = collections.OrderedDict(
     [("premise", premise), ("hypothesis", hypothesis)]
 )
-
 
 raw_hyphenated_text = "It's a run-of-the-mill kind of farmer's tan."
 
@@ -33,27 +40,13 @@ def attacked_text_pair():
 
 
 class TestAttackedText:
-    def test_words(self, attacked_text):
+    def test_words(self, attacked_text, pokemon_attacked_text):
+        # fmt: off
         assert attacked_text.words == [
-            "A",
-            "person",
-            "walks",
-            "up",
-            "stairs",
-            "into",
-            "a",
-            "room",
-            "and",
-            "sees",
-            "beer",
-            "poured",
-            "from",
-            "a",
-            "keg",
-            "and",
-            "people",
-            "talking",
+            "A", "person", "walks", "up", "stairs", "into", "a", "room", "and", "sees", "beer", "poured", "from", "a", "keg", "and", "people", "talking",
         ]
+        assert pokemon_attacked_text.words == ['the', 'threat', 'implied', 'in', 'the', 'title', 'pokémon', '4ever', 'is', 'terrifying', 'like', 'locusts', 'in', 'a', 'horde', 'these', 'things', 'will', 'keep', 'coming'] 
+        # fmt: on
 
     def test_window_around_index(self, attacked_text):
         assert attacked_text.text_window_around_index(5, 1) == "into"
@@ -77,8 +70,9 @@ class TestAttackedText:
     def test_window_around_index_end(self, attacked_text):
         assert attacked_text.text_window_around_index(17, 3) == "and people talking"
 
-    def test_text(self, attacked_text, attacked_text_pair):
+    def test_text(self, attacked_text, pokemon_attacked_text, attacked_text_pair):
         assert attacked_text.text == raw_text
+        assert pokemon_attacked_text.text == raw_pokemon_text
         assert attacked_text_pair.text == "\n".join(raw_text_pair.values())
 
     def test_printable_text(self, attacked_text, attacked_text_pair):
