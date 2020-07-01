@@ -18,7 +18,7 @@
   </a>
 </p>
 
-<img src="https://jackxmorris.com/files/render1593035135238.gif?raw=true" alt="TextAttack Demo GIF" style="display: block; margin: 0 auto;" />
+<img src="http://jackxmorris.com/files/textattack.gif" alt="TextAttack Demo GIF" style="display: block; margin: 0 auto;" />
   
 ## About
 
