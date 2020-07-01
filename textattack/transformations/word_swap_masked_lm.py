@@ -59,7 +59,7 @@ class WordSwapMaskedLM(WordSwap):
             text,
             max_length=self.max_length,
             truncation=True,
-            pad_to_max_length=True,
+            padding="max_length",
             return_tensors="pt",
         )
         return {k: v.to(utils.device) for k, v in encoding.items()}
