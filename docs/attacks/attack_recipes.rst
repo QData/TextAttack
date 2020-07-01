@@ -20,12 +20,14 @@ Faster Alzantot Genetic Algorithm (Certified Robustness to Adversarial Word Subs
 BAE (BAE: BERT-Based Adversarial Examples)
 ############
 
-.. automodule:: textattack.attack_recipes.deepwordbug_gao_2018
+.. automodule:: textattack.attack_recipes.bae_garg_2019
+   :members:
 
 BERT-Attack: (BERT-Attack: Adversarial Attack Against BERT Using BERT)
 ############
 
-.. automodule:: textattack.attack_recipes.deepwordbug_gao_2018
+.. automodule:: textattack.attack_recipes.bert_attack_li_2020
+   :members:
 
 DeepWordBug (Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers)
 ############
@@ -36,7 +38,7 @@ DeepWordBug (Black-box Generation of Adversarial Text Sequences to Evade Deep Le
 HotFlip (HotFlip: White-Box Adversarial Examples for Text Classification)
 ###########
 
-.. automodule:: textattack.attack_recipes.hotflip_ebrahimi_2017.py
+.. automodule:: textattack.attack_recipes.hotflip_ebrahimi_2017
    :members:
 
 Input Reduction
