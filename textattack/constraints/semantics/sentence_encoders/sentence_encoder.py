@@ -157,7 +157,7 @@ class SentenceEncoder(Constraint):
                 # If the embedding is not yet a tensor, make it one.
                 starting_embedding = torch.tensor(embeddings[0]).to(utils.device)
 
-            if isinstance(embeddings, list):
+            if isinstance(embeddings[1], torch.Tensor):
                 # If `encode` did not return a Tensor of all embeddings, combine
                 # into a tensor.
                 transformed_embeddings = torch.stack(embeddings[1:]).to(utils.device)

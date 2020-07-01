@@ -78,6 +78,7 @@ class Attack:
         # Give search method access to functions for getting transformations and evaluating them
         self.search_method.get_transformations = self.get_transformations
         self.search_method.get_goal_results = self.goal_function.get_results
+        self.search_method.filter_transformations = self.filter_transformations
 
     def get_transformations(self, current_text, original_text=None, **kwargs):
         """
@@ -105,7 +106,7 @@ class Attack:
                 **kwargs,
             )
         )
-        return self._filter_transformations(
+        return self.filter_transformations(
             transformed_texts, current_text, original_text
         )
 
@@ -135,7 +136,7 @@ class Attack:
             self.constraints_cache[(current_text, filtered_text)] = True
         return filtered_texts
 
-    def _filter_transformations(
+    def filter_transformations(
         self, transformed_texts, current_text, original_text=None
     ):
         """ 

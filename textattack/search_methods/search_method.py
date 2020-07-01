@@ -20,6 +20,10 @@ class SearchMethod:
             raise AttributeError(
                 "Search Method must have access to get_goal_results method"
             )
+        if not hasattr(self, "filter_transformations"):
+            raise AttributeError(
+                "Search Method must have access to filter_transformations method"
+            )
         return self._perform_search(initial_result)
 
     def _perform_search(self, initial_result):

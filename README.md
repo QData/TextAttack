@@ -18,7 +18,7 @@
   </a>
 </p>
 
-<img src="https://github.com/jxmorris12/jxmorris12.github.io/blob/master/files/render1593035135238.gif?raw=true" style="display: block; margin: 0 auto;" />
+<img src="https://github.com/jxmorris12/jxmorris12.github.io/blob/master/files/render1593035135238.gif?raw=true" alt="TextAttack Demo GIF" style="display: block; margin: 0 auto;" />
   
 ## About
 
@@ -123,7 +123,7 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
 
 *seq2sick (black-box) against T5 fine-tuned for English-German translation:*
 ```bash
-textattack attack --recipe seq2sick --model t5-en2de --num-examples 100
+ textattack attack --model t5-en-de --recipe seq2sick --num-examples 100
 ```
 
 ### Augmenting Text
@@ -303,6 +303,8 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 ## Contributing to TextAttack
 
 We welcome suggestions and contributions! Submit an issue or pull request and we will do our best to respond in a timely manner. TextAttack is currently in an "alpha" stage in which we are working to improve its capabilities and design.
+
+See [CONTRIBUTING.md](https://github.com/QData/TextAttack/blob/master/CONTRIBUTING.md) for detailed information on contributing.
 
 ## Citing TextAttack
 
