@@ -10,6 +10,7 @@ from copy import deepcopy
 import numpy as np
 import torch
 
+from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
@@ -74,9 +75,7 @@ class GeneticAlgorithm(SearchMethod):
                 iterations += 1
                 continue
 
-            new_results, self._search_over = self.get_goal_results(
-                transformations, original_result.output
-            )
+            new_results, self._search_over = self.get_goal_results(transformations)
 
             if self._search_over:
                 break
@@ -145,9 +144,7 @@ class GeneticAlgorithm(SearchMethod):
                 else pop_member2.attacked_text
             )
 
-        new_results, self._search_over = self.get_goal_results(
-            [new_text], original_result.output
-        )
+        new_results, self._search_over = self.get_goal_results([new_text])
 
         return PopulationMember(new_text, num_candidates_per_word, new_results[0])
 
@@ -198,7 +195,11 @@ class GeneticAlgorithm(SearchMethod):
         current_score = initial_result.score
         for i in range(self.max_iters):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
-            if self._search_over or population[0].result.succeeded:
+            if (
+                self._search_over
+                or population[0].result.goal_status
+                == GoalFunctionResultStatus.SUCCEEDED
+            ):
                 break
 
             if population[0].result.score > current_score:
@@ -234,8 +235,6 @@ class GeneticAlgorithm(SearchMethod):
                 # `crossover` method and `perturb` method.
                 if self._search_over:
                     break
-            if self._search_over:
-                break
 
             population = [population[0]] + children
 

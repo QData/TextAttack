@@ -14,15 +14,15 @@ class NonOverlappingOutput(TextToTextGoalFunction):
     Defined in seq2sick (https://arxiv.org/pdf/1803.01128.pdf), equation (3).
     """
 
-    def _is_goal_complete(self, model_output, ground_truth_output):
-        return self._get_score(model_output, ground_truth_output) == 1.0
+    def _is_goal_complete(self, model_output, _):
+        return self._get_score(model_output, self.ground_truth_output) == 1.0
 
-    def _get_score(self, model_output, ground_truth_output):
-        num_words_diff = word_difference_score(model_output, ground_truth_output)
+    def _get_score(self, model_output, _):
+        num_words_diff = word_difference_score(model_output, self.ground_truth_output)
         if num_words_diff == 0:
             return 0.0
         else:
-            return num_words_diff / len(get_words_cached(ground_truth_output))
+            return num_words_diff / len(get_words_cached(self.ground_truth_output))
 
 
 @functools.lru_cache(maxsize=2 ** 12)

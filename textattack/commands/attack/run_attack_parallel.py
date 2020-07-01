@@ -125,7 +125,10 @@ def run(args, checkpoint=None):
             pbar.update()
             num_results += 1
 
-            if type(result) == textattack.attack_results.SuccessfulAttackResult:
+            if (
+                type(result) == textattack.attack_results.SuccessfulAttackResult
+                or type(result) == textattack.attack_results.MaximizedAttackResult
+            ):
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
                 num_failures += 1

@@ -55,7 +55,7 @@ class AttackedText:
             raise TypeError(f"Invalid type for attack_attrs: {type(attack_attrs)}")
         # Indices of words from the *original* text. Allows us to map
         # indices between original text and this text, and vice-versa.
-        self.attack_attrs.setdefault("original_index_map", np.arange(len(self.words)))
+        self.attack_attrs.setdefault("original_index_map", np.arange(self.num_words))
         # A list of all indices in *this* text that have been modified.
         self.attack_attrs.setdefault("modified_indices", set())
 
@@ -99,7 +99,7 @@ class AttackedText:
 
     def text_window_around_index(self, index, window_size):
         """ The text window of ``window_size`` words centered around ``index``. """
-        length = len(self.words)
+        length = self.num_words
         half_size = (window_size - 1) / 2.0
         if index - half_size < 0:
             start = 0
@@ -375,6 +375,11 @@ class AttackedText:
             break.
         """
         return "\n".join(self._text_input.values())
+
+    @property
+    def num_words(self):
+        """ Returns the number of words in the sequence. """
+        return len(self.words)
 
     def printable_text(self, key_color="bold", key_color_method=None):
         """ Represents full text input. Adds field descriptions.
