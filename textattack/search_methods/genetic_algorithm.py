@@ -75,9 +75,7 @@ class GeneticAlgorithm(SearchMethod):
                 iterations += 1
                 continue
 
-            new_results, self._search_over = self.get_goal_results(
-                transformations
-            )
+            new_results, self._search_over = self.get_goal_results(transformations)
 
             if self._search_over:
                 break
@@ -146,9 +144,7 @@ class GeneticAlgorithm(SearchMethod):
                 else pop_member2.attacked_text
             )
 
-        new_results, self._search_over = self.get_goal_results(
-            [new_text]
-        )
+        new_results, self._search_over = self.get_goal_results([new_text])
 
         return PopulationMember(new_text, num_candidates_per_word, new_results[0])
 
@@ -199,7 +195,11 @@ class GeneticAlgorithm(SearchMethod):
         current_score = initial_result.score
         for i in range(self.max_iters):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
-            if self._search_over or population[0].result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
+            if (
+                self._search_over
+                or population[0].result.goal_status
+                == GoalFunctionResultStatus.SUCCEEDED
+            ):
                 break
 
             if population[0].result.score > current_score:
