@@ -55,4 +55,3 @@ class ClassificationGoalFunction(GoalFunction):
 
     def _get_displayed_output(self, raw_output):
         return int(raw_output.argmax())
-

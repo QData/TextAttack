@@ -34,7 +34,9 @@ class InputReduction(ClassificationGoalFunction):
 
         # The main goal is to reduce the number of words (num_words_score)
         # Higher model score for the ground truth label is used as a tiebreaker (model_score)
-        num_words_score = max((initial_num_words - cur_num_words) / initial_num_words, 0)
+        num_words_score = max(
+            (initial_num_words - cur_num_words) / initial_num_words, 0
+        )
         model_score = model_output[self.ground_truth_output]
         return min(num_words_score + model_score / initial_num_words, 1)
 
