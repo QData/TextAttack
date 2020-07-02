@@ -7,6 +7,7 @@ ATTACK_RECIPE_NAMES = {
     "faster-alzantot": "textattack.attack_recipes.FasterGeneticAlgorithmJia2019",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
+    "input-reduction": "textattack.attack_recipes.InputReductionFeng2018",
     "kuleshov": "textattack.attack_recipes.Kuleshov2017",
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",

@@ -10,8 +10,11 @@ import numpy as np
 import torch
 from torch.nn.functional import softmax
 
+from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
-from textattack.shared.validators import transformation_consists_of_word_swaps
+from textattack.shared.validators import (
+    transformation_consists_of_word_swaps_and_deletions,
+)
 
 
 class GreedyWordSwapWIR(SearchMethod):
@@ -21,21 +24,16 @@ class GreedyWordSwapWIR(SearchMethod):
         
     Args:
         wir_method: method for ranking most important words
-        ascending: if True, ranks words from least-to-most important. (Default
-            ranking shows the most important word first.)
     """
 
-    def __init__(self, wir_method="unk", ascending=False):
+    def __init__(self, wir_method="unk"):
         self.wir_method = wir_method
-        self.ascending = ascending
 
     def _get_index_order(self, initial_result, texts):
         """ Queries model for list of attacked text objects ``text`` and
             ranks in order of descending score.
         """
-        leave_one_results, search_over = self.get_goal_results(
-            texts, initial_result.output
-        )
+        leave_one_results, search_over = self.get_goal_results(texts)
         leave_one_scores = np.array([result.score for result in leave_one_results])
         return leave_one_scores, search_over
 
@@ -98,10 +96,7 @@ class GreedyWordSwapWIR(SearchMethod):
             search_over = False
 
         if self.wir_method != "random":
-            if self.ascending:
-                index_order = (leave_one_scores).argsort()
-            else:
-                index_order = (-leave_one_scores).argsort()
+            index_order = (-leave_one_scores).argsort()
 
         i = 0
         results = None
@@ -114,9 +109,7 @@ class GreedyWordSwapWIR(SearchMethod):
             i += 1
             if len(transformed_text_candidates) == 0:
                 continue
-            results, search_over = self.get_goal_results(
-                transformed_text_candidates, initial_result.output
-            )
+            results, search_over = self.get_goal_results(transformed_text_candidates)
             results = sorted(results, key=lambda x: -x.score)
             # Skip swaps which don't improve the score
             if results[0].score > cur_result.score:
@@ -124,12 +117,12 @@ class GreedyWordSwapWIR(SearchMethod):
             else:
                 continue
             # If we succeeded, return the index with best similarity.
-            if cur_result.succeeded:
+            if cur_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
                 best_result = cur_result
                 # @TODO: Use vectorwise operations
                 max_similarity = -float("inf")
                 for result in results:
-                    if not result.succeeded:
+                    if result.goal_status != GoalFunctionResultStatus.SUCCEEDED:
                         break
                     candidate = result.attacked_text
                     try:
@@ -149,9 +142,9 @@ class GreedyWordSwapWIR(SearchMethod):
 
     def check_transformation_compatibility(self, transformation):
         """
-            Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swaps transformations.
+            Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swap and deletion transformations.
         """
-        return transformation_consists_of_word_swaps(transformation)
+        return transformation_consists_of_word_swaps_and_deletions(transformation)
 
     def extra_repr_keys(self):
         return ["wir_method"]
