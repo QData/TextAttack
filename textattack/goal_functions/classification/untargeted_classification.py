@@ -35,6 +35,3 @@ class UntargetedClassification(ClassificationGoalFunction):
             return abs(model_output.item() - self.ground_truth_output)
         else:
             return 1 - model_output[self.ground_truth_output]
-
-    def _get_displayed_output(self, raw_output):
-        return int(raw_output.argmax())

@@ -178,7 +178,7 @@ class Attack:
             initial_result: The initial ``GoalFunctionResult`` from which to perturb.
 
         Returns:
-            Either a ``SuccessfulAttackResult``, ``FailedAttackResult``, 
+            A ``SuccessfulAttackResult``, ``FailedAttackResult``, 
                 or ``MaximizedAttackResult``.
         """
         final_result = self.search_method(initial_result)
