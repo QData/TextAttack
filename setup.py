@@ -26,7 +26,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     url="https://github.com/QData/textattack",
     packages=setuptools.find_namespace_packages(
-        exclude=["build*", "docs*", "dist*", "outputs*", "tests*", "wandb*",]
+        exclude=["build*", "docs*", "dist*", "examples*", "outputs*", "tests*", "wandb*",]
     ),
     extras_require=extras,
     entry_points={

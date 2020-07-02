@@ -8,6 +8,10 @@ def has_letter(word):
     return False
 
 
+def is_one_word(word):
+    return len(words_from_text(word)) == 1
+
+
 def add_indent(s_, numSpaces):
     s = s_.split("\n")
     # don't do anything for single-line stuff
