@@ -142,7 +142,7 @@ class GreedyWordSwapWIR(SearchMethod):
 
     def check_transformation_compatibility(self, transformation):
         """
-            Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swaps transformations.
+            Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swap and deletion transformations.
         """
         return transformation_consists_of_word_swaps_and_deletions(transformation)
 

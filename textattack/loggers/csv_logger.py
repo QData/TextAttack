@@ -21,7 +21,7 @@ class CSVLogger(Logger):
 
     def log_attack_result(self, result):
         original_text, perturbed_text = result.diff_color(self.color_method)
-        result_type = result.__class__.__name__[:-12]
+        result_type = result.__class__.__name__.replace("AttackResult", "")
         row = {
             "original_text": original_text,
             "perturbed_text": perturbed_text,
