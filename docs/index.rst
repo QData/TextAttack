@@ -35,6 +35,7 @@ TextAttack has some other features that make it a pleasure to use:
 
 
    Installation <quickstart/installation>
+   Overview <quickstart/overview>
    Command-Line Usage <quickstart/command_line_usage>
    Tutorial 0: TextAttack End-To-End (Train, Eval, Attack) <examples/0_End_to_End.ipynb>
    Tutorial 1: Transformations <examples/1_Introduction_and_Transformations.ipynb>
@@ -75,7 +76,7 @@ TextAttack has some other features that make it a pleasure to use:
    :hidden:
    :caption: Miscellaneous
    
-   misc/attacked_text
    misc/checkpoints
    misc/loggers
    misc/validators
+   misc/tokenized_text

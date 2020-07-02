@@ -22,7 +22,7 @@ examples corresponding to the proper columns.
 
 For example, given the following as `examples.csv`:
 
-```
+```csv
 "text",label
 "the rock is destined to be the 21st century's new conan and that he's going to make a splash even greater than arnold schwarzenegger , jean- claud van damme or steven segal.", 1
 "the gorgeously elaborate continuation of 'the lord of the rings' trilogy is so huge that a column of words cannot adequately describe co-writer/director peter jackson's expanded vision of j . r . r . tolkien's middle-earth .", 1
@@ -40,7 +40,7 @@ will augment the `text` column with four swaps per augmentation, twice as many a
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
 After augmentation, here are the contents of `augment.csv`:
-```
+```csv
 text,label
 "the rock is destined to be the 21st century's newest conan and that he's gonna to make a splashing even stronger than arnold schwarzenegger , jean- claud van damme or steven segal.",1
 "the rock is destined to be the 21tk century's novel conan and that he's going to make a splat even greater than arnold schwarzenegger , jean- claud van damme or stevens segal.",1
