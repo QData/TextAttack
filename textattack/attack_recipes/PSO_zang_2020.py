@@ -1,5 +1,5 @@
 from textattack.constraints.pre_transformation import (
-    InputColumnModification,
+    # InputColumnModification,
     RepeatModification,
     StopwordModification,
 )
@@ -40,10 +40,10 @@ def PSOZang2020(model):
     # During entailment, we should only edit the hypothesis - keep the premise
     # the same.
     #
-    input_column_modification = InputColumnModification(
-        ["premise", "hypothesis"], {"premise"}
-    )
-    constraints.append(input_column_modification)
+    # input_column_modification = InputColumnModification(
+    #     ["premise", "hypothesis"], {"premise"}
+    # )
+    # constraints.append(input_column_modification)
     #
     # Use untargeted classification for demo, can be switched to targeted one
     #

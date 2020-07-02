@@ -55,7 +55,9 @@ class WordSwapHowNet(WordSwap):
         word_list, pos_list = zip_flair_result(
             self._flair_pos_tagger.predict(words_str)[0]
         )
-        assert len(words) == len(word_list), "Part-of-speech tagger returned incorrect number of tags"
+        assert len(words) == len(
+            word_list
+        ), "Part-of-speech tagger returned incorrect number of tags"
         transformed_texts = []
 
         for i in indices_to_modify:

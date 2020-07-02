@@ -10,7 +10,7 @@ from copy import deepcopy
 import numpy as np
 
 from textattack.search_methods import SearchMethod
-from textattack.goal_function_results import GoalFunctionResultStatus
+# from textattack.goal_function_results import GoalFunctionResultStatus
 
 
 class PSOAlgorithm(SearchMethod):
@@ -188,7 +188,8 @@ class PSOAlgorithm(SearchMethod):
         top_attack = np.argmax(pop_scores)
         all_elite = pop[top_attack]
         all_elite_score = pop_scores[top_attack]
-        if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
+        # if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
+        if pop_results[top_attack].succeeded:
             return pop_results[top_attack]
 
         # set up hyper-parameters
@@ -232,7 +233,11 @@ class PSOAlgorithm(SearchMethod):
                 return max(pop_results, key=lambda x: x.score)
             pop_scores = np.array([r.score for r in pop_results])
             top_attack = np.argmax(pop_scores)
-            if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
+            if (
+                # pop_results[top_attack].goal_status
+                # == GoalFunctionResultStatus.SUCCEEDED
+                pop_results[top_attack].succeeded
+            ):
                 return pop_results[top_attack]
 
             # mutation based on the current change rate
@@ -241,7 +246,9 @@ class PSOAlgorithm(SearchMethod):
                 change_ratio = self._count_change_ratio(
                     x, self.original_attacked_text, x_len
                 )
-                p_change = 1 - 2 * change_ratio # referred from the original source code
+                p_change = (
+                    1 - 2 * change_ratio
+                )  # referred from the original source code
                 if np.random.uniform() < p_change:
                     new_h, new_w_list = self._gen_h_score(
                         x, neighbors_len, neighbors_list
@@ -259,7 +266,11 @@ class PSOAlgorithm(SearchMethod):
                 return max(pop_results, key=lambda x: x.score)
             pop_scores = np.array([r.score for r in pop_results])
             top_attack = np.argmax(pop_scores)
-            if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
+            if (
+                # pop_results[top_attack].goal_status
+                # == GoalFunctionResultStatus.SUCCEEDED
+                pop_results[top_attack].succeeded
+            ):
                 return pop_results[top_attack]
 
             # update the elite if the score is increased
