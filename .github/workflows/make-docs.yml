@@ -25,7 +25,8 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        python -m pip install --upgrade pip setuptools wheel
+        sudo apt-get install pandoc # install pandoc
+        python -m pip install --upgrade pip setuptools wheel # update python
         python setup.py install_egg_info # Workaround https://github.com/pypa/pip/issues/4537
         pip install -e . ".[dev]" # This should install all packages for development
     - name: Build docs with Sphinx and check for errors
