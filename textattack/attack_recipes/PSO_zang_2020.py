@@ -1,4 +1,5 @@
-from textattack.constraints.pre_transformation import (  # InputColumnModification,
+from textattack.constraints.pre_transformation import (
+    InputColumnModification,
     RepeatModification,
     StopwordModification,
 )
@@ -15,6 +16,16 @@ def PSOZang2020(model):
         Word-level Textual Adversarial Attacking as Combinatorial Optimization.
         
         https://www.aclweb.org/anthology/2020.acl-main.540.pdf
+
+        Methodology description quoted from the paper:
+
+        "We propose a novel word substitution-based textual attack model, which reforms
+        both the aforementioned two steps. In the first step, we adopt a sememe-based word
+        substitution strategy, which can generate more candidate adversarial examples with
+        better semantic preservation. In the second step, we utilize particle swarm optimization
+        (Eberhart and Kennedy, 1995) as the adversarial example searching algorithm."
+
+        And "Following the settings in Alzantot et al. (2018), we set the max iteration time G to 20."
     """
     #
     # Swap words with their synonyms extracted based on the HowNet.
@@ -29,16 +40,16 @@ def PSOZang2020(model):
     # During entailment, we should only edit the hypothesis - keep the premise
     # the same.
     #
-    # input_column_modification = InputColumnModification(
-    #     ["premise", "hypothesis"], {"premise"}
-    # )
-    # constraints.append(input_column_modification)
+    input_column_modification = InputColumnModification(
+        ["premise", "hypothesis"], {"premise"}
+    )
+    constraints.append(input_column_modification)
     #
-    # Goal is untargeted classification
+    # Use untargeted classification for demo, can be switched to targeted one
     #
     goal_function = UntargetedClassification(model)
     #
-    # Perform word substitution with a genetic algorithm.
+    # Perform word substitution with a Particle Swarm Optimization (PSO) algorithm.
     #
     search_method = PSOAlgorithm(pop_size=60, max_iters=20)
 

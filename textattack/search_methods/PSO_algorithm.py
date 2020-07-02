@@ -10,15 +10,21 @@ from copy import deepcopy
 import numpy as np
 
 from textattack.search_methods import SearchMethod
+from textattack.goal_function_results import GoalFunctionResultStatus
 
 
 class PSOAlgorithm(SearchMethod):
     """
-    Attacks a model with word substiutitions using a PSO algorithm.
+    Attacks a model with word substiutitions using a Particle Swarm Optimization (PSO) algorithm.
+    Some key hyper-parameters are setup according to the original paper:
+
+    "We adjust PSO on the validation set of SST and set ω_1 as 0.8 and ω_2 as 0.2.
+    We set the max velocity of the particles V_{max} to 3, which means the changing
+    probability of the particles ranges from 0.047 (sigmoid(-3)) to 0.953 (sigmoid(3))."
 
     Args:
-        pop_size (:obj:`int`, optional): The population size. Defauls to 20.
-        max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 50.
+        pop_size (:obj:`int`, optional): The population size. Defauls to 60.
+        max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 20.
     """
 
     def __init__(
@@ -28,15 +34,21 @@ class PSOAlgorithm(SearchMethod):
         self.pop_size = pop_size
         self.search_over = False
 
-    def generate_population(self, x_orig, neighbors_list, neighbors_len):
-        h_score, w_list = self.gen_h_score(x_orig, neighbors_len, neighbors_list)
-        return [self.mutate(x_orig, h_score, w_list) for _ in range(self.pop_size)]
+        self.Omega_1 = 0.8
+        self.Omega_2 = 0.2
+        self.C1_origin = 0.8
+        self.C2_origin = 0.2
+        self.V_max = 3.0
 
-    def mutate(self, x_cur, w_select_probs, w_list):
+    def _generate_population(self, x_orig, neighbors_list, neighbors_len):
+        h_score, w_list = self._gen_h_score(x_orig, neighbors_len, neighbors_list)
+        return [self._mutate(x_orig, h_score, w_list) for _ in range(self.pop_size)]
+
+    def _mutate(self, x_cur, w_select_probs, w_list):
         rand_idx = np.random.choice(len(w_select_probs), 1, p=w_select_probs)[0]
         return x_cur.replace_word_at_index(rand_idx, w_list[rand_idx])
 
-    def gen_h_score(self, x, neighbors_len, neighbors_list):
+    def _gen_h_score(self, x, neighbors_len, neighbors_list):
 
         w_list = []
         prob_list = []
@@ -45,17 +57,17 @@ class PSOAlgorithm(SearchMethod):
                 w_list.append(orig_w)
                 prob_list.append(0)
                 continue
-            p, w = self.gen_most_change(x, i, neighbors_list[i])
+            p, w = self._gen_most_change(x, i, neighbors_list[i])
             w_list.append(w)
             prob_list.append(p)
 
-        prob_list = self.norm(prob_list)
+        prob_list = self._norm(prob_list)
 
         h_score = prob_list
         h_score = np.array(h_score)
         return h_score, w_list
 
-    def norm(self, n):
+    def _norm(self, n):
 
         tn = []
         for i in n:
@@ -73,7 +85,7 @@ class PSOAlgorithm(SearchMethod):
         return new_n
 
     # for un-targeted attacking
-    def gen_most_change(self, x_cur, pos, replace_list):
+    def _gen_most_change(self, x_cur, pos, replace_list):
         orig_result, self.search_over = self.get_goal_results(
             [x_cur], self.correct_output
         )
@@ -128,13 +140,13 @@ class PSOAlgorithm(SearchMethod):
         neighbors_list = [np.array(x) for x in neighbors_list]
         return neighbors_list
 
-    def equal(self, a, b):
+    def _equal(self, a, b):
         if a == b:
-            return -3
+            return -self.V_max
         else:
-            return 3
+            return self.V_max
 
-    def turn(self, x1, x2, prob, x_len):
+    def _turn(self, x1, x2, prob, x_len):
         indices_to_replace = []
         words_to_replace = []
         x2_words = x2.words
@@ -145,11 +157,11 @@ class PSOAlgorithm(SearchMethod):
         new_text = x1.replace_words_at_indices(indices_to_replace, words_to_replace)
         return new_text
 
-    def count_change_ratio(self, x1, x2, x_len):
+    def _count_change_ratio(self, x1, x2, x_len):
         change_ratio = float(np.sum(x1.words != x2.words)) / float(x_len)
         return change_ratio
 
-    def sigmod(self, n):
+    def _sigmoid(self, n):
         return 1 / (1 + np.exp(-n))
 
     def _perform_search(self, initial_result):
@@ -160,7 +172,7 @@ class PSOAlgorithm(SearchMethod):
         # get word substitute candidates and generate population
         neighbors_list = self._get_neighbors_list(self.original_attacked_text)
         neighbors_len = [len(x) for x in neighbors_list]
-        pop = self.generate_population(
+        pop = self._generate_population(
             self.original_attacked_text, neighbors_list, neighbors_len
         )
 
@@ -176,25 +188,21 @@ class PSOAlgorithm(SearchMethod):
         top_attack = np.argmax(pop_scores)
         all_elite = pop[top_attack]
         all_elite_score = pop_scores[top_attack]
-        if pop_results[top_attack].succeeded:
+        if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
             return pop_results[top_attack]
 
         # set up hyper-parameters
-        Omega_1 = 0.8
-        Omega_2 = 0.2
-        C1_origin = 0.8
-        C2_origin = 0.2
-        V = [np.random.uniform(-3, 3) for _ in range(self.pop_size)]
+        V = np.random.uniform(-self.V_max, self.V_max, self.pop_size)
         V_P = [[V[t] for _ in range(x_len)] for t in range(self.pop_size)]
 
         # start iterations
         for i in range(self.max_iters):
 
-            Omega = (Omega_1 - Omega_2) * (
+            Omega = (self.Omega_1 - self.Omega_2) * (
                 self.max_iters - i
-            ) / self.max_iters + Omega_2
-            C1 = C1_origin - i / self.max_iters * (C1_origin - C2_origin)
-            C2 = C2_origin + i / self.max_iters * (C1_origin - C2_origin)
+            ) / self.max_iters + self.Omega_2
+            C1 = self.C1_origin - i / self.max_iters * (self.C1_origin - self.C2_origin)
+            C2 = self.C2_origin + i / self.max_iters * (self.C1_origin - self.C2_origin)
             P1 = C1
             P2 = C2
 
@@ -206,15 +214,15 @@ class PSOAlgorithm(SearchMethod):
                 part_elites_words = part_elites[id].words
                 for dim in range(x_len):
                     V_P[id][dim] = Omega * V_P[id][dim] + (1 - Omega) * (
-                        self.equal(pop_words[dim], part_elites_words[dim])
-                        + self.equal(pop_words[dim], all_elite_words[dim])
+                        self._equal(pop_words[dim], part_elites_words[dim])
+                        + self._equal(pop_words[dim], all_elite_words[dim])
                     )
-                turn_prob = [self.sigmod(V_P[id][d]) for d in range(x_len)]
+                turn_prob = [self._sigmoid(V_P[id][d]) for d in range(x_len)]
 
                 if np.random.uniform() < P1:
-                    pop[id] = self.turn(part_elites[id], pop[id], turn_prob, x_len)
+                    pop[id] = self._turn(part_elites[id], pop[id], turn_prob, x_len)
                 if np.random.uniform() < P2:
-                    pop[id] = self.turn(all_elite, pop[id], turn_prob, x_len)
+                    pop[id] = self._turn(all_elite, pop[id], turn_prob, x_len)
 
             # check if there is any successful attack in the current population
             pop_results, self.search_over = self.get_goal_results(
@@ -224,21 +232,21 @@ class PSOAlgorithm(SearchMethod):
                 return max(pop_results, key=lambda x: x.score)
             pop_scores = np.array([r.score for r in pop_results])
             top_attack = np.argmax(pop_scores)
-            if pop_results[top_attack].succeeded:
+            if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
                 return pop_results[top_attack]
 
             # mutation based on the current change rate
             new_pop = []
             for x in pop:
-                change_ratio = self.count_change_ratio(
+                change_ratio = self._count_change_ratio(
                     x, self.original_attacked_text, x_len
                 )
-                p_change = 1 - 2 * change_ratio
+                p_change = 1 - 2 * change_ratio # referred from the original source code
                 if np.random.uniform() < p_change:
-                    new_h, new_w_list = self.gen_h_score(
+                    new_h, new_w_list = self._gen_h_score(
                         x, neighbors_len, neighbors_list
                     )
-                    new_pop.append(self.mutate(x, new_h, new_w_list))
+                    new_pop.append(self._mutate(x, new_h, new_w_list))
                 else:
                     new_pop.append(x)
             pop = new_pop
@@ -251,7 +259,7 @@ class PSOAlgorithm(SearchMethod):
                 return max(pop_results, key=lambda x: x.score)
             pop_scores = np.array([r.score for r in pop_results])
             top_attack = np.argmax(pop_scores)
-            if pop_results[top_attack].succeeded:
+            if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
                 return pop_results[top_attack]
 
             # update the elite if the score is increased

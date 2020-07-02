@@ -17,7 +17,7 @@ class WordSwapHowNet(WordSwap):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
 
-        # Download embeddings if they're not cached.
+        # Download synonym candidates bank if they're not cached.
         cache_path = utils.download_if_needed(
             "{}/{}".format(WordSwapHowNet.PATH, "word_candidates_sense.pkl")
         )
@@ -55,7 +55,7 @@ class WordSwapHowNet(WordSwap):
         word_list, pos_list = zip_flair_result(
             self._flair_pos_tagger.predict(words_str)[0]
         )
-        assert len(words) == len(word_list)
+        assert len(words) == len(word_list), "Part-of-speech tagger returned incorrect number of tags"
         transformed_texts = []
 
         for i in indices_to_modify:
@@ -90,6 +90,7 @@ def recover_word_case(word, reference_word):
 
 
 def zip_flair_result(pred):
+    """Parse the output from the FLAIR POS tagger"""
     if not isinstance(pred, Sentence):
         raise TypeError(f"Result from Flair POS tagger must be a `Sentence` object.")
 
