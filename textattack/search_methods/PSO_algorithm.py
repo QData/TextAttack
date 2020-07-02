@@ -9,8 +9,8 @@ from copy import deepcopy
 
 import numpy as np
 
-from textattack.search_methods import SearchMethod
 from textattack.goal_function_results import GoalFunctionResultStatus
+from textattack.search_methods import SearchMethod
 
 
 class PSOAlgorithm(SearchMethod):
