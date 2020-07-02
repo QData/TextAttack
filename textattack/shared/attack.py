@@ -7,11 +7,9 @@ import numpy as np
 import textattack
 from textattack.attack_results import (
     FailedAttackResult,
-    MaximizedAttackResult,
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
-from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.shared import AttackedText, utils
 
 
@@ -58,7 +56,7 @@ class Attack:
             self.transformation
         ):
             raise ValueError(
-                f"SearchMethod {self.search_method} incompatible with transformation {self.transformation}"
+                "SearchMethod {self.search_method} incompatible with transformation {self.transformation}"
             )
 
         self.constraints = []
@@ -78,7 +76,6 @@ class Attack:
         # Give search method access to functions for getting transformations and evaluating them
         self.search_method.get_transformations = self.get_transformations
         self.search_method.get_goal_results = self.goal_function.get_results
-        self.search_method.filter_transformations = self.filter_transformations
 
     def get_transformations(self, current_text, original_text=None, **kwargs):
         """
@@ -106,7 +103,7 @@ class Attack:
                 **kwargs,
             )
         )
-        return self.filter_transformations(
+        return self._filter_transformations(
             transformed_texts, current_text, original_text
         )
 
@@ -136,7 +133,7 @@ class Attack:
             self.constraints_cache[(current_text, filtered_text)] = True
         return filtered_texts
 
-    def filter_transformations(
+    def _filter_transformations(
         self, transformed_texts, current_text, original_text=None
     ):
         """ 
@@ -178,18 +175,17 @@ class Attack:
             initial_result: The initial ``GoalFunctionResult`` from which to perturb.
 
         Returns:
-            A ``SuccessfulAttackResult``, ``FailedAttackResult``, 
-                or ``MaximizedAttackResult``.
+            Either a ``SuccessfulAttackResult`` or ``FailedAttackResult``.
         """
         final_result = self.search_method(initial_result)
-        if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
-            return SuccessfulAttackResult(initial_result, final_result,)
-        elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
-            return FailedAttackResult(initial_result, final_result,)
-        elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
-            return MaximizedAttackResult(initial_result, final_result,)
+        if final_result.succeeded:
+            return SuccessfulAttackResult(
+                initial_result, final_result, self.goal_function.num_queries
+            )
         else:
-            raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
+            return FailedAttackResult(
+                initial_result, final_result, self.goal_function.num_queries
+            )
 
     def _get_examples_from_dataset(self, dataset, indices=None):
         """ 
@@ -221,9 +217,14 @@ class Attack:
                 attacked_text = AttackedText(
                     text, attack_attrs={"label_names": label_names}
                 )
-                goal_function_result, _ = self.goal_function.init_attack_example(
+                self.goal_function.num_queries = 0
+                goal_function_result, _ = self.goal_function.get_result(
                     attacked_text, ground_truth_output
                 )
+                if goal_function_result.succeeded:
+                    # Store the true output on the goal function so that the
+                    # SkippedAttackResult has the correct output, not the incorrect.
+                    goal_function_result.output = ground_truth_output
                 yield goal_function_result
 
             except IndexError:
@@ -244,7 +245,7 @@ class Attack:
         examples = self._get_examples_from_dataset(dataset, indices=indices)
 
         for goal_function_result in examples:
-            if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
+            if goal_function_result.succeeded:
                 yield SkippedAttackResult(goal_function_result)
             else:
                 result = self.attack_one(goal_function_result)

@@ -1,6 +1,5 @@
 from nltk.corpus import wordnet
 
-import textattack
 from textattack.transformations.word_swap import WordSwap
 
 
@@ -14,12 +13,14 @@ class WordSwapWordNet(WordSwap):
         synonyms = set()
         for syn in wordnet.synsets(word):
             for l in syn.lemmas():
-                syn_word = l.name()
-                if (
-                    (syn_word != word)
-                    and ("_" not in syn_word)
-                    and (textattack.shared.utils.is_one_word(syn_word))
-                ):
+                if l.name() != word and check_if_one_word(l.name()):
                     # WordNet can suggest phrases that are joined by '_' but we ignore phrases.
-                    synonyms.add(syn_word)
+                    synonyms.add(l.name())
         return list(synonyms)
+
+
+def check_if_one_word(word):
+    for c in word:
+        if not c.isalpha():
+            return False
+    return True

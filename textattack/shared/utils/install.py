@@ -11,9 +11,6 @@ import requests
 import torch
 import tqdm
 
-# Hide an error message from `tokenizers` if this process is forked.
-os.environ["TOKENIZERS_PARALLELISM"] = "True"
-
 
 def path_in_cache(file_path):
     try:

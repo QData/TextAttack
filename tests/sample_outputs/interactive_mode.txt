@@ -28,10 +28,6 @@
       )
     (3): RepeatModification
     (4): StopwordModification
-    (5): InputColumnModification(
-        (matching_column_labels):  ['premise', 'hypothesis']
-        (columns_to_ignore):  {'premise'}
-      )
   (is_black_box):  True
 ) 
 /.*/

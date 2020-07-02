@@ -7,12 +7,9 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 extras = {}
-# Packages required for installing docs.
-extras["docs"] = ["recommonmark", "nbsphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
-# Packages required for formatting code & running tests.
-extras["test"] = ["black", "isort", "pytest", "pytest-xdist"]
 # For developers, install development tools along with all optional dependencies.
-extras["dev"] = extras["docs"] + extras["test"]
+extras["dev"] = ["black", "isort", "pytest", "pytest-xdist"]
+
 
 setuptools.setup(
     name="textattack",
@@ -30,9 +27,9 @@ setuptools.setup(
             "build*",
             "docs*",
             "dist*",
-            "examples*",
             "outputs*",
             "tests*",
+            "local_test*",
             "wandb*",
         ]
     ),

@@ -1,9 +1,11 @@
+from textattack.transformations.word_swap import WordSwap
+
 from .transformation import Transformation
 
 
 class WordDeletion(Transformation):
     """
-    An abstract class that takes a sentence and transforms it by
+    An abstract class that takes a sentence and transforms it by replacing
     deleting a single word.
     
         letters_to_insert (string): letters allowed for insertion into words

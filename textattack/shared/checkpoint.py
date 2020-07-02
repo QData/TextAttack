@@ -6,7 +6,6 @@ import time
 
 from textattack.attack_results import (
     FailedAttackResult,
-    MaximizedAttackResult,
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
@@ -104,11 +103,6 @@ class Checkpoint:
         )
         breakdown_lines.append(
             utils.add_indent(
-                f"(Number of maximized attacks): {self.num_maximized_attacks}", 2
-            )
-        )
-        breakdown_lines.append(
-            utils.add_indent(
                 f"(Number of skipped attacks): {self.num_skipped_attacks}", 2
             )
         )
@@ -144,12 +138,6 @@ class Checkpoint:
     def num_successful_attacks(self):
         return sum(
             isinstance(r, SuccessfulAttackResult) for r in self.log_manager.results
-        )
-
-    @property
-    def num_maximized_attacks(self):
-        return sum(
-            isinstance(r, MaximizedAttackResult) for r in self.log_manager.results
         )
 
     @property

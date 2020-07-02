@@ -31,7 +31,7 @@ class T5ForTextToText:
     def __init__(
         self, mode="english_to_german", max_length=20, num_beams=1, early_stopping=True
     ):
-        self.model = transformers.AutoModelForSeq2SeqLM.from_pretrained("t5-base")
+        self.model = transformers.AutoModelWithLMHead.from_pretrained("t5-base")
         self.model.to(utils.device)
         self.model.eval()
         self.tokenizer = T5Tokenizer(mode)

@@ -9,6 +9,9 @@ class TextToTextGoalFunction(GoalFunction):
         original_output: the original output of the model
     """
 
+    def __init__(self, model):
+        super().__init__(model)
+
     def _goal_function_result_type(self):
         """ Returns the class of this goal function's results. """
         return TextToTextGoalFunctionResult

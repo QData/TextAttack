@@ -27,9 +27,11 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (97%)[0m --> [91m[FAILED][0m
+[92mPositive (97%)[0m --> [91mNegative (100%)[0m
 
-the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .
+the story gives ample opportunity for large-scale action and suspense , which director shekhar [92mkapur[0m supplies with tremendous skill .
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar [91munwilling[0m supplies with tremendous skill .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
@@ -56,13 +58,13 @@ throws in enough clever and unexpected twists to make the formula feel fresh .
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 1      |
-| Number of failed attacks:     | 3      |
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 2      |
 | Number of skipped attacks:    | 0      |
 | Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 75.0%  |
-| Attack success rate:          | 25.0%  |
-| Average perturbed word %:     | 3.85%  |
-| Average num. words per input: | 15.5   |
-| Avg num queries:              | 1.25   |
+| Accuracy under attack:        | 50.0%  |
+| Attack success rate:          | 50.0%  |
+| Average perturbed word %:     | 4.55%  |
+| Average num. words per input: | 15.75  |
+| Avg num queries:              | 1.5    |
 +-------------------------------+--------+

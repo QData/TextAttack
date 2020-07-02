@@ -112,24 +112,6 @@ attack_test_params = [
     ),
     # fmt: on
     #
-    # test: run_attack on LSTM MR using word embedding transformation and genetic algorithm. Simulate alzantot recipe without using expensive LM
-    (
-        "run_attack_faster_alzantot_recipe",
-        (
-            "textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 --num-examples-offset 20"
-        ),
-        "tests/sample_outputs/run_attack_faster_alzantot_recipe.txt",
-    ),
-    #
-    # test: run_attack with kuleshov recipe and sst-2 cnn
-    #
-    (
-        "run_attack_kuleshov_nn",
-        (
-            "textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst --attack-n --query-budget 200"
-        ),
-        "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
-    ),
 ]
 
 

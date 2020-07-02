@@ -11,10 +11,10 @@ class T5Tokenizer(AutoTokenizer):
         
         Supports the following modes:
 
-        * summarization: summarize English text
-        * english_to_german: translate English to German 
-        * english_to_french: translate English to French
-        * english_to_romanian: translate English to Romanian
+        * summarization: summarize English text (CNN/Daily Mail dataset)
+        * english_to_german: translate English to German (WMT dataset)
+        * english_to_french: translate English to French  (WMT dataset)
+        * english_to_romanian: translate English to Romanian (WMT dataset)
             
     """
 
@@ -28,7 +28,7 @@ class T5Tokenizer(AutoTokenizer):
         elif mode == "summarization":
             self.tokenization_prefix = "summarize: "
         else:
-            raise ValueError(f"Invalid t5 tokenizer mode {mode}.")
+            raise ValueError(f"Invalid t5 tokenizer mode {english_to_german}.")
 
         super().__init__(name="t5-base", max_length=max_length)
 
@@ -38,28 +38,11 @@ class T5Tokenizer(AutoTokenizer):
         passed into T5.
         """
         if isinstance(text, tuple):
-            if len(text) > 1:
-                raise ValueError(
-                    f"T5Tokenizer tuple inputs must have length 1; got {len(text)}"
-                )
             text = text[0]
         if not isinstance(text, str):
             raise TypeError(f"T5Tokenizer expects `str` input, got {type(text)}")
         text_to_encode = self.tokenization_prefix + text
         return super().encode(text_to_encode)
-
-    def batch_encode(self, input_text_list):
-        new_input_text_list = []
-        for text in input_text_list:
-            if isinstance(text, tuple):
-                if len(text) > 1:
-                    raise ValueError(
-                        f"T5Tokenizer tuple inputs must have length 1; got {len(text)}"
-                    )
-                text = text[0]
-            new_input_text_list.append(self.tokenization_prefix + text)
-
-        return super().batch_encode(new_input_text_list)
 
     def decode(self, ids):
         """ 

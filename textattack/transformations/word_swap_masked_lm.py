@@ -2,7 +2,7 @@ import itertools
 
 import numpy as np
 import torch
-from transformers import AutoModelForMaskedLM, AutoTokenizer
+from transformers import AutoModelWithLMHead, AutoTokenizer
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
@@ -41,28 +41,14 @@ class WordSwapMaskedLM(WordSwap):
         self._lm_tokenizer = AutoTokenizer.from_pretrained(
             masked_language_model, use_fast=True
         )
-        self._language_model = AutoModelForMaskedLM.from_pretrained(
+        self._language_model = AutoModelWithLMHead.from_pretrained(
             masked_language_model
         )
         self._language_model.to(utils.device)
-        self._language_model.eval()
-
-    def _encode_text(self, text):
-        """ Encodes ``text`` using an ``AutoTokenizer``, 
-            ``self._lm_tokenizer``. 
-            
-            Returns a ``dict`` where keys are strings (like 'input_ids') and 
-            values are ``torch.Tensor``s. Moves tensors to the same device as 
-            the language model.
-        """
-        encoding = self._lm_tokenizer.encode_plus(
-            text,
-            max_length=self.max_length,
-            truncation=True,
-            padding="max_length",
-            return_tensors="pt",
+        self._segment_tensor = (
+            torch.zeros(self.max_length, dtype=torch.long).unsqueeze(0).to(utils.device)
         )
-        return {k: v.to(utils.device) for k, v in encoding.items()}
+        self._language_model.eval()
 
     def _bae_replacement_words(self, current_text, index):
         """
@@ -74,8 +60,11 @@ class WordSwapMaskedLM(WordSwap):
         masked_attacked_text = current_text.replace_word_at_index(
             index, self._lm_tokenizer.mask_token
         )
-        inputs = self._encode_text(masked_attacked_text.text)
-        ids = inputs["input_ids"].tolist()[0]
+        ids = self._lm_tokenizer.encode(
+            masked_attacked_text.text,
+            max_length=self.max_length,
+            pad_to_max_length=True,
+        )
 
         try:
             # Need try-except b/c mask-token located past max_length might be truncated by tokenizer
@@ -83,8 +72,11 @@ class WordSwapMaskedLM(WordSwap):
         except ValueError:
             return []
 
+        ids_tensor = torch.tensor([ids]).to(utils.device)
         with torch.no_grad():
-            preds = self._language_model(**inputs)[0]
+            preds = self._language_model(
+                ids_tensor, token_type_ids=self._segment_tensor
+            )[0]
 
         mask_token_probs = preds[0, masked_index]
         topk = torch.topk(mask_token_probs, self.max_candidates)
@@ -94,7 +86,7 @@ class WordSwapMaskedLM(WordSwap):
         replacement_words = []
         for id in top_ids:
             token = self._lm_tokenizer.convert_ids_to_tokens(id)
-            if utils.is_one_word(token):
+            if check_if_word(token):
                 replacement_words.append(token)
 
         return replacement_words
@@ -116,8 +108,9 @@ class WordSwapMaskedLM(WordSwap):
         masked_text = current_text.replace_word_at_index(
             index, self._lm_tokenizer.mask_token
         )
-        current_inputs = self._encode_text(masked_text.text)
-        current_ids = current_inputs["input_ids"].tolist()[0]
+        current_ids = self._lm_tokenizer.encode(
+            masked_text.text, max_length=self.max_length, pad_to_max_length=True,
+        )
         word_tokens = self._lm_tokenizer.tokenize(current_text.words[index])
 
         try:
@@ -141,7 +134,7 @@ class WordSwapMaskedLM(WordSwap):
             replacement_words = []
             for id in top_preds:
                 token = self._lm_tokenizer.convert_ids_to_tokens(id)
-                if utils.is_one_word(token):
+                if check_if_word(token):
                     replacement_words.append(token)
             return replacement_words
         else:
@@ -163,7 +156,7 @@ class WordSwapMaskedLM(WordSwap):
                 word = "".join(
                     self._lm_tokenizer.convert_ids_to_tokens(word_tensor)
                 ).replace("##", "")
-                if utils.is_one_word(word):
+                if check_if_word(word):
                     combination_results.append((word, perplexity))
             # Sort to get top-K results
             sorted(combination_results, key=lambda x: x[1])
@@ -183,9 +176,15 @@ class WordSwapMaskedLM(WordSwap):
     def _get_transformations(self, current_text, indices_to_modify):
         extra_args = {}
         if self.method == "bert-attack":
-            current_inputs = self._encode_text(current_text.text)
+            current_ids = self._lm_tokenizer.encode(
+                current_text.text, max_length=self.max_length, pad_to_max_length=True
+            )
+
+            current_ids = torch.tensor([current_ids]).to(utils.device)
             with torch.no_grad():
-                pred_probs = self._language_model(**current_inputs)[0][0]
+                pred_probs = self._language_model(
+                    current_ids, token_type_ids=self._segment_tensor
+                )[0][0]
             top_probs, top_ids = torch.topk(pred_probs, self.max_candidates)
             id_preds = top_ids.cpu()
             masked_lm_logits = pred_probs.cpu()
@@ -193,7 +192,6 @@ class WordSwapMaskedLM(WordSwap):
         transformed_texts = []
 
         for i in indices_to_modify:
-            word_at_index = current_text.words[i]
             if self.method == "bert-attack":
                 replacement_words = self._get_replacement_words(
                     current_text,
@@ -205,10 +203,7 @@ class WordSwapMaskedLM(WordSwap):
                 replacement_words = self._get_replacement_words(current_text, i)
             transformed_texts_idx = []
             for r in replacement_words:
-                if r != word_at_index:
-                    transformed_texts_idx.append(
-                        current_text.replace_word_at_index(i, r)
-                    )
+                transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
             transformed_texts.extend(transformed_texts_idx)
 
         return transformed_texts
@@ -229,3 +224,10 @@ def recover_word_case(word, reference_word):
     else:
         # if other, just do not alter the word's case
         return word
+
+
+def check_if_word(word):
+    for c in word:
+        if not c.isalpha():
+            return False
+    return True

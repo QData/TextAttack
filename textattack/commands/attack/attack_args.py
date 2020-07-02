@@ -2,12 +2,9 @@ import textattack
 
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
-    "bae": "textattack.attack_recipes.BAEGarg2019",
-    "bert-attack": "textattack.attack_recipes.BERTAttackLi2020",
     "faster-alzantot": "textattack.attack_recipes.FasterGeneticAlgorithmJia2019",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
-    "input-reduction": "textattack.attack_recipes.InputReductionFeng2018",
     "kuleshov": "textattack.attack_recipes.Kuleshov2017",
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
@@ -220,22 +217,11 @@ TEXTATTACK_DATASET_BY_MODEL = {
     ),
     #
     # Translation models
-    "t5-en-de": (
-        "english_to_german",
-        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
-    ),
-    "t5-en-fr": (
-        "english_to_french",
-        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "fr"),
-    ),
-    "t5-en-ro": (
-        "english_to_romanian",
-        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
-    ),
+    # TODO add proper `nlp` datasets for translation & summarization
     #
     # Summarization models
     #
-    "t5-summarization": ("summarization", ("gigaword", None, "test")),
+    #'t5-summ':                      'textattack.models.summarization.T5Summarization',
 }
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {

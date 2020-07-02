@@ -52,6 +52,3 @@ class ClassificationGoalFunction(GoalFunction):
 
     def extra_repr_keys(self):
         return []
-
-    def _get_displayed_output(self, raw_output):
-        return int(raw_output.argmax())

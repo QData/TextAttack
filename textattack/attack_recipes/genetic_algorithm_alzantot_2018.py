@@ -3,7 +3,6 @@ from textattack.constraints.grammaticality.language_models import (
 )
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
-    InputColumnModification,
     RepeatModification,
     StopwordModification,
 )
@@ -35,14 +34,6 @@ def GeneticAlgorithmAlzantot2018(model):
     #
     constraints = [RepeatModification(), StopwordModification()]
     #
-    # During entailment, we should only edit the hypothesis - keep the premise
-    # the same.
-    #
-    input_column_modification = InputColumnModification(
-        ["premise", "hypothesis"], {"premise"}
-    )
-    constraints.append(input_column_modification)
-    #
     # Maximum words perturbed percentage of 20%
     #
     constraints.append(MaxWordsPerturbed(max_percent=0.2))
@@ -61,6 +52,6 @@ def GeneticAlgorithmAlzantot2018(model):
     #
     # Perform word substitution with a genetic algorithm.
     #
-    search_method = GeneticAlgorithm(pop_size=60, max_iters=20, max_crossover_retries=0)
+    search_method = GeneticAlgorithm(pop_size=60, max_iters=20)
 
     return Attack(goal_function, constraints, transformation, search_method)

@@ -11,7 +11,7 @@ We split models up into two broad categories:
 
 **Classification models:**
 
-   :ref:`BERT`: ``bert-base-uncased`` fine-tuned on various datasets using ``transformers``.
+   :ref:`BERT`: ``bert-base-uncased`` fine-tuned on various datasets using transformers_.
 
    :ref:`LSTM`: a standard LSTM fine-tuned on various datasets.
    
@@ -20,29 +20,30 @@ We split models up into two broad categories:
 
 **Text-to-text models:**
 
-   :ref:`T5`: ``T5`` fine-tuned on various datasets using ``transformers``.
+   :ref:`T5`: ``T5`` fine-tuned on various datasets using transformers_.
    
    
-.. _BERT:
 
 BERT
 ********
+.. _BERT:
+
 .. automodule:: textattack.models.helpers.bert_for_classification
    :members:
 
 
-.. _LSTM:
-
 LSTM
 *******
+.. _LSTM:
+
 .. automodule:: textattack.models.helpers.lstm_for_classification
    :members:
 
 
-.. _CNN:
-
 Word-CNN
 ************
+.. _CNN:
+
 .. automodule:: textattack.models.helpers.word_cnn_for_classification
    :members:
 

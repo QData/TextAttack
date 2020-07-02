@@ -69,7 +69,7 @@ Word Swap by Random Character Insertion
    :members:
    
 Word Swap by Random Character Substitution
--------------------------------------------
+---------------------------------------
 
 .. automodule:: textattack.transformations.word_swap_random_character_substitution
    :members:

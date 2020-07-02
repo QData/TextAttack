@@ -12,7 +12,6 @@ AUGMENTATION_RECIPE_NAMES = {
     "wordnet": "textattack.augmentation.WordNetAugmenter",
     "embedding": "textattack.augmentation.EmbeddingAugmenter",
     "charswap": "textattack.augmentation.CharSwapAugmenter",
-    "eda": "textattack.augmentation.EasyDataAugmenter",
 }
 
 
@@ -56,18 +55,11 @@ class AugmentCommand(TextAttackCommand):
         textattack.shared.logger.info(
             f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
         )
-
-        if args.recipe == "eda":
-            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                alpha=args.alpha, n_aug=args.transformations_per_example,
-            )
-
-        else:
-            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                num_words_to_swap=args.num_words_to_swap,
-                transformations_per_example=args.transformations_per_example,
-            )
-
+        # Augment all examples.
+        augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+            num_words_to_swap=args.num_words_to_swap,
+            transformations_per_example=args.transformations_per_example,
+        )
         output_rows = []
         for row in tqdm.tqdm(rows, desc="Augmenting rows"):
             text_input = row[args.input_column]
@@ -123,15 +115,6 @@ class AugmentCommand(TextAttackCommand):
             type=int,
             default=2,
         )
-
-        parser.add_argument(
-            "--alpha",
-            "--a",
-            help="fraction of words to modify (EasyDataAugmenter)",
-            type=float,
-            default=0.1,
-        )
-
         parser.add_argument(
             "--transformations-per-example",
             "--t",
