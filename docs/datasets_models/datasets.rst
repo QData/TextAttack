@@ -6,19 +6,10 @@ Datasets
    :members:
    :private-members:
 
-Classification
-###############
-.. automodule:: textattack.datasets.classification.classification_dataset
+.. automodule:: textattack.datasets.huggingface_nlp_dataset
    :members:
 
-Entailment
-############
-.. automodule:: textattack.datasets.entailment.entailment_dataset
+.. automodule:: textattack.datasets.translation.ted_multi
    :members:
 
-
-Translation
-#############
-.. automodule:: textattack.datasets.translation.translation_datasets
-   :members:
 

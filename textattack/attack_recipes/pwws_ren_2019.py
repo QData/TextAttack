@@ -26,5 +26,5 @@ def PWWSRen2019(model):
     constraints = [RepeatModification(), StopwordModification()]
     goal_function = UntargetedClassification(model)
     # search over words based on a combination of their saliency score, and how efficient the WordSwap transform is
-    search_method = GreedyWordSwapWIR("pwws", ascending=False)
+    search_method = GreedyWordSwapWIR("pwws")
     return Attack(goal_function, constraints, transformation, search_method)

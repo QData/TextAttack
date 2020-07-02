@@ -179,7 +179,7 @@ class AttackedText:
         """ Takes indices of words from original string and converts them to 
             indices of the same words in the current string.
             
-            Uses information from ``self.attack_attrs['original_index_map'], 
+            Uses information from ``self.attack_attrs['original_index_map']``, 
             which maps word indices from the original to perturbed text.
         """
         if len(self.attack_attrs["original_index_map"]) == 0:

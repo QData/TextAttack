@@ -120,6 +120,16 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_faster_alzantot_recipe.txt",
     ),
+    #
+    # test: run_attack with kuleshov recipe and sst-2 cnn
+    #
+    (
+        "run_attack_kuleshov_nn",
+        (
+            "textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst --attack-n --query-budget 200"
+        ),
+        "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
+    ),
 ]
 
 

@@ -141,9 +141,9 @@ class SentenceEncoder(Constraint):
                     )
                 )
             embeddings = self.encode(starting_text_windows + transformed_text_windows)
-            starting_embeddings = torch.tensor(embeddings[: len(transformed_texts)]).to(
-                utils.device
-            )
+            if not isinstance(embeddings, torch.Tensor):
+                embeddings = torch.tensor(embeddings)
+            starting_embeddings = embeddings[: len(transformed_texts)].to(utils.device)
             transformed_embeddings = torch.tensor(
                 embeddings[len(transformed_texts) :]
             ).to(utils.device)
@@ -151,18 +151,12 @@ class SentenceEncoder(Constraint):
             starting_raw_text = starting_text.text
             transformed_raw_texts = [t.text for t in transformed_texts]
             embeddings = self.encode([starting_raw_text] + transformed_raw_texts)
-            if isinstance(embeddings[0], torch.Tensor):
-                starting_embedding = embeddings[0].to(utils.device)
-            else:
-                # If the embedding is not yet a tensor, make it one.
-                starting_embedding = torch.tensor(embeddings[0]).to(utils.device)
+            if not isinstance(embeddings, torch.Tensor):
+                embeddings = torch.tensor(embeddings)
 
-            if isinstance(embeddings[1], torch.Tensor):
-                # If `encode` did not return a Tensor of all embeddings, combine
-                # into a tensor.
-                transformed_embeddings = torch.stack(embeddings[1:]).to(utils.device)
-            else:
-                transformed_embeddings = torch.tensor(embeddings[1:]).to(utils.device)
+            starting_embedding = embeddings[0].to(utils.device)
+
+            transformed_embeddings = embeddings[1:].to(utils.device)
 
             # Repeat original embedding to size of perturbed embedding.
             starting_embeddings = starting_embedding.unsqueeze(dim=0).repeat(

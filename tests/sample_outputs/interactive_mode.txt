@@ -34,7 +34,7 @@
       )
   (is_black_box):  True
 ) 
-
+/.*/
 Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:
