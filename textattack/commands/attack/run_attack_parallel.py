@@ -165,7 +165,7 @@ def run(args, checkpoint=None):
     pbar.close()
     print()
     # Enable summary stdout.
-    if args.disable_stdout:
+    if args.hide_all_results:
         attack_log_manager.enable_stdout()
     attack_log_manager.log_summary()
     attack_log_manager.flush()

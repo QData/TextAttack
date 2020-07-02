@@ -12,6 +12,8 @@ class AttackLogManager:
     def __init__(self):
         self.loggers = []
         self.results = []
+        self.hide_failed_result = False
+        self.hide_skipped_result = False
 
     def enable_stdout(self):
         self.loggers.append(FileLogger(stdout=True))
@@ -28,11 +30,26 @@ class AttackLogManager:
     def add_output_csv(self, filename, color_method):
         self.loggers.append(CSVLogger(filename=filename, color_method=color_method))
 
+    def hide_failed_results(self):
+        self.hide_failed_result = True
+
+    def hide_skipped_results(self):
+        self.hide_skipped_result = True
+
     def log_result(self, result):
         """ Logs an ``AttackResult`` on each of `self.loggers`. """
         self.results.append(result)
         for logger in self.loggers:
-            logger.log_attack_result(result)
+            if self.hide_failed_result:
+                if not isinstance(result, FailedAttackResult):
+                    logger.log_attack_result(result)
+            if self.hide_skipped_result:
+                if not isinstance(result, SkippedAttackResult):
+                    logger.log_attack_result(result)
+            if self.hide_failed_result and self.hide_skipped_result:
+                if (not isinstance(result, FailedAttackResult)) and \
+                        (not isinstance(result, SkippedAttackResult)):
+                    logger.log_attack_result(result)
 
     def log_results(self, results):
         """ Logs an iterable of ``AttackResult`` objects on each of 

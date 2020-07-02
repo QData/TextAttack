@@ -94,7 +94,7 @@ def run(args, checkpoint=None):
         for result in attack.attack_dataset(dataset, indices=worklist):
             attack_log_manager.log_result(result)
 
-            if not args.disable_stdout:
+            if not args.hide_all_results:
                 print("\n")
             if (not args.attack_n) or (
                 not isinstance(result, textattack.attack_results.SkippedAttackResult)
@@ -134,7 +134,7 @@ def run(args, checkpoint=None):
         pbar.close()
         print()
         # Enable summary stdout
-        if args.disable_stdout:
+        if args.hide_all_results:
             attack_log_manager.enable_stdout()
         attack_log_manager.log_summary()
         attack_log_manager.flush()

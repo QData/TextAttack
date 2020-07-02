@@ -93,6 +93,29 @@ def add_dataset_args(parser):
         help="The offset to start at in the dataset.",
     )
 
+    parser.add_argument(
+        "--hide-all-results",
+        action="store_true",
+        required=False,
+        default=False,
+    )
+
+    parser.add_argument(
+        "--hide-failed-results",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Hides failed attacks from the attack log.",
+    )
+
+    parser.add_argument(
+        "--hide-skipped-results",
+        action="store_true",
+        required=False,
+        default=False,
+        help="Hides skipped attacks from the attack log",
+    )
+
 
 def load_module_from_file(file_path):
     """ Uses ``importlib`` to dynamically open a file and load an object from
@@ -433,8 +456,15 @@ def parse_logger_from_args(args):
         attack_log_manager.enable_wandb()
 
     # Stdout
-    if not args.disable_stdout:
+    if not args.hide_all_results:
         attack_log_manager.enable_stdout()
+
+    if args.hide_failed_results:
+        attack_log_manager.hide_failed_results()
+
+    if args.hide_skipped_results:
+        attack_log_manager.hide_skipped_results()
+
     return attack_log_manager
 
 
