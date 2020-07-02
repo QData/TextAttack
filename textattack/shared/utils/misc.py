@@ -78,6 +78,8 @@ def load_textattack_model_from_path(model_name, model_path):
         model = textattack.models.helpers.BERTForClassification(
             model_path=model_path, num_labels=num_labels
         )
+    elif model_name.startswith("t5"):
+        model = textattack.models.helpers.T5ForTextToText(model_path)
     else:
         raise ValueError(f"Unknown textattack model {model_path}")
     return model

@@ -35,6 +35,12 @@ def get_nlp_dataset_columns(dataset):
     elif {"sentence", "label"} <= schema:
         input_columns = ("sentence",)
         output_column = "label"
+    elif {"document", "summary"} <= schema:
+        input_columns = ("document",)
+        output_column = "summary"
+    elif {"content", "summary"} <= schema:
+        input_columns = ("content",)
+        output_column = "summary"
     else:
         raise ValueError(
             f"Unsupported dataset schema {schema}. Try loading dataset manually (from a file) instead."
@@ -47,18 +53,17 @@ class HuggingFaceNLPDataset(TextAttackDataset):
     """ Loads a dataset from HuggingFace ``nlp`` and prepares it as a
         TextAttack dataset.
         
-        name: the dataset name
-        subset: the subset of the main dataset. Dataset will be loaded as
-            ``nlp.load_dataset(name, subset)``.
-        label_map: Mapping if output labels should be re-mapped. Useful
-            if model was trained with a different label arrangement than
-            provided in the ``nlp`` version of the dataset.
-        output_scale_factor (float): Factor to divide ground-truth outputs by.
+        - name: the dataset name
+        - subset: the subset of the main dataset. Dataset will be loaded as ``nlp.load_dataset(name, subset)``.
+        - label_map: Mapping if output labels should be re-mapped. Useful
+          if model was trained with a different label arrangement than
+          provided in the ``nlp`` version of the dataset.
+        - output_scale_factor (float): Factor to divide ground-truth outputs by.
             Generally, TextAttack goal functions require model outputs
-            between 0 and 1. Some datasets test the model's *correlation*
+            between 0 and 1. Some datasets test the model's \*correlation\*
             with ground-truth output, instead of its accuracy, so these
             outputs may be scaled arbitrarily. 
-        shuffle (bool): Whether to shuffle the dataset on load.
+        - shuffle (bool): Whether to shuffle the dataset on load.
                 
     """
 
@@ -72,6 +77,7 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         dataset_columns=None,
         shuffle=False,
     ):
+        self._name = name
         self._dataset = nlp.load_dataset(name, subset)[split]
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
         textattack.shared.logger.info(

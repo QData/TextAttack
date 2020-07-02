@@ -13,6 +13,8 @@ from .word_swap_random_character_insertion import WordSwapRandomCharacterInserti
 from .word_swap_random_character_substitution import WordSwapRandomCharacterSubstitution
 from .word_swap_wordnet import WordSwapWordNet
 from .word_swap_masked_lm import WordSwapMaskedLM
+from .word_swap_random_word import RandomSwap
+from .random_synonym_insertion import RandomSynonymInsertion
 
 # White-box transformations
 from .word_swap_gradient_based import WordSwapGradientBased

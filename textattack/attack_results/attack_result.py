@@ -13,7 +13,7 @@ class AttackResult:
             perturbed text. May or may not have been successful.
     """
 
-    def __init__(self, original_result, perturbed_result, num_queries=0):
+    def __init__(self, original_result, perturbed_result):
         if original_result is None:
             raise ValueError("Attack original result cannot be None")
         elif not isinstance(original_result, GoalFunctionResult):
@@ -27,7 +27,7 @@ class AttackResult:
 
         self.original_result = original_result
         self.perturbed_result = perturbed_result
-        self.num_queries = num_queries
+        self.num_queries = perturbed_result.num_queries
 
         # We don't want the AttackedText attributes sticking around clogging up
         # space on our devices. Delete them here, if they're still present,
@@ -89,27 +89,34 @@ class AttackResult:
         i1 = 0
         i2 = 0
 
-        while i1 < len(t1.words) and i2 < len(t2.words):
+        while i1 < t1.num_words or i2 < t2.num_words:
             # show deletions
-            while t2.attack_attrs["original_index_map"][i1] == -1:
+            while (
+                i1 < len(t2.attack_attrs["original_index_map"])
+                and t2.attack_attrs["original_index_map"][i1] == -1
+            ):
                 words_1.append(utils.color_text(t1.words[i1], color_1, color_method))
                 words_1_idxs.append(i1)
                 i1 += 1
             # show insertions
-            while i2 < t2.attack_attrs["original_index_map"][i1]:
+            while (
+                i1 < len(t2.attack_attrs["original_index_map"])
+                and i2 < t2.attack_attrs["original_index_map"][i1]
+            ):
                 words_2.append(utils.color_text(t1.words[i2], color_2, color_method))
                 words_2_idxs.append(i2)
                 i2 += 1
             # show swaps
-            word_1 = t1.words[i1]
-            word_2 = t2.words[i2]
-            if word_1 != word_2:
-                words_1.append(utils.color_text(word_1, color_1, color_method))
-                words_2.append(utils.color_text(word_2, color_2, color_method))
-                words_1_idxs.append(i1)
-                words_2_idxs.append(i2)
-            i1 += 1
-            i2 += 1
+            if i1 < t1.num_words and i2 < t2.num_words:
+                word_1 = t1.words[i1]
+                word_2 = t2.words[i2]
+                if word_1 != word_2:
+                    words_1.append(utils.color_text(word_1, color_1, color_method))
+                    words_2.append(utils.color_text(word_2, color_2, color_method))
+                    words_1_idxs.append(i1)
+                    words_2_idxs.append(i2)
+                i1 += 1
+                i2 += 1
 
         t1 = self.original_result.attacked_text.replace_words_at_indices(
             words_1_idxs, words_1

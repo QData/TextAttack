@@ -125,7 +125,10 @@ def run(args, checkpoint=None):
             pbar.update()
             num_results += 1
 
-            if type(result) == textattack.attack_results.SuccessfulAttackResult:
+            if (
+                type(result) == textattack.attack_results.SuccessfulAttackResult
+                or type(result) == textattack.attack_results.MaximizedAttackResult
+            ):
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
                 num_failures += 1
@@ -169,6 +172,8 @@ def run(args, checkpoint=None):
     print()
     finish_time = time.time()
     textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
+
+    return attack_log_manager.results
 
 
 def pytorch_multiprocessing_workaround():

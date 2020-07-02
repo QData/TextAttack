@@ -1,1 +1,1 @@
-from .translation_datasets import *
+from .ted_multi import TedMultiTranslationDataset
