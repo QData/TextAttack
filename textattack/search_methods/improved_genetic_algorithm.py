@@ -30,11 +30,11 @@ class ImprovedGeneticAlgorithm(SearchMethod):
 
     def __init__(
         self,
-        max_pop_size=20, 
-        max_iters=50, 
-        max_replaced_times=5, 
+        max_pop_size=20,
+        max_iters=50,
+        max_replaced_times=5,
         give_up_if_no_improvement=False,
-        max_crossover_retries=20
+        max_crossover_retries=20,
     ):
         self.max_iters = max_iters
         self.max_pop_size = max_pop_size
@@ -64,7 +64,9 @@ class ImprovedGeneticAlgorithm(SearchMethod):
         )
         if not len(transformations):
             return False
-        orig_result, self._search_over = self.get_goal_results([pop_member.attacked_text])
+        orig_result, self._search_over = self.get_goal_results(
+            [pop_member.attacked_text]
+        )
         if self._search_over:
             return False
         new_x_results, self._search_over = self.get_goal_results(transformations)
@@ -73,7 +75,7 @@ class ImprovedGeneticAlgorithm(SearchMethod):
         if len(new_x_scores) and new_x_scores.max() > 0:
             max_idx = new_x_scores.argmax()
             pop_member.attacked_text = transformations[max_idx]
-            pop_member.replaced_times[idx] =- 1
+            pop_member.replaced_times[idx] = -1
             pop_member.results = new_x_results[max_idx]
             return True
         return False
@@ -103,9 +105,7 @@ class ImprovedGeneticAlgorithm(SearchMethod):
             The population.
         """
         words = initial_result.attacked_text.words
-        replaced_times = np.array(
-            [self.max_replaced_times for _ in range(len(words))]
-        )
+        replaced_times = np.array([self.max_replaced_times for _ in range(len(words))])
         population = []
         for idx in range(len(words)):
             pop_member = PopulationMember(
@@ -161,7 +161,7 @@ class ImprovedGeneticAlgorithm(SearchMethod):
                 # In this case, neither x_1 nor x_2 has been transformed,
                 # meaning that new_text == original_text
                 filtered = [new_text]
-            
+
             if filtered:
                 new_text = filtered[0]
                 passed_constraints = True
@@ -190,7 +190,7 @@ class ImprovedGeneticAlgorithm(SearchMethod):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
             pop_size = len(population)
             if pop_size > self.max_pop_size:
-                population = population[:self.max_pop_size]
+                population = population[: self.max_pop_size]
                 pop_size = self.max_pop_size
 
             if (
@@ -212,12 +212,11 @@ class ImprovedGeneticAlgorithm(SearchMethod):
             children = []
             for idx in range(pop_size - 1):
                 child = self._crossover(
-                    population[parent1_idx[idx]],
-                    population[parent2_idx[idx]]
+                    population[parent1_idx[idx]], population[parent2_idx[idx]]
                 )
                 if self._search_over:
                     break
-                
+
                 self._mutate(child)
                 children.append(child)
 
@@ -235,7 +234,12 @@ class ImprovedGeneticAlgorithm(SearchMethod):
         return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
-        return ["max_pop_size", "max_iters", "max_replaced_times", "give_up_if_no_improvement"]
+        return [
+            "max_pop_size",
+            "max_iters",
+            "max_replaced_times",
+            "give_up_if_no_improvement",
+        ]
 
 
 class PopulationMember:

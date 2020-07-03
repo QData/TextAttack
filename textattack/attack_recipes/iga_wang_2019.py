@@ -48,6 +48,8 @@ def IGAWang2019(model):
     #
     # Perform word substitution with an improved genetic algorithm.
     #
-    search_method = ImprovedGeneticAlgorithm(max_pop_size=60, max_iters=20, max_replaced_times=5)
+    search_method = ImprovedGeneticAlgorithm(
+        max_pop_size=60, max_iters=20, max_replaced_times=5
+    )
 
     return Attack(goal_function, constraints, transformation, search_method)
