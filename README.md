@@ -285,7 +285,7 @@ The `attack_one` method in an `Attack` takes as input an `AttackedText`, and out
 
 ### Goal Functions
 
-A `GoalFunction` takes as input an `AttackedText` object and the ground truth output, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
+A `GoalFunction` takes as input an `AttackedText` object, scores it, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
 
 ### Constraints
 
