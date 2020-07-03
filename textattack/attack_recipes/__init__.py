@@ -10,3 +10,4 @@ from .seq2sick_cheng_2018_blackbox import Seq2SickCheng2018BlackBox
 from .textbugger_li_2018 import TextBuggerLi2018
 from .textfooler_jin_2019 import TextFoolerJin2019
 from .pwws_ren_2019 import PWWSRen2019
+from .iga_wang_2019 import IGAWang2019
