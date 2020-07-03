@@ -36,7 +36,7 @@ class ThoughtVector(SentenceEncoder):
         return torch.mean(embeddings, dim=0)
 
     def encode(self, raw_text_list):
-        return [self._get_thought_vector(text) for text in raw_text_list]
+        return torch.stack([self._get_thought_vector(text) for text in raw_text_list])
 
     def extra_repr_keys(self):
         """Set the extra representation of the constraint using these keys.

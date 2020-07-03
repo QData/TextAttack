@@ -12,11 +12,26 @@ def attacked_text():
     return textattack.shared.AttackedText(raw_text)
 
 
+raw_pokemon_text = "the threat implied in the title pokémon 4ever is terrifying  like locusts in a horde these things will keep coming ."
+
+
+@pytest.fixture
+def pokemon_attacked_text():
+    return textattack.shared.AttackedText(raw_pokemon_text)
+
+
 premise = "Among these are the red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes."
 hypothesis = "The Patan Museum is down the street from the red brick Royal Palace."
 raw_text_pair = collections.OrderedDict(
     [("premise", premise), ("hypothesis", hypothesis)]
 )
+
+raw_hyphenated_text = "It's a run-of-the-mill kind of farmer's tan."
+
+
+@pytest.fixture
+def hyphenated_text():
+    return textattack.shared.AttackedText(raw_hyphenated_text)
 
 
 @pytest.fixture
@@ -25,27 +40,13 @@ def attacked_text_pair():
 
 
 class TestAttackedText:
-    def test_words(self, attacked_text):
+    def test_words(self, attacked_text, pokemon_attacked_text):
+        # fmt: off
         assert attacked_text.words == [
-            "A",
-            "person",
-            "walks",
-            "up",
-            "stairs",
-            "into",
-            "a",
-            "room",
-            "and",
-            "sees",
-            "beer",
-            "poured",
-            "from",
-            "a",
-            "keg",
-            "and",
-            "people",
-            "talking",
+            "A", "person", "walks", "up", "stairs", "into", "a", "room", "and", "sees", "beer", "poured", "from", "a", "keg", "and", "people", "talking",
         ]
+        assert pokemon_attacked_text.words == ['the', 'threat', 'implied', 'in', 'the', 'title', 'pokémon', '4ever', 'is', 'terrifying', 'like', 'locusts', 'in', 'a', 'horde', 'these', 'things', 'will', 'keep', 'coming'] 
+        # fmt: on
 
     def test_window_around_index(self, attacked_text):
         assert attacked_text.text_window_around_index(5, 1) == "into"
@@ -53,6 +54,10 @@ class TestAttackedText:
         assert attacked_text.text_window_around_index(5, 3) == "stairs into a"
         assert attacked_text.text_window_around_index(5, 4) == "up stairs into a"
         assert attacked_text.text_window_around_index(5, 5) == "up stairs into a room"
+        assert (
+            attacked_text.text_window_around_index(5, float("inf"))
+            == "A person walks up stairs into a room and sees beer poured from a keg and people talking"
+        )
 
     def test_big_window_around_index(self, attacked_text):
         assert (
@@ -65,8 +70,9 @@ class TestAttackedText:
     def test_window_around_index_end(self, attacked_text):
         assert attacked_text.text_window_around_index(17, 3) == "and people talking"
 
-    def test_text(self, attacked_text, attacked_text_pair):
+    def test_text(self, attacked_text, pokemon_attacked_text, attacked_text_pair):
         assert attacked_text.text == raw_text
+        assert pokemon_attacked_text.text == raw_pokemon_text
         assert attacked_text_pair.text == "\n".join(raw_text_pair.values())
 
     def test_printable_text(self, attacked_text, attacked_text_pair):
@@ -136,13 +142,13 @@ class TestAttackedText:
             + "\n"
             + "The Patan Museum is down the street from the red brick Royal Palace."
         )
-        new_text = new_text.insert_text_after_word_index(38, "and shapes")
+        new_text = new_text.insert_text_after_word_index(37, "and shapes")
         assert new_text.text == (
             "Among these are the old decrepit red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes and shapes."
             + "\n"
             + "The Patan Museum is down the street from the red brick Royal Palace."
         )
-        new_text = new_text.insert_text_after_word_index(41, "The")
+        new_text = new_text.insert_text_after_word_index(40, "The")
         assert new_text.text == (
             "Among these are the old decrepit red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes and shapes."
             + "\n"
@@ -159,7 +165,7 @@ class TestAttackedText:
         )
         for old_idx, new_idx in enumerate(new_text.attack_attrs["original_index_map"]):
             assert (attacked_text.words[old_idx] == new_text.words[new_idx]) or (
-                new_i == -1
+                new_idx == -1
             )
         new_text = (
             new_text.delete_word_at_index(0)
@@ -176,3 +182,14 @@ class TestAttackedText:
             new_text.text
             == "person walks a very long way up stairs into a room and sees beer poured and people on the couch."
         )
+
+    def test_hyphen_apostrophe_words(self, hyphenated_text):
+        assert hyphenated_text.words == [
+            "It's",
+            "a",
+            "run-of-the-mill",
+            "kind",
+            "of",
+            "farmer's",
+            "tan",
+        ]

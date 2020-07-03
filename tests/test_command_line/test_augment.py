@@ -37,3 +37,5 @@ def test_command_line_augmentation(name, command, outfile, sample_output_file):
     # Ensure CSV file exists, then delete it.
     assert os.path.exists(outfile)
     os.remove(outfile)
+
+    assert result.returncode == 0

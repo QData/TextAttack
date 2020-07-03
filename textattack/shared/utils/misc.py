@@ -24,7 +24,7 @@ def html_style_from_dict(style_dict):
 def html_table_from_rows(rows, title=None, header=None, style_dict=None):
     # Stylize the container div.
     if style_dict:
-        table_html = "<div {}>".format(style_from_dict(style_dict))
+        table_html = "<div {}>".format(html_style_from_dict(style_dict))
     else:
         table_html = "<div>"
     # Print the title string.
@@ -78,6 +78,8 @@ def load_textattack_model_from_path(model_name, model_path):
         model = textattack.models.helpers.BERTForClassification(
             model_path=model_path, num_labels=num_labels
         )
+    elif model_name.startswith("t5"):
+        model = textattack.models.helpers.T5ForTextToText(model_path)
     else:
         raise ValueError(f"Unknown textattack model {model_path}")
     return model

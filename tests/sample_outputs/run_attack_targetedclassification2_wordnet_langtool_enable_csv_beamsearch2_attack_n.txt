@@ -23,10 +23,13 @@
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[37mNeutral (100%)[0m --> [91m[FAILED][0m
+[37mNeutral (100%)[0m --> [92mEntailment (56%)[0m
 
 [1m[4mPremise[0m[0m: This site includes a list of all award winners and a searchable database of Government Executive articles.
-[1m[4mHypothesis[0m[0m: The Government Executive articles housed on the website are not able to be searched.
+[1m[4mHypothesis[0m[0m: The Government Executive articles housed on the website are not [37mable[0m to be searched.
+
+[1m[4mPremise[0m[0m: This site includes a list of all award winners and a searchable database of Government Executive articles.
+[1m[4mHypothesis[0m[0m: The Government Executive articles housed on the website are not [92mable-bodied[0m to be searched.
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
@@ -43,13 +46,13 @@
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 1      |
-| Number of failed attacks:     | 1      |
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 0      |
 | Number of skipped attacks:    | 1      |
 | Original accuracy:            | 66.67% |
-| Accuracy under attack:        | 33.33% |
-| Attack success rate:          | 50.0%  |
-| Average perturbed word %:     | 2.27%  |
-| Average num. words per input: | 29.0   |
-| Avg num queries:              | 447.5  |
+| Accuracy under attack:        | 0.0%   |
+| Attack success rate:          | 100.0% |
+| Average perturbed word %:     | 2.78%  |
+| Average num. words per input: | 28.67  |
+| Avg num queries:              | 182.0  |
 +-------------------------------+--------+

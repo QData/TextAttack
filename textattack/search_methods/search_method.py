@@ -1,7 +1,9 @@
+from abc import ABC, abstractmethod
+
 from textattack.shared.utils import default_class_repr
 
 
-class SearchMethod:
+class SearchMethod(ABC):
     """
     This is an abstract class that contains main helper functionality for 
     search methods. A search method is a strategy for applying transformations
@@ -20,8 +22,13 @@ class SearchMethod:
             raise AttributeError(
                 "Search Method must have access to get_goal_results method"
             )
+        if not hasattr(self, "filter_transformations"):
+            raise AttributeError(
+                "Search Method must have access to filter_transformations method"
+            )
         return self._perform_search(initial_result)
 
+    @abstractmethod
     def _perform_search(self, initial_result):
         """
         Perturbs `attacked_text` from ``initial_result`` until goal is reached or search is 

@@ -11,8 +11,8 @@ from .language_model_helpers import QueryHandler
 class LearningToWriteLanguageModel(LanguageModelConstraint):
     """ A constraint based on the L2W language model.
     
-        The RNN-based language model from ``Learning to Write With Cooperative
-        Discriminators'' (Holtzman et al, 2018).
+        The RNN-based language model from "Learning to Write With Cooperative
+        Discriminators" (Holtzman et al, 2018).
         
         https://arxiv.org/pdf/1805.06087.pdf
         
