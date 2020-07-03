@@ -24,11 +24,11 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (88%)[0m
+[92mPositive (100%)[0m --> [91mNegative (98%)[0m
 
-exposing the ways we fool ourselves is one hour [92mphoto[0m's real [92mstrength[0m .
+exposing the ways we fool ourselves is one [92mhour[0m photo's real [92mstrength[0m .
 
-exposing the ways we fool ourselves is one hour [91mpictures[0m's real [91mkraft[0m .
+exposing the ways we fool ourselves is one [91mstopwatch[0m photo's real [91mkraft[0m .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
@@ -65,7 +65,7 @@ mostly , [goldbacher] just lets her complicated characters be [91mhaphazard[0m
 | Original accuracy:            | 100.0% |
 | Accuracy under attack:        | 0.0%   |
 | Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 17.13% |
-| Average num. words per input: | 17.0   |
-| Avg num queries:              | 46.0   |
+| Average perturbed word %:     | 17.56% |
+| Average num. words per input: | 16.25  |
+| Avg num queries:              | 45.5   |
 +-------------------------------+--------+

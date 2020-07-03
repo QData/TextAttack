@@ -35,6 +35,6 @@ I went into "Night of the Hunted" not knowing what to expect at all. I was reall
 | Accuracy under attack:        | 0.0%   |
 | Attack success rate:          | 100.0% |
 | Average perturbed word %:     | 0.62%  |
-| Average num. words per input: | 165.0  |
-| Avg num queries:              | 167.0  |
+| Average num. words per input: | 164.0  |
+| Avg num queries:              | 166.0  |
 +-------------------------------+--------+

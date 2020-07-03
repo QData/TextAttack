@@ -27,3 +27,5 @@ def test_command_line_list(name, command, sample_output_file):
     print("stderr =>", stderr)
 
     assert stdout == desired_text
+
+    assert result.returncode == 0
