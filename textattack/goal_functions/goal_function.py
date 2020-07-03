@@ -114,13 +114,6 @@ class GoalFunction:
             )
         return results, self.num_queries == self.query_budget
 
-    def get_results_from_search_method(self, attacked_text_list):
-        """
-        The search method doesn't have access to the ``check_skip`` argument of
-        ``get_results``.
-        """
-        return self.get_results(attacked_text_list)
-
     def _get_goal_status(self, model_output, attacked_text, check_skip=False):
         should_skip = check_skip and self._should_skip(model_output, attacked_text)
         if should_skip:
