@@ -1,7 +1,8 @@
+from abc import ABC, abstractmethod
+
 from textattack.constraints import Constraint
 
-
-class PreTransformationConstraint(Constraint):
+class PreTransformationConstraint(Constraint, ABC):
     """ 
     An abstract class that represents constraints which are applied before
     the transformation. These restrict which words are allowed to be modified
@@ -22,6 +23,7 @@ class PreTransformationConstraint(Constraint):
             return set(range(len(current_text.words)))
         return self._get_modifiable_indices(current_text)
 
+    @abstractmethod
     def _get_modifiable_indices(current_text):
         """
         Returns the word indices in ``current_text`` which are able to be modified. 
@@ -31,3 +33,6 @@ class PreTransformationConstraint(Constraint):
             current_text: The ``AttackedText`` input to consider.
         """
         raise NotImplementedError()
+    
+    def _check_constraint(self):
+        raise RuntimeError('PreTransformationConstraints do not support `_check_constraint()`.')

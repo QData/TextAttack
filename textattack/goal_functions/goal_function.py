@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 import math
 
 import lru
@@ -11,7 +12,7 @@ from textattack.shared import utils, validators
 from textattack.shared.utils import batch_model_predict, default_class_repr
 
 
-class GoalFunction:
+class GoalFunction(ABC):
     """
     Evaluates how well a perturbed attacked_text object is achieving a specified goal.
     
@@ -124,24 +125,28 @@ class GoalFunction:
             return GoalFunctionResultStatus.SUCCEEDED
         return GoalFunctionResultStatus.SEARCHING
 
+    @abstractmethod
     def _is_goal_complete(self, model_output, attacked_text):
         raise NotImplementedError()
 
     def _should_skip(self, model_output, attacked_text):
         return self._is_goal_complete(model_output, attacked_text)
 
+    @abstractmethod
     def _get_score(self, model_output, attacked_text):
         raise NotImplementedError()
 
     def _get_displayed_output(self, raw_output):
         return raw_output
 
+    @abstractmethod
     def _goal_function_result_type(self):
         """ 
         Returns the class of this goal function's results. 
         """
         raise NotImplementedError()
 
+    @abstractmethod
     def _process_model_outputs(self, inputs, outputs):
         """ 
         Processes and validates a list of model outputs. 
