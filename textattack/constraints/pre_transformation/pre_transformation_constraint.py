@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from textattack.constraints import Constraint
 
+
 class PreTransformationConstraint(Constraint, ABC):
     """ 
     An abstract class that represents constraints which are applied before
@@ -33,6 +34,8 @@ class PreTransformationConstraint(Constraint, ABC):
             current_text: The ``AttackedText`` input to consider.
         """
         raise NotImplementedError()
-    
+
     def _check_constraint(self):
-        raise RuntimeError('PreTransformationConstraints do not support `_check_constraint()`.')
+        raise RuntimeError(
+            "PreTransformationConstraints do not support `_check_constraint()`."
+        )
