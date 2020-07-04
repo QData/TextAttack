@@ -72,7 +72,9 @@ class SentenceEncoder(Constraint):
             The similarity between the starting and transformed text using the metric. 
         """
         try:
-            modified_index = next(iter(x_adv.attack_attrs["newly_modified_indices"]))
+            modified_index = next(
+                iter(transformed_text.attack_attrs["newly_modified_indices"])
+            )
         except KeyError:
             raise KeyError(
                 "Cannot apply sentence encoder constraint without `newly_modified_indices`"
@@ -111,7 +113,7 @@ class SentenceEncoder(Constraint):
                 ``transformed_texts``. If ``transformed_texts`` is empty, 
                 an empty tensor is returned
         """
-        # Return an empty tensor if x_adv_list is empty.
+        # Return an empty tensor if transformed_texts is empty.
         # This prevents us from calling .repeat(x, 0), which throws an
         # error on machines with multiple GPUs (pytorch 1.2).
         if len(transformed_texts) == 0:
@@ -207,7 +209,7 @@ class SentenceEncoder(Constraint):
                     "Must provide original text when compare_with_original is true."
                 )
         else:
-            scores = self._sim_score(current_text, transformed_texts)
+            scores = self._sim_score(current_text, transformed_text)
         transformed_text.attack_attrs["similarity_score"] = score
         return score >= self.threshold
 

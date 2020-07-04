@@ -47,7 +47,7 @@ class WordEmbeddingDistance(Constraint):
             mse_dist_file = "mse_dist.p"
             cos_sim_file = "cos_sim.p"
         else:
-            raise ValueError(f"Could not find word embedding {word_embedding}")
+            raise ValueError(f"Could not find word embedding {embedding_type}")
 
         # Download embeddings if they're not cached.
         word_embeddings_path = utils.download_if_needed(WordEmbeddingDistance.PATH)

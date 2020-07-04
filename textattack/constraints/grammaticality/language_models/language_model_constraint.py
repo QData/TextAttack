@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from textattack.constraints import Constraint
 
 
-class LanguageModelConstraint(ABC, Constraint):
+class LanguageModelConstraint(Constraint, ABC):
     """ 
     Determines if two sentences have a swapped word that has a similar
     probability according to a language model.

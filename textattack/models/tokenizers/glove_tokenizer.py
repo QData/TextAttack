@@ -62,7 +62,11 @@ class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
         normalizers = []
 
         if unicode_normalizer:
-            normalizers += [unicode_normalizer_from_str(unicode_normalizer)]
+            normalizers += [
+                hf_tokenizers.normalizers.unicode_normalizer_from_str(
+                    unicode_normalizer
+                )
+            ]
 
         if lowercase:
             normalizers += [hf_tokenizers.normalizers.Lowercase()]
