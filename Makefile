@@ -3,9 +3,10 @@ format: FORCE  ## Run black and isort (rewriting files)
 	isort  --atomic --recursive tests textattack
 
 
-lint: FORCE  ## Run black (in check mode)
+lint: FORCE  ## Run black, isort, flake8 (in check mode)
 	black . --check
 	isort --check-only --recursive tests textattack
+	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=./.*,build,dist # catch certain syntax errors using flake8
 
 test: FORCE ## Run tests using pytest
 	python -m pytest --dist=loadfile -n auto

@@ -1,7 +1,10 @@
+from abc import ABC, abstractmethod
+
+import textattack
 from textattack.shared.utils import default_class_repr
 
 
-class Constraint:
+class Constraint(ABC):
     """ 
     An abstract class that represents constraints on adversial text examples. 
     Constraints evaluate whether transformations from a ``AttackedText`` to another 
@@ -68,9 +71,9 @@ class Constraint:
             current_text: The current ``AttackedText``.
             original_text: The original ``AttackedText`` from which the attack began.
         """
-        if not isinstance(transformed_text, AttackedText):
+        if not isinstance(transformed_text, textattack.shared.AttackedText):
             raise TypeError("transformed_text must be of type AttackedText")
-        if not isinstance(current_text, AttackedText):
+        if not isinstance(current_text, textattack.shared.AttackedText):
             raise TypeError("current_text must be of type AttackedText")
 
         try:
@@ -86,6 +89,7 @@ class Constraint:
             transformed_text, current_text, original_text=original_text
         )
 
+    @abstractmethod
     def _check_constraint(self, transformed_text, current_text, original_text=None):
         """ 
         Returns True if the constraint is fulfilled, False otherwise. Must be overridden by

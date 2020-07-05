@@ -105,7 +105,8 @@ class GeneticAlgorithm(SearchMethod):
             A population member containing the crossover.
         """
         x1_text = pop_member1.attacked_text
-        x2_words = pop_member2.attacked_text.words
+        x2_text = pop_member2.attacked_text
+        x2_words = x2_text.words
 
         num_tries = 0
         passed_constraints = False
@@ -121,12 +122,24 @@ class GeneticAlgorithm(SearchMethod):
             new_text = x1_text.replace_words_at_indices(
                 indices_to_replace, words_to_replace
             )
-            new_text.attack_attrs["last_transformation"] = x1_text.attack_attrs[
-                "last_transformation"
-            ]
-            filtered = self.filter_transformations(
-                [new_text], x1_text, original_text=original_result.attacked_text
-            )
+            if "last_transformation" in x1_text.attack_attrs:
+                new_text.attack_attrs["last_transformation"] = x1_text.attack_attrs[
+                    "last_transformation"
+                ]
+                filtered = self.filter_transformations(
+                    [new_text], x1_text, original_text=original_result.attacked_text
+                )
+            elif "last_transformation" in x2_text.attack_attrs:
+                new_text.attack_attrs["last_transformation"] = x2_text.attack_attrs[
+                    "last_transformation"
+                ]
+                filtered = self.filter_transformations(
+                    [new_text], x1_text, original_text=original_result.attacked_text
+                )
+            else:
+                # In this case, neither x_1 nor x_2 has been transformed,
+                # meaning that new_text == original_text
+                filtered = [new_text]
 
             if filtered:
                 new_text = filtered[0]
@@ -170,9 +183,8 @@ class GeneticAlgorithm(SearchMethod):
         # Just b/c there are no candidates now doesn't mean we never want to select the word for perturbation
         # Therefore, we give small non-zero probability for words with no candidates
         # Epsilon is some small number to approximately assign 1% probability
-        total_candidates = np.sum(num_candidates_per_word)
-        num_zero_elements = len(words) - np.count_nonzero(num_candidates_per_word)
-        epsilon = max(1, int(total_candidates / (100 - num_zero_elements)))
+        num_total_candidates = np.sum(num_candidates_per_word)
+        epsilon = max(1, int(num_total_candidates * 0.01))
         for i in range(len(num_candidates_per_word)):
             if num_candidates_per_word[i] == 0:
                 num_candidates_per_word[i] = epsilon

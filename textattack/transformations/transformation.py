@@ -1,7 +1,9 @@
+from abc import ABC, abstractmethod
+
 from textattack.shared.utils import default_class_repr
 
 
-class Transformation:
+class Transformation(ABC):
     """
     An abstract class for transforming a sequence of text to produce
     a potential adversarial example. 
@@ -44,6 +46,7 @@ class Transformation:
             text.attack_attrs["last_transformation"] = self
         return transformed_texts
 
+    @abstractmethod
     def _get_transformations(self, current_text, indices_to_modify):
         """ 
         Returns a list of all possible transformations for ``current_text``, only modifying

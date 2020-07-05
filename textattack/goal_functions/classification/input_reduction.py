@@ -18,7 +18,7 @@ class InputReduction(ClassificationGoalFunction):
     def _is_goal_complete(self, model_output, attacked_text):
         return (
             self.ground_truth_output == model_output.argmax()
-            and attacked_text.num_words <= target_num_words
+            and attacked_text.num_words <= self.target_num_words
         )
 
     def _should_skip(self, model_output, attacked_text):
