@@ -362,7 +362,6 @@ def train_model(args):
                 break
 
     # read the saved model and report its eval performance
-    args.output_dir = "/crimea/jindi/adv_eval/TextAttack/outputs/training/lstm-yelp_polarity-2020-07-04-02:30"
     model.load_state_dict(torch.load(os.path.join(args.output_dir, args.weights_name)))
     eval_score = get_eval_score()
     logger.info(
