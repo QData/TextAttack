@@ -6,7 +6,7 @@ import time
 import numpy as np
 import scipy
 import torch
-from torch.utils.data import DataLoader, Dataset, RandomSampler
+from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampler
 import tqdm
 import transformers
 
@@ -55,6 +55,12 @@ def train_model(args):
 
     # Get list of text and list of label (integers) from disk.
     train_text, train_labels, eval_text, eval_labels = dataset_from_args(args)
+    # with open('/data/medg/misc/jindi/nlp/datasets/yelp/huggingface_nlp.train.txt', 'w') as file:
+    #     for text, label in zip(train_text, train_labels):
+    #         file.write(f'{label} {text}\n')
+    # with open('/data/medg/misc/jindi/nlp/datasets/yelp/huggingface_nlp.test.txt', 'w') as file:
+    #     for text, label in zip(eval_text, eval_labels):
+    #         file.write(f'{label} {text}\n')
 
     # Filter labels
     if args.allowed_labels:
@@ -124,34 +130,40 @@ def train_model(args):
         * args.num_train_epochs
     )
 
-    param_optimizer = list(model.named_parameters())
-    no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
-    optimizer_grouped_parameters = [
-        {
-            "params": [
-                p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
-            ],
-            "weight_decay": 0.01,
-        },
-        {
-            "params": [
-                p for n, p in param_optimizer if any(nd in n for nd in no_decay)
-            ],
-            "weight_decay": 0.0,
-        },
-    ]
+    if args.model == 'lstm' or args.model == 'cnn':
+        need_grad = lambda x: x.requires_grad
+        optimizer = torch.optim.Adam(
+            filter(need_grad, model.parameters()),
+            lr=args.learning_rate
+        )
+        scheduler = None
+    else:
+        param_optimizer = list(model.named_parameters())
+        no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
+        optimizer_grouped_parameters = [
+            {
+                "params": [
+                    p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+                ],
+                "weight_decay": 0.01,
+            },
+            {
+                "params": [
+                    p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+                ],
+                "weight_decay": 0.0,
+            },
+        ]
 
-    optimizer = transformers.optimization.AdamW(
-        optimizer_grouped_parameters, lr=args.learning_rate
-    )
+        optimizer = transformers.optimization.AdamW(
+            optimizer_grouped_parameters, lr=args.learning_rate
+        )
 
-    scheduler = transformers.optimization.get_linear_schedule_with_warmup(
-        optimizer,
-        num_warmup_steps=args.warmup_proportion,
-        num_training_steps=num_train_optimization_steps,
-    )
-
-    global_step = 0
+        scheduler = transformers.optimization.get_linear_schedule_with_warmup(
+            optimizer,
+            num_warmup_steps=args.warmup_proportion,
+            num_training_steps=num_train_optimization_steps,
+        )
 
     # Start Tensorboard and log hyperparams.
     from tensorboardX import SummaryWriter
@@ -188,7 +200,7 @@ def train_model(args):
     eval_input_ids = np.array(eval_text_ids)
     eval_labels = np.array(eval_labels)
     eval_data = list((ids, label) for ids, label in zip(eval_input_ids, eval_labels))
-    eval_sampler = RandomSampler(eval_data)
+    eval_sampler = SequentialSampler(eval_data)
     eval_dataloader = DataLoader(
         eval_data, sampler=eval_sampler, batch_size=args.batch_size
     )
@@ -243,6 +255,7 @@ def train_model(args):
             pass
 
     global_step = 0
+    tr_loss = 0
 
     def save_model_checkpoint():
         # Save model checkpoint
@@ -268,6 +281,12 @@ def train_model(args):
         loss.backward()
         return loss
 
+    if args.do_regression:
+        # TODO integrate with textattack `metrics` package
+        loss_fct = torch.nn.MSELoss()
+    else:
+        loss_fct = torch.nn.CrossEntropyLoss()
+
     for epoch in tqdm.trange(
         int(args.num_train_epochs), desc="Epoch", position=0, leave=False
     ):
@@ -287,20 +306,24 @@ def train_model(args):
 
             if args.do_regression:
                 # TODO integrate with textattack `metrics` package
-                loss_fct = torch.nn.MSELoss()
                 loss = loss_fct(logits.squeeze(), labels.squeeze())
             else:
-                loss_fct = torch.nn.CrossEntropyLoss()
                 loss = loss_fct(logits, labels)
             loss = loss_backward(loss)
+            tr_loss += loss.item()
 
             if global_step % args.tb_writer_step == 0:
                 tb_writer.add_scalar("loss", loss.item(), global_step)
-                tb_writer.add_scalar("lr", scheduler.get_last_lr()[0], global_step)
-            prog_bar.set_description(f"Loss {loss.item()}")
+                if scheduler is not None:
+                    tb_writer.add_scalar("lr", scheduler.get_last_lr()[0], global_step)
+                else:
+                    tb_writer.add_scalar("lr", args.learning_rate, global_step)
+            if global_step > 0:
+                prog_bar.set_description(f"Loss {tr_loss/global_step}")
             if (step + 1) % args.grad_accum_steps == 0:
                 optimizer.step()
-                scheduler.step()
+                if scheduler is not None:
+                    scheduler.step()
                 optimizer.zero_grad()
             # Save model checkpoint to file.
             if (
@@ -309,8 +332,6 @@ def train_model(args):
                 and (global_step % args.checkpoint_steps) == 0
             ):
                 save_model_checkpoint()
-
-            model.zero_grad()
 
             # Inc step counter.
             global_step += 1
@@ -340,6 +361,14 @@ def train_model(args):
                     f"Stopping early since it's been {args.early_stopping_epochs} steps since validation acc increased"
                 )
                 break
+
+    # read the saved model and report its eval performance
+    args.output_dir = '/crimea/jindi/adv_eval/TextAttack/outputs/training/lstm-yelp_polarity-2020-07-04-02:30'
+    model.load_state_dict(torch.load(os.path.join(args.output_dir, args.weights_name)))
+    eval_score = get_eval_score()
+    logger.info(
+        f"Eval of saved model {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
+    )
 
     # end of training, save tokenizer
     try:

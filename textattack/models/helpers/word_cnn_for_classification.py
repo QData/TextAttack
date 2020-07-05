@@ -55,7 +55,7 @@ class WordCNNForClassification(nn.Module):
 
         output = self.drop(output)
         pred = self.out(output)
-        return nn.functional.softmax(pred, dim=-1)
+        return pred
 
 
 class CNNTextLayer(nn.Module):

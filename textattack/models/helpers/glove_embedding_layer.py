@@ -62,6 +62,8 @@ class EmbeddingLayer(nn.Module):
                 norms = norms.unsqueeze(1)
             weight.data.div_(norms.expand_as(weight.data))
 
+        self.embedding.weight.requires_grad = False
+
     def forward(self, input):
         return self.embedding(input)
 

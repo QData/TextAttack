@@ -60,7 +60,7 @@ class LSTMForClassification(nn.Module):
 
     def forward(self, _input):
         # ensure RNN module weights are part of single contiguous chunk of memory
-        self.encoder.flatten_parameters()
+        # self.encoder.flatten_parameters()
 
         emb = self.emb_layer(_input.t())
         emb = self.drop(emb)
@@ -70,4 +70,4 @@ class LSTMForClassification(nn.Module):
 
         output = self.drop(output)
         pred = self.out(output)
-        return nn.functional.softmax(pred, dim=-1)
+        return pred
