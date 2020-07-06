@@ -6,6 +6,7 @@ from textattack.constraints import Constraint
 class LevenshteinEditDistance(Constraint):
     """ 
     A constraint on edit distance (Levenshtein Distance).
+
     Args:
         max_edit_distance (int): Maximum edit distance allowed.
         compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.

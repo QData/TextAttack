@@ -1,8 +1,7 @@
 """
 When WIR method is set to ``unk``, this is a
 reimplementation of the search method from the paper: 
-Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and 
-Entailment by Jin et. al, 2019. 
+Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment by Jin et. al, 2019.
 See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
 """
 
@@ -23,13 +22,7 @@ class GreedyWordSwapWIR(SearchMethod):
     order of index, after ranking indices by importance.
         
     Args:
-<<<<<<< HEAD
-        wir_method (str): Method for ranking most important words. Available choices: `unk`, `delete`, `pwws`, and `random`.
-        ascending (bool): if True, ranks words from least-to-most important. (Default
-            ranking shows the most important word first.)
-=======
         wir_method: method for ranking most important words
->>>>>>> master
     """
 
     def __init__(self, wir_method="unk"):

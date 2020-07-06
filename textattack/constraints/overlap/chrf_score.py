@@ -6,9 +6,10 @@ from textattack.constraints import Constraint
 class chrF(Constraint):
     """ 
     A constraint on chrF (n-gram F-score) difference.
+
     Args:
         max_chrf (int): Max n-gram F-score allowed.
-        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+        compare_against_original (bool): If `True`, compare new `x_adv` against the original `x`.
             Otherwise, compare it against the previous `x_adv`.
     """
 
