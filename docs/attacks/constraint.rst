@@ -83,6 +83,12 @@ GPT-2
 
 .. automodule:: textattack.constraints.grammaticality.language_models.gpt2
    :members:
+   
+"Learning To Write" Language Model
+************************************
+
+.. automodule:: textattack.constraints.grammaticality.language_models.learning_to_write.learning_to_write
+   :members:
 
 
 Google 1-Billion Words Language Model
@@ -136,7 +142,7 @@ Maximum Words Perturbed
 .. _pre_transformation:
 
 Pre-Transformation
-----------
+-------------------------
 
 Pre-transformation constraints determine if a transformation is valid based on 
 only the original input and the position of the replacement. These constraints 
@@ -145,7 +151,7 @@ constraints can prevent search methods from swapping words at the same index
 twice, or from replacing stopwords.
 
 Pre-Transformation Constraint
-########################
+###############################
 .. automodule:: textattack.constraints.pre_transformation.pre_transformation_constraint
    :special-members: __call__
    :private-members:
@@ -159,4 +165,14 @@ Stopword Modification
 Repeat Modification
 ########################
 .. automodule:: textattack.constraints.pre_transformation.repeat_modification
+   :members:
+
+Input Column Modification
+#############################
+.. automodule:: textattack.constraints.pre_transformation.input_column_modification
+   :members: 
+ 
+Max Word Index Modification
+###############################
+.. automodule:: textattack.constraints.pre_transformation.max_word_index_modification
    :members:

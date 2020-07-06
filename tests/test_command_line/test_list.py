@@ -1,6 +1,5 @@
-import pytest
-
 from helpers import run_command_and_get_result
+import pytest
 
 list_test_params = [
     (
@@ -27,3 +26,5 @@ def test_command_line_list(name, command, sample_output_file):
     print("stderr =>", stderr)
 
     assert stdout == desired_text
+
+    assert result.returncode == 0

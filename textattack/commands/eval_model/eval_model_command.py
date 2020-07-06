@@ -12,11 +12,11 @@ def _cb(s):
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
 
 
-class BenchmarkModelCommand(TextAttackCommand):
+class EvalModelCommand(TextAttackCommand):
     """
     The TextAttack model benchmarking module:
     
-        A command line parser to benchmark a model from user specifications.
+        A command line parser to evaluatate a model from user specifications.
     """
 
     def get_num_successes(self, model, ids, true_labels):
@@ -83,7 +83,7 @@ class BenchmarkModelCommand(TextAttackCommand):
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
         parser = main_parser.add_parser(
-            "benchmark-model",
+            "eval",
             help="evaluate a model with TextAttack",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
@@ -97,4 +97,4 @@ class BenchmarkModelCommand(TextAttackCommand):
             default=256,
             help="Batch size for model inference.",
         )
-        parser.set_defaults(func=BenchmarkModelCommand())
+        parser.set_defaults(func=EvalModelCommand())

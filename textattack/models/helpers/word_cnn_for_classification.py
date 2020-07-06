@@ -1,6 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn as nn
+from torch.nn import functional as F
 
 import textattack
 from textattack.models.helpers import GloveEmbeddingLayer
@@ -19,21 +19,25 @@ class WordCNNForClassification(nn.Module):
         self,
         hidden_size=150,
         dropout=0.3,
-        nclasses=2,
+        num_labels=2,
         max_seq_length=128,
         model_path=None,
+        emb_layer_trainable=True,
     ):
         super().__init__()
         self.drop = nn.Dropout(dropout)
-        self.emb_layer = GloveEmbeddingLayer()
+        self.emb_layer = GloveEmbeddingLayer(emb_layer_trainable=emb_layer_trainable)
         self.word2id = self.emb_layer.word2id
         self.encoder = CNNTextLayer(
             self.emb_layer.n_d, widths=[3, 4, 5], filters=hidden_size
         )
         d_out = 3 * hidden_size
-        self.out = nn.Linear(d_out, nclasses)
-        self.tokenizer = textattack.models.tokenizers.SpacyTokenizer(
-            self.word2id, self.emb_layer.oovid, self.emb_layer.padid, max_seq_length
+        self.out = nn.Linear(d_out, num_labels)
+        self.tokenizer = textattack.models.tokenizers.GloveTokenizer(
+            word_id_map=self.word2id,
+            unk_token_id=self.emb_layer.oovid,
+            pad_token_id=self.emb_layer.padid,
+            max_length=max_seq_length,
         )
 
         if model_path is not None:
@@ -52,7 +56,7 @@ class WordCNNForClassification(nn.Module):
 
         output = self.drop(output)
         pred = self.out(output)
-        return nn.functional.softmax(pred, dim=-1)
+        return pred
 
 
 class CNNTextLayer(nn.Module):

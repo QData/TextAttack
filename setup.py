@@ -6,6 +6,14 @@ from docs import conf as docs_conf
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+extras = {}
+# Packages required for installing docs.
+extras["docs"] = ["recommonmark", "nbsphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
+# Packages required for formatting code & running tests.
+extras["test"] = ["black", "isort==5.0.3", "flake8", "pytest", "pytest-xdist"]
+# For developers, install development tools along with all optional dependencies.
+extras["dev"] = extras["docs"] + extras["test"]
+
 setuptools.setup(
     name="textattack",
     version=docs_conf.release,
@@ -22,12 +30,13 @@ setuptools.setup(
             "build*",
             "docs*",
             "dist*",
+            "examples*",
             "outputs*",
             "tests*",
-            "local_test*",
             "wandb*",
         ]
     ),
+    extras_require=extras,
     entry_points={
         "console_scripts": ["textattack=textattack.commands.textattack_cli:main"],
     },

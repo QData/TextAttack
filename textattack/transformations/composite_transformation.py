@@ -21,6 +21,14 @@ class CompositeTransformation(Transformation):
             raise ValueError("transformations cannot be empty")
         self.transformations = transformations
 
+    def _get_transformations(self, *_):
+        """ Placeholder method that would throw an error if a user tried to
+            treat the CompositeTransformation as a 'normal' transformation.
+        """
+        raise RuntimeError(
+            "CompositeTransformation does not support _get_transformations()."
+        )
+
     def __call__(self, *args, **kwargs):
         new_attacked_texts = set()
         for transformation in self.transformations:

@@ -1,6 +1,7 @@
 import argparse
 import copy
 import importlib
+import json
 import os
 import pickle
 import random
@@ -30,7 +31,7 @@ def add_model_args(parser):
         type=str,
         required=False,
         default=None,
-        help='The pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
+        help='Name of or path to a pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
         + str(model_names),
     )
     model_group.add_argument(
@@ -153,6 +154,8 @@ def parse_goal_function_from_args(args, model):
     else:
         raise ValueError(f"Error: unsupported goal_function {goal_function}")
     goal_function.query_budget = args.query_budget
+    goal_function.model_batch_size = args.model_batch_size
+    goal_function.model_cache_size = args.model_cache_size
     return goal_function
 
 
@@ -191,6 +194,9 @@ def parse_attack_from_args(args):
         else:
             raise ValueError(f"Invalid recipe {args.recipe}")
         recipe.goal_function.query_budget = args.query_budget
+        recipe.goal_function.model_batch_size = args.model_batch_size
+        recipe.goal_function.model_cache_size = args.model_cache_size
+        recipe.constraint_cache_size = args.constraint_cache_size
         return recipe
     elif args.attack_from_file:
         if ":" in args.attack_from_file:
@@ -218,7 +224,11 @@ def parse_attack_from_args(args):
         else:
             raise ValueError(f"Error: unsupported attack {args.search}")
     return textattack.shared.Attack(
-        goal_function, constraints, transformation, search_method
+        goal_function,
+        constraints,
+        transformation,
+        search_method,
+        constraint_cache_size=args.constraint_cache_size,
     )
 
 
@@ -295,6 +305,22 @@ def parse_model_from_args(args):
             model = textattack.shared.utils.load_textattack_model_from_path(
                 args.model, model_path
             )
+        elif args.model and os.path.exists(args.model):
+            # If `args.model` is a path/directory, let's assume it was a model
+            # trained with textattack, and try and load it.
+            model_args_json_path = os.path.join(args.model, "train_args.json")
+            if not os.path.exists(model_args_json_path):
+                raise FileNotFoundError(
+                    f"Tried to load model from path {args.model} - could not find train_args.json."
+                )
+            model_train_args = json.loads(open(model_args_json_path).read())
+            model_train_args["model"] = args.model
+            num_labels = model_train_args["num_labels"]
+            from textattack.commands.train_model.train_args_helpers import (
+                model_from_args,
+            )
+
+            model = model_from_args(argparse.Namespace(**model_train_args), num_labels)
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
     return model
@@ -306,7 +332,32 @@ def parse_dataset_from_args(args):
     if args.model in HUGGINGFACE_DATASET_BY_MODEL:
         _, args.dataset_from_nlp = HUGGINGFACE_DATASET_BY_MODEL[args.model]
     elif args.model in TEXTATTACK_DATASET_BY_MODEL:
-        _, args.dataset_from_nlp = TEXTATTACK_DATASET_BY_MODEL[args.model]
+        _, dataset = TEXTATTACK_DATASET_BY_MODEL[args.model]
+        if dataset[0].startswith("textattack"):
+            # unsavory way to pass custom dataset classes
+            # ex: dataset = ('textattack.datasets.translation.TedMultiTranslationDataset', 'en', 'de')
+            dataset = eval(f"{dataset[0]}")(*dataset[1:])
+            return dataset
+        else:
+            args.dataset_from_nlp = dataset
+    # Automatically detect dataset for models trained with textattack.
+    elif args.model and os.path.exists(args.model):
+        model_args_json_path = os.path.join(args.model, "train_args.json")
+        if not os.path.exists(model_args_json_path):
+            raise FileNotFoundError(
+                f"Tried to load model from path {args.model} - could not find train_args.json."
+            )
+        model_train_args = json.loads(open(model_args_json_path).read())
+        try:
+            args.dataset_from_nlp = (
+                model_train_args["dataset"],
+                None,
+                model_train_args["dataset_dev_split"],
+            )
+        except KeyError:
+            raise KeyError(
+                f"Tried to load model from path {args.model} but can't initialize dataset from train_args.json."
+            )
 
     # Get dataset from args.
     if args.dataset_from_file:
@@ -331,8 +382,11 @@ def parse_dataset_from_args(args):
             )
     elif args.dataset_from_nlp:
         dataset_args = args.dataset_from_nlp
-        if ":" in dataset_args:
-            dataset_args = dataset_args.split(":")
+        if isinstance(dataset_args, str):
+            if ":" in dataset_args:
+                dataset_args = dataset_args.split(":")
+            else:
+                dataset_args = (dataset_args,)
         dataset = textattack.datasets.HuggingFaceNLPDataset(
             *dataset_args, shuffle=args.shuffle
         )
@@ -350,8 +404,10 @@ def parse_logger_from_args(args):
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
         outputs_dir = os.path.join(
-            current_dir, os.pardir, os.pardir, os.pardir, "outputs"
+            current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
         )
+        if not os.path.exists(outputs_dir):
+            os.makedirs(outputs_dir)
         args.out_dir = os.path.normpath(outputs_dir)
 
     # if "--log-to-file" specified in terminal command, then save it to a txt file

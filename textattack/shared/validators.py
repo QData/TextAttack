@@ -8,7 +8,7 @@ from . import logger
 
 # A list of goal functions and the corresponding available models.
 MODELS_BY_GOAL_FUNCTIONS = {
-    (TargetedClassification, UntargetedClassification): [
+    (TargetedClassification, UntargetedClassification, InputReduction): [
         r"^textattack.models.classification.*",
         r"^textattack.models.entailment.*",
         r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
@@ -108,3 +108,14 @@ def transformation_consists_of_word_swaps(transformation):
     from textattack.transformations import WordSwap, WordSwapGradientBased
 
     return transformation_consists_of(transformation, [WordSwap, WordSwapGradientBased])
+
+
+def transformation_consists_of_word_swaps_and_deletions(transformation):
+    """
+        Determines if ``transformation`` is a word swap or consists of only word swaps and deletions.
+    """
+    from textattack.transformations import WordDeletion, WordSwap, WordSwapGradientBased
+
+    return transformation_consists_of(
+        transformation, [WordDeletion, WordSwap, WordSwapGradientBased]
+    )

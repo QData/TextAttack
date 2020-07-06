@@ -3,8 +3,13 @@ import random
 
 import nlp
 
+import textattack
 from textattack.datasets import TextAttackDataset
 from textattack.shared import AttackedText
+
+
+def _cb(s):
+    return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
 
 
 def get_nlp_dataset_columns(dataset):
@@ -30,6 +35,12 @@ def get_nlp_dataset_columns(dataset):
     elif {"sentence", "label"} <= schema:
         input_columns = ("sentence",)
         output_column = "label"
+    elif {"document", "summary"} <= schema:
+        input_columns = ("document",)
+        output_column = "summary"
+    elif {"content", "summary"} <= schema:
+        input_columns = ("content",)
+        output_column = "summary"
     else:
         raise ValueError(
             f"Unsupported dataset schema {schema}. Try loading dataset manually (from a file) instead."
@@ -42,18 +53,17 @@ class HuggingFaceNLPDataset(TextAttackDataset):
     """ Loads a dataset from HuggingFace ``nlp`` and prepares it as a
         TextAttack dataset.
         
-        name: the dataset name
-        subset: the subset of the main dataset. Dataset will be loaded as
-            ``nlp.load_dataset(name, subset)``.
-        label_map: Mapping if output labels should be re-mapped. Useful
-            if model was trained with a different label arrangement than
-            provided in the ``nlp`` version of the dataset.
-        output_scale_factor (float): Factor to divide ground-truth outputs by.
+        - name: the dataset name
+        - subset: the subset of the main dataset. Dataset will be loaded as ``nlp.load_dataset(name, subset)``.
+        - label_map: Mapping if output labels should be re-mapped. Useful
+          if model was trained with a different label arrangement than
+          provided in the ``nlp`` version of the dataset.
+        - output_scale_factor (float): Factor to divide ground-truth outputs by.
             Generally, TextAttack goal functions require model outputs
-            between 0 and 1. Some datasets test the model's *correlation*
+            between 0 and 1. Some datasets test the model's \*correlation\*
             with ground-truth output, instead of its accuracy, so these
             outputs may be scaled arbitrarily. 
-        shuffle (bool): Whether to shuffle the dataset on load.
+        - shuffle (bool): Whether to shuffle the dataset on load.
                 
     """
 
@@ -67,7 +77,12 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         dataset_columns=None,
         shuffle=False,
     ):
+        self._name = name
         self._dataset = nlp.load_dataset(name, subset)[split]
+        subset_print_str = f", subset {_cb(subset)}" if subset else ""
+        textattack.shared.logger.info(
+            f"Loading {_cb('nlp')} dataset {_cb(name)}{subset_print_str}, split {_cb(split)}."
+        )
         # Input/output column order, like (('premise', 'hypothesis'), 'label')
         (
             self.input_columns,
@@ -79,8 +94,20 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         self.output_scale_factor = output_scale_factor
         try:
             self.label_names = self._dataset.features["label"].names
+            # If labels are remapped, the label names have to be remapped as
+            # well.
+            if label_map:
+                self.label_names = [
+                    self.label_names[self.label_map[i]]
+                    for i in range(len(self.label_map))
+                ]
         except KeyError:
+            # This happens when the dataset doesn't have 'features' or a 'label' column.
             self.label_names = None
+        except AttributeError:
+            # This happens when self._dataset.features["label"] exists
+            # but is a single value.
+            self.label_names = ("label",)
         if shuffle:
             random.shuffle(self.examples)
 

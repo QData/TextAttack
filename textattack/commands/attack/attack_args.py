@@ -1,15 +1,20 @@
 import textattack
 
 ATTACK_RECIPE_NAMES = {
-    "alzantot": "textattack.attack_recipes.Alzantot2018",
+    "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
+    "bae": "textattack.attack_recipes.BAEGarg2019",
+    "bert-attack": "textattack.attack_recipes.BERTAttackLi2020",
+    "faster-alzantot": "textattack.attack_recipes.FasterGeneticAlgorithmJia2019",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
+    "input-reduction": "textattack.attack_recipes.InputReductionFeng2018",
     "kuleshov": "textattack.attack_recipes.Kuleshov2017",
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
     "pwws": "textattack.attack_recipes.PWWSRen2019",
     "pruthi": "textattack.attack_recipes.Pruthi2019",
+    "pso": "textattack.attack_recipes.PSOZang2020",
 }
 
 #
@@ -54,6 +59,14 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "bert-base-uncased-wnli": (
         "textattack/bert-base-uncased-WNLI",
         ("glue", "wnli", "validation"),
+    ),
+    "bert-base-uncased-mr": (
+        "textattack/bert-base-uncased-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
+    "bert-base-uncased-snli": (
+        "textattack/bert-base-uncased-snli",
+        ("snli", None, "test", [1, 2, 0]),
     ),
     #
     # distilbert-base-cased
@@ -141,6 +154,24 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/roberta-base-WNLI",
         ("glue", "wnli", "validation"),
     ),
+    "roberta-base-mr": (
+        "textattack/roberta-base-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
+    #
+    # albert-base-v2 (ALBERT is cased by default)
+    #
+    "albert-base-v2-mr": (
+        "textattack/albert-base-v2-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
+    #
+    # xlnet-base-cased
+    #
+    "xlnet-base-cased-mr": (
+        "textattack/xlnet-base-cased-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
 }
 
 
@@ -172,10 +203,6 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     # Text classification models
     #
-    "bert-base-uncased-mr": (
-        ("models/classification/bert/mr-uncased", 2),
-        ("rotten_tomatoes", None, "train"),
-    ),
     "bert-base-cased-imdb": (
         ("models/classification/bert/imdb-cased", 2),
         ("imdb", None, "test"),
@@ -194,11 +221,22 @@ TEXTATTACK_DATASET_BY_MODEL = {
     ),
     #
     # Translation models
-    # TODO add proper `nlp` datasets for translation & summarization
+    "t5-en-de": (
+        "english_to_german",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+    ),
+    "t5-en-fr": (
+        "english_to_french",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "fr"),
+    ),
+    "t5-en-ro": (
+        "english_to_romanian",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+    ),
     #
     # Summarization models
     #
-    #'t5-summ':                      'textattack.models.summarization.T5Summarization',
+    "t5-summarization": ("summarization", ("gigaword", None, "test")),
 }
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
@@ -233,6 +271,7 @@ CONSTRAINT_CLASS_NAMES = {
     "part-of-speech": "textattack.constraints.grammaticality.PartOfSpeech",
     "goog-lm": "textattack.constraints.grammaticality.language_models.GoogleLanguageModel",
     "gpt2": "textattack.constraints.grammaticality.language_models.GPT2",
+    "learning-to-write": "textattack.constraints.grammaticality.language_models.LearningToWriteLanguageModel",
     #
     # Overlap constraints
     #

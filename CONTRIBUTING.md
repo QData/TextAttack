@@ -9,6 +9,10 @@ It also helps us if you spread the word: reference the library from blog posts
 on the awesome projects it made possible, shout out on Twitter every time it has
 helped you, or simply star the repo to say "thank you".
 
+## Slack Channel
+
+For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-ez3ts03b-Nr55tDiqgAvCkRbbz8zz9g)!
+
 ## Ways to contribute
 
 There are lots of ways you can contribute to TextAttack:
@@ -113,7 +117,7 @@ Follow these steps to start contributing:
    
    ```bash
    $ cd TextAttack
-   $ pip install -e .
+   $ pip install -e . ".[dev]"
    $ pip install black isort pytest pytest-xdist
    ```
    
@@ -175,11 +179,25 @@ Follow these steps to start contributing:
    $ git push -u origin a-descriptive-name-for-my-changes
    ```
 
-6. Once you are satisfied (**and the checklist below is happy too**), go to the
+6. Add documentation.
+   
+   Our docs are in the `docs/` folder. Thanks to `sphinx-automodule`, this 
+   should just be two lines. Our docs will automatically generate from the 
+   comments you added to your code. If you're adding an attack recipe, add a 
+   reference in `attack_recipes.rst`. If you're adding a transformation, add
+   a reference in `transformation.rst`, etc. 
+
+   You can build the docs and view the updates using `make docs`. If you're 
+   adding a tutorial or something where you want to update the docs multiple
+   times, you can run `make docs-auto`. This will run a server using 
+   `sphinx-autobuild` that should automatically reload whenever you change
+   a file.
+
+7. Once you are satisfied (**and the checklist below is happy too**), go to the
    webpage of your fork on GitHub. Click on 'Pull request' to send your changes
    to the project maintainers for review.
 
-7. It's ok if maintainers ask you for changes. It happens to core contributors
+8. It's ok if maintainers ask you for changes. It happens to core contributors
    too! So everyone can see the changes in the Pull request, work in your local
    branch and push the changes to your fork. They will automatically appear in
    the pull request.

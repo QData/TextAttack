@@ -18,14 +18,12 @@ logger = textattack.shared.logger
 
 def run(args, checkpoint=None):
     # Only use one GPU, if we have one.
+    # TODO: Running Universal Sentence Encoder uses multiple GPUs
     if "CUDA_VISIBLE_DEVICES" not in os.environ:
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
-    # Cache TensorFlow Hub models here, if not otherwise specified.
-    if "TFHUB_CACHE_DIR" not in os.environ:
-        os.environ["TFHUB_CACHE_DIR"] = os.path.expanduser("~/.cache/tensorflow-hub")
 
     if args.checkpoint_resume:
         num_remaining_attacks = checkpoint.num_remaining_attacks
@@ -110,7 +108,10 @@ def run(args, checkpoint=None):
 
             num_results += 1
 
-            if type(result) == textattack.attack_results.SuccessfulAttackResult:
+            if (
+                type(result) == textattack.attack_results.SuccessfulAttackResult
+                or type(result) == textattack.attack_results.MaximizedAttackResult
+            ):
                 num_successes += 1
             if type(result) == textattack.attack_results.FailedAttackResult:
                 num_failures += 1
@@ -140,6 +141,8 @@ def run(args, checkpoint=None):
         print()
         finish_time = time.time()
         textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
+
+        return attack_log_manager.results
 
 
 if __name__ == "__main__":

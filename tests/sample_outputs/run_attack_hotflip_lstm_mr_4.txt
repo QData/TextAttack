@@ -27,7 +27,7 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (100%)[0m --> [91m[FAILED][0m
+[92mPositive (97%)[0m --> [91m[FAILED][0m
 
 the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .
 
@@ -63,6 +63,6 @@ throws in enough clever and unexpected twists to make the formula feel fresh .
 | Accuracy under attack:        | 75.0%  |
 | Attack success rate:          | 25.0%  |
 | Average perturbed word %:     | 3.85%  |
-| Average num. words per input: | 15.75  |
+| Average num. words per input: | 15.5   |
 | Avg num queries:              | 1.25   |
 +-------------------------------+--------+

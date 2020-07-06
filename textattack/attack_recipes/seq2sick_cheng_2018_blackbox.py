@@ -27,7 +27,7 @@ def Seq2SickCheng2018BlackBox(model, goal_function="non_overlapping"):
     # Goal is non-overlapping output.
     #
     goal_function = NonOverlappingOutput(model)
-    # @TODO implement transformation / search method just like they do in
+    # TODO implement transformation / search method just like they do in
     # seq2sick.
     transformation = WordSwapEmbedding(max_candidates=50)
     #
@@ -42,6 +42,6 @@ def Seq2SickCheng2018BlackBox(model, goal_function="non_overlapping"):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    search_method = GreedyWordSwapWIR()
+    search_method = GreedyWordSwapWIR(wir_method="unk")
 
     return Attack(goal_function, constraints, transformation, search_method)

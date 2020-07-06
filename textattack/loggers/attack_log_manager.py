@@ -12,8 +12,6 @@ class AttackLogManager:
     def __init__(self):
         self.loggers = []
         self.results = []
-        self.max_words_changed = 0
-        self.max_seq_len = 2 ** 16
 
     def enable_stdout(self):
         self.loggers.append(FileLogger(stdout=True))
@@ -71,11 +69,13 @@ class AttackLogManager:
         # Count things about attacks.
         all_num_words = np.zeros(len(self.results))
         perturbed_word_percentages = np.zeros(len(self.results))
-        num_words_changed_until_success = np.zeros(self.max_seq_len)
+        num_words_changed_until_success = np.zeros(
+            2 ** 16
+        )  # @ TODO: be smarter about this
         failed_attacks = 0
         skipped_attacks = 0
         successful_attacks = 0
-        max_words_changed = None
+        max_words_changed = 0
         for i, result in enumerate(self.results):
             all_num_words[i] = len(result.original_result.attacked_text.words)
             if isinstance(result, FailedAttackResult):
@@ -156,7 +156,7 @@ class AttackLogManager:
             summary_table_rows, "Attack Results", "attack_results_summary"
         )
         # Show histogram of words changed.
-        numbins = max(self.max_words_changed, 10)
+        numbins = max(max_words_changed, 10)
         for logger in self.loggers:
             logger.log_hist(
                 num_words_changed_until_success[:numbins],

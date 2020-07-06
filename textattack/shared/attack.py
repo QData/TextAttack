@@ -7,9 +7,11 @@ import numpy as np
 import textattack
 from textattack.attack_results import (
     FailedAttackResult,
+    MaximizedAttackResult,
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
+from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.shared import AttackedText, utils
 
 
@@ -27,6 +29,7 @@ class Attack:
         constraints: A list of constraints to add to the attack, defining which perturbations are valid.
         transformation: The transformation applied at each step of the attack.
         search_method: A strategy for exploring the search space of possible perturbations
+        constraint_cache_size (int): the number of items to keep in the constraints cache
     """
 
     def __init__(
@@ -35,6 +38,7 @@ class Attack:
         constraints=[],
         transformation=None,
         search_method=None,
+        constraint_cache_size=2 ** 18,
     ):
         """ Initialize an attack object. Attacks can be run multiple times. """
         self.goal_function = goal_function
@@ -54,7 +58,7 @@ class Attack:
             self.transformation
         ):
             raise ValueError(
-                "SearchMethod {self.search_method} incompatible with transformation {self.transformation}"
+                f"SearchMethod {self.search_method} incompatible with transformation {self.transformation}"
             )
 
         self.constraints = []
@@ -68,11 +72,17 @@ class Attack:
             else:
                 self.constraints.append(constraint)
 
-        self.constraints_cache = lru.LRU(utils.config("CONSTRAINT_CACHE_SIZE"))
+        self.constraint_cache_size = constraint_cache_size
+        self.constraints_cache = lru.LRU(constraint_cache_size)
 
         # Give search method access to functions for getting transformations and evaluating them
         self.search_method.get_transformations = self.get_transformations
-        self.search_method.get_goal_results = self.goal_function.get_results
+        # The search method only needs access to the first argument. The second is only used
+        # by the attack class when checking whether to skip the sample
+        self.search_method.get_goal_results = lambda attacked_text_list: self.goal_function.get_results(
+            attacked_text_list
+        )
+        self.search_method.filter_transformations = self.filter_transformations
 
     def get_transformations(self, current_text, original_text=None, **kwargs):
         """
@@ -100,7 +110,7 @@ class Attack:
                 **kwargs,
             )
         )
-        return self._filter_transformations(
+        return self.filter_transformations(
             transformed_texts, current_text, original_text
         )
 
@@ -124,13 +134,13 @@ class Attack:
             )
         # Default to false for all original transformations.
         for original_transformed_text in transformed_texts:
-            self.constraints_cache[original_transformed_text] = False
+            self.constraints_cache[(current_text, original_transformed_text)] = False
         # Set unfiltered transformations to True in the cache.
         for filtered_text in filtered_texts:
-            self.constraints_cache[filtered_text] = True
+            self.constraints_cache[(current_text, filtered_text)] = True
         return filtered_texts
 
-    def _filter_transformations(
+    def filter_transformations(
         self, transformed_texts, current_text, original_text=None
     ):
         """ 
@@ -145,18 +155,20 @@ class Attack:
         # Populate cache with transformed_texts
         uncached_texts = []
         for transformed_text in transformed_texts:
-            if transformed_text not in self.constraints_cache:
+            if (current_text, transformed_text) not in self.constraints_cache:
                 uncached_texts.append(transformed_text)
             else:
                 # promote transformed_text to the top of the LRU cache
-                self.constraints_cache[transformed_text] = self.constraints_cache[
-                    transformed_text
-                ]
+                self.constraints_cache[
+                    (current_text, transformed_text)
+                ] = self.constraints_cache[(current_text, transformed_text)]
         self._filter_transformations_uncached(
             uncached_texts, current_text, original_text=original_text
         )
         # Return transformed_texts from cache
-        filtered_texts = [t for t in transformed_texts if self.constraints_cache[t]]
+        filtered_texts = [
+            t for t in transformed_texts if self.constraints_cache[(current_text, t)]
+        ]
         # Sort transformations to ensure order is preserved between runs
         filtered_texts.sort(key=lambda t: t.text)
         return filtered_texts
@@ -170,17 +182,18 @@ class Attack:
             initial_result: The initial ``GoalFunctionResult`` from which to perturb.
 
         Returns:
-            Either a ``SuccessfulAttackResult`` or ``FailedAttackResult``.
+            A ``SuccessfulAttackResult``, ``FailedAttackResult``, 
+                or ``MaximizedAttackResult``.
         """
         final_result = self.search_method(initial_result)
-        if final_result.succeeded:
-            return SuccessfulAttackResult(
-                initial_result, final_result, self.goal_function.num_queries
-            )
+        if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
+            return SuccessfulAttackResult(initial_result, final_result,)
+        elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
+            return FailedAttackResult(initial_result, final_result,)
+        elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
+            return MaximizedAttackResult(initial_result, final_result,)
         else:
-            return FailedAttackResult(
-                initial_result, final_result, self.goal_function.num_queries
-            )
+            raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 
     def _get_examples_from_dataset(self, dataset, indices=None):
         """ 
@@ -212,14 +225,9 @@ class Attack:
                 attacked_text = AttackedText(
                     text, attack_attrs={"label_names": label_names}
                 )
-                self.goal_function.num_queries = 0
-                goal_function_result, _ = self.goal_function.get_result(
+                goal_function_result, _ = self.goal_function.init_attack_example(
                     attacked_text, ground_truth_output
                 )
-                if goal_function_result.succeeded:
-                    # Store the true output on the goal function so that the
-                    # SkippedAttackResult has the correct output, not the incorrect.
-                    goal_function_result.output = ground_truth_output
                 yield goal_function_result
 
             except IndexError:
@@ -240,7 +248,7 @@ class Attack:
         examples = self._get_examples_from_dataset(dataset, indices=indices)
 
         for goal_function_result in examples:
-            if goal_function_result.succeeded:
+            if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
                 yield SkippedAttackResult(goal_function_result)
             else:
                 result = self.attack_one(goal_function_result)

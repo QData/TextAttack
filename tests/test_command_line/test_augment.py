@@ -1,6 +1,5 @@
-import pytest
-
 from helpers import run_command_and_get_result
+import pytest
 
 augment_test_params = [
     (
@@ -37,3 +36,5 @@ def test_command_line_augmentation(name, command, outfile, sample_output_file):
     # Ensure CSV file exists, then delete it.
     assert os.path.exists(outfile)
     os.remove(outfile)
+
+    assert result.returncode == 0

@@ -6,7 +6,7 @@ import torch
 
 import textattack
 
-from .utils import device, words_from_text
+from .utils import words_from_text
 
 
 class AttackedText:
@@ -42,9 +42,11 @@ class AttackedText:
             raise TypeError(
                 f"Invalid text_input type {type(text_input)} (required str or OrderedDict)"
             )
+        # Find words in input lazily.
+        self._words = None
+        self._words_per_input = None
         # Format text inputs.
         self._text_input = OrderedDict([(k, v) for k, v in self._text_input.items()])
-        self.words = words_from_text(self.text)
         if attack_attrs is None:
             self.attack_attrs = dict()
         elif isinstance(attack_attrs, dict):
@@ -53,7 +55,7 @@ class AttackedText:
             raise TypeError(f"Invalid type for attack_attrs: {type(attack_attrs)}")
         # Indices of words from the *original* text. Allows us to map
         # indices between original text and this text, and vice-versa.
-        self.attack_attrs.setdefault("original_index_map", np.arange(len(self.words)))
+        self.attack_attrs.setdefault("original_index_map", np.arange(self.num_words))
         # A list of all indices in *this* text that have been modified.
         self.attack_attrs.setdefault("modified_indices", set())
 
@@ -97,7 +99,7 @@ class AttackedText:
 
     def text_window_around_index(self, index, window_size):
         """ The text window of ``window_size`` words centered around ``index``. """
-        length = len(self.words)
+        length = self.num_words
         half_size = (window_size - 1) / 2.0
         if index - half_size < 0:
             start = 0
@@ -177,7 +179,7 @@ class AttackedText:
         """ Takes indices of words from original string and converts them to 
             indices of the same words in the current string.
             
-            Uses information from ``self.attack_attrs['original_index_map'], 
+            Uses information from ``self.attack_attrs['original_index_map']``, 
             which maps word indices from the original to perturbed text.
         """
         if len(self.attack_attrs["original_index_map"]) == 0:
@@ -345,11 +347,39 @@ class AttackedText:
         return tuple(self._text_input.values())
 
     @property
+    def column_labels(self):
+        """ Returns the labels for this text's columns. For single-sequence
+            inputs, this simply returns ['text'].
+        """
+        return list(self._text_input.keys())
+
+    @property
+    def words_per_input(self):
+        """ Returns a list of lists of words corresponding to each input.
+        """
+        if not self._words_per_input:
+            self._words_per_input = [
+                words_from_text(_input) for _input in self._text_input.values()
+            ]
+        return self._words_per_input
+
+    @property
+    def words(self):
+        if not self._words:
+            self._words = words_from_text(self.text)
+        return self._words
+
+    @property
     def text(self):
         """ Represents full text input. Multiply inputs are joined with a line 
             break.
         """
         return "\n".join(self._text_input.values())
+
+    @property
+    def num_words(self):
+        """ Returns the number of words in the sequence. """
+        return len(self.words)
 
     def printable_text(self, key_color="bold", key_color_method=None):
         """ Represents full text input. Adds field descriptions.
