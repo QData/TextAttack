@@ -83,10 +83,11 @@ class GloveEmbeddingLayer(EmbeddingLayer):
 
     EMBEDDING_PATH = "word_embeddings/glove200"
 
-    def __init__(self):
+    def __init__(self, emb_layer_trainable=True):
         glove_path = utils.download_if_needed(GloveEmbeddingLayer.EMBEDDING_PATH)
         glove_word_list_path = os.path.join(glove_path, "glove.wordlist.npy")
         word_list = np.load(glove_word_list_path)
         glove_matrix_path = os.path.join(glove_path, "glove.6B.200d.mat.npy")
         embedding_matrix = np.load(glove_matrix_path)
         super().__init__(embedding_matrix=embedding_matrix, word_list=word_list)
+        self.embedding.weight.requires_grad = emb_layer_trainable
