@@ -121,7 +121,6 @@ class Constraint(ABC):
         this method in your own constraint. Both single-line and multi-line
         strings are acceptable.
         """
-        return []
-        #return ["compare_against_original"]
+        return ["compare_against_original"]
 
     __str__ = __repr__ = default_class_repr

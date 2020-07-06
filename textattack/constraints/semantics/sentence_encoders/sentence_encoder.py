@@ -34,7 +34,6 @@ class SentenceEncoder(Constraint):
         skip_text_shorter_than_window=False,
     ):
         super().__init__(compare_against_original)
-        self.compare_with_original = compare_against_original
         self.metric = metric
         self.threshold = threshold
         self.window_size = window_size
@@ -203,7 +202,6 @@ class SentenceEncoder(Constraint):
         return [
             "metric",
             "threshold",
-            "compare_with_original",
             "window_size",
             "skip_text_shorter_than_window",
         ]

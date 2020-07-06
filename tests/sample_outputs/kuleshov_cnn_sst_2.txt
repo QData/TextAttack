@@ -13,7 +13,6 @@
         (embedding_type):  paragramcf
         (metric):  max_euclidean
         (threshold):  -0.2
-        (compare_with_original):  False
         (window_size):  inf
         (skip_text_shorter_than_window):  False
       )
@@ -24,7 +23,7 @@
     (4): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mPositive (100%)[0m --> [91mNegative (69%)[0m
 

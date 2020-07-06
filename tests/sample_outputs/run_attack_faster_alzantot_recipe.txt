@@ -27,7 +27,7 @@
     (4): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mPositive (100%)[0m --> [91mNegative (73%)[0m
 
@@ -62,5 +62,5 @@ grown-up quibbles are beside the point here . the little girls understand , and 
 | Attack success rate:          | 66.67% |
 | Average perturbed word %:     | 8.58%  |
 | Average num. words per input: | 25.67  |
-| Avg num queries:              |/.*/|
+| Avg num queries:              | 893.67 |
 +-------------------------------+--------+

@@ -22,7 +22,6 @@
     (2): UniversalSentenceEncoder(
         (metric):  angular
         (threshold):  0.904458599
-        (compare_with_original):  False
         (window_size):  15
         (skip_text_shorter_than_window):  True
       )
@@ -34,7 +33,7 @@
       )
   (is_black_box):  True
 ) 
-/.*/
+
 Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:

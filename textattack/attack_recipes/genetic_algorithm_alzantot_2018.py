@@ -49,11 +49,11 @@ def GeneticAlgorithmAlzantot2018(model):
     #
     # Maximum word embedding euclidean distance of 0.5.
     #
-    constraints.append(WordEmbeddingDistance(max_mse_dist=0.5))
+    constraints.append(WordEmbeddingDistance(max_mse_dist=0.5, compare_against_original=False))
     #
     # Language Model
     #
-    constraints.append(Google1BillionWordsLanguageModel(top_n_per_index=4))
+    constraints.append(Google1BillionWordsLanguageModel(top_n_per_index=4, compare_against_original=False))
     #
     # Goal is untargeted classification
     #
