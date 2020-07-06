@@ -50,7 +50,7 @@ class WordSwapQWERTY(WordSwap):
             else:
                 return adjacent_keys
         else:
-            return [s]
+            return []
 
 
     def _get_replacement_words(self, word):
@@ -76,13 +76,4 @@ class WordSwapQWERTY(WordSwap):
 
         return candidate_words
                     
-
-
-
-
-
-
-
-
-
 

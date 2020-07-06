@@ -14,14 +14,14 @@ from textattack.goal_functions import UntargetedClassification
 from textattack.shared.attack import Attack
 
 
-def Pruthi2019(model, swaps=1):
+def Pruthi2019(model, max_num_word_swaps=1):
     transformation = CompositeTransformation([
                         WordSwapNeighboringCharacterSwap(random_one=False, skip_first_char=True, skip_last_char=True),
                         WordSwapRandomCharacterDeletion(random_one=False, skip_first_char=True, skip_last_char=True),
                         WordSwapRandomCharacterInsertion(random_one=False, skip_first_char=True, skip_last_char=True),
                         WordSwapQWERTY(random_one=False, skip_first_char=True, skip_last_char=True),
-                        ])
-    constraints = [MinWordLength(min_length=4), StopwordModification(), MaxWordsPerturbed(swaps), RepeatModification()]
+                    ])
+    constraints = [MinWordLength(min_length=4), StopwordModification(), MaxWordsPerturbed(max_num_words=max_num_word_swaps), RepeatModification()]
     goal_function = UntargetedClassification(model)
     search_method = GreedySearch()
     return Attack(goal_function, constraints, transformation, search_method)

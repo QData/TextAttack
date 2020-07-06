@@ -29,7 +29,6 @@ class BeamSearch(SearchMethod):
                 )
                 for next_text in transformations:
                     potential_next_beam.append(next_text)
-            breakpoint()
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
                 return best_result
