@@ -169,7 +169,7 @@ class SentenceEncoder(Constraint):
 
     def _check_constraint_many(self, transformed_texts, reference_text):
         """
-        Filters the list ``transformed_texts`` so that the similarity between the ``current_text``
+        Filters the list ``transformed_texts`` so that the similarity between the ``reference_text``
         and the transformed text is greater than the ``self.threshold``.
         """
         scores = self._score_list(reference_text, transformed_texts)
