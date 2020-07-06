@@ -1,5 +1,5 @@
+from torch import nn as nn
 from torch.autograd import Variable
-import torch.nn as nn
 
 from .adaptive_softmax import AdaptiveSoftmax
 
