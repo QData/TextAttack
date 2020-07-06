@@ -55,12 +55,6 @@ def train_model(args):
 
     # Get list of text and list of label (integers) from disk.
     train_text, train_labels, eval_text, eval_labels = dataset_from_args(args)
-    # with open('/data/medg/misc/jindi/nlp/datasets/yelp/huggingface_nlp.train.txt', 'w') as file:
-    #     for text, label in zip(train_text, train_labels):
-    #         file.write(f'{label} {text}\n')
-    # with open('/data/medg/misc/jindi/nlp/datasets/yelp/huggingface_nlp.test.txt', 'w') as file:
-    #     for text, label in zip(eval_text, eval_labels):
-    #         file.write(f'{label} {text}\n')
 
     # Filter labels
     if args.allowed_labels:
