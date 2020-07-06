@@ -48,9 +48,9 @@ class PartOfSpeech(Constraint):
                 )
 
             if self.tagger_type == "flair":
-                word_list, pos_list = zip_flair_result(
-                    self._flair_pos_tagger.predict(context_key)[0]
-                )
+                context_key_sentence = Sentence(context_key)
+                self._flair_pos_tagger.predict(context_key_sentence)
+                word_list, pos_list = zip_flair_result(context_key_sentence)
 
             self._pos_tag_cache[context_key] = (word_list, pos_list)
 
