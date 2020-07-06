@@ -57,9 +57,4 @@ class PreTransformationConstraint(ABC):
         """
         return []
 
-    def _check_constraint(self):
-        raise RuntimeError(
-            "PreTransformationConstraints do not support `_check_constraint()`."
-        )
-
     __str__ = __repr__ = default_class_repr
