@@ -78,9 +78,6 @@ class GoogleLanguageModel(Constraint):
             probs_of_swaps_at_index = list(
                 zip(item_indices, get_probs(current_text, this_transformed_texts))
             )
-            # if len(probs_of_swaps_at_index) == 0:
-            #     probs.extend(0)
-            #     continue
             # Sort by probability in descending order and take the top n for this index.
             probs_of_swaps_at_index.sort(key=lambda x: -x[1])
             if self.top_n_per_index:
