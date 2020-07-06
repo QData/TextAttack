@@ -16,16 +16,23 @@ class ListThingsCommand(TextAttackCommand):
         List default things in textattack.
     """
 
-    def _list(self, list_of_things):
+    def _list(self, list_of_things, plain=False):
         """ Prints a list or dict of things. """
         if isinstance(list_of_things, list):
             list_of_things = sorted(list_of_things)
             for thing in list_of_things:
-                print(_cb(thing))
+                if plain:
+                    print(thing)
+                else:
+                    print(_cb(thing))
         elif isinstance(list_of_things, dict):
             for thing in sorted(list_of_things.keys()):
                 thing_long_description = list_of_things[thing]
-                print(f"{_cb(thing)} ({thing_long_description})")
+                if plain:
+                    thing_key = thing
+                else:
+                    thing_key = _cb(thing)
+                print(f"{thing_key} ({thing_long_description})")
         else:
             raise TypeError(f"Cannot print list of type {type(list_of_things)}")
 
@@ -51,7 +58,7 @@ class ListThingsCommand(TextAttackCommand):
             list_of_things = ListThingsCommand.things()[args.feature]
         except KeyError:
             raise ValuError(f"Unknown list key {args.thing}")
-        self._list(list_of_things)
+        self._list(list_of_things, plain=args.plain)
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
@@ -62,5 +69,8 @@ class ListThingsCommand(TextAttackCommand):
         )
         parser.add_argument(
             "feature", help=f"the feature to list", choices=ListThingsCommand.things()
+        )
+        parser.add_argument(
+            "--plain", help="print output without color", default=False, action='store_true'
         )
         parser.set_defaults(func=ListThingsCommand())
