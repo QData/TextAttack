@@ -8,6 +8,14 @@ class WordSwapQWERTY(WordSwap):
     def __init__(
         self, random_one=True, skip_first_char=False, skip_last_char=False, **kwargs
     ):
+        """
+        A transformation that swaps characters with adjacent keys on a QWERTY keyboard,
+        replicating the kind of errors that come from typing too quickly.
+
+        :param random_one: Whether to return a single (random) swap, or all possible swaps.
+        :param skip_first_char: When True, do not modify the first character of each word.
+        :param skip_last_char: When True, do not modify the last character of each word.
+        """
         super().__init__(**kwargs)
         self.random_one = random_one
         self.skip_first_char = skip_first_char
