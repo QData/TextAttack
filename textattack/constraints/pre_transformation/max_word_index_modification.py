@@ -13,3 +13,6 @@ class MaxWordIndexModification(PreTransformationConstraint):
     def _get_modifiable_indices(self, current_text):
         """ Returns the word indices in current_text which are able to be deleted """
         return set(range(min(self.max_length, len(current_text.words))))
+
+    def extra_repr_keys(self):
+        return ["max_length"]

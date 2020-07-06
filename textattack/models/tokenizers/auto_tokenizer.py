@@ -18,11 +18,7 @@ class AutoTokenizer:
     """
 
     def __init__(
-        self,
-        name="bert-base-uncased",
-        max_length=256,
-        pad_to_length=False,
-        use_fast=True,
+        self, name="bert-base-uncased", max_length=256, use_fast=True,
     ):
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(
             name, use_fast=use_fast
@@ -43,7 +39,7 @@ class AutoTokenizer:
             *input_text,
             max_length=self.max_length,
             add_special_tokens=True,
-            pad_to_max_length=True,
+            padding="max_length",
             truncation=True,
         )
         return dict(encoded_text)
@@ -59,7 +55,7 @@ class AutoTokenizer:
                 truncation=True,
                 max_length=self.max_length,
                 add_special_tokens=True,
-                pad_to_max_length=True,
+                padding="max_length",
             )
             # Encodings is a `transformers.utils.BatchEncode` object, which
             # is basically a big dictionary that contains a key for all input

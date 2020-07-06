@@ -7,11 +7,13 @@ ATTACK_RECIPE_NAMES = {
     "faster-alzantot": "textattack.attack_recipes.FasterGeneticAlgorithmJia2019",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
+    "input-reduction": "textattack.attack_recipes.InputReductionFeng2018",
     "kuleshov": "textattack.attack_recipes.Kuleshov2017",
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
     "pwws": "textattack.attack_recipes.PWWSRen2019",
+    "pso": "textattack.attack_recipes.PSOZang2020",
 }
 
 #
@@ -218,11 +220,22 @@ TEXTATTACK_DATASET_BY_MODEL = {
     ),
     #
     # Translation models
-    # TODO add proper `nlp` datasets for translation & summarization
+    "t5-en-de": (
+        "english_to_german",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+    ),
+    "t5-en-fr": (
+        "english_to_french",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "fr"),
+    ),
+    "t5-en-ro": (
+        "english_to_romanian",
+        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+    ),
     #
     # Summarization models
     #
-    #'t5-summ':                      'textattack.models.summarization.T5Summarization',
+    "t5-summarization": ("summarization", ("gigaword", None, "test")),
 }
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {

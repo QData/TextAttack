@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+import textattack
 from textattack.shared.utils import default_class_repr
 
 
@@ -71,10 +72,10 @@ class Constraint(ABC):
             transformed_text (AttackedText): The candidate transformed ``AttackedText``.
             reference_text (AttackedText): The ``AttackedText`` to compare against.
         """
-        if not isinstance(transformed_text, AttackedText):
+        if not isinstance(transformed_text, textattack.shared.AttackedText):
             raise TypeError("transformed_text must be of type AttackedText")
-        if not isinstance(reference_text, AttackedText):
-            raise TypeError("reference_text must be of type AttackedText")
+        if not isinstance(current_text, textattack.shared.AttackedText):
+            raise TypeError("current_text must be of type AttackedText")
 
         try:
             if not self.check_compatibility(

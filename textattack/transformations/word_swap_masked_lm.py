@@ -58,7 +58,8 @@ class WordSwapMaskedLM(WordSwap):
         encoding = self._lm_tokenizer.encode_plus(
             text,
             max_length=self.max_length,
-            pad_to_max_length=True,
+            truncation=True,
+            padding="max_length",
             return_tensors="pt",
         )
         return {k: v.to(utils.device) for k, v in encoding.items()}
@@ -93,7 +94,7 @@ class WordSwapMaskedLM(WordSwap):
         replacement_words = []
         for id in top_ids:
             token = self._lm_tokenizer.convert_ids_to_tokens(id)
-            if check_if_word(token):
+            if utils.is_one_word(token):
                 replacement_words.append(token)
 
         return replacement_words
@@ -140,7 +141,7 @@ class WordSwapMaskedLM(WordSwap):
             replacement_words = []
             for id in top_preds:
                 token = self._lm_tokenizer.convert_ids_to_tokens(id)
-                if check_if_word(token):
+                if utils.is_one_word(token):
                     replacement_words.append(token)
             return replacement_words
         else:
@@ -162,7 +163,7 @@ class WordSwapMaskedLM(WordSwap):
                 word = "".join(
                     self._lm_tokenizer.convert_ids_to_tokens(word_tensor)
                 ).replace("##", "")
-                if check_if_word(word):
+                if utils.is_one_word(word):
                     combination_results.append((word, perplexity))
             # Sort to get top-K results
             sorted(combination_results, key=lambda x: x[1])
@@ -228,10 +229,3 @@ def recover_word_case(word, reference_word):
     else:
         # if other, just do not alter the word's case
         return word
-
-
-def check_if_word(word):
-    for c in word:
-        if not c.isalpha():
-            return False
-    return True

@@ -1,5 +1,6 @@
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
+    InputColumnModification,
     RepeatModification,
     StopwordModification,
 )
@@ -35,6 +36,13 @@ def TextFoolerJin2019(model):
     # fmt: on
     constraints = [RepeatModification(), StopwordModification(stopwords=stopwords)]
     #
+    # During entailment, we should only edit the hypothesis - keep the premise
+    # the same.
+    #
+    input_column_modification = InputColumnModification(
+        ["premise", "hypothesis"], {"premise"}
+    )
+    constraints.append(input_column_modification)
     # Minimum word embedding cosine similarity of 0.5.
     # (The paper claims 0.7, but analysis of the released code and some empirical
     # results show that it's 0.5.)

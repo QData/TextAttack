@@ -49,7 +49,7 @@ class GoogleLanguageModel(Constraint):
                 [t.words[word_swap_index] for t in transformed_texts]
             )
             if self.print_step:
-                print(prefix, swapped_words, suffix)
+                print(prefix, swapped_words)
             probs = self.lm.get_words_probs(prefix, swapped_words)
             return probs
 
