@@ -1,6 +1,7 @@
 def test_imports():
-    import textattack
     import torch
+
+    import textattack
 
     del textattack, torch
 

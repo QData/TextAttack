@@ -122,13 +122,12 @@ class CharSwapAugmenter(Augmenter):
     """ Augments words by swapping characters out for other characters. """
 
     def __init__(self, **kwargs):
-        from textattack.transformations import CompositeTransformation
         from textattack.transformations import (
+            CompositeTransformation,
             WordSwapNeighboringCharacterSwap,
             WordSwapRandomCharacterDeletion,
             WordSwapRandomCharacterInsertion,
             WordSwapRandomCharacterSubstitution,
-            WordSwapNeighboringCharacterSwap,
         )
 
         transformation = CompositeTransformation(

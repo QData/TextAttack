@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+from torch import nn as nn
 
 import textattack
 from textattack.models.helpers import GloveEmbeddingLayer
