@@ -52,10 +52,9 @@ class WordSwapQWERTY(WordSwap):
 
     def _get_adjacent(self, s):
         s_lower = s.lower()
-        was_capitalized = s_lower != s
-        if s in self._keyboard_adjacency:
-            adjacent_keys = self._keyboard_adjacency[s]
-            if was_capitalized:
+        if s_lower in self._keyboard_adjacency:
+            adjacent_keys = self._keyboard_adjacency[s_lower]
+            if s.isupper():
                 return [key.upper() for key in adjacent_keys]
             else:
                 return adjacent_keys
