@@ -88,14 +88,18 @@ def model_from_args(args, num_labels):
     if args.model == "lstm":
         textattack.shared.logger.info("Loading textattack model: LSTMForClassification")
         model = textattack.models.helpers.LSTMForClassification(
-            max_seq_length=args.max_length, num_labels=num_labels
+            max_seq_length=args.max_length,
+            num_labels=num_labels,
+            emb_layer_trainable=False,
         )
     elif args.model == "cnn":
         textattack.shared.logger.info(
             "Loading textattack model: WordCNNForClassification"
         )
         model = textattack.models.helpers.WordCNNForClassification(
-            max_seq_length=args.max_length, num_labels=num_labels
+            max_seq_length=args.max_length,
+            num_labels=num_labels,
+            emb_layer_trainable=False,
         )
     else:
         import transformers

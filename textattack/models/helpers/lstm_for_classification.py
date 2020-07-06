@@ -22,6 +22,7 @@ class LSTMForClassification(nn.Module):
         num_labels=2,
         max_seq_length=128,
         model_path=None,
+        emb_layer_trainable=True,
     ):
         super().__init__()
         if depth <= 1:
@@ -30,7 +31,7 @@ class LSTMForClassification(nn.Module):
             # so if that's all we have, this will display a warning.
             dropout = 0
         self.drop = nn.Dropout(dropout)
-        self.emb_layer = GloveEmbeddingLayer()
+        self.emb_layer = GloveEmbeddingLayer(emb_layer_trainable=emb_layer_trainable)
         self.word2id = self.emb_layer.word2id
         self.encoder = nn.LSTM(
             input_size=self.emb_layer.n_d,
