@@ -52,4 +52,4 @@ class MaxWordsPerturbed(Constraint):
             metric.append("max_percent")
         if self.max_num_words is not None:
             metric.append("max_num_words")
-        return metric
+        return metric + super().extra_repr_keys()

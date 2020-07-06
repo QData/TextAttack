@@ -97,7 +97,7 @@ class PartOfSpeech(Constraint):
         return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
-        return ["tagger_type", "tagset", "allow_verb_noun_swap"]
+        return ["tagger_type", "tagset", "allow_verb_noun_swap"] + super().extra_repr_keys()
 
 
 def zip_flair_result(pred):

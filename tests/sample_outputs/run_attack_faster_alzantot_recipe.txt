@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GeneticAlgorithm(
     (pop_size):  60
     (max_iters):  20
@@ -13,15 +13,18 @@ Attack(
   (constraints): 
     (0): MaxWordsPerturbed(
         (max_percent):  0.2
+        (compare_against_original):  True
       )
     (1): WordEmbeddingDistance(
         (embedding_type):  paragramcf
         (max_mse_dist):  0.5
         (cased):  False
         (include_unknown_words):  True
+        (compare_against_original):  True
       )
     (2): LearningToWriteLanguageModel(
         (max_log_prob_diff):  5.0
+        (compare_against_original):  True
       )
     (3): RepeatModification
     (4): StopwordModification

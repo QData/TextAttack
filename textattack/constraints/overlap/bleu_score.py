@@ -26,4 +26,4 @@ class BLEU(Constraint):
         return bleu_score <= self.max_bleu_score
 
     def extra_repr_keys(self):
-        return ["max_bleu_score"]
+        return ["max_bleu_score"] + super().extra_repr_keys()

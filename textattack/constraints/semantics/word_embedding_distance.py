@@ -176,4 +176,4 @@ class WordEmbeddingDistance(Constraint):
             metric = "max_mse_dist"
         else:
             metric = "min_cos_sim"
-        return ["embedding_type", metric, "cased", "include_unknown_words"]
+        return ["embedding_type", metric, "cased", "include_unknown_words"] + super().extra_repr_keys()

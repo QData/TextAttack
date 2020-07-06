@@ -25,4 +25,4 @@ class chrF(Constraint):
         return chrf <= self.max_chrf
 
     def extra_repr_keys(self):
-        return ["max_chrf"]
+        return ["max_chrf"] + super().extra_repr_keys()

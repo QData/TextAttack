@@ -204,7 +204,7 @@ class SentenceEncoder(Constraint):
             "threshold",
             "window_size",
             "skip_text_shorter_than_window",
-        ]
+        ] + super().extra_repr_keys()
 
 
 def get_angular_sim(emb1, emb2):

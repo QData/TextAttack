@@ -37,4 +37,4 @@ class LanguageTool(Constraint):
         return errors_added <= self.grammar_error_threshold
 
     def extra_repr_keys(self):
-        return ["grammar_error_threshold"]
+        return ["grammar_error_threshold"] + super().extra_repr_keys()

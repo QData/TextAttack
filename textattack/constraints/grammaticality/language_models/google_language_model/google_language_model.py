@@ -98,18 +98,8 @@ class GoogleLanguageModel(Constraint):
 
         return [transformed_texts[i] for i in max_el_indices]
 
-<<<<<<< HEAD
     def _check_constraint(self, transformed_text, reference_text):
         return self._check_constraint_many([transformed_text], reference_text)
-=======
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        return self._check_constraint_many(
-            [transformed_text], current_text, original_text=original_text
-        )
-
-    def __call__(self, x, x_adv):
-        raise NotImplementedError()
->>>>>>> master
 
     def extra_repr_keys(self):
-        return ["top_n", "top_n_per_index"]
+        return ["top_n", "top_n_per_index"] + super().extra_repr_keys()

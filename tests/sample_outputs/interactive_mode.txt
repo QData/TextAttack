@@ -13,17 +13,20 @@
         (min_cos_sim):  0.5
         (cased):  False
         (include_unknown_words):  True
+        (compare_against_original):  True
       )
     (1): PartOfSpeech(
         (tagger_type):  nltk
         (tagset):  universal
         (allow_verb_noun_swap):  True
+        (compare_against_original):  True
       )
     (2): UniversalSentenceEncoder(
         (metric):  angular
         (threshold):  0.904458599
         (window_size):  15
         (skip_text_shorter_than_window):  True
+        (compare_against_original):  False
       )
     (3): RepeatModification
     (4): StopwordModification

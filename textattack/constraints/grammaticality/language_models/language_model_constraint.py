@@ -49,4 +49,4 @@ class LanguageModelConstraint(Constraint, ABC):
         return True
 
     def extra_repr_keys(self):
-        return ["max_log_prob_diff"]
+        return ["max_log_prob_diff"] + super().extra_repr_keys()

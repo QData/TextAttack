@@ -24,4 +24,4 @@ class METEOR(Constraint):
         return meteor <= self.max_meteor
 
     def extra_repr_keys(self):
-        return ["max_meteor"]
+        return ["max_meteor"] + super().extra_repr_keys()
