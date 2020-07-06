@@ -133,11 +133,7 @@ class AttackCommand(TextAttackCommand):
         def str_to_int(s):
             return sum((ord(c) for c in s))
 
-        parser.add_argument(
-            "--random-seed",
-            default=str_to_int("TEXTATTACK"),
-            type=int
-        )
+        parser.add_argument("--random-seed", default=str_to_int("TEXTATTACK"), type=int)
 
         parser.add_argument(
             "--checkpoint-dir",
