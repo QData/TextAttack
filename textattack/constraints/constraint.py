@@ -74,8 +74,8 @@ class Constraint(ABC):
         """
         if not isinstance(transformed_text, textattack.shared.AttackedText):
             raise TypeError("transformed_text must be of type AttackedText")
-        if not isinstance(current_text, textattack.shared.AttackedText):
-            raise TypeError("current_text must be of type AttackedText")
+        if not isinstance(reference_text, textattack.shared.AttackedText):
+            raise TypeError("reference_text must be of type AttackedText")
 
         try:
             if not self.check_compatibility(
@@ -96,7 +96,6 @@ class Constraint(ABC):
         
         Args:
             transformed_text: The candidate transformed ``AttackedText``.
-            current_text: The current ``AttackedText``.
             reference_text (AttackedText): The ``AttackedText`` to compare against.
         """
         raise NotImplementedError()
