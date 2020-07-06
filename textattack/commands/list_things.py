@@ -71,6 +71,9 @@ class ListThingsCommand(TextAttackCommand):
             "feature", help=f"the feature to list", choices=ListThingsCommand.things()
         )
         parser.add_argument(
-            "--plain", help="print output without color", default=False, action='store_true'
+            "--plain",
+            help="print output without color",
+            default=False,
+            action="store_true",
         )
         parser.set_defaults(func=ListThingsCommand())

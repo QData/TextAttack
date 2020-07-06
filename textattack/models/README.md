@@ -50,11 +50,11 @@ All evaluations shown are on the full validation or test set up to 1000 examples
     - nlp dataset `rotten_tomatoes`, split `test`
     - Successes: 768/1000
     - Accuracy: 76.80%
-- SST-2 (`lstm-sst2`)
+- SST-2 (`cnn-sst2`)
     - nlp dataset `glue`, subset `sst2`, split `validation`
     - Successes: 721/872 
     - Accuracy: 82.68%
-- Yelp Polarity (`lstm-yelp`)
+- Yelp Polarity (`cnn-yelp`)
     - nlp dataset `yelp_polarity`, split `test`
     - Successes: 913/1000
     - Accuracy: 91.30%
@@ -66,7 +66,7 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 
 <section>
 
-- CoLA `albert-base-v2-cola`
+- CoLA (`albert-base-v2-cola`)
     - nlp dataset `glue`, subset `cola`, split `validation`
     - Successes: 829/1000
     - Accuracy: 82.90%
@@ -102,7 +102,7 @@ All evaluations shown are on the full validation or test set up to 1000 examples
     - nlp dataset `glue`, subset `wnli`, split `validation`
     - Successes: 42/71
     - Accuracy: 59.15%
-- Yelp Polarity (`lstm-yelp`)
+- Yelp Polarity (`albert-base-v2-yelp`)
     - nlp dataset `yelp_polarity`, split `test`
     - Successes: 963/1000
     - Accuracy: 96.30%
@@ -242,12 +242,77 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 
 <section>
 
-
+- CoLA (`roberta-base-cola`)
+    - nlp dataset `glue`, subset `cola`, split `validation`
+    - Successes: 857/1000
+    - Accuracy: 85.70%
+- IMDB (`roberta-base-imdb`)
+    - nlp dataset `imdb`, split `test`
+    - Successes: 941/1000
+    - Accuracy: 94.10%
+- Movie Reviews [Rotten Tomatoes] (`roberta-base-mr`)
+    - nlp dataset `rotten_tomatoes`, split `test`
+    - Successes: 883/1000
+    - Accuracy: 88.30%
+- MRPC (`roberta-base-mrpc`)
+    - nlp dataset `glue`, subset `mrpc`, split `validation`
+    - Successes: 371/408
+    - Accuracy: 91.18%
+- QNLI (`roberta-base-qnli`)
+    - nlp dataset `glue`, subset `qnli`, split `validation`
+    - Successes: 917/1000
+    - Accuracy: 91.70%
+- Recognizing Textual Entailment (`roberta-base-rte`)
+    - nlp dataset `glue`, subset `rte`, split `validation`
+    - Successes: 217/277 
+    - Accuracy: 78.34%
+- SST-2 (`roberta-base-sst2`)
+    - nlp dataset `glue`, subset `sst2`, split `validation`
+    - Successes: 820/872
+    - Accuracy: 94.04%)
+- STS-b (`roberta-base-stsb`)
+    - nlp dataset `glue`, subset `stsb`, split `validation`
+    - Pearson correlation: 0.906067852162708
+    - Spearman correlation: 0.9025045272903051
+- WNLI (`roberta-base-wnli`)
+    - nlp dataset `glue`, subset `wnli`, split `validation`
+    - Successes: 40/71
+    - Accuracy: 56.34%
 
 </section>
 
 ### `xlnet-base-cased`
 
 <section>
+
+- CoLA (`xlnet-base-cased-cola`)
+    - nlp dataset `glue`, subset `cola`, split `validation`
+    - Successes: 800/1000
+    - Accuracy: 80.00%
+- IMDB (`xlnet-base-cased-imdb`)
+    - nlp dataset `imdb`, split `test`
+    - Successes: 957/1000
+    - Accuracy: 95.70%
+- Movie Reviews [Rotten Tomatoes] (`xlnet-base-cased-mr`)
+    - nlp dataset `rotten_tomatoes`, split `test`
+    - Successes: 876/1000
+    - Accuracy: 87.60%
+- MRPC (`xlnet-base-cased-mrpc`)
+    - nlp dataset `glue`, subset `mrpc`, split `validation`
+    - Successes: 363/408
+    - Accuracy: 88.97%
+- Recognizing Textual Entailment (`xlnet-base-cased-rte`)
+    - nlp dataset `glue`, subset `rte`, split `validation`
+    - Successes: 196/277 
+    - Accuracy: 70.76%
+- STS-b (`xlnet-base-cased-stsb`)
+    - nlp dataset `glue`, subset `stsb`, split `validation`
+    - Pearson correlation: 0.883111673280641
+    - Spearman correlation: 0.8773439961182335
+- WNLI (`xlnet-base-cased-wnli`)
+    - nlp dataset `glue`, subset `wnli`, split `validation`
+    - Successes: 41/71
+    - Accuracy: 57.75%
+
 </section>
 

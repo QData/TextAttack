@@ -11,8 +11,10 @@ from textattack.commands.attack.attack_args_helpers import *
 
 logger = textattack.shared.logger
 
+
 def _cb(s):
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
+
 
 class EvalModelCommand(TextAttackCommand):
     """
@@ -29,12 +31,12 @@ class EvalModelCommand(TextAttackCommand):
     def test_model_on_dataset(self, args):
         model = parse_model_from_args(args)
         dataset = parse_dataset_from_args(args)
-        
+
         preds = []
         ground_truth_outputs = []
         i = 0
         while i < min(args.num_examples, len(dataset)):
-            dataset_batch = dataset[i:min(args.num_examples, i+args.batch_size)]
+            dataset_batch = dataset[i : min(args.num_examples, i + args.batch_size)]
             batch_inputs = []
             for (text_input, ground_truth_output) in dataset_batch:
                 attacked_text = textattack.shared.AttackedText(text_input)
@@ -43,20 +45,20 @@ class EvalModelCommand(TextAttackCommand):
                 ground_truth_outputs.append(ground_truth_output)
             preds.extend(self.get_preds(model, batch_inputs))
             i += args.batch_size
-        
+
         preds = torch.stack(preds).squeeze().cpu()
         ground_truth_outputs = torch.tensor(ground_truth_outputs).cpu()
-        
-        logger.info(f'Got {len(preds)} predictions.')
-        
+
+        logger.info(f"Got {len(preds)} predictions.")
+
         if preds.ndim == 1:
             # if preds is just a list of numbers, assume regression for now
             # TODO integrate with `textattack.metrics` package
             pearson_correlation, _ = scipy.stats.pearsonr(ground_truth_outputs, preds)
             spearman_correlation, _ = scipy.stats.spearmanr(ground_truth_outputs, preds)
-            
-            logger.info(f'Pearson correlation = {_cb(pearson_correlation)}')
-            logger.info(f'Spearman correlation = {_cb(spearman_correlation)}')
+
+            logger.info(f"Pearson correlation = {_cb(pearson_correlation)}")
+            logger.info(f"Spearman correlation = {_cb(spearman_correlation)}")
         else:
             guess_labels = preds.argmax(dim=1)
             successes = (guess_labels == ground_truth_outputs).sum().item()

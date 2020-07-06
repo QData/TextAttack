@@ -140,10 +140,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/roberta-base-CoLA",
         ("glue", "cola", "validation"),
     ),
-    "roberta-base-imdb": (
-        "textattack/roberta-base-imdb",
-        ("imdb", None, "test"),
-    ),
+    "roberta-base-imdb": ("textattack/roberta-base-imdb", ("imdb", None, "test"),),
     "roberta-base-mr": (
         "textattack/textattack/roberta-base-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
@@ -156,10 +153,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/roberta-base-QNLI",
         ("glue", "qnli", "validation"),
     ),
-    "roberta-base-rte": (
-        "textattack/roberta-base-RTE", 
-        ("glue", "rte", "validation")
-    ),
+    "roberta-base-rte": ("textattack/roberta-base-RTE", ("glue", "rte", "validation")),
     "roberta-base-sst2": (
         "textattack/roberta-base-SST-2",
         ("glue", "sst2", "validation"),
@@ -183,26 +177,20 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/albert-base-v2-CoLA",
         ("glue", "cola", "validation"),
     ),
-    "albert-base-v2-imdb": (
-        "textattack/albert-base-v2-imdb",
-        ("imdb", None, "test"),
-    ),
+    "albert-base-v2-imdb": ("textattack/albert-base-v2-imdb", ("imdb", None, "test"),),
     "albert-base-v2-mr": (
         "textattack/albert-base-v2-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
     "albert-base-v2-rte": (
-        "textattack/albert-base-v2-RTE", 
-        ("glue", "rte", "validation")
+        "textattack/albert-base-v2-RTE",
+        ("glue", "rte", "validation"),
     ),
     "albert-base-v2-qqp": (
         "textattack/albert-base-v2-QQP",
         ("glue", "qqp", "validation"),
     ),
-    "albert-base-v2-snli": (
-        "textattack/albert-base-v2-snli",
-        ("snli", None, "test"),
-    ),
+    "albert-base-v2-snli": ("textattack/albert-base-v2-snli", ("snli", None, "test"),),
     "albert-base-v2-sst2": (
         "textattack/albert-base-v2-SST-2",
         ("glue", "sst2", "validation"),
@@ -239,8 +227,8 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         ("glue", "mrpc", "validation"),
     ),
     "xlnet-base-cased-rte": (
-        "textattack/xlnet-base-cased-RTE", 
-        ("glue", "rte", "validation")
+        "textattack/xlnet-base-cased-RTE",
+        ("glue", "rte", "validation"),
     ),
     "xlnet-base-cased-stsb": (
         "textattack/xlnet-base-cased-STS-B",
@@ -261,38 +249,18 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     # CNNs
     #
-    "lstm-sst2": ("models/classification/lstm/sst2", 
-        ("glue", "sst2", "validation")
-    ),
-    "lstm-yelp": (
-        "models/classification/lstm/yelp",
-        ("yelp_polarity", None, "test"),
-    ),
-    "lstm-imdb": (
-        "models/classification/lstm/imdb", 
-        ("imdb", None, "test")
-    ),
-    "lstm-mr": (
-        "models/classification/lstm/mr", 
-        ("rotten_tomatoes", None, "test"),
-    ),
+    "lstm-sst2": ("models/classification/lstm/sst2", ("glue", "sst2", "validation")),
+    "lstm-yelp": ("models/classification/lstm/yelp", ("yelp_polarity", None, "test"),),
+    "lstm-imdb": ("models/classification/lstm/imdb", ("imdb", None, "test")),
+    "lstm-mr": ("models/classification/lstm/mr", ("rotten_tomatoes", None, "test"),),
     #
     # LSTMs
     #
-    "cnn-sst2": (
-        "models/classification/cnn/sst", 
-        ("glue", "sst2", "validation")
-    ),
-    "cnn-imdb": (
-        "models/classification/cnn/imdb", 
-        ("imdb", None, "test")
-    ),
-    "cnn-yelp": (
-        "models/classification/cnn/yelp",
-        ("yelp_polarity", None, "test"),
-    ),
+    "cnn-sst2": ("models/classification/cnn/sst", ("glue", "sst2", "validation")),
+    "cnn-imdb": ("models/classification/cnn/imdb", ("imdb", None, "test")),
+    "cnn-yelp": ("models/classification/cnn/yelp", ("yelp_polarity", None, "test"),),
     "cnn-mr": (
-        "models/classification/cnn/rotten-tomatoes", 
+        "models/classification/cnn/rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
     #
