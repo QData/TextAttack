@@ -70,9 +70,15 @@ def dataset_from_args(args):
                     )
                     args.dataset_dev_split = "validation"
                 except KeyError:
-                    raise KeyError(
-                        f"Could not find `dev`, `eval`, or `validation` split in dataset {args.dataset}."
-                    )
+                    try:
+                        eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
+                            *dataset_args, split="test"
+                        )
+                        args.dataset_dev_split = "test"
+                    except KeyError:
+                        raise KeyError(
+                            f"Could not find `dev`, `eval`, `validation`, or `test` split in dataset {args.dataset}."
+                        )
     eval_text, eval_labels = prepare_dataset_for_training(eval_dataset)
 
     return train_text, train_labels, eval_text, eval_labels
@@ -82,14 +88,18 @@ def model_from_args(args, num_labels):
     if args.model == "lstm":
         textattack.shared.logger.info("Loading textattack model: LSTMForClassification")
         model = textattack.models.helpers.LSTMForClassification(
-            max_seq_length=args.max_length, num_labels=num_labels
+            max_seq_length=args.max_length,
+            num_labels=num_labels,
+            emb_layer_trainable=False,
         )
     elif args.model == "cnn":
         textattack.shared.logger.info(
             "Loading textattack model: WordCNNForClassification"
         )
         model = textattack.models.helpers.WordCNNForClassification(
-            max_seq_length=args.max_length, num_labels=num_labels
+            max_seq_length=args.max_length,
+            num_labels=num_labels,
+            emb_layer_trainable=False,
         )
     else:
         import transformers

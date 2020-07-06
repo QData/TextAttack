@@ -44,12 +44,13 @@ class GoogleLanguageModel(Constraint):
 
         def get_probs(reference_text, transformed_texts):
             word_swap_index = reference_text.first_word_diff_index(transformed_texts[0])
+            if word_swap_index is None:
+                return []
+
             prefix = reference_text.words[word_swap_index - 1]
             swapped_words = np.array(
                 [t.words[word_swap_index] for t in transformed_texts]
             )
-            if self.print_step:
-                print(prefix, swapped_words)
             probs = self.lm.get_words_probs(prefix, swapped_words)
             return probs
 
@@ -97,8 +98,18 @@ class GoogleLanguageModel(Constraint):
 
         return [transformed_texts[i] for i in max_el_indices]
 
+<<<<<<< HEAD
     def _check_constraint(self, transformed_text, reference_text):
         return self._check_constraint_many([transformed_text], reference_text)
+=======
+    def _check_constraint(self, transformed_text, current_text, original_text=None):
+        return self._check_constraint_many(
+            [transformed_text], current_text, original_text=original_text
+        )
+
+    def __call__(self, x, x_adv):
+        raise NotImplementedError()
+>>>>>>> master
 
     def extra_repr_keys(self):
         return ["top_n", "top_n_per_index"]
