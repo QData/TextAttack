@@ -54,7 +54,7 @@ it's a mystery how the movie could this released in be condition .,0
 it's a whodunit how the movie could be released in this condition .,0
 ```
 
-The 'eda' uses a combination of word swaps, insertions, and substitutions to generate new examples.
+The 'eda' augmentation uses a combination of word swaps, insertions, and substitutions to generate new examples.
 
 ## Adversarial Attacks with `textattack attack`
 

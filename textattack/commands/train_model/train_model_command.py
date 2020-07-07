@@ -91,7 +91,7 @@ class TrainModelCommand(TextAttackCommand):
             help="Total number of epochs to train for",
         )
         parser.add_argument(
-            "--augment", type=str, default=None, help="Augmentation scheme to use",
+            "--augment", type=str, default=None, help="Augmentation recipe to use",
         )
         parser.add_argument(
             "--pct-words-to-swap",

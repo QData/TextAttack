@@ -1,6 +1,7 @@
 import os
 
 import textattack
+from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 
 logger = textattack.shared.logger
 
@@ -123,19 +124,11 @@ def model_from_args(args, num_labels):
     return model
 
 
-AUGMENTER_RECIPE_NAMES = {
-    "eda": "textattack.augmentation.EasyDataAugmenter",
-    "wordnet": "textattack.augmentation.WordNetAugmenter",
-    "charswap": "textattack.augmentation.CharSwapAugmenter",
-    "embedding": "textattack.augmentation.EmbeddingAugmenter",
-}
-
-
 def augmenter_from_args(args):
     augmenter = None
     if args.augment:
-        if args.augment in AUGMENTER_RECIPE_NAMES:
-            augmenter = eval(AUGMENTER_RECIPE_NAMES[args.augment])(
+        if args.augment in AUGMENTATION_RECIPE_NAMES:
+            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.augment])(
                 pct_words_to_swap=args.pct_words_to_swap,
                 transformations_per_example=args.transformations_per_example,
             )
