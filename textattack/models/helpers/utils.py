@@ -8,6 +8,7 @@ from textattack.shared import utils
 
 def load_cached_state_dict(model_folder_path):
     model_folder_path = utils.download_if_needed(model_folder_path)
+    # Take the first model matching the pattern *model.bin.
     model_path_list = glob.glob(os.path.join(model_folder_path, "*model.bin"))
     if not model_path_list:
         raise FileNotFoundError(

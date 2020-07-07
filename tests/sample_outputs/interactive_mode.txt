@@ -1,4 +1,4 @@
-/.*/Attack(
+Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -41,10 +41,10 @@ Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:
 Attacking...
-[92m1 (59%)[0m --> [91m0 (72%)[0m
+[92m1 (96%)[0m --> [91m0 (66%)[0m
 
-All that [92mglitters[0m is not gold
+[92mAll[0m that [92mglitters[0m is not gold
 
-All that [91mglisten[0m is not gold
+[91mAny[0m that [91mshinning[0m is not gold
 
 Enter a sentence to attack or "q" to quit:

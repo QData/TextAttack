@@ -1,11 +1,14 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
+import scipy
 import torch
 
 import textattack
 from textattack.commands import TextAttackCommand
 from textattack.commands.attack.attack_args import *
 from textattack.commands.attack.attack_args_helpers import *
+
+logger = textattack.shared.logger
 
 
 def _cb(s):
@@ -19,55 +22,48 @@ class EvalModelCommand(TextAttackCommand):
         A command line parser to evaluatate a model from user specifications.
     """
 
-    def get_num_successes(self, model, ids, true_labels):
+    def get_preds(self, model, inputs):
         with torch.no_grad():
-            preds = textattack.shared.utils.model_predict(model, ids)
-        true_labels = torch.tensor(true_labels).to(textattack.shared.utils.device)
-        guess_labels = preds.argmax(dim=1)
-        successes = (guess_labels == true_labels).sum().item()
-        return successes, true_labels, guess_labels
+            preds = textattack.shared.utils.model_predict(model, inputs)
+        return preds
 
     def test_model_on_dataset(self, args):
         model = parse_model_from_args(args)
         dataset = parse_dataset_from_args(args)
-        succ = 0
-        fail = 0
-        batch_ids = []
-        batch_labels = []
-        all_true_labels = []
-        all_guess_labels = []
-        for i, (text_input, label) in enumerate(dataset):
-            if i >= args.num_examples:
-                break
-            attacked_text = textattack.shared.AttackedText(text_input)
-            ids = model.tokenizer.encode(attacked_text.tokenizer_input)
-            batch_ids.append(ids)
-            batch_labels.append(label)
-            if len(batch_ids) == args.batch_size:
-                batch_succ, true_labels, guess_labels = self.get_num_successes(
-                    model, batch_ids, batch_labels
-                )
-                batch_fail = args.batch_size - batch_succ
-                succ += batch_succ
-                fail += batch_fail
-                batch_ids = []
-                batch_labels = []
-                all_true_labels.extend(true_labels.tolist())
-                all_guess_labels.extend(guess_labels.tolist())
-        if len(batch_ids) > 0:
-            batch_succ, true_labels, guess_labels = self.get_num_successes(
-                model, batch_ids, batch_labels
-            )
-            batch_fail = len(batch_ids) - batch_succ
-            succ += batch_succ
-            fail += batch_fail
-            all_true_labels.extend(true_labels.tolist())
-            all_guess_labels.extend(guess_labels.tolist())
 
-        perc = float(succ) / (succ + fail) * 100.0
-        perc = "{:.2f}%".format(perc)
-        print(f"Successes {succ}/{succ+fail} ({_cb(perc)})")
-        return perc
+        preds = []
+        ground_truth_outputs = []
+        i = 0
+        while i < min(args.num_examples, len(dataset)):
+            dataset_batch = dataset[i : min(args.num_examples, i + args.batch_size)]
+            batch_inputs = []
+            for (text_input, ground_truth_output) in dataset_batch:
+                attacked_text = textattack.shared.AttackedText(text_input)
+                ids = model.tokenizer.encode(attacked_text.tokenizer_input)
+                batch_inputs.append(ids)
+                ground_truth_outputs.append(ground_truth_output)
+            preds.extend(self.get_preds(model, batch_inputs))
+            i += args.batch_size
+
+        preds = torch.stack(preds).squeeze().cpu()
+        ground_truth_outputs = torch.tensor(ground_truth_outputs).cpu()
+
+        logger.info(f"Got {len(preds)} predictions.")
+
+        if preds.ndim == 1:
+            # if preds is just a list of numbers, assume regression for now
+            # TODO integrate with `textattack.metrics` package
+            pearson_correlation, _ = scipy.stats.pearsonr(ground_truth_outputs, preds)
+            spearman_correlation, _ = scipy.stats.spearmanr(ground_truth_outputs, preds)
+
+            logger.info(f"Pearson correlation = {_cb(pearson_correlation)}")
+            logger.info(f"Spearman correlation = {_cb(spearman_correlation)}")
+        else:
+            guess_labels = preds.argmax(dim=1)
+            successes = (guess_labels == ground_truth_outputs).sum().item()
+            perc_accuracy = successes / len(preds) * 100.0
+            perc_accuracy = "{:.2f}%".format(perc_accuracy)
+            logger.info(f"Successes {successes}/{len(preds)} ({_cb(perc_accuracy)})")
 
     def run(self, args):
         # Default to 'all' if no model chosen.
@@ -77,6 +73,7 @@ class EvalModelCommand(TextAttackCommand):
             ):
                 args.model = model_name
                 self.test_model_on_dataset(args)
+                logger.info("-" * 50)
         else:
             self.test_model_on_dataset(args)
 

@@ -28,6 +28,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/bert-base-uncased-CoLA",
         ("glue", "cola", "validation"),
     ),
+    "bert-base-uncased-imdb": (
+        "textattack/bert-base-uncased-imdb",
+        ("imdb", None, "test"),
+    ),
     "bert-base-uncased-mnli": (
         "textattack/bert-base-uncased-MNLI",
         ("glue", "mnli", "validation_matched", [1, 2, 0]),
@@ -68,6 +72,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/bert-base-uncased-snli",
         ("snli", None, "test", [1, 2, 0]),
     ),
+    "bert-base-uncased-yelp": (
+        "textattack/bert-base-uncased-yelp-polarity",
+        ("yelp_polarity", None, "test"),
+    ),
     #
     # distilbert-base-cased
     #
@@ -83,6 +91,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/distilbert-base-cased-QQP",
         ("glue", "qqp", "validation"),
     ),
+    "distilbert-base-cased-snli": (
+        "textattack/distilbert-base-cased-snli",
+        ("snli", None, "test"),
+    ),
     "distilbert-base-cased-sst2": (
         "textattack/distilbert-base-cased-SST-2",
         ("glue", "sst2", "validation"),
@@ -94,6 +106,14 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # distilbert-base-uncased
     #
+    "distilbert-base-uncased-cola": (
+        "textattack/distilbert-base-cased-CoLA",
+        ("glue", "cola", "validation"),
+    ),
+    "distilbert-base-uncased-imdb": (
+        "textattack/distilbert-base-uncased-imdb",
+        ("imdb", None, "test"),
+    ),
     "distilbert-base-uncased-mnli": (
         "textattack/distilbert-base-uncased-MNLI",
         ("glue", "mnli", "validation_matched", [1, 2, 0]),
@@ -106,21 +126,9 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/distilbert-base-uncased-QNLI",
         ("glue", "qnli", "validation"),
     ),
-    "distilbert-base-uncased-qqp": (
-        "textattack/distilbert-base-uncased-QQP",
-        ("glue", "qqp", "validation"),
-    ),
     "distilbert-base-uncased-rte": (
         "textattack/distilbert-base-uncased-RTE",
         ("glue", "rte", "validation"),
-    ),
-    "distilbert-base-uncased-sst2": (
-        "textattack/distilbert-base-uncased-SST-2",
-        ("glue", "sst2", "validation"),
-    ),
-    "distilbert-base-uncased-stsb": (
-        "textattack/distilbert-base-uncased-STS-B",
-        ("glue", "stsb", "validation", None, 5.0),
     ),
     "distilbert-base-uncased-wnli": (
         "textattack/distilbert-base-uncased-WNLI",
@@ -132,6 +140,11 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "roberta-base-cola": (
         "textattack/roberta-base-CoLA",
         ("glue", "cola", "validation"),
+    ),
+    "roberta-base-imdb": ("textattack/roberta-base-imdb", ("imdb", None, "test"),),
+    "roberta-base-mr": (
+        "textattack/textattack/roberta-base-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
     ),
     "roberta-base-mrpc": (
         "textattack/roberta-base-MRPC",
@@ -161,16 +174,70 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # albert-base-v2 (ALBERT is cased by default)
     #
+    "albert-base-v2-cola": (
+        "textattack/albert-base-v2-CoLA",
+        ("glue", "cola", "validation"),
+    ),
+    "albert-base-v2-imdb": ("textattack/albert-base-v2-imdb", ("imdb", None, "test"),),
     "albert-base-v2-mr": (
         "textattack/albert-base-v2-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
+    "albert-base-v2-rte": (
+        "textattack/albert-base-v2-RTE",
+        ("glue", "rte", "validation"),
+    ),
+    "albert-base-v2-qqp": (
+        "textattack/albert-base-v2-QQP",
+        ("glue", "qqp", "validation"),
+    ),
+    "albert-base-v2-snli": ("textattack/albert-base-v2-snli", ("snli", None, "test"),),
+    "albert-base-v2-sst2": (
+        "textattack/albert-base-v2-SST-2",
+        ("glue", "sst2", "validation"),
+    ),
+    "albert-base-v2-stsb": (
+        "textattack/albert-base-v2-STS-B",
+        ("glue", "stsb", "validation", None, 5.0),
+    ),
+    "albert-base-v2-wnli": (
+        "textattack/albert-base-v2-WNLI",
+        ("glue", "wnli", "validation"),
+    ),
+    "albert-base-v2-yelp": (
+        "textattack/albert-base-v2-yelp-polarity",
+        ("yelp_polarity", None, "test"),
+    ),
     #
     # xlnet-base-cased
     #
+    "xlnet-base-cased-cola": (
+        "textattack/xlnet-base-cased-CoLA",
+        ("glue", "cola", "validation"),
+    ),
+    "xlnet-base-cased-imdb": (
+        "textattack/xlnet-base-cased-imdb",
+        ("imdb", None, "test"),
+    ),
     "xlnet-base-cased-mr": (
         "textattack/xlnet-base-cased-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
+    ),
+    "xlnet-base-cased-mrpc": (
+        "textattack/xlnet-base-cased-MRPC",
+        ("glue", "mrpc", "validation"),
+    ),
+    "xlnet-base-cased-rte": (
+        "textattack/xlnet-base-cased-RTE",
+        ("glue", "rte", "validation"),
+    ),
+    "xlnet-base-cased-stsb": (
+        "textattack/xlnet-base-cased-STS-B",
+        ("glue", "stsb", "validation", None, 5.0),
+    ),
+    "xlnet-base-cased-wnli": (
+        "textattack/xlnet-base-cased-WNLI",
+        ("glue", "wnli", "validation"),
     ),
 }
 
@@ -183,44 +250,23 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     # CNNs
     #
-    "lstm-sst": ("models/classification/lstm/sst", ("glue", "sst2", "validation")),
-    "lstm-yelp-sentiment": (
-        "models/classification/lstm/yelp_polarity",
-        ("yelp_polarity", None, "test"),
-    ),
+    "lstm-sst2": ("models/classification/lstm/sst2", ("glue", "sst2", "validation")),
+    "lstm-yelp": ("models/classification/lstm/yelp", ("yelp_polarity", None, "test"),),
     "lstm-imdb": ("models/classification/lstm/imdb", ("imdb", None, "test")),
     "lstm-mr": ("models/classification/lstm/mr", ("rotten_tomatoes", None, "test"),),
     #
     # LSTMs
     #
-    "cnn-sst": ("models/classification/cnn/sst", ("glue", "sst2", "validation")),
+    "cnn-sst2": ("models/classification/cnn/sst", ("glue", "sst2", "validation")),
     "cnn-imdb": ("models/classification/cnn/imdb", ("imdb", None, "test")),
-    "cnn-yelp-sentiment": (
-        "models/classification/cnn/yelp_polarity",
-        ("yelp_polarity", None, "test"),
-    ),
-    "cnn-mr": ("models/classification/cnn/mr", ("rotten_tomatoes", None, "test"),),
-    #
-    # Text classification models
-    #
-    "bert-base-cased-imdb": (
-        ("models/classification/bert/imdb-cased", 2),
-        ("imdb", None, "test"),
-    ),
-    "bert-base-uncased-imdb": (
-        ("models/classification/bert/imdb-uncased", 2),
-        ("imdb", None, "test"),
-    ),
-    "bert-base-cased-yelp": (
-        ("models/classification/bert/yelp-cased", 2),
-        ("yelp_polarity", None, "test"),
-    ),
-    "bert-base-uncased-yelp": (
-        ("models/classification/bert/yelp-uncased", 2),
-        ("yelp_polarity", None, "test"),
+    "cnn-yelp": ("models/classification/cnn/yelp", ("yelp_polarity", None, "test"),),
+    "cnn-mr": (
+        "models/classification/cnn/rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
     ),
     #
-    # Translation models
+    # T5 for translation
+    #
     "t5-en-de": (
         "english_to_german",
         ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
@@ -234,7 +280,7 @@ TEXTATTACK_DATASET_BY_MODEL = {
         ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
     ),
     #
-    # Summarization models
+    # T5 for summarization
     #
     "t5-summarization": ("summarization", ("gigaword", None, "test")),
 }

@@ -49,7 +49,7 @@ def get_nlp_dataset_columns(dataset):
     return input_columns, output_column
 
 
-class HuggingFaceNLPDataset(TextAttackDataset):
+class HuggingFaceNlpDataset(TextAttackDataset):
     """ Loads a dataset from HuggingFace ``nlp`` and prepares it as a
         TextAttack dataset.
         
@@ -132,4 +132,9 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         return self._format_raw_example(raw_example)
 
     def __getitem__(self, i):
-        return self._format_raw_example(self.examples[i])
+        if isinstance(i, int):
+            return self._format_raw_example(self.examples[i])
+        else:
+            # `i` could be a slice or an integer. if it's a slice,
+            # return the formatted version of the proper slice of the list
+            return [self._format_raw_example(ex) for ex in self.examples[i]]

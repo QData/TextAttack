@@ -125,7 +125,7 @@ attack_test_params = [
     (
         "run_attack_kuleshov_nn",
         (
-            "textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst --attack-n --query-budget 200"
+            "textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst2 --attack-n --query-budget 200"
         ),
         "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
     ),
