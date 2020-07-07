@@ -5,6 +5,8 @@ import textattack
 logger = textattack.shared.logger
 
 
+
+
 def prepare_dataset_for_training(nlp_dataset):
     """ Changes an `nlp` dataset into the proper format for tokenization. """
 
@@ -121,6 +123,23 @@ def model_from_args(args, num_labels):
     model = model.to(textattack.shared.utils.device)
 
     return model
+
+AUGMENTER_RECIPE_NAMES = {
+        "eda" : "textattack.augmentation.EasyDataAugmenter",
+        "wordnet" : "textattack.augmentation.WordNetAugmenter",
+        "charswap" : "textattack.augmentation.CharSwapAugmenter",
+        "embedding" : "textattack.augmentation.EmbeddingAugmenter",
+    }
+
+
+def augmenter_from_args(args):
+    augmenter = None
+    if args.augment:
+        if args.augment in AUGMENTER_RECIPE_NAMES:
+            augmenter = eval(AUGMENTER_RECIPE_NAMES[args.augment])()
+        else:
+            raise ValueError(f"Unrecognized augmentation recipe: {args.augment}")
+    return augmenter
 
 
 def write_readme(args, best_eval_score, best_eval_score_epoch):

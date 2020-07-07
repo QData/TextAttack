@@ -34,7 +34,7 @@ class EasyDataAugmenter(Augmenter):
 
     """
 
-    def __init__(self, alpha, n_aug):
+    def __init__(self, alpha=.1, n_aug=4):
         self.alpha = alpha
         self.transformations_per_example = n_aug
         n_aug_each = max(n_aug // 4, 1)

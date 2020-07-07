@@ -12,7 +12,7 @@ import transformers
 
 import textattack
 
-from .train_args_helpers import dataset_from_args, model_from_args, write_readme
+from .train_args_helpers import dataset_from_args, model_from_args, write_readme, augmenter_from_args
 
 device = textattack.shared.utils.device
 logger = textattack.shared.logger
@@ -56,6 +56,7 @@ def train_model(args):
     # Get list of text and list of label (integers) from disk.
     train_text, train_labels, eval_text, eval_labels = dataset_from_args(args)
 
+
     # Filter labels
     if args.allowed_labels:
         logger.info(f"Filtering samples with labels outside of {args.allowed_labels}.")
@@ -77,6 +78,34 @@ def train_model(args):
             f"Filtered {len(eval_text)} dev samples to {len(final_eval_text)} points."
         )
         eval_text, eval_labels = final_eval_text, final_eval_labels
+
+    # data augmentation
+    augmenter = augmenter_from_args(args)
+    if augmenter:
+        # augment the training set
+        aug_train_text = augmenter.augment_many(train_text)
+        # flatten augmented examples and duplicate labels
+        flat_aug_train_text = []
+        flat_aug_train_labels = []
+        for i, examples in enumerate(aug_train_text):
+            for aug_ver in examples:
+                flat_aug_train_text.append(aug_ver)
+                flat_aug_train_labels.append(train_labels[i])
+        train_text = flat_aug_train_text
+        train_labels = flat_aug_train_labels
+
+        # augment the eval set
+        aug_eval_text = augmenter.augment_many(eval_text)
+        # flatten the augmented examples and duplicate labels
+        flat_aug_eval_text = []
+        flat_aug_eval_labels = []
+        for i, examples in enumerate(aug_eval_text):
+            for aug_ver in examples:
+                flat_aug_eval_text.append(aug_ver)
+                flat_aug_eval_labels.append(eval_labels[i])
+        eval_text = flat_aug_eval_text
+        eval_labels = flat_aug_eval_labels
+
 
     label_id_len = len(train_labels)
     label_set = set(train_labels)
