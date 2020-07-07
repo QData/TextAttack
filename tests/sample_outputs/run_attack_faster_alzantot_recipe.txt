@@ -32,40 +32,36 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (74%)[0m
+[92mPositive (73%)[0m --> [91mNegative (68%)[0m
 
-this kind of hands-on [92mstorytelling[0m is ultimately what makes shanghai [92mghetto[0m move beyond a good , dry , [92mreliable[0m textbook and what [92mallows[0m it to rank with its worthy predecessors .
+this kind of hands-on storytelling is ultimately what makes shanghai ghetto move beyond a good , dry , reliable [92mtextbook[0m and what allows it to rank with its [92mworthy[0m predecessors .
 
-this kind of hands-on [91mtale[0m is ultimately what makes shanghai [91mslum[0m move beyond a good , dry , [91mcredible[0m textbook and what [91mallowed[0m it to rank with its worthy predecessors .
+this kind of hands-on storytelling is ultimately what makes shanghai ghetto move beyond a good , dry , reliable [91mmanuals[0m and what allows it to rank with its [91mcreditable[0m predecessors .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92mPositive (80%)[0m --> [91mNegative (100%)[0m
+[91mNegative (73%)[0m --> [37m[SKIPPED][0m
 
-making such a tragedy the backdrop to a love story risks trivializing it , [92mthough[0m chouraqui no doubt intended the film to affirm love's power to help people endure [92malmost[0m unimaginable horror .
-
-making such a tragedy the backdrop to a love story risks trivializing it , [91mnotwithstanding[0m chouraqui no doubt intended the film to affirm love's power to help people endure [91mabout[0m unimaginable horror .
+making such a tragedy the backdrop to a love story risks trivializing it , though chouraqui no doubt intended the film to affirm love's power to help people endure almost unimaginable horror .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (92%)[0m --> [91mNegative (52%)[0m
+[91mNegative (62%)[0m --> [37m[SKIPPED][0m
 
-grown-up quibbles are beside the point here . the [92mlittle[0m [92mgirls[0m [92munderstand[0m , and mccracken [92mknows[0m that's all that [92mmatters[0m .
-
-grown-up quibbles are beside the point here . the [91msmall[0m [91mgirl[0m [91munderstanding[0m , and mccracken [91mrealises[0m that's all that [91mquestions[0m .
+grown-up quibbles are beside the point here . the little girls understand , and mccracken knows that's all that matters .
 
 
 
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 3      |
+| Number of successful attacks: | 1      |
 | Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
+| Number of skipped attacks:    | 2      |
+| Original accuracy:            | 33.33% |
 | Accuracy under attack:        | 0.0%   |
 | Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 16.17% |
+| Average perturbed word %:     | 7.14%  |
 | Average num. words per input: | 25.67  |
-| Avg num queries:              | 837.67 |
+| Avg num queries:              | 521.0  |
 +-------------------------------+--------+

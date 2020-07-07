@@ -1,6 +1,6 @@
 format: FORCE  ## Run black and isort (rewriting files)
 	black .
-	isort  --atomic tests textattack
+	isort --atomic tests textattack
 
 
 lint: FORCE  ## Run black, isort, flake8 (in check mode)

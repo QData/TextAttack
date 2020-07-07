@@ -30,27 +30,27 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (97%)[0m --> [91m[FAILED][0m
+[92mPositive (96%)[0m --> [91mNegative (77%)[0m
 
-the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [92msupplies[0m with tremendous skill .
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [91mstagnated[0m with tremendous skill .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92mPositive (68%)[0m --> [91m[FAILED][0m
+[91mNegative (57%)[0m --> [37m[SKIPPED][0m
 
 red dragon " never cuts corners .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (91%)[0m --> [91mNegative (100%)[0m
+[92mPositive (51%)[0m --> [91m[FAILED][0m
 
-[92mfresnadillo[0m has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
-
-[91mvain[0m has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
+fresnadillo has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
-[92mPositive (100%)[0m --> [91m[FAILED][0m
+[92mPositive (89%)[0m --> [91m[FAILED][0m
 
 throws in enough clever and unexpected twists to make the formula feel fresh .
 
@@ -60,12 +60,12 @@ throws in enough clever and unexpected twists to make the formula feel fresh .
 | Attack Results                |        |
 +-------------------------------+--------+
 | Number of successful attacks: | 1      |
-| Number of failed attacks:     | 3      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 75.0%  |
-| Attack success rate:          | 25.0%  |
-| Average perturbed word %:     | 3.85%  |
+| Number of failed attacks:     | 2      |
+| Number of skipped attacks:    | 1      |
+| Original accuracy:            | 75.0%  |
+| Accuracy under attack:        | 50.0%  |
+| Attack success rate:          | 33.33% |
+| Average perturbed word %:     | 5.56%  |
 | Average num. words per input: | 15.5   |
-| Avg num queries:              | 1.25   |
+| Avg num queries:              | 1.33   |
 +-------------------------------+--------+

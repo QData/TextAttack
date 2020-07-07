@@ -1,5 +1,5 @@
-from .constraint import Constraint
 from .pre_transformation_constraint import PreTransformationConstraint
+from .constraint import Constraint
 
 from . import grammaticality
 from . import semantics
