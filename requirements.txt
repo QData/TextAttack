@@ -17,7 +17,7 @@ tensorflow>=2
 tensorflow_hub
 tensorboardX
 terminaltables
-tokenizers
+tokenizers==0.8.0-rc4
 tqdm
 visdom
 wandb
