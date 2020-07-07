@@ -41,9 +41,12 @@ class ImprovedGeneticAlgorithm(SearchMethod):
         self.max_replaced_times = max_replaced_times
         self.give_up_if_no_improvement = give_up_if_no_improvement
         self.max_crossover_retries = max_crossover_retries
+        # flag to indicate if it is the improved genetic algorithm proposed in Natural Language Adversarial Attacks and Defenses in Word Level by Wang et al.
 
         # internal flag to indicate if search should end immediately
         self._search_over = False
+
+
 
     def _replace_at_index(self, pop_member, idx):
         """
