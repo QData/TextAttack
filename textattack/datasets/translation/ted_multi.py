@@ -3,10 +3,10 @@ import collections
 import nlp
 import numpy as np
 
-from textattack.datasets import HuggingFaceNLPDataset
+from textattack.datasets import HuggingFaceNlpDataset
 
 
-class TedMultiTranslationDataset(HuggingFaceNLPDataset):
+class TedMultiTranslationDataset(HuggingFaceNlpDataset):
     """ Loads examples from the Ted Talk translation dataset using the `nlp`
         package.
 
@@ -28,6 +28,7 @@ class TedMultiTranslationDataset(HuggingFaceNLPDataset):
         self.source_lang = source_lang
         self.target_lang = target_lang
         self.label_names = ("Translation",)
+        self._i = 0
 
     def _format_raw_example(self, raw_example):
         translations = np.array(raw_example["translation"])

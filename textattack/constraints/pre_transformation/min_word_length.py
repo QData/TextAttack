@@ -1,4 +1,4 @@
-from textattack.constraints.pre_transformation import PreTransformationConstraint
+from textattack.constraints import PreTransformationConstraint
 
 
 class MinWordLength(PreTransformationConstraint):

@@ -9,17 +9,20 @@
   (constraints): 
     (0): MaxWordsPerturbed(
         (max_num_words):  2
+        (compare_against_original):  True
       )
     (1): WordEmbeddingDistance(
         (embedding_type):  paragramcf
         (min_cos_sim):  0.8
         (cased):  False
         (include_unknown_words):  True
+        (compare_against_original):  True
       )
     (2): PartOfSpeech(
         (tagger_type):  nltk
         (tagset):  universal
         (allow_verb_noun_swap):  True
+        (compare_against_original):  True
       )
     (3): RepeatModification
     (4): StopwordModification

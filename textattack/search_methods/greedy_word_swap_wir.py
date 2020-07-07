@@ -1,8 +1,7 @@
 """
 When WIR method is set to ``unk``, this is a
 reimplementation of the search method from the paper: 
-Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and 
-Entailment by Jin et. al, 2019. 
+Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment by Jin et. al, 2019.
 See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
 """
 

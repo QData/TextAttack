@@ -25,7 +25,9 @@ class GeneticAlgorithm(SearchMethod):
         temp (float): Temperature for softmax function used to normalize probability dist when sampling parents.
             Higher temperature increases the sensitivity to lower probability candidates.
         give_up_if_no_improvement (bool): If True, stop the search early if no candidate that improves the score is found.
+        post_crossover_check (bool): If True, check if child produced from crossover step passes the constraints.
         max_crossover_retries (int): Maximum number of crossover retries if resulting child fails to pass the constraints.
+            Applied only when `post_crossover_check` is set to `True`.
             Setting it to 0 means we immediately take one of the parents at random as the child.
         improved_genetic_algorithm (bool): If True, we use the improved genetic algorithm.
         max_replace_times_per_index (int):  The maximum times words at the same index can be replaced in improved genetic algorithm.
@@ -37,6 +39,7 @@ class GeneticAlgorithm(SearchMethod):
         max_iters=50,
         temp=0.3,
         give_up_if_no_improvement=False,
+        post_crossover_check=True,
         max_crossover_retries=20,
         improved_genetic_algorithm=False,
         max_replace_times_per_index=5,
@@ -45,6 +48,7 @@ class GeneticAlgorithm(SearchMethod):
         self.pop_size = pop_size
         self.temp = temp
         self.give_up_if_no_improvement = give_up_if_no_improvement
+        self.post_crossover_check = post_crossover_check
         self.max_crossover_retries = max_crossover_retries
         self.improved_genetic_algorithm = improved_genetic_algorithm
         self.max_replace_times_per_index = max_replace_times_per_index
@@ -157,6 +161,12 @@ class GeneticAlgorithm(SearchMethod):
             new_text = x1_text.replace_words_at_indices(
                 indices_to_replace, words_to_replace
             )
+
+            if not self.post_crossover_check or (
+                new_text.text == x1_text.text or new_text.text == x2_text.text
+            ):
+                break
+
             if "last_transformation" in x1_text.attack_attrs:
                 new_text.attack_attrs["last_transformation"] = x1_text.attack_attrs[
                     "last_transformation"
@@ -169,7 +179,7 @@ class GeneticAlgorithm(SearchMethod):
                     "last_transformation"
                 ]
                 filtered = self.filter_transformations(
-                    [new_text], x1_text, original_text=original_result.attacked_text
+                    [new_text], x2_text, original_text=original_result.attacked_text
                 )
             else:
                 # In this case, neither x_1 nor x_2 has been transformed,
@@ -183,7 +193,7 @@ class GeneticAlgorithm(SearchMethod):
 
             num_tries += 1
 
-        if not passed_constraints:
+        if self.post_crossover_check and not passed_constraints:
             # If we cannot find a child that passes the constraints,
             # we just randomly pick one of the parents to be the child for the next iteration.
             new_text = (

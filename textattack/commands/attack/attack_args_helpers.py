@@ -387,7 +387,7 @@ def parse_dataset_from_args(args):
                 dataset_args = dataset_args.split(":")
             else:
                 dataset_args = (dataset_args,)
-        dataset = textattack.datasets.HuggingFaceNLPDataset(
+        dataset = textattack.datasets.HuggingFaceNlpDataset(
             *dataset_args, shuffle=args.shuffle
         )
         dataset.examples = dataset.examples[args.num_examples_offset :]

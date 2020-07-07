@@ -83,7 +83,7 @@ def BAEGarg2019(model):
     use_constraint = UniversalSentenceEncoder(
         threshold=0.8,
         metric="cosine",
-        compare_with_original=True,
+        compare_against_original=True,
         window_size=15,
         skip_text_shorter_than_window=True,
     )

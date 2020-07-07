@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 
-from textattack.constraints import Constraint
+from textattack.shared.utils import default_class_repr
 
 
-class PreTransformationConstraint(Constraint, ABC):
+class PreTransformationConstraint(ABC):
     """ 
     An abstract class that represents constraints which are applied before
     the transformation. These restrict which words are allowed to be modified
@@ -35,7 +35,26 @@ class PreTransformationConstraint(Constraint, ABC):
         """
         raise NotImplementedError()
 
-    def _check_constraint(self):
-        raise RuntimeError(
-            "PreTransformationConstraints do not support `_check_constraint()`."
-        )
+    def check_compatibility(self, transformation):
+        """ 
+        Checks if this constraint is compatible with the given transformation.
+        For example, the ``WordEmbeddingDistance`` constraint compares the embedding of
+        the word inserted with that of the word deleted. Therefore it can only be
+        applied in the case of word swaps, and not for transformations which involve
+        only one of insertion or deletion.
+
+        Args:
+            transformation: The ``Transformation`` to check compatibility with.
+        """
+        return True
+
+    def extra_repr_keys(self):
+        """Set the extra representation of the constraint using these keys.
+        
+        To print customized extra information, you should reimplement
+        this method in your own constraint. Both single-line and multi-line
+        strings are acceptable.
+        """
+        return []
+
+    __str__ = __repr__ = default_class_repr
