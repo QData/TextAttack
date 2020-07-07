@@ -8,7 +8,7 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
-from textattack.search_methods import ImprovedGeneticAlgorithm
+from textattack.search_methods import GeneticAlgorithm
 from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
@@ -17,16 +17,14 @@ def IGAWang2019(model):
     """
         Xiaosen Wang, Hao Jin, Kun He (2019). 
         
-        Natural Language Adversarial Attack and Defense inWord Level. 
+        Natural Language Adversarial Attack and Defense in Word Level. 
         
         http://arxiv.org/abs/1909.06723 
     """
     #
     # Swap words with their embedding nearest-neighbors.
-    #
     # Embedding: Counter-fitted Paragram Embeddings.
-    #
-    # "[We] fix the hyperparameter values to S = 60, δ = 0.5, λ = 5, and N is unrestricted (50)."
+    # Fix the hyperparameter value to N = Unrestricted (50)."
     #
     transformation = WordSwapEmbedding(max_candidates=50)
     #
@@ -38,7 +36,7 @@ def IGAWang2019(model):
     #
     constraints.append(MaxWordsPerturbed(max_percent=0.2))
     #
-    # Maximum word embedding euclidean distance of 0.5.
+    # Maximum word embedding euclidean distance δ of 0.5.
     #
     constraints.append(WordEmbeddingDistance(max_mse_dist=0.5))
     #
@@ -47,9 +45,13 @@ def IGAWang2019(model):
     goal_function = UntargetedClassification(model)
     #
     # Perform word substitution with an improved genetic algorithm.
+    # Fix the hyperparameter values to S = 60, M = 20, λ = 5."
     #
-    search_method = ImprovedGeneticAlgorithm(
-        max_pop_size=60, max_iters=20, max_replaced_times=5
+    search_method = GeneticAlgorithm(
+        pop_size=60,
+        max_iters=20,
+        improved_genetic_algorithm=True,
+        max_replace_times_per_index=5,
     )
 
     return Attack(goal_function, constraints, transformation, search_method)
