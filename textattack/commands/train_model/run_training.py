@@ -12,7 +12,12 @@ import transformers
 
 import textattack
 
-from .train_args_helpers import dataset_from_args, model_from_args, write_readme, augmenter_from_args
+from .train_args_helpers import (
+    augmenter_from_args,
+    dataset_from_args,
+    model_from_args,
+    write_readme,
+)
 
 device = textattack.shared.utils.device
 logger = textattack.shared.logger
@@ -55,7 +60,6 @@ def train_model(args):
 
     # Get list of text and list of label (integers) from disk.
     train_text, train_labels, eval_text, eval_labels = dataset_from_args(args)
-
 
     # Filter labels
     if args.allowed_labels:
@@ -105,7 +109,6 @@ def train_model(args):
                 flat_aug_eval_labels.append(eval_labels[i])
         eval_text = flat_aug_eval_text
         eval_labels = flat_aug_eval_labels
-
 
     label_id_len = len(train_labels)
     label_set = set(train_labels)

@@ -27,9 +27,15 @@ class Augmenter:
         self,
         transformation,
         constraints=[],
-        pct_words_to_swap=.1,
+        pct_words_to_swap=0.1,
         transformations_per_example=1,
     ):
+        assert (
+            transformations_per_example > 0
+        ), "transformations_per_example must be a positive integer"
+        assert (
+            pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
+        ), "pct_words_to_swap must be in [0., 1.]"
         self.transformation = transformation
         self.pct_words_to_swap = pct_words_to_swap
         self.transformations_per_example = transformations_per_example

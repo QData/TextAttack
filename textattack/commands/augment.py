@@ -1,5 +1,5 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
-import csv 
+import csv
 import os
 import time
 

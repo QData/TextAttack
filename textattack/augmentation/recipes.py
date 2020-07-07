@@ -31,26 +31,28 @@ class EasyDataAugmenter(Augmenter):
 
     """
 
-    def __init__(self, pct_words_to_swap=.1, transformations_per_example=4):
+    def __init__(self, pct_words_to_swap=0.1, transformations_per_example=4):
+        assert (
+            pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
+        ), "pct_words_to_swap must be in [0., 1.]"
+        assert (
+            transformations_per_example > 0
+        ), "transformations_per_example must be a positive integer"
         self.pct_words_to_swap = pct_words_to_swap
         self.transformations_per_example = transformations_per_example
         n_aug_each = max(transformations_per_example // 4, 1)
 
         self.synonym_replacement = WordNetAugmenter(
-            pct_words_to_swap = pct_words_to_swap,
-            transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
         )
         self.random_deletion = DeletionAugmenter(
-                pct_words_to_swap=pct_words_to_swap,
-                transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
         )
         self.random_swap = SwapAugmenter(
-                pct_words_to_swap=pct_words_to_swap,
-                transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
         )
         self.random_insertion = SynonymInsertionAugmenter(
-                pct_words_to_swap=pct_words_to_swap,
-                transformations_per_example=n_aug_each
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each
         )
 
     def augment(self, text):
