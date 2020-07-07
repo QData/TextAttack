@@ -132,7 +132,7 @@ class HuggingFaceNlpDataset(TextAttackDataset):
         return self._format_raw_example(raw_example)
 
     def __getitem__(self, i):
-        if isinstance(self.examples[i], str):
+        if isinstance(i, int):
             return self._format_raw_example(self.examples[i])
         else:
             # `i` could be a slice or an integer. if it's a slice,

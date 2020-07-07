@@ -8,7 +8,6 @@ from textattack.commands import TextAttackCommand
 from textattack.commands.attack.attack_args import *
 from textattack.commands.attack.attack_args_helpers import *
 
-
 logger = textattack.shared.logger
 
 

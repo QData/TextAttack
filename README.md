@@ -205,12 +205,12 @@ textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 5
 textattack train --model bert-base-uncased --dataset glue:cola --batch-size 32 --epochs 5
 ```
 
-## `textattack peek-dataset`
+### `textattack peek-dataset`
 
 To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-nlp snli` will show information about the SNLI dataset from the NLP package.
 
 
-## `textattack list`
+### `textattack list`
 
 There are lots of pieces in TextAttack, and it can be difficult to keep track of all of them. You can use `textattack list` to list components, for example, pretrained models (`textattack list models`) or available search methods (`textattack list search-methods`).
 
@@ -229,8 +229,11 @@ TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that
 
 TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
 dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
-tasks, as well as some common datasets for classification, translation, and summarization. You can 
-see the full list of provided models & datasets via `textattack attack --help`.
+tasks, as well as some common datasets for classification, translation, and summarization. 
+
+A list of available pretrained models and their validation accuracies is available at
+[models/README.md](models/README.md). You can also view a full list of provided models 
+& datasets via `textattack attack --help`.
 
 Here's an example of using one of the built-in models (the SST-2 dataset is automatically loaded):
 
