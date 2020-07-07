@@ -18,8 +18,8 @@ class SentenceEncoder(Constraint):
             Defaults to 0.8
         metric (:obj:`str`, optional): The similarity metric to use. Defaults to 
             cosine. Options: ['cosine, 'angular']
-        compare_with_original (bool): Whether to compare `x_adv` to the previous `x_adv`
-            or the original `x`.
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
         window_size (int): The number of words to use in the similarity 
             comparison. `None` indicates no windowing (encoding is based on the
             full input).
@@ -29,13 +29,13 @@ class SentenceEncoder(Constraint):
         self,
         threshold=0.8,
         metric="cosine",
-        compare_with_original=False,
+        compare_against_original=True,
         window_size=None,
         skip_text_shorter_than_window=False,
     ):
+        super().__init__(compare_against_original)
         self.metric = metric
         self.threshold = threshold
-        self.compare_with_original = compare_with_original
         self.window_size = window_size
         self.skip_text_shorter_than_window = skip_text_shorter_than_window
 
@@ -167,22 +167,13 @@ class SentenceEncoder(Constraint):
 
         return self.sim_metric(starting_embeddings, transformed_embeddings)
 
-    def _check_constraint_many(
-        self, transformed_texts, current_text, original_text=None
-    ):
+    def _check_constraint_many(self, transformed_texts, reference_text):
         """
-        Filters the list ``transformed_texts`` so that the similarity between the ``current_text``
+        Filters the list ``transformed_texts`` so that the similarity between the ``reference_text``
         and the transformed text is greater than the ``self.threshold``.
         """
-        if self.compare_with_original:
-            if original_text:
-                scores = self._score_list(original_text, transformed_texts)
-            else:
-                raise ValueError(
-                    "Must provide original text when compare_with_original is true."
-                )
-        else:
-            scores = self._score_list(current_text, transformed_texts)
+        scores = self._score_list(reference_text, transformed_texts)
+
         for i, transformed_text in enumerate(transformed_texts):
             # Optionally ignore similarity score for sentences shorter than the
             # window size.
@@ -195,21 +186,15 @@ class SentenceEncoder(Constraint):
         mask = (scores >= self.threshold).cpu().numpy().nonzero()
         return np.array(transformed_texts)[mask]
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
+    def _check_constraint(self, transformed_text, reference_text):
         if (
             self.skip_text_shorter_than_window
             and len(transformed_text.words) < self.window_size
         ):
             score = 1
-        elif self.compare_with_original:
-            if original_text:
-                score = self._sim_score(original_text, transformed_text)
-            else:
-                raise ValueError(
-                    "Must provide original text when compare_with_original is true."
-                )
         else:
-            scores = self._sim_score(current_text, transformed_text)
+            score = self._sim_score(reference_text, transformed_text)
+
         transformed_text.attack_attrs["similarity_score"] = score
         return score >= self.threshold
 
@@ -217,10 +202,9 @@ class SentenceEncoder(Constraint):
         return [
             "metric",
             "threshold",
-            "compare_with_original",
             "window_size",
             "skip_text_shorter_than_window",
-        ]
+        ] + super().extra_repr_keys()
 
 
 def get_angular_sim(emb1, emb2):

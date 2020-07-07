@@ -152,7 +152,7 @@ twice, or from replacing stopwords.
 
 Pre-Transformation Constraint
 ###############################
-.. automodule:: textattack.constraints.pre_transformation.pre_transformation_constraint
+.. automodule:: textattack.constraints.pre_transformation_constraint
    :special-members: __call__
    :private-members:
    :members:

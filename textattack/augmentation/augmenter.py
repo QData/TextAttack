@@ -2,7 +2,7 @@ import random
 
 import tqdm
 
-from textattack.constraints.pre_transformation import PreTransformationConstraint
+from textattack.constraints import PreTransformationConstraint
 from textattack.shared import AttackedText
 
 
@@ -50,9 +50,15 @@ class Augmenter:
         for C in self.constraints:
             if len(transformed_texts) == 0:
                 break
-            transformed_texts = C.call_many(
-                transformed_texts, current_text, original_text=original_text
-            )
+            if C.compare_against_original:
+                if not original_text:
+                    raise ValueError(
+                        f"Missing `original_text` argument when constraint {type(C)} is set to compare against `original_text`"
+                    )
+
+                transformed_texts = C.call_many(transformed_texts, original_text)
+            else:
+                transformed_texts = C.call_many(transformed_texts, current_text)
         return transformed_texts
 
     def augment(self, text):
