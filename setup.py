@@ -10,7 +10,7 @@ extras = {}
 # Packages required for installing docs.
 extras["docs"] = ["recommonmark", "nbsphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
 # Packages required for formatting code & running tests.
-extras["test"] = ["black", "isort", "pytest", "pytest-xdist"]
+extras["test"] = ["black", "isort==5.0.3", "flake8", "pytest", "pytest-xdist"]
 # For developers, install development tools along with all optional dependencies.
 extras["dev"] = extras["docs"] + extras["test"]
 

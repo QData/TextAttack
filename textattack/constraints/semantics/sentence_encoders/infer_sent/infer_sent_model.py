@@ -8,12 +8,11 @@
 """
 This file contains the definition of encoders used in https://arxiv.org/pdf/1705.02364.pdf
 """
-
 import time
 
 import numpy as np
 import torch
-import torch.nn as nn
+from torch import nn as nn
 
 
 class InferSentModel(nn.Module):

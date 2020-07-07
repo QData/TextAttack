@@ -26,10 +26,9 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip setuptools wheel
-        pip install black isort # Testing packages
+        pip install black flake8 isort # Testing packages
         python setup.py install_egg_info # Workaround https://github.com/pypa/pip/issues/4537
         pip install -e .
     - name: Check code format with black and isort
       run: |
-        black . --check
-        isort --check-only --recursive tests textattack
+        make lint

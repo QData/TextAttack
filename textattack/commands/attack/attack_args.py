@@ -14,6 +14,8 @@ ATTACK_RECIPE_NAMES = {
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
     "pwws": "textattack.attack_recipes.PWWSRen2019",
     "iga": "textattack.attack_recipes.IGAWang2019",
+    "pruthi": "textattack.attack_recipes.Pruthi2019",
+    "pso": "textattack.attack_recipes.PSOZang2020",
 }
 
 #

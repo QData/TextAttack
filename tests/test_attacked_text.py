@@ -165,7 +165,7 @@ class TestAttackedText:
         )
         for old_idx, new_idx in enumerate(new_text.attack_attrs["original_index_map"]):
             assert (attacked_text.words[old_idx] == new_text.words[new_idx]) or (
-                new_i == -1
+                new_idx == -1
             )
         new_text = (
             new_text.delete_word_at_index(0)

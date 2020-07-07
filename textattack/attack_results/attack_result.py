@@ -17,7 +17,7 @@ class AttackResult:
         if original_result is None:
             raise ValueError("Attack original result cannot be None")
         elif not isinstance(original_result, GoalFunctionResult):
-            raise TypeError(f"Invalid original goal function result: {original_text}")
+            raise TypeError(f"Invalid original goal function result: {original_result}")
         if perturbed_result is None:
             raise ValueError("Attack perturbed result cannot be None")
         elif not isinstance(perturbed_result, GoalFunctionResult):

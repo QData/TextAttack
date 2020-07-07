@@ -53,6 +53,12 @@ Kuleshov (Adversarial Examples for Natural Language Classification Problems)
 .. automodule:: textattack.attack_recipes.kuleshov_2017
    :members:
 
+Particle Swarm Optimization (Word-level Textual Adversarial Attacking as Combinatorial Optimization)
+#####################################################################################################
+
+.. automodule:: textattack.attack_recipes.PSO_zang_2020
+   :members:
+
 PWWS (Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency)
 ###################################################################################################
 
