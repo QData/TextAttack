@@ -136,7 +136,10 @@ def augmenter_from_args(args):
     augmenter = None
     if args.augment:
         if args.augment in AUGMENTER_RECIPE_NAMES:
-            augmenter = eval(AUGMENTER_RECIPE_NAMES[args.augment])()
+            augmenter = eval(AUGMENTER_RECIPE_NAMES[args.augment])(
+                    pct_words_to_swap=args.pct_words_to_swap, 
+                    transformations_per_example=args.transformations_per_example,
+                    )
         else:
             raise ValueError(f"Unrecognized augmentation recipe: {args.augment}")
     return augmenter
