@@ -171,7 +171,7 @@ def train_model(args):
         return False
 
     args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
-    
+
     # Save original args to file
     args_save_path = os.path.join(args.output_dir, "train_args.json")
     with open(args_save_path, "w", encoding="utf-8") as f:

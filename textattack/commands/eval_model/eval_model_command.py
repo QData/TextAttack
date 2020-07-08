@@ -25,7 +25,6 @@ class EvalModelCommand(TextAttackCommand):
     def get_preds(self, model, inputs):
         with torch.no_grad():
             preds = textattack.shared.utils.model_predict(model, inputs)
-        breakpoint()
         return preds
 
     def test_model_on_dataset(self, args):
@@ -65,9 +64,6 @@ class EvalModelCommand(TextAttackCommand):
             perc_accuracy = successes / len(preds) * 100.0
             perc_accuracy = "{:.2f}%".format(perc_accuracy)
             logger.info(f"Successes {successes}/{len(preds)} ({_cb(perc_accuracy)})")
-            
-            import collections
-            print(collections.Counter(guess_labels.tolist()))
 
     def run(self, args):
         # Default to 'all' if no model chosen.

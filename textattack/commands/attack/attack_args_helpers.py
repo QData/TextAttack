@@ -322,7 +322,11 @@ def parse_model_from_args(args):
                 model_from_args,
             )
 
-            model = model_from_args(argparse.Namespace(**model_train_args), num_labels)
+            model = model_from_args(
+                argparse.Namespace(**model_train_args),
+                num_labels,
+                model_path=args.model,
+            )
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
     return model
