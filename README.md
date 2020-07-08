@@ -24,6 +24,8 @@
 
 TextAttack is a Python framework for adversarial attacks, data augmentation, and model training in NLP.
 
+> If you're looking for information about TextAttack's menagerie of pre-trained models, you might want the [TextAttack Model Zoo](textattack/models/README.md) readme.
+
 ## Slack Channel
 
 For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-ez3ts03b-Nr55tDiqgAvCkRbbz8zz9g)!
@@ -240,7 +242,7 @@ dataset to the correct model. We include various pre-trained models for each of 
 tasks, as well as some common datasets for classification, translation, and summarization. 
 
 A list of available pretrained models and their validation accuracies is available at
-[models/README.md](models/README.md). You can also view a full list of provided models 
+[textattack/models/README.md](textattack/models/README.md). You can also view a full list of provided models 
 & datasets via `textattack attack --help`.
 
 Here's an example of using one of the built-in models (the SST-2 dataset is automatically loaded):
