@@ -23,7 +23,7 @@ Attack(
       )
     (2): UniversalSentenceEncoder(
         (metric):  angular
-        (threshold):  0.904458599
+        (threshold):  0.840845057
         (window_size):  15
         (skip_text_shorter_than_window):  True
         (compare_against_original):  False
