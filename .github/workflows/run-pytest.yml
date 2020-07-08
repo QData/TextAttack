@@ -30,6 +30,7 @@ jobs:
         pip uninstall textattack --yes # Remove TA if it's already installed 
         python setup.py install_egg_info # Workaround https://github.com/pypa/pip/issues/4537
         pip install .
+        pip freeze
     - name: Test with pytest
       run: |
         pytest tests -vx --dist=loadfile -n auto

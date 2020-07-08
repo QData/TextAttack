@@ -12,12 +12,12 @@ scikit-learn
 scipy==1.4.1
 sentence_transformers>0.2.6
 torch
-transformers>=3
+transformers==3.0.2
 tensorflow>=2
 tensorflow_hub
 tensorboardX
 terminaltables
-tokenizers==0.8.0-rc4
+tokenizers==0.8.1-rc1
 tqdm
 visdom
 wandb
