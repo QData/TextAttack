@@ -12,7 +12,12 @@ import transformers
 
 import textattack
 
-from .train_args_helpers import dataset_from_args, model_from_args, write_readme
+from .train_args_helpers import (
+    augmenter_from_args,
+    dataset_from_args,
+    model_from_args,
+    write_readme,
+)
 
 device = textattack.shared.utils.device
 logger = textattack.shared.logger
@@ -78,6 +83,33 @@ def train_model(args):
         )
         eval_text, eval_labels = final_eval_text, final_eval_labels
 
+    # data augmentation
+    augmenter = augmenter_from_args(args)
+    if augmenter:
+        # augment the training set
+        aug_train_text = augmenter.augment_many(train_text)
+        # flatten augmented examples and duplicate labels
+        flat_aug_train_text = []
+        flat_aug_train_labels = []
+        for i, examples in enumerate(aug_train_text):
+            for aug_ver in examples:
+                flat_aug_train_text.append(aug_ver)
+                flat_aug_train_labels.append(train_labels[i])
+        train_text = flat_aug_train_text
+        train_labels = flat_aug_train_labels
+
+        # augment the eval set
+        aug_eval_text = augmenter.augment_many(eval_text)
+        # flatten the augmented examples and duplicate labels
+        flat_aug_eval_text = []
+        flat_aug_eval_labels = []
+        for i, examples in enumerate(aug_eval_text):
+            for aug_ver in examples:
+                flat_aug_eval_text.append(aug_ver)
+                flat_aug_eval_labels.append(eval_labels[i])
+        eval_text = flat_aug_eval_text
+        eval_labels = flat_aug_eval_labels
+
     label_id_len = len(train_labels)
     label_set = set(train_labels)
     args.num_labels = len(label_set)
@@ -86,7 +118,7 @@ def train_model(args):
     )
 
     if isinstance(train_labels[0], float):
-        # TODO come up with a more sophisticated scheme for when to do regression
+        # TODO come up with a more sophisticated scheme for knowing when to do regression
         logger.warn(f"Detected float labels. Doing regression.")
         args.num_labels = 1
         args.do_regression = True
@@ -117,6 +149,7 @@ def train_model(args):
     # multi-gpu training
     if num_gpus > 1:
         model = torch.nn.DataParallel(model)
+        logger.info("Using torch.nn.DataParallel.")
     logger.info(f"Training model across {num_gpus} GPUs")
 
     num_train_optimization_steps = (
@@ -170,6 +203,12 @@ def train_model(args):
         return False
 
     args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
+
+    # Save original args to file
+    args_save_path = os.path.join(args.output_dir, "train_args.json")
+    with open(args_save_path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(args_dict, indent=2) + "\n")
+    logger.info(f"Wrote original training args to {args_save_path}.")
 
     tb_writer.add_hparams(args_dict, {})
 
@@ -356,6 +395,8 @@ def train_model(args):
                 break
 
     # read the saved model and report its eval performance
+    logger.info("Finished training. Re-loading and evaluating model from disk.")
+    model = model_from_args(args, args.num_labels)
     model.load_state_dict(torch.load(os.path.join(args.output_dir, args.weights_name)))
     eval_score = get_eval_score()
     logger.info(
@@ -375,8 +416,7 @@ def train_model(args):
     write_readme(args, args.best_eval_score, args.best_eval_score_epoch)
 
     # Save args to file
-    args_save_path = os.path.join(args.output_dir, "train_args.json")
     final_args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
     with open(args_save_path, "w", encoding="utf-8") as f:
         f.write(json.dumps(final_args_dict, indent=2) + "\n")
-    logger.info(f"Wrote training args to {args_save_path}.")
+    logger.info(f"Wrote final training args to {args_save_path}.")

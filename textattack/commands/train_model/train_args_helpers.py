@@ -1,6 +1,7 @@
 import os
 
 import textattack
+from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 
 logger = textattack.shared.logger
 
@@ -71,7 +72,7 @@ def dataset_from_args(args):
                     args.dataset_dev_split = "validation"
                 except KeyError:
                     try:
-                        eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
+                        eval_dataset = textattack.datasets.HuggingFaceNlpDataset(
                             *dataset_args, split="test"
                         )
                         args.dataset_dev_split = "test"
@@ -84,43 +85,64 @@ def dataset_from_args(args):
     return train_text, train_labels, eval_text, eval_labels
 
 
-def model_from_args(args, num_labels):
-    if args.model == "lstm":
+def model_from_args(train_args, num_labels, model_path=None):
+    """ Constructs a model from its `train_args.json`. If huggingface model,
+        loads from model hub address. If TextAttack lstm/cnn, loads from
+        disk (and `model_path` provides the path to the model).
+    """
+    if train_args.model == "lstm":
         textattack.shared.logger.info("Loading textattack model: LSTMForClassification")
         model = textattack.models.helpers.LSTMForClassification(
-            max_seq_length=args.max_length,
+            max_seq_length=train_args.max_length,
             num_labels=num_labels,
             emb_layer_trainable=False,
         )
-    elif args.model == "cnn":
+        if model_path:
+            model.load_from_disk(model_path)
+    elif train_args.model == "cnn":
         textattack.shared.logger.info(
             "Loading textattack model: WordCNNForClassification"
         )
         model = textattack.models.helpers.WordCNNForClassification(
-            max_seq_length=args.max_length,
+            max_seq_length=train_args.max_length,
             num_labels=num_labels,
             emb_layer_trainable=False,
         )
+        if model_path:
+            model.load_from_disk(model_path)
     else:
         import transformers
 
         textattack.shared.logger.info(
-            f"Loading transformers AutoModelForSequenceClassification: {args.model}"
+            f"Loading transformers AutoModelForSequenceClassification: {train_args.model}"
         )
         config = transformers.AutoConfig.from_pretrained(
-            args.model, num_labels=num_labels, finetuning_task=args.dataset
+            train_args.model, num_labels=num_labels, finetuning_task=train_args.dataset
         )
         model = transformers.AutoModelForSequenceClassification.from_pretrained(
-            args.model, config=config,
+            train_args.model, config=config,
         )
         tokenizer = textattack.models.tokenizers.AutoTokenizer(
-            args.model, use_fast=True, max_length=args.max_length
+            train_args.model, use_fast=True, max_length=train_args.max_length
         )
         setattr(model, "tokenizer", tokenizer)
 
     model = model.to(textattack.shared.utils.device)
 
     return model
+
+
+def augmenter_from_args(args):
+    augmenter = None
+    if args.augment:
+        if args.augment in AUGMENTATION_RECIPE_NAMES:
+            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.augment])(
+                pct_words_to_swap=args.pct_words_to_swap,
+                transformations_per_example=args.transformations_per_example,
+            )
+        else:
+            raise ValueError(f"Unrecognized augmentation recipe: {args.augment}")
+    return augmenter
 
 
 def write_readme(args, best_eval_score, best_eval_score_epoch):
