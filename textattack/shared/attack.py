@@ -205,15 +205,16 @@ class Attack:
         Gets examples from a dataset and tokenizes them.
 
         Args:
-            dataset: An iterable of (text, ground_truth_output) pairs
+            dataset: An iterable of (text_input, ground_truth_output) pairs
             indices: An iterable of indices of the dataset that we want to attack. If None, attack all samples in dataset.
         
         Returns:
             results (Iterable[GoalFunctionResult]): an iterable of GoalFunctionResults of the original examples
         """
-        indices = indices if indices else deque(range(len(dataset)))
+        indices = indices or range(len(dataset))
         if not isinstance(indices, deque):
-            indices = deque(indices)
+            indices = deque(sorted(indices))
+
         if not indices:
             return
             yield
@@ -221,14 +222,14 @@ class Attack:
         while indices:
             i = indices.popleft()
             try:
-                text, ground_truth_output = dataset[i]
+                text_input, ground_truth_output = dataset[i]
                 try:
                     # get label names from dataset, if possible
                     label_names = dataset.label_names
                 except AttributeError:
                     label_names = None
                 attacked_text = AttackedText(
-                    text, attack_attrs={"label_names": label_names}
+                    text_input, attack_attrs={"label_names": label_names}
                 )
                 goal_function_result, _ = self.goal_function.init_attack_example(
                     attacked_text, ground_truth_output
@@ -236,9 +237,10 @@ class Attack:
                 yield goal_function_result
 
             except IndexError:
-                raise IndexError(
-                    f"Out of bounds access of dataset. Size of data is {len(dataset)} but tried to access index {i}"
+                utils.logger.warn(
+                    f"Dataset has {len(dataset)} samples but tried to access index {i}. Ending attack early."
                 )
+                break
 
     def attack_dataset(self, dataset, indices=None):
         """ 

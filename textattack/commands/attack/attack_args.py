@@ -24,6 +24,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # bert-base-uncased
     #
+    "bert-base-uncased-ag-news": (
+        "textattack/bert-base-uncased-ag-news",
+        ("ag_news", None, "test"),
+    ),
     "bert-base-uncased-cola": (
         "textattack/bert-base-uncased-CoLA",
         ("glue", "cola", "validation"),
@@ -106,6 +110,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # distilbert-base-uncased
     #
+    "distilbert-base-uncased-ag-news": (
+        "textattack/distilbert-base-uncased-ag-news",
+        ("ag_news", None, "test"),
+    ),
     "distilbert-base-uncased-cola": (
         "textattack/distilbert-base-cased-CoLA",
         ("glue", "cola", "validation"),
@@ -137,6 +145,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # roberta-base (RoBERTa is cased by default)
     #
+    "roberta-base-ag-news": (
+        "textattack/roberta-base-ag-news",
+        ("ag_news", None, "test"),
+    ),
     "roberta-base-cola": (
         "textattack/roberta-base-CoLA",
         ("glue", "cola", "validation"),
@@ -174,6 +186,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     #
     # albert-base-v2 (ALBERT is cased by default)
     #
+    "albert-base-v2-ag-news": (
+        "textattack/albert-base-v2-ag-news",
+        ("ag_news", None, "test"),
+    ),
     "albert-base-v2-cola": (
         "textattack/albert-base-v2-CoLA",
         ("glue", "cola", "validation"),
@@ -246,24 +262,25 @@ HUGGINGFACE_DATASET_BY_MODEL = {
 # Models hosted by textattack.
 #
 TEXTATTACK_DATASET_BY_MODEL = {
-    # @TODO restore ag-news models after agnews joins `nlp` as a dataset.
     #
     # CNNs
     #
-    "lstm-sst2": ("models/classification/lstm/sst2", ("glue", "sst2", "validation")),
-    "lstm-yelp": ("models/classification/lstm/yelp", ("yelp_polarity", None, "test"),),
+    "lstm-ag-news": ("models/classification/lstm/ag-news", ("ag_news", None, "test"),),
     "lstm-imdb": ("models/classification/lstm/imdb", ("imdb", None, "test")),
     "lstm-mr": ("models/classification/lstm/mr", ("rotten_tomatoes", None, "test"),),
+    "lstm-sst2": ("models/classification/lstm/sst2", ("glue", "sst2", "validation")),
+    "lstm-yelp": ("models/classification/lstm/yelp", ("yelp_polarity", None, "test"),),
     #
     # LSTMs
     #
-    "cnn-sst2": ("models/classification/cnn/sst", ("glue", "sst2", "validation")),
+    "cnn-ag-news": ("models/classification/cnn/ag-news", ("ag_news", None, "test"),),
     "cnn-imdb": ("models/classification/cnn/imdb", ("imdb", None, "test")),
-    "cnn-yelp": ("models/classification/cnn/yelp", ("yelp_polarity", None, "test"),),
     "cnn-mr": (
         "models/classification/cnn/rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
+    "cnn-sst2": ("models/classification/cnn/sst", ("glue", "sst2", "validation")),
+    "cnn-yelp": ("models/classification/cnn/yelp", ("yelp_polarity", None, "test"),),
     #
     # T5 for translation
     #
