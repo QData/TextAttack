@@ -110,6 +110,7 @@ Attacks on classification tasks, like sentiment classification and entailment:
 - **pwws**: Greedy attack with word importance ranking based on word saliency and synonym swap scores (["Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency" (Ren et al., 2019)](https://www.aclweb.org/anthology/P19-1103/)).
 - **textbugger**: Greedy attack with word importance ranking and a combination of synonym and character-based swaps ([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)).
 - **textfooler**: Greedy attack with word importance ranking and counter-fitted embedding swap (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932)).
+- **pruthi**: Character-based attack that simulates common typos (["Combating Adversarial Misspellings with Robust Word Recognition" (Pruthi et al., 2019)](https://arxiv.org/abs/1905.11268)
 
 Attacks on sequence-to-sequence models:
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)).
@@ -136,6 +137,7 @@ for data augmentation:
 - `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
 - `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
 - `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
+- `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -154,8 +156,8 @@ For example, given the following as `examples.csv`:
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-The command `textattack augment --csv examples.csv --input-column text --recipe embedding --num-words-to-swap 4 --transformations-per-example 2 --exclude-original`
-will augment the `text` column with four swaps per augmentation, twice as many augmentations as original inputs, and exclude the original inputs from the
+The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap 4 --transformations-per-example 2 --exclude-original`
+will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
 After augmentation, here are the contents of `augment.csv`:
@@ -199,6 +201,12 @@ automatically loaded using the `nlp` package.
 ```bash
 textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
 ```
+
+The training process has data augmentation built-in:
+```bash
+textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
+```
+This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` dataset before training.
 
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
 ```bash

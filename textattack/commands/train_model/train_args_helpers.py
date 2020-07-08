@@ -1,6 +1,7 @@
 import os
 
 import textattack
+from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 
 logger = textattack.shared.logger
 
@@ -129,6 +130,19 @@ def model_from_args(train_args, num_labels, model_path=None):
     model = model.to(textattack.shared.utils.device)
 
     return model
+
+
+def augmenter_from_args(args):
+    augmenter = None
+    if args.augment:
+        if args.augment in AUGMENTATION_RECIPE_NAMES:
+            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.augment])(
+                pct_words_to_swap=args.pct_words_to_swap,
+                transformations_per_example=args.transformations_per_example,
+            )
+        else:
+            raise ValueError(f"Unrecognized augmentation recipe: {args.augment}")
+    return augmenter
 
 
 def write_readme(args, best_eval_score, best_eval_score_epoch):

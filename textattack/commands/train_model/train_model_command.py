@@ -91,6 +91,21 @@ class TrainModelCommand(TextAttackCommand):
             help="Total number of epochs to train for",
         )
         parser.add_argument(
+            "--augment", type=str, default=None, help="Augmentation recipe to use",
+        )
+        parser.add_argument(
+            "--pct-words-to-swap",
+            type=float,
+            default=0.1,
+            help="Percentage of words to modify when using data augmentation (--augment)",
+        )
+        parser.add_argument(
+            "--transformations-per-example",
+            type=int,
+            default=4,
+            help="Number of augmented versions to create from each example when using data augmentation (--augment)",
+        )
+        parser.add_argument(
             "--allowed-labels",
             type=int,
             nargs="*",

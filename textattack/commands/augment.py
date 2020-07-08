@@ -57,16 +57,10 @@ class AugmentCommand(TextAttackCommand):
             f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
         )
 
-        if args.recipe == "eda":
-            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                alpha=args.alpha, n_aug=args.transformations_per_example,
-            )
-
-        else:
-            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                num_words_to_swap=args.num_words_to_swap,
-                transformations_per_example=args.transformations_per_example,
-            )
+        augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+            pct_words_to_swap=args.pct_words_to_swap,
+            transformations_per_example=args.transformations_per_example,
+        )
 
         output_rows = []
         for row in tqdm.tqdm(rows, desc="Augmenting rows"):
@@ -117,17 +111,9 @@ class AugmentCommand(TextAttackCommand):
             choices=AUGMENTATION_RECIPE_NAMES.keys(),
         )
         parser.add_argument(
-            "--num-words-to-swap",
-            "--n",
-            help="words to swap out for each augmented example",
-            type=int,
-            default=2,
-        )
-
-        parser.add_argument(
-            "--alpha",
-            "--a",
-            help="fraction of words to modify (EasyDataAugmenter)",
+            "--pct-words-to-swap",
+            "--p",
+            help="Percentage of words to modify when generating each augmented example.",
             type=float,
             default=0.1,
         )
