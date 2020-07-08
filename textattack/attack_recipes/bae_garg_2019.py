@@ -79,9 +79,13 @@ def BAEGarg2019(model):
     # at each iteration instead of the current one (While doing this change
     # for the R-operation is trivial, doing it for the I-operation with the
     # window based USE comparison might be more involved)."
-
+    #
+    # Finally, since the BAE code is based on the TextFooler code, we need to
+    # adjust the threshold to account for the missing / pi in the cosine
+    # similarity comparison. So the final threshold is 1 - (1 - 0.8) / pi
+    # = 1 - (0.2 / pi) = 0.936338023.
     use_constraint = UniversalSentenceEncoder(
-        threshold=0.8,
+        threshold=0.936338023,
         metric="cosine",
         compare_against_original=True,
         window_size=15,
