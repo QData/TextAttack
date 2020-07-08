@@ -428,7 +428,7 @@ def parse_logger_from_args(args):
         color_method = None if args.enable_csv == "plain" else "file"
         csv_path = os.path.join(args.out_dir, outfile_name)
         attack_log_manager.add_output_csv(csv_path, color_method)
-        print("Logging to CSV at path {}.".format(csv_path))
+        textattack.shared.logger.info(f"Logging to CSV at path {csv_path}.")
 
     # Visdom
     if args.enable_visdom:
