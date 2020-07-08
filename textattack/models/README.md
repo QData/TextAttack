@@ -1,4 +1,4 @@
-# TextAttack Models
+# TextAttack Model Zoo
 
 TextAttack includes pre-trained models for different common NLP tasks. This makes it easier for
 users to get started with TextAttack. It also enables a more fair comparison of attacks from
