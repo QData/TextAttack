@@ -66,6 +66,10 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 
 <section>
 
+- AG News (`albert-base-v2-ag-news`)
+    - nlp dataset `ag_news`, split `test`
+    - Successes: 943/1000
+    - Accuracy: 94.30%
 - CoLA (`albert-base-v2-cola`)
     - nlp dataset `glue`, subset `cola`, split `validation`
     - Successes: 829/1000
@@ -113,6 +117,10 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 
 <section>
 
+- AG News (`bert-base-uncased-ag-news`)
+    - nlp dataset `ag_news`, split `test`
+    - Successes: 942/1000
+    - Accuracy: 94.20%
 - CoLA (`bert-base-uncased-cola`)
     - nlp dataset `glue`, subset `cola`, split `validation`
     - Successes: 812/1000
@@ -172,6 +180,7 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 
 <section>
 
+
 - CoLA (`distilbert-base-cased-cola`)
     - nlp dataset `glue`, subset `cola`, split `validation`
     - Successes: 786/1000
@@ -203,6 +212,10 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 
 <section>
 
+- AG News (`distilbert-base-uncased-ag-news`)
+    - nlp dataset `ag_news`, split `test`
+    - Successes: 944/1000
+    - Accuracy: 94.40%
 - CoLA (`distilbert-base-uncased-cola`)
     - nlp dataset `glue`, subset `cola`, split `validation`
     - Successes: 786/1000
@@ -242,6 +255,10 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 
 <section>
 
+- AG News (`roberta-base-ag-news`)
+    - nlp dataset `ag_news`, split `test`
+    - Successes: 947/1000
+    - Accuracy: 94.70%
 - CoLA (`roberta-base-cola`)
     - nlp dataset `glue`, subset `cola`, split `validation`
     - Successes: 857/1000

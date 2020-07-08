@@ -71,7 +71,7 @@ def dataset_from_args(args):
                     args.dataset_dev_split = "validation"
                 except KeyError:
                     try:
-                        eval_dataset = textattack.datasets.HuggingFaceNLPDataset(
+                        eval_dataset = textattack.datasets.HuggingFaceNlpDataset(
                             *dataset_args, split="test"
                         )
                         args.dataset_dev_split = "test"
