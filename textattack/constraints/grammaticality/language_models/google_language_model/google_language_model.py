@@ -77,8 +77,6 @@ class GoogleLanguageModel(Constraint):
                 ]
             probs.extend(probs_of_swaps_at_index)
             t2 = time.time()
-            if self.print_step:
-                print(f"LM {len(item_list)} items in {t2-t1}s")
 
         # Probs is a list of (index, prob) where index is the corresponding
         # position in transformed_texts.
