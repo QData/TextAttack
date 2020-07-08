@@ -56,48 +56,9 @@ class GeneticAlgorithm(SearchMethod):
         # internal flag to indicate if search should end immediately
         self._search_over = False
 
-    def _replace_at_index(self, pop_member, idx, original_result):
+    def _perturb(self, pop_member, original_result, specified_idx=-1):
         """
-        Select the best replacement for word at position (idx) 
-        in (pop_member) to maximize score.
-
-        Args:
-            pop_member: The population member being perturbed.
-            idx: The index at which to replace a word.
-
-        Returns:
-            Whether a replacement which increased the score was found.
-        """
-        transformations = self.get_transformations(
-            pop_member.attacked_text,
-            original_text=original_result.attacked_text,
-            indices_to_modify=[idx],
-        )
-        if not len(transformations):
-            return False
-        new_results, self._search_over = self.get_goal_results(transformations)
-        if self._search_over:
-            return False
-        diff_scores = (
-            torch.Tensor([r.score for r in new_results]) - pop_member.result.score
-        )
-        if len(diff_scores) and diff_scores.max() > 0:
-            idx_with_max_score = diff_scores.argmax()
-            pop_member.attacked_text = transformations[idx_with_max_score]
-            # For genetic algorithms, the word has been replaced cannot be modified again.
-            # For improved genetic algorithm,
-            # it allows to substitute words at the same index multiple times but not more than `max_replace_times_per_index`.
-            if not self.improved_genetic_algorithm:
-                pop_member.num_candidates_per_word[idx] = 0
-            else:
-                pop_member.num_candidates_per_word[idx] -= 1
-            pop_member.results = new_results[idx_with_max_score]
-            return True
-        return False
-
-    def _perturb(self, pop_member, original_result):
-        """
-        Replaces the word at a random index in pop_member that has not been modified more than the allowed maximum replacement times.
+        Replaces the word at a random or specified index in pop_member that has not been modified more than the allowed maximum replacement times.
         Args:
             pop_member (PopulationMember): The population member being perturbed.
             original_result (GoalFunctionResult): Result of original sample being attacked      
@@ -110,14 +71,47 @@ class GeneticAlgorithm(SearchMethod):
             return
         iterations = 0
         while iterations < non_zero_indices:
-            w_select_probs = num_candidates_per_word / np.sum(num_candidates_per_word)
-            rand_idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
-
-            if self._replace_at_index(pop_member, rand_idx, original_result):
-                break
+            if specified_idx in range(num_words):
+                idx = specified_idx
             else:
-                num_candidates_per_word[rand_idx] = 0
+                w_select_probs = num_candidates_per_word / np.sum(
+                    num_candidates_per_word
+                )
+                idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
+
+            transformations = self.get_transformations(
+                pop_member.attacked_text,
+                original_text=original_result.attacked_text,
+                indices_to_modify=[idx],
+            )
+
+            if not len(transformations):
                 iterations += 1
+                continue
+
+            new_results, self._search_over = self.get_goal_results(transformations)
+
+            if self._search_over:
+                break
+
+            diff_scores = (
+                torch.Tensor([r.score for r in new_results]) - pop_member.result.score
+            )
+            if len(diff_scores) and diff_scores.max() > 0:
+                idx_with_max_score = diff_scores.argmax()
+                pop_member.attacked_text = transformations[idx_with_max_score]
+                # For genetic algorithms, the word has been replaced cannot be modified again.
+                # For improved genetic algorithm,
+                # it allows to substitute words at the same index multiple times but not more than `max_replace_times_per_index`.
+                if not self.improved_genetic_algorithm:
+                    pop_member.num_candidates_per_word[idx] = 0
+                else:
+                    pop_member.num_candidates_per_word[idx] -= 1
+                pop_member.results = new_results[idx_with_max_score]
+                break
+
+            num_candidates_per_word[idx] = 0
+            iterations += 1
 
     def _crossover(self, pop_member1, pop_member2, original_result):
         """
@@ -259,7 +253,7 @@ class GeneticAlgorithm(SearchMethod):
                     np.copy(num_candidates_per_word),
                     initial_result,
                 )
-                self._replace_at_index(pop_member, idx, initial_result)
+                self._perturb(pop_member, initial_result, specified_idx=idx)
                 population.append(pop_member)
         return population
 

@@ -38,7 +38,9 @@ def IGAWang2019(model):
     #
     # Maximum word embedding euclidean distance δ of 0.5.
     #
-    constraints.append(WordEmbeddingDistance(max_mse_dist=0.5))
+    constraints.append(
+        WordEmbeddingDistance(max_mse_dist=0.5, compare_against_original=False)
+    )
     #
     # Goal is untargeted classification
     #
@@ -52,6 +54,7 @@ def IGAWang2019(model):
         max_iters=20,
         improved_genetic_algorithm=True,
         max_replace_times_per_index=5,
+        post_crossover_check=False,
     )
 
     return Attack(goal_function, constraints, transformation, search_method)
