@@ -62,7 +62,7 @@ def TextFoolerJin2019(model):
     use_constraint = UniversalSentenceEncoder(
         threshold=0.904458599,
         metric="angular",
-        compare_with_original=False,
+        compare_against_original=False,
         window_size=15,
         skip_text_shorter_than_window=True,
     )

@@ -15,18 +15,13 @@ class GoogleLanguageModel(Constraint):
     determine the difference in perplexity between x and x_adv. 
 
     Args:
-        top_n (int):
+        top_n (int): 
         top_n_per_index (int):
-        print_step (:obj:`bool`, optional): Whether to print each step. Defaults to False. 
-        
-    Returns:
-        The :obj:`top_n` sentences.
-
-    Raises:
-        ValueError: If :obj:`top_n` or :obj:`top_n_per_index` are not provided. 
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, top_n=None, top_n_per_index=None, print_step=False):
+    def __init__(self, top_n=None, top_n_per_index=None, compare_against_original=True):
         if not (top_n or top_n_per_index):
             raise ValueError(
                 "Cannot instantiate GoogleLanguageModel without top_n or top_n_per_index"
@@ -34,14 +29,12 @@ class GoogleLanguageModel(Constraint):
         self.lm = GoogLMHelper()
         self.top_n = top_n
         self.top_n_per_index = top_n_per_index
-        self.print_step = print_step
+        super().__init__(compare_against_original)
 
     def check_compatibility(self, transformation):
         return isinstance(transformation, WordSwap)
 
-    def _check_constraint_many(
-        self, transformed_texts, current_text, original_text=None
-    ):
+    def _check_constraint_many(self, transformed_texts, reference_text):
         """
         Returns the `top_n` of transformed_texts, as evaluated by the language 
         model. 
@@ -49,17 +42,15 @@ class GoogleLanguageModel(Constraint):
         if not len(transformed_texts):
             return []
 
-        def get_probs(current_text, transformed_texts):
-            word_swap_index = current_text.first_word_diff_index(transformed_texts[0])
+        def get_probs(reference_text, transformed_texts):
+            word_swap_index = reference_text.first_word_diff_index(transformed_texts[0])
             if word_swap_index is None:
                 return []
 
-            prefix = current_text.words[word_swap_index - 1]
+            prefix = reference_text.words[word_swap_index - 1]
             swapped_words = np.array(
                 [t.words[word_swap_index] for t in transformed_texts]
             )
-            if self.print_step:
-                print(prefix, swapped_words)
             probs = self.lm.get_words_probs(prefix, swapped_words)
             return probs
 
@@ -67,7 +58,7 @@ class GoogleLanguageModel(Constraint):
         word_swap_index_map = defaultdict(list)
 
         for idx, transformed_text in enumerate(transformed_texts):
-            word_swap_index = current_text.first_word_diff_index(transformed_text)
+            word_swap_index = reference_text.first_word_diff_index(transformed_text)
             word_swap_index_map[word_swap_index].append((idx, transformed_text))
 
         probs = []
@@ -76,7 +67,7 @@ class GoogleLanguageModel(Constraint):
             item_indices, this_transformed_texts = zip(*item_list)
             t1 = time.time()
             probs_of_swaps_at_index = list(
-                zip(item_indices, get_probs(current_text, this_transformed_texts))
+                zip(item_indices, get_probs(reference_text, this_transformed_texts))
             )
             # Sort by probability in descending order and take the top n for this index.
             probs_of_swaps_at_index.sort(key=lambda x: -x[1])
@@ -107,13 +98,8 @@ class GoogleLanguageModel(Constraint):
 
         return [transformed_texts[i] for i in max_el_indices]
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        return self._check_constraint_many(
-            [transformed_text], current_text, original_text=original_text
-        )
-
-    def __call__(self, x, x_adv):
-        raise NotImplementedError()
+    def _check_constraint(self, transformed_text, reference_text):
+        return self._check_constraint_many([transformed_text], reference_text)
 
     def extra_repr_keys(self):
-        return ["top_n", "top_n_per_index"]
+        return ["top_n", "top_n_per_index"] + super().extra_repr_keys()

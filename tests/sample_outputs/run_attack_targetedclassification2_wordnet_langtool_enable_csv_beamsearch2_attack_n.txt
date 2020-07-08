@@ -9,6 +9,7 @@
   (constraints): 
     (0): LanguageTool(
         (grammar_error_threshold):  0
+        (compare_against_original):  True
       )
     (1): RepeatModification
     (2): StopwordModification
