@@ -137,3 +137,6 @@ class Augmenter:
             all_text_list.extend([text] + augmented_texts)
             all_id_list.extend([_id] * (1 + len(augmented_texts)))
         return all_text_list, all_id_list
+
+    def __repr__(self):
+        return type(self).__name__

@@ -23,6 +23,12 @@ from .train_args_helpers import (
 device = textattack.shared.utils.device
 logger = textattack.shared.logger
 
+def save_args(args, save_path):
+    # Save args to file
+    final_args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
+    with open(save_path, "w", encoding="utf-8") as f:
+        f.write(json.dumps(final_args_dict, indent=2) + "\n")
+
 def filter_labels(text, labels, allowed_labels):
     final_text, final_labels = [], []
     for text, label in zip(text, labels):
@@ -31,6 +37,29 @@ def filter_labels(text, labels, allowed_labels):
             final_labels.append(label)
     return final_text, final_labels
 
+def save_model_checkpoint(model, output_dir, global_step):
+    # Save model checkpoint
+    output_dir = os.path.join(output_dir, "checkpoint-{}".format(global_step))
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+    # Take care of distributed/parallel training
+    model_to_save = model.module if hasattr(model, "module") else model
+    model_to_save.save_pretrained(output_dir)
+    torch.save(args, os.path.join(output_dir, "training_args.bin"))
+
+def save_model(model, output_dir, weights_name, config_name):
+    model_to_save = (model.module if hasattr(model, "module") else model)
+
+    # If we save using the predefined names, we can load using `from_pretrained`
+    output_model_file = os.path.join(output_dir, weights_name)
+    output_config_file = os.path.join(output_dir, config_name)
+
+    torch.save(model_to_save.state_dict(), output_model_file)
+    try:
+        model_to_save.config.to_json_file(output_config_file)
+    except AttributeError:
+        # no config
+        pass
 
 def get_eval_score(model, eval_dataloader, do_regression):
     model.eval()
@@ -42,9 +71,7 @@ def get_eval_score(model, eval_dataloader, do_regression):
         if isinstance(input_ids, dict):
             ## HACK: dataloader collates dict backwards. This is a temporary
             # workaround to get ids in the right shape
-            input_ids = {
-                k: torch.stack(v).T.to(device) for k, v in input_ids.items()
-            }
+            input_ids = {k: torch.stack(v).T.to(device) for k, v in input_ids.items()}
         batch_labels = batch_labels.to(device)
 
         with torch.no_grad():
@@ -87,22 +114,26 @@ def make_dataloader(tokenizer, text, labels, batch_size):
     labels = np.array(labels)
     data = list((ids, label) for ids, label in zip(input_ids, labels))
     sampler = RandomSampler(data)
-    dataloader = DataLoader(
-        data, sampler=sampler, batch_size=batch_size,
-    )
+    dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size)
     return dataloader
 
 def data_augmentation(text, labels, augmenter):
-        aug_text = augmenter.augment_many(text)
-        # flatten augmented examples and duplicate labels
-        flat_aug_text = []
-        flat_aug_labels = []
-        for i, examples in enumerate(aug_text):
-            for aug_ver in examples:
-                flat_aug_text.append(aug_ver)
-                flat_aug_labels.append(labels[i])
-        return flat_aug_text, flat_aug_labels
+    aug_text = augmenter.augment_many(text)
+    # flatten augmented examples and duplicate labels
+    flat_aug_text = []
+    flat_aug_labels = []
+    for i, examples in enumerate(aug_text):
+        for aug_ver in examples:
+            flat_aug_text.append(aug_ver)
+            flat_aug_labels.append(labels[i])
+    return flat_aug_text, flat_aug_labels
 
+def attack_model(model, attack_t, dataset):
+    attack = attack_t(model)
+    adv_train_text = []
+    for adv_ex in tqdm.tqdm(attack.attack_dataset(dataset), desc="Attack", total=len(dataset)):
+        adv_train_text.append(adv_ex.perturbed_text())
+    return adv_train_text
 
 def train_model(args):
     logger.warn(
@@ -131,14 +162,17 @@ def train_model(args):
 
     # Filter labels
     if args.allowed_labels:
-        logger.info(f"Filtering samples with labels outside of {args.allowed_labels}.")
         train_text, train_labels = filter_labels(train_text, train_labels, args.allowed_labels)
         eval_text, eval_labels = filter_labels(eval_text, eval_labels, args.allowed_labels)
     
+    train_examples_len = len(train_text)
+
     # data augmentation
     augmenter = augmenter_from_args(args)
     if augmenter:
+        logger.info(f"Augmenting {len(train_text)} samples with {augmenter}")
         train_text, train_labels = data_augmentation(train_text, train_labels, augmenter)
+        logger.info(f"Using augmented training set of size {len(train_text)}")
 
     label_id_len = len(train_labels)
     label_set = set(train_labels)
@@ -153,10 +187,9 @@ def train_model(args):
     else:
         args.do_regression = False
 
-    train_examples_len = len(train_text)
 
-    if len(train_labels) != train_examples_len:
-        raise ValueError(f"Number of train examples ({train_examples_len}) does not match number of labels ({len(train_labels)})")
+    if len(train_labels) != len(train_text):
+        raise ValueError(f"Number of train examples ({len(train_text)}) does not match number of labels ({len(train_labels)})")
     if len(eval_labels) != len(eval_text):
         raise ValueError(f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_labels)})")
 
@@ -187,23 +220,11 @@ def train_model(args):
         param_optimizer = list(model.named_parameters())
         no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
         optimizer_grouped_parameters = [
-            {
-                "params": [
-                    p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
-                ],
-                "weight_decay": 0.01,
-            },
-            {
-                "params": [
-                    p for n, p in param_optimizer if any(nd in n for nd in no_decay)
-                ],
-                "weight_decay": 0.0,
-            },
-        ]
+                {"params": [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], "weight_decay": 0.01,},
+                {"params": [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], "weight_decay": 0.0,},
+            ]
 
-        optimizer = transformers.optimization.AdamW(
-            optimizer_grouped_parameters, lr=args.learning_rate
-        )
+        optimizer = transformers.optimization.AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
 
         scheduler = transformers.optimization.get_linear_schedule_with_warmup(
             optimizer,
@@ -216,19 +237,20 @@ def train_model(args):
 
     tb_writer = SummaryWriter(args.output_dir)
 
-    args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
-
     # Save original args to file
     args_save_path = os.path.join(args.output_dir, "train_args.json")
-    with open(args_save_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(args_dict, indent=2) + "\n")
+    save_args(args, args_save_path)
     logger.info(f"Wrote original training args to {args_save_path}.")
 
-    tb_writer.add_hparams(args_dict, {})
+    tb_writer.add_hparams({k: v for k, v in vars(args).items() if is_writable_type(v)}, {})
 
     # Start training
     logger.info("***** Running training *****")
-    logger.info(f"\tNum examples = {train_examples_len}")
+    if augmenter:
+        logger.info(f"\tNum original examples = {train_examples_len}")
+        logger.info(f"\tNum examples after augmentation = {len(train_text)}")
+    else:
+        logger.info(f"\tNum examples = {train_examples_len}")
     logger.info(f"\tBatch size = {args.batch_size}")
     logger.info(f"\tMax sequence length = {args.max_length}")
     logger.info(f"\tNum steps = {num_train_optimization_steps}")
@@ -238,36 +260,9 @@ def train_model(args):
     eval_dataloader = make_dataloader(tokenizer, eval_text, eval_labels, args.batch_size)
     train_dataloader = make_dataloader(tokenizer, train_text, train_labels, args.batch_size)
         
-    def save_model():
-        model_to_save = (
-            model.module if hasattr(model, "module") else model
-        )  # Only save the model itself
-
-        # If we save using the predefined names, we can load using `from_pretrained`
-        output_model_file = os.path.join(args.output_dir, args.weights_name)
-        output_config_file = os.path.join(args.output_dir, args.config_name)
-
-        torch.save(model_to_save.state_dict(), output_model_file)
-        try:
-            model_to_save.config.to_json_file(output_config_file)
-        except AttributeError:
-            # no config
-            pass
-
     global_step = 0
     tr_loss = 0
-
-    def save_model_checkpoint():
-        # Save model checkpoint
-        output_dir = os.path.join(args.output_dir, "checkpoint-{}".format(global_step))
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-        # Take care of distributed/parallel training
-        model_to_save = model.module if hasattr(model, "module") else model
-        model_to_save.save_pretrained(output_dir)
-        torch.save(args, os.path.join(output_dir, "training_args.bin"))
-        logger.info(f"Checkpoint saved to {output_dir}.")
-
+    
     model.train()
     args.best_eval_score = 0
     args.best_eval_score_epoch = 0
@@ -287,15 +282,10 @@ def train_model(args):
     else:
         loss_fct = torch.nn.CrossEntropyLoss()
 
-    for epoch in tqdm.trange(
-        int(args.num_train_epochs), desc="Epoch", position=0, leave=False
-    ):
+    for epoch in tqdm.trange(int(args.num_train_epochs), desc="Epoch", position=0, leave=False):
         if attack_t and epoch > 0:
-            logger.info("Attacking model to generating new training set...")
-            attack = attack_t(model)
-            adv_train_text = []
-            for adv_ex in tqdm.tqdm(attack.attack_dataset(list(zip(train_text, train_labels))), desc="Attack", total=len(train_text)):
-                adv_train_text.append(adv_ex.perturbed_text())
+            logger.info("Attacking model to generate new training set...")
+            adv_train_text = attack_model(model, attack_t, list(zip(train_text, train_labels)))
             train_dataloader = make_dataloader(tokenizer, adv_train_text, train_labels, args.batch_size)
 
         prog_bar = tqdm.tqdm(
@@ -307,9 +297,8 @@ def train_model(args):
             if isinstance(input_ids, dict):
                 ## HACK: dataloader collates dict backwards. This is a temporary
                 # workaround to get ids in the right shape
-                input_ids = {
-                    k: torch.stack(v).T.to(device) for k, v in input_ids.items()
-                }
+                input_ids = {k: torch.stack(v).T.to(device) for k, v in input_ids.items()}
+
             logits = textattack.shared.utils.model_predict(model, input_ids)
 
             if args.do_regression:
@@ -339,7 +328,7 @@ def train_model(args):
                 and (args.checkpoint_steps > 0)
                 and (global_step % args.checkpoint_steps) == 0
             ):
-                save_model_checkpoint()
+                save_model_checkpoint(model, args.output_dir, global_step)
 
             # Inc step counter.
             global_step += 1
@@ -349,7 +338,7 @@ def train_model(args):
         tb_writer.add_scalar("epoch_eval_score", eval_score, global_step)
 
         if args.checkpoint_every_epoch:
-            save_model_checkpoint()
+            save_model_checkpoint(model, args.output_dir, args.global_step)
 
         logger.info(
             f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
@@ -358,8 +347,10 @@ def train_model(args):
             args.best_eval_score = eval_score
             args.best_eval_score_epoch = epoch
             args.epochs_since_best_eval_score = 0
-            save_model()
+            save_model(model, args.output_dir, args.weights_name, args.config_name)
             logger.info(f"Best acc found. Saved model to {args.output_dir}.")
+            save_args(args, args_save_path)
+            logger.info(f"Saved updated args to {args_save_path}")
         else:
             args.epochs_since_best_eval_score += 1
             if (args.early_stopping_epochs > 0) and (
@@ -391,8 +382,5 @@ def train_model(args):
     # Save a little readme with model info
     write_readme(args, args.best_eval_score, args.best_eval_score_epoch)
 
-    # Save args to file
-    final_args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
-    with open(args_save_path, "w", encoding="utf-8") as f:
-        f.write(json.dumps(final_args_dict, indent=2) + "\n")
+    save_args(args, args_save_path)
     logger.info(f"Wrote final training args to {args_save_path}.")
