@@ -264,7 +264,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
 #
 TEXTATTACK_DATASET_BY_MODEL = {
     #
-    # CNNs
+    # LSTMs
     #
     "lstm-ag-news": ("models/classification/lstm/ag-news", ("ag_news", None, "test"),),
     "lstm-imdb": ("models/classification/lstm/imdb", ("imdb", None, "test")),
@@ -272,7 +272,7 @@ TEXTATTACK_DATASET_BY_MODEL = {
     "lstm-sst2": ("models/classification/lstm/sst2", ("glue", "sst2", "validation")),
     "lstm-yelp": ("models/classification/lstm/yelp", ("yelp_polarity", None, "test"),),
     #
-    # LSTMs
+    # CNNs
     #
     "cnn-ag-news": ("models/classification/cnn/ag-news", ("ag_news", None, "test"),),
     "cnn-imdb": ("models/classification/cnn/imdb", ("imdb", None, "test")),
