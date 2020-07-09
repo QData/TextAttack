@@ -11,4 +11,4 @@ from .textbugger_li_2018 import TextBuggerLi2018
 from .textfooler_jin_2019 import TextFoolerJin2019
 from .pwws_ren_2019 import PWWSRen2019
 from .pruthi_2019 import Pruthi2019
-from .PSO_zang_2020 import PSOZang2020
+from .pso_zang_2020 import PSOZang2020

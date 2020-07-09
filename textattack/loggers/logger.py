@@ -1,4 +1,7 @@
-class Logger:
+from abc import ABC
+
+
+class Logger(ABC):
     """ An abstract class for different methods of logging attack results. 
     """
 

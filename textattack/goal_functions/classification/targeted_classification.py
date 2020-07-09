@@ -25,4 +25,7 @@ class TargetedClassification(ClassificationGoalFunction):
             return model_output[self.target_class]
 
     def extra_repr_keys(self):
-        return ["target_class"]
+        if self.maximizable:
+            return ["maximizable", "target_class"]
+        else:
+            return ["target_class"]

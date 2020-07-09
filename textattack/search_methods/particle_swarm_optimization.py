@@ -13,7 +13,7 @@ from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
 
 
-class PSOAlgorithm(SearchMethod):
+class ParticleSwarmOptimization(SearchMethod):
     """
     Attacks a model with word substiutitions using a Particle Swarm Optimization (PSO) algorithm.
     Some key hyper-parameters are setup according to the original paper:

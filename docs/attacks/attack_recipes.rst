@@ -41,8 +41,15 @@ HotFlip (HotFlip: White-Box Adversarial Examples for Text Classification)
 .. automodule:: textattack.attack_recipes.hotflip_ebrahimi_2017
    :members:
 
-Input Reduction
-################
+Improved Genetic Algorithm (Natural Language Adversarial Attacks and Defenses in Word Level)
+#################################################################################################
+
+.. automodule:: textattack.attack_recipes.iga_wang_2019
+   :members:
+
+
+Input Reduction (Pathologies of Neural Models Make Interpretations Difficult)
+####################################################################################
 
 .. automodule:: textattack.attack_recipes.input_reduction_feng_2018
    :members:

@@ -30,8 +30,11 @@
     (4): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
+t1 / <AttackedText "this kind of hands-on storytelling is ultimately what makes shanghai ghetto move beyond a good , dry , reliable textbook and what allows it to rank with its worthy predecessors .">
+t2 / <AttackedText "this kind of hands-on storytelling is ultimately what makes shanghai ghetto move beyond a good , dry , reliable manuals and what allows it to rank with its creditable predecessors .">
+t1.num_words / 28 t2.num_words / 28
 [92mPositive (73%)[0m --> [91mNegative (68%)[0m
 
 this kind of hands-on storytelling is ultimately what makes shanghai ghetto move beyond a good , dry , reliable [92mtextbook[0m and what allows it to rank with its [92mworthy[0m predecessors .

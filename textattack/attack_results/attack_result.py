@@ -1,8 +1,10 @@
+from abc import ABC
+
 from textattack.goal_function_results import GoalFunctionResult
 from textattack.shared import utils
 
 
-class AttackResult:
+class AttackResult(ABC):
     """
     Result of an Attack run on a single (output, text_input) pair. 
 
@@ -88,7 +90,10 @@ class AttackResult:
 
         i1 = 0
         i2 = 0
-
+        print("t1 /", t1)
+        print("t2 /", t2)
+        print("t1.num_words /", t1.num_words, "t2.num_words /", t2.num_words)
+        sp = None
         while i1 < t1.num_words or i2 < t2.num_words:
             # show deletions
             while (

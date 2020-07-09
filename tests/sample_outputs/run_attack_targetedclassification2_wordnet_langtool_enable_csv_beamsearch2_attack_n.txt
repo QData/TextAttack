@@ -15,7 +15,12 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
+t1 / <AttackedText "The new rights are nice enough
+Everyone really likes the newest benefits ">
+t2 / <AttackedText "The new rights are nice enough
+Everyone really likes the newest benefits ">
+t1.num_words / 12 t2.num_words / 12
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mEntailment (99%)[0m --> [37m[SKIPPED][0m
 
@@ -23,7 +28,17 @@
 [1m[4mHypothesis[0m[0m: Everyone really likes the newest benefits 
 
 
+t1 / <AttackedText "This site includes a list of all award winners and a searchable database of Government Executive articles.
+The Government Executive articles housed on the website are not able to be searched.">
+t2 / <AttackedText "This site includes a list of all award winners and a searchable database of Government Executive articles.
+The Government Executive articles housed on the website are not able-bodied to be searched.">
+t1.num_words / 31 t2.num_words / 31
 --------------------------------------------- Result 2 ---------------------------------------------
+t1 / <AttackedText "This site includes a list of all award winners and a searchable database of Government Executive articles.
+The Government Executive articles housed on the website are not able to be searched.">
+t2 / <AttackedText "This site includes a list of all award winners and a searchable database of Government Executive articles.
+The Government Executive articles housed on the website are not able-bodied to be searched.">
+t1.num_words / 31 t2.num_words / 31
 [37mNeutral (100%)[0m --> [92mEntailment (56%)[0m
 
 [1m[4mPremise[0m[0m: This site includes a list of all award winners and a searchable database of Government Executive articles.
@@ -33,7 +48,17 @@
 [1m[4mHypothesis[0m[0m: The Government Executive articles housed on the website are not [92mable-bodied[0m to be searched.
 
 
+t1 / <AttackedText "uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+I like him for the most part, but would still enjoy seeing someone beat him.">
+t2 / <AttackedText "uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+I like him for the most office, but would still enjoy seeing someone beat him.">
+t1.num_words / 43 t2.num_words / 43
 --------------------------------------------- Result 3 ---------------------------------------------
+t1 / <AttackedText "uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+I like him for the most part, but would still enjoy seeing someone beat him.">
+t2 / <AttackedText "uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+I like him for the most office, but would still enjoy seeing someone beat him.">
+t1.num_words / 43 t2.num_words / 43
 [91mContradiction (99%)[0m --> [92mEntailment (100%)[0m
 
 [1m[4mPremise[0m[0m: uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him

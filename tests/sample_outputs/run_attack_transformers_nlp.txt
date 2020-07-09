@@ -3,7 +3,20 @@
     (wir_method):  unk
   )
   (goal_function):  UntargetedClassification
-  (transformation):  CompositeTransformation
+  (transformation):  CompositeTransformation(
+    (0): WordSwapNeighboringCharacterSwap(
+        (random_one):  True
+      )
+    (1): WordSwapRandomCharacterSubstitution(
+        (random_one):  True
+      )
+    (2): WordSwapRandomCharacterDeletion(
+        (random_one):  True
+      )
+    (3): WordSwapRandomCharacterInsertion(
+        (random_one):  True
+      )
+    )
   (constraints): 
     (0): LevenshteinEditDistance(
         (max_edit_distance):  30
@@ -13,8 +26,11 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
+t1 / <AttackedText "hide new secretions from the parental units ">
+t2 / <AttackedText "Ehide enw secretions from the parental units ">
+t1.num_words / 7 t2.num_words / 7
 [91mNegative (100%)[0m --> [92mPositive (71%)[0m
 
 [91mhide[0m [91mnew[0m secretions from the parental units 
@@ -29,6 +45,9 @@ contains no wit , only labored gags
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
+t1 / <AttackedText "that loves its characters and communicates something rather beautiful about human nature ">
+t2 / <AttackedText "that lodes its characters and communicates somethNng rathrer beautifdul about human nature ">
+t1.num_words / 12 t2.num_words / 12
 [92mPositive (100%)[0m --> [91mNegative (96%)[0m
 
 that [92mloves[0m its characters and communicates [92msomething[0m [92mrather[0m [92mbeautiful[0m about human nature 

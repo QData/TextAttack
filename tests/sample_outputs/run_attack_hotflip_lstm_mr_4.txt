@@ -28,8 +28,11 @@
     (4): StopwordModification
   (is_black_box):  False
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
+t1 / <AttackedText "the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .">
+t2 / <AttackedText "the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur stagnated with tremendous skill .">
+t1.num_words / 18 t2.num_words / 18
 [92mPositive (96%)[0m --> [91mNegative (77%)[0m
 
 the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [92msupplies[0m with tremendous skill .

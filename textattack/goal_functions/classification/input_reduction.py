@@ -41,4 +41,7 @@ class InputReduction(ClassificationGoalFunction):
         return min(num_words_score + model_score / initial_num_words, 1)
 
     def extra_repr_keys(self):
-        return ["target_num_words"]
+        if self.maximizable:
+            return ["maximizable"]
+        else:
+            return ["maximizable", "target_num_words"]

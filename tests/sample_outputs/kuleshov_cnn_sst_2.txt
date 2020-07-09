@@ -26,8 +26,11 @@
     (4): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
+t1 / <AttackedText "it 's a charming and often affecting journey . ">
+t2 / <AttackedText "it 's a loveable and ordinarily affecting journey . ">
+t1.num_words / 8 t2.num_words / 8
 [92mPositive (100%)[0m --> [91mNegative (69%)[0m
 
 it 's a [92mcharming[0m and [92moften[0m affecting journey . 
@@ -36,6 +39,9 @@ it 's a [91mloveable[0m and [91mordinarily[0m affecting journey .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
+t1 / <AttackedText "unflinchingly bleak and desperate ">
+t2 / <AttackedText "unflinchingly bleak and desperation ">
+t1.num_words / 4 t2.num_words / 4
 [91mNegative (83%)[0m --> [92mPositive (90%)[0m
 
 unflinchingly bleak and [91mdesperate[0m 
