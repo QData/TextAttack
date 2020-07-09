@@ -36,3 +36,6 @@ class WordSwapRandomCharacterSubstitution(WordSwap):
                 candidate_words.append(candidate_word)
 
         return candidate_words
+
+    def extra_repr_keys(self):
+        return super().extra_repr_keys() + ["random_one"]

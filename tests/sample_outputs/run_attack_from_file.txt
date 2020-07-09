@@ -3,7 +3,9 @@
     (wir_method):  unk
   )
   (goal_function):  UntargetedClassification
-  (transformation):  WordSwapRandomCharacterSubstitution
+  (transformation):  WordSwapRandomCharacterSubstitution(
+    (random_one):  True
+  )
   (constraints): None
   (is_black_box):  True
 ) 

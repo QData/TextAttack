@@ -1,8 +1,10 @@
+from abc import ABC
+
 from textattack.goal_function_results import GoalFunctionResult
 from textattack.shared import utils
 
 
-class AttackResult:
+class AttackResult(ABC):
     """
     Result of an Attack run on a single (output, text_input) pair. 
 

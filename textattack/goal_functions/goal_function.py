@@ -202,8 +202,11 @@ class GoalFunction(ABC):
             return all_outputs
 
     def extra_repr_keys(self):
+        attrs = []
         if self.query_budget < float("inf"):
-            return ["query_budget"]
-        return []
+            attrs.append("query_budget")
+        if self.maximizable:
+            attrs.append("maximizable")
+        return attrs
 
     __repr__ = __str__ = default_class_repr

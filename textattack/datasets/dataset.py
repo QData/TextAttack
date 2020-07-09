@@ -1,20 +1,15 @@
+from abc import ABC, abstractmethod
 import pickle
 import random
 
 from textattack.shared import utils
 
 
-class TextAttackDataset:
+class TextAttackDataset(ABC):
     """
     Any iterable of (label, text_input) pairs qualifies as 
     a ``TextAttackDataset``.
     """
-
-    def __init__(self):
-        """ 
-        Loads a full dataset from disk. 
-        """
-        raise NotImplementedError()
 
     def __iter__(self):
         return self

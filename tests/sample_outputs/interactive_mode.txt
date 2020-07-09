@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -36,7 +36,7 @@ Attack(
       )
   (is_black_box):  True
 ) 
-
+/.*/
 Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:

@@ -4,7 +4,7 @@ from textattack.constraints.pre_transformation import (
     StopwordModification,
 )
 from textattack.goal_functions import UntargetedClassification
-from textattack.search_methods import PSOAlgorithm
+from textattack.search_methods import ParticleSwarmOptimization
 from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding, WordSwapHowNet
 
@@ -51,6 +51,6 @@ def PSOZang2020(model):
     #
     # Perform word substitution with a Particle Swarm Optimization (PSO) algorithm.
     #
-    search_method = PSOAlgorithm(pop_size=60, max_iters=20)
+    search_method = ParticleSwarmOptimization(pop_size=60, max_iters=20)
 
     return Attack(goal_function, constraints, transformation, search_method)
