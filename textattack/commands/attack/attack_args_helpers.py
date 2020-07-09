@@ -68,11 +68,12 @@ def add_dataset_args(parser):
         default=None,
         help="Dataset to load from a file.",
     )
-    dataset_group.add_argument(
+    parser.add_argument(
         "--shuffle",
-        action="store_true",
+        type=eval,
         required=False,
-        default=False,
+        choices=[True, False],
+        default="True",
         help="Randomly shuffle the data before attacking",
     )
     parser.add_argument(
