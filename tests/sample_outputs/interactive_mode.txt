@@ -36,14 +36,11 @@
       )
   (is_black_box):  True
 ) 
-
+/.*/
 Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:
 Attacking...
-t1 / <AttackedText "All that glitters is not gold">
-t2 / <AttackedText "Any that shinning is not gold">
-t1.num_words / 6 t2.num_words / 6
 [92m1 (96%)[0m --> [91m0 (66%)[0m
 
 [92mAll[0m that [92mglitters[0m is not gold

@@ -1,5 +1,4 @@
-/.*/2020-07-09 09:51:14,589 loading file /u/jm8wx/.flair/models/en-pos-ontonotes-fast-v0.4.pt
-Attack(
+/.*/Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -25,11 +24,8 @@ Attack(
     (3): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-t1 / <AttackedText "exposing the ways we fool ourselves is one hour photo's real strength .">
-t2 / <AttackedText "exposing the ways we fool ourselves is one stopwatch photo's real kraft .">
-t1.num_words / 12 t2.num_words / 12
 [92mPositive (100%)[0m --> [91mNegative (98%)[0m
 
 exposing the ways we fool ourselves is one [92mhour[0m photo's real [92mstrength[0m .
@@ -38,9 +34,6 @@ exposing the ways we fool ourselves is one [91mstopwatch[0m photo's real [91m
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-t1 / <AttackedText "it's up to you to decide whether to admire these people's dedication to their cause or be repelled by their dogmatism , manipulativeness and narrow , fearful view of american life .">
-t2 / <AttackedText "it's up to you to decide whether to admire these people's dedication to their cause or be rescheduled by their dogmatism , manipulativeness and narrow , shitless view of american life .">
-t1.num_words / 29 t2.num_words / 29
 [92mPositive (96%)[0m --> [91mNegative (99%)[0m
 
 it's up to you to decide whether to admire these people's dedication to their cause or be [92mrepelled[0m by their dogmatism , manipulativeness and narrow , [92mfearful[0m view of american life .
@@ -49,9 +42,6 @@ it's up to you to decide whether to admire these people's dedication to their ca
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-t1 / <AttackedText "mostly , [goldbacher] just lets her complicated characters be unruly , confusing and , through it all , human .">
-t2 / <AttackedText "mostly , [goldbacher] just lets her complicated characters be haphazard , confusing and , through it all , humanistic .">
-t1.num_words / 15 t2.num_words / 15
 [92mPositive (100%)[0m --> [91mNegative (96%)[0m
 
 mostly , [goldbacher] just lets her complicated characters be [92munruly[0m , confusing and , through it all , [92mhuman[0m .
@@ -60,9 +50,6 @@ mostly , [goldbacher] just lets her complicated characters be [91mhaphazard[0m
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
-t1 / <AttackedText ". . . quite good at providing some good old fashioned spooks .">
-t2 / <AttackedText ". . . rather good at provision some good old fashioned bugging .">
-t1.num_words / 9 t2.num_words / 9
 [92mPositive (99%)[0m --> [91mNegative (90%)[0m
 
 . . . [92mquite[0m good at [92mproviding[0m some good old fashioned [92mspooks[0m .

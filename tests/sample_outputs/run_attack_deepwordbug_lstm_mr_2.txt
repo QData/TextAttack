@@ -26,11 +26,8 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-t1 / <AttackedText "lovingly photographed in the manner of a golden book sprung to life , stuart little 2 manages sweetness largely without stickiness .">
-t2 / <AttackedText "lovingly photographed in the manner of a golden book sprung to ife , stuart little 2 manager seetness largely without stickiness .">
-t1.num_words / 20 t2.num_words / 20
 [92mPositive (91%)[0m --> [91mNegative (69%)[0m
 
 lovingly photographed in the manner of a golden book sprung to [92mlife[0m , stuart little 2 [92mmanages[0m [92msweetness[0m largely without stickiness .
@@ -39,9 +36,6 @@ lovingly photographed in the manner of a golden book sprung to [91mife[0m , st
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-t1 / <AttackedText "consistently clever and suspenseful .">
-t2 / <AttackedText "conisstently celver and Huspenseful .">
-t1.num_words / 4 t2.num_words / 4
 [92mPositive (99%)[0m --> [91mNegative (82%)[0m
 
 [92mconsistently[0m [92mclever[0m and [92msuspenseful[0m .
