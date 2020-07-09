@@ -91,6 +91,9 @@ class TrainModelCommand(TextAttackCommand):
             help="Total number of epochs to train for",
         )
         parser.add_argument(
+            "--attack", type=str, default=None, help="Attack recipe to use (enables adversarial training)"
+        )
+        parser.add_argument(
             "--augment", type=str, default=None, help="Augmentation recipe to use",
         )
         parser.add_argument(

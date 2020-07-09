@@ -16,23 +16,92 @@ from .train_args_helpers import (
     augmenter_from_args,
     dataset_from_args,
     model_from_args,
+    attack_from_args,
     write_readme,
 )
 
 device = textattack.shared.utils.device
 logger = textattack.shared.logger
 
+def filter_labels(text, labels, allowed_labels):
+    final_text, final_labels = [], []
+    for text, label in zip(text, labels):
+        if label in allowed_labels:
+            final_text.append(text)
+            final_labels.append(label)
+    return final_text, final_labels
+
+
+def get_eval_score(model, eval_dataloader, do_regression):
+    model.eval()
+    correct = 0
+    total = 0
+    logits = []
+    labels = []
+    for input_ids, batch_labels in eval_dataloader:
+        if isinstance(input_ids, dict):
+            ## HACK: dataloader collates dict backwards. This is a temporary
+            # workaround to get ids in the right shape
+            input_ids = {
+                k: torch.stack(v).T.to(device) for k, v in input_ids.items()
+            }
+        batch_labels = batch_labels.to(device)
+
+        with torch.no_grad():
+            batch_logits = textattack.shared.utils.model_predict(model, input_ids)
+
+        logits.extend(batch_logits.cpu().squeeze().tolist())
+        labels.extend(batch_labels)
+
+    model.train()
+    logits = torch.tensor(logits)
+    labels = torch.tensor(labels)
+
+    if do_regression:
+        pearson_correlation, pearson_p_value = scipy.stats.pearsonr(logits, labels)
+        return pearson_correlation
+    else:
+        preds = logits.argmax(dim=1)
+        correct = (preds == labels).sum()
+        return float(correct) / len(labels)
 
 def make_directories(output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
+def is_writable_type(obj):
+    for ok_type in [bool, int, str, float]:
+        if isinstance(obj, ok_type):
+            return True
+    return False
 
 def batch_encode(tokenizer, text_list):
     if hasattr(tokenizer, "batch_encode"):
         return tokenizer.batch_encode(text_list)
     else:
         return [tokenizer.encode(text_input) for text_input in text_list]
+
+def make_dataloader(tokenizer, text, labels, batch_size):
+    text_ids = batch_encode(tokenizer, text)
+    input_ids = np.array(text_ids)
+    labels = np.array(labels)
+    data = list((ids, label) for ids, label in zip(input_ids, labels))
+    sampler = RandomSampler(data)
+    dataloader = DataLoader(
+        data, sampler=sampler, batch_size=batch_size,
+    )
+    return dataloader
+
+def data_augmentation(text, labels, augmenter):
+        aug_text = augmenter.augment_many(text)
+        # flatten augmented examples and duplicate labels
+        flat_aug_text = []
+        flat_aug_labels = []
+        for i, examples in enumerate(aug_text):
+            for aug_ver in examples:
+                flat_aug_text.append(aug_ver)
+                flat_aug_labels.append(labels[i])
+        return flat_aug_text, flat_aug_labels
 
 
 def train_model(args):
@@ -55,7 +124,6 @@ def train_model(args):
     if args.enable_wandb:
         global wandb
         import wandb
-
         wandb.init(sync_tensorboard=True)
 
     # Get list of text and list of label (integers) from disk.
@@ -64,58 +132,18 @@ def train_model(args):
     # Filter labels
     if args.allowed_labels:
         logger.info(f"Filtering samples with labels outside of {args.allowed_labels}.")
-        final_train_text, final_train_labels = [], []
-        for text, label in zip(train_text, train_labels):
-            if label in args.allowed_labels:
-                final_train_text.append(text)
-                final_train_labels.append(label)
-        logger.info(
-            f"Filtered {len(train_text)} train samples to {len(final_train_text)} points."
-        )
-        train_text, train_labels = final_train_text, final_train_labels
-        final_eval_text, final_eval_labels = [], []
-        for text, label in zip(eval_text, eval_labels):
-            if label in args.allowed_labels:
-                final_eval_text.append(text)
-                final_eval_labels.append(label)
-        logger.info(
-            f"Filtered {len(eval_text)} dev samples to {len(final_eval_text)} points."
-        )
-        eval_text, eval_labels = final_eval_text, final_eval_labels
-
+        train_text, train_labels = filter_labels(train_text, train_labels, args.allowed_labels)
+        eval_text, eval_labels = filter_labels(eval_text, eval_labels, args.allowed_labels)
+    
     # data augmentation
     augmenter = augmenter_from_args(args)
     if augmenter:
-        # augment the training set
-        aug_train_text = augmenter.augment_many(train_text)
-        # flatten augmented examples and duplicate labels
-        flat_aug_train_text = []
-        flat_aug_train_labels = []
-        for i, examples in enumerate(aug_train_text):
-            for aug_ver in examples:
-                flat_aug_train_text.append(aug_ver)
-                flat_aug_train_labels.append(train_labels[i])
-        train_text = flat_aug_train_text
-        train_labels = flat_aug_train_labels
-
-        # augment the eval set
-        aug_eval_text = augmenter.augment_many(eval_text)
-        # flatten the augmented examples and duplicate labels
-        flat_aug_eval_text = []
-        flat_aug_eval_labels = []
-        for i, examples in enumerate(aug_eval_text):
-            for aug_ver in examples:
-                flat_aug_eval_text.append(aug_ver)
-                flat_aug_eval_labels.append(eval_labels[i])
-        eval_text = flat_aug_eval_text
-        eval_labels = flat_aug_eval_labels
+        train_text, train_labels = data_augmentation(train_text, train_labels, augmenter)
 
     label_id_len = len(train_labels)
     label_set = set(train_labels)
     args.num_labels = len(label_set)
-    logger.info(
-        f"Loaded dataset. Found: {args.num_labels} labels: ({sorted(label_set)})"
-    )
+    logger.info(f"Loaded dataset. Found: {args.num_labels} labels: ({sorted(label_set)})")
 
     if isinstance(train_labels[0], float):
         # TODO come up with a more sophisticated scheme for knowing when to do regression
@@ -128,27 +156,19 @@ def train_model(args):
     train_examples_len = len(train_text)
 
     if len(train_labels) != train_examples_len:
-        raise ValueError(
-            f"Number of train examples ({train_examples_len}) does not match number of labels ({len(train_labels)})"
-        )
+        raise ValueError(f"Number of train examples ({train_examples_len}) does not match number of labels ({len(train_labels)})")
     if len(eval_labels) != len(eval_text):
-        raise ValueError(
-            f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_labels)})"
-        )
+        raise ValueError(f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_labels)})")
 
     model = model_from_args(args, args.num_labels)
     tokenizer = model.tokenizer
 
-    logger.info(f"Tokenizing training data. (len: {train_examples_len})")
-    train_text_ids = batch_encode(tokenizer, train_text)
-    logger.info(f"Tokenizing eval data (len: {len(eval_labels)})")
-    eval_text_ids = batch_encode(tokenizer, eval_text)
-    load_time = time.time()
-    logger.info(f"Loaded data and tokenized in {load_time-start_time}s")
+    attack_t = attack_from_args(args)
 
     # multi-gpu training
     if num_gpus > 1:
         model = torch.nn.DataParallel(model)
+        model.tokenizer = model.module.tokenizer
         logger.info("Using torch.nn.DataParallel.")
     logger.info(f"Training model across {num_gpus} GPUs")
 
@@ -196,12 +216,6 @@ def train_model(args):
 
     tb_writer = SummaryWriter(args.output_dir)
 
-    def is_writable_type(obj):
-        for ok_type in [bool, int, str, float]:
-            if isinstance(obj, ok_type):
-                return True
-        return False
-
     args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
 
     # Save original args to file
@@ -221,55 +235,9 @@ def train_model(args):
     logger.info(f"\tNum epochs = {args.num_train_epochs}")
     logger.info(f"\tLearning rate = {args.learning_rate}")
 
-    train_input_ids = np.array(train_text_ids)
-    train_labels = np.array(train_labels)
-    train_data = list((ids, label) for ids, label in zip(train_input_ids, train_labels))
-    train_sampler = RandomSampler(train_data)
-    train_dataloader = DataLoader(
-        train_data, sampler=train_sampler, batch_size=args.batch_size
-    )
-
-    eval_input_ids = np.array(eval_text_ids)
-    eval_labels = np.array(eval_labels)
-    eval_data = list((ids, label) for ids, label in zip(eval_input_ids, eval_labels))
-    eval_sampler = SequentialSampler(eval_data)
-    eval_dataloader = DataLoader(
-        eval_data, sampler=eval_sampler, batch_size=args.batch_size
-    )
-
-    def get_eval_score():
-        model.eval()
-        correct = 0
-        total = 0
-        logits = []
-        labels = []
-        for input_ids, batch_labels in eval_dataloader:
-            if isinstance(input_ids, dict):
-                ## HACK: dataloader collates dict backwards. This is a temporary
-                # workaround to get ids in the right shape
-                input_ids = {
-                    k: torch.stack(v).T.to(device) for k, v in input_ids.items()
-                }
-            batch_labels = batch_labels.to(device)
-
-            with torch.no_grad():
-                batch_logits = textattack.shared.utils.model_predict(model, input_ids)
-
-            logits.extend(batch_logits.cpu().squeeze().tolist())
-            labels.extend(batch_labels)
-
-        model.train()
-        logits = torch.tensor(logits)
-        labels = torch.tensor(labels)
-
-        if args.do_regression:
-            pearson_correlation, pearson_p_value = scipy.stats.pearsonr(logits, labels)
-            return pearson_correlation
-        else:
-            preds = logits.argmax(dim=1)
-            correct = (preds == labels).sum()
-            return float(correct) / len(labels)
-
+    eval_dataloader = make_dataloader(tokenizer, eval_text, eval_labels, args.batch_size)
+    train_dataloader = make_dataloader(tokenizer, train_text, train_labels, args.batch_size)
+        
     def save_model():
         model_to_save = (
             model.module if hasattr(model, "module") else model
@@ -322,6 +290,14 @@ def train_model(args):
     for epoch in tqdm.trange(
         int(args.num_train_epochs), desc="Epoch", position=0, leave=False
     ):
+        if attack_t and epoch > 0:
+            logger.info("Attacking model to generating new training set...")
+            attack = attack_t(model)
+            adv_train_text = []
+            for adv_ex in tqdm.tqdm(attack.attack_dataset(list(zip(train_text, train_labels))), desc="Attack", total=len(train_text)):
+                adv_train_text.append(adv_ex.perturbed_text())
+            train_dataloader = make_dataloader(tokenizer, adv_train_text, train_labels, args.batch_size)
+
         prog_bar = tqdm.tqdm(
             train_dataloader, desc="Iteration", position=1, leave=False
         )
@@ -369,7 +345,7 @@ def train_model(args):
             global_step += 1
 
         # Check accuracy after each epoch.
-        eval_score = get_eval_score()
+        eval_score = get_eval_score(model, eval_dataloader, args.do_regression)
         tb_writer.add_scalar("epoch_eval_score", eval_score, global_step)
 
         if args.checkpoint_every_epoch:
@@ -398,7 +374,7 @@ def train_model(args):
     logger.info("Finished training. Re-loading and evaluating model from disk.")
     model = model_from_args(args, args.num_labels)
     model.load_state_dict(torch.load(os.path.join(args.output_dir, args.weights_name)))
-    eval_score = get_eval_score()
+    eval_score = get_eval_score(model, eval_dataloader, args.do_regression)
     logger.info(
         f"Eval of saved model {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
     )

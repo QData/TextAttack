@@ -2,6 +2,7 @@ import os
 
 import textattack
 from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
+from textattack.commands.attack.attack_args import ATTACK_RECIPE_NAMES
 
 logger = textattack.shared.logger
 
@@ -130,6 +131,17 @@ def model_from_args(train_args, num_labels, model_path=None):
     model = model.to(textattack.shared.utils.device)
 
     return model
+
+def attack_from_args(args):
+    # note that this returns a recipe type, not an object
+    # (we need to wait to have access to the model to initialize)
+    attack_t = None
+    if args.attack:
+        if args.attack in ATTACK_RECIPE_NAMES:
+            attack_t = eval(ATTACK_RECIPE_NAMES[args.attack])
+        else:
+            raise ValueError(f"Unrecognized attack recipe: {args.attack}")
+    return attack_t
 
 
 def augmenter_from_args(args):
