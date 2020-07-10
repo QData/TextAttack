@@ -27,7 +27,15 @@ class QueryHandler:
         except:
             probs = []
             for s, w in zip(sentences, swapped_words):
-                probs.append(self.try_query([s], [w], batch_size=1)[0])
+                try:
+                    probs.append(self.try_query([s], [w], batch_size=1)[0])
+                except RuntimeError:
+                    print(
+                        "WARNING:  got runtime error trying languag emodel on language model w s/w",
+                        s,
+                        w,
+                    )
+                    probs.append(float("-inf"))
             return probs
 
     def try_query(self, sentences, swapped_words, batch_size=32):
@@ -52,9 +60,6 @@ class QueryHandler:
                         raw_idx_list[t].append(word_idxs[t])
             orig_num_idxs = len(raw_idx_list)
             raw_idx_list = [x for x in raw_idx_list if len(x)]
-            if not len(raw_idx_list):
-                # if no inputs are long enough to check, return inf for all
-                return [float("-inf")] * len(batch)
             num_idxs_dropped = orig_num_idxs - len(raw_idx_list)
             all_raw_idxs = torch.tensor(
                 raw_idx_list, device=self.device, dtype=torch.long
@@ -63,6 +68,8 @@ class QueryHandler:
             hidden = self.model.init_hidden(len(batch))
             source = word_idxs[:-1, :]
             target = word_idxs[1:, :]
+            if (not len(source)) or not len(hidden):
+                return [float("-inf")] * len(batch)
             decode, hidden = self.model(source, hidden)
             decode = decode.view(sentence_length - num_idxs_dropped, len(batch), -1)
             for i in range(len(batch)):
