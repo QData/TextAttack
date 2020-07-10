@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+import math
 
 import numpy as np
 import scipy
@@ -28,6 +29,33 @@ def save_args(args, save_path):
     final_args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
     with open(save_path, "w", encoding="utf-8") as f:
         f.write(json.dumps(final_args_dict, indent=2) + "\n")
+
+def get_sample_count(*lsts):
+    if all(len(lst) == len(lsts[0]) for lst in lsts):
+        sample_count = len(lsts[0])
+    else:
+        sample_count = None
+    return sample_count
+
+def random_shuffle(*lsts):
+    permutation = np.random.permutation(len(lsts[0]))
+    shuffled = []
+    for lst in lsts:
+        shuffled.append((np.array(lst)[permutation]).tolist())
+    return tuple(shuffled)
+
+def train_val_split(*arrays, split_val=.2):
+    sample_count = get_sample_count(*arrays)
+    if not sample_count:
+        raise Exception("Batch Axis inconsistent. All input arrays must have first axis of equal length.")
+    arrays = random_shuffle(*arrays)
+    split_idx = math.floor(sample_count * split_val)
+    train_set = [array[split_idx:] for array in arrays]
+    val_set = [array[:split_idx] for array in arrays]
+    if len(train_set) == 1 and len(val_set) == 1:
+        train_set = train_set[0]
+        val_set = val_set[0]
+    return train_set, val_set
 
 def filter_labels(text, labels, allowed_labels):
     final_text, final_labels = [], []
@@ -165,6 +193,9 @@ def train_model(args):
         train_text, train_labels = filter_labels(train_text, train_labels, args.allowed_labels)
         eval_text, eval_labels = filter_labels(eval_text, eval_labels, args.allowed_labels)
     
+    if args.pct_dataset < 1.:
+        logger.info(f"Using {args.pct_dataset*100}% of the training set")
+        (train_text, train_labels), _ = train_val_split(train_text, train_labels, split_val=1.-args.pct_dataset)
     train_examples_len = len(train_text)
 
     # data augmentation
@@ -172,7 +203,6 @@ def train_model(args):
     if augmenter:
         logger.info(f"Augmenting {len(train_text)} samples with {augmenter}")
         train_text, train_labels = data_augmentation(train_text, train_labels, augmenter)
-        logger.info(f"Using augmented training set of size {len(train_text)}")
 
     label_id_len = len(train_labels)
     label_set = set(train_labels)

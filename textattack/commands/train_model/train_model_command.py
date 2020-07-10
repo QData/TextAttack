@@ -49,6 +49,12 @@ class TrainModelCommand(TextAttackCommand):
             " ex: `glue:sst2` or `rotten_tomatoes`",
         )
         parser.add_argument(
+            "--pct-dataset",
+            type=float,
+            default=1.,
+            help="Fraction of dataset to use during training ([0., 1.])"
+        )
+        parser.add_argument(
             "--dataset-train-split",
             "--train-split",
             type=str,
