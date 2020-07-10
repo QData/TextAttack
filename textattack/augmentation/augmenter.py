@@ -75,7 +75,7 @@ class Augmenter:
         attacked_text = AttackedText(text)
         original_text = attacked_text
         all_transformed_texts = set()
-        num_words_to_swap = int(self.pct_words_to_swap * len(attacked_text.words))
+        num_words_to_swap = max(int(self.pct_words_to_swap * len(attacked_text.words)), 1)
         for _ in range(self.transformations_per_example):
             index_order = list(range(len(attacked_text.words)))
             random.shuffle(index_order)
