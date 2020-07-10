@@ -52,6 +52,9 @@ class QueryHandler:
                         raw_idx_list[t].append(word_idxs[t])
             orig_num_idxs = len(raw_idx_list)
             raw_idx_list = [x for x in raw_idx_list if len(x)]
+            if not len(raw_idx_list):
+                # if no inputs are long enough to check, return inf for all
+                return [float("-inf")] * len(batch)
             num_idxs_dropped = orig_num_idxs - len(raw_idx_list)
             all_raw_idxs = torch.tensor(
                 raw_idx_list, device=self.device, dtype=torch.long
