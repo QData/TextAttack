@@ -10,12 +10,11 @@ from .alzantot_goog_lm import GoogLMHelper
 
 
 class GoogleLanguageModel(Constraint):
-    """
-    Constraint that uses the Google 1 Billion Words Language Model to 
-    determine the difference in perplexity between x and x_adv. 
+    """Constraint that uses the Google 1 Billion Words Language Model to
+    determine the difference in perplexity between x and x_adv.
 
     Args:
-        top_n (int): 
+        top_n (int):
         top_n_per_index (int):
         compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
             Otherwise, compare it against the previous `x_adv`.
@@ -35,10 +34,8 @@ class GoogleLanguageModel(Constraint):
         return isinstance(transformation, WordSwap)
 
     def _check_constraint_many(self, transformed_texts, reference_text):
-        """
-        Returns the `top_n` of transformed_texts, as evaluated by the language 
-        model. 
-        """
+        """Returns the `top_n` of transformed_texts, as evaluated by the
+        language model."""
         if not len(transformed_texts):
             return []
 

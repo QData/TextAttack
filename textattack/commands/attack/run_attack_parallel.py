@@ -1,6 +1,4 @@
-"""
-A command line parser to run an attack from user specifications.
-"""
+"""A command line parser to run an attack from user specifications."""
 
 from collections import deque
 import os

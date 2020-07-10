@@ -5,9 +5,8 @@ from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapHomoglyphSwap(WordSwap):
-    """ Transforms an input by replacing its words with visually similar words 
-        using homoglyph swaps.
-    """
+    """Transforms an input by replacing its words with visually similar words
+    using homoglyph swaps."""
 
     def __init__(self, random_one=False, **kwargs):
         super().__init__(**kwargs)
@@ -54,8 +53,8 @@ class WordSwapHomoglyphSwap(WordSwap):
         self.random_one = random_one
 
     def _get_replacement_words(self, word):
-        """ Returns a list containing all possible words with 1 character replaced by a homoglyph.
-        """
+        """Returns a list containing all possible words with 1 character
+        replaced by a homoglyph."""
         candidate_words = []
 
         if self.random_one:

@@ -9,11 +9,11 @@ import textattack
 
 
 class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
-    """ WordLevelTokenizer. 
-    
+    """WordLevelTokenizer.
+
     Represents a simple word level tokenization using the internals of BERT's
     tokenizer.
-    
+
     Based off the `tokenizers` BertWordPieceTokenizer (https://github.com/huggingface/tokenizers/blob/704cf3fdd2f607ead58a561b892b510b49c301db/bindings/python/tokenizers/implementations/bert_wordpiece.py).
     """
 
@@ -105,9 +105,9 @@ class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
 
 
 class GloveTokenizer(WordLevelTokenizer):
-    """ A word-level tokenizer with GloVe 200-dimensional vectors. 
-    
-        Lowercased, since GloVe vectors are lowercased.
+    """A word-level tokenizer with GloVe 200-dimensional vectors.
+
+    Lowercased, since GloVe vectors are lowercased.
     """
 
     def __init__(
@@ -127,11 +127,11 @@ class GloveTokenizer(WordLevelTokenizer):
         self.enable_truncation(max_length=max_length)
 
     def _process_text(self, text_input):
-        """ A text input may be a single-input tuple (text,) or multi-input
-            tuple (text, text, ...). 
-            
-            In the single-input case, unroll the tuple. In the multi-input
-            case, raise an error.
+        """A text input may be a single-input tuple (text,) or multi-input
+        tuple (text, text, ...).
+
+        In the single-input case, unroll the tuple. In the multi-input
+        case, raise an error.
         """
         if isinstance(text_input, tuple):
             if len(text_input) > 1:
@@ -146,7 +146,7 @@ class GloveTokenizer(WordLevelTokenizer):
         return super().encode(text, add_special_tokens=False).ids
 
     def batch_encode(self, input_text_list):
-        """ The batch equivalent of ``encode``."""
+        """The batch equivalent of ``encode``."""
         input_text_list = list(map(self._process_text, input_text_list))
         encodings = self.encode_batch(input_text_list, add_special_tokens=False,)
         return [x.ids for x in encodings]

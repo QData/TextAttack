@@ -10,10 +10,10 @@ from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
 class WordEmbeddingDistance(Constraint):
-    """
-    A constraint on word substitutions which places a maximum distance between the embedding of the
-    word being deleted and the word being inserted.
-    
+    """A constraint on word substitutions which places a maximum distance
+    between the embedding of the word being deleted and the word being
+    inserted.
+
     Args:
         embedding_type (str): The word embedding to use.
         include_unknown_words (bool): Whether or not the constraint is fulfilled
@@ -84,7 +84,7 @@ class WordEmbeddingDistance(Constraint):
             self.cos_sim_mat = {}
 
     def get_cos_sim(self, a, b):
-        """ Returns the cosine similarity of words with IDs a and b."""
+        """Returns the cosine similarity of words with IDs a and b."""
         if isinstance(a, str):
             a = self.word_embedding_word2index[a]
         if isinstance(b, str):
@@ -102,7 +102,7 @@ class WordEmbeddingDistance(Constraint):
         return cos_sim
 
     def get_mse_dist(self, a, b):
-        """ Returns the MSE distance of words with IDs a and b."""
+        """Returns the MSE distance of words with IDs a and b."""
         a, b = min(a, b), max(a, b)
         try:
             mse_dist = self.mse_dist_mat[a][b]
@@ -116,10 +116,8 @@ class WordEmbeddingDistance(Constraint):
         return mse_dist
 
     def _check_constraint(self, transformed_text, reference_text):
-        """ 
-        Returns true if (``transformed_text`` and ``reference_text``) are closer than 
-        ``self.min_cos_sim`` and ``self.max_mse_dist``. 
-        """
+        """Returns true if (``transformed_text`` and ``reference_text``) are
+        closer than ``self.min_cos_sim`` and ``self.max_mse_dist``."""
         try:
             indices = transformed_text.attack_attrs["newly_modified_indices"]
         except KeyError:
@@ -159,18 +157,17 @@ class WordEmbeddingDistance(Constraint):
         return True
 
     def check_compatibility(self, transformation):
-        """
-        WordEmbeddingDistance requires a word being both deleted and inserted at the same index
-        in order to compare their embeddings, therefore it's restricted to word swaps.
-        """
+        """WordEmbeddingDistance requires a word being both deleted and
+        inserted at the same index in order to compare their embeddings,
+        therefore it's restricted to word swaps."""
         return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
         """Set the extra representation of the constraint using these keys.
-        
+
         To print customized extra information, you should reimplement
-        this method in your own constraint. Both single-line and multi-line
-        strings are acceptable.
+        this method in your own constraint. Both single-line and multi-
+        line strings are acceptable.
         """
         if self.min_cos_sim is None:
             metric = "max_mse_dist"

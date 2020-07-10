@@ -13,12 +13,11 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def TextFoolerJin2019(model):
-    """
-        Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019). 
-        
-        Is BERT Really Robust? Natural Language Attack on Text Classification and Entailment. 
-        
-        https://arxiv.org/abs/1907.11932 
+    """Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019).
+
+    Is BERT Really Robust? Natural Language Attack on Text Classification and Entailment.
+
+    https://arxiv.org/abs/1907.11932
     """
     #
     # Swap words with their 50 closest embedding nearest-neighbors.

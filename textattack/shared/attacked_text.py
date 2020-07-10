@@ -11,23 +11,21 @@ from .utils import words_from_text
 
 class AttackedText:
 
-    """ 
-     A helper class that represents a string that can be attacked.
-     
-     Models that take multiple sentences as input separate them by ``SPLIT_TOKEN``. 
-     Attacks "see" the entire input, joined into one string, without the split token. 
-     
-     ``AttackedText`` instances that were perturbed from other ``AttackedText``
-     objects contain a pointer to the previous text 
-     (``attack_attrs["previous_attacked_text"]``), so that the full chain of 
-     perturbations might be reconstructed by using this key to form a linked
-     list.
+    """A helper class that represents a string that can be attacked.
 
-     Args:
-        text (string): The string that this AttackedText represents
-        attack_attrs (dict): Dictionary of various attributes stored
-            during the course of an attack.
-        
+    Models that take multiple sentences as input separate them by ``SPLIT_TOKEN``.
+    Attacks "see" the entire input, joined into one string, without the split token.
+
+    ``AttackedText`` instances that were perturbed from other ``AttackedText``
+    objects contain a pointer to the previous text
+    (``attack_attrs["previous_attacked_text"]``), so that the full chain of
+    perturbations might be reconstructed by using this key to form a linked
+    list.
+
+    Args:
+       text (string): The string that this AttackedText represents
+       attack_attrs (dict): Dictionary of various attributes stored
+           during the course of an attack.
     """
 
     SPLIT_TOKEN = ">>>>"
@@ -60,11 +58,11 @@ class AttackedText:
         self.attack_attrs.setdefault("modified_indices", set())
 
     def __eq__(self, other):
-        """ Compares two text instances to make sure they have the same attack
-            attributes.
-            
-            Since some elements stored in ``self.attack_attrs`` may be numpy
-            arrays, we have to take special care when comparing them.
+        """Compares two text instances to make sure they have the same attack
+        attributes.
+
+        Since some elements stored in ``self.attack_attrs`` may be numpy
+        arrays, we have to take special care when comparing them.
         """
         if not (self.text == other.text):
             return False
@@ -85,9 +83,9 @@ class AttackedText:
         return hash(self.text)
 
     def free_memory(self):
-        """ Delete items that take up memory.
-            
-            Can be called once the AttackedText is only needed to display.
+        """Delete items that take up memory.
+
+        Can be called once the AttackedText is only needed to display.
         """
         if "previous_attacked_text" in self.attack_attrs:
             self.attack_attrs["previous_attacked_text"].free_memory()
@@ -98,7 +96,8 @@ class AttackedText:
                 del self.attack_attrs[key]
 
     def text_window_around_index(self, index, window_size):
-        """ The text window of ``window_size`` words centered around ``index``. """
+        """The text window of ``window_size`` words centered around
+        ``index``."""
         length = self.num_words
         half_size = (window_size - 1) / 2.0
         if index - half_size < 0:
@@ -115,7 +114,7 @@ class AttackedText:
         return self.text[text_idx_start:text_idx_end]
 
     def _text_index_of_word_index(self, i):
-        """ Returns the index of word ``i`` in self.text. """
+        """Returns the index of word ``i`` in self.text."""
         pre_words = self.words[: i + 1]
         lower_text = self.text.lower()
         # Find all words until `i` in string.
@@ -125,19 +124,22 @@ class AttackedText:
         return look_after_index
 
     def text_until_word_index(self, i):
-        """ Returns the text before the beginning of word at index ``i``. """
+        """Returns the text before the beginning of word at index ``i``."""
         look_after_index = self._text_index_of_word_index(i)
         return self.text[:look_after_index]
 
     def text_after_word_index(self, i):
-        """ Returns the text after the end of word at index ``i``. """
+        """Returns the text after the end of word at index ``i``."""
         # Get index of beginning of word then jump to end of word.
         look_after_index = self._text_index_of_word_index(i) + len(self.words[i])
         return self.text[look_after_index:]
 
     def first_word_diff(self, other_attacked_text):
-        """ Returns the first word in self.words that differs from 
-            other_attacked_text. Useful for word swap strategies. """
+        """Returns the first word in self.words that differs from
+        other_attacked_text.
+
+        Useful for word swap strategies.
+        """
         w1 = self.words
         w2 = other_attacked_text.words
         for i in range(min(len(w1), len(w2))):
@@ -146,8 +148,11 @@ class AttackedText:
         return None
 
     def first_word_diff_index(self, other_attacked_text):
-        """ Returns the index of the first word in self.words that differs
-            from other_attacked_text. Useful for word swap strategies. """
+        """Returns the index of the first word in self.words that differs from
+        other_attacked_text.
+
+        Useful for word swap strategies.
+        """
         w1 = self.words
         w2 = other_attacked_text.words
         for i in range(min(len(w1), len(w2))):
@@ -156,8 +161,8 @@ class AttackedText:
         return None
 
     def all_words_diff(self, other_attacked_text):
-        """ Returns the set of indices for which this and other_attacked_text
-        have different words. """
+        """Returns the set of indices for which this and other_attacked_text
+        have different words."""
         indices = set()
         w1 = self.words
         w2 = other_attacked_text.words
@@ -167,8 +172,8 @@ class AttackedText:
         return indices
 
     def ith_word_diff(self, other_attacked_text, i):
-        """ Returns whether the word at index i differs from other_attacked_text
-        """
+        """Returns whether the word at index i differs from
+        other_attacked_text."""
         w1 = self.words
         w2 = other_attacked_text.words
         if len(w1) - 1 < i or len(w2) - 1 < i:
@@ -176,11 +181,12 @@ class AttackedText:
         return w1[i] != w2[i]
 
     def convert_from_original_idxs(self, idxs):
-        """ Takes indices of words from original string and converts them to 
-            indices of the same words in the current string.
-            
-            Uses information from ``self.attack_attrs['original_index_map']``, 
-            which maps word indices from the original to perturbed text.
+        """Takes indices of words from original string and converts them to
+        indices of the same words in the current string.
+
+        Uses information from
+        ``self.attack_attrs['original_index_map']``, which maps word
+        indices from the original to perturbed text.
         """
         if len(self.attack_attrs["original_index_map"]) == 0:
             return idxs
@@ -195,8 +201,8 @@ class AttackedText:
         return [self.attack_attrs["original_index_map"][i] for i in idxs]
 
     def replace_words_at_indices(self, indices, new_words):
-        """ This code returns a new AttackedText object where the word at 
-            ``index`` is replaced with a new word."""
+        """This code returns a new AttackedText object where the word at
+        ``index`` is replaced with a new word."""
         if len(indices) != len(new_words):
             raise ValueError(
                 f"Cannot replace {len(new_words)} words at {len(indices)} indices."
@@ -213,9 +219,8 @@ class AttackedText:
         return self.generate_new_attacked_text(words)
 
     def replace_word_at_index(self, index, new_word):
-        """ This code returns a new AttackedText object where the word at 
-            ``index`` is replaced with a new word.
-        """
+        """This code returns a new AttackedText object where the word at
+        ``index`` is replaced with a new word."""
         if not isinstance(new_word, str):
             raise TypeError(
                 f"replace_word_at_index requires ``str`` new_word, got {type(new_word)}"
@@ -223,15 +228,13 @@ class AttackedText:
         return self.replace_words_at_indices([index], [new_word])
 
     def delete_word_at_index(self, index):
-        """ This code returns a new AttackedText object where the word at 
-            ``index`` is removed.
-        """
+        """This code returns a new AttackedText object where the word at
+        ``index`` is removed."""
         return self.replace_word_at_index(index, "")
 
     def insert_text_after_word_index(self, index, text):
-        """ Inserts a string before word at index ``index`` and attempts to add
-            appropriate spacing.
-        """
+        """Inserts a string before word at index ``index`` and attempts to add
+        appropriate spacing."""
         if not isinstance(text, str):
             raise TypeError(f"text must be an str, got type {type(text)}")
         word_at_index = self.words[index]
@@ -239,9 +242,8 @@ class AttackedText:
         return self.replace_word_at_index(index, new_text)
 
     def insert_text_before_word_index(self, index, text):
-        """ Inserts a string before word at index ``index`` and attempts to add
-            appropriate spacing.
-        """
+        """Inserts a string before word at index ``index`` and attempts to add
+        appropriate spacing."""
         if not isinstance(text, str):
             raise TypeError(f"text must be an str, got type {type(text)}")
         word_at_index = self.words[index]
@@ -256,15 +258,15 @@ class AttackedText:
         ]
 
     def generate_new_attacked_text(self, new_words):
-        """ Returns a new AttackedText object and replaces old list of words 
-            with a new list of words, but preserves the punctuation and spacing 
-            of the original message.
-            
-            ``self.words`` is a list of the words in the current text with 
-            punctuation removed. However, each "word" in ``new_words``
-            could be an empty string, representing a word deletion, or a string
-            with multiple space-separated words, representation an insertion
-            of one or more words.
+        """Returns a new AttackedText object and replaces old list of words
+        with a new list of words, but preserves the punctuation and spacing of
+        the original message.
+
+        ``self.words`` is a list of the words in the current text with
+        punctuation removed. However, each "word" in ``new_words`` could
+        be an empty string, representing a word deletion, or a string
+        with multiple space-separated words, representation an insertion
+        of one or more words.
         """
         perturbed_text = ""
         original_text = AttackedText.SPLIT_TOKEN.join(self._text_input.values())
@@ -343,20 +345,20 @@ class AttackedText:
 
     @property
     def tokenizer_input(self):
-        """ The tuple of inputs to be passed to the tokenizer. """
+        """The tuple of inputs to be passed to the tokenizer."""
         return tuple(self._text_input.values())
 
     @property
     def column_labels(self):
-        """ Returns the labels for this text's columns. For single-sequence
-            inputs, this simply returns ['text'].
+        """Returns the labels for this text's columns.
+
+        For single-sequence inputs, this simply returns ['text'].
         """
         return list(self._text_input.keys())
 
     @property
     def words_per_input(self):
-        """ Returns a list of lists of words corresponding to each input.
-        """
+        """Returns a list of lists of words corresponding to each input."""
         if not self._words_per_input:
             self._words_per_input = [
                 words_from_text(_input) for _input in self._text_input.values()
@@ -371,19 +373,20 @@ class AttackedText:
 
     @property
     def text(self):
-        """ Represents full text input. Multiply inputs are joined with a line 
-            break.
+        """Represents full text input.
+
+        Multiply inputs are joined with a line break.
         """
         return "\n".join(self._text_input.values())
 
     @property
     def num_words(self):
-        """ Returns the number of words in the sequence. """
+        """Returns the number of words in the sequence."""
         return len(self.words)
 
     def printable_text(self, key_color="bold", key_color_method=None):
-        """ Represents full text input. Adds field descriptions.
-        
+        """Represents full text input. Adds field descriptions.
+
         For example, entailment inputs look like:
             ```
             premise: ...

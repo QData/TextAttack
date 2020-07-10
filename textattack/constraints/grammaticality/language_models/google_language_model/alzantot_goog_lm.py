@@ -20,11 +20,8 @@ tf.get_logger().setLevel("INFO")
 
 
 class GoogLMHelper:
-    """
-    An implementation of `<https://arxiv.org/abs/1804.07998>`_
-    adapted from `<https://github.com/nesl/nlp_adversarial_examples>`_. 
-
-    """
+    """An implementation of `<https://arxiv.org/abs/1804.07998>`_ adapted from
+    `<https://github.com/nesl/nlp_adversarial_examples>`_."""
 
     CACHE_PATH = "constraints/semantics/language-models/alzantot-goog-lm"
 
@@ -81,8 +78,7 @@ class GoogLMHelper:
         return np.array(word_probs)
 
     def get_words_probs(self, prefix, list_words):
-        """
-        Retrieves the probability of words.
+        """Retrieves the probability of words.
 
         Args:
             prefix_words

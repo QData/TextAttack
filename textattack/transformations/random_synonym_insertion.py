@@ -6,9 +6,8 @@ from textattack.transformations import Transformation
 
 
 class RandomSynonymInsertion(Transformation):
-    """
-    Transformation that inserts synonyms of words that are already in the sequence.
-    """
+    """Transformation that inserts synonyms of words that are already in the
+    sequence."""
 
     def _get_synonyms(self, word):
         synonyms = set()

@@ -5,9 +5,8 @@ from textattack.transformations.transformation import Transformation
 
 
 class CompositeTransformation(Transformation):
-    """
-    A transformation which applies each of a list of transformations, returning a set of 
-    all optoins.
+    """A transformation which applies each of a list of transformations,
+    returning a set of all optoins.
 
     Args:
         transformations: The list of ``Transformation``\s to apply.
@@ -23,9 +22,8 @@ class CompositeTransformation(Transformation):
         self.transformations = transformations
 
     def _get_transformations(self, *_):
-        """ Placeholder method that would throw an error if a user tried to
-            treat the CompositeTransformation as a 'normal' transformation.
-        """
+        """Placeholder method that would throw an error if a user tried to
+        treat the CompositeTransformation as a 'normal' transformation."""
         raise RuntimeError(
             "CompositeTransformation does not support _get_transformations()."
         )

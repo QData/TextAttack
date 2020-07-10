@@ -11,7 +11,7 @@ from .logger import Logger
 
 
 class CSVLogger(Logger):
-    """ Logs attack results to a CSV. """
+    """Logs attack results to a CSV."""
 
     def __init__(self, filename="results.csv", color_method="file"):
         self.filename = filename

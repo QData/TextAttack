@@ -25,13 +25,11 @@ class Vocabulary(object):
     """Class that holds a vocabulary for the dataset."""
 
     def __init__(self, filename):
+        """Initialize vocabulary.
+
+        Args:
+          filename (str): Vocabulary file name.
         """
-    Initialize vocabulary.
-
-    Args:
-      filename (str): Vocabulary file name.
-
-    """
 
         self._id_to_word = []
         self._word_to_id = {}
@@ -78,16 +76,14 @@ class Vocabulary(object):
         return self.unk
 
     def id_to_word(self, cur_id):
+        """Converts an ID to the word it represents.
+
+        Args:
+          cur_id: The ID
+
+        Returns:
+          The word that :obj:`cur_id` represents.
         """
-    Converts an ID to the word it represents.
-
-    Args:
-      cur_id: The ID 
-
-    Returns:
-      The word that :obj:`cur_id` represents. 
-
-    """
         if cur_id < self.size:
             return self._id_to_word[cur_id]
         return "ERROR"
@@ -233,16 +229,17 @@ def get_batch(generator, batch_size, num_steps, max_word_length, pad=False):
 class LM1BDataset(object):
     """Utility class for 1B word benchmark dataset.
 
-  The current implementation reads the data from the tokenized text files.
-  """
+    The current implementation reads the data from the tokenized text
+    files.
+    """
 
     def __init__(self, filepattern, vocab):
         """Initialize LM1BDataset reader.
 
-    Args:
-      filepattern: Dataset file pattern.
-      vocab: Vocabulary.
-    """
+        Args:
+          filepattern: Dataset file pattern.
+          vocab: Vocabulary.
+        """
         self._vocab = vocab
         self._all_shards = tf.io.gfile.glob(filepattern)
         tf.compat.v1.logging.info(
@@ -256,12 +253,12 @@ class LM1BDataset(object):
     def _load_shard(self, shard_name):
         """Read one file and convert to ids.
 
-    Args:
-      shard_name: file path.
+        Args:
+          shard_name: file path.
 
-    Returns:
-      list of (id, char_id, global_word_id) tuples.
-    """
+        Returns:
+          list of (id, char_id, global_word_id) tuples.
+        """
         tf.compat.v1.logging.info("Loading data from: %s", shard_name)
         with tf.io.gfile.GFile(shard_name) as f:
             sentences = f.readlines()

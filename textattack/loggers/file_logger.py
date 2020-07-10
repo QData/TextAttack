@@ -8,7 +8,7 @@ from .logger import Logger
 
 
 class FileLogger(Logger):
-    """ Logs the results of an attack to a file, or `stdout`. """
+    """Logs the results of an attack to a file, or `stdout`."""
 
     def __init__(self, filename="", stdout=False):
         self.stdout = stdout

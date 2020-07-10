@@ -4,10 +4,8 @@ from textattack.shared.utils import default_class_repr
 
 
 class Transformation(ABC):
-    """
-    An abstract class for transforming a sequence of text to produce
-    a potential adversarial example. 
-    """
+    """An abstract class for transforming a sequence of text to produce a
+    potential adversarial example."""
 
     def __call__(
         self,
@@ -16,9 +14,9 @@ class Transformation(ABC):
         indices_to_modify=None,
         shifted_idxs=True,
     ):
-        """ 
-        Returns a list of all possible transformations for ``current_text``. Applies the
-        ``pre_transformation_constraints`` then calles ``_get_transformations``.
+        """Returns a list of all possible transformations for ``current_text``.
+        Applies the ``pre_transformation_constraints`` then calles
+        ``_get_transformations``.
 
         Args:
             current_text: The ``AttackedText`` to transform.
@@ -48,9 +46,9 @@ class Transformation(ABC):
 
     @abstractmethod
     def _get_transformations(self, current_text, indices_to_modify):
-        """ 
-        Returns a list of all possible transformations for ``current_text``, only modifying
-        ``indices_to_modify``. Must be overridden by specific transformations.
+        """Returns a list of all possible transformations for ``current_text``,
+        only modifying ``indices_to_modify``. Must be overridden by specific
+        transformations.
 
         Args:
             current_text: The ``AttackedText`` to transform.

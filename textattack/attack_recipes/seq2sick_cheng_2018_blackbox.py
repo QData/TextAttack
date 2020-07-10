@@ -11,16 +11,15 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def Seq2SickCheng2018BlackBox(model, goal_function="non_overlapping"):
-    """
-        Cheng, Minhao, et al. 
-        
-        Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with 
-        Adversarial Examples
-        
-        https://arxiv.org/abs/1803.01128    
-        
-        This is a greedy re-implementation of the seq2sick attack method. It does 
-        not use gradient descent.
+    """Cheng, Minhao, et al.
+
+    Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with
+    Adversarial Examples
+
+    https://arxiv.org/abs/1803.01128
+
+    This is a greedy re-implementation of the seq2sick attack method. It does
+    not use gradient descent.
     """
 
     #

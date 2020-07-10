@@ -14,12 +14,11 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def IGAWang2019(model):
-    """
-        Xiaosen Wang, Hao Jin, Kun He (2019). 
-        
-        Natural Language Adversarial Attack and Defense in Word Level. 
-        
-        http://arxiv.org/abs/1909.06723 
+    """Xiaosen Wang, Hao Jin, Kun He (2019).
+
+    Natural Language Adversarial Attack and Defense in Word Level.
+
+    http://arxiv.org/abs/1909.06723
     """
     #
     # Swap words with their embedding nearest-neighbors.

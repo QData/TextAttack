@@ -10,14 +10,13 @@ def _cb(s):
 
 
 class ListThingsCommand(TextAttackCommand):
-    """
-    The list module:
-    
-        List default things in textattack.
+    """The list module:
+
+    List default things in textattack.
     """
 
     def _list(self, list_of_things, plain=False):
-        """ Prints a list or dict of things. """
+        """Prints a list or dict of things."""
         if isinstance(list_of_things, list):
             list_of_things = sorted(list_of_things)
             for thing in list_of_things:

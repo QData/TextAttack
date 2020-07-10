@@ -1,4 +1,4 @@
-format: FORCE  ## Run black and isort (rewriting files) jiujiujiu
+format: FORCE  ## Run black and isort (rewriting files)
 	black .
 	isort --atomic tests textattack
 

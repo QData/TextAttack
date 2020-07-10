@@ -20,10 +20,9 @@ logger = textattack.shared.logger
 
 
 class PeekDatasetCommand(TextAttackCommand):
-    """
-    The peek dataset module:
-    
-        Takes a peek into a dataset in textattack.
+    """The peek dataset module:
+
+    Takes a peek into a dataset in textattack.
     """
 
     def run(self, args):

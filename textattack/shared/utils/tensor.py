@@ -5,7 +5,8 @@ from textattack.shared import utils
 
 
 def batch_tokenize(tokenizer, attacked_text_list):
-    """ Tokenizes a list of inputs and returns their tokenized forms in a list. """
+    """Tokenizes a list of inputs and returns their tokenized forms in a
+    list."""
     inputs = [at.tokenizer_input for at in attacked_text_list]
     if hasattr(tokenizer, "batch_encode"):
         return tokenizer.batch_encode(inputs)
@@ -110,7 +111,7 @@ def get_list_dim(ids):
 
 
 def pad_lists(lists, pad_token=0):
-    """ Pads lists with trailing zeros to make them all the same length. """
+    """Pads lists with trailing zeros to make them all the same length."""
     max_list_len = max(len(l) for l in lists)
     for i in range(len(lists)):
         lists[i] += [pad_token] * (max_list_len - len(lists[i]))

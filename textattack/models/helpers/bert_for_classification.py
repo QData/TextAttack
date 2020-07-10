@@ -6,14 +6,12 @@ from textattack.shared import utils
 
 
 class BERTForClassification:
-    """ 
-    BERT fine-tuned for textual classification. 
+    """BERT fine-tuned for textual classification.
 
     Args:
         model_path(:obj:`string`): Path to the pre-trained model.
-        num_labels(:obj:`int`, optional):  Number of class labels for 
+        num_labels(:obj:`int`, optional):  Number of class labels for
             prediction, if different than 2.
-            
     """
 
     def __init__(self, model_path, num_labels=2):

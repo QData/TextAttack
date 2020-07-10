@@ -6,10 +6,10 @@ from textattack.commands.attack.attack_args_helpers import *
 
 
 class AttackResumeCommand(TextAttackCommand):
-    """
-    The TextAttack attack resume recipe module:
-    
-        A command line parser to resume a checkpointed attack from user specifications.
+    """The TextAttack attack resume recipe module:
+
+    A command line parser to resume a checkpointed attack from user
+    specifications.
     """
 
     def run(self, args):

@@ -5,17 +5,17 @@ from textattack.goal_functions import GoalFunction
 
 
 class ClassificationGoalFunction(GoalFunction):
-    """ A goal function defined on a model that outputs a probability for some
-        number of classes.
-    
-        model: The PyTorch or TensorFlow model used for evaluation.
+    """A goal function defined on a model that outputs a probability for some
+    number of classes.
+
+    model: The PyTorch or TensorFlow model used for evaluation.
     """
 
     def _process_model_outputs(self, inputs, scores):
-        """ Processes and validates a list of model outputs. 
-        
-            This is a task-dependent operation. For example, classification 
-            outputs need to have a softmax applied. 
+        """Processes and validates a list of model outputs.
+
+        This is a task-dependent operation. For example, classification
+        outputs need to have a softmax applied.
         """
         # Validation check on model score dimensions
         if scores.ndim == 1:
@@ -47,7 +47,7 @@ class ClassificationGoalFunction(GoalFunction):
         return scores.cpu()
 
     def _goal_function_result_type(self):
-        """ Returns the class of this goal function's results. """
+        """Returns the class of this goal function's results."""
         return ClassificationGoalFunctionResult
 
     def extra_repr_keys(self):

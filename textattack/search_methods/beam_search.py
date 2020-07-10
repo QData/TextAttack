@@ -5,15 +5,14 @@ from textattack.search_methods import SearchMethod
 
 
 class BeamSearch(SearchMethod):
-    """ 
-    An attack that maintinas a beam of the `beam_width` highest scoring AttackedTexts, greedily
-    updating the beam with the highest scoring transformations from the current beam.
-    
+    """An attack that maintinas a beam of the `beam_width` highest scoring
+    AttackedTexts, greedily updating the beam with the highest scoring
+    transformations from the current beam.
+
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
         transformation (Transformation): The type of transformation.
         beam_width (int): the number of candidates to retain at each step
-
     """
 
     def __init__(self, beam_width=8):

@@ -28,12 +28,12 @@ def s3_url(uri):
 
 
 def download_if_needed(folder_name):
-    """ Folder name will be saved as `.cache/textattack/[folder name]`. If it
-        doesn't exist on disk, the zip file will be downloaded and extracted. 
-    
+    """Folder name will be saved as `.cache/textattack/[folder name]`. If it
+    doesn't exist on disk, the zip file will be downloaded and extracted.
+
     Args:
         folder_name (str): path to folder or file in cache
-    
+
     Returns:
         str: path to the downloaded folder or file on disk
     """
@@ -67,7 +67,7 @@ def download_if_needed(folder_name):
 
 
 def unzip_file(path_to_zip_file, unzipped_folder_path):
-    """ Unzips a .zip file to folder path. """
+    """Unzips a .zip file to folder path."""
     logger.info(f"Unzipping file {path_to_zip_file} to {unzipped_folder_path}.")
     enclosing_unzipped_path = pathlib.Path(unzipped_folder_path).parent
     with zipfile.ZipFile(path_to_zip_file, "r") as zip_ref:
@@ -75,9 +75,9 @@ def unzip_file(path_to_zip_file, unzipped_folder_path):
 
 
 def http_get(folder_name, out_file, proxies=None):
-    """ Get contents of a URL and save to a file.
-    
-        https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
+    """Get contents of a URL and save to a file.
+
+    https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
     """
     folder_s3_url = s3_url(folder_name)
     logger.info(f"Downloading {folder_s3_url}.")
@@ -120,7 +120,7 @@ def _post_install():
 
 
 def set_cache_dir(cache_dir):
-    """ Sets all relevant cache directories to ``TA_CACHE_DIR``. """
+    """Sets all relevant cache directories to ``TA_CACHE_DIR``."""
     # Tensorflow Hub cache directory
     os.environ["TFHUB_CACHE_DIR"] = cache_dir
     # HuggingFace `transformers` cache directory
@@ -132,7 +132,7 @@ def set_cache_dir(cache_dir):
 
 
 def _post_install_if_needed():
-    """ Runs _post_install if hasn't been run since install. """
+    """Runs _post_install if hasn't been run since install."""
     # Check for post-install file.
     post_install_file_path = path_in_cache("post_install_check")
     post_install_file_lock_path = post_install_file_path + ".lock"

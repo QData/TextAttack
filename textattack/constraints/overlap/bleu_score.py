@@ -4,8 +4,7 @@ from textattack.constraints import Constraint
 
 
 class BLEU(Constraint):
-    """
-    A constraint on BLEU score difference.
+    """A constraint on BLEU score difference.
 
     Args:
         max_bleu_score (int): Maximum BLEU score allowed.

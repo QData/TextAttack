@@ -7,10 +7,9 @@ from textattack.commands.attack.attack_args_helpers import *
 
 
 class AttackCommand(TextAttackCommand):
-    """
-    The TextAttack attack module:
-    
-        A command line parser to run an attack from user specifications.
+    """The TextAttack attack module:
+
+    A command line parser to run an attack from user specifications.
     """
 
     def run(self, args):

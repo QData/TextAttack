@@ -13,9 +13,9 @@ from textattack.shared.utils import batch_model_predict, default_class_repr
 
 
 class GoalFunction(ABC):
-    """
-    Evaluates how well a perturbed attacked_text object is achieving a specified goal.
-    
+    """Evaluates how well a perturbed attacked_text object is achieving a
+    specified goal.
+
     Args:
         model: The model used for evaluation.
         maximizable: Whether the goal function is maximizable, as opposed to a boolean result
@@ -58,10 +58,8 @@ class GoalFunction(ABC):
             self._call_model_cache = None
 
     def init_attack_example(self, attacked_text, ground_truth_output):
-        """
-        Called before attacking ``attacked_text`` to 'reset' the goal
-        function and set properties for this example.
-        """
+        """Called before attacking ``attacked_text`` to 'reset' the goal
+        function and set properties for this example."""
         self.initial_attacked_text = attacked_text
         self.ground_truth_output = ground_truth_output
         self.num_queries = 0
@@ -69,26 +67,24 @@ class GoalFunction(ABC):
         return result, _
 
     def get_output(self, attacked_text):
-        """
-        Returns output for display based on the result of calling the model.
-        """
+        """Returns output for display based on the result of calling the
+        model."""
         return self._get_displayed_output(self._call_model([attacked_text])[0])
 
     def get_result(self, attacked_text, **kwargs):
-        """ 
-        A helper method that queries ``self.get_results`` with a single
-        ``AttackedText`` object.
-        """
+        """A helper method that queries ``self.get_results`` with a single
+        ``AttackedText`` object."""
         results, search_over = self.get_results([attacked_text], **kwargs)
         result = results[0] if len(results) else None
         return result, search_over
 
     def get_results(self, attacked_text_list, check_skip=False):
-        """
-        For each attacked_text object in attacked_text_list, returns a result 
-        consisting of whether or not the goal has been achieved, the output for 
-        display purposes, and a score. Additionally returns whether the search
-        is over due to the query budget.
+        """For each attacked_text object in attacked_text_list, returns a
+        result consisting of whether or not the goal has been achieved, the
+        output for display purposes, and a score.
+
+        Additionally returns whether the search is over due to the query
+        budget.
         """
         results = []
         if self.query_budget < float("inf"):
@@ -141,26 +137,21 @@ class GoalFunction(ABC):
 
     @abstractmethod
     def _goal_function_result_type(self):
-        """ 
-        Returns the class of this goal function's results. 
-        """
+        """Returns the class of this goal function's results."""
         raise NotImplementedError()
 
     @abstractmethod
     def _process_model_outputs(self, inputs, outputs):
-        """ 
-        Processes and validates a list of model outputs. 
-        
-        This is a task-dependent operation. For example, classification 
-        outputs need to make sure they have a softmax applied. 
+        """Processes and validates a list of model outputs.
+
+        This is a task-dependent operation. For example, classification
+        outputs need to make sure they have a softmax applied.
         """
         raise NotImplementedError()
 
     def _call_model_uncached(self, attacked_text_list):
-        """ 
-        Queries model and returns outputs for a list of AttackedText 
-        objects. 
-        """
+        """Queries model and returns outputs for a list of AttackedText
+        objects."""
         if not len(attacked_text_list):
             return []
         ids = utils.batch_tokenize(self.tokenizer, attacked_text_list)
@@ -173,10 +164,10 @@ class GoalFunction(ABC):
         return self._process_model_outputs(attacked_text_list, outputs)
 
     def _call_model(self, attacked_text_list):
-        """ Gets predictions for a list of ``AttackedText`` objects.
-        
-            Gets prediction from cache if possible. If prediction is not in the 
-            cache, queries model and stores prediction in cache.
+        """Gets predictions for a list of ``AttackedText`` objects.
+
+        Gets prediction from cache if possible. If prediction is not in
+        the cache, queries model and stores prediction in cache.
         """
         if not self.use_cache:
             return self._call_model_uncached(attacked_text_list)

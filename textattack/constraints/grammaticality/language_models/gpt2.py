@@ -11,12 +11,10 @@ os.environ["WANDB_SILENT"] = "1"
 
 
 class GPT2(LanguageModelConstraint):
-    """ A constraint based on the GPT-2 language model.
+    """A constraint based on the GPT-2 language model.
 
-
-        from "Better Language Models and Their Implications"
-            (openai.com/blog/better-language-models/)
-
+    from "Better Language Models and Their Implications"
+    (openai.com/blog/better-language-models/)
     """
 
     def __init__(self, **kwargs):
@@ -30,9 +28,11 @@ class GPT2(LanguageModelConstraint):
         super().__init__(**kwargs)
 
     def get_log_probs_at_index(self, text_list, word_index):
-        """ Gets the probability of the word at index `word_index` according
-            to GPT-2. Assumes that all items in `text_list`
-            have the same prefix up until `word_index`.
+        """Gets the probability of the word at index `word_index` according to
+        GPT-2.
+
+        Assumes that all items in `text_list` have the same prefix up
+        until `word_index`.
         """
         prefix = text_list[0].text_until_word_index(word_index)
 

@@ -7,8 +7,8 @@ from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapEmbedding(WordSwap):
-    """ Transforms an input by replacing its words with synonyms in the word
-        embedding space. """
+    """Transforms an input by replacing its words with synonyms in the word
+    embedding space."""
 
     PATH = "word_embeddings"
 
@@ -44,8 +44,10 @@ class WordSwapEmbedding(WordSwap):
             self.word_embedding_index2word[index] = word
 
     def _get_replacement_words(self, word):
-        """ Returns a list of possible 'candidate words' to replace a word in a sentence 
-            or phrase. Based on nearest neighbors selected word embeddings.
+        """Returns a list of possible 'candidate words' to replace a word in a
+        sentence or phrase.
+
+        Based on nearest neighbors selected word embeddings.
         """
         try:
             word_id = self.word_embedding_word2index[word.lower()]
@@ -64,8 +66,10 @@ class WordSwapEmbedding(WordSwap):
 
 
 def recover_word_case(word, reference_word):
-    """ Makes the case of `word` like the case of `reference_word`. Supports 
-        lowercase, UPPERCASE, and Capitalized. """
+    """Makes the case of `word` like the case of `reference_word`.
+
+    Supports lowercase, UPPERCASE, and Capitalized.
+    """
     if reference_word.islower():
         return word.lower()
     elif reference_word.isupper() and len(reference_word) > 1:

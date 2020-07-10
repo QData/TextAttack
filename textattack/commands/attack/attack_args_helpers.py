@@ -17,9 +17,10 @@ from .attack_args import *
 
 
 def add_model_args(parser):
-    """ Adds model-related arguments to an argparser. This is useful because we
-        want to load pretrained models using multiple different parsers that
-        share these, but not all, arguments.
+    """Adds model-related arguments to an argparser.
+
+    This is useful because we want to load pretrained models using
+    multiple different parsers that share these, but not all, arguments.
     """
     model_group = parser.add_mutually_exclusive_group()
 
@@ -49,9 +50,10 @@ def add_model_args(parser):
 
 
 def add_dataset_args(parser):
-    """ Adds dataset-related arguments to an argparser. This is useful because we
-        want to load pretrained models using multiple different parsers that
-        share these, but not all, arguments.
+    """Adds dataset-related arguments to an argparser.
+
+    This is useful because we want to load pretrained models using
+    multiple different parsers that share these, but not all, arguments.
     """
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument(
@@ -96,9 +98,8 @@ def add_dataset_args(parser):
 
 
 def load_module_from_file(file_path):
-    """ Uses ``importlib`` to dynamically open a file and load an object from
-        it. 
-    """
+    """Uses ``importlib`` to dynamically open a file and load an object from
+    it."""
     temp_module_name = f"temp_{time.time()}"
     colored_file_path = textattack.shared.utils.color_text(
         file_path, color="blue", method="ansi"
@@ -471,7 +472,8 @@ def default_checkpoint_dir():
 
 
 def merge_checkpoint_args(saved_args, cmdline_args):
-    """ Merge previously saved arguments for checkpoint and newly entered arguments """
+    """Merge previously saved arguments for checkpoint and newly entered
+    arguments."""
     args = copy.deepcopy(saved_args)
     # Newly entered arguments take precedence
     args.parallel = cmdline_args.parallel

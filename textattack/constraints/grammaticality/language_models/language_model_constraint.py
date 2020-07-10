@@ -4,10 +4,9 @@ from textattack.constraints import Constraint
 
 
 class LanguageModelConstraint(Constraint, ABC):
-    """ 
-    Determines if two sentences have a swapped word that has a similar
+    """Determines if two sentences have a swapped word that has a similar
     probability according to a language model.
-        
+
     Args:
         max_log_prob_diff (float): the maximum decrease in log-probability
             in swapped words from `x` to `x_adv`
@@ -23,9 +22,8 @@ class LanguageModelConstraint(Constraint, ABC):
 
     @abstractmethod
     def get_log_probs_at_index(self, text_list, word_index):
-        """ Gets the log-probability of items in `text_list` at index 
-            `word_index` according to a language model.
-        """
+        """Gets the log-probability of items in `text_list` at index
+        `word_index` according to a language model."""
         raise NotImplementedError()
 
     def _check_constraint(self, transformed_text, reference_text):

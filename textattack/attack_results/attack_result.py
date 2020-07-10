@@ -5,8 +5,7 @@ from textattack.shared import utils
 
 
 class AttackResult(ABC):
-    """
-    Result of an Attack run on a single (output, text_input) pair. 
+    """Result of an Attack run on a single (output, text_input) pair.
 
     Args:
         original_result (GoalFunctionResult): Result of the goal function
@@ -38,23 +37,26 @@ class AttackResult(ABC):
         self.perturbed_result.attacked_text.free_memory()
 
     def original_text(self, color_method=None):
-        """ Returns the text portion of `self.original_result`. Helper method.
+        """Returns the text portion of `self.original_result`.
+
+        Helper method.
         """
         return self.original_result.attacked_text.printable_text(
             key_color=("bold", "underline"), key_color_method=color_method
         )
 
     def perturbed_text(self, color_method=None):
-        """ Returns the text portion of `self.perturbed_result`. Helper method.
+        """Returns the text portion of `self.perturbed_result`.
+
+        Helper method.
         """
         return self.perturbed_result.attacked_text.printable_text(
             key_color=("bold", "underline"), key_color_method=color_method
         )
 
     def str_lines(self, color_method=None):
-        """ A list of the lines to be printed for this result's string
-            representation. 
-        """
+        """A list of the lines to be printed for this result's string
+        representation."""
         lines = [self.goal_function_result_str(color_method=color_method)]
         lines.extend(self.diff_color(color_method))
         return lines
@@ -63,18 +65,16 @@ class AttackResult(ABC):
         return "\n\n".join(self.str_lines(color_method=color_method))
 
     def goal_function_result_str(self, color_method=None):
-        """
-        Returns a string illustrating the results of the goal function.
-        """
+        """Returns a string illustrating the results of the goal function."""
         orig_colored = self.original_result.get_colored_output(color_method)
         pert_colored = self.perturbed_result.get_colored_output(color_method)
         return orig_colored + " --> " + pert_colored
 
     def diff_color(self, color_method=None):
-        """ Highlights the difference between two texts using color.
+        """Highlights the difference between two texts using color.
 
         Has to account for deletions and insertions from original text to
-        perturbed. Relies on the index map stored in 
+        perturbed. Relies on the index map stored in
         ``self.original_result.attacked_text.attack_attrs["original_index_map"]``.
         """
         t1 = self.original_result.attacked_text

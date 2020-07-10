@@ -16,10 +16,10 @@ def _cb(s):
 
 
 class EvalModelCommand(TextAttackCommand):
-    """
-    The TextAttack model benchmarking module:
-    
-        A command line parser to evaluatate a model from user specifications.
+    """The TextAttack model benchmarking module:
+
+    A command line parser to evaluatate a model from user
+    specifications.
     """
 
     def get_preds(self, model, inputs):
