@@ -9,7 +9,8 @@ from textattack.shared import utils
 
 
 class SentenceEncoder(Constraint):
-    """ 
+    """
+    test test test
     Constraint using cosine similarity between sentence encodings of x and 
     x_adv.
         
