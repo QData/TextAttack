@@ -14,7 +14,7 @@ class TrainModelCommand(TextAttackCommand):
 
     def run(self, args):
 
-        date_now = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")
+        date_now = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
         current_dir = os.path.dirname(os.path.realpath(__file__))
         outputs_dir = os.path.join(
             current_dir, os.pardir, os.pardir, os.pardir, "outputs", "training"
