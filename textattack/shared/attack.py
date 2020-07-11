@@ -1,5 +1,5 @@
 from collections import deque
-import os
+# import os
 
 import lru
 import numpy as np
@@ -117,10 +117,10 @@ class Attack:
         self, transformed_texts, current_text, original_text=None
     ):
         """Filters a list of potential transformaed texts based on
-        ``self.constraints``\.
+        ``self.constraints``
 
         Args:
-            transformed_texts: A list of candidate transformed ``AttackedText``\s to filter.
+            transformed_texts: A list of candidate transformed ``AttackedText`` to filter.
             current_text: The current ``AttackedText`` on which the transformation was applied.
             original_text: The original ``AttackedText`` from which the attack started.
         """
@@ -149,10 +149,10 @@ class Attack:
         self, transformed_texts, current_text, original_text=None
     ):
         """Filters a list of potential transformed texts based on
-        ``self.constraints``\. Checks cache first.
+        ``self.constraints`` Checks cache first.
 
         Args:
-            transformed_texts: A list of candidate transformed ``AttackedText``\s to filter.
+            transformed_texts: A list of candidate transformed ``AttackedText`` to filter.
             current_text: The current ``AttackedText`` on which the transformation was applied.
             original_text: The original ``AttackedText`` from which the attack started.
         """

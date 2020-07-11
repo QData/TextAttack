@@ -1,8 +1,8 @@
-import collections
+# import collections
 import re
 
 import textattack
-from textattack.goal_functions import *
+from textattack.goal_functions import TargetedClassification, UntargetedClassification, InputReduction, NonOverlappingOutput
 
 from . import logger
 
@@ -43,7 +43,7 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     except KeyError:
         raise ValueError(f"No entry found for goal function {goal_function_class}.")
     # Get options for this goal function.
-    model_module = model_class.__module__
+    # model_module = model_class.__module__
     model_module_path = ".".join((model_class.__module__, model_class.__name__))
     # Ensure the model matches one of these options.
     for glob in matching_model_globs:

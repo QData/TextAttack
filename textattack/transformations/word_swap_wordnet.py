@@ -13,8 +13,8 @@ class WordSwapWordNet(WordSwap):
         replaced by a homoglyph."""
         synonyms = set()
         for syn in wordnet.synsets(word):
-            for l in syn.lemmas():
-                syn_word = l.name()
+            for lemma in syn.lemmas():
+                syn_word = lemma.name()
                 if (
                     (syn_word != word)
                     and ("_" not in syn_word)

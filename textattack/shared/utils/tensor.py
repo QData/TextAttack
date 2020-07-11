@@ -1,7 +1,7 @@
 import torch
 
 import textattack
-from textattack.shared import utils
+# from textattack.shared import utils
 
 
 def batch_tokenize(tokenizer, attacked_text_list):
@@ -112,7 +112,7 @@ def get_list_dim(ids):
 
 def pad_lists(lists, pad_token=0):
     """Pads lists with trailing zeros to make them all the same length."""
-    max_list_len = max(len(l) for l in lists)
+    max_list_len = max(len(list) for list in lists)
     for i in range(len(lists)):
         lists[i] += [pad_token] * (max_list_len - len(lists[i]))
     return lists

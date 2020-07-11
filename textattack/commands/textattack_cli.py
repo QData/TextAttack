@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
-import os
-import sys
+# import os
+# import sys
 
 from textattack.commands.attack import AttackCommand, AttackResumeCommand
 from textattack.commands.augment import AugmentCommand

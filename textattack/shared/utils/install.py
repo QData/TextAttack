@@ -1,4 +1,4 @@
-import logging
+# import logging
 import logging.config
 import os
 import pathlib
@@ -8,7 +8,7 @@ import zipfile
 
 import filelock
 import requests
-import torch
+# import torch
 import tqdm
 
 # Hide an error message from `tokenizers` if this process is forked.

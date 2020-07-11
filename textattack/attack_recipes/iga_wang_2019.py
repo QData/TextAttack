@@ -1,9 +1,5 @@
-from textattack.constraints.grammaticality.language_models import (
-    Google1BillionWordsLanguageModel,
-)
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
-    RepeatModification,
     StopwordModification,
 )
 from textattack.constraints.semantics import WordEmbeddingDistance

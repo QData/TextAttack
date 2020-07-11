@@ -62,7 +62,7 @@ class GoogleLanguageModel(Constraint):
         for word_swap_index, item_list in word_swap_index_map.items():
             # zip(*some_list) is the inverse operator of zip!
             item_indices, this_transformed_texts = zip(*item_list)
-            t1 = time.time()
+            # t1 = time.time()
             probs_of_swaps_at_index = list(
                 zip(item_indices, get_probs(reference_text, this_transformed_texts))
             )
@@ -73,7 +73,7 @@ class GoogleLanguageModel(Constraint):
                     : self.top_n_per_index
                 ]
             probs.extend(probs_of_swaps_at_index)
-            t2 = time.time()
+            # t2 = time.time()
 
         # Probs is a list of (index, prob) where index is the corresponding
         # position in transformed_texts.

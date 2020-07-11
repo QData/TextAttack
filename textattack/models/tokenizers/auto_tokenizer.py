@@ -1,7 +1,7 @@
-import torch
+# import torch
 import transformers
 
-from textattack.shared import AttackedText
+# from textattack.shared import AttackedText
 
 
 class AutoTokenizer:

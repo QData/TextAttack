@@ -9,7 +9,7 @@ text.
 """
 
 import bert_score
-import nltk
+# import nltk
 
 from textattack.constraints import Constraint
 from textattack.shared import utils

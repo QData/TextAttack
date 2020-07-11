@@ -1,6 +1,6 @@
-from abc import ABC, abstractmethod
 import pickle
 import random
+from abc import ABC
 
 from textattack.shared import utils
 

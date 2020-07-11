@@ -1,8 +1,8 @@
 import random
 import string
 
-import nltk
-from nltk.corpus import stopwords
+# import nltk
+# from nltk.corpus import stopwords
 
 from .transformation import Transformation
 

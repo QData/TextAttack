@@ -9,7 +9,7 @@ class WordDeletion(Transformation):
     """
 
     def _get_transformations(self, current_text, indices_to_modify):
-        words = current_text.words
+        # words = current_text.words
         transformed_texts = []
         if len(current_text.words) > 1:
             for i in indices_to_modify:

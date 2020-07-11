@@ -25,7 +25,7 @@ class QueryHandler:
         """
         try:
             return self.try_query(sentences, swapped_words, batch_size=batch_size)
-        except:
+        except Exception:
             probs = []
             for s, w in zip(sentences, swapped_words):
                 probs.append(self.try_query([s], [w], batch_size=1)[0])

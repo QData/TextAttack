@@ -15,7 +15,7 @@ class PreTransformationConstraint(ABC):
     def __call__(self, current_text, transformation):
         """Returns the word indices in ``current_text`` which are able to be
         modified. First checks compatibility with ``transformation`` then calls
-        ``_get_modifiable_indices``\.
+        ``_get_modifiable_indices``
 
         Args:
             current_text: The ``AttackedText`` input to consider.

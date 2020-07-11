@@ -308,7 +308,7 @@ class AttackedText:
                         pass
                 new_attack_attrs["modified_indices"] = shifted_modified_indices
                 # Track insertions and deletions wrt original text.
-                original_modification_idx = i
+                # original_modification_idx = i
                 new_idx_map = new_attack_attrs["original_index_map"].copy()
                 if num_words_diff == -1:
                     new_idx_map[new_idx_map == i] = -1
@@ -400,11 +400,11 @@ class AttackedText:
         # color the key.
         else:
             if key_color_method:
-                ck = lambda k: textattack.shared.utils.color_text(
-                    k, key_color, key_color_method
-                )
+                def ck(k):
+                    return textattack.shared.utils.color_text(k, key_color, key_color_method)
             else:
-                ck = lambda k: k
+                def ck(k):
+                    return k
             return "\n".join(
                 f"{ck(key.capitalize())}: {value}"
                 for key, value in self._text_input.items()

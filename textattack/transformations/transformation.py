@@ -20,7 +20,7 @@ class Transformation(ABC):
 
         Args:
             current_text: The ``AttackedText`` to transform.
-            pre_transformation_constraints: The ``PreTransformationConstraint``\s to apply before
+            pre_transformation_constraints: The ``PreTransformationConstraint`` to apply before
                 beginning the transformation.
             indices_to_modify: Which word indices should be modified as dictated by the
                 ``SearchMethod``.

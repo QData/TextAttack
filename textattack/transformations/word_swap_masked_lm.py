@@ -1,6 +1,6 @@
 import itertools
 
-import numpy as np
+# import numpy as np
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
@@ -87,7 +87,7 @@ class WordSwapMaskedLM(WordSwap):
 
         mask_token_probs = preds[0, masked_index]
         topk = torch.topk(mask_token_probs, self.max_candidates)
-        top_logits = topk[0].tolist()
+        # top_logits = topk[0].tolist()
         top_ids = topk[1].tolist()
 
         replacement_words = []
@@ -181,7 +181,7 @@ class WordSwapMaskedLM(WordSwap):
             raise ValueError(f"Unrecognized value {self.method} for `self.method`.")
 
     def _get_transformations(self, current_text, indices_to_modify):
-        extra_args = {}
+        # extra_args = {}
         if self.method == "bert-attack":
             current_inputs = self._encode_text(current_text.text)
             with torch.no_grad():

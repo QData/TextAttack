@@ -5,7 +5,7 @@ import nlp
 
 import textattack
 from textattack.datasets import TextAttackDataset
-from textattack.shared import AttackedText
+# from textattack.shared import AttackedText
 
 
 def _cb(s):
@@ -60,7 +60,7 @@ class HuggingFaceNlpDataset(TextAttackDataset):
       provided in the ``nlp`` version of the dataset.
     - output_scale_factor (float): Factor to divide ground-truth outputs by.
         Generally, TextAttack goal functions require model outputs
-        between 0 and 1. Some datasets test the model's \*correlation\*
+        between 0 and 1. Some datasets test the model's correlation
         with ground-truth output, instead of its accuracy, so these
         outputs may be scaled arbitrarily.
     - shuffle (bool): Whether to shuffle the dataset on load.

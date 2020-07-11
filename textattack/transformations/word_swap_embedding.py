@@ -17,7 +17,7 @@ class WordSwapEmbedding(WordSwap):
         self.max_candidates = max_candidates
         self.embedding_type = embedding_type
         if embedding_type == "paragramcf":
-            word_embeddings_folder = "paragramcf"
+            # word_embeddings_folder = "paragramcf"
             word_embeddings_file = "paragram.npy"
             word_list_file = "wordlist.pickle"
             nn_matrix_file = "nn.npy"

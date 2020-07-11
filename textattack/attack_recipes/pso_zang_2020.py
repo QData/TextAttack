@@ -6,7 +6,7 @@ from textattack.constraints.pre_transformation import (
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import ParticleSwarmOptimization
 from textattack.shared.attack import Attack
-from textattack.transformations import WordSwapEmbedding, WordSwapHowNet
+from textattack.transformations import WordSwapHowNet
 
 
 def PSOZang2020(model):

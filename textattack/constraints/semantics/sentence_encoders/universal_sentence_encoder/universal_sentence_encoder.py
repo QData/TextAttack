@@ -1,6 +1,6 @@
-import os
+# import os
 
-import tensorflow as tf
+# import tensorflow as tf
 import tensorflow_hub as hub
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder

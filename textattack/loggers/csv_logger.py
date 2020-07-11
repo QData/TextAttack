@@ -1,10 +1,10 @@
 import csv
-import os
-import sys
+# import os
+# import sys
 
 import pandas as pd
 
-from textattack.attack_results import FailedAttackResult
+# from textattack.attack_results import FailedAttackResult
 from textattack.shared import logger
 
 from .logger import Logger

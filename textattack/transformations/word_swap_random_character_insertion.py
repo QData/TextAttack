@@ -1,6 +1,6 @@
 import numpy as np
 
-from textattack.shared import utils
+# from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 

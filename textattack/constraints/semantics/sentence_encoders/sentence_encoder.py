@@ -1,5 +1,5 @@
 import math
-import os
+# import os
 
 import numpy as np
 import torch
@@ -67,7 +67,7 @@ class SentenceEncoder(Constraint):
 
         Args:
             starting_text: The ``AttackedText``to use as a starting point.
-            transformed_text: A transformed ``AttackedText``\.
+            transformed_text: A transformed ``AttackedText``
 
         Returns:
             The similarity between the starting and transformed text using the metric.
@@ -106,7 +106,7 @@ class SentenceEncoder(Constraint):
 
         Args:
             starting_text: The ``AttackedText``to use as a starting point.
-            transformed_texts: A list of transformed ``AttackedText``\s.
+            transformed_texts: A list of transformed ``AttackedText``
 
         Returns:
             A list with the similarity between the ``starting_text`` and each of

@@ -1,4 +1,4 @@
-import numpy as np
+# import numpy as np
 
 from textattack.shared import utils
 from textattack.transformations.transformation import Transformation
@@ -9,7 +9,7 @@ class CompositeTransformation(Transformation):
     returning a set of all optoins.
 
     Args:
-        transformations: The list of ``Transformation``\s to apply.
+        transformations: The list of ``Transformation`` to apply.
     """
 
     def __init__(self, transformations):

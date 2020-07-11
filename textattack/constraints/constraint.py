@@ -21,7 +21,7 @@ class Constraint(ABC):
     def call_many(self, transformed_texts, reference_text):
         """Filters ``transformed_texts`` based on which transformations fulfill
         the constraint. First checks compatibility with latest
-        ``Transformation``, then calls ``_check_constraint_many``\.
+        ``Transformation``, then calls ``_check_constraint_many``
 
         Args:
             transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``'s.
@@ -48,10 +48,10 @@ class Constraint(ABC):
 
     def _check_constraint_many(self, transformed_texts, reference_text):
         """Filters ``transformed_texts`` based on which transformations fulfill
-        the constraint. Calls ``check_constraint``\.
+        the constraint. Calls ``check_constraint``
 
         Args:
-            transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``\s.
+            transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``
             reference_texts (AttackedText): The ``AttackedText`` to compare against.
         """
         return [
@@ -63,7 +63,7 @@ class Constraint(ABC):
     def __call__(self, transformed_text, reference_text):
         """Returns True if the constraint is fulfilled, False otherwise. First
         checks compatibility with latest ``Transformation``, then calls
-        ``_check_constraint``\.
+        ``_check_constraint``
 
         Args:
             transformed_text (AttackedText): The candidate transformed ``AttackedText``.
