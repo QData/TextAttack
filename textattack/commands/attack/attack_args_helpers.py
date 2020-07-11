@@ -3,17 +3,17 @@ import copy
 import importlib
 import json
 import os
-import pickle
-import random
-import sys
+# import pickle
+# import random
+# import sys
 import time
 
-import numpy as np
-import torch
+# import numpy as np
+# import torch
 
 import textattack
 
-from .attack_args import *
+from .attack_args import HUGGINGFACE_DATASET_BY_MODEL, TEXTATTACK_DATASET_BY_MODEL, WHITE_BOX_TRANSFORMATION_CLASS_NAMES,BLACK_BOX_TRANSFORMATION_CLASS_NAMES, GOAL_FUNCTION_CLASS_NAMES, CONSTRAINT_CLASS_NAMES, ATTACK_RECIPE_NAMES, SEARCH_METHOD_CLASS_NAMES
 
 
 def add_model_args(parser):
@@ -252,7 +252,7 @@ def parse_model_from_args(args):
             )
         try:
             model_module = load_module_from_file(args.model_from_file)
-        except:
+        except Exception:
             raise ValueError(f"Failed to import file {args.model_from_file}")
         try:
             model = getattr(model_module, model_name)
@@ -378,7 +378,7 @@ def parse_dataset_from_args(args):
             dataset_file, dataset_name = args.dataset_from_file, "dataset"
         try:
             dataset_module = load_module_from_file(dataset_file)
-        except:
+        except Exception:
             raise ValueError(
                 f"Failed to import dataset from file {args.dataset_from_file}"
             )

@@ -1,4 +1,4 @@
-import textattack
+# import textattack
 
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",

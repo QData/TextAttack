@@ -9,7 +9,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helpers import *
+from .attack_args_helpers import parse_attack_from_args, parse_logger_from_args, parse_dataset_from_args
 
 logger = textattack.shared.logger
 
@@ -70,7 +70,7 @@ def run(args, checkpoint=None):
     # We could do the same thing with the model, but it's actually faster
     # to let each thread have their own copy of the model.
     args = torch.multiprocessing.Manager().Namespace(**vars(args))
-    start_time = time.time()
+    # start_time = time.time()
 
     if args.checkpoint_resume:
         attack_log_manager = checkpoint.log_manager
@@ -96,9 +96,7 @@ def run(args, checkpoint=None):
         in_queue.put((i, text, output))
 
     # Start workers.
-    pool = torch.multiprocessing.Pool(
-        num_gpus, attack_from_queue, (args, in_queue, out_queue)
-    )
+    # pool = torch.multiprocessing.Pool(num_gpus, attack_from_queue, (args, in_queue, out_queue))
     # Log results asynchronously and update progress bar.
     if args.checkpoint_resume:
         num_results = checkpoint.results_count
@@ -168,7 +166,7 @@ def run(args, checkpoint=None):
     attack_log_manager.log_summary()
     attack_log_manager.flush()
     print()
-    finish_time = time.time()
+    # finish_time = time.time()
     textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
     return attack_log_manager.results

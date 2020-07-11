@@ -2,8 +2,8 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.commands.attack.attack_args import *
-from textattack.commands.attack.attack_args_helpers import *
+from textattack.commands.attack.attack_args import BLACK_BOX_TRANSFORMATION_CLASS_NAMES, WHITE_BOX_TRANSFORMATION_CLASS_NAMES, CONSTRAINT_CLASS_NAMES, GOAL_FUNCTION_CLASS_NAMES, SEARCH_METHOD_CLASS_NAMES, ATTACK_RECIPE_NAMES
+from textattack.commands.attack.attack_args_helpers import add_model_args, add_dataset_args, default_checkpoint_dir
 
 
 class AttackCommand(TextAttackCommand):
