@@ -6,12 +6,11 @@ import time
 import numpy as np
 import scipy
 import torch
-from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampler
 import tqdm
 import transformers
+from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
 import textattack
-
 from .train_args_helpers import (
     augmenter_from_args,
     dataset_from_args,
@@ -110,7 +109,7 @@ def train_model(args):
         eval_text = flat_aug_eval_text
         eval_labels = flat_aug_eval_labels
 
-    label_id_len = len(train_labels)
+    # label_id_len = len(train_labels)
     label_set = set(train_labels)
     args.num_labels = len(label_set)
     logger.info(
@@ -158,7 +157,8 @@ def train_model(args):
     )
 
     if args.model == "lstm" or args.model == "cnn":
-        need_grad = lambda x: x.requires_grad
+        def need_grad(x):
+            return x.requires_grad
         optimizer = torch.optim.Adam(
             filter(need_grad, model.parameters()), lr=args.learning_rate
         )
@@ -240,7 +240,7 @@ def train_model(args):
     def get_eval_score():
         model.eval()
         correct = 0
-        total = 0
+        # total = 0
         logits = []
         labels = []
         for input_ids, batch_labels in eval_dataloader:

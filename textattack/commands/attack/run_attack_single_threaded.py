@@ -1,7 +1,7 @@
 """A command line parser to run an attack from user specifications."""
 
 from collections import deque
-import datetime
+# import datetime
 import os
 import time
 
@@ -9,7 +9,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helpers import *
+from .attack_args_helpers import parse_attack_from_args, parse_logger_from_args, parse_dataset_from_args
 
 logger = textattack.shared.logger
 
@@ -137,7 +137,7 @@ def run(args, checkpoint=None):
         attack_log_manager.log_summary()
         attack_log_manager.flush()
         print()
-        finish_time = time.time()
+        # finish_time = time.time()
         textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
         return attack_log_manager.results

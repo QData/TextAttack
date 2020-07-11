@@ -12,9 +12,9 @@ class RandomSynonymInsertion(Transformation):
     def _get_synonyms(self, word):
         synonyms = set()
         for syn in wordnet.synsets(word):
-            for l in syn.lemmas():
-                if l.name() != word and check_if_one_word(l.name()):
-                    synonyms.add(l.name())
+            for lemma in syn.lemmas():
+                if lemma.name() != word and check_if_one_word(lemma.name()):
+                    synonyms.add(lemma.name())
         return list(synonyms)
 
     def _get_transformations(self, current_text, indices_to_modify):

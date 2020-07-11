@@ -126,7 +126,7 @@ class ParticleSwarmOptimization(SearchMethod):
             try:
                 diff_idx = attacked_text.first_word_diff_index(transformed_text)
                 neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
-            except:
+            except Exception:
                 assert len(attacked_text.words) == len(transformed_text.words)
                 assert all(
                     [

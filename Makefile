@@ -7,6 +7,8 @@ lint: FORCE  ## Run black, isort, flake8 (in check mode)
 	black . --check
 	isort --check-only tests textattack
 	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=./.*,build,dist # catch certain syntax errors using flake8
+	##### flake8 . --count --ignore=C901,E501,W503,E203,E231,E266 --show-source --statistics --exclude=./.*,build,dist #####
+
 
 test: FORCE ## Run tests using pytest
 	python -m pytest --dist=loadfile -n auto

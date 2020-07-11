@@ -5,7 +5,7 @@ al `<arxiv.org/abs/1804.07998>`_
 `<github.com/nesl/nlp_adversarial_examples>`_
 """
 
-from copy import deepcopy
+# from copy import deepcopy
 
 import numpy as np
 import torch
