@@ -312,6 +312,7 @@ BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     "word-swap-random-char-substitution": "textattack.transformations.WordSwapRandomCharacterSubstitution",
     "word-swap-wordnet": "textattack.transformations.WordSwapWordNet",
     "word-swap-masked-lm": "textattack.transformations.WordSwapMaskedLM",
+    "word-swap-hownet": "textattack.transformations.WordSwapHowNet",
 }
 
 WHITE_BOX_TRANSFORMATION_CLASS_NAMES = {
