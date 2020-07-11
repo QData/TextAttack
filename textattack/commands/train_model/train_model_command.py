@@ -51,8 +51,8 @@ class TrainModelCommand(TextAttackCommand):
         parser.add_argument(
             "--pct-dataset",
             type=float,
-            default=1.,
-            help="Fraction of dataset to use during training ([0., 1.])"
+            default=1.0,
+            help="Fraction of dataset to use during training ([0., 1.])",
         )
         parser.add_argument(
             "--dataset-train-split",
@@ -84,7 +84,7 @@ class TrainModelCommand(TextAttackCommand):
             help="save model after this many steps (-1 for no checkpointing)",
         )
         parser.add_argument(
-            "--checkpoint-every_epoch",
+            "--checkpoint-every-epoch",
             action="store_true",
             default=False,
             help="save model checkpoint after each epoch",
@@ -97,7 +97,10 @@ class TrainModelCommand(TextAttackCommand):
             help="Total number of epochs to train for",
         )
         parser.add_argument(
-            "--attack", type=str, default=None, help="Attack recipe to use (enables adversarial training)"
+            "--attack",
+            type=str,
+            default=None,
+            help="Attack recipe to use (enables adversarial training)",
         )
         parser.add_argument(
             "--augment", type=str, default=None, help="Augmentation recipe to use",

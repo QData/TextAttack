@@ -1,8 +1,8 @@
 import os
 
 import textattack
-from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 from textattack.commands.attack.attack_args import ATTACK_RECIPE_NAMES
+from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 
 logger = textattack.shared.logger
 
@@ -131,6 +131,7 @@ def model_from_args(train_args, num_labels, model_path=None):
     model = model.to(textattack.shared.utils.device)
 
     return model
+
 
 def attack_from_args(args):
     # note that this returns a recipe type, not an object

@@ -3,7 +3,7 @@ import random
 import tqdm
 
 from textattack.constraints import PreTransformationConstraint
-from textattack.shared import AttackedText
+from textattack.shared import AttackedText, utils
 
 
 class Augmenter:
@@ -75,7 +75,9 @@ class Augmenter:
         attacked_text = AttackedText(text)
         original_text = attacked_text
         all_transformed_texts = set()
-        num_words_to_swap = max(int(self.pct_words_to_swap * len(attacked_text.words)), 1)
+        num_words_to_swap = max(
+            int(self.pct_words_to_swap * len(attacked_text.words)), 1
+        )
         for _ in range(self.transformations_per_example):
             index_order = list(range(len(attacked_text.words)))
             random.shuffle(index_order)
@@ -139,4 +141,20 @@ class Augmenter:
         return all_text_list, all_id_list
 
     def __repr__(self):
-        return type(self).__name__
+        main_str = "Augmenter" + "("
+        lines = []
+        # self.transformation
+        lines.append(utils.add_indent(f"(transformation):  {self.transformation}", 2))
+        # self.constraints
+        constraints_lines = []
+        constraints = self.constraints + self.pre_transformation_constraints
+        if len(constraints):
+            for i, constraint in enumerate(constraints):
+                constraints_lines.append(utils.add_indent(f"({i}): {constraint}", 2))
+            constraints_str = utils.add_indent("\n" + "\n".join(constraints_lines), 2)
+        else:
+            constraints_str = "None"
+        lines.append(utils.add_indent(f"(constraints): {constraints_str}", 2))
+        main_str += "\n  " + "\n  ".join(lines) + "\n"
+        main_str += ")"
+        return main_str

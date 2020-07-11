@@ -1,8 +1,8 @@
 import json
 import logging
+import math
 import os
 import time
-import math
 
 import numpy as np
 import scipy
@@ -14,50 +14,91 @@ import transformers
 import textattack
 
 from .train_args_helpers import (
+    attack_from_args,
     augmenter_from_args,
     dataset_from_args,
     model_from_args,
-    attack_from_args,
     write_readme,
 )
 
 device = textattack.shared.utils.device
 logger = textattack.shared.logger
 
-def save_args(args, save_path):
-    # Save args to file
-    final_args_dict = {k: v for k, v in vars(args).items() if is_writable_type(v)}
+
+def _save_args(args, save_path):
+    """
+    Dump args dictionary to a json
+
+    :param: args. Dictionary of arguments to save.
+    :save_path: Path to json file to write args to.
+    """
+    final_args_dict = {k: v for k, v in vars(args).items() if _is_writable_type(v)}
     with open(save_path, "w", encoding="utf-8") as f:
         f.write(json.dumps(final_args_dict, indent=2) + "\n")
 
-def get_sample_count(*lsts):
+
+def _get_sample_count(*lsts):
+    """
+    Get sample count of a dataset.
+
+    :param *lsts: variable number of lists.
+    :return: sample count of this dataset, if all lists match, else None.
+    """
     if all(len(lst) == len(lsts[0]) for lst in lsts):
         sample_count = len(lsts[0])
     else:
         sample_count = None
     return sample_count
 
-def random_shuffle(*lsts):
+
+def _random_shuffle(*lsts):
+    """
+    Randomly shuffle a dataset. Applies the same permutation
+    to each list (to preserve mapping between inputs and targets).
+
+    :param *lsts: variable number of lists to shuffle.
+    :return: shuffled lsts.
+    """
     permutation = np.random.permutation(len(lsts[0]))
     shuffled = []
     for lst in lsts:
         shuffled.append((np.array(lst)[permutation]).tolist())
     return tuple(shuffled)
 
-def train_val_split(*arrays, split_val=.2):
-    sample_count = get_sample_count(*arrays)
+
+def _train_val_split(*lsts, split_val=0.2):
+    """
+    Split dataset into training and validation sets.
+
+    :param *lsts: variable number of lists that make up a dataset (e.g. text, labels)
+    :param split_val: float [0., 1.). Fraction of the dataset to reserve for evaluation.
+    :return: (train split of list for list in lsts), (val split of list for list in lsts)
+    """
+    sample_count = _get_sample_count(*lsts)
     if not sample_count:
-        raise Exception("Batch Axis inconsistent. All input arrays must have first axis of equal length.")
-    arrays = random_shuffle(*arrays)
+        raise Exception(
+            "Batch Axis inconsistent. All input arrays must have first axis of equal length."
+        )
+    lsts = _random_shuffle(*lsts)
     split_idx = math.floor(sample_count * split_val)
-    train_set = [array[split_idx:] for array in arrays]
-    val_set = [array[:split_idx] for array in arrays]
+    train_set = [lst[split_idx:] for lst in lsts]
+    val_set = [lst[:split_idx] for lst in lsts]
     if len(train_set) == 1 and len(val_set) == 1:
         train_set = train_set[0]
         val_set = val_set[0]
     return train_set, val_set
 
-def filter_labels(text, labels, allowed_labels):
+
+def _filter_labels(text, labels, allowed_labels):
+    """
+    Keep examples with approved labels
+
+    :param text: list of text inputs.
+    :param labels: list of corresponding labels.
+    :param allowed_labels: list of approved label values.
+
+    :return: (final_text, final_labels). Filtered version of text and labels
+    """
     final_text, final_labels = [], []
     for text, label in zip(text, labels):
         if label in allowed_labels:
@@ -65,7 +106,15 @@ def filter_labels(text, labels, allowed_labels):
             final_labels.append(label)
     return final_text, final_labels
 
-def save_model_checkpoint(model, output_dir, global_step):
+
+def _save_model_checkpoint(model, output_dir, global_step):
+    """
+    Save model checkpoint to disk.
+
+    :param model: Model to save (pytorch)
+    :param output_dir: Path to model save dir.
+    :param global_step: Current global training step #. Used in ckpt filename.
+    """
     # Save model checkpoint
     output_dir = os.path.join(output_dir, "checkpoint-{}".format(global_step))
     if not os.path.exists(output_dir):
@@ -73,10 +122,18 @@ def save_model_checkpoint(model, output_dir, global_step):
     # Take care of distributed/parallel training
     model_to_save = model.module if hasattr(model, "module") else model
     model_to_save.save_pretrained(output_dir)
-    torch.save(args, os.path.join(output_dir, "training_args.bin"))
 
-def save_model(model, output_dir, weights_name, config_name):
-    model_to_save = (model.module if hasattr(model, "module") else model)
+
+def _save_model(model, output_dir, weights_name, config_name):
+    """
+    Save model to disk.
+
+    :param model: Model to save (pytorch)
+    :param output_dir: Path to model save dir.
+    :param weights_name: filename for model parameters.
+    :param config_name: filename for config.
+    """
+    model_to_save = model.module if hasattr(model, "module") else model
 
     # If we save using the predefined names, we can load using `from_pretrained`
     output_model_file = os.path.join(output_dir, weights_name)
@@ -89,7 +146,17 @@ def save_model(model, output_dir, weights_name, config_name):
         # no config
         pass
 
-def get_eval_score(model, eval_dataloader, do_regression):
+
+def _get_eval_score(model, eval_dataloader, do_regression):
+    """
+    Measure performance of a model on the evaluation set.
+
+    :param model: Model to test.
+    :param eval_dataloader: a torch DataLoader that iterates through the eval set.
+    :param do_regression: bool. Whether we are doing regression (True) or classification (False)
+    
+    :return: pearson correlation, if do_regression==True, else classification accuracy [0., 1.]
+    """
     model.eval()
     correct = 0
     total = 0
@@ -120,15 +187,18 @@ def get_eval_score(model, eval_dataloader, do_regression):
         correct = (preds == labels).sum()
         return float(correct) / len(labels)
 
-def make_directories(output_dir):
+
+def _make_directories(output_dir):
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-def is_writable_type(obj):
+
+def _is_writable_type(obj):
     for ok_type in [bool, int, str, float]:
         if isinstance(obj, ok_type):
             return True
     return False
+
 
 def batch_encode(tokenizer, text_list):
     if hasattr(tokenizer, "batch_encode"):
@@ -136,7 +206,17 @@ def batch_encode(tokenizer, text_list):
     else:
         return [tokenizer.encode(text_input) for text_input in text_list]
 
-def make_dataloader(tokenizer, text, labels, batch_size):
+
+def _make_dataloader(tokenizer, text, labels, batch_size):
+    """
+    Create torch DataLoader from list of input text and labels.
+
+    :param tokenizer: Tokenizer to use for this text.
+    :param text: list of input text.
+    :param labels: list of corresponding labels.
+    :param batch_size: batch size (int).
+    :return: torch DataLoader for this training set.
+    """
     text_ids = batch_encode(tokenizer, text)
     input_ids = np.array(text_ids)
     labels = np.array(labels)
@@ -145,7 +225,17 @@ def make_dataloader(tokenizer, text, labels, batch_size):
     dataloader = DataLoader(data, sampler=sampler, batch_size=batch_size)
     return dataloader
 
-def data_augmentation(text, labels, augmenter):
+
+def _data_augmentation(text, labels, augmenter):
+    """
+    Use an augmentation method to expand a training set.
+
+    :param text: list of input text.
+    :param labels: list of corresponding labels.
+    :param augmenter: textattack.augmentation.Augmenter, augmentation scheme.
+
+    :return: augmented_text, augmented_labels. list of (augmented) input text and labels.
+    """
     aug_text = augmenter.augment_many(text)
     # flatten augmented examples and duplicate labels
     flat_aug_text = []
@@ -156,19 +246,32 @@ def data_augmentation(text, labels, augmenter):
             flat_aug_labels.append(labels[i])
     return flat_aug_text, flat_aug_labels
 
-def attack_model(model, attack_t, dataset):
-    attack = attack_t(model)
+
+def _generate_adversarial_examples(model, attackCls, dataset):
+    """
+    Create a dataset of adversarial examples based on perturbations of the existing dataset.
+
+    :param model: Model to attack.
+    :param attackCls: class name of attack recipe to run.
+    :param dataset: iterable of (text, label) pairs.
+
+    :return: list of adversarial examples.
+    """
+    attack = attackCls(model)
     adv_train_text = []
-    for adv_ex in tqdm.tqdm(attack.attack_dataset(dataset), desc="Attack", total=len(dataset)):
+    for adv_ex in tqdm.tqdm(
+        attack.attack_dataset(dataset), desc="Attack", total=len(dataset)
+    ):
         adv_train_text.append(adv_ex.perturbed_text())
     return adv_train_text
+
 
 def train_model(args):
     logger.warn(
         "WARNING: TextAttack's model training feature is in beta. Please report any issues on our Github page, https://github.com/QData/TextAttack/issues."
     )
     start_time = time.time()
-    make_directories(args.output_dir)
+    _make_directories(args.output_dir)
 
     num_gpus = torch.cuda.device_count()
 
@@ -183,6 +286,7 @@ def train_model(args):
     if args.enable_wandb:
         global wandb
         import wandb
+
         wandb.init(sync_tensorboard=True)
 
     # Get list of text and list of label (integers) from disk.
@@ -190,24 +294,34 @@ def train_model(args):
 
     # Filter labels
     if args.allowed_labels:
-        train_text, train_labels = filter_labels(train_text, train_labels, args.allowed_labels)
-        eval_text, eval_labels = filter_labels(eval_text, eval_labels, args.allowed_labels)
-    
-    if args.pct_dataset < 1.:
+        train_text, train_labels = _filter_labels(
+            train_text, train_labels, args.allowed_labels
+        )
+        eval_text, eval_labels = _filter_labels(
+            eval_text, eval_labels, args.allowed_labels
+        )
+
+    if args.pct_dataset < 1.0:
         logger.info(f"Using {args.pct_dataset*100}% of the training set")
-        (train_text, train_labels), _ = train_val_split(train_text, train_labels, split_val=1.-args.pct_dataset)
+        (train_text, train_labels), _ = _train_val_split(
+            train_text, train_labels, split_val=1.0 - args.pct_dataset
+        )
     train_examples_len = len(train_text)
 
     # data augmentation
     augmenter = augmenter_from_args(args)
     if augmenter:
         logger.info(f"Augmenting {len(train_text)} samples with {augmenter}")
-        train_text, train_labels = data_augmentation(train_text, train_labels, augmenter)
+        train_text, train_labels = _data_augmentation(
+            train_text, train_labels, augmenter
+        )
 
     label_id_len = len(train_labels)
     label_set = set(train_labels)
     args.num_labels = len(label_set)
-    logger.info(f"Loaded dataset. Found: {args.num_labels} labels: ({sorted(label_set)})")
+    logger.info(
+        f"Loaded dataset. Found: {args.num_labels} labels: ({sorted(label_set)})"
+    )
 
     if isinstance(train_labels[0], float):
         # TODO come up with a more sophisticated scheme for knowing when to do regression
@@ -217,11 +331,14 @@ def train_model(args):
     else:
         args.do_regression = False
 
-
     if len(train_labels) != len(train_text):
-        raise ValueError(f"Number of train examples ({len(train_text)}) does not match number of labels ({len(train_labels)})")
+        raise ValueError(
+            f"Number of train examples ({len(train_text)}) does not match number of labels ({len(train_labels)})"
+        )
     if len(eval_labels) != len(eval_text):
-        raise ValueError(f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_labels)})")
+        raise ValueError(
+            f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_labels)})"
+        )
 
     model = model_from_args(args, args.num_labels)
     tokenizer = model.tokenizer
@@ -250,11 +367,23 @@ def train_model(args):
         param_optimizer = list(model.named_parameters())
         no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
         optimizer_grouped_parameters = [
-                {"params": [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)], "weight_decay": 0.01,},
-                {"params": [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], "weight_decay": 0.0,},
-            ]
+            {
+                "params": [
+                    p for n, p in param_optimizer if not any(nd in n for nd in no_decay)
+                ],
+                "weight_decay": 0.01,
+            },
+            {
+                "params": [
+                    p for n, p in param_optimizer if any(nd in n for nd in no_decay)
+                ],
+                "weight_decay": 0.0,
+            },
+        ]
 
-        optimizer = transformers.optimization.AdamW(optimizer_grouped_parameters, lr=args.learning_rate)
+        optimizer = transformers.optimization.AdamW(
+            optimizer_grouped_parameters, lr=args.learning_rate
+        )
 
         scheduler = transformers.optimization.get_linear_schedule_with_warmup(
             optimizer,
@@ -269,10 +398,12 @@ def train_model(args):
 
     # Save original args to file
     args_save_path = os.path.join(args.output_dir, "train_args.json")
-    save_args(args, args_save_path)
+    _save_args(args, args_save_path)
     logger.info(f"Wrote original training args to {args_save_path}.")
 
-    tb_writer.add_hparams({k: v for k, v in vars(args).items() if is_writable_type(v)}, {})
+    tb_writer.add_hparams(
+        {k: v for k, v in vars(args).items() if _is_writable_type(v)}, {}
+    )
 
     # Start training
     logger.info("***** Running training *****")
@@ -287,12 +418,16 @@ def train_model(args):
     logger.info(f"\tNum epochs = {args.num_train_epochs}")
     logger.info(f"\tLearning rate = {args.learning_rate}")
 
-    eval_dataloader = make_dataloader(tokenizer, eval_text, eval_labels, args.batch_size)
-    train_dataloader = make_dataloader(tokenizer, train_text, train_labels, args.batch_size)
-        
+    eval_dataloader = _make_dataloader(
+        tokenizer, eval_text, eval_labels, args.batch_size
+    )
+    train_dataloader = _make_dataloader(
+        tokenizer, train_text, train_labels, args.batch_size
+    )
+
     global_step = 0
     tr_loss = 0
-    
+
     model.train()
     args.best_eval_score = 0
     args.best_eval_score_epoch = 0
@@ -312,11 +447,17 @@ def train_model(args):
     else:
         loss_fct = torch.nn.CrossEntropyLoss()
 
-    for epoch in tqdm.trange(int(args.num_train_epochs), desc="Epoch", position=0, leave=False):
+    for epoch in tqdm.trange(
+        int(args.num_train_epochs), desc="Epoch", position=0, leave=False
+    ):
         if attack_t and epoch > 0:
             logger.info("Attacking model to generate new training set...")
-            adv_train_text = attack_model(model, attack_t, list(zip(train_text, train_labels)))
-            train_dataloader = make_dataloader(tokenizer, adv_train_text, train_labels, args.batch_size)
+            adv_train_text = _generate_adversarial_examples(
+                model, attack_t, list(zip(train_text, train_labels))
+            )
+            train_dataloader = _make_dataloader(
+                tokenizer, adv_train_text, train_labels, args.batch_size
+            )
 
         prog_bar = tqdm.tqdm(
             train_dataloader, desc="Iteration", position=1, leave=False
@@ -327,7 +468,9 @@ def train_model(args):
             if isinstance(input_ids, dict):
                 ## HACK: dataloader collates dict backwards. This is a temporary
                 # workaround to get ids in the right shape
-                input_ids = {k: torch.stack(v).T.to(device) for k, v in input_ids.items()}
+                input_ids = {
+                    k: torch.stack(v).T.to(device) for k, v in input_ids.items()
+                }
 
             logits = textattack.shared.utils.model_predict(model, input_ids)
 
@@ -358,17 +501,17 @@ def train_model(args):
                 and (args.checkpoint_steps > 0)
                 and (global_step % args.checkpoint_steps) == 0
             ):
-                save_model_checkpoint(model, args.output_dir, global_step)
+                _save_model_checkpoint(model, args.output_dir, global_step)
 
             # Inc step counter.
             global_step += 1
 
         # Check accuracy after each epoch.
-        eval_score = get_eval_score(model, eval_dataloader, args.do_regression)
+        eval_score = _get_eval_score(model, eval_dataloader, args.do_regression)
         tb_writer.add_scalar("epoch_eval_score", eval_score, global_step)
 
         if args.checkpoint_every_epoch:
-            save_model_checkpoint(model, args.output_dir, args.global_step)
+            _save_model_checkpoint(model, args.output_dir, args.global_step)
 
         logger.info(
             f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
@@ -377,9 +520,9 @@ def train_model(args):
             args.best_eval_score = eval_score
             args.best_eval_score_epoch = epoch
             args.epochs_since_best_eval_score = 0
-            save_model(model, args.output_dir, args.weights_name, args.config_name)
+            _save_model(model, args.output_dir, args.weights_name, args.config_name)
             logger.info(f"Best acc found. Saved model to {args.output_dir}.")
-            save_args(args, args_save_path)
+            _save_args(args, args_save_path)
             logger.info(f"Saved updated args to {args_save_path}")
         else:
             args.epochs_since_best_eval_score += 1
@@ -395,7 +538,7 @@ def train_model(args):
     logger.info("Finished training. Re-loading and evaluating model from disk.")
     model = model_from_args(args, args.num_labels)
     model.load_state_dict(torch.load(os.path.join(args.output_dir, args.weights_name)))
-    eval_score = get_eval_score(model, eval_dataloader, args.do_regression)
+    eval_score = _get_eval_score(model, eval_dataloader, args.do_regression)
     logger.info(
         f"Eval of saved model {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
     )
@@ -412,5 +555,5 @@ def train_model(args):
     # Save a little readme with model info
     write_readme(args, args.best_eval_score, args.best_eval_score_epoch)
 
-    save_args(args, args_save_path)
+    _save_args(args, args_save_path)
     logger.info(f"Wrote final training args to {args_save_path}.")
