@@ -2,7 +2,12 @@
 import re
 
 import textattack
-from textattack.goal_functions import TargetedClassification, UntargetedClassification, InputReduction, NonOverlappingOutput
+from textattack.goal_functions import (
+    TargetedClassification,
+    UntargetedClassification,
+    InputReduction,
+    NonOverlappingOutput,
+)
 
 from . import logger
 

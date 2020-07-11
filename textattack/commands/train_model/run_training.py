@@ -157,8 +157,10 @@ def train_model(args):
     )
 
     if args.model == "lstm" or args.model == "cnn":
+
         def need_grad(x):
             return x.requires_grad
+
         optimizer = torch.optim.Adam(
             filter(need_grad, model.parameters()), lr=args.learning_rate
         )

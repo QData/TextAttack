@@ -400,11 +400,17 @@ class AttackedText:
         # color the key.
         else:
             if key_color_method:
+
                 def ck(k):
-                    return textattack.shared.utils.color_text(k, key_color, key_color_method)
+                    return textattack.shared.utils.color_text(
+                        k, key_color, key_color_method
+                    )
+
             else:
+
                 def ck(k):
                     return k
+
             return "\n".join(
                 f"{ck(key.capitalize())}: {value}"
                 for key, value in self._text_input.items()

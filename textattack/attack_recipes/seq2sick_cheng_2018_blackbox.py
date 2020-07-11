@@ -3,6 +3,7 @@ from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
+
 # from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import NonOverlappingOutput
 from textattack.search_methods import GreedyWordSwapWIR

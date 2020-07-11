@@ -1,7 +1,5 @@
 from textattack.constraints.overlap import MaxWordsPerturbed
-from textattack.constraints.pre_transformation import (
-    StopwordModification,
-)
+from textattack.constraints.pre_transformation import StopwordModification
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm

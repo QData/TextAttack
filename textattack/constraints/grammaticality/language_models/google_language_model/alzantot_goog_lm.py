@@ -3,6 +3,7 @@
     All rights reserved.
 """
 import os
+
 # import sys
 
 # from google.protobuf import text_format

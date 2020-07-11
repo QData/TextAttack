@@ -5,8 +5,16 @@ import torch
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.commands.attack.attack_args import HUGGINGFACE_DATASET_BY_MODEL, TEXTATTACK_DATASET_BY_MODEL
-from textattack.commands.attack.attack_args_helpers import parse_model_from_args, parse_dataset_from_args, add_model_args, add_dataset_args
+from textattack.commands.attack.attack_args import (
+    HUGGINGFACE_DATASET_BY_MODEL,
+    TEXTATTACK_DATASET_BY_MODEL,
+)
+from textattack.commands.attack.attack_args_helpers import (
+    parse_model_from_args,
+    parse_dataset_from_args,
+    add_model_args,
+    add_dataset_args,
+)
 
 logger = textattack.shared.logger
 
