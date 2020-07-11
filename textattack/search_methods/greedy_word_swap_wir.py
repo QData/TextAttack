@@ -59,7 +59,9 @@ class GreedyWordSwapWIR(SearchMethod):
                 initial_result, leave_one_texts
             )
 
-            softmax_saliency_scores = softmax(torch.Tensor(saliency_scores), dim=0).numpy()
+            softmax_saliency_scores = softmax(
+                torch.Tensor(saliency_scores), dim=0
+            ).numpy()
 
             # compute the largest change in score we can find by swapping each word
             delta_ps = []
