@@ -1,8 +1,9 @@
 import pdb
 import re
 
-from helpers import run_command_and_get_result
 import pytest
+
+from helpers import run_command_and_get_result
 
 DEBUG = False
 

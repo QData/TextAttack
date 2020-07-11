@@ -5,7 +5,7 @@ import sys
 import pandas as pd
 
 from textattack.attack_results import FailedAttackResult
-from textattack.shared import logger, AttackedText
+from textattack.shared import AttackedText, logger
 
 from .logger import Logger
 
