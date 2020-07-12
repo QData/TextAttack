@@ -4,8 +4,6 @@ import lru
 import nltk
 
 from textattack.constraints import Constraint
-
-# from textattack.shared import AttackedText
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 

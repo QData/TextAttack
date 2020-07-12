@@ -1,12 +1,7 @@
 import json
-
-# import os
 import tempfile
 
-# import numpy as np
 import tokenizers as hf_tokenizers
-
-# import textattack
 
 
 class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):

@@ -6,11 +6,12 @@ import time
 import numpy as np
 import scipy
 import torch
+from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 import tqdm
 import transformers
-from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 
 import textattack
+
 from .train_args_helpers import (
     augmenter_from_args,
     dataset_from_args,

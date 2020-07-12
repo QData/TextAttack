@@ -1,8 +1,6 @@
 import nltk
 
 from textattack.constraints import PreTransformationConstraint
-
-# from textattack.shared.utils import default_class_repr
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 

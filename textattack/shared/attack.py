@@ -1,7 +1,5 @@
 from collections import deque
 
-# import os
-
 import lru
 import numpy as np
 
@@ -14,6 +12,8 @@ from textattack.attack_results import (
 )
 from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.shared import AttackedText, utils
+
+# import os
 
 
 class Attack:

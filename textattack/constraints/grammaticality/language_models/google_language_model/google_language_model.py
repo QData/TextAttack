@@ -1,13 +1,13 @@
 from collections import defaultdict
 
-# import time
-
 import numpy as np
 
 from textattack.constraints import Constraint
 from textattack.transformations import WordSwap
 
 from .alzantot_goog_lm import GoogLMHelper
+
+# import time
 
 
 class GoogleLanguageModel(Constraint):

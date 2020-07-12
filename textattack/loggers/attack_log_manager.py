@@ -1,10 +1,10 @@
 import numpy as np
 
-# import torch
-
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 
 from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
+
+# import torch
 
 
 class AttackLogManager:

@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 import argparse
 
-# import os
-# import sys
-
 from textattack.commands.attack import AttackCommand, AttackResumeCommand
 from textattack.commands.augment import AugmentCommand
 from textattack.commands.benchmark_recipe import BenchmarkRecipeCommand
@@ -11,6 +8,9 @@ from textattack.commands.eval_model import EvalModelCommand
 from textattack.commands.list_things import ListThingsCommand
 from textattack.commands.peek_dataset import PeekDatasetCommand
 from textattack.commands.train_model import TrainModelCommand
+
+# import os
+# import sys
 
 
 def main():

@@ -3,10 +3,10 @@ import re
 
 import textattack
 from textattack.goal_functions import (
-    TargetedClassification,
-    UntargetedClassification,
     InputReduction,
     NonOverlappingOutput,
+    TargetedClassification,
+    UntargetedClassification,
 )
 
 from . import logger

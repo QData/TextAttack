@@ -3,8 +3,8 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import textattack
 from textattack.commands import TextAttackCommand
 from textattack.commands.attack.attack_args_helpers import (
-    parse_checkpoint_from_args,
     merge_checkpoint_args,
+    parse_checkpoint_from_args,
 )
 
 

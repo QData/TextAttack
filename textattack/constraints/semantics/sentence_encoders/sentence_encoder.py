@@ -1,12 +1,12 @@
 import math
 
-# import os
-
 import numpy as np
 import torch
 
 from textattack.constraints import Constraint
 from textattack.shared import utils
+
+# import os
 
 
 class SentenceEncoder(Constraint):

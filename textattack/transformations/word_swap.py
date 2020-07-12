@@ -1,10 +1,10 @@
 import random
 import string
 
+from .transformation import Transformation
+
 # import nltk
 # from nltk.corpus import stopwords
-
-from .transformation import Transformation
 
 
 class WordSwap(Transformation):

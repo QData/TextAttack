@@ -3,8 +3,6 @@ from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
-
-# from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import NonOverlappingOutput
 from textattack.search_methods import GreedyWordSwapWIR
 from textattack.shared.attack import Attack
@@ -27,8 +25,6 @@ def Seq2SickCheng2018BlackBox(model, goal_function="non_overlapping"):
     # Goal is non-overlapping output.
     #
     goal_function = NonOverlappingOutput(model)
-    # TODO implement transformation / search method just like they do in
-    # seq2sick.
     transformation = WordSwapEmbedding(max_candidates=50)
     #
     # Don't modify the same word twice or stopwords

@@ -10,10 +10,10 @@ from textattack.commands.attack.attack_args import (
     TEXTATTACK_DATASET_BY_MODEL,
 )
 from textattack.commands.attack.attack_args_helpers import (
-    parse_model_from_args,
-    parse_dataset_from_args,
-    add_model_args,
     add_dataset_args,
+    add_model_args,
+    parse_dataset_from_args,
+    parse_model_from_args,
 )
 
 logger = textattack.shared.logger

@@ -1,5 +1,4 @@
 """A command line parser to run an attack from user specifications."""
-
 from collections import deque
 import os
 import time
@@ -11,8 +10,8 @@ import textattack
 
 from .attack_args_helpers import (
     parse_attack_from_args,
-    parse_logger_from_args,
     parse_dataset_from_args,
+    parse_logger_from_args,
 )
 
 logger = textattack.shared.logger

@@ -3,26 +3,19 @@ import copy
 import importlib
 import json
 import os
-
-# import pickle
-# import random
-# import sys
 import time
-
-# import numpy as np
-# import torch
 
 import textattack
 
 from .attack_args import (
+    ATTACK_RECIPE_NAMES,
+    BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
+    CONSTRAINT_CLASS_NAMES,
+    GOAL_FUNCTION_CLASS_NAMES,
     HUGGINGFACE_DATASET_BY_MODEL,
+    SEARCH_METHOD_CLASS_NAMES,
     TEXTATTACK_DATASET_BY_MODEL,
     WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
-    BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
-    GOAL_FUNCTION_CLASS_NAMES,
-    CONSTRAINT_CLASS_NAMES,
-    ATTACK_RECIPE_NAMES,
-    SEARCH_METHOD_CLASS_NAMES,
 )
 
 

@@ -3,6 +3,7 @@ import functools
 import torch
 
 from textattack.shared import WordEmbedding, utils
+
 from .sentence_encoder import SentenceEncoder
 
 

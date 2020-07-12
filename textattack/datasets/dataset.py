@@ -1,6 +1,6 @@
+from abc import ABC
 import pickle
 import random
-from abc import ABC
 
 from textattack.shared import utils
 
