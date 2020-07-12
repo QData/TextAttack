@@ -28,7 +28,7 @@ class GeneticAlgorithm(SearchMethod):
         post_crossover_check (bool): If True, check if child produced from crossover step passes the constraints.
         max_crossover_retries (int): Maximum number of crossover retries if resulting child fails to pass the constraints.
             Applied only when `post_crossover_check` is set to `True`.
-            Setting it to 0 means we immediately take one of the parents at random as the child.
+            Setting it to 0 means we immediately take one of the parents at random as the child upon failure.
         improved_genetic_algorithm (bool): If True, we use the improved genetic algorithm.
         max_replace_times_per_index (int):  The maximum times words at the same index can be replaced in improved genetic algorithm.
     """
