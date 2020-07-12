@@ -355,9 +355,13 @@ def parse_dataset_from_args(args):
             )
         model_train_args = json.loads(open(model_args_json_path).read())
         try:
+            if ":" in model_train_args["dataset"]:
+                name, subset = model_train_args["dataset"].split(":")
+            else:
+                name, subset = model_train_args["dataset"], None
             args.dataset_from_nlp = (
-                model_train_args["dataset"],
-                None,
+                name,
+                subset,
                 model_train_args["dataset_dev_split"],
             )
         except KeyError:
