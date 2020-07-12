@@ -31,6 +31,7 @@ class LSTMForClassification(nn.Module):
             # so if that's all we have, this will display a warning.
             dropout = 0
         self.drop = nn.Dropout(dropout)
+        self.emb_layer_trainable = emb_layer_trainable
         self.emb_layer = GloveEmbeddingLayer(emb_layer_trainable=emb_layer_trainable)
         self.word2id = self.emb_layer.word2id
         self.encoder = nn.LSTM(
