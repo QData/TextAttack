@@ -103,6 +103,12 @@ class TrainModelCommand(TextAttackCommand):
             help="Attack recipe to use (enables adversarial training)",
         )
         parser.add_argument(
+            "--num-clean-epochs",
+            type=int,
+            default=1,
+            help="Number of epochs to train on the clean dataset before adversarial training (N/A if --attack unspecified)",
+        )
+        parser.add_argument(
             "--augment", type=str, default=None, help="Augmentation recipe to use",
         )
         parser.add_argument(

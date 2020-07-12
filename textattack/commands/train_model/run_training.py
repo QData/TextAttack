@@ -343,7 +343,8 @@ def train_model(args):
     model = model_from_args(args, args.num_labels)
     tokenizer = model.tokenizer
 
-    attack_t = attack_from_args(args)
+    attackCls = attack_from_args(args)
+    adversarial_training = attackCls is not None
 
     # multi-gpu training
     if num_gpus > 1:
@@ -450,14 +451,17 @@ def train_model(args):
     for epoch in tqdm.trange(
         int(args.num_train_epochs), desc="Epoch", position=0, leave=False
     ):
-        if attack_t and epoch > 0:
-            logger.info("Attacking model to generate new training set...")
-            adv_train_text = _generate_adversarial_examples(
-                model, attack_t, list(zip(train_text, train_labels))
-            )
-            train_dataloader = _make_dataloader(
-                tokenizer, adv_train_text, train_labels, args.batch_size
-            )
+        if adversarial_training:
+            if epoch >= args.num_clean_epochs:
+                logger.info("Attacking model to generate new training set...")
+                adv_train_text = _generate_adversarial_examples(
+                    model, attackCls, list(zip(train_text, train_labels))
+                )
+                train_dataloader = _make_dataloader(
+                    tokenizer, adv_train_text, train_labels, args.batch_size
+                )
+            else:
+                logger.info(f"Running clean epoch {epoch+1}/{args.num_clean_epochs}")
 
         prog_bar = tqdm.tqdm(
             train_dataloader, desc="Iteration", position=1, leave=False
@@ -507,32 +511,34 @@ def train_model(args):
             global_step += 1
 
         # Check accuracy after each epoch.
-        eval_score = _get_eval_score(model, eval_dataloader, args.do_regression)
-        tb_writer.add_scalar("epoch_eval_score", eval_score, global_step)
+        # skip args.num_clean_epochs during adversarial training
+        if not adversarial_training or epoch >= args.num_clean_epochs:
+            eval_score = _get_eval_score(model, eval_dataloader, args.do_regression)
+            tb_writer.add_scalar("epoch_eval_score", eval_score, global_step)
 
-        if args.checkpoint_every_epoch:
-            _save_model_checkpoint(model, args.output_dir, args.global_step)
+            if args.checkpoint_every_epoch:
+                _save_model_checkpoint(model, args.output_dir, args.global_step)
 
-        logger.info(
-            f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
-        )
-        if eval_score > args.best_eval_score:
-            args.best_eval_score = eval_score
-            args.best_eval_score_epoch = epoch
-            args.epochs_since_best_eval_score = 0
-            _save_model(model, args.output_dir, args.weights_name, args.config_name)
-            logger.info(f"Best acc found. Saved model to {args.output_dir}.")
-            _save_args(args, args_save_path)
-            logger.info(f"Saved updated args to {args_save_path}")
-        else:
-            args.epochs_since_best_eval_score += 1
-            if (args.early_stopping_epochs > 0) and (
-                args.epochs_since_best_eval_score > args.early_stopping_epochs
-            ):
-                logger.info(
-                    f"Stopping early since it's been {args.early_stopping_epochs} steps since validation acc increased"
-                )
-                break
+            logger.info(
+                f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
+            )
+            if eval_score > args.best_eval_score:
+                args.best_eval_score = eval_score
+                args.best_eval_score_epoch = epoch
+                args.epochs_since_best_eval_score = 0
+                _save_model(model, args.output_dir, args.weights_name, args.config_name)
+                logger.info(f"Best acc found. Saved model to {args.output_dir}.")
+                _save_args(args, args_save_path)
+                logger.info(f"Saved updated args to {args_save_path}")
+            else:
+                args.epochs_since_best_eval_score += 1
+                if (args.early_stopping_epochs > 0) and (
+                    args.epochs_since_best_eval_score > args.early_stopping_epochs
+                ):
+                    logger.info(
+                        f"Stopping early since it's been {args.early_stopping_epochs} steps since validation acc increased"
+                    )
+                    break
 
     # read the saved model and report its eval performance
     logger.info("Finished training. Re-loading and evaluating model from disk.")

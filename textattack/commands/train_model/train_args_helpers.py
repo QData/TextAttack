@@ -136,13 +136,16 @@ def model_from_args(train_args, num_labels, model_path=None):
 def attack_from_args(args):
     # note that this returns a recipe type, not an object
     # (we need to wait to have access to the model to initialize)
-    attack_t = None
+    attackCls = None
     if args.attack:
         if args.attack in ATTACK_RECIPE_NAMES:
-            attack_t = eval(ATTACK_RECIPE_NAMES[args.attack])
+            attackCls = eval(ATTACK_RECIPE_NAMES[args.attack])
         else:
             raise ValueError(f"Unrecognized attack recipe: {args.attack}")
-    return attack_t
+
+    # check attack-related args
+    assert args.num_clean_epochs > 0, "--num-clean-epochs must be > 0"
+    return attackCls
 
 
 def augmenter_from_args(args):
