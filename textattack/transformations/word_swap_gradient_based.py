@@ -106,7 +106,9 @@ class WordSwapGradientBased(Transformation):
                 break
 
         self.model.eval()
-        self.model.emb_layer.embedding.weight.requires_grad = self.model.emb_layer_trainable
+        self.model.emb_layer.embedding.weight.requires_grad = (
+            self.model.emb_layer_trainable
+        )
         return candidates
 
     def _call_model(self, text_ids):
