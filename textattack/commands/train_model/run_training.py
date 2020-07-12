@@ -453,13 +453,16 @@ def train_model(args):
     ):
         if adversarial_training:
             if epoch >= args.num_clean_epochs:
-                logger.info("Attacking model to generate new training set...")
-                adv_train_text = _generate_adversarial_examples(
-                    model, attackCls, list(zip(train_text, train_labels))
-                )
-                train_dataloader = _make_dataloader(
-                    tokenizer, adv_train_text, train_labels, args.batch_size
-                )
+                if (epoch - args.num_clean_epochs) % args.attack_period == 0:
+                    # only generate a new adversarial training set every args.attack_period epochs
+                    # after the clean epochs
+                    logger.info("Attacking model to generate new training set...")
+                    adv_train_text = _generate_adversarial_examples(
+                        model, attackCls, list(zip(train_text, train_labels))
+                    )
+                    train_dataloader = _make_dataloader(
+                        tokenizer, adv_train_text, train_labels, args.batch_size
+                    )
             else:
                 logger.info(f"Running clean epoch {epoch+1}/{args.num_clean_epochs}")
 
