@@ -51,10 +51,11 @@ class WordSwapHowNet(WordSwap):
 
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
-        words_str = " ".join(words)
-        word_list, pos_list = zip_flair_result(
-            self._flair_pos_tagger.predict(words_str)[0]
-        )
+        sentence = Sentence(" ".join(words))
+        # in-place POS tagging
+        self._flair_pos_tagger.predict(sentence)
+        word_list, pos_list = zip_flair_result(sentence)
+
         assert len(words) == len(
             word_list
         ), "Part-of-speech tagger returned incorrect number of tags"

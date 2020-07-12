@@ -1,6 +1,6 @@
 bert-score
 editdistance
-flair>=0.5
+flair>=0.5.1
 filelock
 language_tool_python
 lru-dict
