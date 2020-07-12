@@ -358,6 +358,7 @@ SEARCH_METHOD_CLASS_NAMES = {
     "greedy": "textattack.search_methods.GreedySearch",
     "ga-word": "textattack.search_methods.GeneticAlgorithm",
     "greedy-word-wir": "textattack.search_methods.GreedyWordSwapWIR",
+    "pso": "textattack.search_methods.ParticleSwarmOptimization",
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {
