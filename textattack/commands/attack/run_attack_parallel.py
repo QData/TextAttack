@@ -183,7 +183,3 @@ def pytorch_multiprocessing_workaround():
         torch.multiprocessing.set_sharing_strategy("file_system")
     except RuntimeError:
         pass
-
-
-if __name__ == "__main__":
-    run(get_args())

@@ -255,7 +255,7 @@ def parse_model_from_args(args):
         if ":" in args.model_from_file:
             model_file, model_name, tokenizer_name = args.model_from_file.split(":")
         else:
-            model_file, model_name, tokenizer_name = (
+            _, model_name, tokenizer_name = (
                 args.model_from_file,
                 "model",
                 "tokenizer",
