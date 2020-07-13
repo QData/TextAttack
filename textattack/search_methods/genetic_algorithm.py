@@ -190,11 +190,7 @@ class GeneticAlgorithm(SearchMethod):
         if self.post_crossover_check and not passed_constraints:
             # If we cannot find a child that passes the constraints,
             # we just randomly pick one of the parents to be the child for the next iteration.
-            pop_mem= (
-                pop_member1
-                if np.random.uniform() < 0.5
-                else pop_member2
-            )
+            pop_mem = pop_member1 if np.random.uniform() < 0.5 else pop_member2
             return pop_mem
         else:
             new_results, self._search_over = self.get_goal_results([new_text])
