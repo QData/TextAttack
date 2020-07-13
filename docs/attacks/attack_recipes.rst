@@ -59,6 +59,12 @@ Kuleshov (Adversarial Examples for Natural Language Classification Problems)
 
 .. automodule:: textattack.attack_recipes.kuleshov_2017
    :members:
+   
+MORPHEUS (It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations)
+#####################################################################################################
+
+.. automodule:: textattack.attack_recipes.morpheus_tan_2020
+   :members:
 
 Particle Swarm Optimization (Word-level Textual Adversarial Attacking as Combinatorial Optimization)
 #####################################################################################################

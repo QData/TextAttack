@@ -4,6 +4,7 @@ import re
 import textattack
 from textattack.goal_functions import (
     InputReduction,
+    MinimizeBleu,
     NonOverlappingOutput,
     TargetedClassification,
     UntargetedClassification,

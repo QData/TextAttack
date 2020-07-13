@@ -12,33 +12,29 @@ from textattack.transformations import WordSwapInflections
 
 def MorpheusTan2020(model, goal_function="non_overlapping"):
     """
-        Cheng, Minhao, et al. 
+        Samson Tan, Shafiq Joty, Min-Yen Kan, Richard Socher
         
-        Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with 
-        Adversarial Examples
+        It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations
         
-        https://arxiv.org/abs/1803.01128    
-        
-        This is a greedy re-implementation of the seq2sick attack method. It does 
-        not use gradient descent.
+        https://www.aclweb.org/anthology/2020.acl-main.263/
     """
 
     #
-    # Goal is non-overlapping output.
+    # Goal is to minimize BLEU score between the model output given for the
+    # perturbed input sequence and the reference translation
     #
     goal_function = MinimizeBleu(model)
+
+    # Swap words with their inflections
     transformation = WordSwapInflections()
+
     #
     # Don't modify the same word twice or stopwords
     #
     constraints = [RepeatModification(), StopwordModification()]
+
     #
-    # In these experiments, we hold the maximum difference
-    # on edit distance (ϵ) to a constant 30 for each sample.
-    #
-    constraints.append(LevenshteinEditDistance(30))
-    #
-    # Greedily swap words with "Word Importance Ranking".
+    # Greedily swap words (see psueucode, Algorithm 1 of the paper).
     #
     search_method = GreedySearch()
 

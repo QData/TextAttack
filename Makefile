@@ -7,7 +7,7 @@ format: FORCE  ## Run black and isort (rewriting files)
 lint: FORCE  ## Run black, isort, flake8 (in check mode)
 	black . --check
 	isort --check-only tests textattack
-	flake8 . --count --ignore=$(PEP_IGNORE_ERRORS) --show-source --statistics --exclude=./.*,build,dist
+	flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics --exclude=./.*,build,dist # catch certain syntax errors using flake8
 
 
 test: FORCE ## Run tests using pytest
