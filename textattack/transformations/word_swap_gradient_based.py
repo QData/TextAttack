@@ -52,6 +52,7 @@ class WordSwapGradientBased(Transformation):
             word_index (int): index of the word to replace
         """
         self.model.train()
+        self.model.emb_layer.embedding.weight.requires_grad = True
 
         lookup_table = self.model.lookup_table.to(utils.device)
         lookup_table_transpose = lookup_table.transpose(0, 1)
@@ -105,6 +106,9 @@ class WordSwapGradientBased(Transformation):
                 break
 
         self.model.eval()
+        self.model.emb_layer.embedding.weight.requires_grad = (
+            self.model.emb_layer_trainable
+        )
         return candidates
 
     def _call_model(self, text_ids):

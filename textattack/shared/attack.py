@@ -38,7 +38,7 @@ class Attack:
         constraints=[],
         transformation=None,
         search_method=None,
-        constraint_cache_size=2 ** 18,
+        constraint_cache_size=2 ** 20,
     ):
         """Initialize an attack object.
 
@@ -150,7 +150,8 @@ class Attack:
         self, transformed_texts, current_text, original_text=None
     ):
         """Filters a list of potential transformed texts based on
-        ``self.constraints`` Checks cache first.
+        ``self.constraints`` Utilizes an LRU cache to attempt to avoid
+        recomputing common transformations.
 
         Args:
             transformed_texts: A list of candidate transformed ``AttackedText`` to filter.

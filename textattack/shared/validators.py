@@ -14,8 +14,7 @@ from . import logger
 # A list of goal functions and the corresponding available models.
 MODELS_BY_GOAL_FUNCTIONS = {
     (TargetedClassification, UntargetedClassification, InputReduction): [
-        r"^textattack.models.classification.*",
-        r"^textattack.models.entailment.*",
+        r"^textattack.models.lstm_for_classification.*",
         r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
     ],
     (NonOverlappingOutput,): [

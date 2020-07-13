@@ -2,13 +2,9 @@ import csv
 
 import pandas as pd
 
-# from textattack.attack_results import FailedAttackResult
-from textattack.shared import logger
+from textattack.shared import AttackedText, logger
 
 from .logger import Logger
-
-# import os
-# import sys
 
 
 class CSVLogger(Logger):
@@ -22,6 +18,8 @@ class CSVLogger(Logger):
 
     def log_attack_result(self, result):
         original_text, perturbed_text = result.diff_color(self.color_method)
+        original_text = original_text.replace("\n", AttackedText.SPLIT_TOKEN)
+        perturbed_text = perturbed_text.replace("\n", AttackedText.SPLIT_TOKEN)
         result_type = result.__class__.__name__.replace("AttackResult", "")
         row = {
             "original_text": original_text,

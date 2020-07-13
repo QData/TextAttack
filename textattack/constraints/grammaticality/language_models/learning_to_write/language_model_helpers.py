@@ -28,7 +28,15 @@ class QueryHandler:
         except Exception:
             probs = []
             for s, w in zip(sentences, swapped_words):
-                probs.append(self.try_query([s], [w], batch_size=1)[0])
+                try:
+                    probs.append(self.try_query([s], [w], batch_size=1)[0])
+                except RuntimeError:
+                    print(
+                        "WARNING:  got runtime error trying languag emodel on language model w s/w",
+                        s,
+                        w,
+                    )
+                    probs.append(float("-inf"))
             return probs
 
     def try_query(self, sentences, swapped_words, batch_size=32):
@@ -61,6 +69,8 @@ class QueryHandler:
             hidden = self.model.init_hidden(len(batch))
             source = word_idxs[:-1, :]
             target = word_idxs[1:, :]
+            if (not len(source)) or not len(hidden):
+                return [float("-inf")] * len(batch)
             decode, hidden = self.model(source, hidden)
             decode = decode.view(sentence_length - num_idxs_dropped, len(batch), -1)
             for i in range(len(batch)):

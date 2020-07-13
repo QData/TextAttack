@@ -32,12 +32,13 @@ class GoalFunction(ABC):
         use_cache=True,
         query_budget=float("inf"),
         model_batch_size=32,
-        model_cache_size=2 ** 18,
+        model_cache_size=2 ** 20,
     ):
         validators.validate_model_goal_function_compatibility(
             self.__class__, model.__class__
         )
         self.model = model
+        self.model.eval()
         self.maximizable = maximizable
         self.tokenizer = tokenizer
         if not self.tokenizer:

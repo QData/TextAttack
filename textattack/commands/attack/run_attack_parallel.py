@@ -94,9 +94,18 @@ def run(args, checkpoint=None):
     in_queue = torch.multiprocessing.Queue()
     out_queue = torch.multiprocessing.Queue()
     # Add stuff to queue.
+    missing_datapoints = set()
     for i in worklist:
-        text, output = dataset[i]
-        in_queue.put((i, text, output))
+        try:
+            text, output = dataset[i]
+            in_queue.put((i, text, output))
+        except IndexError:
+            missing_datapoints.add(i)
+
+    # if our dataset is shorter than the number of samples chosen, remove the
+    # out-of-bounds indices from the dataset
+    for i in missing_datapoints:
+        worklist.remove(i)
 
     # Start workers.
     # pool = torch.multiprocessing.Pool(num_gpus, attack_from_queue, (args, in_queue, out_queue))
@@ -146,7 +155,7 @@ def run(args, checkpoint=None):
                 in_queue.put((worklist_tail, text, output))
             except IndexError:
                 raise IndexError(
-                    "Out of bounds access of dataset. Size of data is {} but tried to access index {}".format(
+                    "Tried adding to worklist, but ran out of datapoints. Size of data is {} but tried to access index {}".format(
                         len(dataset), worklist_tail
                     )
                 )

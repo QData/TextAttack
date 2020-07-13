@@ -61,6 +61,9 @@ class EasyDataAugmenter(Augmenter):
         random.shuffle(augmented_text)
         return augmented_text[: self.transformations_per_example]
 
+    def __repr__(self):
+        return "EasyDataAugmenter"
+
 
 class SwapAugmenter(Augmenter):
     def __init__(self, **kwargs):

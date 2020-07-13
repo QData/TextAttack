@@ -1,12 +1,13 @@
+PEP_IGNORE_ERRORS="C901 E501 W503 E203 E231 E266 F403"
+
 format: FORCE  ## Run black and isort (rewriting files)
 	black .
 	isort --atomic tests textattack
 
-
 lint: FORCE  ## Run black, isort, flake8 (in check mode)
 	black . --check
 	isort --check-only tests textattack
-	flake8 . --count --ignore=C901,E501,W503,E203,E231,E266,F403 --show-source --statistics --exclude=./.*,build,dist
+	flake8 . --count --ignore=$(PEP_IGNORE_ERRORS) --show-source --statistics --exclude=./.*,build,dist
 
 
 test: FORCE ## Run tests using pytest
