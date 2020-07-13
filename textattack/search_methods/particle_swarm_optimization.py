@@ -178,9 +178,7 @@ class ParticleSwarmOptimization(SearchMethod):
             current_text, original_text=original_text
         )
         for transformed_text in transformations:
-            diff_idx = next(
-                iter(transformed_text.attack_attrs["newly_modified_indices"])
-            )
+            diff_idx = current_text.first_word_diff_index(transformed_text)
             neighbors_list[diff_idx].append(transformed_text)
 
         return neighbors_list
@@ -189,12 +187,12 @@ class ParticleSwarmOptimization(SearchMethod):
         neighbors_list = self._get_neighbors_list(
             current_position.attacked_text, original_text
         )
-        candidate_list, prob_list = self._get_best_neighbors(
+        best_neighbors, prob_list = self._get_best_neighbors(
             neighbors_list, current_position
         )
         if self._search_over:
             return current_position
-        random_candidate = np.random.choice(candidate_list, 1, p=prob_list)[0]
+        random_candidate = np.random.choice(best_neighbors, 1, p=prob_list)[0]
         return random_candidate
 
     def _generate_population(self, initial_position):
