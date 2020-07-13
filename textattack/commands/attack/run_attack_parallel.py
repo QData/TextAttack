@@ -107,7 +107,9 @@ def run(args, checkpoint=None):
         worklist.remove(i)
 
     # Start workers.
-    pool = torch.multiprocessing.Pool(num_gpus, attack_from_queue, (args, in_queue, out_queue))
+    pool = torch.multiprocessing.Pool(
+        num_gpus, attack_from_queue, (args, in_queue, out_queue)
+    )
     # Log results asynchronously and update progress bar.
     if args.checkpoint_resume:
         num_results = checkpoint.results_count
