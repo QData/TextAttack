@@ -3,6 +3,7 @@ editdistance
 flair>=0.5.1
 filelock
 language_tool_python
+lemminflect
 lru-dict
 nlp
 nltk
