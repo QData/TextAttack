@@ -3,20 +3,20 @@ from textattack.goal_functions import GoalFunction
 
 
 class TextToTextGoalFunction(GoalFunction):
-    """ A goal function defined on a model that outputs text.
-        
-        model: The PyTorch or TensorFlow model used for evaluation.
-        original_output: the original output of the model
+    """A goal function defined on a model that outputs text.
+
+    model: The PyTorch or TensorFlow model used for evaluation.
+    original_output: the original output of the model
     """
 
     def _goal_function_result_type(self):
-        """ Returns the class of this goal function's results. """
+        """Returns the class of this goal function's results."""
         return TextToTextGoalFunctionResult
 
     def _process_model_outputs(self, _, outputs):
-        """ Processes and validates a list of model outputs. 
-        
-            Flatten list of lists to a single list.
+        """Processes and validates a list of model outputs.
+
+        Flatten list of lists to a single list.
         """
         return [output for batch in outputs for output in batch]
 

@@ -1,19 +1,23 @@
-"""
-BERT-Score is introduced in this paper "BERTScore: Evaluating Text Generation with BERT" (Zhang et al, 2019)  https://arxiv.org/abs/1904.09675
-BERT-Score measures token similarity between two text using contextual embedding. 
-To decide which two tokens to compare, it greedily chooses the most similar token from one text and matches it to a token in the second text.
-"""
+"""BERT-Score is introduced in this paper "BERTScore: Evaluating Text
+Generation with BERT" (Zhang et al, 2019)  https://arxiv.org/abs/1904.09675
+BERT-Score measures token similarity between two text using contextual
+embedding.
 
+To decide which two tokens to compare, it greedily chooses the most
+similar token from one text and matches it to a token in the second
+text.
+"""
 import bert_score
-import nltk
 
 from textattack.constraints import Constraint
 from textattack.shared import utils
 
+# import nltk
+
 
 class BERTScore(Constraint):
-    """ 
-    A constraint on BERT-Score difference. 
+    """
+    A constraint on BERT-Score difference.
     Args:
         min_bert_score (float): minimum threshold value for BERT-Score
         model (str): name of model to use for scoring
@@ -49,10 +53,8 @@ class BERTScore(Constraint):
         )
 
     def _check_constraint(self, transformed_text, reference_text):
-        """
-        Return `True` if BERT Score between `transformed_text` and `reference_text`
-            is lower than minimum BERT Score. 
-        """
+        """Return `True` if BERT Score between `transformed_text` and
+        `reference_text` is lower than minimum BERT Score."""
         cand = transformed_text.text
         ref = reference_text.text
         result = self._bert_scorer.score([cand], [ref])

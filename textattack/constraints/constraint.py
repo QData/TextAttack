@@ -5,13 +5,12 @@ from textattack.shared.utils import default_class_repr
 
 
 class Constraint(ABC):
-    """ 
-    An abstract class that represents constraints on adversial text examples. 
-    Constraints evaluate whether transformations from a ``AttackedText`` to another 
-    ``AttackedText`` meet certain conditions.
+    """An abstract class that represents constraints on adversial text
+    examples. Constraints evaluate whether transformations from a
+    ``AttackedText`` to another ``AttackedText`` meet certain conditions.
 
     Args:
-        compare_against_original (bool): If `True`, the reference text should be the original text under attack. 
+        compare_against_original (bool): If `True`, the reference text should be the original text under attack.
             If `False`, the reference text is the most recent text from which the transformed text was generated.
             All constraints must have this attribute.
     """
@@ -20,10 +19,9 @@ class Constraint(ABC):
         self.compare_against_original = compare_against_original
 
     def call_many(self, transformed_texts, reference_text):
-        """
-        Filters ``transformed_texts`` based on which transformations fulfill the constraint.
-        First checks compatibility with latest ``Transformation``, then calls 
-        ``_check_constraint_many``\.
+        """Filters ``transformed_texts`` based on which transformations fulfill
+        the constraint. First checks compatibility with latest
+        ``Transformation``, then calls ``_check_constraint_many``
 
         Args:
             transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``'s.
@@ -49,12 +47,11 @@ class Constraint(ABC):
         return list(filtered_texts) + incompatible_transformed_texts
 
     def _check_constraint_many(self, transformed_texts, reference_text):
-        """
-        Filters ``transformed_texts`` based on which transformations fulfill the constraint.
-        Calls ``check_constraint``\.
+        """Filters ``transformed_texts`` based on which transformations fulfill
+        the constraint. Calls ``check_constraint``
 
         Args:
-            transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``\s.
+            transformed_texts (list[AttackedText]): The candidate transformed ``AttackedText``
             reference_texts (AttackedText): The ``AttackedText`` to compare against.
         """
         return [
@@ -64,10 +61,10 @@ class Constraint(ABC):
         ]
 
     def __call__(self, transformed_text, reference_text):
-        """ 
-        Returns True if the constraint is fulfilled, False otherwise. First checks
-        compatibility with latest ``Transformation``, then calls ``_check_constraint``\.
-        
+        """Returns True if the constraint is fulfilled, False otherwise. First
+        checks compatibility with latest ``Transformation``, then calls
+        ``_check_constraint``
+
         Args:
             transformed_text (AttackedText): The candidate transformed ``AttackedText``.
             reference_text (AttackedText): The ``AttackedText`` to compare against.
@@ -90,10 +87,9 @@ class Constraint(ABC):
 
     @abstractmethod
     def _check_constraint(self, transformed_text, reference_text):
-        """ 
-        Returns True if the constraint is fulfilled, False otherwise. Must be overridden by
-        the specific constraint.
-        
+        """Returns True if the constraint is fulfilled, False otherwise. Must
+        be overridden by the specific constraint.
+
         Args:
             transformed_text: The candidate transformed ``AttackedText``.
             reference_text (AttackedText): The ``AttackedText`` to compare against.
@@ -101,12 +97,12 @@ class Constraint(ABC):
         raise NotImplementedError()
 
     def check_compatibility(self, transformation):
-        """ 
-        Checks if this constraint is compatible with the given transformation.
-        For example, the ``WordEmbeddingDistance`` constraint compares the embedding of
-        the word inserted with that of the word deleted. Therefore it can only be
-        applied in the case of word swaps, and not for transformations which involve
-        only one of insertion or deletion.
+        """Checks if this constraint is compatible with the given
+        transformation. For example, the ``WordEmbeddingDistance`` constraint
+        compares the embedding of the word inserted with that of the word
+        deleted. Therefore it can only be applied in the case of word swaps,
+        and not for transformations which involve only one of insertion or
+        deletion.
 
         Args:
             transformation: The ``Transformation`` to check compatibility with.
@@ -115,10 +111,10 @@ class Constraint(ABC):
 
     def extra_repr_keys(self):
         """Set the extra representation of the constraint using these keys.
-        
+
         To print customized extra information, you should reimplement
-        this method in your own constraint. Both single-line and multi-line
-        strings are acceptable.
+        this method in your own constraint. Both single-line and multi-
+        line strings are acceptable.
         """
         return ["compare_against_original"]
 

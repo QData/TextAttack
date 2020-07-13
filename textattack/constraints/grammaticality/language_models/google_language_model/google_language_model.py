@@ -1,5 +1,4 @@
 from collections import defaultdict
-import time
 
 import numpy as np
 
@@ -8,14 +7,15 @@ from textattack.transformations import WordSwap
 
 from .alzantot_goog_lm import GoogLMHelper
 
+# import time
+
 
 class GoogleLanguageModel(Constraint):
-    """
-    Constraint that uses the Google 1 Billion Words Language Model to 
-    determine the difference in perplexity between x and x_adv. 
+    """Constraint that uses the Google 1 Billion Words Language Model to
+    determine the difference in perplexity between x and x_adv.
 
     Args:
-        top_n (int): 
+        top_n (int):
         top_n_per_index (int):
         compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
             Otherwise, compare it against the previous `x_adv`.
@@ -35,10 +35,8 @@ class GoogleLanguageModel(Constraint):
         return isinstance(transformation, WordSwap)
 
     def _check_constraint_many(self, transformed_texts, reference_text):
-        """
-        Returns the `top_n` of transformed_texts, as evaluated by the language 
-        model. 
-        """
+        """Returns the `top_n` of transformed_texts, as evaluated by the
+        language model."""
         if not len(transformed_texts):
             return []
 
@@ -65,7 +63,7 @@ class GoogleLanguageModel(Constraint):
         for word_swap_index, item_list in word_swap_index_map.items():
             # zip(*some_list) is the inverse operator of zip!
             item_indices, this_transformed_texts = zip(*item_list)
-            t1 = time.time()
+            # t1 = time.time()
             probs_of_swaps_at_index = list(
                 zip(item_indices, get_probs(reference_text, this_transformed_texts))
             )
@@ -76,7 +74,7 @@ class GoogleLanguageModel(Constraint):
                     : self.top_n_per_index
                 ]
             probs.extend(probs_of_swaps_at_index)
-            t2 = time.time()
+            # t2 = time.time()
 
         # Probs is a list of (index, prob) where index is the corresponding
         # position in transformed_texts.

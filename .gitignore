@@ -9,6 +9,7 @@ outputs/
 
 # IDE files
 .c9*
+.idea/
 
 # Sphinx documentation
 docs/_build/

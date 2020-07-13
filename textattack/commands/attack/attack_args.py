@@ -1,4 +1,4 @@
-import textattack
+# import textattack
 
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
@@ -156,7 +156,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     ),
     "roberta-base-imdb": ("textattack/roberta-base-imdb", ("imdb", None, "test"),),
     "roberta-base-mr": (
-        "textattack/textattack/roberta-base-rotten-tomatoes",
+        "textattack/roberta-base-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
     "roberta-base-mrpc": (
@@ -179,10 +179,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "roberta-base-wnli": (
         "textattack/roberta-base-WNLI",
         ("glue", "wnli", "validation"),
-    ),
-    "roberta-base-mr": (
-        "textattack/roberta-base-rotten-tomatoes",
-        ("rotten_tomatoes", None, "test"),
     ),
     #
     # albert-base-v2 (ALBERT is cased by default)

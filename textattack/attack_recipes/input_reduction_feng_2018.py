@@ -9,11 +9,10 @@ from textattack.transformations import WordDeletion
 
 
 def InputReductionFeng2018(model):
-    """
-    Feng, Wallace, Grissom, Iyyer, Rodriguez, Boyd-Graber. (2018).
-    
+    """Feng, Wallace, Grissom, Iyyer, Rodriguez, Boyd-Graber. (2018).
+
     Pathologies of Neural Models Make Interpretations Difficult.
- 
+
     ArXiv, abs/1804.07781.
     """
     # At each step, we remove the word with the lowest importance value until

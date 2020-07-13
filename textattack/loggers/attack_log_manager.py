@@ -1,13 +1,14 @@
 import numpy as np
-import torch
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 
 from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
 
+# import torch
+
 
 class AttackLogManager:
-    """ Logs the results of an attack to all attached loggers. """
+    """Logs the results of an attack to all attached loggers."""
 
     def __init__(self):
         self.loggers = []
@@ -29,15 +30,14 @@ class AttackLogManager:
         self.loggers.append(CSVLogger(filename=filename, color_method=color_method))
 
     def log_result(self, result):
-        """ Logs an ``AttackResult`` on each of `self.loggers`. """
+        """Logs an ``AttackResult`` on each of `self.loggers`."""
         self.results.append(result)
         for logger in self.loggers:
             logger.log_attack_result(result)
 
     def log_results(self, results):
-        """ Logs an iterable of ``AttackResult`` objects on each of 
-            `self.loggers`. 
-        """
+        """Logs an iterable of ``AttackResult`` objects on each of
+        `self.loggers`."""
         for result in results:
             self.log_result(result)
         self.log_summary()

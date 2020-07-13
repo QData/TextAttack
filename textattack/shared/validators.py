@@ -1,16 +1,20 @@
-import collections
+# import collections
 import re
 
 import textattack
-from textattack.goal_functions import *
+from textattack.goal_functions import (
+    InputReduction,
+    NonOverlappingOutput,
+    TargetedClassification,
+    UntargetedClassification,
+)
 
 from . import logger
 
 # A list of goal functions and the corresponding available models.
 MODELS_BY_GOAL_FUNCTIONS = {
     (TargetedClassification, UntargetedClassification, InputReduction): [
-        r"^textattack.models.classification.*",
-        r"^textattack.models.entailment.*",
+        r"^textattack.models.lstm_for_classification.*",
         r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
     ],
     (NonOverlappingOutput,): [
@@ -29,12 +33,13 @@ for goal_functions, matching_model_globs in MODELS_BY_GOAL_FUNCTIONS.items():
 
 
 def validate_model_goal_function_compatibility(goal_function_class, model_class):
-    """
-        Determines if ``model_class`` is task-compatible with ``goal_function_class``. 
-        
-        For example, a text-generative model like one intended for translation
-        or summarization would not be compatible with a goal function
-        that requires probability scores, like the UntargetedGoalFunction.
+    """Determines if ``model_class`` is task-compatible with
+    ``goal_function_class``.
+
+    For example, a text-generative model like one intended for
+    translation or summarization would not be compatible with a goal
+    function that requires probability scores, like the
+    UntargetedGoalFunction.
     """
     # Verify that this is a valid goal function.
     try:
@@ -42,7 +47,7 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     except KeyError:
         raise ValueError(f"No entry found for goal function {goal_function_class}.")
     # Get options for this goal function.
-    model_module = model_class.__module__
+    # model_module = model_class.__module__
     model_module_path = ".".join((model_class.__module__, model_class.__name__))
     # Ensure the model matches one of these options.
     for glob in matching_model_globs:
@@ -70,11 +75,11 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
 
 
 def validate_model_gradient_word_swap_compatibility(model):
-    """
-        Determines if ``model`` is task-compatible with ``radientBasedWordSwap``. 
-        
-        We can only take the gradient with respect to an individual word if the
-        model uses a word-based tokenizer.
+    """Determines if ``model`` is task-compatible with
+    ``radientBasedWordSwap``.
+
+    We can only take the gradient with respect to an individual word if
+    the model uses a word-based tokenizer.
     """
     if isinstance(model, textattack.models.helpers.LSTMForClassification):
         return True
@@ -83,10 +88,8 @@ def validate_model_gradient_word_swap_compatibility(model):
 
 
 def transformation_consists_of(transformation, transformation_classes):
-    """
-        Determines if ``transformation`` is or consists only of 
-        instances of a class in ``transformation_classes``
-    """
+    """Determines if ``transformation`` is or consists only of instances of a
+    class in ``transformation_classes``"""
     from textattack.transformations import CompositeTransformation
 
     if isinstance(transformation, CompositeTransformation):
@@ -102,18 +105,16 @@ def transformation_consists_of(transformation, transformation_classes):
 
 
 def transformation_consists_of_word_swaps(transformation):
-    """
-        Determines if ``transformation`` is a word swap or consists of only word swaps
-    """
+    """Determines if ``transformation`` is a word swap or consists of only word
+    swaps."""
     from textattack.transformations import WordSwap, WordSwapGradientBased
 
     return transformation_consists_of(transformation, [WordSwap, WordSwapGradientBased])
 
 
 def transformation_consists_of_word_swaps_and_deletions(transformation):
-    """
-        Determines if ``transformation`` is a word swap or consists of only word swaps and deletions.
-    """
+    """Determines if ``transformation`` is a word swap or consists of only word
+    swaps and deletions."""
     from textattack.transformations import WordDeletion, WordSwap, WordSwapGradientBased
 
     return transformation_consists_of(

@@ -2,8 +2,7 @@ from abc import ABC
 
 
 class Logger(ABC):
-    """ An abstract class for different methods of logging attack results. 
-    """
+    """An abstract class for different methods of logging attack results."""
 
     def __init__(self):
         pass

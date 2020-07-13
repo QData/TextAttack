@@ -3,12 +3,12 @@ import subprocess
 
 
 def run_command_and_get_result(command):
-    """ Runs a command in the console and gets the result.
-    
-        Command can be a string (single command) or a tuple of strings (multiple
-        commands). In the multi-command setting, commands will be joined
-        together with a pipe, and the output of the last command will be
-        returned.
+    """Runs a command in the console and gets the result.
+
+    Command can be a string (single command) or a tuple of strings
+    (multiple commands). In the multi-command setting, commands will be
+    joined together with a pipe, and the output of the last command will
+    be returned.
     """
     from subprocess import PIPE
 

@@ -17,16 +17,16 @@ AUGMENTATION_RECIPE_NAMES = {
 
 
 class AugmentCommand(TextAttackCommand):
-    """
-    The TextAttack attack module:
-    
-        A command line parser to run data augmentation from user specifications.
+    """The TextAttack attack module:
+
+    A command line parser to run data augmentation from user
+    specifications.
     """
 
     def run(self, args):
-        """ Reads in a CSV, performs augmentation, and outputs an augmented CSV.
-        
-            Preserves all columns except for the input (augmneted) column.
+        """Reads in a CSV, performs augmentation, and outputs an augmented CSV.
+
+        Preserves all columns except for the input (augmneted) column.
         """
         textattack.shared.utils.set_seed(args.random_seed)
         start_time = time.time()

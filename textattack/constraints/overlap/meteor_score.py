@@ -4,8 +4,7 @@ from textattack.constraints import Constraint
 
 
 class METEOR(Constraint):
-    """ 
-    A constraint on METEOR score difference.
+    """A constraint on METEOR score difference.
 
     Args:
         max_meteor (int): Max METEOR score allowed.

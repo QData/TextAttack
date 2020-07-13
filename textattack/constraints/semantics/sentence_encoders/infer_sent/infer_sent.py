@@ -1,9 +1,9 @@
 import os
 
-import numpy as np
+# import numpy as np
 import torch
 
-from textattack.constraints import Constraint
+# from textattack.constraints import Constraint
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 from textattack.shared import utils
 
@@ -11,10 +11,8 @@ from .infer_sent_model import InferSentModel
 
 
 class InferSent(SentenceEncoder):
-    """ 
-    Constraint using similarity between sentence encodings of x and x_adv where 
-    the text embeddings are created using InferSent.
-    """
+    """Constraint using similarity between sentence encodings of x and x_adv
+    where the text embeddings are created using InferSent."""
 
     MODEL_PATH = "constraints/semantics/sentence-encoders/infersent-encoder"
     WORD_EMBEDDING_PATH = "word_embeddings"
@@ -25,12 +23,10 @@ class InferSent(SentenceEncoder):
         self.model.to(utils.device)
 
     def get_infersent_model(self):
-        """
-        Retrieves the InferSent model. 
+        """Retrieves the InferSent model.
 
         Returns:
-            The pretrained InferSent model. 
-
+            The pretrained InferSent model.
         """
         infersent_version = 2
         model_folder_path = utils.download_if_needed(InferSent.MODEL_PATH)

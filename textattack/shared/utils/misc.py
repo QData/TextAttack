@@ -1,4 +1,4 @@
-import importlib
+# import importlib
 import json
 import os
 import random
@@ -12,10 +12,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def html_style_from_dict(style_dict):
-    """ Turns
-            { 'color': 'red', 'height': '100px'}
-        into
-            style: "color: red; height: 100px"
+    """Turns.
+
+        { 'color': 'red', 'height': '100px'}
+    into
+        style: "color: red; height: 100px"
     """
     style_str = ""
     for key in style_dict:
@@ -57,7 +58,7 @@ def html_table_from_rows(rows, title=None, header=None, style_dict=None):
 
 
 def load_textattack_model_from_path(model_name, model_path):
-    """ Loads a pre-trained TextAttack model from its name and path. """
+    """Loads a pre-trained TextAttack model from its name and path."""
 
     def get_num_labels():
         model_cache_path = textattack.shared.utils.download_if_needed(model_path)

@@ -1,11 +1,11 @@
-"""
-Reimplementation of search method from Generating Natural Language Adversarial Examples 
-by Alzantot et. al
-`<arxiv.org/abs/1804.07998>`_
+"""Reimplementation of search method from Generating Natural Language
+Adversarial Examples by Alzantot et.
+
+al `<arxiv.org/abs/1804.07998>`_
 `<github.com/nesl/nlp_adversarial_examples>`_
 """
 
-from copy import deepcopy
+# from copy import deepcopy
 
 import numpy as np
 import torch
@@ -16,11 +16,10 @@ from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
 class GeneticAlgorithm(SearchMethod):
-    """
-    Attacks a model with word substiutitions using a genetic algorithm.
+    """Attacks a model with word substiutitions using a genetic algorithm.
 
     Args:
-        pop_size (int): The population size. Defaults to 20. 
+        pop_size (int): The population size. Defaults to 20.
         max_iters (int): The maximum number of iterations to use. Defaults to 50.
         temp (float): Temperature for softmax function used to normalize probability dist when sampling parents.
             Higher temperature increases the sensitivity to lower probability candidates.
@@ -57,11 +56,12 @@ class GeneticAlgorithm(SearchMethod):
         self._search_over = False
 
     def _perturb(self, pop_member, original_result, specified_idx=-1):
-        """
-        Replaces the word at a random or specified index in pop_member that has not been modified more than the allowed maximum replacement times.
+        """Replaces the word at a random or specified index in pop_member that
+        has not been modified more than the allowed maximum replacement times.
+
         Args:
             pop_member (PopulationMember): The population member being perturbed.
-            original_result (GoalFunctionResult): Result of original sample being attacked      
+            original_result (GoalFunctionResult): Result of original sample being attacked
         Returns: None
         """
         num_words = pop_member.num_candidates_per_word.shape[0]
@@ -114,8 +114,8 @@ class GeneticAlgorithm(SearchMethod):
             iterations += 1
 
     def _crossover(self, pop_member1, pop_member2, original_result):
-        """
-        Generates a crossover between pop_member1 and pop_member2.
+        """Generates a crossover between pop_member1 and pop_member2.
+
         If the child fails to satisfy the constraits, we re-try crossover for a fix number of times,
         before taking one of the parents at random as the resulting child.
         Args:
@@ -313,9 +313,8 @@ class GeneticAlgorithm(SearchMethod):
         return population[0].result
 
     def check_transformation_compatibility(self, transformation):
-        """
-        The genetic algorithm is specifically designed for word substitutions.
-        """
+        """The genetic algorithm is specifically designed for word
+        substitutions."""
         return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
@@ -323,9 +322,8 @@ class GeneticAlgorithm(SearchMethod):
 
 
 class PopulationMember:
-    """
-    A member of the population during the course of the genetic algorithm.
-    
+    """A member of the population during the course of the genetic algorithm.
+
     Args:
         attacked_text: The ``AttackedText`` of the population member.
         num_candidates_per_word (numpy.array): A list of the number of candidate neighbors list for each word.

@@ -140,8 +140,7 @@ attack_test_params = [
 @pytest.mark.parametrize("name, command, sample_output_file", attack_test_params)
 @pytest.mark.slow
 def test_command_line_attack(name, command, sample_output_file):
-    """ Runs attack tests and compares their outputs to a reference file.
-    """
+    """Runs attack tests and compares their outputs to a reference file."""
     # read in file and create regex
     desired_output = open(sample_output_file, "r").read().strip()
     print("desired_output.encoded =>", desired_output.encode())

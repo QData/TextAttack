@@ -4,24 +4,23 @@ import lru
 import nltk
 
 from textattack.constraints import Constraint
-from textattack.shared import AttackedText
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
 class PartOfSpeech(Constraint):
-    """ Constraints word swaps to only swap words with the same part of speech.
-        Uses the NLTK universal part-of-speech tagger by default.
-        An implementation of `<https://arxiv.org/abs/1907.11932>`_
-        adapted from `<https://github.com/jind11/TextFooler>`_.
+    """Constraints word swaps to only swap words with the same part of speech.
+    Uses the NLTK universal part-of-speech tagger by default. An implementation
+    of `<https://arxiv.org/abs/1907.11932>`_ adapted from
+    `<https://github.com/jind11/TextFooler>`_.
 
-        POS tagger from Flair `<https://github.com/flairNLP/flair>` also available
+    POS tagger from Flair `<https://github.com/flairNLP/flair>` also available
 
-        Args:
-            tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair").
-            tagset (str): tagset to use for POS tagging
-            allow_verb_noun_swap (bool): If `True`, allow verbs to be swapped with nouns and vice versa. 
-            compare_against_original (bool): If `True`, compare against the original text. 
-                Otherwise, compare against the most recent text.
+    Args:
+        tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair").
+        tagset (str): tagset to use for POS tagging
+        allow_verb_noun_swap (bool): If `True`, allow verbs to be swapped with nouns and vice versa.
+        compare_against_original (bool): If `True`, compare against the original text.
+            Otherwise, compare against the most recent text.
     """
 
     def __init__(
@@ -106,7 +105,7 @@ class PartOfSpeech(Constraint):
 
 def zip_flair_result(pred):
     if not isinstance(pred, Sentence):
-        raise TypeError(f"Result from Flair POS tagger must be a `Sentence` object.")
+        raise TypeError("Result from Flair POS tagger must be a `Sentence` object.")
 
     tokens = pred.tokens
     word_list = []

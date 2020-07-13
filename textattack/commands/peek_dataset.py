@@ -20,10 +20,9 @@ logger = textattack.shared.logger
 
 
 class PeekDatasetCommand(TextAttackCommand):
-    """
-    The peek dataset module:
-    
-        Takes a peek into a dataset in textattack.
+    """The peek dataset module:
+
+    Takes a peek into a dataset in textattack.
     """
 
     def run(self, args):
@@ -47,7 +46,7 @@ class PeekDatasetCommand(TextAttackCommand):
             outputs.append(output)
 
         logger.info(f"Number of samples: {_cb(len(attacked_texts))}")
-        logger.info(f"Number of words per input:")
+        logger.info("Number of words per input:")
         num_words = np.array(num_words)
         logger.info(f'\t{("total:").ljust(8)} {_cb(num_words.sum())}')
         mean_words = f"{num_words.mean():.2f}"
@@ -67,7 +66,7 @@ class PeekDatasetCommand(TextAttackCommand):
         if len(outputs) < 20:
             print(sorted(set(outputs)))
 
-        logger.info(f"Most common outputs:")
+        logger.info("Most common outputs:")
         for i, (key, value) in enumerate(collections.Counter(outputs).most_common(20)):
             print("\t", str(key)[:5].ljust(5), f" ({value})")
 

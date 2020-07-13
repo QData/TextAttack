@@ -11,24 +11,21 @@ DEFAULT_CONSTRAINTS = [
 
 
 class EasyDataAugmenter(Augmenter):
-    """
+    """An implementation of Easy Data Augmentation, which combines:
 
-        An implementation of Easy Data Augmentation, which combines:
+    - WordNet synonym replacement
+        - Randomly replace words with their synonyms.
+    - Word deletion
+        - Randomly remove words from the sentence.
+    - Word order swaps
+        - Randomly swap the position of words in the sentence.
+    - Random synonym insertion
+        - Insert a random synonym of a random word at a random location.
 
-        - WordNet synonym replacement
-            - Randomly replace words with their synonyms.
-        - Word deletion
-            - Randomly remove words from the sentence.
-        - Word order swaps
-            - Randomly swap the position of words in the sentence.
-        - Random synonym insertion
-            - Insert a random synonym of a random word at a random location.
+    in one augmentation method.
 
-        in one augmentation method.
-
-        "EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks" (Wei and Zou, 2019)
-        https://arxiv.org/abs/1901.11196
-
+    "EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks" (Wei and Zou, 2019)
+    https://arxiv.org/abs/1901.11196
     """
 
     def __init__(self, pct_words_to_swap=0.1, transformations_per_example=4):
@@ -64,6 +61,9 @@ class EasyDataAugmenter(Augmenter):
         random.shuffle(augmented_text)
         return augmented_text[: self.transformations_per_example]
 
+    def __repr__(self):
+        return "EasyDataAugmenter"
+
 
 class SwapAugmenter(Augmenter):
     def __init__(self, **kwargs):
@@ -82,7 +82,7 @@ class SynonymInsertionAugmenter(Augmenter):
 
 
 class WordNetAugmenter(Augmenter):
-    """ Augments text by replacing with synonyms from the WordNet thesaurus. """
+    """Augments text by replacing with synonyms from the WordNet thesaurus."""
 
     def __init__(self, **kwargs):
         from textattack.transformations import WordSwapWordNet
@@ -100,7 +100,7 @@ class DeletionAugmenter(Augmenter):
 
 
 class EmbeddingAugmenter(Augmenter):
-    """ Augments text by transforming words with their embeddings. """
+    """Augments text by transforming words with their embeddings."""
 
     def __init__(self, **kwargs):
         from textattack.transformations import WordSwapEmbedding
@@ -115,7 +115,7 @@ class EmbeddingAugmenter(Augmenter):
 
 
 class CharSwapAugmenter(Augmenter):
-    """ Augments words by swapping characters out for other characters. """
+    """Augments words by swapping characters out for other characters."""
 
     def __init__(self, **kwargs):
         from textattack.transformations import (

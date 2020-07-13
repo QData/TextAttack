@@ -7,10 +7,10 @@ import textattack
 
 
 class WordEmbedding:
-    """ An object that loads word embeddings and related distances.
-    
-        Args:
-            embedding_type (str): The type of the embedding to load
+    """An object that loads word embeddings and related distances.
+
+    Args:
+        embedding_type (str): The type of the embedding to load
     """
 
     PATH = "word_embeddings"
@@ -60,9 +60,9 @@ class WordEmbedding:
             self.cos_sim_mat = {}
 
     def __getitem__(self, index):
-        """ Gets a word embedding by word or ID. 
-            
-            If word or ID not found, returns None.
+        """Gets a word embedding by word or ID.
+
+        If word or ID not found, returns None.
         """
         if isinstance(index, str):
             try:
