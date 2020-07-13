@@ -11,9 +11,9 @@ class GoalFunctionResultStatus:
 
 
 class GoalFunctionResult(ABC):
-    """
-    Represents the result of a goal function evaluating a AttackedText object.
-    
+    """Represents the result of a goal function evaluating a AttackedText
+    object.
+
     Args:
         attacked_text: The sequence that was evaluated.
         output: The display-friendly output.
@@ -49,21 +49,18 @@ class GoalFunctionResult(ABC):
 
     @abstractmethod
     def get_text_color_input(self):
-        """ A string representing the color this result's changed
-            portion should be if it represents the original input.
-        """
+        """A string representing the color this result's changed portion should
+        be if it represents the original input."""
         raise NotImplementedError()
 
     @abstractmethod
     def get_text_color_perturbed(self):
-        """ A string representing the color this result's changed
-            portion should be if it represents the perturbed input.
-        """
+        """A string representing the color this result's changed portion should
+        be if it represents the perturbed input."""
         raise NotImplementedError()
 
     @abstractmethod
     def get_colored_output(self, color_method=None):
-        """ Returns a string representation of this result's output, colored 
-            according to `color_method`.
-        """
+        """Returns a string representation of this result's output, colored
+        according to `color_method`."""
         raise NotImplementedError()

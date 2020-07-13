@@ -12,12 +12,11 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def Kuleshov2017(model):
-    """
-        Kuleshov, V. et al. 
-        
-        Generating Natural Language Adversarial Examples. 
-        
-        https://openreview.net/pdf?id=r1QZ3zbAZ.
+    """Kuleshov, V. et al.
+
+    Generating Natural Language Adversarial Examples.
+
+    https://openreview.net/pdf?id=r1QZ3zbAZ.
     """
     #
     # "Specifically, in all experiments, we used a target of τ = 0.7,

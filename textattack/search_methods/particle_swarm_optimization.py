@@ -1,6 +1,7 @@
-"""
-Reimplementation of search method from Word-level Textual Adversarial Attacking as Combinatorial Optimization
-by Zang et. al
+"""Reimplementation of search method from Word-level Textual Adversarial
+Attacking as Combinatorial Optimization by Zang et.
+
+al
 `<https://www.aclweb.org/anthology/2020.acl-main.540.pdf>`_
 `<https://github.com/thunlp/SememePSO-Attack>`_
 """
@@ -14,9 +15,9 @@ from textattack.search_methods import SearchMethod
 
 
 class ParticleSwarmOptimization(SearchMethod):
-    """
-    Attacks a model with word substiutitions using a Particle Swarm Optimization (PSO) algorithm.
-    Some key hyper-parameters are setup according to the original paper:
+    """Attacks a model with word substiutitions using a Particle Swarm
+    Optimization (PSO) algorithm. Some key hyper-parameters are setup according
+    to the original paper:
 
     "We adjust PSO on the validation set of SST and set ω_1 as 0.8 and ω_2 as 0.2.
     We set the max velocity of the particles V_{max} to 3, which means the changing
@@ -125,7 +126,7 @@ class ParticleSwarmOptimization(SearchMethod):
             try:
                 diff_idx = attacked_text.first_word_diff_index(transformed_text)
                 neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
-            except:
+            except Exception:
                 assert len(attacked_text.words) == len(transformed_text.words)
                 assert all(
                     [

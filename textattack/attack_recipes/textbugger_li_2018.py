@@ -1,4 +1,4 @@
-from textattack.constraints.grammaticality import PartOfSpeech
+# from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
@@ -18,11 +18,10 @@ from textattack.transformations import (
 
 
 def TextBuggerLi2018(model):
-    """
-    Li, J., Ji, S., Du, T., Li, B., and Wang, T. (2018).
-    
+    """Li, J., Ji, S., Du, T., Li, B., and Wang, T. (2018).
+
     TextBugger: Generating Adversarial Text Against Real-world Applications.
- 
+
     ArXiv, abs/1812.05271.
     """
     #

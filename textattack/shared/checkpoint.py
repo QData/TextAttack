@@ -14,15 +14,16 @@ from textattack.shared import logger, utils
 
 
 class Checkpoint:
-    """ An object that stores necessary information for saving and loading checkpoints
-    
-        Args:
-            args: Command line arguments of the original attack
-            log_manager (AttackLogManager): Object for storing attack results
-            worklist (deque[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
-            worklist_tail (int): Highest index that had been in the worklist at any given time. Used to get the next dataset element
-                when attacking with `attack_n` = True. 
-            chkpt_time (float): epoch time representing when checkpoint was made
+    """An object that stores necessary information for saving and loading
+    checkpoints.
+
+    Args:
+        args: Command line arguments of the original attack
+        log_manager (AttackLogManager): Object for storing attack results
+        worklist (deque[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
+        worklist_tail (int): Highest index that had been in the worklist at any given time. Used to get the next dataset element
+            when attacking with `attack_n` = True.
+        chkpt_time (float): epoch time representing when checkpoint was made
     """
 
     def __init__(self, args, log_manager, worklist, worklist_tail, chkpt_time=None):
@@ -129,7 +130,7 @@ class Checkpoint:
 
     @property
     def results_count(self):
-        """ Return number of attacks made so far """
+        """Return number of attacks made so far."""
         return len(self.log_manager.results)
 
     @property
@@ -163,7 +164,7 @@ class Checkpoint:
 
     @property
     def dataset_offset(self):
-        """ Calculate offset into the dataset to start from """
+        """Calculate offset into the dataset to start from."""
         # Original offset + # of results processed so far
         return self.args.num_examples_offset + self.results_count
 
@@ -196,7 +197,7 @@ class Checkpoint:
         return checkpoint
 
     def _verify(self):
-        """ Check that the checkpoint has no duplicates and is consistent"""
+        """Check that the checkpoint has no duplicates and is consistent."""
         assert self.num_remaining_attacks == len(
             self.worklist
         ), "Recorded number of remaining attacks and size of worklist are different."

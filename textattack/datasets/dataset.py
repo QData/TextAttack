@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 import pickle
 import random
 
@@ -6,22 +6,19 @@ from textattack.shared import utils
 
 
 class TextAttackDataset(ABC):
-    """
-    Any iterable of (label, text_input) pairs qualifies as 
-    a ``TextAttackDataset``.
-    """
+    """Any iterable of (label, text_input) pairs qualifies as a
+    ``TextAttackDataset``."""
 
     def __iter__(self):
         return self
 
     def _process_example_from_file(self, raw_line):
-        """ 
-        Processes each example read from a file. Implemented on a dataset-
+        """Processes each example read from a file. Implemented on a dataset-
         by-dataset basis.
-        
+
         Args:
             raw_line (str): Line of the example to process.
-            
+
         Returns:
             A tuple of text objects
         """
@@ -48,15 +45,14 @@ class TextAttackDataset(ABC):
         self.examples = self.examples[offset:]
 
     def _load_classification_text_file(self, text_file_name, offset=0, shuffle=False):
-        """ 
-        Loads tuples from lines of a classification text file. 
-        
+        """Loads tuples from lines of a classification text file.
+
         Format must look like:
-        
+
             1 this is a great little ...
             0 "i love hot n juicy .  ...
             0 "\""this world needs a ...
-        
+
         Arguments:
             text_file_name (str): name of the text file to load from.
             offset (int): line to start reading from
@@ -73,8 +69,8 @@ class TextAttackDataset(ABC):
             random.shuffle(self.examples)
 
     def _clean_example(self, ex):
-        """ 
-        Optionally pre-processes an input string before some tokenization.
-        Only necessary for some datasets. 
+        """Optionally pre-processes an input string before some tokenization.
+
+        Only necessary for some datasets.
         """
         return ex

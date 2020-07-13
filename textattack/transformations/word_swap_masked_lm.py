@@ -1,6 +1,6 @@
 import itertools
 
-import numpy as np
+# import numpy as np
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
@@ -9,8 +9,7 @@ from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapMaskedLM(WordSwap):
-    """
-    Generate potential replacements for a word using BERT-Masked LM.
+    """Generate potential replacements for a word using BERT-Masked LM.
 
     Based off of two papers
         - "BAE: BERT-based Adversarial Examples for Text Classification" (Garg et al., 2020) https://arxiv.org/abs/2004.01970
@@ -48,12 +47,11 @@ class WordSwapMaskedLM(WordSwap):
         self._language_model.eval()
 
     def _encode_text(self, text):
-        """ Encodes ``text`` using an ``AutoTokenizer``, 
-            ``self._lm_tokenizer``. 
-            
-            Returns a ``dict`` where keys are strings (like 'input_ids') and 
-            values are ``torch.Tensor``s. Moves tensors to the same device as 
-            the language model.
+        """Encodes ``text`` using an ``AutoTokenizer``, ``self._lm_tokenizer``.
+
+        Returns a ``dict`` where keys are strings (like 'input_ids') and
+        values are ``torch.Tensor``s. Moves tensors to the same device
+        as the language model.
         """
         encoding = self._lm_tokenizer.encode_plus(
             text,
@@ -65,8 +63,9 @@ class WordSwapMaskedLM(WordSwap):
         return {k: v.to(utils.device) for k, v in encoding.items()}
 
     def _bae_replacement_words(self, current_text, index):
-        """
-        Get replacement words for the word we want to replace using BAE method.
+        """Get replacement words for the word we want to replace using BAE
+        method.
+
         Args:
             current_text (AttackedText): Text we want to get replacements for.
             index (int): index of word we want to replace
@@ -88,7 +87,7 @@ class WordSwapMaskedLM(WordSwap):
 
         mask_token_probs = preds[0, masked_index]
         topk = torch.topk(mask_token_probs, self.max_candidates)
-        top_logits = topk[0].tolist()
+        # top_logits = topk[0].tolist()
         top_ids = topk[1].tolist()
 
         replacement_words = []
@@ -102,14 +101,15 @@ class WordSwapMaskedLM(WordSwap):
     def _bert_attack_replacement_words(
         self, current_text, index, id_preds, masked_lm_logits,
     ):
-        """
-        Get replacement words for the word we want to replace using BERT-Attack method.
+        """Get replacement words for the word we want to replace using BERT-
+        Attack method.
+
         Args:
             current_text (AttackedText): Text we want to get replacements for.
             index (int): index of word we want to replace
-            id_preds (torch.Tensor): N x K tensor of top-K ids for each token-position predicted by the masked language model. 
+            id_preds (torch.Tensor): N x K tensor of top-K ids for each token-position predicted by the masked language model.
                 N is equivalent to `self.max_length`.
-            masked_lm_logits (torch.Tensor): N x V tensor of the raw logits outputted by the masked language model. 
+            masked_lm_logits (torch.Tensor): N x V tensor of the raw logits outputted by the masked language model.
                 N is equivlaent to `self.max_length` and V is dictionary size of masked language model.
         """
         # We need to find which BPE tokens belong to the word we want to replace
@@ -181,7 +181,7 @@ class WordSwapMaskedLM(WordSwap):
             raise ValueError(f"Unrecognized value {self.method} for `self.method`.")
 
     def _get_transformations(self, current_text, indices_to_modify):
-        extra_args = {}
+        # extra_args = {}
         if self.method == "bert-attack":
             current_inputs = self._encode_text(current_text.text)
             with torch.no_grad():
@@ -218,8 +218,10 @@ class WordSwapMaskedLM(WordSwap):
 
 
 def recover_word_case(word, reference_word):
-    """ Makes the case of `word` like the case of `reference_word`. Supports
-        lowercase, UPPERCASE, and Capitalized. """
+    """Makes the case of `word` like the case of `reference_word`.
+
+    Supports lowercase, UPPERCASE, and Capitalized.
+    """
     if reference_word.islower():
         return word.lower()
     elif reference_word.isupper() and len(reference_word) > 1:

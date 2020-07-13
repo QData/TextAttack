@@ -1,18 +1,17 @@
 import random
 import string
 
-import nltk
-from nltk.corpus import stopwords
-
 from .transformation import Transformation
+
+# import nltk
+# from nltk.corpus import stopwords
 
 
 class WordSwap(Transformation):
-    """
-    An abstract class that takes a sentence and transforms it by replacing
+    """An abstract class that takes a sentence and transforms it by replacing
     some of its words.
-    
-        letters_to_insert (string): letters allowed for insertion into words
+
+    letters_to_insert (string): letters allowed for insertion into words
     """
 
     def __init__(self, letters_to_insert=None):
@@ -21,9 +20,8 @@ class WordSwap(Transformation):
             self.letters_to_insert = string.ascii_letters
 
     def _get_replacement_words(self, word):
-        """
-        Returns a set of replacements given an input word. Must be overriden by specific
-        word swap transformations.
+        """Returns a set of replacements given an input word. Must be overriden
+        by specific word swap transformations.
 
         Args:
             word: The input word to find replacements for.
@@ -31,10 +29,8 @@ class WordSwap(Transformation):
         raise NotImplementedError()
 
     def _get_random_letter(self):
-        """ 
-        Helper function that returns a random single letter from the English
-        alphabet that could be lowercase or uppercase. 
-        """
+        """Helper function that returns a random single letter from the English
+        alphabet that could be lowercase or uppercase."""
         return random.choice(self.letters_to_insert)
 
     def _get_transformations(self, current_text, indices_to_modify):

@@ -3,9 +3,8 @@
     All rights reserved.
 """
 import os
-import sys
 
-from google.protobuf import text_format
+# from google.protobuf import text_format
 import lru
 import numpy as np
 import tensorflow as tf
@@ -14,17 +13,17 @@ from textattack.shared import utils
 
 from . import lm_data_utils, lm_utils
 
+# import sys
+
+
 tf.get_logger().setLevel("INFO")
 
 # @TODO automatically choose between GPU and CPU.
 
 
 class GoogLMHelper:
-    """
-    An implementation of `<https://arxiv.org/abs/1804.07998>`_
-    adapted from `<https://github.com/nesl/nlp_adversarial_examples>`_. 
-
-    """
+    """An implementation of `<https://arxiv.org/abs/1804.07998>`_ adapted from
+    `<https://github.com/nesl/nlp_adversarial_examples>`_."""
 
     CACHE_PATH = "constraints/semantics/language-models/alzantot-goog-lm"
 
@@ -81,8 +80,7 @@ class GoogLMHelper:
         return np.array(word_probs)
 
     def get_words_probs(self, prefix, list_words):
-        """
-        Retrieves the probability of words.
+        """Retrieves the probability of words.
 
         Args:
             prefix_words

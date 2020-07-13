@@ -8,10 +8,10 @@ from .text_to_text_goal_function import TextToTextGoalFunction
 
 
 class NonOverlappingOutput(TextToTextGoalFunction):
-    """
-    Ensures that none of the words at a position are equal.
-    
-    Defined in seq2sick (https://arxiv.org/pdf/1803.01128.pdf), equation (3).
+    """Ensures that none of the words at a position are equal.
+
+    Defined in seq2sick (https://arxiv.org/pdf/1803.01128.pdf), equation
+    (3).
     """
 
     def _is_goal_complete(self, model_output, _):
@@ -32,7 +32,8 @@ def get_words_cached(s):
 
 @functools.lru_cache(maxsize=2 ** 12)
 def word_difference_score(s1, s2):
-    """ Returns the number of words that are non-overlapping between s1 and s2. """
+    """Returns the number of words that are non-overlapping between s1 and
+    s2."""
     s1_words = get_words_cached(s1)
     s2_words = get_words_cached(s2)
     min_length = min(len(s1_words), len(s2_words))

@@ -1,16 +1,15 @@
-import os
+# import os
 
-import tensorflow as tf
+# import tensorflow as tf
 import tensorflow_hub as hub
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 
 
 class UniversalSentenceEncoder(SentenceEncoder):
-    """ 
-    Constraint using similarity between sentence encodings of x and x_adv where 
-    the text embeddings are created using the Universal Sentence Encoder.
-    """
+    """Constraint using similarity between sentence encodings of x and x_adv
+    where the text embeddings are created using the Universal Sentence
+    Encoder."""
 
     def __init__(self, threshold=0.8, large=False, metric="angular", **kwargs):
         super().__init__(threshold=threshold, metric=metric, **kwargs)

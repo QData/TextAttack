@@ -12,15 +12,14 @@ from textattack.transformations import WordSwapGradientBased
 
 
 def HotFlipEbrahimi2017(model):
-    """
-        Ebrahimi, J. et al. (2017)
-        
-        HotFlip: White-Box Adversarial Examples for Text Classification
-        
-        https://arxiv.org/abs/1712.06751
-        
-        This is a reproduction of the HotFlip word-level attack (section 5 of the 
-        paper).
+    """Ebrahimi, J. et al. (2017)
+
+    HotFlip: White-Box Adversarial Examples for Text Classification
+
+    https://arxiv.org/abs/1712.06751
+
+    This is a reproduction of the HotFlip word-level attack (section 5 of the
+    paper).
     """
     #
     # "HotFlip ... uses the gradient with respect to a one-hot input

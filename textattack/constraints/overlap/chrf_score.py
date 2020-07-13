@@ -4,8 +4,7 @@ from textattack.constraints import Constraint
 
 
 class chrF(Constraint):
-    """ 
-    A constraint on chrF (n-gram F-score) difference.
+    """A constraint on chrF (n-gram F-score) difference.
 
     Args:
         max_chrf (int): Max n-gram F-score allowed.

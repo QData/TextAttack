@@ -13,13 +13,13 @@ tf.get_logger().setLevel("INFO")
 def LoadModel(sess, graph, gd_file, ckpt_file):
     """Load the model from GraphDef and Checkpoint.
 
-  Args:
-    gd_file: GraphDef proto text file.
-    ckpt_file: TensorFlow Checkpoint file.
+    Args:
+      gd_file: GraphDef proto text file.
+      ckpt_file: TensorFlow Checkpoint file.
 
-  Returns:
-    TensorFlow session and tensors dict.
-  """
+    Returns:
+      TensorFlow session and tensors dict.
+    """
     with graph.as_default():
         sys.stderr.write("Recovering graph.\n")
         with tf.io.gfile.GFile(gd_file) as f:

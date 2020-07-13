@@ -1,11 +1,5 @@
-from textattack.constraints.grammaticality.language_models import (
-    Google1BillionWordsLanguageModel,
-)
 from textattack.constraints.overlap import MaxWordsPerturbed
-from textattack.constraints.pre_transformation import (
-    RepeatModification,
-    StopwordModification,
-)
+from textattack.constraints.pre_transformation import StopwordModification
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GeneticAlgorithm
@@ -14,12 +8,11 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def IGAWang2019(model):
-    """
-        Xiaosen Wang, Hao Jin, Kun He (2019). 
-        
-        Natural Language Adversarial Attack and Defense in Word Level. 
-        
-        http://arxiv.org/abs/1909.06723 
+    """Xiaosen Wang, Hao Jin, Kun He (2019).
+
+    Natural Language Adversarial Attack and Defense in Word Level.
+
+    http://arxiv.org/abs/1909.06723
     """
     #
     # Swap words with their embedding nearest-neighbors.

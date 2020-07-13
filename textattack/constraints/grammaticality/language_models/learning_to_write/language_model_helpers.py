@@ -15,16 +15,17 @@ class QueryHandler:
         self.device = device
 
     def query(self, sentences, swapped_words, batch_size=32):
-        """ Since we don't filter prefixes for OOV ahead of time, it's possible that 
-        some of them will have different lengths. When this is the case,
+        """Since we don't filter prefixes for OOV ahead of time, it's possible
+        that some of them will have different lengths. When this is the case,
         we can't do RNN prediction in batch.
-        
-        This method _tries_ to do prediction in batch, and, when it fails, 
-        just does prediction sequentially and concatenates all of the results.
-    """
+
+        This method _tries_ to do prediction in batch, and, when it
+        fails, just does prediction sequentially and concatenates all of
+        the results.
+        """
         try:
             return self.try_query(sentences, swapped_words, batch_size=batch_size)
-        except:
+        except Exception:
             probs = []
             for s, w in zip(sentences, swapped_words):
                 try:

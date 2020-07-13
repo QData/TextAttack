@@ -3,23 +3,27 @@ import copy
 import importlib
 import json
 import os
-import pickle
-import random
-import sys
 import time
-
-import numpy as np
-import torch
 
 import textattack
 
-from .attack_args import *
+from .attack_args import (
+    ATTACK_RECIPE_NAMES,
+    BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
+    CONSTRAINT_CLASS_NAMES,
+    GOAL_FUNCTION_CLASS_NAMES,
+    HUGGINGFACE_DATASET_BY_MODEL,
+    SEARCH_METHOD_CLASS_NAMES,
+    TEXTATTACK_DATASET_BY_MODEL,
+    WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
+)
 
 
 def add_model_args(parser):
-    """ Adds model-related arguments to an argparser. This is useful because we
-        want to load pretrained models using multiple different parsers that
-        share these, but not all, arguments.
+    """Adds model-related arguments to an argparser.
+
+    This is useful because we want to load pretrained models using
+    multiple different parsers that share these, but not all, arguments.
     """
     model_group = parser.add_mutually_exclusive_group()
 
@@ -49,9 +53,10 @@ def add_model_args(parser):
 
 
 def add_dataset_args(parser):
-    """ Adds dataset-related arguments to an argparser. This is useful because we
-        want to load pretrained models using multiple different parsers that
-        share these, but not all, arguments.
+    """Adds dataset-related arguments to an argparser.
+
+    This is useful because we want to load pretrained models using
+    multiple different parsers that share these, but not all, arguments.
     """
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument(
@@ -96,9 +101,8 @@ def add_dataset_args(parser):
 
 
 def load_module_from_file(file_path):
-    """ Uses ``importlib`` to dynamically open a file and load an object from
-        it. 
-    """
+    """Uses ``importlib`` to dynamically open a file and load an object from
+    it."""
     temp_module_name = f"temp_{time.time()}"
     colored_file_path = textattack.shared.utils.color_text(
         file_path, color="blue", method="ansi"
@@ -244,14 +248,14 @@ def parse_model_from_args(args):
         if ":" in args.model_from_file:
             model_file, model_name, tokenizer_name = args.model_from_file.split(":")
         else:
-            model_file, model_name, tokenizer_name = (
+            _, model_name, tokenizer_name = (
                 args.model_from_file,
                 "model",
                 "tokenizer",
             )
         try:
             model_module = load_module_from_file(args.model_from_file)
-        except:
+        except Exception:
             raise ValueError(f"Failed to import file {args.model_from_file}")
         try:
             model = getattr(model_module, model_name)
@@ -381,7 +385,7 @@ def parse_dataset_from_args(args):
             dataset_file, dataset_name = args.dataset_from_file, "dataset"
         try:
             dataset_module = load_module_from_file(dataset_file)
-        except:
+        except Exception:
             raise ValueError(
                 f"Failed to import dataset from file {args.dataset_from_file}"
             )
@@ -475,7 +479,8 @@ def default_checkpoint_dir():
 
 
 def merge_checkpoint_args(saved_args, cmdline_args):
-    """ Merge previously saved arguments for checkpoint and newly entered arguments """
+    """Merge previously saved arguments for checkpoint and newly entered
+    arguments."""
     args = copy.deepcopy(saved_args)
     # Newly entered arguments take precedence
     args.parallel = cmdline_args.parallel

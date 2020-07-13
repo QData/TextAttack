@@ -6,10 +6,9 @@ from textattack.commands import TextAttackCommand
 
 
 class TrainModelCommand(TextAttackCommand):
-    """
-    The TextAttack train module:
-    
-        A command line parser to train a model from user specifications.
+    """The TextAttack train module:
+
+    A command line parser to train a model from user specifications.
     """
 
     def run(self, args):
