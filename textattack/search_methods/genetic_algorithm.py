@@ -190,15 +190,15 @@ class GeneticAlgorithm(SearchMethod):
         if self.post_crossover_check and not passed_constraints:
             # If we cannot find a child that passes the constraints,
             # we just randomly pick one of the parents to be the child for the next iteration.
-            new_text = (
-                pop_member1.attacked_text
+            pop_mem= (
+                pop_member1
                 if np.random.uniform() < 0.5
-                else pop_member2.attacked_text
+                else pop_member2
             )
-
-        new_results, self._search_over = self.get_goal_results([new_text])
-
-        return PopulationMember(new_text, num_candidates_per_word, new_results[0])
+            return pop_mem
+        else:
+            new_results, self._search_over = self.get_goal_results([new_text])
+            return PopulationMember(new_text, num_candidates_per_word, new_results[0])
 
     def _initialize_population(self, initial_result):
         """
@@ -322,7 +322,8 @@ class GeneticAlgorithm(SearchMethod):
 
 
 class PopulationMember:
-    """A member of the population during the course of the genetic algorithm.
+    """
+    A member of the population during the course of the genetic algorithm.
 
     Args:
         attacked_text: The ``AttackedText`` of the population member.
