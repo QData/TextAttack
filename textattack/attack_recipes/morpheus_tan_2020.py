@@ -1,9 +1,7 @@
-from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
-from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import MinimizeBleu
 from textattack.search_methods import GreedySearch
 from textattack.shared.attack import Attack
@@ -11,12 +9,11 @@ from textattack.transformations import WordSwapInflections
 
 
 def MorpheusTan2020(model, goal_function="non_overlapping"):
-    """
-        Samson Tan, Shafiq Joty, Min-Yen Kan, Richard Socher
-        
-        It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations
-        
-        https://www.aclweb.org/anthology/2020.acl-main.263/
+    """Samson Tan, Shafiq Joty, Min-Yen Kan, Richard Socher.
+
+    It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations
+
+    https://www.aclweb.org/anthology/2020.acl-main.263/
     """
 
     #

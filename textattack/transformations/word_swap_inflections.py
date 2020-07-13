@@ -2,19 +2,18 @@ from flair.data import Sentence
 from flair.models import SequenceTagger
 import lemminflect
 
-import textattack
 from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapInflections(WordSwap):
-    """ Transforms an input by replacing its words with their inflections.
-        
-        For example, the inflections of 'schedule' are {'schedule', 'schedules',
-        'scheduling'}.
-    
-        Base on ``It’s Morphin’ Time! Combating Linguistic Discrimination with 
-        Inflectional Perturbations". 
-        (https://www.aclweb.org/anthology/2020.acl-main.263.pdf)
+    """Transforms an input by replacing its words with their inflections.
+
+    For example, the inflections of 'schedule' are {'schedule', 'schedules',
+    'scheduling'}.
+
+    Base on ``It’s Morphin’ Time! Combating Linguistic Discrimination with
+    Inflectional Perturbations".
+    (https://www.aclweb.org/anthology/2020.acl-main.263.pdf)
     """
 
     def __init__(self, **kwargs):
@@ -60,8 +59,10 @@ class WordSwapInflections(WordSwap):
 
 
 def recover_word_case(word, reference_word):
-    """ Makes the case of `word` like the case of `reference_word`. Supports 
-        lowercase, UPPERCASE, and Capitalized. """
+    """Makes the case of `word` like the case of `reference_word`.
+
+    Supports lowercase, UPPERCASE, and Capitalized.
+    """
     if reference_word.islower():
         return word.lower()
     elif reference_word.isupper() and len(reference_word) > 1:
@@ -74,7 +75,7 @@ def recover_word_case(word, reference_word):
 
 
 def zip_flair_result(pred):
-    """Parse the output from the FLAIR POS tagger"""
+    """Parse the output from the FLAIR POS tagger."""
     if not isinstance(pred, Sentence):
         raise TypeError(f"Result from Flair POS tagger must be a `Sentence` object.")
 

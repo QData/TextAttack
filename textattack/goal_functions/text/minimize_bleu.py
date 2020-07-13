@@ -8,12 +8,11 @@ from .text_to_text_goal_function import TextToTextGoalFunction
 
 
 class MinimizeBleu(TextToTextGoalFunction):
-    """
-    Attempts to minimize the BLEU score between the current output translation
-    and the reference translation.
-    
-    Defined in It’s Morphin’ Time! Combating Linguistic Discrimination with 
-    Inflectional Perturbations 
+    """Attempts to minimize the BLEU score between the current output
+    translation and the reference translation.
+
+    Defined in It’s Morphin’ Time! Combating Linguistic Discrimination with
+    Inflectional Perturbations
     (https://www.aclweb.org/anthology/2020.acl-main.263/).
     """
 
