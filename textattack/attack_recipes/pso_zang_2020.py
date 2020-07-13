@@ -51,6 +51,8 @@ def PSOZang2020(model):
     #
     # Perform word substitution with a Particle Swarm Optimization (PSO) algorithm.
     #
-    search_method = ParticleSwarmOptimization(pop_size=60, max_iters=20, post_turn_check=False)
+    search_method = ParticleSwarmOptimization(
+        pop_size=60, max_iters=20, post_turn_check=False
+    )
 
     return Attack(goal_function, constraints, transformation, search_method)
