@@ -73,6 +73,6 @@ def TextFoolerJin2019(model):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    search_method = GreedyWordSwapWIR()
+    search_method = GreedyWordSwapWIR(wir_method="del")
 
     return Attack(goal_function, constraints, transformation, search_method)
