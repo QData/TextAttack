@@ -11,23 +11,22 @@ from textattack.transformations import WordSwapMaskedLM
 
 
 def BAEGarg2019(model):
-    """
-        Siddhant Garg and Goutham Ramakrishnan, 2019.
-        
-        BAE: BERT-based Adversarial Examples for Text Classification.
-        
-        https://arxiv.org/pdf/2004.01970
-        
-        This is "attack mode" 1 from the paper, BAE-R, word replacement.
-        
-        We present 4 attack modes for BAE based on the
-            R and I operations, where for each token t in S:
-            • BAE-R: Replace token t (See Algorithm 1)
-            • BAE-I: Insert a token to the left or right of t
-            • BAE-R/I: Either replace token t or insert a
-            token to the left or right of t
-            • BAE-R+I: First replace token t, then insert a
-            token to the left or right of t
+    """Siddhant Garg and Goutham Ramakrishnan, 2019.
+
+    BAE: BERT-based Adversarial Examples for Text Classification.
+
+    https://arxiv.org/pdf/2004.01970
+
+    This is "attack mode" 1 from the paper, BAE-R, word replacement.
+
+    We present 4 attack modes for BAE based on the
+        R and I operations, where for each token t in S:
+        • BAE-R: Replace token t (See Algorithm 1)
+        • BAE-I: Insert a token to the left or right of t
+        • BAE-R/I: Either replace token t or insert a
+        token to the left or right of t
+        • BAE-R+I: First replace token t, then insert a
+        token to the left or right of t
     """
     # "In this paper, we present a simple yet novel technique: BAE (BERT-based
     # Adversarial Examples), which uses a language model (LM) for token

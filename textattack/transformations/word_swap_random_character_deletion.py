@@ -1,19 +1,19 @@
 import numpy as np
 
-from textattack.shared import utils
+# from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapRandomCharacterDeletion(WordSwap):
-    """ Transforms an input by deleting its characters.
-           
-        Args:
-            random_one (bool): Whether to return a single word with a random 
-                character deleted. If not, returns all possible options.
-            skip_first_char (bool): Whether to disregard deleting the first 
-                character.
-            skip_last_char (bool): Whether to disregard deleting the last 
-                character.
+    """Transforms an input by deleting its characters.
+
+    Args:
+        random_one (bool): Whether to return a single word with a random
+            character deleted. If not, returns all possible options.
+        skip_first_char (bool): Whether to disregard deleting the first
+            character.
+        skip_last_char (bool): Whether to disregard deleting the last
+            character.
     """
 
     def __init__(
@@ -25,9 +25,8 @@ class WordSwapRandomCharacterDeletion(WordSwap):
         self.skip_last_char = skip_last_char
 
     def _get_replacement_words(self, word):
-        """ Returns returns a list containing all possible words with 1 letter
-            deleted.
-        """
+        """Returns returns a list containing all possible words with 1 letter
+        deleted."""
         if len(word) <= 1:
             return []
 

@@ -2,10 +2,9 @@ from .classification_goal_function import ClassificationGoalFunction
 
 
 class UntargetedClassification(ClassificationGoalFunction):
-    """
-    An untargeted attack on classification models which attempts to minimize the 
-    score of the correct label until it is no longer the predicted label.
-    
+    """An untargeted attack on classification models which attempts to minimize
+    the score of the correct label until it is no longer the predicted label.
+
     Args:
         target_max_score (int): If set, goal is to reduce model output to
             below this score. Otherwise, goal is to change the overall predicted

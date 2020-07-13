@@ -1,19 +1,20 @@
 import numpy as np
 
-from textattack.shared import utils
+# from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapNeighboringCharacterSwap(WordSwap):
-    """ Transforms an input by replacing its words with a neighboring character swap.
-            
-        Args:
-            random_one (bool): Whether to return a single word with two characters 
-                swapped. If not, returns all possible options.
-            skip_first_char (bool): Whether to disregard perturbing the first 
-                character.
-            skip_last_char (bool): Whether to disregard perturbing the last 
-                character.
+    """Transforms an input by replacing its words with a neighboring character
+    swap.
+
+    Args:
+        random_one (bool): Whether to return a single word with two characters
+            swapped. If not, returns all possible options.
+        skip_first_char (bool): Whether to disregard perturbing the first
+            character.
+        skip_last_char (bool): Whether to disregard perturbing the last
+            character.
     """
 
     def __init__(
@@ -25,9 +26,8 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
         self.skip_last_char = skip_last_char
 
     def _get_replacement_words(self, word):
-        """ Returns a list containing all possible words with 1 pair of neighboring characters 
-            swapped.
-        """
+        """Returns a list containing all possible words with 1 pair of
+        neighboring characters swapped."""
 
         if len(word) <= 1:
             return []

@@ -2,13 +2,12 @@ from .classification_goal_function import ClassificationGoalFunction
 
 
 class InputReduction(ClassificationGoalFunction):
-    """
-    Attempts to reduce the input down to as few words as possible while maintaining
-    the same predicted label.
+    """Attempts to reduce the input down to as few words as possible while
+    maintaining the same predicted label.
 
     From Feng, Wallace, Grissom, Iyyer, Rodriguez, Boyd-Graber. (2018).
-    Pathologies of Neural Models Make Interpretations Difficult.
-    ArXiv, abs/1804.07781.
+    Pathologies of Neural Models Make Interpretations Difficult. ArXiv,
+    abs/1804.07781.
     """
 
     def __init__(self, *args, target_num_words=1, **kwargs):

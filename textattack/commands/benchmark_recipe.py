@@ -4,10 +4,10 @@ from textattack.commands import TextAttackCommand
 
 
 class BenchmarkRecipeCommand(TextAttackCommand):
-    """
-    The TextAttack benchmark recipe module:
-    
-        A command line parser to benchmark a recipe from user specifications.
+    """The TextAttack benchmark recipe module:
+
+    A command line parser to benchmark a recipe from user
+    specifications.
     """
 
     def run(self, args):

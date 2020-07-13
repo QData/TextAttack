@@ -2,12 +2,11 @@ import json
 import logging
 import math
 import os
-import time
 
 import numpy as np
 import scipy
 import torch
-from torch.utils.data import DataLoader, Dataset, RandomSampler, SequentialSampler
+from torch.utils.data import DataLoader, RandomSampler
 import tqdm
 import transformers
 
@@ -154,12 +153,11 @@ def _get_eval_score(model, eval_dataloader, do_regression):
     :param model: Model to test.
     :param eval_dataloader: a torch DataLoader that iterates through the eval set.
     :param do_regression: bool. Whether we are doing regression (True) or classification (False)
-    
+
     :return: pearson correlation, if do_regression==True, else classification accuracy [0., 1.]
     """
     model.eval()
     correct = 0
-    total = 0
     logits = []
     labels = []
     for input_ids, batch_labels in eval_dataloader:
@@ -270,7 +268,6 @@ def train_model(args):
     logger.warn(
         "WARNING: TextAttack's model training feature is in beta. Please report any issues on our Github page, https://github.com/QData/TextAttack/issues."
     )
-    start_time = time.time()
     _make_directories(args.output_dir)
 
     num_gpus = torch.cuda.device_count()
@@ -316,7 +313,7 @@ def train_model(args):
             train_text, train_labels, augmenter
         )
 
-    label_id_len = len(train_labels)
+    # label_id_len = len(train_labels)
     label_set = set(train_labels)
     args.num_labels = len(label_set)
     logger.info(
@@ -325,7 +322,7 @@ def train_model(args):
 
     if isinstance(train_labels[0], float):
         # TODO come up with a more sophisticated scheme for knowing when to do regression
-        logger.warn(f"Detected float labels. Doing regression.")
+        logger.warn("Detected float labels. Doing regression.")
         args.num_labels = 1
         args.do_regression = True
     else:
@@ -359,7 +356,10 @@ def train_model(args):
     )
 
     if args.model == "lstm" or args.model == "cnn":
-        need_grad = lambda x: x.requires_grad
+
+        def need_grad(x):
+            return x.requires_grad
+
         optimizer = torch.optim.Adam(
             filter(need_grad, model.parameters()), lr=args.learning_rate
         )

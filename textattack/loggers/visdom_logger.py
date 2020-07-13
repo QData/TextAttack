@@ -1,4 +1,4 @@
-import copy
+# import copy
 import socket
 
 from visdom import Visdom
@@ -18,7 +18,7 @@ def port_is_open(port_num, hostname="127.0.0.1"):
 
 
 class VisdomLogger(Logger):
-    """ Logs attack results to Visdom. """
+    """Logs attack results to Visdom."""
 
     def __init__(self, env="main", port=8097, hostname="localhost"):
         if not port_is_open(port, hostname=hostname):
@@ -65,7 +65,7 @@ class VisdomLogger(Logger):
             self.windows[window_id] = new_window
 
     def table(self, rows, window_id=None, title=None, header=None, style=None):
-        """ Generates an HTML table. """
+        """Generates an HTML table."""
 
         if not window_id:
             window_id = title  # Can provide either of these,

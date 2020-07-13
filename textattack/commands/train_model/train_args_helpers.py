@@ -8,16 +8,16 @@ logger = textattack.shared.logger
 
 
 def prepare_dataset_for_training(nlp_dataset):
-    """ Changes an `nlp` dataset into the proper format for tokenization. """
+    """Changes an `nlp` dataset into the proper format for tokenization."""
 
     def prepare_example_dict(ex):
-        """ Returns the values in order corresponding to the data.
-        
-            ex:
-                'Some text input'
-            or in the case of multi-sequence inputs:
-                ('The premise', 'the hypothesis',)
-            etc.
+        """Returns the values in order corresponding to the data.
+
+        ex:
+            'Some text input'
+        or in the case of multi-sequence inputs:
+            ('The premise', 'the hypothesis',)
+        etc.
         """
         values = list(ex.values())
         if len(values) == 1:
@@ -29,9 +29,8 @@ def prepare_dataset_for_training(nlp_dataset):
 
 
 def dataset_from_args(args):
-    """ Returns a tuple of ``HuggingFaceNlpDataset`` for the train and test
-        datasets for ``args.dataset``.
-    """
+    """Returns a tuple of ``HuggingFaceNlpDataset`` for the train and test
+    datasets for ``args.dataset``."""
     dataset_args = args.dataset.split(":")
     # TODO `HuggingFaceNlpDataset` -> `HuggingFaceDataset`
     if args.dataset_train_split:
@@ -87,9 +86,11 @@ def dataset_from_args(args):
 
 
 def model_from_args(train_args, num_labels, model_path=None):
-    """ Constructs a model from its `train_args.json`. If huggingface model,
-        loads from model hub address. If TextAttack lstm/cnn, loads from
-        disk (and `model_path` provides the path to the model).
+    """Constructs a model from its `train_args.json`.
+
+    If huggingface model, loads from model hub address. If TextAttack
+    lstm/cnn, loads from disk (and `model_path` provides the path to the
+    model).
     """
     if train_args.model == "lstm":
         textattack.shared.logger.info("Loading textattack model: LSTMForClassification")
@@ -171,15 +172,15 @@ def write_readme(args, best_eval_score, best_eval_score_epoch):
     epoch_info = f"{best_eval_score_epoch} epoch" + (
         "s" if best_eval_score_epoch > 1 else ""
     )
-    readme_text = f""" 
+    readme_text = f"""
 ## TextAttack Model Card
 
-This `{args.model}` model was fine-tuned for sequence classification using TextAttack 
-and the {dataset_name} dataset loaded using the `nlp` library. The model was fine-tuned 
-for {args.num_train_epochs} epochs with a batch size of {args.batch_size}, a learning 
-rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}. 
-Since this was a {task_name} task, the model was trained with a {loss_func} loss function. 
-The best score the model achieved on this task was {best_eval_score}, as measured by the 
+This `{args.model}` model was fine-tuned for sequence classification using TextAttack
+and the {dataset_name} dataset loaded using the `nlp` library. The model was fine-tuned
+for {args.num_train_epochs} epochs with a batch size of {args.batch_size}, a learning
+rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}.
+Since this was a {task_name} task, the model was trained with a {loss_func} loss function.
+The best score the model achieved on this task was {best_eval_score}, as measured by the
 eval set {metric_name}, found after {epoch_info}.
 
 For more information, check out [TextAttack on Github](https://github.com/QData/TextAttack).

@@ -1,17 +1,14 @@
 import csv
-import os
-import sys
 
 import pandas as pd
 
-from textattack.attack_results import FailedAttackResult
 from textattack.shared import AttackedText, logger
 
 from .logger import Logger
 
 
 class CSVLogger(Logger):
-    """ Logs attack results to a CSV. """
+    """Logs attack results to a CSV."""
 
     def __init__(self, filename="results.csv", color_method="file"):
         self.filename = filename

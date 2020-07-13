@@ -1,5 +1,4 @@
 import math
-import os
 
 import numpy as np
 import torch
@@ -7,20 +6,21 @@ import torch
 from textattack.constraints import Constraint
 from textattack.shared import utils
 
+# import os
+
 
 class SentenceEncoder(Constraint):
-    """ 
-    Constraint using cosine similarity between sentence encodings of x and 
+    """Constraint using cosine similarity between sentence encodings of x and
     x_adv.
-        
+
     Args:
         threshold (:obj:`float`, optional): The threshold for the constraint to be met.
             Defaults to 0.8
-        metric (:obj:`str`, optional): The similarity metric to use. Defaults to 
+        metric (:obj:`str`, optional): The similarity metric to use. Defaults to
             cosine. Options: ['cosine, 'angular']
         compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
             Otherwise, compare it against the previous `x_adv`.
-        window_size (int): The number of words to use in the similarity 
+        window_size (int): The number of words to use in the similarity
             comparison. `None` indicates no windowing (encoding is based on the
             full input).
     """
@@ -56,20 +56,22 @@ class SentenceEncoder(Constraint):
             raise ValueError(f"Unsupported metric {metric}.")
 
     def encode(self, sentences):
-        """ Encodes a list of sentences. To be implemented by subclasses. """
+        """Encodes a list of sentences.
+
+        To be implemented by subclasses.
+        """
         raise NotImplementedError()
 
     def _sim_score(self, starting_text, transformed_text):
-        """ 
-        Returns the metric similarity between the embedding of the starting text and the 
-        transformed text.
+        """Returns the metric similarity between the embedding of the starting
+        text and the transformed text.
 
         Args:
             starting_text: The ``AttackedText``to use as a starting point.
-            transformed_text: A transformed ``AttackedText``\.
+            transformed_text: A transformed ``AttackedText``
 
         Returns:
-            The similarity between the starting and transformed text using the metric. 
+            The similarity between the starting and transformed text using the metric.
         """
         try:
             modified_index = next(
@@ -100,17 +102,16 @@ class SentenceEncoder(Constraint):
         return self.sim_metric(starting_embedding, transformed_embedding)
 
     def _score_list(self, starting_text, transformed_texts):
-        """
-        Returns the metric similarity between the embedding of the starting text and a list
-        of transformed texts. 
+        """Returns the metric similarity between the embedding of the starting
+        text and a list of transformed texts.
 
         Args:
             starting_text: The ``AttackedText``to use as a starting point.
-            transformed_texts: A list of transformed ``AttackedText``\s.
+            transformed_texts: A list of transformed ``AttackedText``
 
         Returns:
-            A list with the similarity between the ``starting_text`` and each of 
-                ``transformed_texts``. If ``transformed_texts`` is empty, 
+            A list with the similarity between the ``starting_text`` and each of
+                ``transformed_texts``. If ``transformed_texts`` is empty,
                 an empty tensor is returned
         """
         # Return an empty tensor if transformed_texts is empty.
@@ -168,10 +169,9 @@ class SentenceEncoder(Constraint):
         return self.sim_metric(starting_embeddings, transformed_embeddings)
 
     def _check_constraint_many(self, transformed_texts, reference_text):
-        """
-        Filters the list ``transformed_texts`` so that the similarity between the ``reference_text``
-        and the transformed text is greater than the ``self.threshold``.
-        """
+        """Filters the list ``transformed_texts`` so that the similarity
+        between the ``reference_text`` and the transformed text is greater than
+        the ``self.threshold``."""
         scores = self._score_list(reference_text, transformed_texts)
 
         for i, transformed_text in enumerate(transformed_texts):
@@ -208,15 +208,13 @@ class SentenceEncoder(Constraint):
 
 
 def get_angular_sim(emb1, emb2):
-    """ Returns the _angular_ similarity between a batch of vector and a batch 
-        of vectors.
-    """
+    """Returns the _angular_ similarity between a batch of vector and a batch
+    of vectors."""
     cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
     return 1 - (torch.acos(cos_sim) / math.pi)
 
 
 def get_neg_euclidean_dist(emb1, emb2):
-    """ Returns the Euclidean distance between a batch of vectors and a batch of 
-        vectors. 
-    """
+    """Returns the Euclidean distance between a batch of vectors and a batch of
+    vectors."""
     return -torch.sum((emb1 - emb2) ** 2, dim=1)

@@ -15,12 +15,12 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def GeneticAlgorithmAlzantot2018(model):
-    """
-        Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, K. (2018). 
-        
-        Generating Natural Language Adversarial Examples. 
-        
-        https://arxiv.org/abs/1801.00554 
+    """Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., &
+    Chang, K. (2018).
+
+    Generating Natural Language Adversarial Examples.
+
+    https://arxiv.org/abs/1801.00554
     """
     #
     # Swap words with their embedding nearest-neighbors.

@@ -5,9 +5,8 @@
 # LICENSE file in the root directory of this source tree.
 #
 
-"""
-This file contains the definition of encoders used in https://arxiv.org/pdf/1705.02364.pdf
-"""
+"""This file contains the definition of encoders used in
+https://arxiv.org/pdf/1705.02364.pdf."""
 import time
 
 import numpy as np

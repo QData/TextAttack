@@ -7,12 +7,11 @@ from textattack.shared import AttackedText, utils
 
 
 class Augmenter:
-    """ 
-    A class for performing data augmentation using TextAttack.
-    
-    Returns all possible transformations for a given string. Currently only 
+    """A class for performing data augmentation using TextAttack.
+
+    Returns all possible transformations for a given string. Currently only
         supports transformations which are word swaps.
-    
+
     Args:
         transformation (textattack.Transformation): the transformation
             that suggests new texts from an input.
@@ -49,10 +48,8 @@ class Augmenter:
                 self.constraints.append(constraint)
 
     def _filter_transformations(self, transformed_texts, current_text, original_text):
-        """ 
-        Filters a list of ``AttackedText`` objects to include only the ones 
-        that pass ``self.constraints``.
-        """
+        """Filters a list of ``AttackedText`` objects to include only the ones
+        that pass ``self.constraints``."""
         for C in self.constraints:
             if len(transformed_texts) == 0:
                 break
@@ -68,10 +65,8 @@ class Augmenter:
         return transformed_texts
 
     def augment(self, text):
-        """ 
-        Returns all possible augmentations of ``text`` according to 
-        ``self.transformation``.
-        """
+        """Returns all possible augmentations of ``text`` according to
+        ``self.transformation``."""
         attacked_text = AttackedText(text)
         original_text = attacked_text
         all_transformed_texts = set()
@@ -105,13 +100,12 @@ class Augmenter:
         return sorted([at.printable_text() for at in all_transformed_texts])
 
     def augment_many(self, text_list, show_progress=False):
-        """
-        Returns all possible augmentations of a list of strings according to
+        """Returns all possible augmentations of a list of strings according to
         ``self.transformation``.
-    
+
         Args:
             text_list (list(string)): a list of strings for data augmentation
-            
+
         Returns a list(string) of augmented texts.
         """
         if show_progress:
@@ -119,9 +113,10 @@ class Augmenter:
         return [self.augment(text) for text in text_list]
 
     def augment_text_with_ids(self, text_list, id_list, show_progress=True):
-        """ 
-        Supplements a list of text with more text data. Returns the augmented
-        text along with the corresponding IDs for each augmented example.
+        """Supplements a list of text with more text data.
+
+        Returns the augmented text along with the corresponding IDs for
+        each augmented example.
         """
         if len(text_list) != len(id_list):
             raise ValueError("List of text must be same length as list of IDs")

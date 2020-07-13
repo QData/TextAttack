@@ -4,7 +4,7 @@ from .logger import Logger
 
 
 class WeightsAndBiasesLogger(Logger):
-    """ Logs attack results to Weights & Biases. """
+    """Logs attack results to Weights & Biases."""
 
     def __init__(self, filename="", stdout=False):
         global wandb
@@ -29,9 +29,10 @@ class WeightsAndBiasesLogger(Logger):
         wandb.log({"attack_params": table})
 
     def _log_result_table(self):
-        """ Weights & Biases doesn't have a feature to automatically 
-            aggregate results across timesteps and display the full table.
-            Therefore, we have to do it manually.
+        """Weights & Biases doesn't have a feature to automatically aggregate
+        results across timesteps and display the full table.
+
+        Therefore, we have to do it manually.
         """
         result_table = html_table_from_rows(
             self._result_table_rows, header=["", "Original Input", "Perturbed Input"]

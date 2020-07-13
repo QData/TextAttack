@@ -2,14 +2,17 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.commands.attack.attack_args_helpers import *
+from textattack.commands.attack.attack_args_helpers import (
+    merge_checkpoint_args,
+    parse_checkpoint_from_args,
+)
 
 
 class AttackResumeCommand(TextAttackCommand):
-    """
-    The TextAttack attack resume recipe module:
-    
-        A command line parser to resume a checkpointed attack from user specifications.
+    """The TextAttack attack resume recipe module:
+
+    A command line parser to resume a checkpointed attack from user
+    specifications.
     """
 
     def run(self, args):

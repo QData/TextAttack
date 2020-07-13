@@ -11,14 +11,13 @@ from textattack.transformations import WordSwapMaskedLM
 
 
 def BERTAttackLi2020(model):
-    """
-        Li, L.., Ma, R., Guo, Q., Xiangyang, X., Xipeng, Q. (2020).
-        
-        BERT-ATTACK: Adversarial Attack Against BERT Using BERT
-        
-        https://arxiv.org/abs/2004.09984
-        
-        This is "attack mode" 1 from the paper, BAE-R, word replacement.
+    """Li, L.., Ma, R., Guo, Q., Xiangyang, X., Xipeng, Q. (2020).
+
+    BERT-ATTACK: Adversarial Attack Against BERT Using BERT
+
+    https://arxiv.org/abs/2004.09984
+
+    This is "attack mode" 1 from the paper, BAE-R, word replacement.
     """
     # [from correspondence with the author]
     # Candidate size K is set to 48 for all data-sets.

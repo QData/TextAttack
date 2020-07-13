@@ -9,10 +9,10 @@ from textattack.shared import utils
 
 
 class WordCNNForClassification(nn.Module):
-    """ A convolutional neural network for text classification. 
-    
-        We use different versions of this network to pretrain models for text 
-        classification.
+    """A convolutional neural network for text classification.
+
+    We use different versions of this network to pretrain models for
+    text classification.
     """
 
     def __init__(

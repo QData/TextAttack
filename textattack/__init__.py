@@ -1,5 +1,3 @@
-name = "textattack"
-
 from . import (
     attack_recipes,
     attack_results,
@@ -15,3 +13,5 @@ from . import (
     shared,
     transformations,
 )
+
+name = "textattack"

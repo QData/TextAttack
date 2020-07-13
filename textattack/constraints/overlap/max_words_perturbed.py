@@ -4,9 +4,8 @@ from textattack.constraints import Constraint
 
 
 class MaxWordsPerturbed(Constraint):
-    """ 
-    A constraint representing a maximum allowed perturbed words. 
-    
+    """A constraint representing a maximum allowed perturbed words.
+
     Args:
         max_num_words (:obj:`int`, optional): Maximum number of perturbed words allowed.
         max_percent (:obj: `float`, optional): Maximum percentage of words allowed to be perturbed.

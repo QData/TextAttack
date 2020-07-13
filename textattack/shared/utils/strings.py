@@ -1,6 +1,5 @@
 def has_letter(word):
-    """ Returns true if `word` contains at least one character in [A-Za-z]. 
-    """
+    """Returns true if `word` contains at least one character in [A-Za-z]."""
     # TODO implement w regex
     for c in word:
         if c.isalpha():
@@ -25,8 +24,8 @@ def add_indent(s_, numSpaces):
 
 
 def words_from_text(s, words_to_ignore=[]):
-    """ Lowercases a string, removes all non-alphanumeric characters,
-        and splits into words. """
+    """Lowercases a string, removes all non-alphanumeric characters, and splits
+    into words."""
     # TODO implement w regex
     words = []
     word = ""
@@ -74,8 +73,10 @@ LABEL_COLORS = [
 
 
 def process_label_name(label_name):
-    """ Takes a label name from a dataset and makes it nice. Meant to correct
-        different abbreviations and automatically capitalize.
+    """Takes a label name from a dataset and makes it nice.
+
+    Meant to correct different abbreviations and automatically
+    capitalize.
     """
     label_name = label_name.lower()
     if label_name == "neg":
@@ -86,7 +87,7 @@ def process_label_name(label_name):
 
 
 def color_from_label(label_num):
-    """ Arbitrary colors for different labels. """
+    """Arbitrary colors for different labels."""
     try:
         label_num %= len(LABEL_COLORS)
         return LABEL_COLORS[label_num]
@@ -95,9 +96,8 @@ def color_from_label(label_num):
 
 
 def color_from_output(label_name, label):
-    """ Returns the correct color for a label name, like 'positive', 'medicine',
-    or 'entailment'.
-    """
+    """Returns the correct color for a label name, like 'positive', 'medicine',
+    or 'entailment'."""
     label_name = label_name.lower()
     if label_name in {"entailment", "positive"}:
         return "green"
@@ -113,7 +113,7 @@ def color_from_output(label_name, label):
 
 
 class ANSI_ESCAPE_CODES:
-    """ Escape codes for printing color to the terminal. """
+    """Escape codes for printing color to the terminal."""
 
     HEADER = "\033[95m"
     OKBLUE = "\033[94m"

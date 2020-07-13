@@ -4,16 +4,14 @@ from textattack.constraints import Constraint
 
 
 class LanguageTool(Constraint):
-    """ 
-        Uses languagetool to determine if two sentences have the same
-        number of grammatical erors. 
-        (https://languagetool.org/)
-        
-        Args:
-            grammar_error_threshold (int): the number of additional errors permitted in `x_adv`
-                relative to `x`
-            compare_against_original (bool): If `True`, compare against the original text. 
-                Otherwise, compare against the most recent text.
+    """Uses languagetool to determine if two sentences have the same number of
+    grammatical erors. (https://languagetool.org/)
+
+    Args:
+        grammar_error_threshold (int): the number of additional errors permitted in `x_adv`
+            relative to `x`
+        compare_against_original (bool): If `True`, compare against the original text.
+            Otherwise, compare against the most recent text.
     """
 
     def __init__(self, grammar_error_threshold=0, compare_against_original=True):

@@ -5,8 +5,16 @@ import torch
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.commands.attack.attack_args import *
-from textattack.commands.attack.attack_args_helpers import *
+from textattack.commands.attack.attack_args import (
+    HUGGINGFACE_DATASET_BY_MODEL,
+    TEXTATTACK_DATASET_BY_MODEL,
+)
+from textattack.commands.attack.attack_args_helpers import (
+    add_dataset_args,
+    add_model_args,
+    parse_dataset_from_args,
+    parse_model_from_args,
+)
 
 logger = textattack.shared.logger
 
@@ -16,10 +24,10 @@ def _cb(s):
 
 
 class EvalModelCommand(TextAttackCommand):
-    """
-    The TextAttack model benchmarking module:
-    
-        A command line parser to evaluatate a model from user specifications.
+    """The TextAttack model benchmarking module:
+
+    A command line parser to evaluatate a model from user
+    specifications.
     """
 
     def get_preds(self, model, inputs):

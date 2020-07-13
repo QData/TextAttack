@@ -17,21 +17,20 @@ from textattack.transformations import (
 
 
 def Pruthi2019(model, max_num_word_swaps=1):
-    """
-        An implementation of the attack used in "Combating Adversarial
-        Misspellings with Robust Word Recognition", Pruthi et al., 2019.
+    """An implementation of the attack used in "Combating Adversarial
+    Misspellings with Robust Word Recognition", Pruthi et al., 2019.
 
-        This attack focuses on a small number of character-level changes
-        that simulate common typos. It combines:
-            - Swapping neighboring characters
-            - Deleting characters
-            - Inserting characters
-            - Swapping characters for adjacent keys on a QWERTY keyboard.
+    This attack focuses on a small number of character-level changes
+    that simulate common typos. It combines:
+        - Swapping neighboring characters
+        - Deleting characters
+        - Inserting characters
+        - Swapping characters for adjacent keys on a QWERTY keyboard.
 
-        https://arxiv.org/abs/1905.11268
+    https://arxiv.org/abs/1905.11268
 
-        :param model: Model to attack.
-        :param max_num_word_swaps: Maximum number of modifications to allow.
+    :param model: Model to attack.
+    :param max_num_word_swaps: Maximum number of modifications to allow.
     """
     # a combination of 4 different character-based transforms
     # ignore the first and last letter of each word, as in the paper
