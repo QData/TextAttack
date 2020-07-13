@@ -1,6 +1,6 @@
 /.*/Attack(
   (search_method): GreedyWordSwapWIR(
-    (wir_method):  unk
+    (wir_method):  delete
   )
   (goal_function):  UntargetedClassification
   (transformation):  WordSwapEmbedding(
