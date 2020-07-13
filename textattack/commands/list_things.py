@@ -77,7 +77,7 @@ class ListThingsCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
-            "feature", help=f"the feature to list", choices=ListThingsCommand.things()
+            "feature", help="the feature to list", choices=ListThingsCommand.things()
         )
         parser.add_argument(
             "--plain",

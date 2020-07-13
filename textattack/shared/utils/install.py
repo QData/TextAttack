@@ -92,7 +92,7 @@ def http_get(folder_name, out_file, proxies=None):
     progress.close()
 
 
-LOG_STRING = f"\033[34;1mtextattack\033[0m"
+LOG_STRING = "\033[34;1mtextattack\033[0m"
 logger = logging.getLogger(__name__)
 logging.config.dictConfig(
     {"version": 1, "loggers": {__name__: {"level": logging.INFO}}}

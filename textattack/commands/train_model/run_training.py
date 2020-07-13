@@ -322,7 +322,7 @@ def train_model(args):
 
     if isinstance(train_labels[0], float):
         # TODO come up with a more sophisticated scheme for knowing when to do regression
-        logger.warn(f"Detected float labels. Doing regression.")
+        logger.warn("Detected float labels. Doing regression.")
         args.num_labels = 1
         args.do_regression = True
     else:

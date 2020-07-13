@@ -99,7 +99,7 @@ def recover_word_case(word, reference_word):
 def zip_flair_result(pred):
     """Parse the output from the FLAIR POS tagger."""
     if not isinstance(pred, Sentence):
-        raise TypeError(f"Result from Flair POS tagger must be a `Sentence` object.")
+        raise TypeError("Result from Flair POS tagger must be a `Sentence` object.")
 
     tokens = pred.tokens
     word_list = []

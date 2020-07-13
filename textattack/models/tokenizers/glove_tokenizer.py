@@ -132,7 +132,7 @@ class GloveTokenizer(WordLevelTokenizer):
         if isinstance(text_input, tuple):
             if len(text_input) > 1:
                 raise ValueError(
-                    f"Cannot use `GloveTokenizer` to encode multiple inputs"
+                    "Cannot use `GloveTokenizer` to encode multiple inputs"
                 )
             text_input = text_input[0]
         return text_input
