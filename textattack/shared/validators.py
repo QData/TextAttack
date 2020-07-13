@@ -12,7 +12,7 @@ MODELS_BY_GOAL_FUNCTIONS = {
         r"^textattack.models.lstm_for_classification.*",
         r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
     ],
-    (NonOverlappingOutput,): [
+    (NonOverlappingOutput, MinimizeBleu,): [
         r"^textattack.models.translation.*",
         r"^textattack.models.summarization.*",
     ],
