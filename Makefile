@@ -3,7 +3,7 @@ PEP_IGNORE_ERRORS="C901 E501 W503 E203 E231 E266 F403"
 format: FORCE  ## Run black and isort (rewriting files)
 	black .
 	isort --atomic tests textattack
-	docformatter --in-place --recursive textattack docs
+	docformatter --in-place --recursive textattack tests
 
 lint: FORCE  ## Run black, isort, flake8 (in check mode)
 	black . --check
