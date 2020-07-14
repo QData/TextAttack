@@ -8,7 +8,7 @@ from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapInflections
 
 
-def MorpheusTan2020(model, goal_function="non_overlapping"):
+def MorpheusTan2020(model):
     """Samson Tan, Shafiq Joty, Min-Yen Kan, Richard Socher.
 
     It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations
@@ -31,7 +31,7 @@ def MorpheusTan2020(model, goal_function="non_overlapping"):
     constraints = [RepeatModification(), StopwordModification()]
 
     #
-    # Greedily swap words (see psueucode, Algorithm 1 of the paper).
+    # Greedily swap words (see pseudocode, Algorithm 1 of the paper).
     #
     search_method = GreedySearch()
 
