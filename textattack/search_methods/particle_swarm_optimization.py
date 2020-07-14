@@ -25,10 +25,10 @@ class ParticleSwarmOptimization(SearchMethod):
     probability of the particles ranges from 0.047 (sigmoid(-3)) to 0.953 (sigmoid(3))."
 
     Args:
-        pop_size (:obj:`int`, optional): The population size. Defauls to 60.
+        pop_size (:obj:`int`, optional): The population size. Defaults to 60.
         max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 20.
-        post_turn_check (bool): If True, check if new position reached by moving passes the constraints.
-        max_turn_retries (int): Maximum number of movement retries if new position after turning fails to pass the constraints.
+        post_turn_check (:obj:`bool`, optional): If `True`, check if new position reached by moving passes the constraints. Defaults to `True`
+        max_turn_retries (:obj:`bool`, optional): Maximum number of movement retries if new position after turning fails to pass the constraints.
             Applied only when `post_movement_check` is set to `True`.
             Setting it to 0 means we immediately take the old position as the new position upon failure.
     """
@@ -178,7 +178,9 @@ class ParticleSwarmOptimization(SearchMethod):
             current_text, original_text=original_text
         )
         for transformed_text in transformations:
-            diff_idx = current_text.first_word_diff_index(transformed_text)
+            diff_idx = next(
+                iter(transformed_text.attack_attrs["newly_modified_indices"])
+            )
             neighbors_list[diff_idx].append(transformed_text)
 
         return neighbors_list
@@ -187,12 +189,12 @@ class ParticleSwarmOptimization(SearchMethod):
         neighbors_list = self._get_neighbors_list(
             current_position.attacked_text, original_text
         )
-        best_neighbors, prob_list = self._get_best_neighbors(
+        candidate_list, prob_list = self._get_best_neighbors(
             neighbors_list, current_position
         )
         if self._search_over:
             return current_position
-        random_candidate = np.random.choice(best_neighbors, 1, p=prob_list)[0]
+        random_candidate = np.random.choice(candidate_list, 1, p=prob_list)[0]
         return random_candidate
 
     def _generate_population(self, initial_position):
@@ -347,7 +349,7 @@ class Position:
     Each position represents transformed version of original text
     Args:
         attacked_text (:obj:`AttackedText`): `AttackedText` for the transformed text
-        result (:obs:`GoalFunctionResult`, optional): `GoalFunctionResult` for the transformed text
+        result (:obj:`GoalFunctionResult`, optional): `GoalFunctionResult` for the transformed text
     """
 
     def __init__(self, attacked_text, result=None):
