@@ -542,6 +542,9 @@ def train_model(args):
         f"Eval of saved model {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
     )
 
+    if args.save_last:
+        _save_model(model, args.output_dir, args.weights_name, args.config_name)
+
     # end of training, save tokenizer
     try:
         tokenizer.save_pretrained(args.output_dir)
