@@ -92,6 +92,8 @@ class GreedyWordSwapWIR(SearchMethod):
             index_order = np.arange(len_text)
             np.random.shuffle(index_order)
             search_over = False
+        else:
+            raise ValueError(f"Unsupport WIR method {self.wir_method}")
 
         if self.wir_method != "random":
             index_order = (-leave_one_scores).argsort()
