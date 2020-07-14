@@ -6,8 +6,8 @@ We provide a number of pre-built attack recipes. To run an attack recipe, run::
     textattack attack --recipe [recipe_name]
 
 
-Attacks on classification
-#############################
+Attacks on classification models
+#################################
 
     
 Alzantot Genetic Algorithm (Generating Natural Language Adversarial Examples)
