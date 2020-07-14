@@ -90,6 +90,12 @@ class TrainModelCommand(TextAttackCommand):
             help="save model checkpoint after each epoch",
         )
         parser.add_argument(
+            "--save-last",
+            action="store_true",
+            default=False,
+            help="Overwrite the saved model weights after the final epoch.",
+        )
+        parser.add_argument(
             "--num-train-epochs",
             "--epochs",
             type=int,
