@@ -11,8 +11,12 @@ class MinimizeBleu(TextToTextGoalFunction):
     """Attempts to minimize the BLEU score between the current output
     translation and the reference translation.
 
-    Defined in It’s Morphin’ Time! Combating Linguistic Discrimination with
-    Inflectional Perturbations
+    BLEU score was defined in ``BLEU: a Method for Automatic Evaluation of
+    Machine Translation''
+    (https://www.aclweb.org/anthology/P02-1040.pdf).
+
+    This goal function is defined in ``It’s Morphin’ Time! Combating
+    Linguistic Discrimination with Inflectional Perturbations''.
     (https://www.aclweb.org/anthology/2020.acl-main.263/).
     """
 

@@ -35,13 +35,14 @@ class WordSwapInflections(WordSwap):
 
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
-        sentence = Sentence(" ".join(words))
+        sentence = Sentence(current_text.text)
         self._flair_pos_tagger.predict(sentence)
         word_list, pos_list = zip_flair_result(sentence)
 
         assert len(words) == len(
             word_list
         ), "Part-of-speech tagger returned incorrect number of tags"
+
         transformed_texts = []
 
         for i in indices_to_modify:
@@ -50,28 +51,10 @@ class WordSwapInflections(WordSwap):
             replacement_words = (
                 self._get_replacement_words(word_to_replace, word_to_replace_pos) or []
             )
-            transformed_texts_idx = []
             for r in replacement_words:
-                transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
-            transformed_texts.extend(transformed_texts_idx)
+                transformed_texts.append(current_text.replace_word_at_index(i, r))
 
         return transformed_texts
-
-
-def recover_word_case(word, reference_word):
-    """Makes the case of `word` like the case of `reference_word`.
-
-    Supports lowercase, UPPERCASE, and Capitalized.
-    """
-    if reference_word.islower():
-        return word.lower()
-    elif reference_word.isupper() and len(reference_word) > 1:
-        return word.upper()
-    elif reference_word[0].isupper() and reference_word[1:].islower():
-        return word.capitalize()
-    else:
-        # if other, just do not alter the word's case
-        return word
 
 
 def zip_flair_result(pred):
