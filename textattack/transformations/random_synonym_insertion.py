@@ -2,10 +2,10 @@ import random
 
 from nltk.corpus import wordnet
 
-from textattack.transformations import Transformation
+from textattack.transformations import RandomTransformation, Transformation
 
 
-class RandomSynonymInsertion(Transformation):
+class RandomSynonymInsertion(Transformation, RandomTransformation):
     """Transformation that inserts synonyms of words that are already in the
     sequence."""
 

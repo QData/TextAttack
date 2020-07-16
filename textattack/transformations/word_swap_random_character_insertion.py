@@ -11,7 +11,7 @@ class WordSwapRandomCharacterInsertion(WordSwap):
     character deleted. If not, returns all possible options.
     skip_first_char (bool): Whether to disregard inserting as the first
     character. skip_last_char (bool): Whether to disregard inserting as
-    the last     character.
+    the last character.
     """
 
     def __init__(

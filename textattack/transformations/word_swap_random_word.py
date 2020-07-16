@@ -1,9 +1,9 @@
 import random
 
-from textattack.transformations import Transformation
+from textattack.transformations import RandomTransformation, Transformation
 
 
-class RandomSwap(Transformation):
+class RandomSwap(Transformation, RandomTransformation):
     """Transformation that swaps the order of words in a sequence."""
 
     def _get_transformations(self, current_text, indices_to_modify):

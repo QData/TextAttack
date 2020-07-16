@@ -1,5 +1,5 @@
 from .composite_transformation import CompositeTransformation
-from .transformation import Transformation
+from .transformation import Transformation, RandomTransformation
 from .word_swap import WordSwap
 
 # Black-box transformations
