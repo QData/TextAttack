@@ -4,6 +4,8 @@
     (max_iters):  20
     (temp):  0.3
     (give_up_if_no_improvement):  False
+    (post_crossover_check):  False
+    (max_crossover_retries):  20
   )
   (goal_function):  UntargetedClassification
   (transformation):  WordSwapEmbedding(
