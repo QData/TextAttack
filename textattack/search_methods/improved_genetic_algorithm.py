@@ -32,8 +32,8 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
 
     def __init__(
         self,
-        pop_size=20,
-        max_iters=50,
+        pop_size=60,
+        max_iters=20,
         temp=0.3,
         max_replace_times_per_index=5,
         give_up_if_no_improvement=False,
@@ -141,6 +141,10 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
             new_text = x1_text.replace_words_at_indices(
                 indices_to_replace, words_to_replace
             )
+            indices_to_replace = set(indices_to_replace)
+            new_text.attack_attrs["modified_indices"] = (
+                x1_text.attack_attrs["modified_indices"] - indices_to_replace
+            ) | (x2_text.attack_attrs["modified_indices"] & indices_to_replace)
 
             if not self.post_crossover_check or (
                 new_text.text == x1_text.text or new_text.text == x2_text.text

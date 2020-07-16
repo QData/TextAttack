@@ -58,10 +58,12 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
         Returns:
             `True` if perturbation occured. `False` if not.
         """
+        # TODO: Below is very slow and is the main cause behind memory build up + slowness
         best_neighbors, prob_list = self._get_best_neighbors(
             pop_member.result, original_result
         )
         random_result = np.random.choice(best_neighbors, 1, p=prob_list)[0]
+
         if random_result == pop_member.result:
             return False
         else:
@@ -72,24 +74,24 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
     def _equal(self, a, b):
         return -self.V_max if a == b else self.V_max
 
-    def _turn(self, source_x, target_x, prob, original_text):
+    def _turn(self, source_text, target_text, prob, original_text):
         """
-        Based on given probabilities, "move" to `target_x` from `source_x`
+        Based on given probabilities, "move" to `target_text` from `source_text`
         Args:
-            source_x (PopulationMember): Text we start from.
-            target_x (PopulationMember): Text we want to move to.
+            source_text (PopulationMember): Text we start from.
+            target_text (PopulationMember): Text we want to move to.
             prob (np.array[float]): Turn probability for each word.
             original_text (AttackedText): Original text for constraint check if `self.post_turn_check=True`.
         Returns:
-            New `Position` that we moved to (or if we fail to move, same as `source_x`)
+            New `Position` that we moved to (or if we fail to move, same as `source_text`)
         """
-        assert len(source_x.words) == len(
-            target_x.words
+        assert len(source_text.words) == len(
+            target_text.words
         ), "Word length mismatch for turn operation."
-        assert len(source_x.words) == len(
+        assert len(source_text.words) == len(
             prob
         ), "Length mistmatch for words and probability list."
-        len_x = len(source_x.words)
+        len_x = len(source_text.words)
 
         num_tries = 0
         passed_constraints = False
@@ -99,17 +101,25 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
             for i in range(len_x):
                 if np.random.uniform() < prob[i]:
                     indices_to_replace.append(i)
-                    words_to_replace.append(target_x.words[i])
-            new_text = source_x.attacked_text.replace_words_at_indices(
+                    words_to_replace.append(target_text.words[i])
+            new_text = source_text.attacked_text.replace_words_at_indices(
                 indices_to_replace, words_to_replace
             )
+            indices_to_replace = set(indices_to_replace)
+            new_text.attack_attrs["modified_indices"] = (
+                source_text.attacked_text.attack_attrs["modified_indices"]
+                - indices_to_replace
+            ) | (
+                target_text.attacked_text.attack_attrs["modified_indices"]
+                & indices_to_replace
+            )
 
-            if not self.post_turn_check or (new_text.words == source_x.words):
+            if not self.post_turn_check or (new_text.words == source_text.words):
                 break
 
-            if "last_transformation" in source_x.attacked_text.attack_attrs:
+            if "last_transformation" in source_text.attacked_text.attack_attrs:
                 passed_constraints = self._check_constraints(
-                    new_text, source_x, original_text=original_text
+                    new_text, source_text, original_text=original_text
                 )
             else:
                 passed_constraints = True
@@ -121,7 +131,7 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
 
         if self.post_turn_check and not passed_constraints:
             # If we cannot find a turn that passes the constraints, we do not move.
-            return source_x
+            return source_text
         else:
             return PopulationMember(new_text)
 
@@ -310,7 +320,7 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
         return ["pop_size", "max_iters", "post_turn_check", "max_turn_retries"]
 
 
-def normalize(self, n):
+def normalize(n):
     n = [max(0, i) for i in n]
     s = sum(n)
     if s == 0:
@@ -319,9 +329,9 @@ def normalize(self, n):
         return [i / s for i in n]
 
 
-def count_change_ratio(self, x1, x2):
+def count_change_ratio(x1, x2):
     return float(np.sum(x1.words != x2.words)) / float(len(x2.words))
 
 
-def sigmoid(self, n):
+def sigmoid(n):
     return 1 / (1 + np.exp(-n))
