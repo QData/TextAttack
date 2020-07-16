@@ -56,7 +56,7 @@ class PopulationBasedMethod(SearchMethod, ABC):
         raise NotImplementedError
 
 
-class PopulationMember(ABC):
+class PopulationMember():
     """Represent a single member of population."""
 
     def __init__(self, attacked_text, result=None, **kwargs):
