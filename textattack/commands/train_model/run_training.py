@@ -25,8 +25,7 @@ logger = textattack.shared.logger
 
 
 def _save_args(args, save_path):
-    """
-    Dump args dictionary to a json
+    """Dump args dictionary to a json.
 
     :param: args. Dictionary of arguments to save.
     :save_path: Path to json file to write args to.
@@ -37,8 +36,7 @@ def _save_args(args, save_path):
 
 
 def _get_sample_count(*lsts):
-    """
-    Get sample count of a dataset.
+    """Get sample count of a dataset.
 
     :param *lsts: variable number of lists.
     :return: sample count of this dataset, if all lists match, else None.
@@ -51,9 +49,8 @@ def _get_sample_count(*lsts):
 
 
 def _random_shuffle(*lsts):
-    """
-    Randomly shuffle a dataset. Applies the same permutation
-    to each list (to preserve mapping between inputs and targets).
+    """Randomly shuffle a dataset. Applies the same permutation to each list
+    (to preserve mapping between inputs and targets).
 
     :param *lsts: variable number of lists to shuffle.
     :return: shuffled lsts.
@@ -66,8 +63,7 @@ def _random_shuffle(*lsts):
 
 
 def _train_val_split(*lsts, split_val=0.2):
-    """
-    Split dataset into training and validation sets.
+    """Split dataset into training and validation sets.
 
     :param *lsts: variable number of lists that make up a dataset (e.g. text, labels)
     :param split_val: float [0., 1.). Fraction of the dataset to reserve for evaluation.
@@ -89,8 +85,7 @@ def _train_val_split(*lsts, split_val=0.2):
 
 
 def _filter_labels(text, labels, allowed_labels):
-    """
-    Keep examples with approved labels
+    """Keep examples with approved labels.
 
     :param text: list of text inputs.
     :param labels: list of corresponding labels.
@@ -107,8 +102,7 @@ def _filter_labels(text, labels, allowed_labels):
 
 
 def _save_model_checkpoint(model, output_dir, global_step):
-    """
-    Save model checkpoint to disk.
+    """Save model checkpoint to disk.
 
     :param model: Model to save (pytorch)
     :param output_dir: Path to model save dir.
@@ -124,8 +118,7 @@ def _save_model_checkpoint(model, output_dir, global_step):
 
 
 def _save_model(model, output_dir, weights_name, config_name):
-    """
-    Save model to disk.
+    """Save model to disk.
 
     :param model: Model to save (pytorch)
     :param output_dir: Path to model save dir.
@@ -147,8 +140,7 @@ def _save_model(model, output_dir, weights_name, config_name):
 
 
 def _get_eval_score(model, eval_dataloader, do_regression):
-    """
-    Measure performance of a model on the evaluation set.
+    """Measure performance of a model on the evaluation set.
 
     :param model: Model to test.
     :param eval_dataloader: a torch DataLoader that iterates through the eval set.
@@ -206,8 +198,7 @@ def batch_encode(tokenizer, text_list):
 
 
 def _make_dataloader(tokenizer, text, labels, batch_size):
-    """
-    Create torch DataLoader from list of input text and labels.
+    """Create torch DataLoader from list of input text and labels.
 
     :param tokenizer: Tokenizer to use for this text.
     :param text: list of input text.
@@ -225,8 +216,7 @@ def _make_dataloader(tokenizer, text, labels, batch_size):
 
 
 def _data_augmentation(text, labels, augmenter):
-    """
-    Use an augmentation method to expand a training set.
+    """Use an augmentation method to expand a training set.
 
     :param text: list of input text.
     :param labels: list of corresponding labels.
@@ -246,8 +236,8 @@ def _data_augmentation(text, labels, augmenter):
 
 
 def _generate_adversarial_examples(model, attackCls, dataset):
-    """
-    Create a dataset of adversarial examples based on perturbations of the existing dataset.
+    """Create a dataset of adversarial examples based on perturbations of the
+    existing dataset.
 
     :param model: Model to attack.
     :param attackCls: class name of attack recipe to run.
@@ -551,6 +541,9 @@ def train_model(args):
     logger.info(
         f"Eval of saved model {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
     )
+
+    if args.save_last:
+        _save_model(model, args.output_dir, args.weights_name, args.config_name)
 
     # end of training, save tokenizer
     try:

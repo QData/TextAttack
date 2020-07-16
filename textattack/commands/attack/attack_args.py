@@ -9,6 +9,7 @@ ATTACK_RECIPE_NAMES = {
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
     "input-reduction": "textattack.attack_recipes.InputReductionFeng2018",
     "kuleshov": "textattack.attack_recipes.Kuleshov2017",
+    "morpheus": "textattack.attack_recipes.MorpheusTan2020",
     "seq2sick": "textattack.attack_recipes.Seq2SickCheng2018BlackBox",
     "textbugger": "textattack.attack_recipes.TextBuggerLi2018",
     "textfooler": "textattack.attack_recipes.TextFoolerJin2019",
@@ -300,8 +301,11 @@ TEXTATTACK_DATASET_BY_MODEL = {
 }
 
 BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
+    "random-synonym-insertion": "textattack.transformations.RandomSynonymInsertion",
+    "word-deletion": "textattack.transformations.WordDeletion",
     "word-swap-embedding": "textattack.transformations.WordSwapEmbedding",
     "word-swap-homoglyph": "textattack.transformations.WordSwapHomoglyphSwap",
+    "word-swap-inflections": "textattack.transformations.WordSwapInflections",
     "word-swap-neighboring-char-swap": "textattack.transformations.WordSwapNeighboringCharacterSwap",
     "word-swap-random-char-deletion": "textattack.transformations.WordSwapRandomCharacterDeletion",
     "word-swap-random-char-insertion": "textattack.transformations.WordSwapRandomCharacterInsertion",
@@ -309,6 +313,7 @@ BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     "word-swap-wordnet": "textattack.transformations.WordSwapWordNet",
     "word-swap-masked-lm": "textattack.transformations.WordSwapMaskedLM",
     "word-swap-hownet": "textattack.transformations.WordSwapHowNet",
+    "word-swap-qwerty": "textattack.transformations.WordSwapQWERTY",
 }
 
 WHITE_BOX_TRANSFORMATION_CLASS_NAMES = {
@@ -358,6 +363,8 @@ SEARCH_METHOD_CLASS_NAMES = {
 }
 
 GOAL_FUNCTION_CLASS_NAMES = {
+    "input-reduction": "textattack.goal_functions.InputReduction",
+    "minimize-bleu": "textattack.goal_functions.MinimizeBleu",
     "non-overlapping-output": "textattack.goal_functions.NonOverlappingOutput",
     "targeted-classification": "textattack.goal_functions.TargetedClassification",
     "untargeted-classification": "textattack.goal_functions.UntargetedClassification",

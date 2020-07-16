@@ -38,7 +38,6 @@ class GoalFunction(ABC):
             self.__class__, model.__class__
         )
         self.model = model
-        self.model.eval()
         self.maximizable = maximizable
         self.tokenizer = tokenizer
         if not self.tokenizer:
