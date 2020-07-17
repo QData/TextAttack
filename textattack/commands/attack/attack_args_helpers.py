@@ -5,6 +5,7 @@ import json
 import os
 import time
 
+
 import textattack
 
 from .attack_args import (
@@ -104,6 +105,7 @@ def add_dataset_args(parser):
         action="store_true",
         required=False,
         default=False,
+        help="Hides all attacks from the attack log."
     )
 
     parser.add_argument(

@@ -48,9 +48,9 @@ class AttackLogManager:
                 if not isinstance(result, SkippedAttackResult):
                     logger.log_attack_result(result)
             if self.hide_failed_result and self.hide_skipped_result:
-                if (not isinstance(result, FailedAttackResult)) and \
-                        (not isinstance(result, SkippedAttackResult)):
-                    logger.log_attack_result(result)
+                if not isinstance(result, FailedAttackResult):
+                    if not isinstance(result, SkippedAttackResult):
+                        logger.log_attack_result(result)
 
     def log_results(self, results):
         """Logs an iterable of ``AttackResult`` objects on each of
