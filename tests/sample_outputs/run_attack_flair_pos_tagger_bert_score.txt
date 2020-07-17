@@ -12,11 +12,13 @@
         (min_bert_score):  0.8
         (model):  bert-base-uncased
         (score_type):  f1
+        (compare_against_original):  True
       )
     (1): PartOfSpeech(
         (tagger_type):  flair
         (tagset):  universal
         (allow_verb_noun_swap):  True
+        (compare_against_original):  True
       )
     (2): RepeatModification
     (3): StopwordModification

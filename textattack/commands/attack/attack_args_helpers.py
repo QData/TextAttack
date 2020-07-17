@@ -3,23 +3,27 @@ import copy
 import importlib
 import json
 import os
-import pickle
-import random
-import sys
 import time
-
-import numpy as np
-import torch
 
 import textattack
 
-from .attack_args import *
+from .attack_args import (
+    ATTACK_RECIPE_NAMES,
+    BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
+    CONSTRAINT_CLASS_NAMES,
+    GOAL_FUNCTION_CLASS_NAMES,
+    HUGGINGFACE_DATASET_BY_MODEL,
+    SEARCH_METHOD_CLASS_NAMES,
+    TEXTATTACK_DATASET_BY_MODEL,
+    WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
+)
 
 
 def add_model_args(parser):
-    """ Adds model-related arguments to an argparser. This is useful because we
-        want to load pretrained models using multiple different parsers that
-        share these, but not all, arguments.
+    """Adds model-related arguments to an argparser.
+
+    This is useful because we want to load pretrained models using
+    multiple different parsers that share these, but not all, arguments.
     """
     model_group = parser.add_mutually_exclusive_group()
 
@@ -49,9 +53,10 @@ def add_model_args(parser):
 
 
 def add_dataset_args(parser):
-    """ Adds dataset-related arguments to an argparser. This is useful because we
-        want to load pretrained models using multiple different parsers that
-        share these, but not all, arguments.
+    """Adds dataset-related arguments to an argparser.
+
+    This is useful because we want to load pretrained models using
+    multiple different parsers that share these, but not all, arguments.
     """
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument(
@@ -68,11 +73,12 @@ def add_dataset_args(parser):
         default=None,
         help="Dataset to load from a file.",
     )
-    dataset_group.add_argument(
+    parser.add_argument(
         "--shuffle",
-        action="store_true",
+        type=eval,
         required=False,
-        default=False,
+        choices=[True, False],
+        default="True",
         help="Randomly shuffle the data before attacking",
     )
     parser.add_argument(
@@ -118,9 +124,8 @@ def add_dataset_args(parser):
 
 
 def load_module_from_file(file_path):
-    """ Uses ``importlib`` to dynamically open a file and load an object from
-        it. 
-    """
+    """Uses ``importlib`` to dynamically open a file and load an object from
+    it."""
     temp_module_name = f"temp_{time.time()}"
     colored_file_path = textattack.shared.utils.color_text(
         file_path, color="blue", method="ansi"
@@ -266,14 +271,14 @@ def parse_model_from_args(args):
         if ":" in args.model_from_file:
             model_file, model_name, tokenizer_name = args.model_from_file.split(":")
         else:
-            model_file, model_name, tokenizer_name = (
+            _, model_name, tokenizer_name = (
                 args.model_from_file,
                 "model",
                 "tokenizer",
             )
         try:
             model_module = load_module_from_file(args.model_from_file)
-        except:
+        except Exception:
             raise ValueError(f"Failed to import file {args.model_from_file}")
         try:
             model = getattr(model_module, model_name)
@@ -337,13 +342,19 @@ def parse_model_from_args(args):
                     f"Tried to load model from path {args.model} - could not find train_args.json."
                 )
             model_train_args = json.loads(open(model_args_json_path).read())
-            model_train_args["model"] = args.model
+            if model_train_args["model"] not in {"cnn", "lstm"}:
+                # for huggingface models, set args.model to the path of the model
+                model_train_args["model"] = args.model
             num_labels = model_train_args["num_labels"]
             from textattack.commands.train_model.train_args_helpers import (
                 model_from_args,
             )
 
-            model = model_from_args(argparse.Namespace(**model_train_args), num_labels)
+            model = model_from_args(
+                argparse.Namespace(**model_train_args),
+                num_labels,
+                model_path=args.model,
+            )
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
     return model
@@ -372,9 +383,13 @@ def parse_dataset_from_args(args):
             )
         model_train_args = json.loads(open(model_args_json_path).read())
         try:
+            if ":" in model_train_args["dataset"]:
+                name, subset = model_train_args["dataset"].split(":")
+            else:
+                name, subset = model_train_args["dataset"], None
             args.dataset_from_nlp = (
-                model_train_args["dataset"],
-                None,
+                name,
+                subset,
                 model_train_args["dataset_dev_split"],
             )
         except KeyError:
@@ -393,7 +408,7 @@ def parse_dataset_from_args(args):
             dataset_file, dataset_name = args.dataset_from_file, "dataset"
         try:
             dataset_module = load_module_from_file(dataset_file)
-        except:
+        except Exception:
             raise ValueError(
                 f"Failed to import dataset from file {args.dataset_from_file}"
             )
@@ -410,7 +425,7 @@ def parse_dataset_from_args(args):
                 dataset_args = dataset_args.split(":")
             else:
                 dataset_args = (dataset_args,)
-        dataset = textattack.datasets.HuggingFaceNLPDataset(
+        dataset = textattack.datasets.HuggingFaceNlpDataset(
             *dataset_args, shuffle=args.shuffle
         )
         dataset.examples = dataset.examples[args.num_examples_offset :]
@@ -445,7 +460,7 @@ def parse_logger_from_args(args):
         color_method = None if args.enable_csv == "plain" else "file"
         csv_path = os.path.join(args.out_dir, outfile_name)
         attack_log_manager.add_output_csv(csv_path, color_method)
-        print("Logging to CSV at path {}.".format(csv_path))
+        textattack.shared.logger.info(f"Logging to CSV at path {csv_path}.")
 
     # Visdom
     if args.enable_visdom:
@@ -494,7 +509,8 @@ def default_checkpoint_dir():
 
 
 def merge_checkpoint_args(saved_args, cmdline_args):
-    """ Merge previously saved arguments for checkpoint and newly entered arguments """
+    """Merge previously saved arguments for checkpoint and newly entered
+    arguments."""
     args = copy.deepcopy(saved_args)
     # Newly entered arguments take precedence
     args.parallel = cmdline_args.parallel

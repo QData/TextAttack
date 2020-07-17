@@ -1,5 +1,5 @@
 import torch
-import torch.nn as nn
+from torch import nn as nn
 
 import textattack
 from textattack.models.helpers import GloveEmbeddingLayer
@@ -8,10 +8,10 @@ from textattack.shared import utils
 
 
 class LSTMForClassification(nn.Module):
-    """ A long short-term memory neural network for text classification. 
-    
-        We use different versions of this network to pretrain models for text 
-        classification.
+    """A long short-term memory neural network for text classification.
+
+    We use different versions of this network to pretrain models for
+    text classification.
     """
 
     def __init__(
@@ -22,6 +22,7 @@ class LSTMForClassification(nn.Module):
         num_labels=2,
         max_seq_length=128,
         model_path=None,
+        emb_layer_trainable=True,
     ):
         super().__init__()
         if depth <= 1:
@@ -30,7 +31,8 @@ class LSTMForClassification(nn.Module):
             # so if that's all we have, this will display a warning.
             dropout = 0
         self.drop = nn.Dropout(dropout)
-        self.emb_layer = GloveEmbeddingLayer()
+        self.emb_layer_trainable = emb_layer_trainable
+        self.emb_layer = GloveEmbeddingLayer(emb_layer_trainable=emb_layer_trainable)
         self.word2id = self.emb_layer.word2id
         self.encoder = nn.LSTM(
             input_size=self.emb_layer.n_d,
@@ -70,4 +72,4 @@ class LSTMForClassification(nn.Module):
 
         output = self.drop(output)
         pred = self.out(output)
-        return nn.functional.softmax(pred, dim=-1)
+        return pred

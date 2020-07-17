@@ -34,3 +34,8 @@ Genetic Algorithm Word Swap
 .. automodule:: textattack.search_methods.genetic_algorithm
    :members:
 
+Particle Swarm Optimization
+##############################
+
+.. automodule:: textattack.search_methods.particle_swarm_optimization
+   :members:

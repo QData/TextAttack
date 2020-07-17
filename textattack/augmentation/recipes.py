@@ -11,62 +11,58 @@ DEFAULT_CONSTRAINTS = [
 
 
 class EasyDataAugmenter(Augmenter):
+    """An implementation of Easy Data Augmentation, which combines:
+
+    - WordNet synonym replacement
+        - Randomly replace words with their synonyms.
+    - Word deletion
+        - Randomly remove words from the sentence.
+    - Word order swaps
+        - Randomly swap the position of words in the sentence.
+    - Random synonym insertion
+        - Insert a random synonym of a random word at a random location.
+
+    in one augmentation method.
+
+    "EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks" (Wei and Zou, 2019)
+    https://arxiv.org/abs/1901.11196
     """
 
-        An implementation of Easy Data Augmentation, which combines:
-
-        - WordNet synonym replacement
-            - Randomly replace words with their synonyms.
-        - Word deletion
-            - Randomly remove words from the sentence.
-        - Word order swaps
-            - Randomly swap the position of words in the sentence.
-        - Random synonym insertion
-            - Insert a random synonym of a random word at a random location.
-
-        in one augmentation method.
-
-        "EDA: Easy Data Augmentation Techniques for Boosting Performance on Text Classification Tasks" (Wei and Zou, 2019)
-        https://arxiv.org/abs/1901.11196
-
-    :param alpha: fraction of words to modify each iteration.
-    :param n_aug: how many augmented examples to create from each existing input.
-
-    """
-
-    def __init__(self, alpha, n_aug):
-        self.alpha = alpha
-        self.transformations_per_example = n_aug
-        n_aug_each = max(n_aug // 4, 1)
+    def __init__(self, pct_words_to_swap=0.1, transformations_per_example=4):
+        assert (
+            pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
+        ), "pct_words_to_swap must be in [0., 1.]"
+        assert (
+            transformations_per_example > 0
+        ), "transformations_per_example must be a positive integer"
+        self.pct_words_to_swap = pct_words_to_swap
+        self.transformations_per_example = transformations_per_example
+        n_aug_each = max(transformations_per_example // 4, 1)
 
         self.synonym_replacement = WordNetAugmenter(
-            transformations_per_example=n_aug_each
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
         )
-        self.random_deletion = DeletionAugmenter(transformations_per_example=n_aug_each)
-        self.random_swap = SwapAugmenter(transformations_per_example=n_aug_each)
+        self.random_deletion = DeletionAugmenter(
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
+        )
+        self.random_swap = SwapAugmenter(
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
+        )
         self.random_insertion = SynonymInsertionAugmenter(
-            transformations_per_example=n_aug_each
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each
         )
-
-    def _set_words_to_swap(self, num):
-        self.synonym_replacement.num_words_to_swap = num
-        self.random_deletion.num_words_to_swap = num
-        self.random_swap.num_words_to_swap = num
-        self.random_insertion.num_words_to_swap = num
 
     def augment(self, text):
-        attacked_text = textattack.shared.AttackedText(text)
-        num_words_to_swap = max(1, int(self.alpha * len(attacked_text.words)))
-        self._set_words_to_swap(num_words_to_swap)
-
-        augmented_text = [attacked_text.printable_text()]
+        augmented_text = []
         augmented_text += self.synonym_replacement.augment(text)
         augmented_text += self.random_deletion.augment(text)
         augmented_text += self.random_swap.augment(text)
         augmented_text += self.random_insertion.augment(text)
-
         random.shuffle(augmented_text)
         return augmented_text[: self.transformations_per_example]
+
+    def __repr__(self):
+        return "EasyDataAugmenter"
 
 
 class SwapAugmenter(Augmenter):
@@ -86,7 +82,7 @@ class SynonymInsertionAugmenter(Augmenter):
 
 
 class WordNetAugmenter(Augmenter):
-    """ Augments text by replacing with synonyms from the WordNet thesaurus. """
+    """Augments text by replacing with synonyms from the WordNet thesaurus."""
 
     def __init__(self, **kwargs):
         from textattack.transformations import WordSwapWordNet
@@ -104,7 +100,7 @@ class DeletionAugmenter(Augmenter):
 
 
 class EmbeddingAugmenter(Augmenter):
-    """ Augments text by transforming words with their embeddings. """
+    """Augments text by transforming words with their embeddings."""
 
     def __init__(self, **kwargs):
         from textattack.transformations import WordSwapEmbedding
@@ -119,16 +115,15 @@ class EmbeddingAugmenter(Augmenter):
 
 
 class CharSwapAugmenter(Augmenter):
-    """ Augments words by swapping characters out for other characters. """
+    """Augments words by swapping characters out for other characters."""
 
     def __init__(self, **kwargs):
-        from textattack.transformations import CompositeTransformation
         from textattack.transformations import (
+            CompositeTransformation,
             WordSwapNeighboringCharacterSwap,
             WordSwapRandomCharacterDeletion,
             WordSwapRandomCharacterInsertion,
             WordSwapRandomCharacterSubstitution,
-            WordSwapNeighboringCharacterSwap,
         )
 
         transformation = CompositeTransformation(

@@ -1,9 +1,9 @@
-"""
-When WIR method is set to ``unk``, this is a
-reimplementation of the search method from the paper: 
-Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and 
-Entailment by Jin et. al, 2019. 
-See https://arxiv.org/abs/1907.11932 and https://github.com/jind11/TextFooler.
+"""When WIR method is set to ``unk``, this is a reimplementation of the search
+method from the paper: Is BERT Really Robust?
+
+A Strong Baseline for Natural Language Attack on Text Classification and
+Entailment by Jin et. al, 2019. See https://arxiv.org/abs/1907.11932 and
+https://github.com/jind11/TextFooler.
 """
 
 import numpy as np
@@ -18,10 +18,9 @@ from textattack.shared.validators import (
 
 
 class GreedyWordSwapWIR(SearchMethod):
-    """
-    An attack that greedily chooses from a list of possible perturbations in 
+    """An attack that greedily chooses from a list of possible perturbations in
     order of index, after ranking indices by importance.
-        
+
     Args:
         wir_method: method for ranking most important words
     """
@@ -30,9 +29,8 @@ class GreedyWordSwapWIR(SearchMethod):
         self.wir_method = wir_method
 
     def _get_index_order(self, initial_result, texts):
-        """ Queries model for list of attacked text objects ``text`` and
-            ranks in order of descending score.
-        """
+        """Queries model for list of attacked text objects ``text`` and ranks
+        in order of descending score."""
         leave_one_results, search_over = self.get_goal_results(texts)
         leave_one_scores = np.array([result.score for result in leave_one_results])
         return leave_one_scores, search_over
@@ -60,7 +58,9 @@ class GreedyWordSwapWIR(SearchMethod):
                 initial_result, leave_one_texts
             )
 
-            softmax_saliency_scores = softmax(torch.Tensor(saliency_scores)).numpy()
+            softmax_saliency_scores = softmax(
+                torch.Tensor(saliency_scores), dim=0
+            ).numpy()
 
             # compute the largest change in score we can find by swapping each word
             delta_ps = []
@@ -74,9 +74,7 @@ class GreedyWordSwapWIR(SearchMethod):
                     # no valid synonym substitutions for this word
                     delta_ps.append(0.0)
                     continue
-                swap_results, _ = self.get_goal_results(
-                    transformed_text_candidates, initial_result.output
-                )
+                swap_results, _ = self.get_goal_results(transformed_text_candidates)
                 score_change = [result.score for result in swap_results]
                 max_score_change = np.max(score_change)
                 delta_ps.append(max_score_change)
@@ -94,6 +92,8 @@ class GreedyWordSwapWIR(SearchMethod):
             index_order = np.arange(len_text)
             np.random.shuffle(index_order)
             search_over = False
+        else:
+            raise ValueError(f"Unsupport WIR method {self.wir_method}")
 
         if self.wir_method != "random":
             index_order = (-leave_one_scores).argsort()
@@ -141,9 +141,8 @@ class GreedyWordSwapWIR(SearchMethod):
         return cur_result
 
     def check_transformation_compatibility(self, transformation):
-        """
-            Since it ranks words by their importance, GreedyWordSwapWIR is limited to word swap and deletion transformations.
-        """
+        """Since it ranks words by their importance, GreedyWordSwapWIR is
+        limited to word swap and deletion transformations."""
         return transformation_consists_of_word_swaps_and_deletions(transformation)
 
     def extra_repr_keys(self):

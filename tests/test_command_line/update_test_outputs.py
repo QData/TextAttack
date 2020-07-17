@@ -1,8 +1,7 @@
-"""
-Re-runs command-line tests and places their outputs in the sample files. 
+"""Re-runs command-line tests and places their outputs in the sample files.
 
-This is useful for large changes, but be wary: the outputs still may need to be
-manually edited to account for variance between runs.
+This is useful for large changes, but be wary: the outputs still may
+need to be manually edited to account for variance between runs.
 """
 from helpers import run_command_and_get_result
 from test_attack import attack_test_params

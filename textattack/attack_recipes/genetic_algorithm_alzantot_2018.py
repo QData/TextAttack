@@ -15,12 +15,12 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def GeneticAlgorithmAlzantot2018(model):
-    """
-        Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., & Chang, K. (2018). 
-        
-        Generating Natural Language Adversarial Examples. 
-        
-        https://arxiv.org/abs/1801.00554 
+    """Alzantot, M., Sharma, Y., Elgohary, A., Ho, B., Srivastava, M.B., &
+    Chang, K. (2018).
+
+    Generating Natural Language Adversarial Examples.
+
+    https://arxiv.org/abs/1801.00554
     """
     #
     # Swap words with their embedding nearest-neighbors.
@@ -49,11 +49,17 @@ def GeneticAlgorithmAlzantot2018(model):
     #
     # Maximum word embedding euclidean distance of 0.5.
     #
-    constraints.append(WordEmbeddingDistance(max_mse_dist=0.5))
+    constraints.append(
+        WordEmbeddingDistance(max_mse_dist=0.5, compare_against_original=False)
+    )
     #
     # Language Model
     #
-    constraints.append(Google1BillionWordsLanguageModel(top_n_per_index=4))
+    constraints.append(
+        Google1BillionWordsLanguageModel(
+            top_n_per_index=4, compare_against_original=False
+        )
+    )
     #
     # Goal is untargeted classification
     #
@@ -61,6 +67,8 @@ def GeneticAlgorithmAlzantot2018(model):
     #
     # Perform word substitution with a genetic algorithm.
     #
-    search_method = GeneticAlgorithm(pop_size=60, max_iters=20, max_crossover_retries=0)
+    search_method = GeneticAlgorithm(
+        pop_size=60, max_iters=20, post_crossover_check=False
+    )
 
     return Attack(goal_function, constraints, transformation, search_method)

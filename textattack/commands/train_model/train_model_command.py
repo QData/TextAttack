@@ -6,15 +6,14 @@ from textattack.commands import TextAttackCommand
 
 
 class TrainModelCommand(TextAttackCommand):
-    """
-    The TextAttack train module:
-    
-        A command line parser to train a model from user specifications.
+    """The TextAttack train module:
+
+    A command line parser to train a model from user specifications.
     """
 
     def run(self, args):
 
-        date_now = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M")
+        date_now = datetime.datetime.now().strftime("%Y-%m-%d-%H-%M-%S-%f")
         current_dir = os.path.dirname(os.path.realpath(__file__))
         outputs_dir = os.path.join(
             current_dir, os.pardir, os.pardir, os.pardir, "outputs", "training"
@@ -49,6 +48,12 @@ class TrainModelCommand(TextAttackCommand):
             " ex: `glue:sst2` or `rotten_tomatoes`",
         )
         parser.add_argument(
+            "--pct-dataset",
+            type=float,
+            default=1.0,
+            help="Fraction of dataset to use during training ([0., 1.])",
+        )
+        parser.add_argument(
             "--dataset-train-split",
             "--train-split",
             type=str,
@@ -78,10 +83,16 @@ class TrainModelCommand(TextAttackCommand):
             help="save model after this many steps (-1 for no checkpointing)",
         )
         parser.add_argument(
-            "--checkpoint-every_epoch",
+            "--checkpoint-every-epoch",
             action="store_true",
             default=False,
             help="save model checkpoint after each epoch",
+        )
+        parser.add_argument(
+            "--save-last",
+            action="store_true",
+            default=False,
+            help="Overwrite the saved model weights after the final epoch.",
         )
         parser.add_argument(
             "--num-train-epochs",
@@ -89,6 +100,39 @@ class TrainModelCommand(TextAttackCommand):
             type=int,
             default=100,
             help="Total number of epochs to train for",
+        )
+        parser.add_argument(
+            "--attack",
+            type=str,
+            default=None,
+            help="Attack recipe to use (enables adversarial training)",
+        )
+        parser.add_argument(
+            "--num-clean-epochs",
+            type=int,
+            default=1,
+            help="Number of epochs to train on the clean dataset before adversarial training (N/A if --attack unspecified)",
+        )
+        parser.add_argument(
+            "--attack-period",
+            type=int,
+            default=1,
+            help="How often (in epochs) to generate a new adversarial training set (N/A if --attack unspecified)",
+        )
+        parser.add_argument(
+            "--augment", type=str, default=None, help="Augmentation recipe to use",
+        )
+        parser.add_argument(
+            "--pct-words-to-swap",
+            type=float,
+            default=0.1,
+            help="Percentage of words to modify when using data augmentation (--augment)",
+        )
+        parser.add_argument(
+            "--transformations-per-example",
+            type=int,
+            default=4,
+            help="Number of augmented versions to create from each example when using data augmentation (--augment)",
         )
         parser.add_argument(
             "--allowed-labels",

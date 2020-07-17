@@ -1,11 +1,15 @@
+PEP_IGNORE_ERRORS="C901 E501 W503 E203 E231 E266 F403"
+
 format: FORCE  ## Run black and isort (rewriting files)
 	black .
-	isort  --atomic --recursive tests textattack
+	isort --atomic tests textattack
+	docformatter --in-place --recursive textattack tests
 
-
-lint: FORCE  ## Run black (in check mode)
+lint: FORCE  ## Run black, isort, flake8 (in check mode)
 	black . --check
-	isort --check-only --recursive tests textattack
+	isort --check-only tests textattack
+	flake8 . --count --ignore=$(PEP_IGNORE_ERRORS) --show-source --statistics --exclude=./.*,build,dist
+
 
 test: FORCE ## Run tests using pytest
 	python -m pytest --dist=loadfile -n auto

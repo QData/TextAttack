@@ -2,9 +2,10 @@ from .classification_goal_function import ClassificationGoalFunction
 
 
 class TargetedClassification(ClassificationGoalFunction):
-    """
-    A targeted attack on classification models which attempts to maximize the 
-    score of the target label. Complete when the arget label is the predicted label.
+    """A targeted attack on classification models which attempts to maximize
+    the score of the target label.
+
+    Complete when the arget label is the predicted label.
     """
 
     def __init__(self, *args, target_class=0, **kwargs):
@@ -25,4 +26,7 @@ class TargetedClassification(ClassificationGoalFunction):
             return model_output[self.target_class]
 
     def extra_repr_keys(self):
-        return ["target_class"]
+        if self.maximizable:
+            return ["maximizable", "target_class"]
+        else:
+            return ["target_class"]

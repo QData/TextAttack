@@ -5,15 +5,15 @@ import numpy as np
 import torch
 
 from textattack.constraints import Constraint
-from textattack.shared import AttackedText, utils
+from textattack.shared import utils
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
 class WordEmbeddingDistance(Constraint):
-    """
-    A constraint on word substitutions which places a maximum distance between the embedding of the
-    word being deleted and the word being inserted.
-    
+    """A constraint on word substitutions which places a maximum distance
+    between the embedding of the word being deleted and the word being
+    inserted.
+
     Args:
         embedding_type (str): The word embedding to use.
         include_unknown_words (bool): Whether or not the constraint is fulfilled
@@ -22,6 +22,8 @@ class WordEmbeddingDistance(Constraint):
         max_mse_dist: The maximum euclidean distance between word embeddings.
         cased (bool): Whether embedding supports uppercase & lowercase
             (defaults to False, or just lowercase).
+        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
+            Otherwise, compare it against the previous `x_adv`.
     """
 
     PATH = "word_embeddings"
@@ -33,7 +35,9 @@ class WordEmbeddingDistance(Constraint):
         min_cos_sim=None,
         max_mse_dist=None,
         cased=False,
+        compare_against_original=True,
     ):
+        super().__init__(compare_against_original)
         self.include_unknown_words = include_unknown_words
         self.cased = cased
         self.min_cos_sim = min_cos_sim
@@ -47,7 +51,7 @@ class WordEmbeddingDistance(Constraint):
             mse_dist_file = "mse_dist.p"
             cos_sim_file = "cos_sim.p"
         else:
-            raise ValueError(f"Could not find word embedding {word_embedding}")
+            raise ValueError(f"Could not find word embedding {embedding_type}")
 
         # Download embeddings if they're not cached.
         word_embeddings_path = utils.download_if_needed(WordEmbeddingDistance.PATH)
@@ -80,7 +84,7 @@ class WordEmbeddingDistance(Constraint):
             self.cos_sim_mat = {}
 
     def get_cos_sim(self, a, b):
-        """ Returns the cosine similarity of words with IDs a and b."""
+        """Returns the cosine similarity of words with IDs a and b."""
         if isinstance(a, str):
             a = self.word_embedding_word2index[a]
         if isinstance(b, str):
@@ -98,7 +102,7 @@ class WordEmbeddingDistance(Constraint):
         return cos_sim
 
     def get_mse_dist(self, a, b):
-        """ Returns the MSE distance of words with IDs a and b."""
+        """Returns the MSE distance of words with IDs a and b."""
         a, b = min(a, b), max(a, b)
         try:
             mse_dist = self.mse_dist_mat[a][b]
@@ -111,11 +115,9 @@ class WordEmbeddingDistance(Constraint):
             self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
 
-    def _check_constraint(self, transformed_text, current_text, original_text=None):
-        """ 
-        Returns true if (``current_text, ``transformed_text``) are closer than 
-        ``self.min_cos_sim`` and ``self.max_mse_dist``. 
-        """
+    def _check_constraint(self, transformed_text, reference_text):
+        """Returns true if (``transformed_text`` and ``reference_text``) are
+        closer than ``self.min_cos_sim`` and ``self.max_mse_dist``."""
         try:
             indices = transformed_text.attack_attrs["newly_modified_indices"]
         except KeyError:
@@ -124,16 +126,16 @@ class WordEmbeddingDistance(Constraint):
             )
 
         for i in indices:
-            cur_word = current_text.words[i]
+            ref_word = reference_text.words[i]
             transformed_word = transformed_text.words[i]
 
             if not self.cased:
                 # If embedding vocabulary is all lowercase, lowercase words.
-                cur_word = cur_word.lower()
+                ref_word = ref_word.lower()
                 transformed_word = transformed_word.lower()
 
             try:
-                cur_id = self.word_embedding_word2index[cur_word]
+                ref_id = self.word_embedding_word2index[ref_word]
                 transformed_id = self.word_embedding_word2index[transformed_word]
             except KeyError:
                 # This error is thrown if x or x_adv has no corresponding ID.
@@ -143,33 +145,37 @@ class WordEmbeddingDistance(Constraint):
 
             # Check cosine distance.
             if self.min_cos_sim:
-                cos_sim = self.get_cos_sim(cur_id, transformed_id)
+                cos_sim = self.get_cos_sim(ref_id, transformed_id)
                 if cos_sim < self.min_cos_sim:
                     return False
             # Check MSE distance.
             if self.max_mse_dist:
-                mse_dist = self.get_mse_dist(cur_id, transformed_id)
+                mse_dist = self.get_mse_dist(ref_id, transformed_id)
                 if mse_dist > self.max_mse_dist:
                     return False
 
         return True
 
     def check_compatibility(self, transformation):
-        """
-        WordEmbeddingDistance requires a word being both deleted and inserted at the same index
-        in order to compare their embeddings, therefore it's restricted to word swaps.
-        """
+        """WordEmbeddingDistance requires a word being both deleted and
+        inserted at the same index in order to compare their embeddings,
+        therefore it's restricted to word swaps."""
         return transformation_consists_of_word_swaps(transformation)
 
     def extra_repr_keys(self):
         """Set the extra representation of the constraint using these keys.
-        
+
         To print customized extra information, you should reimplement
-        this method in your own constraint. Both single-line and multi-line
-        strings are acceptable.
+        this method in your own constraint. Both single-line and multi-
+        line strings are acceptable.
         """
         if self.min_cos_sim is None:
             metric = "max_mse_dist"
         else:
             metric = "min_cos_sim"
-        return ["embedding_type", metric, "cased", "include_unknown_words"]
+        return [
+            "embedding_type",
+            metric,
+            "cased",
+            "include_unknown_words",
+        ] + super().extra_repr_keys()

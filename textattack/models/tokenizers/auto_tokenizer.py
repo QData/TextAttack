@@ -1,17 +1,16 @@
-import torch
+# import torch
 import transformers
 
-from textattack.shared import AttackedText
+# from textattack.shared import AttackedText
 
 
 class AutoTokenizer:
-    """ 
-    A generic class that convert text to tokens and tokens to IDs. Supports
-    any type of tokenization, be it word, wordpiece, or character-based.
-    Based on the ``AutoTokenizer`` from the ``transformers`` library, but 
+    """A generic class that convert text to tokens and tokens to IDs. Supports
+    any type of tokenization, be it word, wordpiece, or character-based. Based
+    on the ``AutoTokenizer`` from the ``transformers`` library, but
     standardizes the functionality for TextAttack.
-    
-    Args: 
+
+    Args:
         name: the identifying name of the tokenizer (see AutoTokenizer,
             https://github.com/huggingface/transformers/blob/master/src/transformers/tokenization_auto.py)
         max_length: if set, will truncate & pad tokens to fit this length
@@ -27,11 +26,12 @@ class AutoTokenizer:
         self.save_pretrained = self.tokenizer.save_pretrained
 
     def encode(self, input_text):
-        """ Encodes ``input_text``.
-        
-        ``input_text`` may be a string or a tuple of strings, depending if the
-        model takes 1 or multiple inputs. The ``transformers.AutoTokenizer``
-        will automatically handle either case.
+        """Encodes ``input_text``.
+
+        ``input_text`` may be a string or a tuple of strings, depending
+        if the model takes 1 or multiple inputs. The
+        ``transformers.AutoTokenizer`` will automatically handle either
+        case.
         """
         if isinstance(input_text, str):
             input_text = (input_text,)
@@ -45,7 +45,7 @@ class AutoTokenizer:
         return dict(encoded_text)
 
     def batch_encode(self, input_text_list):
-        """ The batch equivalent of ``encode``."""
+        """The batch equivalent of ``encode``."""
         if hasattr(self.tokenizer, "batch_encode_plus"):
             if isinstance(input_text_list[0], tuple) and len(input_text_list[0]) == 1:
                 # Unroll tuples of length 1.

@@ -13,12 +13,11 @@ from textattack.transformations import WordSwapEmbedding
 
 
 def TextFoolerJin2019(model):
-    """
-        Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019). 
-        
-        Is BERT Really Robust? Natural Language Attack on Text Classification and Entailment. 
-        
-        https://arxiv.org/abs/1907.11932 
+    """Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019).
+
+    Is BERT Really Robust? Natural Language Attack on Text Classification and Entailment.
+
+    https://arxiv.org/abs/1907.11932
     """
     #
     # Swap words with their 50 closest embedding nearest-neighbors.
@@ -53,16 +52,16 @@ def TextFoolerJin2019(model):
     #
     constraints.append(PartOfSpeech(allow_verb_noun_swap=True))
     #
-    # Universal Sentence Encoder with a minimum angular similarity of ε = 0.7.
+    # Universal Sentence Encoder with a minimum angular similarity of ε = 0.5.
     #
     # In the TextFooler code, they forget to divide the angle between the two
-    # embeddings by pi. So if the original threshold was that 1 - sim >= 0.7, the
-    # new threshold is 1 - (0.3) / pi = 0.90445
+    # embeddings by pi. So if the original threshold was that 1 - sim >= 0.5, the
+    # new threshold is 1 - (0.5) / pi = 0.840845057
     #
     use_constraint = UniversalSentenceEncoder(
-        threshold=0.904458599,
+        threshold=0.840845057,
         metric="angular",
-        compare_with_original=False,
+        compare_against_original=False,
         window_size=15,
         skip_text_shorter_than_window=True,
     )
@@ -74,6 +73,6 @@ def TextFoolerJin2019(model):
     #
     # Greedily swap words with "Word Importance Ranking".
     #
-    search_method = GreedyWordSwapWIR()
+    search_method = GreedyWordSwapWIR(wir_method="delete")
 
     return Attack(goal_function, constraints, transformation, search_method)

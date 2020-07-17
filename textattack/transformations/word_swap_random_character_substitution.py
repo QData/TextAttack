@@ -1,16 +1,16 @@
 import numpy as np
 
-from textattack.shared import utils
+# from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapRandomCharacterSubstitution(WordSwap):
-    """ Transforms an input by replacing one character in a word with a random
-        new character.
+    """Transforms an input by replacing one character in a word with a random
+    new character.
 
-        Args:
-            random_one (bool): Whether to return a single word with a random 
-                character deleted. If not set, returns all possible options.
+    Args:
+        random_one (bool): Whether to return a single word with a random
+            character deleted. If not set, returns all possible options.
     """
 
     def __init__(self, random_one=True, **kwargs):
@@ -18,9 +18,8 @@ class WordSwapRandomCharacterSubstitution(WordSwap):
         self.random_one = random_one
 
     def _get_replacement_words(self, word):
-        """ Returns returns a list containing all possible words with 1 letter
-            substituted for a random letter.
-        """
+        """Returns returns a list containing all possible words with 1 letter
+        substituted for a random letter."""
         if len(word) <= 1:
             return []
 
@@ -36,3 +35,6 @@ class WordSwapRandomCharacterSubstitution(WordSwap):
                 candidate_words.append(candidate_word)
 
         return candidate_words
+
+    def extra_repr_keys(self):
+        return super().extra_repr_keys() + ["random_one"]

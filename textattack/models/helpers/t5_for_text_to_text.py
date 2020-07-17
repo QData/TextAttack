@@ -5,27 +5,25 @@ from textattack.shared import utils
 
 
 class T5ForTextToText:
-    """ 
-    A T5 model trained to generate text from text.
-    
-    For more information, please see the T5 paper, "Exploring the Limits of 
+    """A T5 model trained to generate text from text.
+
+    For more information, please see the T5 paper, "Exploring the Limits of
     Transfer Learning with a Unified Text-to-Text Transformer".
     Appendix D contains information about the various tasks supported
     by T5.
-    
+
     For usage information, see HuggingFace Transformers documentation section
     on text-to-text with T5:
     https://huggingface.co/transformers/usage.html.
 
     Args:
         mode (string): Name of the T5 model to use.
-        max_length (int): The max length of the sequence to be generated. 
+        max_length (int): The max length of the sequence to be generated.
             Between 1 and infinity.
-        num_beams (int): Number of beams for beam search. Must be between 1 and 
+        num_beams (int): Number of beams for beam search. Must be between 1 and
             infinity. 1 means no beam search.
-        early_stopping (bool): if set to `True` beam search is stopped when at 
+        early_stopping (bool): if set to `True` beam search is stopped when at
             least `num_beams` sentences finished per batch. Defaults to `True`.
-        
     """
 
     def __init__(

@@ -1,6 +1,6 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
+from torch import nn as nn
+from torch.nn import functional as F
 
 import textattack
 from textattack.models.helpers import GloveEmbeddingLayer
@@ -9,10 +9,10 @@ from textattack.shared import utils
 
 
 class WordCNNForClassification(nn.Module):
-    """ A convolutional neural network for text classification. 
-    
-        We use different versions of this network to pretrain models for text 
-        classification.
+    """A convolutional neural network for text classification.
+
+    We use different versions of this network to pretrain models for
+    text classification.
     """
 
     def __init__(
@@ -22,10 +22,11 @@ class WordCNNForClassification(nn.Module):
         num_labels=2,
         max_seq_length=128,
         model_path=None,
+        emb_layer_trainable=True,
     ):
         super().__init__()
         self.drop = nn.Dropout(dropout)
-        self.emb_layer = GloveEmbeddingLayer()
+        self.emb_layer = GloveEmbeddingLayer(emb_layer_trainable=emb_layer_trainable)
         self.word2id = self.emb_layer.word2id
         self.encoder = CNNTextLayer(
             self.emb_layer.n_d, widths=[3, 4, 5], filters=hidden_size
@@ -55,7 +56,7 @@ class WordCNNForClassification(nn.Module):
 
         output = self.drop(output)
         pred = self.out(output)
-        return nn.functional.softmax(pred, dim=-1)
+        return pred
 
 
 class CNNTextLayer(nn.Module):

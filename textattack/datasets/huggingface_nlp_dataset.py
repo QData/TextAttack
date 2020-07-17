@@ -5,7 +5,8 @@ import nlp
 
 import textattack
 from textattack.datasets import TextAttackDataset
-from textattack.shared import AttackedText
+
+# from textattack.shared import AttackedText
 
 
 def _cb(s):
@@ -49,22 +50,21 @@ def get_nlp_dataset_columns(dataset):
     return input_columns, output_column
 
 
-class HuggingFaceNLPDataset(TextAttackDataset):
-    """ Loads a dataset from HuggingFace ``nlp`` and prepares it as a
-        TextAttack dataset.
-        
-        - name: the dataset name
-        - subset: the subset of the main dataset. Dataset will be loaded as ``nlp.load_dataset(name, subset)``.
-        - label_map: Mapping if output labels should be re-mapped. Useful
-          if model was trained with a different label arrangement than
-          provided in the ``nlp`` version of the dataset.
-        - output_scale_factor (float): Factor to divide ground-truth outputs by.
-            Generally, TextAttack goal functions require model outputs
-            between 0 and 1. Some datasets test the model's \*correlation\*
-            with ground-truth output, instead of its accuracy, so these
-            outputs may be scaled arbitrarily. 
-        - shuffle (bool): Whether to shuffle the dataset on load.
-                
+class HuggingFaceNlpDataset(TextAttackDataset):
+    """Loads a dataset from HuggingFace ``nlp`` and prepares it as a TextAttack
+    dataset.
+
+    - name: the dataset name
+    - subset: the subset of the main dataset. Dataset will be loaded as ``nlp.load_dataset(name, subset)``.
+    - label_map: Mapping if output labels should be re-mapped. Useful
+      if model was trained with a different label arrangement than
+      provided in the ``nlp`` version of the dataset.
+    - output_scale_factor (float): Factor to divide ground-truth outputs by.
+        Generally, TextAttack goal functions require model outputs
+        between 0 and 1. Some datasets test the model's correlation
+        with ground-truth output, instead of its accuracy, so these
+        outputs may be scaled arbitrarily.
+    - shuffle (bool): Whether to shuffle the dataset on load.
     """
 
     def __init__(
@@ -132,4 +132,9 @@ class HuggingFaceNLPDataset(TextAttackDataset):
         return self._format_raw_example(raw_example)
 
     def __getitem__(self, i):
-        return self._format_raw_example(self.examples[i])
+        if isinstance(i, int):
+            return self._format_raw_example(self.examples[i])
+        else:
+            # `i` could be a slice or an integer. if it's a slice,
+            # return the formatted version of the proper slice of the list
+            return [self._format_raw_example(ex) for ex in self.examples[i]]

@@ -6,16 +6,16 @@ from textattack.transformations import Transformation
 
 
 class WordSwapGradientBased(Transformation):
-    """ Uses the model's gradient to suggest replacements for a given word.
-        
-        Based off of HotFlip: White-Box Adversarial Examples for Text 
-        Classification (Ebrahimi et al., 2018).
-        https://arxiv.org/pdf/1712.06751.pdf
-        
-        Arguments:
-            model (nn.Module): The model to attack. Model must have a 
-                `word_embeddings` matrix and `convert_id_to_word` function.
-            top_n (int): the number of top words to return at each index
+    """Uses the model's gradient to suggest replacements for a given word.
+
+    Based off of HotFlip: White-Box Adversarial Examples for Text
+    Classification (Ebrahimi et al., 2018).
+    https://arxiv.org/pdf/1712.06751.pdf
+
+    Arguments:
+        model (nn.Module): The model to attack. Model must have a
+            `word_embeddings` matrix and `convert_id_to_word` function.
+        top_n (int): the number of top words to return at each index
     """
 
     def __init__(self, model, top_n=1):
@@ -44,14 +44,15 @@ class WordSwapGradientBased(Transformation):
         self.is_black_box = False
 
     def _get_replacement_words_by_grad(self, attacked_text, indices_to_replace):
-        """ Returns returns a list containing all possible words to replace
-            `word` with, based off of the model's gradient.
-            
-            Arguments:
-                attacked_text (AttackedText): The full text input to perturb
-                word_index (int): index of the word to replace
+        """Returns returns a list containing all possible words to replace
+        `word` with, based off of the model's gradient.
+
+        Arguments:
+            attacked_text (AttackedText): The full text input to perturb
+            word_index (int): index of the word to replace
         """
         self.model.train()
+        self.model.emb_layer.embedding.weight.requires_grad = True
 
         lookup_table = self.model.lookup_table.to(utils.device)
         lookup_table_transpose = lookup_table.transpose(0, 1)
@@ -105,19 +106,20 @@ class WordSwapGradientBased(Transformation):
                 break
 
         self.model.eval()
+        self.model.emb_layer.embedding.weight.requires_grad = (
+            self.model.emb_layer_trainable
+        )
         return candidates
 
     def _call_model(self, text_ids):
-        """ A helper function to query `self.model` with AttackedText `text`.
-        """
+        """A helper function to query `self.model` with AttackedText `text`."""
         return utils.model_predict(self.model, [text_ids])
 
     def _get_transformations(self, attacked_text, indices_to_replace):
-        """
-        Returns a list of all possible transformations for `text`.
-            
-        If indices_to_replace is set, only replaces words at those indices.
-        
+        """Returns a list of all possible transformations for `text`.
+
+        If indices_to_replace is set, only replaces words at those
+        indices.
         """
         transformations = []
         for word, idx in self._get_replacement_words_by_grad(

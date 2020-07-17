@@ -1,11 +1,14 @@
+from torch import nn as nn
 from torch.autograd import Variable
-import torch.nn as nn
 
 from .adaptive_softmax import AdaptiveSoftmax
 
 
 class RNNModel(nn.Module):
-    """Container module with an encoder, a recurrent module, and a decoder. Based on official pytorch examples"""
+    """Container module with an encoder, a recurrent module, and a decoder.
+
+    Based on official pytorch examples
+    """
 
     def __init__(
         self,

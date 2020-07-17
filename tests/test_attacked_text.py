@@ -45,7 +45,7 @@ class TestAttackedText:
         assert attacked_text.words == [
             "A", "person", "walks", "up", "stairs", "into", "a", "room", "and", "sees", "beer", "poured", "from", "a", "keg", "and", "people", "talking",
         ]
-        assert pokemon_attacked_text.words == ['the', 'threat', 'implied', 'in', 'the', 'title', 'pokémon', '4ever', 'is', 'terrifying', 'like', 'locusts', 'in', 'a', 'horde', 'these', 'things', 'will', 'keep', 'coming'] 
+        assert pokemon_attacked_text.words == ['the', 'threat', 'implied', 'in', 'the', 'title', 'pokémon', '4ever', 'is', 'terrifying', 'like', 'locusts', 'in', 'a', 'horde', 'these', 'things', 'will', 'keep', 'coming']
         # fmt: on
 
     def test_window_around_index(self, attacked_text):
@@ -165,7 +165,7 @@ class TestAttackedText:
         )
         for old_idx, new_idx in enumerate(new_text.attack_attrs["original_index_map"]):
             assert (attacked_text.words[old_idx] == new_text.words[new_idx]) or (
-                new_i == -1
+                new_idx == -1
             )
         new_text = (
             new_text.delete_word_at_index(0)

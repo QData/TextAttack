@@ -11,14 +11,13 @@ from textattack.transformations import WordSwapMaskedLM
 
 
 def BERTAttackLi2020(model):
-    """
-        Li, L.., Ma, R., Guo, Q., Xiangyang, X., Xipeng, Q. (2020).
-        
-        BERT-ATTACK: Adversarial Attack Against BERT Using BERT
-        
-        https://arxiv.org/abs/2004.09984
-        
-        This is "attack mode" 1 from the paper, BAE-R, word replacement.
+    """Li, L.., Ma, R., Guo, Q., Xiangyang, X., Xipeng, Q. (2020).
+
+    BERT-ATTACK: Adversarial Attack Against BERT Using BERT
+
+    https://arxiv.org/abs/2004.09984
+
+    This is "attack mode" 1 from the paper, BAE-R, word replacement.
     """
     # [from correspondence with the author]
     # Candidate size K is set to 48 for all data-sets.
@@ -55,7 +54,7 @@ def BERTAttackLi2020(model):
     # data, the TextAttack implementation uses a fixed threshold - determined to
     # be 0.2 to be most fair.
     use_constraint = UniversalSentenceEncoder(
-        threshold=0.2, metric="cosine", compare_with_original=True, window_size=None,
+        threshold=0.2, metric="cosine", compare_against_original=True, window_size=None,
     )
     constraints.append(use_constraint)
     #

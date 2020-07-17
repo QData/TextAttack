@@ -2,20 +2,19 @@ import os
 
 import numpy as np
 import torch
-import torch.nn as nn
+from torch import nn as nn
 
 from textattack.shared import logger, utils
 
 
 class EmbeddingLayer(nn.Module):
-    """
-        A layer of a model that replaces word IDs with their embeddings. 
-        
-        This is a useful abstraction for any nn.module which wants to take word IDs
-        (a sequence of text) as input layer but actually manipulate words'
-        embeddings.
-        
-        Requires some pre-trained embedding with associated word IDs.
+    """A layer of a model that replaces word IDs with their embeddings.
+
+    This is a useful abstraction for any nn.module which wants to take word IDs
+    (a sequence of text) as input layer but actually manipulate words'
+    embeddings.
+
+    Requires some pre-trained embedding with associated word IDs.
     """
 
     def __init__(
@@ -67,26 +66,27 @@ class EmbeddingLayer(nn.Module):
 
 
 class GloveEmbeddingLayer(EmbeddingLayer):
-    """ Pre-trained Global Vectors for Word Representation (GLOVE) vectors.
-        Uses embeddings of dimension 200.
-        
-        GloVe is an unsupervised learning algorithm for obtaining vector 
-        representations for words. Training is performed on aggregated global 
-        word-word co-occurrence statistics from a corpus, and the resulting 
-        representations showcase interesting linear substructures of the word 
-        vector space.
-        
-        
-        GloVe: Global Vectors for Word Representation. (Jeffrey Pennington, 
-            Richard Socher, and Christopher D. Manning. 2014.)
+    """Pre-trained Global Vectors for Word Representation (GLOVE) vectors. Uses
+    embeddings of dimension 200.
+
+    GloVe is an unsupervised learning algorithm for obtaining vector
+    representations for words. Training is performed on aggregated global
+    word-word co-occurrence statistics from a corpus, and the resulting
+    representations showcase interesting linear substructures of the word
+    vector space.
+
+
+    GloVe: Global Vectors for Word Representation. (Jeffrey Pennington,
+        Richard Socher, and Christopher D. Manning. 2014.)
     """
 
     EMBEDDING_PATH = "word_embeddings/glove200"
 
-    def __init__(self):
+    def __init__(self, emb_layer_trainable=True):
         glove_path = utils.download_if_needed(GloveEmbeddingLayer.EMBEDDING_PATH)
         glove_word_list_path = os.path.join(glove_path, "glove.wordlist.npy")
         word_list = np.load(glove_word_list_path)
         glove_matrix_path = os.path.join(glove_path, "glove.6B.200d.mat.npy")
         embedding_matrix = np.load(glove_matrix_path)
         super().__init__(embedding_matrix=embedding_matrix, word_list=word_list)
+        self.embedding.weight.requires_grad = emb_layer_trainable

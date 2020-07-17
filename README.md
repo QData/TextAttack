@@ -24,6 +24,8 @@
 
 TextAttack is a Python framework for adversarial attacks, data augmentation, and model training in NLP.
 
+> If you're looking for information about TextAttack's menagerie of pre-trained models, you might want the [TextAttack Model Zoo](textattack/models/README.md) readme.
+
 ## Slack Channel
 
 For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-ez3ts03b-Nr55tDiqgAvCkRbbz8zz9g)!
@@ -101,15 +103,20 @@ Attacks on classification tasks, like sentiment classification and entailment:
 - **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998)).
 - **bae**: BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).
 - **bert-attack**: BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984)).
+- **faster-alzantot**: modified, faster version of the Alzantot et al. genetic algorithm, from (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986)).
 - **deepwordbug**: Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)).
 - **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751)).
+- **iga**: Improved genetic algorithm attack from (["Natural Language Adversarial Attacks and Defenses in Word Level (Wang et al., 2019)"](https://arxiv.org/abs/1909.06723)
 - **input-reduction**: Reducing the input while maintaining the prediction through word importance ranking (["Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)](https://arxiv.org/pdf/1804.07781.pdf)).
 - **kuleshov**: Greedy search and counterfitted embedding swap (["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ)).
+- **pruthi**: Character-based attack that simulates common typos (["Combating Adversarial Misspellings with Robust Word Recognition" (Pruthi et al., 2019)](https://arxiv.org/abs/1905.11268)
+- **pso**: Particle swarm optimization and HowNet synonym swap (["Word-level Textual Adversarial Attacking as Combinatorial Optimization" (Zang et al., 2020)](https://www.aclweb.org/anthology/2020.acl-main.540/)).
 - **pwws**: Greedy attack with word importance ranking based on word saliency and synonym swap scores (["Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency" (Ren et al., 2019)](https://www.aclweb.org/anthology/P19-1103/)).
-- **textbugger**: Greedy attack with word importance ranking and character-based swaps ([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)).
+- **textbugger**: Greedy attack with word importance ranking and a combination of synonym and character-based swaps ([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)).
 - **textfooler**: Greedy attack with word importance ranking and counter-fitted embedding swap (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932)).
 
 Attacks on sequence-to-sequence models:
+- **morpheus**: Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)).
 
 #### Recipe Usage Examples
@@ -134,6 +141,7 @@ for data augmentation:
 - `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
 - `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
 - `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
+- `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -152,8 +160,8 @@ For example, given the following as `examples.csv`:
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-The command `textattack augment --csv examples.csv --input-column text --recipe embedding --num-words-to-swap 4 --transformations-per-example 2 --exclude-original`
-will augment the `text` column with four swaps per augmentation, twice as many augmentations as original inputs, and exclude the original inputs from the
+The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap 4 --transformations-per-example 2 --exclude-original`
+will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
 After augmentation, here are the contents of `augment.csv`:
@@ -198,17 +206,23 @@ automatically loaded using the `nlp` package.
 textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
 ```
 
+The training process has data augmentation built-in:
+```bash
+textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
+```
+This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` dataset before training.
+
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
 ```bash
 textattack train --model bert-base-uncased --dataset glue:cola --batch-size 32 --epochs 5
 ```
 
-## `textattack peek-dataset`
+### `textattack peek-dataset`
 
 To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-nlp snli` will show information about the SNLI dataset from the NLP package.
 
 
-## `textattack list`
+### `textattack list`
 
 There are lots of pieces in TextAttack, and it can be difficult to keep track of all of them. You can use `textattack list` to list components, for example, pretrained models (`textattack list models`) or available search methods (`textattack list search-methods`).
 
@@ -227,8 +241,11 @@ TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that
 
 TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
 dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
-tasks, as well as some common datasets for classification, translation, and summarization. You can 
-see the full list of provided models & datasets via `textattack attack --help`.
+tasks, as well as some common datasets for classification, translation, and summarization. 
+
+A list of available pretrained models and their validation accuracies is available at
+[textattack/models/README.md](textattack/models/README.md). You can also view a full list of provided models 
+& datasets via `textattack attack --help`.
 
 Here's an example of using one of the built-in models (the SST-2 dataset is automatically loaded):
 
@@ -285,7 +302,7 @@ The `attack_one` method in an `Attack` takes as input an `AttackedText`, and out
 
 ### Goal Functions
 
-A `GoalFunction` takes as input an `AttackedText` object and the ground truth output, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
+A `GoalFunction` takes as input an `AttackedText` object, scores it, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
 
 ### Constraints
 

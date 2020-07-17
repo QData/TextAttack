@@ -16,13 +16,12 @@ from textattack.transformations import (
 
 
 def DeepWordBugGao2018(model, use_all_transformations=True):
-    """
-        Gao, Lanchantin, Soffa, Qi.
-        
-        Black-box Generation of Adversarial Text Sequences to Evade Deep Learning 
-        Classifiers.
-        
-        https://arxiv.org/abs/1801.04354
+    """Gao, Lanchantin, Soffa, Qi.
+
+    Black-box Generation of Adversarial Text Sequences to Evade Deep Learning
+    Classifiers.
+
+    https://arxiv.org/abs/1801.04354
     """
     #
     # Swap characters out from words. Choose the best of four potential transformations.
