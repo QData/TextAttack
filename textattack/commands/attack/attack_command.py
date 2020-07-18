@@ -85,7 +85,7 @@ class AttackCommand(TextAttackCommand):
             "--txt-filename",
             type=str,
             required=False,
-            help="Specify the name of saved txt files."
+            help="Specify the name of saved txt files.",
         )
 
         parser.add_argument(
@@ -122,7 +122,7 @@ class AttackCommand(TextAttackCommand):
             "--csv-filename",
             type=str,
             required=False,
-            help="Specify the name of saved csv files."
+            help="Specify the name of saved csv files.",
         )
 
         parser.add_argument(

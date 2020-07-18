@@ -433,9 +433,13 @@ def parse_logger_from_args(args):
             outfile_name = "{}.txt".format(args.txt_filename)
         else:
             if args.recipe:
-                outfile_name = "TXT_AttackResult_{}_{}_{}-{}-{}-{}-{}.txt".format(args.model, args.recipe, year, month, day, hour, minute)
+                outfile_name = "TXT_AttackResult_{}_{}_{}-{}-{}-{}-{}.txt".format(
+                    args.model, args.recipe, year, month, day, hour, minute
+                )
             else:
-                outfile_name = "TXT_AttackResult_{}_{}-{}-{}-{}-{}.txt".format(args.model, year, month, day, hour, minute)
+                outfile_name = "TXT_AttackResult_{}_{}-{}-{}-{}-{}.txt".format(
+                    args.model, year, month, day, hour, minute
+                )
         attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
 
     # CSV
@@ -445,9 +449,13 @@ def parse_logger_from_args(args):
             outfile_name = "{}.csv".format(args.csv_filename)
         else:
             if args.recipe:
-                outfile_name = "CSV_AttackResult_{}_{}_{}-{}-{}-{}-{}.csv".format(args.model, args.recipe, year, month, day, hour, minute)
+                outfile_name = "CSV_AttackResult_{}_{}_{}-{}-{}-{}-{}.csv".format(
+                    args.model, args.recipe, year, month, day, hour, minute
+                )
             else:
-                outfile_name = "CSV_AttackResult_{}_{}-{}-{}-{}-{}.csv".format(args.model, year, month, day, hour, minute)
+                outfile_name = "CSV_AttackResult_{}_{}-{}-{}-{}-{}.csv".format(
+                    args.model, year, month, day, hour, minute
+                )
         color_method = None if args.enable_csv == "plain" else "file"
         csv_path = os.path.join(args.out_dir, outfile_name)
         attack_log_manager.add_output_csv(csv_path, color_method)
