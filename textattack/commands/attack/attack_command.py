@@ -82,6 +82,13 @@ class AttackCommand(TextAttackCommand):
         )
 
         parser.add_argument(
+            "--txt-filename",
+            type=str,
+            required=False,
+            help="Specify the name of saved txt files."
+        )
+
+        parser.add_argument(
             "--log-to-file",
             "-l",
             help="Save attack logs to <install-dir>/outputs/~",
@@ -109,6 +116,13 @@ class AttackCommand(TextAttackCommand):
             const="fancy",
             type=str,
             help="Enable logging to csv. Use --enable-csv plain to remove [[]] around words.",
+        )
+
+        parser.add_argument(
+            "--csv-filename",
+            type=str,
+            required=False,
+            help="Specify the name of saved csv files."
         )
 
         parser.add_argument(
