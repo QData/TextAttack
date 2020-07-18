@@ -414,7 +414,8 @@ def parse_dataset_from_args(args):
 def parse_logger_from_args(args):
     # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
-    out_time = int(time.time() * 1000)  # Output file
+    # Get current time for file naming
+    year, month, day, hour, minute = map(int, time.strftime("%Y %m %d %H %M").split())
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -427,13 +428,19 @@ def parse_logger_from_args(args):
 
     # if "--log-to-file" specified in terminal command, then save it to a txt file
     if args.log_to_file:
-        # Output file.
-        outfile_name = "attack-{}.txt".format(out_time)
+        # Output file
+        if args.recipe:
+            outfile_name = "TXT_AttackResult_{}_{}_{}-{}-{}-{}-{}.csv".format(args.model, args.recipe, year, month, day, hour, minute)
+        else:
+            outfile_name = "TXT_AttackResult_{}_{}-{}-{}-{}-{}.csv".format(args.model, year, month, day, hour, minute)
         attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
 
     # CSV
     if args.enable_csv:
-        outfile_name = "attack-{}.csv".format(out_time)
+        if args.recipe:
+            outfile_name = "CSV_AttackResult_{}_{}_{}-{}-{}-{}-{}.csv".format(args.model, args.recipe, year, month, day, hour, minute)
+        else:
+            outfile_name = "CSV_AttackResult_{}_{}-{}-{}-{}-{}.csv".format(args.model, year, month, day, hour, minute)
         color_method = None if args.enable_csv == "plain" else "file"
         csv_path = os.path.join(args.out_dir, outfile_name)
         attack_log_manager.add_output_csv(csv_path, color_method)
