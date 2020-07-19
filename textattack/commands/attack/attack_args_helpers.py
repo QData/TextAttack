@@ -415,7 +415,8 @@ def parse_logger_from_args(args):
     # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
     # Get current time for file naming
-    year, month, day, hour, minute = map(int, time.strftime("%Y %m %d %H %M").split())
+    year, month, day, hour, minute = map(str, time.strftime("%Y %m %d %H %M").split())
+    timestamp = f"{year}-{month}-{day}-{hour}-{minute}"
     # Set default output directory to `textattack/outputs`.
     if not args.out_dir:
         current_dir = os.path.dirname(os.path.realpath(__file__))
@@ -433,13 +434,10 @@ def parse_logger_from_args(args):
             outfile_name = "{}.txt".format(args.txt_filename)
         else:
             if args.recipe:
-                outfile_name = "TXT_AttackResult_{}_{}_{}-{}-{}-{}-{}.txt".format(
-                    args.model, args.recipe, year, month, day, hour, minute
-                )
+                outfile_name = f"{args.model}_{args.recipe}_{timestamp}.txt"
             else:
-                outfile_name = "TXT_AttackResult_{}_{}-{}-{}-{}-{}.txt".format(
-                    args.model, year, month, day, hour, minute
-                )
+                outfile_name = f"{args.model}-{timestamp}.txt"
+
         attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
 
     # CSV
@@ -449,13 +447,9 @@ def parse_logger_from_args(args):
             outfile_name = "{}.csv".format(args.csv_filename)
         else:
             if args.recipe:
-                outfile_name = "CSV_AttackResult_{}_{}_{}-{}-{}-{}-{}.csv".format(
-                    args.model, args.recipe, year, month, day, hour, minute
-                )
+                outfile_name = f"{args.model}_{args.recipe}_{timestamp}.csv"
             else:
-                outfile_name = "CSV_AttackResult_{}_{}-{}-{}-{}-{}.csv".format(
-                    args.model, year, month, day, hour, minute
-                )
+                outfile_name = f"{args.model}_{timestamp}.csv"
         color_method = None if args.enable_csv == "plain" else "file"
         csv_path = os.path.join(args.out_dir, outfile_name)
         attack_log_manager.add_output_csv(csv_path, color_method)
