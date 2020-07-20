@@ -77,14 +77,14 @@ class AttackCommand(TextAttackCommand):
             "--out-file-txt",
             type=str,
             required=False,
-            help="Specify the name of saved txt files. Include '/' at the end of argument to save output to specified directory in defualt naming convention",
+            help="Specify the name of saved txt files. Include '/' at the end of argument to save output to specified directory in default naming convention",
         )
 
         parser.add_argument(
             "--out-file-csv",
             type=str,
             required=False,
-            help="Specify the name of saved csv files. Include '/' at the end of argument to save output to specified directory in defualt naming convention",
+            help="Specify the name of saved csv files. Include '/' at the end of argument to save output to specified directory in default naming convention",
         )
 
         parser.add_argument(
