@@ -433,8 +433,8 @@ def parse_logger_from_args(args):
         filename_txt = f"{args.model}_{args.recipe}_{timestamp}.txt"
         filename_csv = f"{args.model}_{args.recipe}_{timestamp}.csv"
     else:
-        filename_txt = f"{args.model}-{timestamp}.txt"
-        filename_csv = f"{args.model}-{timestamp}.csv"
+        filename_txt = f"{args.model}_{timestamp}.txt"
+        filename_csv = f"{args.model}_{timestamp}.csv"
 
     # if "--out-file-txt" is called
     if args.out_file_txt:
