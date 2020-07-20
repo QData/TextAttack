@@ -39,7 +39,7 @@ class GreedyWordSwapWIR(SearchMethod):
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
-        elif self.wir_method == "saliency":
+        elif self.wir_method == "weighted-saliency":
             # first, compute word saliency
             leave_one_texts = [
                 initial_text.replace_word_at_index(i, "[UNK]") for i in range(len_text)
