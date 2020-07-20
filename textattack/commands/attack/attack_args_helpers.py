@@ -414,44 +414,54 @@ def parse_dataset_from_args(args):
 def parse_logger_from_args(args):
     # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
+
     # Get current time for file naming
     year, month, day, hour, minute = map(str, time.strftime("%Y %m %d %H %M").split())
     timestamp = f"{year}-{month}-{day}-{hour}-{minute}"
-    # Set default output directory to `textattack/outputs`.
-    if not args.out_dir:
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        outputs_dir = os.path.join(
-            current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
-        )
-        if not os.path.exists(outputs_dir):
-            os.makedirs(outputs_dir)
-        args.out_dir = os.path.normpath(outputs_dir)
+
+    # Get default directory to save results
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    outputs_dir = os.path.join(
+        current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
+    )
+    if not os.path.exists(outputs_dir):
+        os.makedirs(outputs_dir)
+    out_dir_txt = out_dir_csv = os.path.normpath(outputs_dir)
+
+    # Get default txt and csv file names
+    if args.recipe:
+        filename_txt = f"{args.model}_{args.recipe}_{timestamp}.txt"
+        filename_csv = f"{args.model}_{args.recipe}_{timestamp}.csv"
+    else:
+        filename_txt = f"{args.model}-{timestamp}.txt"
+        filename_csv = f"{args.model}-{timestamp}.csv"
+
+    # if "--out-file-txt" is called
+    if args.out_file_txt:
+        # if user decide to save to a specific directory
+        if args.out_file_txt[-1] == "/":
+            out_dir_txt = args.out_file_txt
+        # otherwise, customize filename
+        else:
+            filename_txt = f"{args.out_file_txt}.txt"
+
+    # if "--out-file-csv" is called
+    if args.out_file_csv:
+        # if user decide to save to a specific directory
+        if args.out_file_csv[-1] == "/":
+            out_dir_csv = args.out_file_csv
+        # otherwise, customize filename
+        else:
+            filename_csv = f"{args.out_file_csv}.csv"
 
     # if "--log-to-file" specified in terminal command, then save it to a txt file
     if args.log_to_file:
-        # if "--txt-filename" specified, use that as filename
-        if args.txt_filename:
-            outfile_name = "{}.txt".format(args.txt_filename)
-        else:
-            if args.recipe:
-                outfile_name = f"{args.model}_{args.recipe}_{timestamp}.txt"
-            else:
-                outfile_name = f"{args.model}-{timestamp}.txt"
-
-        attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
+        attack_log_manager.add_output_file(os.path.join(out_dir_txt, filename_txt))
 
     # CSV
     if args.enable_csv:
-        # if "--csv-filename" specified, use that as filename
-        if args.csv_filename:
-            outfile_name = "{}.csv".format(args.csv_filename)
-        else:
-            if args.recipe:
-                outfile_name = f"{args.model}_{args.recipe}_{timestamp}.csv"
-            else:
-                outfile_name = f"{args.model}_{timestamp}.csv"
         color_method = None if args.enable_csv == "plain" else "file"
-        csv_path = os.path.join(args.out_dir, outfile_name)
+        csv_path = os.path.join(out_dir_csv, filename_csv)
         attack_log_manager.add_output_csv(csv_path, color_method)
         textattack.shared.logger.info(f"Logging to CSV at path {csv_path}.")
 
