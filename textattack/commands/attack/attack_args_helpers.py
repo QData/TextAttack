@@ -416,8 +416,7 @@ def parse_logger_from_args(args):
     attack_log_manager = textattack.loggers.AttackLogManager()
 
     # Get current time for file naming
-    year, month, day, hour, minute = map(str, time.strftime("%Y %m %d %H %M").split())
-    timestamp = f"{year}-{month}-{day}-{hour}-{minute}"
+    timestamp = time.strftime("%Y-%m-%d-%H-%M")
 
     # Get default directory to save results
     current_dir = os.path.dirname(os.path.realpath(__file__))
