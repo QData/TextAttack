@@ -74,18 +74,17 @@ class AttackCommand(TextAttackCommand):
         )
 
         parser.add_argument(
-            "--out-dir",
+            "--out-file-txt",
             type=str,
             required=False,
-            default=None,
-            help="A directory to output results to.",
+            help="Specify the name of saved txt files. Include '/' at the end of argument to save output to specified directory in defualt naming convention",
         )
 
         parser.add_argument(
-            "--txt-filename",
+            "--out-file-csv",
             type=str,
             required=False,
-            help="Specify the name of saved txt files.",
+            help="Specify the name of saved csv files. Include '/' at the end of argument to save output to specified directory in defualt naming convention",
         )
 
         parser.add_argument(
@@ -116,13 +115,6 @@ class AttackCommand(TextAttackCommand):
             const="fancy",
             type=str,
             help="Enable logging to csv. Use --enable-csv plain to remove [[]] around words.",
-        )
-
-        parser.add_argument(
-            "--csv-filename",
-            type=str,
-            required=False,
-            help="Specify the name of saved csv files.",
         )
 
         parser.add_argument(
