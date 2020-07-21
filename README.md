@@ -73,7 +73,7 @@ The easiest way to try out an attack is via the command-line interface, `textatt
 
 Here are some concrete examples:
 
-*TextFooler on an LSTM trained on the MR sentiment classification dataset*: 
+*TextFooler on BERT trained on the MR sentiment classification dataset*: 
 ```bash
 textattack attack --recipe textfooler --model bert-base-uncased-mr --num-examples 100
 ```
