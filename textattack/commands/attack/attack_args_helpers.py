@@ -440,6 +440,10 @@ def parse_logger_from_args(args):
         # if user decide to save to a specific directory
         if args.out_file_txt[-1] == "/":
             out_dir_txt = args.out_file_txt
+        # else if path + filename is given
+        elif args.out_file_txt[-4:] == ".txt":
+            out_dir_txt = args.out_file_txt.rsplit("/", 1)[0]
+            filename_txt = args.out_file_txt.rsplit("/", 1)[-1]
         # otherwise, customize filename
         else:
             filename_txt = f"{args.out_file_txt}.txt"
@@ -449,15 +453,25 @@ def parse_logger_from_args(args):
         # if user decide to save to a specific directory
         if args.out_file_csv[-1] == "/":
             out_dir_csv = args.out_file_csv
+        # else if path + filename is given
+        elif args.out_file_csv[-4:] == ".csv":
+            out_dir_csv = args.out_file_csv.rsplit("/", 1)[0]
+            filename_csv = args.out_file_csv.rsplit("/", 1)[-1]
         # otherwise, customize filename
         else:
             filename_csv = f"{args.out_file_csv}.csv"
 
-    # if "--log-to-file" specified in terminal command, then save it to a txt file
+    # in case directory specified doesn't exist
+    if not os.path.exists(out_dir_txt):
+        os.makedirs(out_dir_txt)
+    if not os.path.exists(out_dir_csv):
+        os.makedirs(out_dir_csv)
+
+    # if "--log-to-file" specified in terminal command, save to a txt file
     if args.log_to_file:
         attack_log_manager.add_output_file(os.path.join(out_dir_txt, filename_txt))
 
-    # CSV
+    # if "--enable-csv" specified in terminal command, save to a csv file
     if args.enable_csv:
         color_method = None if args.enable_csv == "plain" else "file"
         csv_path = os.path.join(out_dir_csv, filename_csv)
