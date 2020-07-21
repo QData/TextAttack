@@ -40,7 +40,7 @@ class BERTScore(Constraint):
     ):
         super().__init__(compare_against_original)
         if not isinstance(min_bert_score, float):
-            raise TypeError("max_bleu_score must be a float")
+            raise TypeError("max_bert_score must be a float")
         if min_bert_score < 0.0 or min_bert_score > 1.0:
             raise ValueError("max_bert_score must be a value between 0.0 and 1.0")
 
