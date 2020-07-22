@@ -21,6 +21,9 @@ class ThoughtVector(SentenceEncoder):
         self.embedding_type = embedding_type
         super().__init__(**kwargs)
 
+    def clear_cache(self):
+        self._get_thought_vector.cache_clear()
+
     @functools.lru_cache(maxsize=2 ** 10)
     def _get_thought_vector(self, text):
         """Sums the embeddings of all the words in ``text`` into a "thought
