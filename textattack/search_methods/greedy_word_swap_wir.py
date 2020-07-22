@@ -81,7 +81,7 @@ class GreedyWordSwapWIR(SearchMethod):
             raise ValueError(f"Unsupported WIR method {self.wir_method}")
 
         if self.wir_method != "random":
-            index_order = (index_scores).argsort()
+            index_order = (-index_scores).argsort()
 
         return index_order, search_over
 
