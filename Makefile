@@ -10,7 +10,6 @@ lint: FORCE  ## Run black, isort, flake8 (in check mode)
 	isort --check-only tests textattack
 	flake8 . --count --ignore=$(PEP_IGNORE_ERRORS) --show-source --statistics --exclude=./.*,build,dist
 
-
 test: FORCE ## Run tests using pytest
 	python -m pytest --dist=loadfile -n auto
 
