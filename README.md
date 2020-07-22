@@ -60,8 +60,14 @@ or via python module (`python -m textattack ...`).
 
 TextAttack's main features can all be accessed via the `textattack` command. Two very
 common commands are `textattack attack <args>`, and `textattack augment <args>`. You can see more
-information about all commands using `textattack --help`, or a specific command using, for example,
-`textattack attack --help`.
+information about all commands using 
+```bash
+textattack --help 
+```
+or a specific command using, for example,
+```bash
+textattack attack --help
+```
 
 The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The[documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
