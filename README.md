@@ -331,14 +331,16 @@ See [CONTRIBUTING.md](https://github.com/QData/TextAttack/blob/master/CONTRIBUTI
 
 ## Citing TextAttack
 
-If you use TextAttack for your research, please cite [TextAttack: A Framework for Adversarial Attacks in Natural Language Processing](https://arxiv.org/abs/2005.05909).
+If you use TextAttack for your research, please cite [TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP](https://arxiv.org/abs/2005.05909).
 
 ```bibtex
-@misc{Morris2020TextAttack,
-    Author = {John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
-    Title = {TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
-    Year = {2020},
-    Eprint = {arXiv:2005.05909},
+@misc{morris2020textattack,
+    title={TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP},
+    author={John X. Morris and Eli Lifland and Jin Yong Yoo and Jake Grigsby and Di Jin and Yanjun Qi},
+    year={2020},
+    eprint={2005.05909},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
 }
 ```
 
