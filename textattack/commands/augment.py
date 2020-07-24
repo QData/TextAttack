@@ -28,62 +28,99 @@ class AugmentCommand(TextAttackCommand):
 
         Preserves all columns except for the input (augmneted) column.
         """
-        textattack.shared.utils.set_seed(args.random_seed)
-        start_time = time.time()
-        # Validate input/output paths.
-        if not os.path.exists(args.csv):
-            raise FileNotFoundError(f"Can't find CSV at location {args.csv}")
-        if os.path.exists(args.outfile):
-            if args.overwrite:
-                textattack.shared.logger.info(f"Preparing to overwrite {args.outfile}.")
-            else:
-                raise OSError(f"Outfile {args.outfile} exists and --overwrite not set.")
-        # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
-        # try and automatically infer the correct CSV format.
-        csv_file = open(args.csv, "r")
-        dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
-        csv_file.seek(0)
-        rows = [
-            row
-            for row in csv.DictReader(csv_file, dialect=dialect, skipinitialspace=True)
-        ]
-        # Validate input column.
-        row_keys = set(rows[0].keys())
-        if args.input_column not in row_keys:
-            raise ValueError(
-                f"Could not find input column {args.input_column} in CSV. Found keys: {row_keys}"
+        if not args.interactive:
+            textattack.shared.utils.set_seed(args.random_seed)
+            start_time = time.time()
+            # Validate input/output paths.
+            if not os.path.exists(args.csv):
+                raise FileNotFoundError(f"Can't find CSV at location {args.csv}")
+            if os.path.exists(args.outfile):
+                if args.overwrite:
+                    textattack.shared.logger.info(f"Preparing to overwrite {args.outfile}.")
+                else:
+                    raise OSError(f"Outfile {args.outfile} exists and --overwrite not set.")
+            # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
+            # try and automatically infer the correct CSV format.
+            csv_file = open(args.csv, "r")
+            dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
+            csv_file.seek(0)
+            rows = [
+                row
+                for row in csv.DictReader(csv_file, dialect=dialect, skipinitialspace=True)
+            ]
+            # Validate input column.
+            row_keys = set(rows[0].keys())
+            if args.input_column not in row_keys:
+                raise ValueError(
+                    f"Could not find input column {args.input_column} in CSV. Found keys: {row_keys}"
+                )
+            textattack.shared.logger.info(
+                f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
             )
-        textattack.shared.logger.info(
-            f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
-        )
 
-        augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-            pct_words_to_swap=args.pct_words_to_swap,
-            transformations_per_example=args.transformations_per_example,
-        )
-
-        output_rows = []
-        for row in tqdm.tqdm(rows, desc="Augmenting rows"):
-            text_input = row[args.input_column]
-            if not args.exclude_original:
-                output_rows.append(row)
-            for augmentation in augmenter.augment(text_input):
-                augmented_row = row.copy()
-                augmented_row[args.input_column] = augmentation
-                output_rows.append(augmented_row)
-        # Print to file.
-        with open(args.outfile, "w") as outfile:
-            csv_writer = csv.writer(
-                outfile, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+                pct_words_to_swap=args.pct_words_to_swap,
+                transformations_per_example=args.transformations_per_example,
             )
-            # Write header.
-            csv_writer.writerow(output_rows[0].keys())
-            # Write rows.
-            for row in output_rows:
-                csv_writer.writerow(row.values())
-        textattack.shared.logger.info(
-            f"Wrote {len(output_rows)} augmentations to {args.outfile} in {time.time() - start_time}s."
-        )
+
+            output_rows = []
+            for row in tqdm.tqdm(rows, desc="Augmenting rows"):
+                text_input = row[args.input_column]
+                if not args.exclude_original:
+                    output_rows.append(row)
+                for augmentation in augmenter.augment(text_input):
+                    augmented_row = row.copy()
+                    augmented_row[args.input_column] = augmentation
+                    output_rows.append(augmented_row)
+            # Print to file.
+            with open(args.outfile, "w") as outfile:
+                csv_writer = csv.writer(
+                    outfile, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+                )
+                # Write header.
+                csv_writer.writerow(output_rows[0].keys())
+                # Write rows.
+                for row in output_rows:
+                    csv_writer.writerow(row.values())
+            textattack.shared.logger.info(
+                f"Wrote {len(output_rows)} augmentations to {args.outfile} in {time.time() - start_time}s."
+            )
+        else:
+            print("Running in interactive mode")
+            print("----------------------------")
+            while True:
+                print(
+                    'Enter a sentence to augment, "q" to quit, "c" to change arguments:'
+                )
+                text = input()
+
+                if text == "q":
+                    break
+
+                if text == "c":
+                    print("recipe: ", end=" ")
+                    args.recipe = input()
+                    print("pct-words-to-swap: ", end=" ")
+                    args.pct_words_to_swap = float(input())
+                    print("transformations-per-example: ", end=" ")
+                    args.transformations_per_example = int(input())
+                    continue
+
+                if not text:
+                    continue
+
+                print("Augmenting...")
+                print("----------------------------")
+
+                augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+                    pct_words_to_swap=args.pct_words_to_swap,
+                    transformations_per_example=args.transformations_per_example,
+                )
+
+                for augmentation in augmenter.augment(text):
+                    print(augmentation, "\n")
+                print("----------------------------")
+
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
@@ -139,6 +176,12 @@ class AugmentCommand(TextAttackCommand):
             default=False,
             action="store_true",
             help="overwrite output file, if it exists",
+        )
+        parser.add_argument(
+            "--interactive",
+            default=False,
+            action="store_true",
+            help="Whether to run attacks interactively.",
         )
         parser.add_argument(
             "--random-seed", default=42, type=int, help="random seed to set"
