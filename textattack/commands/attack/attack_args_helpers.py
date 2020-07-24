@@ -459,7 +459,7 @@ def parse_logger_from_args(args):
         else:
             filename_csv = f"{args.log_to_csv}.csv"
 
-    # in case directory specified doesn't exist
+    # in case directory doesn't exist
     if not os.path.exists(out_dir_txt):
         os.makedirs(out_dir_txt)
     if not os.path.exists(out_dir_csv):
@@ -471,6 +471,7 @@ def parse_logger_from_args(args):
 
     # if "--log-to-csv" specified in terminal command(with  or without arg), save to a csv file
     if args.log_to_csv == "" or args.log_to_csv:
+        # "--csv-style used to swtich from 'fancy' to 'plain'
         color_method = None if args.csv_style == "plain" else "file"
         csv_path = os.path.join(out_dir_csv, filename_csv)
         attack_log_manager.add_output_csv(csv_path, color_method)
