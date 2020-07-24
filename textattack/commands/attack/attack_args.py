@@ -128,6 +128,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/distilbert-base-uncased-MNLI",
         ("glue", "mnli", "validation_matched", [1, 2, 0]),
     ),
+    "distilbert-base-uncased-mr": (
+        "textattack/distilbert-base-uncased-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
+    ),
     "distilbert-base-uncased-mrpc": (
         "textattack/distilbert-base-uncased-MRPC",
         ("glue", "mrpc", "validation"),

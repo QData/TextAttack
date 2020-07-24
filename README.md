@@ -86,8 +86,8 @@ textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num
 *Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
 ```bash
 textattack attack --model lstm-mr --num-examples 20 \
- --search-method beam-search:beam_width=4 --transformation word-swap-embedding \
- --constraints repeat stopword max-words-perturbed:max_num_words=2 embedding:min_cos_sim=0.8 part-of-speech \
+ --search-method beam-search|beam_width=4 --transformation word-swap-embedding \
+ --constraints repeat stopword max-words-perturbed|max_num_words=2 embedding|min_cos_sim=0.8 part-of-speech \
  --goal-function untargeted-classification
 ```
 
@@ -214,7 +214,7 @@ This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` datase
 
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
 ```bash
-textattack train --model bert-base-uncased --dataset glue:cola --batch-size 32 --epochs 5
+textattack train --model bert-base-uncased --dataset glue|cola --batch-size 32 --epochs 5
 ```
 
 ### `textattack peek-dataset`
@@ -260,7 +260,7 @@ and datasets from the [`nlp` package](https://github.com/huggingface/nlp)! Here'
 and attacking a pre-trained model and dataset:
 
 ```bash
-textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-nlp glue:sst2 --recipe deepwordbug --num-examples 10
+textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-nlp glue|sst2 --recipe deepwordbug --num-examples 10
 ```
 
 You can explore other pre-trained models using the `--model-from-huggingface` argument, or other datasets by changing 
