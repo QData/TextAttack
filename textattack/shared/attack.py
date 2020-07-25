@@ -100,6 +100,16 @@ class Attack:
         )
         self.search_method.filter_transformations = self.filter_transformations
 
+    def clear_cache(self, recursive=True):
+        self.constraints_cache.clear()
+        if self.use_transformation_cache:
+            self.transformation_cache.clear()
+        if recursive:
+            self.goal_function.clear_cache()
+            for constraint in self.constraints:
+                if hasattr(constraint, "clear_cache"):
+                    constraint.clear_cache()
+
     def _get_transformations_uncached(self, current_text, original_text=None, **kwargs):
         """Applies ``self.transformation`` to ``text``, then filters the list
         of possible transformations through the applicable constraints.
@@ -233,6 +243,7 @@ class Attack:
                 or ``MaximizedAttackResult``.
         """
         final_result = self.search_method(initial_result)
+        self.clear_cache()
         if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
             return SuccessfulAttackResult(initial_result, final_result,)
         elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:

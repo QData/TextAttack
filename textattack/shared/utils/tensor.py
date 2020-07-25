@@ -2,8 +2,6 @@ import torch
 
 import textattack
 
-# from textattack.shared import utils
-
 
 def batch_tokenize(tokenizer, attacked_text_list):
     """Tokenizes a list of inputs and returns their tokenized forms in a
