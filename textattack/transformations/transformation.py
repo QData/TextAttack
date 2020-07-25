@@ -56,16 +56,11 @@ class Transformation(ABC):
         """
         raise NotImplementedError()
 
+    @property
+    def deterministic(self):
+        return True
+
     def extra_repr_keys(self):
         return []
 
     __repr__ = __str__ = default_class_repr
-
-
-class RandomTransformation(ABC):
-    """An abstract class for transformations that could be random in nature.
-
-    However, note that it does not fully guaruntee that it is random,
-    since that could depend on the actually parameters set at runtime.
-    Intended to be used as a mixin.
-    """

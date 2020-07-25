@@ -65,5 +65,5 @@ grown-up quibbles are beside the point here . the little girls understand , and 
 | Attack success rate:          | 100.0% |
 | Average perturbed word %:     | 7.14%  |
 | Average num. words per input: | 25.67  |
-| Avg num queries:              | 521.0  |
+| Avg num queries:              | 542.0  |
 +-------------------------------+--------+

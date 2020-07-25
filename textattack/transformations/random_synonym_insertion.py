@@ -2,10 +2,10 @@ import random
 
 from nltk.corpus import wordnet
 
-from textattack.transformations import RandomTransformation, Transformation
+from textattack.transformations import Transformation
 
 
-class RandomSynonymInsertion(Transformation, RandomTransformation):
+class RandomSynonymInsertion(Transformation):
     """Transformation that inserts synonyms of words that are already in the
     sequence."""
 
@@ -33,6 +33,10 @@ class RandomSynonymInsertion(Transformation, RandomTransformation):
                 current_text.insert_text_after_word_index(idx, random_synonym)
             )
         return transformed_texts
+
+    @property
+    def deterministic(self):
+        return False
 
 
 def check_if_one_word(word):

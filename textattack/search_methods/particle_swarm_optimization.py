@@ -5,17 +5,17 @@ al
 `<https://www.aclweb.org/anthology/2020.acl-main.540.pdf>`_
 `<https://github.com/thunlp/SememePSO-Attack>`_
 """
-
 from copy import deepcopy
 
 import numpy as np
 
 from textattack.goal_function_results import GoalFunctionResultStatus
-from textattack.search_methods import PopulationBasedMethod, PopulationMember
+from textattack.search_methods import PopulationBasedSearch, PopulationMember
+from textattack.shared import utils
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
-class ParticleSwarmOptimization(PopulationBasedMethod):
+class ParticleSwarmOptimization(PopulationBasedSearch):
     """Attacks a model with word substiutitions using a Particle Swarm
     Optimization (PSO) algorithm. Some key hyper-parameters are setup according
     to the original paper:
@@ -44,9 +44,9 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
         self._search_over = False
         self.omega_1 = 0.8
         self.omega_2 = 0.2
-        self.C1_origin = 0.8
-        self.C2_origin = 0.2
-        self.V_max = 3.0
+        self.c1_origin = 0.8
+        self.c2_origin = 0.2
+        self.v_max = 3.0
 
     def _perturb(self, pop_member, original_result):
         """Perturb `pop_member` in-place.
@@ -72,7 +72,7 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
             return True
 
     def _equal(self, a, b):
-        return -self.V_max if a == b else self.V_max
+        return -self.v_max if a == b else self.v_max
 
     def _turn(self, source_text, target_text, prob, original_text):
         """
@@ -90,7 +90,7 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
         ), "Word length mismatch for turn operation."
         assert len(source_text.words) == len(
             prob
-        ), "Length mistmatch for words and probability list."
+        ), "Length mismatch for words and probability list."
         len_x = len(source_text.words)
 
         num_tries = 0
@@ -148,10 +148,10 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
         """
         current_text = current_result.attacked_text
         neighbors_list = [[] for _ in range(len(current_text.words))]
-        transformations = self.get_transformations(
+        transformed_texts = self.get_transformations(
             current_text, original_text=original_result.attacked_text
         )
-        for transformed_text in transformations:
+        for transformed_text in transformed_texts:
             diff_idx = next(
                 iter(transformed_text.attack_attrs["newly_modified_indices"])
             )
@@ -207,10 +207,10 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
         # Initialize  up velocities of each word for each population
-        V = np.random.uniform(-self.V_max, self.V_max, self.pop_size)
-        V_P = np.array(
+        v_init = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
+        velocities = np.array(
             [
-                [V[t] for _ in range(len(initial_result.attacked_text.words))]
+                [v_init[t] for _ in range(initial_result.attacked_text.num_words)]
                 for t in range(self.pop_size)
             ]
         )
@@ -222,7 +222,6 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
         ):
             return global_elite.result
 
-        # rank the scores from low to high and check if there is a successful attack
         local_elites = deepcopy(population)
 
         # start iterations
@@ -230,8 +229,8 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
             omega = (self.omega_1 - self.omega_2) * (
                 self.max_iters - i
             ) / self.max_iters + self.omega_2
-            C1 = self.C1_origin - i / self.max_iters * (self.C1_origin - self.C2_origin)
-            C2 = self.C2_origin + i / self.max_iters * (self.C1_origin - self.C2_origin)
+            C1 = self.c1_origin - i / self.max_iters * (self.c1_origin - self.c2_origin)
+            C2 = self.c2_origin + i / self.max_iters * (self.c1_origin - self.c2_origin)
             P1 = C1
             P2 = C2
 
@@ -244,11 +243,11 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
                 ), "PSO word length mismatch!"
 
                 for d in range(len(pop_mem_words)):
-                    V_P[k][d] = omega * V_P[k][d] + (1 - omega) * (
+                    velocities[k][d] = omega * velocities[k][d] + (1 - omega) * (
                         self._equal(pop_mem_words[d], local_elite_words[d])
                         + self._equal(pop_mem_words[d], global_elite.words[d])
                     )
-                turn_prob = sigmoid(V_P[k])
+                turn_prob = utils.sigmoid(velocities[k])
 
                 if np.random.uniform() < P1:
                     # Move towards local elite
@@ -272,19 +271,20 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
             pop_results, self._search_over = self.get_goal_results(
                 [p.attacked_text for p in population]
             )
-            if self._search_over:
-                break
 
-            for k in range(len(population)):
+            for k in range(len(pop_results)):
                 population[k].result = pop_results[k]
             top_result = max(population, key=lambda x: x.score).result
-            if top_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
+            if (
+                self._search_over
+                or top_result.goal_status == GoalFunctionResultStatus.SUCCEEDED
+            ):
                 return top_result
 
             # Mutation based on the current change rate
             for k in range(len(population)):
-                change_ratio = count_change_ratio(
-                    population[k], initial_result.attacked_text
+                change_ratio = initial_result.attacked_text.words_diff_ratio(
+                    population[k].attacked_text
                 )
                 # Referred from the original source code
                 p_change = 1 - 2 * change_ratio
@@ -293,12 +293,13 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
 
                 if self._search_over:
                     break
-            if self._search_over:
-                break
 
             # Check if there is any successful attack in the current population
             top_result = max(population, key=lambda x: x.score)
-            if top_result.result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
+            if (
+                self._search_over
+                or top_result.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
+            ):
                 return top_result.result
 
             # Update the elite if the score is increased
@@ -321,17 +322,10 @@ class ParticleSwarmOptimization(PopulationBasedMethod):
 
 
 def normalize(n):
-    n = [max(0, i) for i in n]
-    s = sum(n)
+    n = np.array(n)
+    n[n < 0] = 0
+    s = np.sum(n)
     if s == 0:
-        return [1 / len(n) for _ in n]
+        return np.ones(len(n)) / len(n)
     else:
-        return [i / s for i in n]
-
-
-def count_change_ratio(x1, x2):
-    return float(np.sum(x1.words != x2.words)) / float(len(x2.words))
-
-
-def sigmoid(n):
-    return 1 / (1 + np.exp(-n))
+        return n / s

@@ -1,10 +1,13 @@
 import pickle
 
+import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
+
+flair.device = utils.device
 
 
 class WordSwapHowNet(WordSwap):

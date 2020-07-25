@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from textattack.search_methods import SearchMethod
 
 
-class PopulationBasedMethod(SearchMethod, ABC):
+class PopulationBasedSearch(SearchMethod, ABC):
     """Abstract base class for population-based search methods.
 
     Examples include: genetic algorithm, particle swarm optimization
@@ -22,9 +22,6 @@ class PopulationBasedMethod(SearchMethod, ABC):
         Returns
             `True` if constraints satisfied and `False` if otherwise.
         """
-        transformed_text.attack_attrs[
-            "last_transformation"
-        ] = current_text.attack_attrs["last_transformation"]
         filtered = self.filter_transformations(
             [transformed_text], current_text, original_text=original_text
         )

@@ -10,11 +10,11 @@ import numpy as np
 import torch
 
 from textattack.goal_function_results import GoalFunctionResultStatus
-from textattack.search_methods import PopulationBasedMethod, PopulationMember
+from textattack.search_methods import PopulationBasedSearch, PopulationMember
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
-class ImprovedGeneticAlgorithm(PopulationBasedMethod):
+class ImprovedGeneticAlgorithm(PopulationBasedSearch):
     """Attacks a model with word substiutitions using a genetic algorithm.
 
     Args:
@@ -78,17 +78,17 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
                 )
                 idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
 
-            transformations = self.get_transformations(
+            transformed_texts = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
                 indices_to_modify=[idx],
             )
 
-            if not len(transformations):
+            if not len(transformed_texts):
                 iterations += 1
                 continue
 
-            new_results, self._search_over = self.get_goal_results(transformations)
+            new_results, self._search_over = self.get_goal_results(transformed_texts)
 
             if self._search_over:
                 break
@@ -98,7 +98,7 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
             )
             if len(diff_scores) and diff_scores.max() > 0:
                 idx_with_max_score = diff_scores.argmax()
-                pop_member.attacked_text = transformations[idx_with_max_score]
+                pop_member.attacked_text = transformed_texts[idx_with_max_score]
                 pop_member.results = new_results[idx_with_max_score]
                 pop_member.num_replacements_per_word[idx] -= 1
                 return True
@@ -107,7 +107,7 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
             iterations += 1
         return False
 
-    def _crossover(self, pop_member1, pop_member2, original_result):
+    def _crossover(self, pop_member1, pop_member2, original_text):
         """Generates a crossover between pop_member1 and pop_member2.
 
         If the child fails to satisfy the constraits, we re-try crossover for a fix number of times,
@@ -115,6 +115,7 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
         Args:
             pop_member1 (PopulationMember): The first population member.
             pop_member2 (PopulationMember): The second population member.
+            original_text (AttackedText): Original text
         Returns:
             A population member containing the crossover.
         """
@@ -146,18 +147,28 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
                 x1_text.attack_attrs["modified_indices"] - indices_to_replace
             ) | (x2_text.attack_attrs["modified_indices"] & indices_to_replace)
 
+            if "last_transformation" in x1_text.attack_attrs:
+                new_text.attack_attrs["last_transformation"] = x1_text.attack_attrs[
+                    "last_transformation"
+                ]
+            elif "last_transformation" in x2_text.attack_attrs:
+                new_text.attack_attrs["last_transformation"] = x2_text.attack_attrs[
+                    "last_transformation"
+                ]
+
             if not self.post_crossover_check or (
                 new_text.text == x1_text.text or new_text.text == x2_text.text
             ):
                 break
 
-            if "last_transformation" in x1_text.attack_attrs:
-                passed_constraints = self._check_constraints(
-                    new_text, x1_text, original_text=original_result.attacked_text
+            if "last_transformation" in new_text.attack_attrs:
+                previous_text = (
+                    x1_text
+                    if "last_transformation" in x1_text.attack_attrs
+                    else x2_text
                 )
-            elif "last_transformation" in x2_text.attack_attrs:
                 passed_constraints = self._check_constraints(
-                    new_text, x2_text, original_text=original_result.attacked_text
+                    new_text, previous_text, original_text=original_text
                 )
             else:
                 passed_constraints = True
@@ -192,7 +203,7 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
         words = initial_result.attacked_text.words
         # For IGA, `num_replacements_per_word` represents the number of times the word at each index can be modified
         num_replacements_per_word = np.array(
-            [self.max_replacement_per_index] * len(words)
+            [self.max_replace_times_per_index] * len(words)
         )
         population = []
 
@@ -253,8 +264,6 @@ class ImprovedGeneticAlgorithm(PopulationBasedMethod):
                 # `crossover` method and `perturb` method.
                 if self._search_over:
                     break
-            if self._search_over:
-                break
 
             population = [population[0]] + children
 

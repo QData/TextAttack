@@ -1,4 +1,4 @@
-from .transformation import Transformation, RandomTransformation
+from .transformation import Transformation
 from .composite_transformation import CompositeTransformation
 from .word_swap import WordSwap
 

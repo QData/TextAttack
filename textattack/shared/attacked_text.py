@@ -343,6 +343,10 @@ class AttackedText:
         )
         return AttackedText(perturbed_input, attack_attrs=new_attack_attrs)
 
+    def words_diff_ratio(self, x):
+        """Get the ratio of words difference between current text and x."""
+        return float(np.sum(self.words != x.words)) / self.num_words
+
     @property
     def tokenizer_input(self):
         """The tuple of inputs to be passed to the tokenizer."""
