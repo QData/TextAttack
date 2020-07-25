@@ -5,7 +5,7 @@ al
 `<https://www.aclweb.org/anthology/2020.acl-main.540.pdf>`_
 `<https://github.com/thunlp/SememePSO-Attack>`_
 """
-from copy import deepcopy
+import copy
 
 import numpy as np
 
@@ -222,7 +222,7 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
         ):
             return global_elite.result
 
-        local_elites = deepcopy(population)
+        local_elites = copy.copy(population)
 
         # start iterations
         for i in range(self.max_iters):
@@ -305,10 +305,10 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
             # Update the elite if the score is increased
             for k in range(len(population)):
                 if population[k].score > local_elites[k].score:
-                    local_elites[k] = deepcopy(population[k])
+                    local_elites[k] = copy.copy(population[k])
 
             if top_result.score > global_elite.score:
-                global_elite = deepcopy(top_result)
+                global_elite = copy.copy(top_result)
 
         return global_elite.result
 

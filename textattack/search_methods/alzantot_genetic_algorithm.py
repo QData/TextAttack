@@ -1,7 +1,8 @@
-"""Reimplementation of search method from Xiaosen Wang, Hao Jin, Kun He (2019).
+"""Reimplementation of search method from Generating Natural Language
+Adversarial Examples by Alzantot et.
 
-Natural Language Adversarial Attack and Defense in Word Level.
-http://arxiv.org/abs/1909.06723
+al `<arxiv.org/abs/1804.07998>`_
+`<github.com/nesl/nlp_adversarial_examples>`_
 """
 
 import numpy as np
@@ -9,7 +10,7 @@ import numpy as np
 from textattack.search_methods import GeneticAlgorithm, PopulationMember
 
 
-class ImprovedGeneticAlgorithm(GeneticAlgorithm):
+class AlzantotGeneticAlgorithm(GeneticAlgorithm):
     """Attacks a model with word substiutitions using a genetic algorithm.
 
     Args:
@@ -22,7 +23,6 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
         max_crossover_retries (int): Maximum number of crossover retries if resulting child fails to pass the constraints.
             Applied only when `post_crossover_check` is set to `True`.
             Setting it to 0 means we immediately take one of the parents at random as the child upon failure.
-        max_replace_times_per_index (int):  The maximum times words at the same index can be replaced in improved genetic algorithm.
     """
 
     def __init__(
@@ -33,7 +33,6 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
         give_up_if_no_improvement=False,
         post_crossover_check=True,
         max_crossover_retries=20,
-        max_replace_times_per_index=5,
     ):
         super().__init__(
             pop_size=pop_size,
@@ -44,14 +43,12 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
             max_crossover_retries=max_crossover_retries,
         )
 
-        self.max_replace_times_per_index = max_replace_times_per_index
-
     def _modify_population_member(self, pop_member, new_text, new_result, word_idx):
         """Modify `pop_member` by returning a new copy with `new_text`,
         `new_result`, and `num_replacements_per_word` altered appropriately for
         given `word_idx`"""
         num_replacements_per_word = np.copy(pop_member.num_replacements_per_word)
-        num_replacements_per_word[word_idx] -= 1
+        num_replacements_per_word[word_idx] = 0
         return PopulationMember(
             new_text,
             result=new_result,
@@ -72,14 +69,11 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
         words_to_replace = []
         num_replacements_per_word = np.copy(pop_member1.num_replacements_per_word)
 
-        # To better simulate the reproduction and biological crossover,
-        # IGA randomly cut the text from two parents and concat two fragments into a new text
-        # rather than randomly choose a word of each position from the two parents.
-        crossover_point = np.random.randint(0, pop_member1.num_words)
-        for i in range(crossover_point, pop_member1.num_words):
-            indices_to_replace.append(i)
-            words_to_replace.append(pop_member2.words[i])
-            num_replacements_per_word[i] = pop_member2.num_replacements_per_word[i]
+        for i in range(pop_member1.num_words):
+            if np.random.uniform() < 0.5:
+                indices_to_replace.append(i)
+                words_to_replace.append(pop_member2.words[i])
+                num_replacements_per_word[i] = pop_member2.num_replacements_per_word[i]
 
         new_text = pop_member1.attacked_text.replace_words_at_indices(
             indices_to_replace, words_to_replace
@@ -96,23 +90,33 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
             population as `list[PopulationMember]`
         """
         words = initial_result.attacked_text.words
-        # For IGA, `num_replacements_per_word` represents the number of times the word at each index can be modified
-        num_replacements_per_word = np.array(
-            [self.max_replace_times_per_index] * len(words)
+        num_replacements_per_word = np.zeros(len(words))
+        transformed_texts = self.get_transformations(
+            initial_result.attacked_text, original_text=initial_result.attacked_text
         )
-        population = []
+        for transformed_text in transformed_texts:
+            diff_idx = next(
+                iter(transformed_text.attack_attrs["newly_modified_indices"])
+            )
+            num_replacements_per_word[diff_idx] += 1
 
-        # IGA initializes the first population by replacing each word by its optimal synonym
-        for idx in range(len(words)):
+        # Just b/c there are no replacements now doesn't mean we never want to select the word for perturbation
+        # Therefore, we give small non-zero probability for words with no replacements
+        # Epsilon is some small number to approximately assign small probability
+        min_num_candidates = np.amin(num_replacements_per_word)
+        epsilon = max(1, int(min_num_candidates * 0.1))
+        for i in range(len(num_replacements_per_word)):
+            num_replacements_per_word[i] = max(num_replacements_per_word[i], epsilon)
+
+        population = []
+        for _ in range(pop_size):
             pop_member = PopulationMember(
                 initial_result.attacked_text,
                 initial_result,
                 num_replacements_per_word=np.copy(num_replacements_per_word),
             )
-            pop_member = self._perturb(pop_member, initial_result, index=idx)
+            # Perturb `pop_member` in-place
+            pop_member = self._perturb(pop_member, initial_result)
             population.append(pop_member)
 
-        return population[:pop_size]
-
-    def extra_repr_keys(self):
-        return super().extra_repr_keys() + ["max_replace_times_per_index"]
+        return population

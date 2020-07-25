@@ -8,7 +8,7 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
-from textattack.search_methods import GeneticAlgorithm
+from textattack.search_methods import AlzantotGeneticAlgorithm
 from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
@@ -119,7 +119,7 @@ def FasterGeneticAlgorithmJia2019(model):
     #
     # Perform word substitution with a genetic algorithm.
     #
-    search_method = GeneticAlgorithm(
+    search_method = AlzantotGeneticAlgorithm(
         pop_size=60, max_iters=20, post_crossover_check=False
     )
 

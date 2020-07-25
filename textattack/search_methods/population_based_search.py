@@ -73,3 +73,7 @@ class PopulationMember:
     @property
     def words(self):
         return self.attacked_text.words
+
+    @property
+    def num_words(self):
+        return self.attacked_text.num_words
