@@ -65,7 +65,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         num_replacements_per_word = np.copy(pop_member.num_replacements_per_word)
         non_zero_indices = np.count_nonzero(num_replacements_per_word)
         if non_zero_indices == 0:
-            return False
+            return pop_member
         iterations = 0
         while iterations < non_zero_indices:
             if index:
@@ -237,7 +237,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 child = self._crossover(
                     population[parent1_idx[idx]],
                     population[parent2_idx[idx]],
-                    initial_result,
+                    initial_result.attacked_text,
                 )
                 if self._search_over:
                     break
