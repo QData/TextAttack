@@ -113,11 +113,15 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
                 target_text.attacked_text.attack_attrs["modified_indices"]
                 & indices_to_replace
             )
+            if "last_transformation" in source_text.attacked_text.attack_attrs:
+                new_text.attack_attrs["last_transformation"] = source_text.attacked_text.attack_attrs[
+                    "last_transformation"
+                ]
 
             if not self.post_turn_check or (new_text.words == source_text.words):
                 break
 
-            if "last_transformation" in source_text.attacked_text.attack_attrs:
+            if "last_transformation" in new_text.attack_attrs:
                 passed_constraints = self._check_constraints(
                     new_text, source_text, original_text=original_text
                 )
