@@ -85,7 +85,7 @@ class TestAttackedText:
         assert attacked_text_pair.printable_text() == desired_printed_pair_text
 
     def test_tokenizer_input(self, attacked_text, attacked_text_pair):
-        assert attacked_text.tokenizer_input == (raw_text,)
+        assert attacked_text.tokenizer_input == raw_text
         assert attacked_text_pair.tokenizer_input == (premise, hypothesis)
 
     def test_word_replacement(self, attacked_text):

@@ -118,15 +118,14 @@ def load_module_from_file(file_path):
     return module
 
 
-def parse_transformation_from_args(args, model):
-    # Transformations
+def parse_transformation_from_args(args, model_wrapper):
     transformation_name = args.transformation
     if ARGS_SPLIT_TOKEN in transformation_name:
         transformation_name, params = transformation_name.split(ARGS_SPLIT_TOKEN)
 
         if transformation_name in WHITE_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
-                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model, {params})"
+                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model_wrapper.model, {params})"
             )
         elif transformation_name in BLACK_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
@@ -137,7 +136,7 @@ def parse_transformation_from_args(args, model):
     else:
         if transformation_name in WHITE_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
-                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model)"
+                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model_wrapper.model)"
             )
         elif transformation_name in BLACK_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
@@ -149,7 +148,6 @@ def parse_transformation_from_args(args, model):
 
 
 def parse_goal_function_from_args(args, model):
-    # Goal Functions
     goal_function = args.goal_function
     if ARGS_SPLIT_TOKEN in goal_function:
         goal_function_name, params = goal_function.split(ARGS_SPLIT_TOKEN)
@@ -169,7 +167,6 @@ def parse_goal_function_from_args(args, model):
 
 
 def parse_constraints_from_args(args):
-    # Constraints
     if not args.constraints:
         return []
 
@@ -266,11 +263,10 @@ def parse_model_from_args(args):
                 f"``{model_name}`` not found in module {args.model_from_file}"
             )
 
-        if not isinstance(model, textattack.models.ModelWrapper):
+        if not isinstance(model, textattack.models.wrappers.ModelWrapper):
             raise TypeError(
-                f"Model must be of type "
-                "``textattack.models.ModelWrapper``, got type "
-                "{type(model)}"
+                "Model must be of type "
+                f"``textattack.models.ModelWrapper``, got type {type(model)}"
             )
     elif (args.model in HUGGINGFACE_DATASET_BY_MODEL) or args.model_from_huggingface:
         # Support loading models automatically from the HuggingFace model hub.
