@@ -4,8 +4,6 @@ from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 
 from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
 
-# import torch
-
 
 class AttackLogManager:
     """Logs the results of an attack to all attached loggers."""

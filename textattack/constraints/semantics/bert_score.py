@@ -12,8 +12,6 @@ import bert_score
 from textattack.constraints import Constraint
 from textattack.shared import utils
 
-# import nltk
-
 
 class BERTScore(Constraint):
     """

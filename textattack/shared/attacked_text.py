@@ -346,7 +346,11 @@ class AttackedText:
     @property
     def tokenizer_input(self):
         """The tuple of inputs to be passed to the tokenizer."""
-        return tuple(self._text_input.values())
+        input_tuple = tuple(self._text_input.values())
+        # Prefer to return a string instead of a tuple with a single value.
+        if len(input_tuple) == 1:
+            input_tuple = input_tuple[0]
+        return input_tuple
 
     @property
     def column_labels(self):

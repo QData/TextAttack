@@ -7,8 +7,6 @@ from textattack.transformations import WordSwap
 
 from .alzantot_goog_lm import GoogLMHelper
 
-# import time
-
 
 class GoogleLanguageModel(Constraint):
     """Constraint that uses the Google 1 Billion Words Language Model to

@@ -4,7 +4,6 @@
 """
 import os
 
-# from google.protobuf import text_format
 import lru
 import numpy as np
 import tensorflow as tf
@@ -12,9 +11,6 @@ import tensorflow as tf
 from textattack.shared import utils
 
 from . import lm_data_utils, lm_utils
-
-# import sys
-
 
 tf.get_logger().setLevel("INFO")
 

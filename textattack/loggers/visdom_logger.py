@@ -1,4 +1,3 @@
-# import copy
 import socket
 
 from visdom import Visdom

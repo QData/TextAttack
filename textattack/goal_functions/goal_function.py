@@ -1,13 +1,12 @@
 from abc import ABC, abstractmethod
 
 import lru
-import torch
 
 from textattack.goal_function_results.goal_function_result import (
     GoalFunctionResultStatus,
 )
-from textattack.shared import utils, validators
-from textattack.shared.utils import batch_model_predict, default_class_repr
+from textattack.shared import validators
+from textattack.shared.utils import default_class_repr
 
 
 class GoalFunction(ABC):
@@ -19,7 +18,6 @@ class GoalFunction(ABC):
         maximizable: Whether the goal function is maximizable, as opposed to a boolean result
             of success or failure.
         query_budget (float): The maximum number of model queries allowed.
-        model_batch_size (int): The batch size for making calls to the model
         model_cache_size (int): The maximum number of items to keep in the model
             results cache at once
     """
@@ -28,10 +26,8 @@ class GoalFunction(ABC):
         self,
         model,
         maximizable=False,
-        tokenizer=None,
         use_cache=True,
         query_budget=float("inf"),
-        model_batch_size=32,
         model_cache_size=2 ** 20,
     ):
         validators.validate_model_goal_function_compatibility(
@@ -39,17 +35,8 @@ class GoalFunction(ABC):
         )
         self.model = model
         self.maximizable = maximizable
-        self.tokenizer = tokenizer
-        if not self.tokenizer:
-            if hasattr(self.model, "tokenizer"):
-                self.tokenizer = self.model.tokenizer
-            else:
-                raise NameError("Cannot instantiate goal function without tokenizer")
-        if not hasattr(self.tokenizer, "encode"):
-            raise TypeError("Tokenizer must contain `encode()` method")
         self.use_cache = use_cache
         self.query_budget = query_budget
-        self.model_batch_size = model_batch_size
         if self.use_cache:
             self._call_model_cache = lru.LRU(model_cache_size)
         else:
@@ -156,12 +143,10 @@ class GoalFunction(ABC):
         objects."""
         if not len(attacked_text_list):
             return []
-        ids = utils.batch_tokenize(self.tokenizer, attacked_text_list)
 
-        with torch.no_grad():
-            outputs = batch_model_predict(
-                self.model, ids, batch_size=self.model_batch_size
-            )
+        inputs = [at.tokenizer_input for at in attacked_text_list]
+
+        outputs = self.model(inputs)
 
         return self._process_model_outputs(attacked_text_list, outputs)
 
