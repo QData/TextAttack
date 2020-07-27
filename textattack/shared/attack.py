@@ -164,6 +164,10 @@ class Attack:
             current_text: The current ``AttackedText`` on which the transformation was applied.
             original_text: The original ``AttackedText`` from which the attack started.
         """
+        # Remove any occurences of current_text in transformed_texts
+        transformed_texts = [
+            t for t in transformed_texts if t.text != current_text.text
+        ]
         # Populate cache with transformed_texts
         uncached_texts = []
         for transformed_text in transformed_texts:
