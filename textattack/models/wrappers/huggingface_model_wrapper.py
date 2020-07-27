@@ -27,7 +27,17 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
                 for k, v in input_dict.items()
             }
             outputs = self.model(**input_dict)
-            return outputs[0]
+
+            if isinstance(outputs[0], str):
+                # HuggingFace sequence-to-sequence models return a list of
+                # string predictions as output. In this case, return the full
+                # list of outputs.
+                return outputs
+            else:
+                # HuggingFace classification models return a tuple as output
+                # where the first item in the tuple corresponds to the list of
+                # scores for each input.
+                return outputs[0]
 
         with torch.no_grad():
             outputs = textattack.shared.utils.batch_model_predict(

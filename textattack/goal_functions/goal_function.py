@@ -148,6 +148,10 @@ class GoalFunction(ABC):
 
         outputs = self.model(inputs)
 
+        assert len(inputs) == len(
+            outputs
+        ), f"Got {len(outputs)} outputs for {len(inputs)} inputs"
+
         return self._process_model_outputs(attacked_text_list, outputs)
 
     def _call_model(self, attacked_text_list):

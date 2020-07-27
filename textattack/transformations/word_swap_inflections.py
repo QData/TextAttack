@@ -35,7 +35,7 @@ class WordSwapInflections(WordSwap):
 
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
-        sentence = Sentence(current_text.text)
+        sentence = Sentence(" ".join(words))
         self._flair_pos_tagger.predict(sentence)
         word_list, pos_list = zip_flair_result(sentence)
 

@@ -101,6 +101,8 @@ def model_from_args(train_args, num_labels, model_path=None):
         )
         if model_path:
             model.load_from_disk(model_path)
+
+        model = textattack.models.wrappers.PyTorchModelWrapper(model, model.tokenizer)
     elif train_args.model == "cnn":
         textattack.shared.logger.info(
             "Loading textattack model: WordCNNForClassification"
