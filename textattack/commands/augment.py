@@ -1,4 +1,4 @@
-from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser, ArgumentError
 import csv
 import os
 import time
@@ -31,6 +31,8 @@ class AugmentCommand(TextAttackCommand):
         if not args.interactive:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
+            if not (args.csv and args.input_column):
+                raise ArgumentError("The following arguments are required: --csv, --input-column/--i")
             # Validate input/output paths.
             if not os.path.exists(args.csv):
                 raise FileNotFoundError(f"Can't find CSV at location {args.csv}")
@@ -86,7 +88,7 @@ class AugmentCommand(TextAttackCommand):
                 f"Wrote {len(output_rows)} augmentations to {args.outfile} in {time.time() - start_time}s."
             )
         else:
-            print("Running in interactive mode")
+            print("\nRunning in interactive mode")
             print("----------------------------")
             while True:
                 print(
@@ -130,14 +132,15 @@ class AugmentCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
-            "--csv", help="input csv file to augment", type=str, required=True
+            "--csv", help="input csv file to augment", type=str, required=False, default=None
         )
         parser.add_argument(
             "--input-column",
             "--i",
             help="csv input column to be augmented",
             type=str,
-            required=True,
+            required=False,
+            default=None
         )
         parser.add_argument(
             "--recipe",
