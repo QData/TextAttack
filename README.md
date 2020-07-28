@@ -60,8 +60,14 @@ or via python module (`python -m textattack ...`).
 
 TextAttack's main features can all be accessed via the `textattack` command. Two very
 common commands are `textattack attack <args>`, and `textattack augment <args>`. You can see more
-information about all commands using `textattack --help`, or a specific command using, for example,
-`textattack attack --help`.
+information about all commands using 
+```bash
+textattack --help 
+```
+or a specific command using, for example,
+```bash
+textattack attack --help
+```
 
 The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The[documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
@@ -325,14 +331,16 @@ See [CONTRIBUTING.md](https://github.com/QData/TextAttack/blob/master/CONTRIBUTI
 
 ## Citing TextAttack
 
-If you use TextAttack for your research, please cite [TextAttack: A Framework for Adversarial Attacks in Natural Language Processing](https://arxiv.org/abs/2005.05909).
+If you use TextAttack for your research, please cite [TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP](https://arxiv.org/abs/2005.05909).
 
 ```bibtex
-@misc{Morris2020TextAttack,
-    Author = {John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
-    Title = {TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
-    Year = {2020},
-    Eprint = {arXiv:2005.05909},
+@misc{morris2020textattack,
+    title={TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP},
+    author={John X. Morris and Eli Lifland and Jin Yong Yoo and Jake Grigsby and Di Jin and Yanjun Qi},
+    year={2020},
+    eprint={2005.05909},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
 }
 ```
 
