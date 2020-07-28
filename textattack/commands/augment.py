@@ -28,7 +28,42 @@ class AugmentCommand(TextAttackCommand):
 
         Preserves all columns except for the input (augmneted) column.
         """
-        if not args.interactive:
+        if args.interactive:
+            print("\nRunning in interactive mode")
+            print("----------------------------")
+            while True:
+                print(
+                    'Enter a sentence to augment, "q" to quit, "c" to change arguments:'
+                )
+                text = input()
+
+                if text == "q":
+                    break
+
+                elif text == "c":
+                    print("recipe: ", end=" ")
+                    args.recipe = input()
+                    print("pct-words-to-swap: ", end=" ")
+                    args.pct_words_to_swap = float(input())
+                    print("transformations-per-example: ", end=" ")
+                    args.transformations_per_example = int(input())
+                    continue
+
+                elif not text:
+                    continue
+
+                print("Augmenting...")
+                print("----------------------------")
+
+                augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+                    pct_words_to_swap=args.pct_words_to_swap,
+                    transformations_per_example=args.transformations_per_example,
+                )
+
+                for augmentation in augmenter.augment(text):
+                    print(augmentation, "\n")
+                print("----------------------------")
+        else:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
             if not (args.csv and args.input_column):
@@ -87,41 +122,6 @@ class AugmentCommand(TextAttackCommand):
             textattack.shared.logger.info(
                 f"Wrote {len(output_rows)} augmentations to {args.outfile} in {time.time() - start_time}s."
             )
-        else:
-            print("\nRunning in interactive mode")
-            print("----------------------------")
-            while True:
-                print(
-                    'Enter a sentence to augment, "q" to quit, "c" to change arguments:'
-                )
-                text = input()
-
-                if text == "q":
-                    break
-
-                if text == "c":
-                    print("recipe: ", end=" ")
-                    args.recipe = input()
-                    print("pct-words-to-swap: ", end=" ")
-                    args.pct_words_to_swap = float(input())
-                    print("transformations-per-example: ", end=" ")
-                    args.transformations_per_example = int(input())
-                    continue
-
-                if not text:
-                    continue
-
-                print("Augmenting...")
-                print("----------------------------")
-
-                augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                    pct_words_to_swap=args.pct_words_to_swap,
-                    transformations_per_example=args.transformations_per_example,
-                )
-
-                for augmentation in augmenter.augment(text):
-                    print(augmentation, "\n")
-                print("----------------------------")
 
 
     @staticmethod
