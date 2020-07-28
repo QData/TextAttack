@@ -30,17 +30,16 @@ class AugmentCommand(TextAttackCommand):
         """
         if args.interactive:
 
+            print("\nRunning in interactive mode...\n")
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
                 pct_words_to_swap=args.pct_words_to_swap,
                 transformations_per_example=args.transformations_per_example,
             )
-
-            print("\nRunning in interactive mode")
-            print("----------------------------")
+            print("--------------------------------------------------------")
 
             while True:
                 print(
-                    'Enter a sentence to augment, "q" to quit, "c" to change arguments:'
+                    '\nEnter a sentence to augment, "q" to quit, "c" to change arguments:\n'
                 )
                 text = input()
 
@@ -48,27 +47,40 @@ class AugmentCommand(TextAttackCommand):
                     break
 
                 elif text == "c":
-                    print("recipe: ", end=" ")
-                    args.recipe = input()
-                    print("pct-words-to-swap: ", end=" ")
-                    args.pct_words_to_swap = float(input())
-                    print("transformations-per-example: ", end=" ")
-                    args.transformations_per_example = int(input())
+                    print("\nChanging augmenter arguments...\n")
+                    recipe = input(
+                        "\tAugmentation recipe name ('r' to see available recipes):  "
+                    )
+                    if recipe == "r":
+                        print("\n\twordnet, embedding, charswap, eda\n")
+                        args.recipe = input("\tAugmentation recipe name:  ")
+                    else:
+                        args.recipe = recipe
+
+                    args.pct_words_to_swap = float(
+                        input("\tPercentage of words to swap (0.0 ~ 1.0):  ")
+                    )
+                    args.transformations_per_example = int(
+                        input("\tTransformations per input example:  ")
+                    )
+
+                    print("\nGenerating new augmenter...\n")
                     augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
                         pct_words_to_swap=args.pct_words_to_swap,
                         transformations_per_example=args.transformations_per_example,
                     )
+                    print("--------------------------------------------------------")
                     continue
 
                 elif not text:
                     continue
 
-                print("Augmenting...")
-                print("----------------------------")
+                print("\nAugmenting...\n")
+                print("--------------------------------------------------------")
 
                 for augmentation in augmenter.augment(text):
                     print(augmentation, "\n")
-                print("----------------------------")
+                print("--------------------------------------------------------")
         else:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
