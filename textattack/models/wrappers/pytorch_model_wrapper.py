@@ -8,7 +8,6 @@ from .model_wrapper import ModelWrapper
 class PyTorchModelWrapper(ModelWrapper):
     """Loads a PyTorch model (`nn.Module`) and tokenizer."""
 
-    # TODO test training code before putting up PR
     def __init__(self, model, tokenizer, batch_size=32):
         if not isinstance(model, torch.nn.Module):
             raise TypeError(
@@ -18,14 +17,6 @@ class PyTorchModelWrapper(ModelWrapper):
         self.model = model.to(textattack.shared.utils.device)
         self.tokenizer = tokenizer
         self.batch_size = batch_size
-
-    @property
-    def get_model_device(self):
-        if hasattr(self.model, "model"):
-            model_device = next(self.model.model.parameters()).device
-        else:
-            model_device = next(self.model.parameters()).device
-        return model_device
 
     def tokenize(self, inputs):
         if hasattr(self.tokenizer, "batch_encode"):

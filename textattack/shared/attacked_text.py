@@ -349,8 +349,9 @@ class AttackedText:
         input_tuple = tuple(self._text_input.values())
         # Prefer to return a string instead of a tuple with a single value.
         if len(input_tuple) == 1:
-            input_tuple = input_tuple[0]
-        return input_tuple
+            return input_tuple[0]
+        else:
+            return input_tuple
 
     @property
     def column_labels(self):

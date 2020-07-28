@@ -68,7 +68,7 @@ def get_textattack_model_num_labels(model_name, model_path):
         return 2
     else:
         args = json.loads(open(train_args_path).read())
-        return args["num_labels"]
+        return args.get("num_labels", 2)
 
 
 def load_textattack_model_from_path(model_name, model_path):
