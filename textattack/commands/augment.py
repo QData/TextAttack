@@ -1,4 +1,4 @@
-from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser, ArgumentError
+from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
 import csv
 import os
 import time
