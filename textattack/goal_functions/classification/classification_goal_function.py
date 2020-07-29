@@ -1,3 +1,4 @@
+import numpy as np
 import torch
 
 from textattack.goal_function_results import ClassificationGoalFunctionResult
@@ -17,10 +18,21 @@ class ClassificationGoalFunction(GoalFunction):
         This is a task-dependent operation. For example, classification
         outputs need to have a softmax applied.
         """
+        # Automatically cast a list or ndarray of predictions to a tensor.
+        if isinstance(scores, list) or isinstance(scores, np.ndarray):
+            scores = torch.tensor(scores)
+
+        # Ensure the returned value is now a tensor.
+        if not isinstance(scores, torch.Tensor):
+            raise TypeError(
+                "Must have list, np.ndarray, or torch.Tensor of "
+                f"scores. Got type {type(scores)}"
+            )
+
         # Validation check on model score dimensions
         if scores.ndim == 1:
             # Unsqueeze prediction, if it's been squeezed by the model.
-            if len(inputs == 1):
+            if len(inputs) == 1:
                 scores = scores.unsqueeze(dim=0)
             else:
                 raise ValueError(

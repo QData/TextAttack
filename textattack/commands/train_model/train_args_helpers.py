@@ -101,6 +101,8 @@ def model_from_args(train_args, num_labels, model_path=None):
         )
         if model_path:
             model.load_from_disk(model_path)
+
+        model = textattack.models.wrappers.PyTorchModelWrapper(model, model.tokenizer)
     elif train_args.model == "cnn":
         textattack.shared.logger.info(
             "Loading textattack model: WordCNNForClassification"
@@ -112,6 +114,8 @@ def model_from_args(train_args, num_labels, model_path=None):
         )
         if model_path:
             model.load_from_disk(model_path)
+
+        model = textattack.models.wrappers.PyTorchModelWrapper(model, model.tokenizer)
     else:
         import transformers
 
@@ -127,9 +131,8 @@ def model_from_args(train_args, num_labels, model_path=None):
         tokenizer = textattack.models.tokenizers.AutoTokenizer(
             train_args.model, use_fast=True, max_length=train_args.max_length
         )
-        setattr(model, "tokenizer", tokenizer)
 
-    model = model.to(textattack.shared.utils.device)
+        model = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
 
     return model
 

@@ -1,10 +1,11 @@
+import torch
 import transformers
 
 from textattack.models.tokenizers import T5Tokenizer
 from textattack.shared import utils
 
 
-class T5ForTextToText:
+class T5ForTextToText(torch.nn.Module):
     """A T5 model trained to generate text from text.
 
     For more information, please see the T5 paper, "Exploring the Limits of
@@ -29,6 +30,7 @@ class T5ForTextToText:
     def __init__(
         self, mode="english_to_german", max_length=20, num_beams=1, early_stopping=True
     ):
+        super().__init__()
         self.model = transformers.AutoModelForSeq2SeqLM.from_pretrained("t5-base")
         self.model.to(utils.device)
         self.model.eval()

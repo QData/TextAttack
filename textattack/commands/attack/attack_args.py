@@ -1,5 +1,3 @@
-# import textattack
-
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
     "bae": "textattack.attack_recipes.BAEGarg2019",
@@ -127,6 +125,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "distilbert-base-uncased-mnli": (
         "textattack/distilbert-base-uncased-MNLI",
         ("glue", "mnli", "validation_matched", [1, 2, 0]),
+    ),
+    "distilbert-base-uncased-mr": (
+        "textattack/distilbert-base-uncased-rotten-tomatoes",
+        ("rotten_tomatoes", None, "test"),
     ),
     "distilbert-base-uncased-mrpc": (
         "textattack/distilbert-base-uncased-MRPC",
