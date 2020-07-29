@@ -86,6 +86,9 @@ class WordSwapGradientBased(Transformation):
         diffs = torch.zeros(len(indices_to_replace), vocab_size)
         indices_to_replace = list(indices_to_replace)
         for j, word_idx in enumerate(indices_to_replace):
+            # Make sure the word is in bounds.
+            if word_idx >= len(emb_grad):
+                continue
             # Get the grad w.r.t the one-hot index of the word.
             b_grads = (
                 emb_grad[word_idx].view(1, -1).mm(lookup_table_transpose).squeeze()

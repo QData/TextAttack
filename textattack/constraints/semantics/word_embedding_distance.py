@@ -54,10 +54,11 @@ class WordEmbeddingDistance(Constraint):
             raise ValueError(f"Could not find word embedding {embedding_type}")
 
         # Download embeddings if they're not cached.
-        word_embeddings_path = utils.download_if_needed(WordEmbeddingDistance.PATH)
         word_embeddings_folder = os.path.join(
-            word_embeddings_path, word_embeddings_folder
+            WordEmbeddingDistance.PATH, word_embeddings_folder
         )
+
+        word_embeddings_folder = utils.download_if_needed(word_embeddings_folder)
 
         # Concatenate folder names to create full path to files.
         word_embeddings_file = os.path.join(
