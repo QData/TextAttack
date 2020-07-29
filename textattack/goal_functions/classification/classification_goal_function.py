@@ -25,8 +25,8 @@ class ClassificationGoalFunction(GoalFunction):
         # Ensure the returned value is now a tensor.
         if not isinstance(scores, torch.Tensor):
             raise TypeError(
-                f"Must have list, np.ndarray, or torch.Tensor of "
-                "scores. Got type {type(scores)}"
+                "Must have list, np.ndarray, or torch.Tensor of "
+                f"scores. Got type {type(scores)}"
             )
 
         # Validation check on model score dimensions
