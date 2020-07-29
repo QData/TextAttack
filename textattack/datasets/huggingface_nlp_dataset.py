@@ -14,7 +14,7 @@ def _cb(s):
 
 
 def get_nlp_dataset_columns(dataset):
-    schema = set(dataset.schema.names)
+    schema = set(dataset.column_names)
     if {"premise", "hypothesis", "label"} <= schema:
         input_columns = ("premise", "hypothesis")
         output_column = "label"
