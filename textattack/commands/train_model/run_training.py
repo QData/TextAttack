@@ -153,14 +153,17 @@ def _get_eval_score(model, eval_dataloader, do_regression):
     logits = []
     labels = []
     for input_ids, batch_labels in eval_dataloader:
-        if isinstance(input_ids, dict):
-            ## HACK: dataloader collates dict backwards. This is a temporary
-            # workaround to get ids in the right shape
-            input_ids = {k: torch.stack(v).T.to(device) for k, v in input_ids.items()}
         batch_labels = batch_labels.to(device)
-
-        with torch.no_grad():
-            batch_logits = textattack.shared.utils.model_predict(model, input_ids)
+        if isinstance(input_ids, dict):
+            ## dataloader collates dict backwards. This is a workaround to get
+            # ids in the right shape for HuggingFace models
+            input_ids = {k: torch.stack(v).T.to(device) for k, v in input_ids.items()}
+            with torch.no_grad():
+                batch_logits = model(**input_ids)[0]
+        else:
+            input_ids = input_ids.to(device)
+            with torch.no_grad():
+                batch_logits = model(input_ids)
 
         logits.extend(batch_logits.cpu().squeeze().tolist())
         labels.extend(batch_labels)
@@ -327,10 +330,13 @@ def train_model(args):
             f"Number of teste xamples ({len(eval_text)}) does not match number of labels ({len(eval_labels)})"
         )
 
-    model = model_from_args(args, args.num_labels)
-    tokenizer = model.tokenizer
+    model_wrapper = model_from_args(args, args.num_labels)
+    model = model_wrapper.model
+    tokenizer = model_wrapper.tokenizer
 
     attackCls = attack_from_args(args)
+    # We are adversarial training if the user specified an attack along with
+    # the training args.
     adversarial_training = attackCls is not None
 
     # multi-gpu training
@@ -463,13 +469,16 @@ def train_model(args):
             input_ids, labels = batch
             labels = labels.to(device)
             if isinstance(input_ids, dict):
-                ## HACK: dataloader collates dict backwards. This is a temporary
-                # workaround to get ids in the right shape
+                ## dataloader collates dict backwards. This is a workaround to get
+                # ids in the right shape for HuggingFace models
                 input_ids = {
                     k: torch.stack(v).T.to(device) for k, v in input_ids.items()
                 }
+                logits = model(**input_ids)[0]
+            else:
 
-            logits = textattack.shared.utils.model_predict(model, input_ids)
+                input_ids = input_ids.to(device)
+                logits = model(input_ids)
 
             if args.do_regression:
                 # TODO integrate with textattack `metrics` package
@@ -535,11 +544,12 @@ def train_model(args):
 
     # read the saved model and report its eval performance
     logger.info("Finished training. Re-loading and evaluating model from disk.")
-    model = model_from_args(args, args.num_labels)
+    model_wrapper = model_from_args(args, args.num_labels)
+    model = model_wrapper.model
     model.load_state_dict(torch.load(os.path.join(args.output_dir, args.weights_name)))
     eval_score = _get_eval_score(model, eval_dataloader, args.do_regression)
     logger.info(
-        f"Eval of saved model {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
+        f"Saved model {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
     )
 
     if args.save_last:

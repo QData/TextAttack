@@ -18,6 +18,10 @@ from .attack_args import (
     WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
 )
 
+# The split token allows users to optionally pass multiple arguments in a single
+# parameter by separating them with the split token.
+ARGS_SPLIT_TOKEN = "|"
+
 
 def add_model_args(parser):
     """Adds model-related arguments to an argparser.
@@ -114,15 +118,14 @@ def load_module_from_file(file_path):
     return module
 
 
-def parse_transformation_from_args(args, model):
-    # Transformations
+def parse_transformation_from_args(args, model_wrapper):
     transformation_name = args.transformation
-    if ":" in transformation_name:
-        transformation_name, params = transformation_name.split(":")
+    if ARGS_SPLIT_TOKEN in transformation_name:
+        transformation_name, params = transformation_name.split(ARGS_SPLIT_TOKEN)
 
         if transformation_name in WHITE_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
-                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model, {params})"
+                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model_wrapper.model, {params})"
             )
         elif transformation_name in BLACK_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
@@ -133,7 +136,7 @@ def parse_transformation_from_args(args, model):
     else:
         if transformation_name in WHITE_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
-                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model)"
+                f"{WHITE_BOX_TRANSFORMATION_CLASS_NAMES[transformation_name]}(model_wrapper.model)"
             )
         elif transformation_name in BLACK_BOX_TRANSFORMATION_CLASS_NAMES:
             transformation = eval(
@@ -145,10 +148,9 @@ def parse_transformation_from_args(args, model):
 
 
 def parse_goal_function_from_args(args, model):
-    # Goal Functions
     goal_function = args.goal_function
-    if ":" in goal_function:
-        goal_function_name, params = goal_function.split(":")
+    if ARGS_SPLIT_TOKEN in goal_function:
+        goal_function_name, params = goal_function.split(ARGS_SPLIT_TOKEN)
         if goal_function_name not in GOAL_FUNCTION_CLASS_NAMES:
             raise ValueError(f"Error: unsupported goal_function {goal_function_name}")
         goal_function = eval(
@@ -165,14 +167,13 @@ def parse_goal_function_from_args(args, model):
 
 
 def parse_constraints_from_args(args):
-    # Constraints
     if not args.constraints:
         return []
 
     _constraints = []
     for constraint in args.constraints:
-        if ":" in constraint:
-            constraint_name, params = constraint.split(":")
+        if ARGS_SPLIT_TOKEN in constraint:
+            constraint_name, params = constraint.split(ARGS_SPLIT_TOKEN)
             if constraint_name not in CONSTRAINT_CLASS_NAMES:
                 raise ValueError(f"Error: unsupported constraint {constraint_name}")
             _constraints.append(
@@ -189,8 +190,8 @@ def parse_constraints_from_args(args):
 def parse_attack_from_args(args):
     model = parse_model_from_args(args)
     if args.recipe:
-        if ":" in args.recipe:
-            recipe_name, params = args.recipe.split(":")
+        if ARGS_SPLIT_TOKEN in args.recipe:
+            recipe_name, params = args.recipe.split(ARGS_SPLIT_TOKEN)
             if recipe_name not in ATTACK_RECIPE_NAMES:
                 raise ValueError(f"Error: unsupported recipe {recipe_name}")
             recipe = eval(f"{ATTACK_RECIPE_NAMES[recipe_name]}(model, {params})")
@@ -204,8 +205,8 @@ def parse_attack_from_args(args):
         recipe.constraint_cache_size = args.constraint_cache_size
         return recipe
     elif args.attack_from_file:
-        if ":" in args.attack_from_file:
-            attack_file, attack_name = args.attack_from_file.split(":")
+        if ARGS_SPLIT_TOKEN in args.attack_from_file:
+            attack_file, attack_name = args.attack_from_file.split(ARGS_SPLIT_TOKEN)
         else:
             attack_file, attack_name = args.attack_from_file, "attack"
         attack_module = load_module_from_file(attack_file)
@@ -219,8 +220,8 @@ def parse_attack_from_args(args):
         goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args, model)
         constraints = parse_constraints_from_args(args)
-        if ":" in args.search:
-            search_name, params = args.search.split(":")
+        if ARGS_SPLIT_TOKEN in args.search:
+            search_name, params = args.search.split(ARGS_SPLIT_TOKEN)
             if search_name not in SEARCH_METHOD_CLASS_NAMES:
                 raise ValueError(f"Error: unsupported search {search_name}")
             search_method = eval(f"{SEARCH_METHOD_CLASS_NAMES[search_name]}({params})")
@@ -239,20 +240,18 @@ def parse_attack_from_args(args):
 
 def parse_model_from_args(args):
     if args.model_from_file:
+        # Support loading the model from a .py file where a model wrapper
+        # is instantiated.
         colored_model_name = textattack.shared.utils.color_text(
             args.model_from_file, color="blue", method="ansi"
         )
         textattack.shared.logger.info(
             f"Loading model and tokenizer from file: {colored_model_name}"
         )
-        if ":" in args.model_from_file:
-            model_file, model_name, tokenizer_name = args.model_from_file.split(":")
+        if ARGS_SPLIT_TOKEN in args.model_from_file:
+            model_file, model_name = args.model_from_file.split(ARGS_SPLIT_TOKEN)
         else:
-            _, model_name, tokenizer_name = (
-                args.model_from_file,
-                "model",
-                "tokenizer",
-            )
+            _, model_name = args.model_from_file, "model"
         try:
             model_module = load_module_from_file(args.model_from_file)
         except Exception:
@@ -263,15 +262,14 @@ def parse_model_from_args(args):
             raise AttributeError(
                 f"``{model_name}`` not found in module {args.model_from_file}"
             )
-        try:
-            tokenizer = getattr(model_module, tokenizer_name)
-        except AttributeError:
-            raise AttributeError(
-                f"``{tokenizer_name}`` not found in module {args.model_from_file}"
+
+        if not isinstance(model, textattack.models.wrappers.ModelWrapper):
+            raise TypeError(
+                "Model must be of type "
+                f"``textattack.models.ModelWrapper``, got type {type(model)}"
             )
-        model = model.to(textattack.shared.utils.device)
-        setattr(model, "tokenizer", tokenizer)
     elif (args.model in HUGGINGFACE_DATASET_BY_MODEL) or args.model_from_huggingface:
+        # Support loading models automatically from the HuggingFace model hub.
         import transformers
 
         model_name = (
@@ -280,7 +278,7 @@ def parse_model_from_args(args):
             else args.model_from_huggingface
         )
 
-        if ":" in model_name:
+        if ARGS_SPLIT_TOKEN in model_name:
             model_class, model_name = model_name
             model_class = eval(f"transformers.{model_class}")
         else:
@@ -295,45 +293,53 @@ def parse_model_from_args(args):
             f"Loading pre-trained model from HuggingFace model repository: {colored_model_name}"
         )
         model = model_class.from_pretrained(model_name)
-        model = model.to(textattack.shared.utils.device)
-        try:
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(model_name)
-        except OSError:
-            textattack.shared.logger.warn(
-                f"AutoTokenizer {args.model_from_huggingface} not found. Defaulting to `bert-base-uncased`"
-            )
-            tokenizer = textattack.models.tokenizers.AutoTokenizer("bert-base-uncased")
-        setattr(model, "tokenizer", tokenizer)
-    else:
-        if args.model in TEXTATTACK_DATASET_BY_MODEL:
-            model_path, _ = TEXTATTACK_DATASET_BY_MODEL[args.model]
-            model = textattack.shared.utils.load_textattack_model_from_path(
-                args.model, model_path
-            )
-        elif args.model and os.path.exists(args.model):
-            # If `args.model` is a path/directory, let's assume it was a model
-            # trained with textattack, and try and load it.
-            model_args_json_path = os.path.join(args.model, "train_args.json")
-            if not os.path.exists(model_args_json_path):
-                raise FileNotFoundError(
-                    f"Tried to load model from path {args.model} - could not find train_args.json."
-                )
-            model_train_args = json.loads(open(model_args_json_path).read())
-            if model_train_args["model"] not in {"cnn", "lstm"}:
-                # for huggingface models, set args.model to the path of the model
-                model_train_args["model"] = args.model
-            num_labels = model_train_args["num_labels"]
-            from textattack.commands.train_model.train_args_helpers import (
-                model_from_args,
-            )
-
-            model = model_from_args(
-                argparse.Namespace(**model_train_args),
-                num_labels,
-                model_path=args.model,
+        tokenizer = textattack.models.tokenizers.AutoTokenizer(model_name)
+        model = textattack.models.wrappers.HuggingFaceModelWrapper(
+            model, tokenizer, batch_size=args.model_batch_size
+        )
+    elif args.model in TEXTATTACK_DATASET_BY_MODEL:
+        # Support loading TextAttack pre-trained models via just a keyword.
+        model_path, _ = TEXTATTACK_DATASET_BY_MODEL[args.model]
+        model = textattack.shared.utils.load_textattack_model_from_path(
+            args.model, model_path
+        )
+        # Choose the approprate model wrapper (based on whether or not this is
+        # a HuggingFace model).
+        if isinstance(
+            model, textattack.models.helpers.BERTForClassification
+        ) or isinstance(model, textattack.models.helpers.T5ForTextToText):
+            model = textattack.models.wrappers.HuggingFaceModelWrapper(
+                model, model.tokenizer, batch_size=args.model_batch_size
             )
         else:
-            raise ValueError(f"Error: unsupported TextAttack model {args.model}")
+            model = textattack.models.wrappers.PyTorchModelWrapper(
+                model, model.tokenizer, batch_size=args.model_batch_size
+            )
+    elif args.model and os.path.exists(args.model):
+        # Support loading TextAttack-trained models via just their folder path.
+        # If `args.model` is a path/directory, let's assume it was a model
+        # trained with textattack, and try and load it.
+        model_args_json_path = os.path.join(args.model, "train_args.json")
+        if not os.path.exists(model_args_json_path):
+            raise FileNotFoundError(
+                f"Tried to load model from path {args.model} - could not find train_args.json."
+            )
+        model_train_args = json.loads(open(model_args_json_path).read())
+        if model_train_args["model"] not in {"cnn", "lstm"}:
+            # for huggingface models, set args.model to the path of the model
+            model_train_args["model"] = args.model
+        num_labels = model_train_args["num_labels"]
+        from textattack.commands.train_model.train_args_helpers import model_from_args
+
+        model = model_from_args(
+            argparse.Namespace(**model_train_args), num_labels, model_path=args.model,
+        )
+        model = textattack.models.wrappers.PyTorchModelWrapper(
+            model, model.tokenizer, batch_size=args.model_batch_size
+        )
+    else:
+        raise ValueError(f"Error: unsupported TextAttack model {args.model}")
+
     return model
 
 
@@ -360,8 +366,8 @@ def parse_dataset_from_args(args):
             )
         model_train_args = json.loads(open(model_args_json_path).read())
         try:
-            if ":" in model_train_args["dataset"]:
-                name, subset = model_train_args["dataset"].split(":")
+            if ARGS_SPLIT_TOKEN in model_train_args["dataset"]:
+                name, subset = model_train_args["dataset"].split(ARGS_SPLIT_TOKEN)
             else:
                 name, subset = model_train_args["dataset"], None
             args.dataset_from_nlp = (
@@ -379,8 +385,8 @@ def parse_dataset_from_args(args):
         textattack.shared.logger.info(
             f"Loading model and tokenizer from file: {args.model_from_file}"
         )
-        if ":" in args.dataset_from_file:
-            dataset_file, dataset_name = args.dataset_from_file.split(":")
+        if ARGS_SPLIT_TOKEN in args.dataset_from_file:
+            dataset_file, dataset_name = args.dataset_from_file.split(ARGS_SPLIT_TOKEN)
         else:
             dataset_file, dataset_name = args.dataset_from_file, "dataset"
         try:
@@ -398,8 +404,8 @@ def parse_dataset_from_args(args):
     elif args.dataset_from_nlp:
         dataset_args = args.dataset_from_nlp
         if isinstance(dataset_args, str):
-            if ":" in dataset_args:
-                dataset_args = dataset_args.split(":")
+            if ARGS_SPLIT_TOKEN in dataset_args:
+                dataset_args = dataset_args.split(ARGS_SPLIT_TOKEN)
             else:
                 dataset_args = (dataset_args,)
         dataset = textattack.datasets.HuggingFaceNlpDataset(

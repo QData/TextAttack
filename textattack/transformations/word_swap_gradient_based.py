@@ -1,5 +1,6 @@
 import torch
 
+import textattack
 from textattack.shared import utils
 from textattack.shared.validators import validate_model_gradient_word_swap_compatibility
 from textattack.transformations import Transformation
@@ -18,28 +19,35 @@ class WordSwapGradientBased(Transformation):
         top_n (int): the number of top words to return at each index
     """
 
-    def __init__(self, model, top_n=1):
-        validate_model_gradient_word_swap_compatibility(model)
-        if not hasattr(model, "word_embeddings"):
+    def __init__(self, model_wrapper, top_n=1):
+        # Unwrap model wrappers. Need raw model for gradient.
+        if not isinstance(model_wrapper, textattack.models.wrappers.ModelWrapper):
+            raise TypeError(f"Got invalid model wrapper type {type(model_wrapper)}")
+        self.model = model_wrapper.model
+        self.model_wrapper = model_wrapper
+        self.tokenizer = self.model_wrapper.tokenizer
+        # Make sure we know how to compute the gradient for this model.
+        validate_model_gradient_word_swap_compatibility(self.model)
+        # Make sure this model has all of the required properties.
+        if not hasattr(self.model, "word_embeddings"):
             raise ValueError(
                 "Model needs word embedding matrix for gradient-based word swap"
             )
-        if not hasattr(model, "lookup_table"):
+        if not hasattr(self.model, "lookup_table"):
             raise ValueError("Model needs lookup table for gradient-based word swap")
-        if not hasattr(model, "zero_grad"):
+        if not hasattr(self.model, "zero_grad"):
             raise ValueError("Model needs `zero_grad()` for gradient-based word swap")
-        if not hasattr(model.tokenizer, "convert_id_to_word"):
+        if not hasattr(self.tokenizer, "convert_id_to_word"):
             raise ValueError(
                 "Tokenizer needs `convert_id_to_word()` for gradient-based word swap"
             )
-        if not hasattr(model.tokenizer, "pad_id"):
+        if not hasattr(self.tokenizer, "pad_id"):
             raise ValueError("Tokenizer needs `pad_id` for gradient-based word swap")
-        if not hasattr(model.tokenizer, "oov_id"):
+        if not hasattr(self.tokenizer, "oov_id"):
             raise ValueError("Tokenizer needs `oov_id` for gradient-based word swap")
         self.loss = torch.nn.CrossEntropyLoss()
-        self.model = model
-        self.pad_id = self.model.tokenizer.pad_id
-        self.oov_id = self.model.tokenizer.oov_id
+        self.pad_id = self.model_wrapper.tokenizer.pad_id
+        self.oov_id = self.model_wrapper.tokenizer.oov_id
         self.top_n = top_n
         self.is_black_box = False
 
@@ -58,7 +66,7 @@ class WordSwapGradientBased(Transformation):
         lookup_table_transpose = lookup_table.transpose(0, 1)
 
         # get word IDs
-        text_ids = self.model.tokenizer.encode(attacked_text.tokenizer_input)
+        text_ids = self.tokenizer.encode(attacked_text.tokenizer_input)
 
         # set backward hook on the word embeddings for input x
         emb_hook = Hook(self.model.word_embeddings, backward=True)
@@ -86,7 +94,7 @@ class WordSwapGradientBased(Transformation):
             diffs[j] = b_grads - a_grad
 
         # Don't change to the pad token.
-        diffs[:, self.model.tokenizer.pad_id] = float("-inf")
+        diffs[:, self.tokenizer.pad_id] = float("-inf")
 
         # Find best indices within 2-d tensor by flattening.
         word_idxs_sorted_by_grad = (-diffs).flatten().argsort()
@@ -97,7 +105,7 @@ class WordSwapGradientBased(Transformation):
             idx_in_diffs = idx // num_words_in_vocab
             idx_in_vocab = idx % (num_words_in_vocab)
             idx_in_sentence = indices_to_replace[idx_in_diffs]
-            word = self.model.tokenizer.convert_id_to_word(idx_in_vocab)
+            word = self.tokenizer.convert_id_to_word(idx_in_vocab)
             if (not utils.has_letter(word)) or (len(utils.words_from_text(word)) != 1):
                 # Do not consider words that are solely letters or punctuation.
                 continue
@@ -113,7 +121,8 @@ class WordSwapGradientBased(Transformation):
 
     def _call_model(self, text_ids):
         """A helper function to query `self.model` with AttackedText `text`."""
-        return utils.model_predict(self.model, [text_ids])
+        model_input = torch.tensor([text_ids]).to(textattack.shared.utils.device)
+        return self.model(model_input)
 
     def _get_transformations(self, attacked_text, indices_to_replace):
         """Returns a list of all possible transformations for `text`.

@@ -9,9 +9,6 @@ from textattack.commands.list_things import ListThingsCommand
 from textattack.commands.peek_dataset import PeekDatasetCommand
 from textattack.commands.train_model import TrainModelCommand
 
-# import os
-# import sys
-
 
 def main():
     parser = argparse.ArgumentParser(
