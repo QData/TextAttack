@@ -92,7 +92,7 @@ attack_test_params = [
     (
         "run_attack_targeted_mnli_misc",
         (
-            "textattack attack --attack-n --goal-function targeted-classification:target_class=2 --log-to-csv "
+            "textattack attack --attack-n --goal-function targeted-classification|target_class=2 --log-to-csv "
             "/tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation "
             "word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search|beam_width=2 "
             "--shuffle=False "
