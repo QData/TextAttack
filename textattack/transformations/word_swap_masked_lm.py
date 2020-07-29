@@ -117,7 +117,9 @@ class WordSwapMaskedLM(WordSwap):
         )
         current_inputs = self._encode_text(masked_text.text)
         current_ids = current_inputs["input_ids"].tolist()[0]
-        word_tokens = self._lm_tokenizer.encode(current_text.words[index], add_special_tokens=False)
+        word_tokens = self._lm_tokenizer.encode(
+            current_text.words[index], add_special_tokens=False
+        )
 
         try:
             # Need try-except b/c mask-token located past max_length might be truncated by tokenizer
@@ -126,7 +128,9 @@ class WordSwapMaskedLM(WordSwap):
             return []
 
         # List of indices of tokens that are part of the target word
-        target_ids_pos = list(range(masked_index, min(masked_index + len(word_tokens), self.max_length)))
+        target_ids_pos = list(
+            range(masked_index, min(masked_index + len(word_tokens), self.max_length))
+        )
 
         if not len(target_ids_pos):
             return []
