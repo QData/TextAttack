@@ -48,6 +48,9 @@ class GoogLMHelper:
 
         self.lm_cache = lru.LRU(2 ** 18)
 
+    def clear_cache(self):
+        self.lm_cache.clear()
+
     def get_words_probs_uncached(self, prefix_words, list_words):
         targets = np.zeros([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.int32)
         weights = np.ones([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.float32)

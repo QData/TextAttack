@@ -55,6 +55,10 @@ class GoalFunction(ABC):
         else:
             self._call_model_cache = None
 
+    def clear_cache(self):
+        if self.use_cache:
+            self._call_model_cache.clear()
+
     def init_attack_example(self, attacked_text, ground_truth_output):
         """Called before attacking ``attacked_text`` to 'reset' the goal
         function and set properties for this example."""

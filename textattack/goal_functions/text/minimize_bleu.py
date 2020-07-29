@@ -26,6 +26,11 @@ class MinimizeBleu(TextToTextGoalFunction):
         self.target_bleu = target_bleu
         super().__init__(*args, **kwargs)
 
+    def clear_cache(self):
+        if self.use_cache:
+            self._call_model_cache.clear()
+        get_bleu.cache_clear()
+
     def _is_goal_complete(self, model_output, _):
         bleu_score = 1.0 - self._get_score(model_output, _)
         return bleu_score <= (self.target_bleu + MinimizeBleu.EPS)

@@ -14,6 +14,12 @@ class NonOverlappingOutput(TextToTextGoalFunction):
     (3).
     """
 
+    def clear_cache(self):
+        if self.use_cache:
+            self._call_model_cache.clear()
+        get_words_cached.cache_clear()
+        word_difference_score.cache_clear()
+
     def _is_goal_complete(self, model_output, _):
         return self._get_score(model_output, self.ground_truth_output) == 1.0
 
