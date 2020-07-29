@@ -420,28 +420,66 @@ def parse_dataset_from_args(args):
 def parse_logger_from_args(args):
     # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
-    out_time = int(time.time() * 1000)  # Output file
-    # Set default output directory to `textattack/outputs`.
-    if not args.out_dir:
-        current_dir = os.path.dirname(os.path.realpath(__file__))
-        outputs_dir = os.path.join(
-            current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
-        )
-        if not os.path.exists(outputs_dir):
-            os.makedirs(outputs_dir)
-        args.out_dir = os.path.normpath(outputs_dir)
 
-    # if "--log-to-file" specified in terminal command, then save it to a txt file
-    if args.log_to_file:
-        # Output file.
-        outfile_name = "attack-{}.txt".format(out_time)
-        attack_log_manager.add_output_file(os.path.join(args.out_dir, outfile_name))
+    # Get current time for file naming
+    timestamp = time.strftime("%Y-%m-%d-%H-%M")
 
-    # CSV
-    if args.enable_csv:
-        outfile_name = "attack-{}.csv".format(out_time)
-        color_method = None if args.enable_csv == "plain" else "file"
-        csv_path = os.path.join(args.out_dir, outfile_name)
+    # Get default directory to save results
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    outputs_dir = os.path.join(
+        current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
+    )
+    out_dir_txt = out_dir_csv = os.path.normpath(outputs_dir)
+
+    # Get default txt and csv file names
+    if args.recipe:
+        filename_txt = f"{args.model}_{args.recipe}_{timestamp}.txt"
+        filename_csv = f"{args.model}_{args.recipe}_{timestamp}.csv"
+    else:
+        filename_txt = f"{args.model}_{timestamp}.txt"
+        filename_csv = f"{args.model}_{timestamp}.csv"
+
+    # if '--log-to-txt' specified with arguments
+    if args.log_to_txt:
+        # if user decide to save to a specific directory
+        if args.log_to_txt[-1] == "/":
+            out_dir_txt = args.log_to_txt
+        # else if path + filename is given
+        elif args.log_to_txt[-4:] == ".txt":
+            out_dir_txt = args.log_to_txt.rsplit("/", 1)[0]
+            filename_txt = args.log_to_txt.rsplit("/", 1)[-1]
+        # otherwise, customize filename
+        else:
+            filename_txt = f"{args.log_to_txt}.txt"
+
+    # if "--log-to-csv" is called
+    if args.log_to_csv:
+        # if user decide to save to a specific directory
+        if args.log_to_csv[-1] == "/":
+            out_dir_csv = args.log_to_csv
+        # else if path + filename is given
+        elif args.log_to_csv[-4:] == ".csv":
+            out_dir_csv = args.log_to_csv.rsplit("/", 1)[0]
+            filename_csv = args.log_to_csv.rsplit("/", 1)[-1]
+        # otherwise, customize filename
+        else:
+            filename_csv = f"{args.log_to_csv}.csv"
+
+    # in case directory doesn't exist
+    if not os.path.exists(out_dir_txt):
+        os.makedirs(out_dir_txt)
+    if not os.path.exists(out_dir_csv):
+        os.makedirs(out_dir_csv)
+
+    # if "--log-to-txt" specified in terminal command (with or without arg), save to a txt file
+    if args.log_to_txt == "" or args.log_to_txt:
+        attack_log_manager.add_output_file(os.path.join(out_dir_txt, filename_txt))
+
+    # if "--log-to-csv" specified in terminal command(with  or without arg), save to a csv file
+    if args.log_to_csv == "" or args.log_to_csv:
+        # "--csv-style used to swtich from 'fancy' to 'plain'
+        color_method = None if args.csv_style == "plain" else "file"
+        csv_path = os.path.join(out_dir_csv, filename_csv)
         attack_log_manager.add_output_csv(csv_path, color_method)
         textattack.shared.logger.info(f"Logging to CSV at path {csv_path}.")
 

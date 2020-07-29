@@ -74,18 +74,35 @@ class AttackCommand(TextAttackCommand):
         )
 
         parser.add_argument(
-            "--out-dir",
-            type=str,
-            required=False,
+            "--log-to-txt",
+            "-l",
+            nargs="?",
             default=None,
-            help="A directory to output results to.",
+            const="",
+            type=str,
+            help="Save attack logs to <install-dir>/outputs/~ by default; Include '/' at the end of argument to save "
+            "output to specified directory in default naming convention; otherwise enter argument to specify "
+            "file name",
         )
 
         parser.add_argument(
-            "--log-to-file",
-            "-l",
-            help="Save attack logs to <install-dir>/outputs/~",
-            action="store_true",
+            "--log-to-csv",
+            nargs="?",
+            default=None,
+            const="",
+            type=str,
+            help="Save attack logs to <install-dir>/outputs/~ by default; Include '/' at the end of argument to save "
+            "output to specified directory in default naming convention; otherwise enter argument to specify "
+            "file name",
+        )
+
+        parser.add_argument(
+            "--csv-style",
+            default=None,
+            const="fancy",
+            nargs="?",
+            type=str,
+            help="Use --csv-style plain to remove [[]] around words",
         )
 
         parser.add_argument(
@@ -100,15 +117,6 @@ class AttackCommand(TextAttackCommand):
 
         parser.add_argument(
             "--disable-stdout", action="store_true", help="Disable logging to stdout"
-        )
-
-        parser.add_argument(
-            "--enable-csv",
-            nargs="?",
-            default=None,
-            const="fancy",
-            type=str,
-            help="Enable logging to csv. Use --enable-csv plain to remove [[]] around words.",
         )
 
         parser.add_argument(

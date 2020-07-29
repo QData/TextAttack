@@ -84,7 +84,7 @@ attack_test_params = [
         "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt",
     ),
     #
-    # test: run_attack targeted classification of class 2 on BERT MNLI with enable_csv
+    # test: run_attack targeted classification of class 2 on BERT MNLI with log-to-csv
     #   and attack_n set, using the WordNet transformation and beam search with
     #   beam width 2, using language tool constraint, on 10 samples
     #                   (takes about 72s)
@@ -92,11 +92,12 @@ attack_test_params = [
     (
         "run_attack_targeted_mnli_misc",
         (
-            "textattack attack --attack-n --goal-function targeted-classification|target_class=2 "
-            "--enable-csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation word-swap-wordnet "
-            "--constraints lang-tool repeat stopword --search beam-search|beam_width=2 --shuffle=False"
+            "textattack attack --attack-n --goal-function targeted-classification|target_class=2 --log-to-csv "
+            "/tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation "
+            "word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search|beam_width=2 "
+            "--shuffle=False "
         ),
-        "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_enable_csv_beamsearch2_attack_n.txt",
+        "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt",
     ),
     #
     # fmt: off
