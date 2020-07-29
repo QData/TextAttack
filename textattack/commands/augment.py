@@ -28,19 +28,78 @@ class AugmentCommand(TextAttackCommand):
 
         Preserves all columns except for the input (augmneted) column.
         """
-        if not args.interactive:
+        if args.interactive:
+
+            print("\nRunning in interactive mode...\n")
+            augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+                pct_words_to_swap=args.pct_words_to_swap,
+                transformations_per_example=args.transformations_per_example,
+            )
+            print("--------------------------------------------------------")
+
+            while True:
+                print(
+                    '\nEnter a sentence to augment, "q" to quit, "c" to change arguments:\n'
+                )
+                text = input()
+
+                if text == "q":
+                    break
+
+                elif text == "c":
+                    print("\nChanging augmenter arguments...\n")
+                    recipe = input(
+                        "\tAugmentation recipe name ('r' to see available recipes):  "
+                    )
+                    if recipe == "r":
+                        print("\n\twordnet, embedding, charswap, eda\n")
+                        args.recipe = input("\tAugmentation recipe name:  ")
+                    else:
+                        args.recipe = recipe
+
+                    args.pct_words_to_swap = float(
+                        input("\tPercentage of words to swap (0.0 ~ 1.0):  ")
+                    )
+                    args.transformations_per_example = int(
+                        input("\tTransformations per input example:  ")
+                    )
+
+                    print("\nGenerating new augmenter...\n")
+                    augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+                        pct_words_to_swap=args.pct_words_to_swap,
+                        transformations_per_example=args.transformations_per_example,
+                    )
+                    print("--------------------------------------------------------")
+                    continue
+
+                elif not text:
+                    continue
+
+                print("\nAugmenting...\n")
+                print("--------------------------------------------------------")
+
+                for augmentation in augmenter.augment(text):
+                    print(augmentation, "\n")
+                print("--------------------------------------------------------")
+        else:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
             if not (args.csv and args.input_column):
-                raise ArgumentError("The following arguments are required: --csv, --input-column/--i")
+                raise ArgumentError(
+                    "The following arguments are required: --csv, --input-column/--i"
+                )
             # Validate input/output paths.
             if not os.path.exists(args.csv):
                 raise FileNotFoundError(f"Can't find CSV at location {args.csv}")
             if os.path.exists(args.outfile):
                 if args.overwrite:
-                    textattack.shared.logger.info(f"Preparing to overwrite {args.outfile}.")
+                    textattack.shared.logger.info(
+                        f"Preparing to overwrite {args.outfile}."
+                    )
                 else:
-                    raise OSError(f"Outfile {args.outfile} exists and --overwrite not set.")
+                    raise OSError(
+                        f"Outfile {args.outfile} exists and --overwrite not set."
+                    )
             # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
             # try and automatically infer the correct CSV format.
             csv_file = open(args.csv, "r")
@@ -48,7 +107,9 @@ class AugmentCommand(TextAttackCommand):
             csv_file.seek(0)
             rows = [
                 row
-                for row in csv.DictReader(csv_file, dialect=dialect, skipinitialspace=True)
+                for row in csv.DictReader(
+                    csv_file, dialect=dialect, skipinitialspace=True
+                )
             ]
             # Validate input column.
             row_keys = set(rows[0].keys())
@@ -87,42 +148,6 @@ class AugmentCommand(TextAttackCommand):
             textattack.shared.logger.info(
                 f"Wrote {len(output_rows)} augmentations to {args.outfile} in {time.time() - start_time}s."
             )
-        else:
-            print("\nRunning in interactive mode")
-            print("----------------------------")
-            while True:
-                print(
-                    'Enter a sentence to augment, "q" to quit, "c" to change arguments:'
-                )
-                text = input()
-
-                if text == "q":
-                    break
-
-                if text == "c":
-                    print("recipe: ", end=" ")
-                    args.recipe = input()
-                    print("pct-words-to-swap: ", end=" ")
-                    args.pct_words_to_swap = float(input())
-                    print("transformations-per-example: ", end=" ")
-                    args.transformations_per_example = int(input())
-                    continue
-
-                if not text:
-                    continue
-
-                print("Augmenting...")
-                print("----------------------------")
-
-                augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                    pct_words_to_swap=args.pct_words_to_swap,
-                    transformations_per_example=args.transformations_per_example,
-                )
-
-                for augmentation in augmenter.augment(text):
-                    print(augmentation, "\n")
-                print("----------------------------")
-
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):
@@ -132,7 +157,11 @@ class AugmentCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
-            "--csv", help="input csv file to augment", type=str, required=False, default=None
+            "--csv",
+            help="input csv file to augment",
+            type=str,
+            required=False,
+            default=None,
         )
         parser.add_argument(
             "--input-column",
@@ -140,7 +169,7 @@ class AugmentCommand(TextAttackCommand):
             help="csv input column to be augmented",
             type=str,
             required=False,
-            default=None
+            default=None,
         )
         parser.add_argument(
             "--recipe",
