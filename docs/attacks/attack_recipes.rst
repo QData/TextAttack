@@ -1,7 +1,7 @@
 Attack Recipes
 ===============
 
-We provide a number of pre-built attack recipes. To run an attack recipe, run::
+We provide a number of pre-built attack recipes, which correspond to attacks from the literature. To run an attack recipe, run::
 
     textattack attack --recipe [recipe_name]
 
@@ -12,6 +12,11 @@ Attacks on classification models
     
 Alzantot Genetic Algorithm (Generating Natural Language Adversarial Examples)
 ###################################################################################
+
+.. warning::
+    This attack uses a very slow language model. Consider using the ``fast-alzantot``
+    recipe instead.
+
 
 .. automodule:: textattack.attack_recipes.genetic_algorithm_alzantot_2018
    :members:
