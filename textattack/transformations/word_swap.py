@@ -3,9 +3,6 @@ import string
 
 from .transformation import Transformation
 
-# import nltk
-# from nltk.corpus import stopwords
-
 
 class WordSwap(Transformation):
     """An abstract class that takes a sentence and transforms it by replacing

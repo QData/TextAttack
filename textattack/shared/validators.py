@@ -1,4 +1,3 @@
-# import collections
 import re
 
 import textattack

@@ -1,9 +1,7 @@
 import os
 
-# import numpy as np
 import torch
 
-# from textattack.constraints import Constraint
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 from textattack.shared import utils
 

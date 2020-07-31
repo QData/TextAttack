@@ -1,5 +1,3 @@
-# import numpy as np
-
 from textattack.shared import utils
 from textattack.transformations import Transformation
 

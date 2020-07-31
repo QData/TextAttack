@@ -6,8 +6,6 @@ import torch
 from textattack.constraints import Constraint
 from textattack.shared import utils
 
-# import os
-
 
 class SentenceEncoder(Constraint):
     """Constraint using cosine similarity between sentence encodings of x and

@@ -1,4 +1,3 @@
-# import importlib
 import json
 import os
 import random
@@ -57,26 +56,33 @@ def html_table_from_rows(rows, title=None, header=None, style_dict=None):
     return table_html
 
 
-def load_textattack_model_from_path(model_name, model_path):
-    """Loads a pre-trained TextAttack model from its name and path."""
+def get_textattack_model_num_labels(model_name, model_path):
+    """Reads `train_args.json` and gets the number of labels for a trained
+    model, if present."""
+    model_cache_path = textattack.shared.utils.download_if_needed(model_path)
+    train_args_path = os.path.join(model_cache_path, "train_args.json")
+    if not os.path.exists(train_args_path):
+        textattack.shared.logger.warn(
+            f"train_args.json not found in model path {model_path}. Defaulting to 2 labels."
+        )
+        return 2
+    else:
+        args = json.loads(open(train_args_path).read())
+        return args.get("num_labels", 2)
 
-    def get_num_labels():
-        model_cache_path = textattack.shared.utils.download_if_needed(model_path)
-        train_args_path = os.path.join(model_cache_path, "train_args.json")
-        if not os.path.exists(train_args_path):
-            textattack.shared.logger.warn(
-                f"train_args.json not found in model path {model_path}. Defaulting to 2 labels."
-            )
-            return 2
-        else:
-            args = json.loads(open(train_args_path).read())
-            return args["num_labels"]
+
+def load_textattack_model_from_path(model_name, model_path):
+    """Loads a pre-trained TextAttack model from its name and path.
+
+    For example, model_name "lstm-yelp" and model path
+    "models/classification/lstm/yelp".
+    """
 
     colored_model_name = textattack.shared.utils.color_text(
         model_name, color="blue", method="ansi"
     )
     if model_name.startswith("lstm"):
-        num_labels = get_num_labels()
+        num_labels = get_textattack_model_num_labels(model_name, model_path)
         textattack.shared.logger.info(
             f"Loading pre-trained TextAttack LSTM: {colored_model_name}"
         )
@@ -84,7 +90,7 @@ def load_textattack_model_from_path(model_name, model_path):
             model_path=model_path, num_labels=num_labels
         )
     elif model_name.startswith("cnn"):
-        num_labels = get_num_labels()
+        num_labels = get_textattack_model_num_labels(model_name, model_path)
         textattack.shared.logger.info(
             f"Loading pre-trained TextAttack CNN: {colored_model_name}"
         )

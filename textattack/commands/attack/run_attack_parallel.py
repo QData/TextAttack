@@ -35,6 +35,7 @@ def set_env_variables(gpu_id):
 def attack_from_queue(args, in_queue, out_queue):
     gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
     set_env_variables(gpu_id)
+    textattack.shared.utils.set_seed(args.random_seed)
     attack = parse_attack_from_args(args)
     if gpu_id == 0:
         print(attack, "\n")

@@ -1,4 +1,3 @@
-# import copy
 import random
 
 from textattack.transformations.word_swap import WordSwap
