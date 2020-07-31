@@ -344,7 +344,10 @@ class AttackedText:
         return AttackedText(perturbed_input, attack_attrs=new_attack_attrs)
 
     def words_diff_ratio(self, x):
-        """Get the ratio of words difference between current text and x."""
+        """Get the ratio of words difference between current text and `x`.
+        Note that current text and `x` must have same number of words.
+        """
+        assert self.num_words == x.num_words 
         return float(np.sum(self.words != x.words)) / self.num_words
 
     @property

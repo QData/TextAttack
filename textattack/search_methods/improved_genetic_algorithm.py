@@ -45,32 +45,33 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
         )
 
         self.max_replace_times_per_index = max_replace_times_per_index
+        self._attr_name = "num_replacements_left"
 
     def _modify_population_member(self, pop_member, new_text, new_result, word_idx):
         """Modify `pop_member` by returning a new copy with `new_text`,
-        `new_result`, and `num_replacements_per_word` altered appropriately for
+        `new_result`, and `num_replacements_left` altered appropriately for
         given `word_idx`"""
-        num_replacements_per_word = np.copy(pop_member.num_replacements_per_word)
-        num_replacements_per_word[word_idx] -= 1
+        num_replacements_left = np.copy(pop_member.num_replacements_left)
+        num_replacements_left[word_idx] -= 1
         return PopulationMember(
             new_text,
             result=new_result,
-            num_replacements_per_word=num_replacements_per_word,
+            num_replacements_left=num_replacements_left,
         )
 
     def _crossover_operation(self, pop_member1, pop_member2):
-        """Actual operation for generating crossover between pop_member1 and
-        pop_member2.
+        """Actual operation that takes `pop_member1` text and `pop_member2` text and mixes the two 
+        to generate crossover between `pop_member1` and `pop_member2`.
 
         Args:
             pop_member1 (PopulationMember): The first population member.
             pop_member2 (PopulationMember): The second population member.
         Returns:
-            Tuple of `AttackedText` and `np.array` for new text and its corresponding `num_replacements_per_word`.
+            Tuple of `AttackedText` and `np.array` for new text and its corresponding `num_replacements_left`.
         """
         indices_to_replace = []
         words_to_replace = []
-        num_replacements_per_word = np.copy(pop_member1.num_replacements_per_word)
+        num_replacements_left = np.copy(pop_member1.num_replacements_left)
 
         # To better simulate the reproduction and biological crossover,
         # IGA randomly cut the text from two parents and concat two fragments into a new text
@@ -79,12 +80,12 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
         for i in range(crossover_point, pop_member1.num_words):
             indices_to_replace.append(i)
             words_to_replace.append(pop_member2.words[i])
-            num_replacements_per_word[i] = pop_member2.num_replacements_per_word[i]
+            num_replacements_left[i] = pop_member2.num_replacements_left[i]
 
         new_text = pop_member1.attacked_text.replace_words_at_indices(
             indices_to_replace, words_to_replace
         )
-        return new_text, num_replacements_per_word
+        return new_text, num_replacements_left
 
     def _initialize_population(self, initial_result, pop_size):
         """
@@ -96,8 +97,8 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
             population as `list[PopulationMember]`
         """
         words = initial_result.attacked_text.words
-        # For IGA, `num_replacements_per_word` represents the number of times the word at each index can be modified
-        num_replacements_per_word = np.array(
+        # For IGA, `num_replacements_left` represents the number of times the word at each index can be modified
+        num_replacements_left = np.array(
             [self.max_replace_times_per_index] * len(words)
         )
         population = []
@@ -107,7 +108,7 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
             pop_member = PopulationMember(
                 initial_result.attacked_text,
                 initial_result,
-                num_replacements_per_word=np.copy(num_replacements_per_word),
+                num_replacements_left=np.copy(num_replacements_left),
             )
             pop_member = self._perturb(pop_member, initial_result, index=idx)
             population.append(pop_member)
