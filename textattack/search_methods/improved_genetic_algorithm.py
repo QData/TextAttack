@@ -54,14 +54,13 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
         num_replacements_left = np.copy(pop_member.num_replacements_left)
         num_replacements_left[word_idx] -= 1
         return PopulationMember(
-            new_text,
-            result=new_result,
-            num_replacements_left=num_replacements_left,
+            new_text, result=new_result, num_replacements_left=num_replacements_left,
         )
 
     def _crossover_operation(self, pop_member1, pop_member2):
-        """Actual operation that takes `pop_member1` text and `pop_member2` text and mixes the two 
-        to generate crossover between `pop_member1` and `pop_member2`.
+        """Actual operation that takes `pop_member1` text and `pop_member2`
+        text and mixes the two to generate crossover between `pop_member1` and
+        `pop_member2`.
 
         Args:
             pop_member1 (PopulationMember): The first population member.

@@ -46,8 +46,8 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
     @abstractmethod
     def _modify_population_member(self, pop_member, new_text, new_result, word_idx):
         """Modify `pop_member` by returning a new copy with `new_text`,
-        `new_result`, and `word_attr_list` altered appropriately for
-        given `word_idx`"""
+        `new_result`, and `word_attr_list` altered appropriately for given
+        `word_idx`"""
         raise NotImplementedError()
 
     def _perturb(self, pop_member, original_result, index=None):
@@ -72,9 +72,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             if index:
                 idx = index
             else:
-                w_select_probs = word_attr_list / np.sum(
-                    word_attr_list
-                )
+                w_select_probs = word_attr_list / np.sum(word_attr_list)
                 idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
 
             transformed_texts = self.get_transformations(
@@ -111,9 +109,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
     @abstractmethod
     def _crossover_operation(self, pop_member1, pop_member2):
-        """
-        Actual operation that takes `pop_member1` text and `pop_member2` text and mixes the two 
-        to generate crossover between `pop_member1` and `pop_member2`.
+        """Actual operation that takes `pop_member1` text and `pop_member2`
+        text and mixes the two to generate crossover between `pop_member1` and
+        `pop_member2`.
 
         Args:
             pop_member1 (PopulationMember): The first population member.
@@ -122,10 +120,13 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
             Tuple of `AttackedText` and `np.array` for new text and its corresponding `word_attr_list`.
         """
         raise NotImplementedError()
-    
-    def _post_crossover_check(self, new_text, parent_text1, parent_text2, original_text):
-        """Check if `new_text` that has been produced by performing crossover between
-        `parent_text1` and `parent_text2` aligns with the constraints.
+
+    def _post_crossover_check(
+        self, new_text, parent_text1, parent_text2, original_text
+    ):
+        """Check if `new_text` that has been produced by performing crossover
+        between `parent_text1` and `parent_text2` aligns with the constraints.
+
         Args:
             new_text (AttackedText): Text produced by crossover operation
             parent_text1 (AttackedText): Parent text of `new_text`
@@ -185,7 +186,9 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
                 ]
 
             if self.post_crossover_check:
-                passed_constraints = self._post_crossover_check(new_text, x1_text, x2_text, original_text)
+                passed_constraints = self._post_crossover_check(
+                    new_text, x1_text, x2_text, original_text
+                )
 
             if not self.post_crossover_check or passed_constraints:
                 break
@@ -200,9 +203,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         else:
             new_results, self._search_over = self.get_goal_results([new_text])
             return PopulationMember(
-                new_text,
-                result=new_results[0],
-                **{self._attr_name: word_attr_list},
+                new_text, result=new_results[0], **{self._attr_name: word_attr_list},
             )
 
     @abstractmethod

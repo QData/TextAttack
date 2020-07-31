@@ -46,9 +46,11 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
 
     def _modify_population_member(self, pop_member, new_text, new_result, word_idx):
         """Modify `pop_member` by returning a new copy with `new_text`,
-        `new_result`, and `num_candidate_transformations` altered appropriately for
-        given `word_idx`"""
-        num_candidate_transformations = np.copy(pop_member.num_candidate_transformations)
+        `new_result`, and `num_candidate_transformations` altered appropriately
+        for given `word_idx`"""
+        num_candidate_transformations = np.copy(
+            pop_member.num_candidate_transformations
+        )
         num_candidate_transformations[word_idx] = 0
         return PopulationMember(
             new_text,
@@ -57,8 +59,9 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
         )
 
     def _crossover_operation(self, pop_member1, pop_member2):
-        """Actual operation that takes `pop_member1` text and `pop_member2` text and mixes the two 
-        to generate crossover between `pop_member1` and `pop_member2`.
+        """Actual operation that takes `pop_member1` text and `pop_member2`
+        text and mixes the two to generate crossover between `pop_member1` and
+        `pop_member2`.
 
         Args:
             pop_member1 (PopulationMember): The first population member.
@@ -68,13 +71,17 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
         """
         indices_to_replace = []
         words_to_replace = []
-        num_candidate_transformations = np.copy(pop_member1.num_candidate_transformations)
+        num_candidate_transformations = np.copy(
+            pop_member1.num_candidate_transformations
+        )
 
         for i in range(pop_member1.num_words):
             if np.random.uniform() < 0.5:
                 indices_to_replace.append(i)
                 words_to_replace.append(pop_member2.words[i])
-                num_candidate_transformations[i] = pop_member2.num_candidate_transformations[i]
+                num_candidate_transformations[
+                    i
+                ] = pop_member2.num_candidate_transformations[i]
 
         new_text = pop_member1.attacked_text.replace_words_at_indices(
             indices_to_replace, words_to_replace
@@ -107,7 +114,9 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
         min_num_candidates = np.amin(num_candidate_transformations)
         epsilon = max(1, int(min_num_candidates * 0.1))
         for i in range(len(num_candidate_transformations)):
-            num_candidate_transformations[i] = max(num_candidate_transformations[i], epsilon)
+            num_candidate_transformations[i] = max(
+                num_candidate_transformations[i], epsilon
+            )
 
         population = []
         for _ in range(pop_size):
