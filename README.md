@@ -285,8 +285,8 @@ To experiment with a model you've trained, you could create the following file
 and name it `my_model.py`:
 
 ```python
-model = load_model()
-tokenizer = load_tokenizer()
+model = load_your_model_with_custom_code() # replace this line with your model loading code
+tokenizer = load_your_tokenizer_with_custom_code() # replace this line with your tokenizer loading code
 ```
 
 Then, run an attack with the argument `--model-from-file my_model.py`. The model and tokenizer will be loaded automatically.
