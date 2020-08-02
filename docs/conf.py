@@ -43,11 +43,6 @@ extensions = [
     "recommonmark",
 ]
 
-# Allow nbsphinx errors
-# (so we don't have to import everything if something
-# needed in the notebook isn't installed)
-nbsphinx_allow_errors = True
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
 
