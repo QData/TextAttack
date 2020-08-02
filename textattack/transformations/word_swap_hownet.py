@@ -71,7 +71,10 @@ class WordSwapHowNet(WordSwap):
             )
             transformed_texts_idx = []
             for r in replacement_words:
-                transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
+                if r != word_to_replace and utils.is_one_word(r):
+                    transformed_texts_idx.append(
+                        current_text.replace_word_at_index(i, r)
+                    )
             transformed_texts.extend(transformed_texts_idx)
 
         return transformed_texts
