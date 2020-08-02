@@ -1,7 +1,5 @@
 import pandas as pd
 
-import textattack
-
 from .model_wrapper import ModelWrapper
 
 

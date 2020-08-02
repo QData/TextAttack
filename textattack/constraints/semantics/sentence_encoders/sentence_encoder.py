@@ -4,7 +4,6 @@ import numpy as np
 import torch
 
 from textattack.constraints import Constraint
-from textattack.shared import utils
 
 
 class SentenceEncoder(Constraint):
