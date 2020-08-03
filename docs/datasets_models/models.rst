@@ -1,55 +1,39 @@
 Models
 ===============
 
-TextAttack provides different pre-trained models for testing NLP attacks.
+User-specified models
+=========================
 
-We split models up into two broad categories:
+TextAttack allows users to provide their own models for testing. Models can be loaded in three ways: 1. ``--model`` for pre-trained models and models trained with TextAttack
+2. ``--model-from-huggingface`` which will attempt to load any model from the ``HuggingFace model hub <https://huggingface.co/models>``
+3. ``--model-from-file`` which will dynamically load a Python file and look for the ``model`` variable
 
-- **Classification**: models that output probability scores for some number of classes. These include models for sentiment classification, topic classification, and entailment.
-- **Text-to-text**: models that output a sequence of text. These include models that do translation and summarization.
+Model Wrappers
+*************************
+TextAttack can attack any model that takes a list of strings as input and outputs a list of predictions. To help your model conform to this API, we've provided the ``textattack.models.wrappers.ModelWrapper`` abstract class.
 
-
-**Classification models:**
-
-   :ref:`BERT`: ``bert-base-uncased`` fine-tuned on various datasets using ``transformers``.
-
-   :ref:`LSTM`: a standard LSTM fine-tuned on various datasets.
-   
-   :ref:`CNN`: a Word-CNN fine-tuned on various datasets.
-
-
-**Text-to-text models:**
-
-   :ref:`T5`: ``T5`` fine-tuned on various datasets using ``transformers``.
-   
-   
-.. _BERT:
-
-BERT
-********
-.. automodule:: textattack.models.helpers.bert_for_classification
+.. automodule:: textattack.models.wrappers.model_wrapper
    :members:
 
 
-.. _LSTM:
+We've also provided implementations of model wrappers for common patterns in some popular machine learning frameworks:
 
-LSTM
-*******
-.. automodule:: textattack.models.helpers.lstm_for_classification
+.. automodule:: textattack.models.wrappers.pytorch_model_wrapper
+   :members:
+
+.. automodule:: textattack.models.wrappers.tensorflow_model_wrapper
+   :members:
+
+.. automodule:: textattack.models.wrappers.sklearn_model_wrapper
+   :members:
+
+.. automodule:: textattack.models.wrappers.huggingface_model_wrapper
    :members:
 
 
-.. _CNN:
+Pre-trained models
+=====================
 
-Word-CNN
-************
-.. automodule:: textattack.models.helpers.word_cnn_for_classification
-   :members:
+TextAttack also provides lots of pre-trained models for common tasks. Testing different attacks on the same model ensures attack comparisons are fair. 
 
-.. _T5:
-
-T5
-*****************
-
-.. automodule:: textattack.models.helpers.t5_for_text_to_text
-   :members:
+Any of these models can be provided to ``textattack attack`` via ``--model``, for example, ``--model bert-base-uncased-mr``. For a full list of pre-trained models, see the `pre-trained models README <https://github.com/QData/TextAttack/tree/master/textattack/models>`_.

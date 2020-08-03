@@ -62,13 +62,13 @@ TextAttack has some other features that make it a pleasure to use:
    augmentation/augmenter
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :hidden:
-   :caption: Models, Datasets and Tokenizers
+   :caption: Models and Tokenizers
 
    datasets_models/models
-   datasets_models/datasets
-   datasets_models/tokenizers
+   Example: Attacking TensorFlow models <datasets_models/Example_0_tensorflow>
+   Example: Attacking scikit-learn models <datasets_models/Example_1_sklearn.ipynb>
 
 .. toctree::
    :maxdepth: 3
