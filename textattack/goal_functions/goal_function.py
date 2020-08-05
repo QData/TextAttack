@@ -14,7 +14,7 @@ class GoalFunction(ABC):
     specified goal.
 
     Args:
-        model: The model used for evaluation.
+        model_wrapper: The model used for evaluation.
         maximizable: Whether the goal function is maximizable, as opposed to a boolean result
             of success or failure.
         query_budget (float): The maximum number of model queries allowed.
@@ -24,16 +24,16 @@ class GoalFunction(ABC):
 
     def __init__(
         self,
-        model,
+        model_wrapper,
         maximizable=False,
         use_cache=True,
         query_budget=float("inf"),
         model_cache_size=2 ** 20,
     ):
         validators.validate_model_goal_function_compatibility(
-            self.__class__, model.__class__
+            self.__class__, model_wrapper.__class__
         )
-        self.model = model
+        self.model = model_wrapper
         self.maximizable = maximizable
         self.use_cache = use_cache
         self.query_budget = query_budget

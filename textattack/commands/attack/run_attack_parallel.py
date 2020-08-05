@@ -20,12 +20,26 @@ logger = textattack.shared.logger
 def set_env_variables(gpu_id):
     # Set sharing strategy to file_system to avoid file descriptor leaks
     torch.multiprocessing.set_sharing_strategy("file_system")
+
     # Only use one GPU, if we have one.
     # For Tensorflow
     # TODO: Using USE with `--parallel` raises similar issue as https://github.com/tensorflow/tensorflow/issues/38518#
     os.environ["CUDA_VISIBLE_DEVICES"] = str(gpu_id)
     # For PyTorch
     torch.cuda.set_device(gpu_id)
+
+    # Fix TensorFlow GPU memory growth
+    import tensorflow as tf
+
+    gpus = tf.config.experimental.list_physical_devices("GPU")
+    if gpus:
+        try:
+            # Currently, memory growth needs to be the same across GPUs
+            gpu = gpus[gpu_id]
+            tf.config.experimental.set_visible_devices(gpu, "GPU")
+            tf.config.experimental.set_memory_growth(gpu, True)
+        except RuntimeError as e:
+            print(e)
 
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
