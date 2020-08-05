@@ -20,7 +20,7 @@ def GeneticAlgorithmAlzantot2018(model):
 
     Generating Natural Language Adversarial Examples.
 
-    https://arxiv.org/abs/1801.00554
+    https://arxiv.org/abs/1804.07998
     """
     #
     # Swap words with their embedding nearest-neighbors.
