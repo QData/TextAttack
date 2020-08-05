@@ -148,10 +148,10 @@ def run(args, checkpoint=None):
         # Enable summary stdout
         if args.disable_stdout:
             attack_log_manager.enable_stdout()
-        attack_log_manager.log_summary()
+        attack_log_manager.log_metrics()
         attack_log_manager.flush()
         print()
         # finish_time = time.time()
         textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
-        return attack_log_manager.results
+        return attack_log_manager.attack_results

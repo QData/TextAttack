@@ -189,13 +189,13 @@ def run(args, checkpoint=None):
     # Enable summary stdout.
     if args.disable_stdout:
         attack_log_manager.enable_stdout()
-    attack_log_manager.log_summary()
+    attack_log_manager.log_metrics()
     attack_log_manager.flush()
     print()
 
     textattack.shared.logger.info(f"Attack time: {time.time() - start_time}s")
 
-    return attack_log_manager.results
+    return attack_log_manager.attack_results
 
 
 def pytorch_multiprocessing_workaround():

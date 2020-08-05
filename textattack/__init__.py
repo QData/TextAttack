@@ -8,6 +8,7 @@ from . import (
     goal_function_results,
     goal_functions,
     loggers,
+    metrics,
     models,
     search_methods,
     shared,
