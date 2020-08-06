@@ -194,9 +194,9 @@ def parse_attack_from_args(args):
             recipe_name, params = args.recipe.split(ARGS_SPLIT_TOKEN)
             if recipe_name not in ATTACK_RECIPE_NAMES:
                 raise ValueError(f"Error: unsupported recipe {recipe_name}")
-            recipe = eval(f"{ATTACK_RECIPE_NAMES[recipe_name]}(model, {params})")
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[recipe_name]}.build(model, {params})")
         elif args.recipe in ATTACK_RECIPE_NAMES:
-            recipe = eval(f"{ATTACK_RECIPE_NAMES[args.recipe]}(model)")
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[args.recipe]}.build(model)")
         else:
             raise ValueError(f"Invalid recipe {args.recipe}")
         recipe.goal_function.query_budget = args.query_budget

@@ -1,3 +1,5 @@
+from .attack_recipe import AttackRecipe
+
 from .bae_garg_2019 import BAEGarg2019
 from .bert_attack_li_2020 import BERTAttackLi2020
 from .genetic_algorithm_alzantot_2018 import GeneticAlgorithmAlzantot2018
