@@ -20,7 +20,7 @@ from .attack_args import (
 
 # The split token allows users to optionally pass multiple arguments in a single
 # parameter by separating them with the split token.
-ARGS_SPLIT_TOKEN = "|"
+ARGS_SPLIT_TOKEN = "^"
 
 
 def add_model_args(parser):
