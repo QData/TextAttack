@@ -93,6 +93,7 @@ TextAttack has some other features that make it a pleasure to use:
    datasets_models/models
    Example: Attacking TensorFlow models <datasets_models/Example_0_tensorflow>
    Example: Attacking scikit-learn models <datasets_models/Example_1_sklearn.ipynb>
+   Example: Attacking AllenNLP models <datasets_models/Example_2_allennlp.ipynb>
 
 .. toctree::
    :maxdepth: 3
