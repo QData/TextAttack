@@ -6,7 +6,6 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapMaskedLM
 
 from .attack_recipe import AttackRecipe

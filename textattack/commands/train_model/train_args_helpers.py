@@ -2,11 +2,10 @@ import os
 
 import textattack
 from textattack.commands.attack.attack_args import ATTACK_RECIPE_NAMES
+from textattack.commands.attack.attack_args_helpers import ARGS_SPLIT_TOKEN
 from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 
 logger = textattack.shared.logger
-
-from textattack.commands.attack.attack_args_helpers import ARGS_SPLIT_TOKEN
 
 
 def prepare_dataset_for_training(nlp_dataset):
