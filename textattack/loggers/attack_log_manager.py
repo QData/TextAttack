@@ -115,6 +115,10 @@ class AttackLogManager:
         #
         # TODO: Add metrics for edit distance and/or USE similarity
         #
+        # TODO: show BLEU score for translation
+        # 
+        # TODO: add --metrics command-line arg to attack
+        #
         metric_table_rows = []
         for metric in self.metrics:
             key = metric.key
