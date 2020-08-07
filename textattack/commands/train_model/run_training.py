@@ -461,7 +461,7 @@ def train_model(args):
         loss_fct = torch.nn.CrossEntropyLoss()
 
     for epoch in tqdm.trange(
-        int(args.num_train_epochs), desc="Epoch", position=0, leave=False
+        int(args.num_train_epochs), desc="Epoch", position=0, leave=True
     ):
         if adversarial_training:
             if epoch >= args.num_clean_epochs:
@@ -480,9 +480,7 @@ def train_model(args):
             else:
                 logger.info(f"Running clean epoch {epoch+1}/{args.num_clean_epochs}")
 
-        prog_bar = tqdm.tqdm(
-            train_dataloader, desc="Iteration", position=1, leave=False
-        )
+        prog_bar = tqdm.tqdm(train_dataloader, desc="Iteration", position=0, leave=True)
 
         # Use these variables to track training accuracy during classification.
         correct_predictions = 0

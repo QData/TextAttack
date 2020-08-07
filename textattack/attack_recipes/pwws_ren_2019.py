@@ -7,8 +7,10 @@ from textattack.search_methods import GreedyWordSwapWIR
 from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapWordNet
 
+from .attack_recipe import AttackRecipe
 
-def PWWSRen2019(model):
+
+class PWWSRen2019(AttackRecipe):
     """An implementation of Probability Weighted Word Saliency from "Generating
     Natural Langauge Adversarial Examples through Probability Weighted Word
     Saliency", Ren et al., 2019.
@@ -21,9 +23,12 @@ def PWWSRen2019(model):
 
     https://www.aclweb.org/anthology/P19-1103/
     """
-    transformation = WordSwapWordNet()
-    constraints = [RepeatModification(), StopwordModification()]
-    goal_function = UntargetedClassification(model)
-    # search over words based on a combination of their saliency score, and how efficient the WordSwap transform is
-    search_method = GreedyWordSwapWIR("weighted-saliency")
-    return Attack(goal_function, constraints, transformation, search_method)
+
+    @staticmethod
+    def build(model):
+        transformation = WordSwapWordNet()
+        constraints = [RepeatModification(), StopwordModification()]
+        goal_function = UntargetedClassification(model)
+        # search over words based on a combination of their saliency score, and how efficient the WordSwap transform is
+        search_method = GreedyWordSwapWIR("weighted-saliency")
+        return Attack(goal_function, constraints, transformation, search_method)
