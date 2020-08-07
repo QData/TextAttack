@@ -1,11 +1,11 @@
 TextAttack
 ==============
 
-Welcome to the documentation for TextAttack! You've come to the right place.
+Welcome to the documentation for TextAttack!
 
 What is TextAttack?
 ----------------------
-`TextAttack <https://github.com/QData/TextAttack>`__ is a Python framework for adversarial attacks and data augmentation in NLP. 
+`TextAttack <https://github.com/QData/TextAttack>`__ is a Python framework for adversarial attacks, adversarial training, and data augmentation in NLP. 
 
 TextAttack makes experimenting with the robustness of NLP models seamless, fast, and easy. It's also useful for NLP model training, adversarial training, and data augmentation. 
 
