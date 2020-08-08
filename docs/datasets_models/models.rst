@@ -4,13 +4,15 @@ Models
 User-specified models
 =========================
 
-TextAttack allows users to provide their own models for testing. Models can be loaded in three ways: 1. ``--model`` for pre-trained models and models trained with TextAttack
+TextAttack allows users to provide their own models for testing. Models can be loaded in three ways: 
+
+1. ``--model`` for pre-trained models and models trained with TextAttack
 2. ``--model-from-huggingface`` which will attempt to load any model from the ``HuggingFace model hub <https://huggingface.co/models>``
 3. ``--model-from-file`` which will dynamically load a Python file and look for the ``model`` variable
 
 Model Wrappers
 *************************
-TextAttack can attack any model that takes a list of strings as input and outputs a list of predictions. To help your model conform to this API, we've provided the ``textattack.models.wrappers.ModelWrapper`` abstract class.
+TextAttack can attack any model that takes a list of strings as input and outputs a list of predictions. This is the idea behind *model wrappers*: to help your model conform to this API, we've provided the ``textattack.models.wrappers.ModelWrapper`` abstract class.
 
 .. automodule:: textattack.models.wrappers.model_wrapper
    :members:

@@ -20,7 +20,7 @@ from .attack_args import (
 
 # The split token allows users to optionally pass multiple arguments in a single
 # parameter by separating them with the split token.
-ARGS_SPLIT_TOKEN = "|"
+ARGS_SPLIT_TOKEN = "^"
 
 
 def add_model_args(parser):
@@ -194,9 +194,9 @@ def parse_attack_from_args(args):
             recipe_name, params = args.recipe.split(ARGS_SPLIT_TOKEN)
             if recipe_name not in ATTACK_RECIPE_NAMES:
                 raise ValueError(f"Error: unsupported recipe {recipe_name}")
-            recipe = eval(f"{ATTACK_RECIPE_NAMES[recipe_name]}(model, {params})")
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[recipe_name]}.build(model, {params})")
         elif args.recipe in ATTACK_RECIPE_NAMES:
-            recipe = eval(f"{ATTACK_RECIPE_NAMES[args.recipe]}(model)")
+            recipe = eval(f"{ATTACK_RECIPE_NAMES[args.recipe]}.build(model)")
         else:
             raise ValueError(f"Invalid recipe {args.recipe}")
         recipe.goal_function.query_budget = args.query_budget
