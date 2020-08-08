@@ -18,6 +18,10 @@ logger = textattack.shared.logger
 
 
 def set_env_variables(gpu_id):
+    # Disable tensorflow logs, except in the case of an error.
+    if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
     # Set sharing strategy to file_system to avoid file descriptor leaks
     torch.multiprocessing.set_sharing_strategy("file_system")
 
@@ -40,10 +44,6 @@ def set_env_variables(gpu_id):
             tf.config.experimental.set_memory_growth(gpu, True)
         except RuntimeError as e:
             print(e)
-
-    # Disable tensorflow logs, except in the case of an error.
-    if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 
 def attack_from_queue(args, in_queue, out_queue):
