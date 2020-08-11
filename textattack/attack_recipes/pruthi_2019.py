@@ -13,7 +13,9 @@ from textattack.transformations import (
     WordSwapQWERTY,
     WordSwapRandomCharacterDeletion,
     WordSwapRandomCharacterInsertion,
+    WordSwap_CE
 )
+
 
 
 def Pruthi2019(model, max_num_word_swaps=1):
@@ -34,20 +36,8 @@ def Pruthi2019(model, max_num_word_swaps=1):
     """
     # a combination of 4 different character-based transforms
     # ignore the first and last letter of each word, as in the paper
-    transformation = CompositeTransformation(
-        [
-            WordSwapNeighboringCharacterSwap(
-                random_one=False, skip_first_char=True, skip_last_char=True
-            ),
-            WordSwapRandomCharacterDeletion(
-                random_one=False, skip_first_char=True, skip_last_char=True
-            ),
-            WordSwapRandomCharacterInsertion(
-                random_one=False, skip_first_char=True, skip_last_char=True
-            ),
-            WordSwapQWERTY(random_one=False, skip_first_char=True, skip_last_char=True),
-        ]
-    )
+    transformation = WordSwapQWERTY(random_one=False, skip_first_char=True, skip_last_char=True)
+
     # only edit words of length >= 4, edit max_num_word_swaps words.
     # note that we also are not editing the same word twice, so
     # max_num_word_swaps is really the max number of character

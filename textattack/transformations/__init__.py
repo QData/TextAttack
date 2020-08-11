@@ -20,3 +20,4 @@ from .word_swap_qwerty import WordSwapQWERTY
 
 # White-box transformations
 from .word_swap_gradient_based import WordSwapGradientBased
+

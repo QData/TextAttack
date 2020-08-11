@@ -15,7 +15,7 @@ class Transformation(ABC):
         shifted_idxs=True,
     ):
         """Returns a list of all possible transformations for ``current_text``.
-        Applies the ``pre_transformation_constraints`` then calles
+        Applies the ``pre_transformation_constraints`` then calls
         ``_get_transformations``.
 
         Args:
@@ -60,3 +60,4 @@ class Transformation(ABC):
         return []
 
     __repr__ = __str__ = default_class_repr
+
