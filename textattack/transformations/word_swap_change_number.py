@@ -20,7 +20,6 @@ class WordSwapChangeNumber(WordSwap):
             num = int(word)
             change = int(num * self.max_change) + 1
             num_list = np.random.randint(num - change, num + change, self.n)
-            print(num_list)
             return num_list.astype(str)
 
         return []

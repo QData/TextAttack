@@ -5,7 +5,7 @@ from textattack.transformations.word_swap import WordSwap
 class WordSwapChangeLocation(WordSwap):
     """
     Future implementations:
-    detect alphabetical numbers as well
+    Capitalization issue
     """
 
     def __init__(self, n=10, **kwargs):
