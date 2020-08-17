@@ -44,4 +44,6 @@ class WordSwap(Transformation):
                 transformed_texts_idx.append(current_text.replace_word_at_index(i, r))
             transformed_texts.extend(transformed_texts_idx)
 
+            print(transformed_texts)
+
         return transformed_texts

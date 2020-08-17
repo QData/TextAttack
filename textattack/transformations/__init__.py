@@ -23,3 +23,4 @@ from .word_swap_gradient_based import WordSwapGradientBased
 
 from .word_swap_contract import WordSwapContract
 from .word_swap_extend import WordSwapExtend
+from .word_swap_change_number import WordSwapChangeNumber
