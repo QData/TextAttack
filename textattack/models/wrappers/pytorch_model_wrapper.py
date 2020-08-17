@@ -25,8 +25,9 @@ class PyTorchModelWrapper(ModelWrapper):
             return [self.tokenizer.encode(x) for x in inputs]
 
     def __call__(self, text_input_list):
+        model_device = next(self.model.parameters()).device
         ids = self.tokenize(text_input_list)
-        ids = torch.tensor(ids).to(textattack.shared.utils.device)
+        ids = torch.tensor(ids).to(model_device)
 
         with torch.no_grad():
             outputs = textattack.shared.utils.batch_model_predict(
