@@ -4,8 +4,8 @@ from textattack.search_methods import GreedySearch
 from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
-    WordSwap_Contract,
-    WordSwap_Extend,
+    WordSwapContract,
+    WordSwapExtend,
 )
 
 
@@ -26,7 +26,7 @@ def Checklist2020(model, max_num_word_swaps=1):
     :param max_num_word_swaps: Maximum number of modifications to allow.
     """
 
-    transformation = CompositeTransformation([WordSwap_Extend(), WordSwap_Contract()])
+    transformation = CompositeTransformation([WordSwapExtend(), WordSwapContract()])
 
     # we need this constraint, or extend and contract start to modify each other's changes and form infinite loop
     constraints = [RepeatModification()]

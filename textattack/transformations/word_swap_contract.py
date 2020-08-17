@@ -4,7 +4,7 @@ from textattack.shared import AttackedText
 from textattack.transformations import Transformation
 
 
-class WordSwap_Contract(Transformation):
+class WordSwapContract(Transformation):
 
     reverse_contraction_map = {
         "is not": "isn't",

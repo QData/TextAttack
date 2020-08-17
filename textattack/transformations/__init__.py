@@ -21,5 +21,5 @@ from .word_swap_qwerty import WordSwapQWERTY
 # White-box transformations
 from .word_swap_gradient_based import WordSwapGradientBased
 
-from .word_swap_contract import WordSwap_Contract
-from .word_swap_extend import WordSwap_Extend
+from .word_swap_contract import WordSwapContract
+from .word_swap_extend import WordSwapExtend
