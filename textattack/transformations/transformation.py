@@ -60,4 +60,3 @@ class Transformation(ABC):
         return []
 
     __repr__ = __str__ = default_class_repr
-

@@ -15,6 +15,7 @@ ATTACK_RECIPE_NAMES = {
     "iga": "textattack.attack_recipes.IGAWang2019",
     "pruthi": "textattack.attack_recipes.Pruthi2019",
     "pso": "textattack.attack_recipes.PSOZang2020",
+    "checklist": "textattack.attack_recipes.Checklist2020",
 }
 
 #
