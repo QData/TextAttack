@@ -10,7 +10,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""
 
     def __init__(self, model, tokenizer, batch_size=32):
-        self.model = model
+        self.model = model.to(textattack.shared.utils.device)
         if isinstance(tokenizer, transformers.PreTrainedTokenizer):
             tokenizer = textattack.models.tokenizers.AutoTokenizer(tokenizer=tokenizer)
         self.tokenizer = tokenizer
@@ -34,8 +34,6 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
                 k: torch.tensor(v).to(textattack.shared.utils.device)
                 for k, v in input_dict.items()
             }
-            for k, v in input_dict.items():
-                break
             outputs = self.model(**input_dict)
 
             if isinstance(outputs[0], str):
