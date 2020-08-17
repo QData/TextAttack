@@ -8,17 +8,14 @@ class AutoTokenizer:
     standardizes the functionality for TextAttack.
 
     Args:
-        name: the identifying name of the tokenizer (see AutoTokenizer,
+        name: the identifying name of the tokenizer, for example, ``bert-base-uncased``
+            (see AutoTokenizer,
             https://github.com/huggingface/transformers/blob/master/src/transformers/tokenization_auto.py)
         max_length: if set, will truncate & pad tokens to fit this length
     """
 
     def __init__(
-        self,
-        tokenizer_path="bert-base-uncased",
-        tokenizer=None,
-        max_length=256,
-        use_fast=True,
+        self, tokenizer_path=None, tokenizer=None, max_length=256, use_fast=True,
     ):
         if not (tokenizer_path or tokenizer):
             raise ValueError("Must pass tokenizer path or tokenizer")
