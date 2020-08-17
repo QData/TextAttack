@@ -14,11 +14,23 @@ class AutoTokenizer:
     """
 
     def __init__(
-        self, name="bert-base-uncased", max_length=256, use_fast=True,
+        self,
+        tokenizer_path="bert-base-uncased",
+        tokenizer=None,
+        max_length=256,
+        use_fast=True,
     ):
-        self.tokenizer = transformers.AutoTokenizer.from_pretrained(
-            name, use_fast=use_fast
-        )
+        if not (tokenizer_path or tokenizer):
+            raise ValueError("Must pass tokenizer path or tokenizer")
+        if tokenizer_path and tokenizer:
+            raise ValueError("Cannot pass both tokenizer path and tokenizer")
+
+        if tokenizer_path:
+            self.tokenizer = transformers.AutoTokenizer.from_pretrained(
+                tokenizer_path, use_fast=use_fast
+            )
+        else:
+            self.tokenizer = tokenizer
         self.max_length = max_length
         self.save_pretrained = self.tokenizer.save_pretrained
 

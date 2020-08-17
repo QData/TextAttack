@@ -1,7 +1,7 @@
 import torch
 from transformers.modeling_bert import BertForSequenceClassification
 
-from textattack.models.tokenizers import BERTTokenizer
+from textattack.models.tokenizers import AutoTokenizer
 from textattack.shared import utils
 
 
@@ -22,7 +22,7 @@ class BERTForClassification:
 
         self.model.to(utils.device)
         self.model.eval()
-        self.tokenizer = BERTTokenizer(model_file_path)
+        self.tokenizer = AutoTokenizer(model_file_path)
 
     def __call__(self, input_ids=None, **kwargs):
         # The tokenizer will return ``input_ids`` along with ``token_type_ids``
