@@ -6,7 +6,8 @@ from textattack.transformations import (
     CompositeTransformation,
     WordSwapContract,
     WordSwapExtend,
-    WordSwapChangeNumber
+    WordSwapChangeNumber,
+    WordSwapChangeLocation,
 )
 
 
@@ -27,7 +28,8 @@ def Checklist2020(model, max_num_word_swaps=1):
     :param max_num_word_swaps: Maximum number of modifications to allow.
     """
 
-    transformation = WordSwapChangeNumber()
+    # transformation = WordSwapChangeNumber()
+    transformation = WordSwapChangeLocation()
     # transformation = CompositeTransformation([WordSwapExtend(), WordSwapContract()])
 
     # we need this constraint, or extend and contract start to modify each other's changes and form infinite loop

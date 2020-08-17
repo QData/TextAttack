@@ -9,9 +9,7 @@ class WordSwapChangeNumber(WordSwap):
     detect alphabetical numbers as well
     """
 
-    def __init__(
-        self, max_change=1, n=10, **kwargs
-    ):
+    def __init__(self, max_change=1, n=10, **kwargs):
         super().__init__(**kwargs)
         self.max_change = max_change
         self.n = n
@@ -25,8 +23,4 @@ class WordSwapChangeNumber(WordSwap):
             print(num_list)
             return num_list.astype(str)
 
-
-
         return []
-
-
