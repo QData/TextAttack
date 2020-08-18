@@ -143,7 +143,7 @@ attack_test_params = [
 def test_command_line_attack(name, command, sample_output_file):
     """Runs attack tests and compares their outputs to a reference file."""
     # TEMP: skip mr tests
-    if "-mr" in " ".join(command):
+    if "-mr" in command:
         return
     # read in file and create regex
     desired_output = open(sample_output_file, "r").read().strip()
