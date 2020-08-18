@@ -14,3 +14,11 @@ class ModelWrapper(ABC):
     @abstractmethod
     def __call__(self, text_list):
         raise NotImplementedError()
+
+    def tokenize(self, inputs):
+        """Helper method that calls ``tokenizer.batch_encode`` if possible, and
+        if not, falls back to calling ``tokenizer.encode`` for each input."""
+        if hasattr(self.tokenizer, "batch_encode"):
+            return self.tokenizer.batch_encode(inputs)
+        else:
+            return [self.tokenizer.encode(x) for x in inputs]

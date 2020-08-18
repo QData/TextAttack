@@ -18,12 +18,6 @@ class PyTorchModelWrapper(ModelWrapper):
         self.tokenizer = tokenizer
         self.batch_size = batch_size
 
-    def tokenize(self, inputs):
-        if hasattr(self.tokenizer, "batch_encode"):
-            return self.tokenizer.batch_encode(inputs)
-        else:
-            return [self.tokenizer.encode(x) for x in inputs]
-
     def __call__(self, text_input_list):
         ids = self.tokenize(text_input_list)
         ids = torch.tensor(ids).to(textattack.shared.utils.device)
