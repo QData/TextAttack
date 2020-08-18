@@ -13,13 +13,10 @@ if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
 
 
 class HuggingFaceSentimentAnalysisPipelineWrapper(ModelWrapper):
-    """ Transformers sentiment analysis pipeline returns a list of responses
-        like 
-        
+    """ Transformers sentiment analysis pipeline returns a list of responses,
+        like
             [{'label': 'POSITIVE', 'score': 0.7817379832267761}]
-            
         We need to convert that to a format TextAttack understands, like
-        
             [[0.218262017, 0.7817379832267761]
     """
 
