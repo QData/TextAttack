@@ -3,5 +3,5 @@
 # model on the Yelp dataset.
 textattack attack --attack-n --goal-function untargeted-classification \
     --model bert-base-uncased-yelp --num-examples 8 --transformation word-swap-wordnet \
-    --constraints edit-distance:12 max-words-perturbed:max_percent=0.75 repeat stopword \
+    --constraints edit-distance^12 max-words-perturbed:max_percent=0.75 repeat stopword \
     --search greedy

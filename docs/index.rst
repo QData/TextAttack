@@ -63,6 +63,13 @@ TextAttack has some other features that make it a pleasure to use:
    Tutorial 0: TextAttack End-To-End (Train, Eval, Attack) <examples/0_End_to_End.ipynb>
    Tutorial 1: Transformations <examples/1_Introduction_and_Transformations.ipynb>
    Tutorial 2: Constraints <examples/2_Constraints.ipynb>
+   
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+   :caption: Multilingual Examples
+
+   CamemBERT & French WordNet <multilingual/Example_1_CamemBERT.ipynb>
 
 .. toctree::
    :maxdepth: 3
