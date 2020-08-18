@@ -29,10 +29,10 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
             Then make lists (values of dict) into tensors.
             """
+            model_device = next(self.model.parameters()).device
             input_dict = {k: [_dict[k] for _dict in inputs] for k in inputs[0]}
             input_dict = {
-                k: torch.tensor(v).to(textattack.shared.utils.device)
-                for k, v in input_dict.items()
+                k: torch.tensor(v).to(model_device) for k, v in input_dict.items()
             }
             outputs = self.model(**input_dict)
 
