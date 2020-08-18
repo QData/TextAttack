@@ -114,16 +114,16 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
                 & indices_to_replace
             )
             if "last_transformation" in source_text.attacked_text.attack_attrs:
-                new_text.attack_attrs[
+                new_text.attack_attrs["last_transformation"] = source_text.attacked_text.attack_attrs[
                     "last_transformation"
-                ] = source_text.attacked_text.attack_attrs["last_transformation"]
+                ]
 
             if not self.post_turn_check or (new_text.words == source_text.words):
                 break
 
             if "last_transformation" in new_text.attack_attrs:
                 passed_constraints = self._check_constraints(
-                    new_text, source_text, original_text=original_text
+                    new_text, source_text.attacked_text, original_text=original_text
                 )
             else:
                 passed_constraints = True
@@ -278,12 +278,12 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
 
             for k in range(len(pop_results)):
                 population[k].result = pop_results[k]
-            top_result = max(population, key=lambda x: x.score).result
+            top_member = max(population, key=lambda x: x.score)
             if (
                 self._search_over
-                or top_result.goal_status == GoalFunctionResultStatus.SUCCEEDED
+                or top_member.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
             ):
-                return top_result
+                return top_member.result
 
             # Mutation based on the current change rate
             for k in range(len(population)):
@@ -299,20 +299,20 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
                     break
 
             # Check if there is any successful attack in the current population
-            top_result = max(population, key=lambda x: x.score)
+            top_member = max(population, key=lambda x: x.score)
             if (
                 self._search_over
-                or top_result.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
+                or top_member.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
             ):
-                return top_result.result
+                return top_member.result
 
             # Update the elite if the score is increased
             for k in range(len(population)):
                 if population[k].score > local_elites[k].score:
                     local_elites[k] = copy.copy(population[k])
 
-            if top_result.score > global_elite.score:
-                global_elite = copy.copy(top_result)
+            if top_member.score > global_elite.score:
+                global_elite = copy.copy(top_member)
 
         return global_elite.result
 
