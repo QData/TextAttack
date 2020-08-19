@@ -14,7 +14,7 @@ from textattack.transformations import (
 
 def Checklist2020(model, max_num_word_swaps=1):
     """An implementation of the attack used in "Beyond Accuracy: Behavioral
-     Testing of NLP models with CheckList", Ribeiro et al., 2020."
+    Testing of NLP models with CheckList", Ribeiro et al., 2020.".
 
     This attack focuses on a number of attacks used in the Invariance Testing
     Method:
@@ -35,7 +35,7 @@ def Checklist2020(model, max_num_word_swaps=1):
             WordSwapContract(),
             WordSwapChangeName(),
             WordSwapChangeNumber(),
-            WordSwapChangeLocation,
+            WordSwapChangeLocation(),
         ]
     )
 

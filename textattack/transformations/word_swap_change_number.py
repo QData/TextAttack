@@ -4,8 +4,8 @@ from textattack.transformations.word_swap import WordSwap
 
 class WordSwapChangeNumber(WordSwap):
 
-    """
-    Future implementations:
+    """Future implementations:
+
     detect alphabetical numbers as well
     """
 

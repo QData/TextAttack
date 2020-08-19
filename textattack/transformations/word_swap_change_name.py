@@ -1,48 +1,73 @@
 import numpy as np
-from textattack.transformations.word_swap import WordSwap
+from textattack.transformations import Transformation
+from flair.data import Sentence
+from flair.models import SequenceTagger
 
 
-class WordSwapChangeName(WordSwap):
+class WordSwapChangeName(Transformation):
+    """Future implementations:
+
+    commenting move name dataset to another location
     """
-    Future implementations:
-    dunno
-    """
 
-    def __init__(self, n=5, first_only=False, last_only=False, **kwargs):
+    def __init__(
+        self, n=5, first_only=False, last_only=False, confidence_score=0.7, **kwargs
+    ):
         super().__init__(**kwargs)
         self.n = n
         self.first_only = first_only
         self.last_only = last_only
+        self.confidence_score = confidence_score
 
-    def _get_replacement_words(self, word):
+    def _get_transformations(self, current_text, indices_to_modify):
+        tagger = SequenceTagger.load("ner")
+        sentence = Sentence(current_text.text)
+        tagger.predict(sentence)
+        fir_name_idx = []
+        last_name_idx = []
+        for token in sentence:
+            tag = token.get_tag("ner")
+            if tag.value == "B-PER" and tag.score > self.confidence_score:
+                fir_name_idx.append(token.idx - 1)
+            elif tag.value == "E-PER" and tag.score > self.confidence_score:
+                last_name_idx.append(token.idx - 1)
 
-        word = word.capitalize()
+        words = current_text.words
+        transformed_texts = []
+        for i in indices_to_modify:
+            word_to_replace = words[i]
+            if i in fir_name_idx:
+                replacement_words = self._get_firstname(word_to_replace)
+                transformed_texts_idx = []
+                for r in replacement_words:
+                    if r == word_to_replace:
+                        continue
+                    transformed_texts_idx.append(
+                        current_text.replace_word_at_index(i, r)
+                    )
+                transformed_texts.extend(transformed_texts_idx)
 
-        if self.first_only:
-            if word in NAME["men"]:
-                return np.random.choice(NAME["men"], self.n)
-            elif word in NAME["women"]:
-                return np.random.choice(NAME["women"], self.n)
-            else:
-                return []
+            elif i in last_name_idx:
+                replacement_words = self._get_lastname(word_to_replace)
+                transformed_texts_idx = []
+                for r in replacement_words:
+                    if r == word_to_replace:
+                        continue
+                    transformed_texts_idx.append(
+                        current_text.replace_word_at_index(i, r)
+                    )
+                transformed_texts.extend(transformed_texts_idx)
+        return transformed_texts
 
-        elif self.last_only:
-            if word in NAME["last"]:
-                return np.random.choice(NAME["last"], self.n)
-            return []
-        else:
-            if word in NAME["men"]:
-                return np.random.choice(NAME["men"], self.n)
-            elif word in NAME["women"]:
-                return np.random.choice(NAME["women"], self.n)
-            elif word in NAME["last"]:
-                return np.random.choice(NAME["last"], self.n)
-            else:
-                return []
+    def _get_lastname(self, word):
+        return np.random.choice(NAME["last"], self.n)
+
+    def _get_firstname(self, word):
+        return np.random.choice(NAME["first"], self.n)
 
 
 NAME = {
-    "men": [
+    "first": [
         "Michael",
         "Christopher",
         "Matthew",
@@ -5436,8 +5461,6 @@ NAME = {
         "Jahsir",
         "Jaquel",
         "Tron",
-    ],
-    "women": [
         "Jennifer",
         "Jessica",
         "Ashley",

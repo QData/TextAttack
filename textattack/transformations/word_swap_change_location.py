@@ -3,8 +3,8 @@ from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapChangeLocation(WordSwap):
-    """
-    Future implementations:
+    """Future implementations:
+
     Capitalization issue
     """
 
