@@ -47,10 +47,9 @@ Features
 ------------
 TextAttack has some other features that make it a pleasure to use:
 
-- `Built-in Datasets <datasets_models/datasets.html>`__ for running attacks without supplying your own data
 - `Pre-trained Models <datasets_models/models.html>`__ for testing attacks and evaluating constraints
-- `Built-in Tokenizers <datasets_models/tokenizers.html>`__ so you don't have to worry about tokenizing the inputs
 - `Visualization options <misc/loggers.html>`__ like Weights & Biases and Visdom
+- `AttackedText <misc/attacked_text.rst>`__, a utility class for strings that includes tools for tokenizing and editing text
 
 .. toctree::
    :maxdepth: 1
