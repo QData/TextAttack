@@ -97,6 +97,7 @@ Here are some models from transformers that have worked well for us:
 
 ## Evaluating Models with `textattack eval-model`
 
+Any TextAttack-compatible model can be evaluated using `textattack eval-model`. TextAttack-trained models can be evaluated using `textattack eval --num-examples <num-examples> --model /path/to/trained/model/`
 
 ## Other Commands
 
