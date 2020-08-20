@@ -29,7 +29,7 @@ class T5Tokenizer(AutoTokenizer):
         else:
             raise ValueError(f"Invalid t5 tokenizer mode {mode}.")
 
-        super().__init__(name="t5-base", max_length=max_length)
+        super().__init__(tokenizer_path="t5-base", max_length=max_length)
 
     def encode(self, text):
         """Encodes a string into IDs of tokens.
