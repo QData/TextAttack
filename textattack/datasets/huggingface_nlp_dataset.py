@@ -10,6 +10,7 @@ from textattack.datasets import TextAttackDataset
 
 
 def _cb(s):
+    """Colors some text blue for printing to the terminal."""
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
 
 
@@ -42,6 +43,9 @@ def get_nlp_dataset_columns(dataset):
     elif {"content", "summary"} <= schema:
         input_columns = ("content",)
         output_column = "summary"
+    elif {"label", "review"} <= schema:
+        input_columns = ("review",)
+        output_column = "label"
     else:
         raise ValueError(
             f"Unsupported dataset schema {schema}. Try loading dataset manually (from a file) instead."
