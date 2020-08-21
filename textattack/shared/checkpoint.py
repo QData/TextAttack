@@ -19,16 +19,18 @@ class Checkpoint:
 
     Args:
         args: Command line arguments of the original attack
-        log_manager (AttackLogManager): Object for storing attack results
+        attack (Attack): Object for storing attack results
         worklist (deque[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
         worklist_tail (int): Highest index that had been in the worklist at any given time. Used to get the next dataset element
             when attacking with `attack_n` = True.
         chkpt_time (float): epoch time representing when checkpoint was made
     """
 
-    def __init__(self, args, log_manager, worklist, worklist_tail, chkpt_time=None):
+    def __init__(
+        self, args, worklist, worklist_tail, attack_results=None, chkpt_time=None
+    ):
         self.args = copy.deepcopy(args)
-        self.log_manager = log_manager
+        self.attack_results = attack_results or []
         self.worklist = worklist
         self.worklist_tail = worklist_tail
         if chkpt_time:
@@ -131,27 +133,23 @@ class Checkpoint:
     @property
     def results_count(self):
         """Return number of attacks made so far."""
-        return len(self.log_manager.results)
+        return len(self.attack.results)
 
     @property
     def num_skipped_attacks(self):
-        return sum(isinstance(r, SkippedAttackResult) for r in self.log_manager.results)
+        return sum(isinstance(r, SkippedAttackResult) for r in self.attack.results)
 
     @property
     def num_failed_attacks(self):
-        return sum(isinstance(r, FailedAttackResult) for r in self.log_manager.results)
+        return sum(isinstance(r, FailedAttackResult) for r in self.attack.results)
 
     @property
     def num_successful_attacks(self):
-        return sum(
-            isinstance(r, SuccessfulAttackResult) for r in self.log_manager.results
-        )
+        return sum(isinstance(r, SuccessfulAttackResult) for r in self.attack_results)
 
     @property
     def num_maximized_attacks(self):
-        return sum(
-            isinstance(r, MaximizedAttackResult) for r in self.log_manager.results
-        )
+        return sum(isinstance(r, MaximizedAttackResult) for r in self.attack_results)
 
     @property
     def num_remaining_attacks(self):
@@ -203,7 +201,7 @@ class Checkpoint:
         ), "Recorded number of remaining attacks and size of worklist are different."
 
         results_set = set()
-        for result in self.log_manager.results:
+        for result in self.attack_results:
             results_set.add(result.original_text)
 
         assert len(results_set) == self.results_count, "Duplicate AttackResults found."

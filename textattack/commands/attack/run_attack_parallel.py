@@ -8,11 +8,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helpers import (
-    parse_attack_from_args,
-    parse_dataset_from_args,
-    parse_logger_from_args,
-)
+from .attack_args_helpers import parse_attack_from_args, parse_dataset_from_args
 
 logger = textattack.shared.logger
 
@@ -182,7 +178,6 @@ def run(args, checkpoint=None):
                 args, attack_log_manager, worklist, worklist_tail
             )
             new_checkpoint.save()
-            attack_log_manager.flush()
 
     pbar.close()
     print()
@@ -190,7 +185,7 @@ def run(args, checkpoint=None):
     if args.disable_stdout:
         attack_log_manager.enable_stdout()
     attack_log_manager.log_metrics()
-    attack_log_manager.flush()
+
     print()
 
     textattack.shared.logger.info(f"Attack time: {time.time() - start_time}s")

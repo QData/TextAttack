@@ -18,6 +18,3 @@ class Logger(ABC):
 
     def log_sep(self):
         pass
-
-    def flush(self):
-        pass

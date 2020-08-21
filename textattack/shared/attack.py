@@ -11,6 +11,12 @@ from textattack.attack_results import (
     SuccessfulAttackResult,
 )
 from textattack.goal_function_results import GoalFunctionResultStatus
+from textattack.loggers import (
+    CSVLogger,
+    FileLogger,
+    VisdomLogger,
+    WeightsAndBiasesLogger,
+)
 from textattack.shared import AttackedText, utils
 
 
@@ -27,15 +33,17 @@ class Attack:
         constraints: A list of constraints to add to the attack, defining which perturbations are valid.
         transformation: The transformation applied at each step of the attack.
         search_method: A strategy for exploring the search space of possible perturbations
+        metrics (List[Metric]): A list of metrics to print for each attack result
         constraint_cache_size (int): the number of items to keep in the constraints cache
     """
 
     def __init__(
         self,
         goal_function=None,
-        constraints=[],
+        constraints=None,
         transformation=None,
         search_method=None,
+        metrics=None,
         constraint_cache_size=2 ** 20,
     ):
         """Initialize an attack object.
@@ -64,7 +72,7 @@ class Attack:
 
         self.constraints = []
         self.pre_transformation_constraints = []
-        for constraint in constraints:
+        for constraint in constraints or []:
             if isinstance(
                 constraint, textattack.constraints.PreTransformationConstraint,
             ):
@@ -83,6 +91,15 @@ class Attack:
             attacked_text_list
         )
         self.search_method.filter_transformations = self.filter_transformations
+
+        self.attack_results = []
+        self.loggers = []
+        self.metrics = []
+        default_metrics = metrics or self._default_attack_metrics()
+        for metric in metrics or default_metrics:
+            if not issubclass(metric, textattack.metrics.Metric):
+                raise TypeError(f"Invalid metric type {type(metric)}")
+            self.metrics.append(metric)
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
@@ -212,9 +229,9 @@ class Attack:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 
     def _get_init_goal_function_results(self, dataset, indices=None):
-        """Gets examples from a dataset and makes an initial model query on each 
-            of them. This creates an initial ``GoalFunctionResult`` object, and 
-            determines whether an example is skipped.
+        """Gets examples from a dataset and makes an initial model query on
+        each of them. This creates an initial ``GoalFunctionResult`` object,
+        and determines whether an example is skipped.
 
         Args:
             dataset: An iterable of (text_input, ground_truth_output) pairs
@@ -268,10 +285,11 @@ class Attack:
 
         for goal_function_result in examples:
             if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
-                yield SkippedAttackResult(goal_function_result)
+                result = SkippedAttackResult(goal_function_result)
             else:
                 result = self.attack_one(goal_function_result)
-                yield result
+            self.log_result(result)
+            yield result
 
     def __repr__(self):
         """Prints attack parameters in a human-readable string.
@@ -305,7 +323,85 @@ class Attack:
 
     __str__ = __repr__
 
+    def _default_attack_metrics(self):
+        """Customizes the default attack metrics based on attack components."""
+        metrics = [
+            textattack.metrics.TotalAttacks,
+            textattack.metrics.TotalSuccessfulAttacks,
+            textattack.metrics.TotalFailedAttacks,
+            textattack.metrics.TotalSkippedAttacks,
+        ]
 
-    """
-    Logger functionality.
-    """
+        if isinstance(
+            self.goal_function, textattack.goal_functions.ClassificationGoalFunction
+        ):
+            metrics.extend(
+                [
+                    textattack.metrics.ModelAccuracy,
+                    textattack.metrics.AccuracyUnderAttack,
+                ]
+            )
+        elif isinstance(
+            self.goal_function, textattack.goal_function.TextToTextGoalFunction
+        ):
+            metrics.extend([textattack.metrics.AverageBLEUScore])
+
+        metrics.extend(
+            [
+                textattack.metrics.AttackSuccessRate,
+                textattack.metrics.AveragePerturbedWordPercentage,
+                textattack.metrics.AverageNumberOfWords,
+                textattack.metrics.AverageNumberOfQueries,
+            ]
+        )
+
+        return metrics
+
+    def log_result(self, result):
+        """Logs an ``AttackResult`` on each of `self.loggers`."""
+        self.attack_results.append(result)
+        for logger in self.loggers:
+            logger.log_attack_result(result)
+
+    def log_metrics(self):
+        #
+        # TODO: ask Eli if metrics are properly computed when results are MaximizedAttackResults
+        #          or if there is a better metric we could show?
+        #
+        # TODO: ask Jeffrey if I broke Checkpoint
+        #
+        # TODO: restore the histogram thing
+        #
+        # TODO: update tutorials to match `log_metrics` API
+        #
+        # TODO: tutorial/example of adding a custom metric
+        #
+        #
+        # TODO: make `run_attack_*` work with this new API
+        #
+        metric_table_rows = []
+        for metric in self.metrics:
+            key = metric.key
+            value = metric.compute_str(self.attack_results)
+            metric_table_rows.append([key, value])
+
+        # Print metrics to `self.loggers`.
+        for logger in self.loggers:
+            logger.log_summary_rows(
+                metric_table_rows, "Attack Results", "attack_results_summary"
+            )
+
+    def enable_stdout(self):
+        self.loggers.append(FileLogger(stdout=True))
+
+    def enable_visdom(self):
+        self.loggers.append(VisdomLogger())
+
+    def enable_wandb(self):
+        self.loggers.append(WeightsAndBiasesLogger())
+
+    def add_output_file(self, filename):
+        self.loggers.append(FileLogger(filename=filename))
+
+    def add_output_csv(self, filename, color_method):
+        self.loggers.append(CSVLogger(filename=filename, color_method=color_method))

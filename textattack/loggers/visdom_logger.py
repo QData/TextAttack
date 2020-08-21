@@ -41,16 +41,14 @@ class VisdomLogger(Logger):
         text_a, text_b = result.diff_color(color_method="html")
         result_str = result.goal_function_result_str(color_method="html")
         self.sample_rows.append([result_str, text_a, text_b])
-
-    def log_summary_rows(self, rows, title, window_id):
-        self.table(rows, title=title, window_id=window_id)
-
-    def flush(self):
         self.table(
             self.sample_rows,
             title="Sample-Level Results",
             window_id="sample_level_results",
         )
+
+    def log_summary_rows(self, rows, title, window_id):
+        self.table(rows, title=title, window_id=window_id)
 
     def log_hist(self, arr, numbins, title, window_id):
         self.bar(arr, numbins=numbins, title=title, window_id=window_id)

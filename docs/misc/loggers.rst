@@ -21,9 +21,3 @@ Loggers
 
 .. automodule:: textattack.loggers.weights_and_biases_logger 
    :members:
-
-
-Log Manager 
-############
-.. automodule:: textattack.loggers.attack_log_manager 
-   :members:

@@ -204,7 +204,7 @@ def parse_attack_from_args(args):
         recipe.goal_function.model_batch_size = args.model_batch_size
         recipe.goal_function.model_cache_size = args.model_cache_size
         recipe.constraint_cache_size = args.constraint_cache_size
-        return recipe
+        attack = recipe
     elif args.attack_from_file:
         if ARGS_SPLIT_TOKEN in args.attack_from_file:
             attack_file, attack_name = args.attack_from_file.split(ARGS_SPLIT_TOKEN)
@@ -216,7 +216,7 @@ def parse_attack_from_args(args):
                 f"Loaded `{attack_file}` but could not find `{attack_name}`."
             )
         attack_func = getattr(attack_module, attack_name)
-        return attack_func(model)
+        attack = attack_func(model)
     else:
         goal_function = parse_goal_function_from_args(args, model)
         transformation = parse_transformation_from_args(args, model)
@@ -230,13 +230,104 @@ def parse_attack_from_args(args):
             search_method = eval(f"{SEARCH_METHOD_CLASS_NAMES[args.search]}()")
         else:
             raise ValueError(f"Error: unsupported attack {args.search}")
-    return textattack.shared.Attack(
-        goal_function,
-        constraints,
-        transformation,
-        search_method,
-        constraint_cache_size=args.constraint_cache_size,
+        attack = textattack.shared.Attack(
+            goal_function,
+            constraints,
+            transformation,
+            search_method,
+            constraint_cache_size=args.constraint_cache_size,
+        )
+    attack = parse_attack_loggers_from_args(args, attack)
+    return attack
+
+
+def parse_attack_loggers_from_args(args, attack):
+    # Add metrics
+    for metric_name in args.metrics:
+        metric = eval(METRIC_NAMES[metric_name])
+        if metric in attack.metrics:
+            textattack.shared.logger.warn(
+                f"Metric {metric_name} included in default metrics."
+            )
+        else:
+            attack.metrics.append(metric)
+
+    # Get current time for file naming
+    timestamp = time.strftime("%Y-%m-%d-%H-%M")
+
+    # Get default directory to save results
+    current_dir = os.path.dirname(os.path.realpath(__file__))
+    outputs_dir = os.path.join(
+        current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
     )
+    out_dir_txt = out_dir_csv = os.path.normpath(outputs_dir)
+
+    # Get default txt and csv file names
+    if args.recipe:
+        filename_txt = f"{args.model}_{args.recipe}_{timestamp}.txt"
+        filename_csv = f"{args.model}_{args.recipe}_{timestamp}.csv"
+    else:
+        filename_txt = f"{args.model}_{timestamp}.txt"
+        filename_csv = f"{args.model}_{timestamp}.csv"
+
+    # if '--log-to-txt' specified with arguments
+    if args.log_to_txt:
+        # if user decide to save to a specific directory
+        if args.log_to_txt[-1] == "/":
+            out_dir_txt = args.log_to_txt
+        # else if path + filename is given
+        elif args.log_to_txt[-4:] == ".txt":
+            out_dir_txt = args.log_to_txt.rsplit("/", 1)[0]
+            filename_txt = args.log_to_txt.rsplit("/", 1)[-1]
+        # otherwise, customize filename
+        else:
+            filename_txt = f"{args.log_to_txt}.txt"
+
+    # if "--log-to-csv" is called
+    if args.log_to_csv:
+        # if user decide to save to a specific directory
+        if args.log_to_csv[-1] == "/":
+            out_dir_csv = args.log_to_csv
+        # else if path + filename is given
+        elif args.log_to_csv[-4:] == ".csv":
+            out_dir_csv = args.log_to_csv.rsplit("/", 1)[0]
+            filename_csv = args.log_to_csv.rsplit("/", 1)[-1]
+        # otherwise, customize filename
+        else:
+            filename_csv = f"{args.log_to_csv}.csv"
+
+    # in case directory doesn't exist
+    if not os.path.exists(out_dir_txt):
+        os.makedirs(out_dir_txt)
+    if not os.path.exists(out_dir_csv):
+        os.makedirs(out_dir_csv)
+
+    # if "--log-to-txt" specified in terminal command (with or without arg), save to a txt file
+    if args.log_to_txt == "" or args.log_to_txt:
+        attack.add_output_file(os.path.join(out_dir_txt, filename_txt))
+
+    # if "--log-to-csv" specified in terminal command(with  or without arg), save to a csv file
+    if args.log_to_csv == "" or args.log_to_csv:
+        # "--csv-style used to swtich from 'fancy' to 'plain'
+        color_method = None if args.csv_style == "plain" else "file"
+        csv_path = os.path.join(out_dir_csv, filename_csv)
+        attack.add_output_csv(csv_path, color_method)
+        textattack.shared.logger.info(f"Logging to CSV at path {csv_path}.")
+
+    # Visdom
+    if args.enable_visdom:
+        attack.enable_visdom()
+
+    # Weights & Biases
+    if args.enable_wandb:
+        attack.enable_wandb()
+
+    # Stdout
+    if not args.disable_stdout:
+        attack.enable_stdout()
+
+    print("set loggers", attack.loggers)
+    return attack
 
 
 def parse_model_from_args(args):
@@ -416,92 +507,6 @@ def parse_dataset_from_args(args):
     else:
         raise ValueError("Must supply pretrained model or dataset")
     return dataset
-
-
-def parse_logger_from_args(args):
-    # Create logger
-    attack_log_manager = textattack.loggers.AttackLogManager()
-
-    # Add metrics
-    print("metrics ->", args.metrics)
-    for metric_name in args.metrics:
-        metric = eval(METRIC_NAMES[metric_name])
-        attack_log_manager.metrics.append(metric)
-
-    # Get current time for file naming
-    timestamp = time.strftime("%Y-%m-%d-%H-%M")
-
-    # Get default directory to save results
-    current_dir = os.path.dirname(os.path.realpath(__file__))
-    outputs_dir = os.path.join(
-        current_dir, os.pardir, os.pardir, os.pardir, "outputs", "attacks"
-    )
-    out_dir_txt = out_dir_csv = os.path.normpath(outputs_dir)
-
-    # Get default txt and csv file names
-    if args.recipe:
-        filename_txt = f"{args.model}_{args.recipe}_{timestamp}.txt"
-        filename_csv = f"{args.model}_{args.recipe}_{timestamp}.csv"
-    else:
-        filename_txt = f"{args.model}_{timestamp}.txt"
-        filename_csv = f"{args.model}_{timestamp}.csv"
-
-    # if '--log-to-txt' specified with arguments
-    if args.log_to_txt:
-        # if user decide to save to a specific directory
-        if args.log_to_txt[-1] == "/":
-            out_dir_txt = args.log_to_txt
-        # else if path + filename is given
-        elif args.log_to_txt[-4:] == ".txt":
-            out_dir_txt = args.log_to_txt.rsplit("/", 1)[0]
-            filename_txt = args.log_to_txt.rsplit("/", 1)[-1]
-        # otherwise, customize filename
-        else:
-            filename_txt = f"{args.log_to_txt}.txt"
-
-    # if "--log-to-csv" is called
-    if args.log_to_csv:
-        # if user decide to save to a specific directory
-        if args.log_to_csv[-1] == "/":
-            out_dir_csv = args.log_to_csv
-        # else if path + filename is given
-        elif args.log_to_csv[-4:] == ".csv":
-            out_dir_csv = args.log_to_csv.rsplit("/", 1)[0]
-            filename_csv = args.log_to_csv.rsplit("/", 1)[-1]
-        # otherwise, customize filename
-        else:
-            filename_csv = f"{args.log_to_csv}.csv"
-
-    # in case directory doesn't exist
-    if not os.path.exists(out_dir_txt):
-        os.makedirs(out_dir_txt)
-    if not os.path.exists(out_dir_csv):
-        os.makedirs(out_dir_csv)
-
-    # if "--log-to-txt" specified in terminal command (with or without arg), save to a txt file
-    if args.log_to_txt == "" or args.log_to_txt:
-        attack_log_manager.add_output_file(os.path.join(out_dir_txt, filename_txt))
-
-    # if "--log-to-csv" specified in terminal command(with  or without arg), save to a csv file
-    if args.log_to_csv == "" or args.log_to_csv:
-        # "--csv-style used to swtich from 'fancy' to 'plain'
-        color_method = None if args.csv_style == "plain" else "file"
-        csv_path = os.path.join(out_dir_csv, filename_csv)
-        attack_log_manager.add_output_csv(csv_path, color_method)
-        textattack.shared.logger.info(f"Logging to CSV at path {csv_path}.")
-
-    # Visdom
-    if args.enable_visdom:
-        attack_log_manager.enable_visdom()
-
-    # Weights & Biases
-    if args.enable_wandb:
-        attack_log_manager.enable_wandb()
-
-    # Stdout
-    if not args.disable_stdout:
-        attack_log_manager.enable_stdout()
-    return attack_log_manager
 
 
 def parse_checkpoint_from_args(args):

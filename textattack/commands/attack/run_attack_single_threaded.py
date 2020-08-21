@@ -7,11 +7,7 @@ import tqdm
 
 import textattack
 
-from .attack_args_helpers import (
-    parse_attack_from_args,
-    parse_dataset_from_args,
-    parse_logger_from_args,
-)
+from .attack_args_helpers import parse_attack_from_args, parse_dataset_from_args
 
 logger = textattack.shared.logger
 
@@ -59,12 +55,6 @@ def run(args, checkpoint=None):
     attack = parse_attack_from_args(args)
     print(attack, "\n")
 
-    # Logger
-    if args.checkpoint_resume:
-        attack_log_manager = checkpoint.log_manager
-    else:
-        attack_log_manager = parse_logger_from_args(args)
-
     load_time = time.time()
     textattack.shared.logger.info(f"Load time: {load_time - start_time}s")
 
@@ -104,7 +94,6 @@ def run(args, checkpoint=None):
             num_successes = 0
 
         for result in attack.attack_dataset(dataset, indices=worklist):
-            attack_log_manager.log_result(result)
 
             if not args.disable_stdout:
                 print("\n")
@@ -135,23 +124,21 @@ def run(args, checkpoint=None):
 
             if (
                 args.checkpoint_interval
-                and len(attack_log_manager.results) % args.checkpoint_interval == 0
+                and len(attack.attack_results) % args.checkpoint_interval == 0
             ):
                 new_checkpoint = textattack.shared.Checkpoint(
-                    args, attack_log_manager, worklist, worklist_tail
+                    args, worklist, worklist_tail, attack_results=attack.attack_results,
                 )
                 new_checkpoint.save()
-                attack_log_manager.flush()
 
         pbar.close()
         print()
         # Enable summary stdout
         if args.disable_stdout:
-            attack_log_manager.enable_stdout()
-        attack_log_manager.log_metrics()
-        attack_log_manager.flush()
+            attack.enable_stdout()
+        attack.log_metrics()
         print()
         # finish_time = time.time()
         textattack.shared.logger.info(f"Attack time: {time.time() - load_time}s")
 
-        return attack_log_manager.attack_results
+        return attack.attack_results

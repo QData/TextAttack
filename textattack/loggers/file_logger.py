@@ -52,9 +52,3 @@ class FileLogger(Logger):
         else:
             for row in rows:
                 self.fout.write(f"{row[0]} {row[1]}\n")
-
-    def log_sep(self):
-        self.fout.write("-" * 90 + "\n")
-
-    def flush(self):
-        self.fout.flush()

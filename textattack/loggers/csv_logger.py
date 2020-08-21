@@ -4,6 +4,7 @@ import pandas as pd
 
 from textattack.shared import AttackedText, logger
 
+from .file_logger import FileLogger
 from .logger import Logger
 
 
@@ -14,7 +15,8 @@ class CSVLogger(Logger):
         self.filename = filename
         self.color_method = color_method
         self.df = pd.DataFrame()
-        self._flushed = True
+        self._printed_header = False
+        self._file_logger = FileLogger(filename=filename, stdout=False)
 
     def log_attack_result(self, result):
         original_text, perturbed_text = result.diff_color(self.color_method)
@@ -33,12 +35,11 @@ class CSVLogger(Logger):
             "result_type": result_type,
         }
         self.df = self.df.append(row, ignore_index=True)
-        self._flushed = False
-
-    def flush(self):
-        self.df.to_csv(self.filename, quoting=csv.QUOTE_NONNUMERIC, index=False)
-        self._flushed = True
-
-    def __del__(self):
-        if not self._flushed:
-            logger.warning("CSVLogger exiting without calling flush().")
+        df_str = self.df.to_csv().strip()
+        if self._printed_header:
+            last_line_pos = df_str.rfind("\n") + 1
+            df_last_line_str = df_str[last_line_pos:]
+            self._file_logger.fout.write(df_last_line_str)
+        else:
+            self._file_logger.fout.write(df_str)
+        self._file_logger.fout.write("\n")
