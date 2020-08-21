@@ -85,7 +85,9 @@ class ImprovedGeneticAlgorithm(GeneticAlgorithm):
         for i in range(crossover_point, pop_member1.num_words):
             indices_to_replace.append(i)
             words_to_replace.append(pop_member2.words[i])
-            num_replacements_left[i] = pop_member2.attributes["num_replacements_left"][i]
+            num_replacements_left[i] = pop_member2.attributes["num_replacements_left"][
+                i
+            ]
 
         new_text = pop_member1.attacked_text.replace_words_at_indices(
             indices_to_replace, words_to_replace

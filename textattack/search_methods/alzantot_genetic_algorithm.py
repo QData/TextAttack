@@ -83,9 +83,9 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
             if np.random.uniform() < 0.5:
                 indices_to_replace.append(i)
                 words_to_replace.append(pop_member2.words[i])
-                num_candidate_transformations[
-                    i
-                ] = pop_member2.attributes["num_candidate_transformations"][i]
+                num_candidate_transformations[i] = pop_member2.attributes[
+                    "num_candidate_transformations"
+                ][i]
 
         new_text = pop_member1.attacked_text.replace_words_at_indices(
             indices_to_replace, words_to_replace
