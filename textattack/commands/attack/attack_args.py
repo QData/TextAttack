@@ -371,3 +371,8 @@ GOAL_FUNCTION_CLASS_NAMES = {
     "targeted-classification": "textattack.goal_functions.TargetedClassification",
     "untargeted-classification": "textattack.goal_functions.UntargetedClassification",
 }
+
+METRIC_NAMES = {
+    "bleu": "textattack.metrics.AverageBLEUScore",
+    "use": "textattack.metrics.AverageUniversalSentenceEncoderCosSim",
+}

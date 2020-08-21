@@ -14,14 +14,19 @@ class BLEU(Constraint):
 
     def __init__(self, max_bleu_score, compare_against_original=True):
         super().__init__(compare_against_original)
-        if not isinstance(max_bleu_score, int):
-            raise TypeError("max_bleu_score must be an int")
+        if not (isinstance(max_bleu_score, int) or isinstance(max_bleu_score, float)):
+            raise TypeError(
+                f"max_bleu_score must be an int or float, got type {type(max_bleu_score)}"
+            )
         self.max_bleu_score = max_bleu_score
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _score(self, transformed_text, reference_text):
         ref = reference_text.words
         hyp = transformed_text.words
-        bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
+        return nltk.translate.bleu_score.sentence_bleu([ref], hyp)
+
+    def _check_constraint(self, transformed_text, reference_text):
+        bleu_score = self._score(transformed_text, reference_text)
         return bleu_score <= self.max_bleu_score
 
     def extra_repr_keys(self):

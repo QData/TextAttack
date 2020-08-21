@@ -109,4 +109,5 @@ TextAttack has some other features that make it a pleasure to use:
    misc/attacked_text
    misc/checkpoints
    misc/loggers
+   misc/metrics
    misc/validators

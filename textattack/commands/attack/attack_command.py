@@ -7,6 +7,7 @@ from textattack.commands.attack.attack_args import (
     BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
     CONSTRAINT_CLASS_NAMES,
     GOAL_FUNCTION_CLASS_NAMES,
+    METRIC_NAMES,
     SEARCH_METHOD_CLASS_NAMES,
     WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
 )
@@ -192,6 +193,14 @@ class AttackCommand(TextAttackCommand):
             type=int,
             default=2 ** 18,
             help="The maximum number of items to keep in the constraints cache at once.",
+        )
+        parser.add_argument(
+            "--metrics",
+            type=str,
+            nargs="+",
+            default=[],
+            help="Additional metrics to compute for attack results",
+            choices=METRIC_NAMES.keys(),
         )
 
         attack_group = parser.add_mutually_exclusive_group(required=False)

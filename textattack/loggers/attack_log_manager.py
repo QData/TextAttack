@@ -65,17 +65,6 @@ class AttackLogManager:
         for logger in self.loggers:
             logger.log_attack_result(result)
 
-    def log_results(self, results):
-        """Logs an iterable of ``AttackResult`` objects on each of
-        `self.loggers`."""
-        for result in results:
-            self.log_result(result)
-        self.log_metrics()
-
-    def log_summary_rows(self, rows, title, window_id):
-        for logger in self.loggers:
-            logger.log_summary_rows(rows, title, window_id)
-
     def log_sep(self):
         for logger in self.loggers:
             logger.log_sep()
@@ -84,47 +73,26 @@ class AttackLogManager:
         for logger in self.loggers:
             logger.flush()
 
-    def log_attack_details(self, attack_name, model_name):
-        # TODO: log a more complete set of attack details
-        # TODO: call this somewhere, or link to it..?
-        attack_detail_rows = [
-            ["Attack algorithm:", attack_name],
-            ["Model:", model_name],
-        ]
-        self.log_summary_rows(attack_detail_rows, "Attack Details", "attack_details")
-
     def log_metrics(self):
+        #
+        # TODO: ask Eli if metrics are properly computed when results are MaximizedAttackResults
+        #
         # TODO: restore the histogram thing
-        # TODO: create semantic distinction between
-        #       `log_summary_rows`
-        #           and
-        #       `log_metrics`
-        # TODO: (maybe) in metrics.py:
-        #   develop a level of abstraction
-        #   that will automatically support percentages/
-        #   averages/etc of different precisions (# decimal
-        #   points) and stuff, and also hopefully reduce
-        #   repeat computations / reuse things better
         #
         # TODO: choose smarter default metrics for seq2seq models,
         #       regression models, maximization recipe
+        #       (show BLEU score for translation)
         #
         # TODO: update tutorials to match `log_metrics` API
         #
         # TODO: tutorial/example of adding a custom metric
         #
-        # TODO: Add metrics for edit distance and/or USE similarity
-        #
-        # TODO: show BLEU score for translation
-        # 
-        # TODO: add --metrics command-line arg to attack
-        #
         metric_table_rows = []
         for metric in self.metrics:
             key = metric.key
-            value = str(metric.compute(self.attack_results))
+            value = metric.compute_str(self.attack_results)
             metric_table_rows.append([key, value])
 
-        self.log_summary_rows(
-            metric_table_rows, "Attack Results", "attack_results_summary"
-        )
+        # Print metrics to `self.loggers`.
+        for logger in self.loggers:
+            logger.log_summary_rows(rows, "Attack Results", "attack_results_summary")

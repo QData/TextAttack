@@ -13,6 +13,7 @@ from .attack_args import (
     CONSTRAINT_CLASS_NAMES,
     GOAL_FUNCTION_CLASS_NAMES,
     HUGGINGFACE_DATASET_BY_MODEL,
+    METRIC_NAMES,
     SEARCH_METHOD_CLASS_NAMES,
     TEXTATTACK_DATASET_BY_MODEL,
     WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
@@ -420,6 +421,12 @@ def parse_dataset_from_args(args):
 def parse_logger_from_args(args):
     # Create logger
     attack_log_manager = textattack.loggers.AttackLogManager()
+
+    # Add metrics
+    print("metrics ->", args.metrics)
+    for metric_name in args.metrics:
+        metric = eval(METRIC_NAMES[metric_name])
+        attack_log_manager.metrics.append(metric)
 
     # Get current time for file naming
     timestamp = time.strftime("%Y-%m-%d-%H-%M")

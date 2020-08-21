@@ -99,6 +99,10 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 > **Tip:** Instead of specifying a dataset and number of examples, you can pass `--interactive` to attack samples inputted by the user.
 
+#### Metrics
+
+You may want to measure properties of your attack results such as the BLEU score or USE cosine similarity between the original and perturbed text. You can do so in the command-line by specificying `--metrics` arguments to go with `textattack attack`, or in the Python interface by adding a `Metric` object.
+
 ### Attacks and Papers Implemented ("Attack Recipes")
 
 We include attack recipes which implement attacks from the literature. You can list attack recipes using `textattack list attack-recipes`.
