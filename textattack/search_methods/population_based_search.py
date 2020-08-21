@@ -56,9 +56,10 @@ class PopulationBasedSearch(SearchMethod, ABC):
 class PopulationMember:
     """Represent a single member of population."""
 
-    def __init__(self, attacked_text, result=None, **kwargs):
+    def __init__(self, attacked_text, result=None, attributes={}, **kwargs):
         self.attacked_text = attacked_text
         self.result = result
+        self.attributes = attributes
         for key, value in kwargs.items():
             setattr(self, key, value)
 
