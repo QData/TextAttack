@@ -6,6 +6,7 @@ import torch
 import textattack
 from textattack.attack_results import (
     FailedAttackResult,
+    MaximizedAttackResult,
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
@@ -74,7 +75,15 @@ class TotalSuccessfulAttacks(Metric):
 
     @staticmethod
     def compute(attack_results):
-        return sum((isinstance(r, SuccessfulAttackResult) for r in attack_results))
+        return sum(
+            (
+                (
+                    isinstance(r, SuccessfulAttackResult)
+                    or isinstance(r, MaximizedAttackResult)
+                )
+                for r in attack_results
+            )
+        )
 
 
 class TotalFailedAttacks(Metric):

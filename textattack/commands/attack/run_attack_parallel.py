@@ -14,6 +14,7 @@ logger = textattack.shared.logger
 
 
 def set_env_variables(gpu_id):
+    """Sets environment variables for a new worker on a given GPU."""
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -42,31 +43,17 @@ def set_env_variables(gpu_id):
             print(e)
 
 
-def attack_from_queue(args, in_queue, out_queue):
-    gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
-    set_env_variables(gpu_id)
-    textattack.shared.utils.set_seed(args.random_seed)
-    attack = parse_attack_from_args(args)
-    if gpu_id == 0:
-        print(attack, "\n")
-    while not in_queue.empty():
-        try:
-            i, text, output = in_queue.get()
-            results_gen = attack.attack_dataset([(text, output)])
-            result = next(results_gen)
-            out_queue.put((i, result))
-        except Exception as e:
-            out_queue.put(e)
-            exit()
-
-
 def run(args, checkpoint=None):
+    """The main thread.
+
+    Starts a process on each GPU.
+    """
     pytorch_multiprocessing_workaround()
 
     num_total_examples = args.num_examples
 
     if args.checkpoint_resume:
-        num_remaining_attacks = checkpoint.num_remaining_attacks
+        args.num_remaining_attacks = checkpoint.num_remaining_attacks
         worklist = checkpoint.worklist
         worklist_tail = checkpoint.worklist_tail
         logger.info(
@@ -76,21 +63,15 @@ def run(args, checkpoint=None):
         )
         print(checkpoint, "\n")
     else:
-        num_remaining_attacks = num_total_examples
+        args.num_remaining_attacks = num_total_examples
         worklist = deque(range(0, num_total_examples))
         worklist_tail = worklist[-1]
 
     # This makes `args` a namespace that's sharable between processes.
-    # We could do the same thing with the model, but it's actually faster
-    # to let each thread have their own copy of the model.
+    # We could do the same thing with the model, but it's turned out
+    # to be faster to let each thread have their own copy of the model.
     args = torch.multiprocessing.Manager().Namespace(**vars(args))
 
-    if args.checkpoint_resume:
-        attack_log_manager = checkpoint.log_manager
-    else:
-        attack_log_manager = parse_logger_from_args(args)
-
-    # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
 
     dataset = parse_dataset_from_args(args)
@@ -103,39 +84,68 @@ def run(args, checkpoint=None):
 
     in_queue = torch.multiprocessing.Queue()
     out_queue = torch.multiprocessing.Queue()
+
     # Add stuff to queue.
-    missing_datapoints = set()
     for i in worklist:
         try:
             text, output = dataset[i]
             in_queue.put((i, text, output))
         except IndexError:
-            missing_datapoints.add(i)
+            # if our dataset is shorter than the number of samples chosen, remove the
+            # out-of-bounds indices from the worklist
+            worklist.remove(i)
 
-    # if our dataset is shorter than the number of samples chosen, remove the
-    # out-of-bounds indices from the dataset
-    for i in missing_datapoints:
-        worklist.remove(i)
-
+    # Store num_results, etc. in args.
+    if args.checkpoint_resume:
+        args.num_results = checkpoint.results_count
+        args.num_failures = checkpoint.num_failed_attacks
+        args.num_successes = checkpoint.num_successful_attacks
+    else:
+        args.num_results = 0
+        args.num_failures = 0
+        args.num_successes = 0
     # Start workers.
     torch.multiprocessing.Pool(num_gpus, attack_from_queue, (args, in_queue, out_queue))
+
+
+def attack_from_queue(args, in_queue, out_queue):
+    """This function runs on each GPU and iteratively attacks samples from the
+    in queue."""
+    textattack.shared.utils.set_seed(args.random_seed)
+    gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
+    set_env_variables(gpu_id)
+    attack = parse_attack_from_args(args)
+    if gpu_id == 0:
+        print(attack, "\n")
+        download_thread = threading.Thread(
+            target=log_attack_results, args=(args, attack, out_queue)
+        )
+        download_thread.start()
+    while not in_queue.empty():
+        try:
+            i, text, output = in_queue.get()
+            results_gen = attack.attack_dataset([(text, output)])
+            result = next(results_gen)
+            out_queue.put((i, result))
+        except Exception as e:
+            out_queue.put(e)
+            exit()
+
+
+def log_attack_results(args, attack, out_queue):
     # Log results asynchronously and update progress bar.
-    if args.checkpoint_resume:
-        num_results = checkpoint.results_count
-        num_failures = checkpoint.num_failed_attacks
-        num_successes = checkpoint.num_successful_attacks
-    else:
-        num_results = 0
-        num_failures = 0
-        num_successes = 0
-    pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
+    num_results = args.num_results
+    num_failures = args.num_failures
+    num_successes = args.num_successes
+
+    pbar = tqdm.tqdm(total=args.num_remaining_attacks, smoothing=0)
     while worklist:
         result = out_queue.get(block=True)
 
         if isinstance(result, Exception):
             raise result
         idx, result = result
-        attack_log_manager.log_result(result)
+        attack.log_result(result)
         worklist.remove(idx)
         if (not args.attack_n) or (
             not isinstance(result, textattack.attack_results.SkippedAttackResult)
@@ -172,10 +182,10 @@ def run(args, checkpoint=None):
 
         if (
             args.checkpoint_interval
-            and len(attack_log_manager.results) % args.checkpoint_interval == 0
+            and len(attack.results) % args.checkpoint_interval == 0
         ):
             new_checkpoint = textattack.shared.Checkpoint(
-                args, attack_log_manager, worklist, worklist_tail
+                args, attack, worklist, worklist_tail
             )
             new_checkpoint.save()
 
@@ -183,18 +193,18 @@ def run(args, checkpoint=None):
     print()
     # Enable summary stdout.
     if args.disable_stdout:
-        attack_log_manager.enable_stdout()
-    attack_log_manager.log_metrics()
+        attack.enable_stdout()
+    attack.log_metrics()
 
     print()
 
     textattack.shared.logger.info(f"Attack time: {time.time() - start_time}s")
 
-    return attack_log_manager.attack_results
+    return attack.attack_results
 
 
 def pytorch_multiprocessing_workaround():
-    # This is a fix for a known bug
+    # This is a fix for a known bug. See https://github.com/pytorch/pytorch/issues/11201
     try:
         torch.multiprocessing.set_start_method("spawn")
         torch.multiprocessing.set_sharing_strategy("file_system")
