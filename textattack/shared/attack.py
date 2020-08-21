@@ -211,23 +211,26 @@ class Attack:
         else:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 
-    def _get_examples_from_dataset(self, dataset, indices=None):
-        """Gets examples from a dataset and tokenizes them.
+    def _get_init_goal_function_results(self, dataset, indices=None):
+        """Gets examples from a dataset and makes an initial model query on each 
+            of them. This creates an initial ``GoalFunctionResult`` object, and 
+            determines whether an example is skipped.
 
         Args:
             dataset: An iterable of (text_input, ground_truth_output) pairs
             indices: An iterable of indices of the dataset that we want to attack. If None, attack all samples in dataset.
 
         Returns:
-            results (Iterable[GoalFunctionResult]): an iterable of GoalFunctionResults of the original examples
+            results (Iterable[GoalFunctionResult]): an iterable of GoalFunctionResults for each of the original examples
         """
-        indices = indices or range(len(dataset))
+        if indices is None:
+            indices = range(len(dataset))
+
         if not isinstance(indices, deque):
             indices = deque(sorted(indices))
 
         if not indices:
-            return
-            yield
+            return []
 
         while indices:
             i = indices.popleft()
@@ -261,7 +264,7 @@ class Attack:
             indices: An iterable of indices of the dataset that we want to attack. If None, attack all samples in dataset.
         """
 
-        examples = self._get_examples_from_dataset(dataset, indices=indices)
+        examples = self._get_init_goal_function_results(dataset, indices=indices)
 
         for goal_function_result in examples:
             if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
@@ -301,3 +304,8 @@ class Attack:
         return main_str
 
     __str__ = __repr__
+
+
+    """
+    Logger functionality.
+    """

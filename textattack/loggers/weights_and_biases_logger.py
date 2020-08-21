@@ -63,6 +63,4 @@ class WeightsAndBiasesLogger(Logger):
             }
         )
         self._log_result_table()
-
-    def log_sep(self):
-        self.fout.write("-" * 90 + "\n")
+    

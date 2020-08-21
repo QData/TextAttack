@@ -65,10 +65,6 @@ class AttackLogManager:
         for logger in self.loggers:
             logger.log_attack_result(result)
 
-    def log_sep(self):
-        for logger in self.loggers:
-            logger.log_sep()
-
     def flush(self):
         for logger in self.loggers:
             logger.flush()
@@ -95,4 +91,4 @@ class AttackLogManager:
 
         # Print metrics to `self.loggers`.
         for logger in self.loggers:
-            logger.log_summary_rows(rows, "Attack Results", "attack_results_summary")
+            logger.log_summary_rows(metric_table_rows, "Attack Results", "attack_results_summary")
