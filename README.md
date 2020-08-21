@@ -92,8 +92,8 @@ textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num
 *Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
 ```bash
 textattack attack --model lstm-mr --num-examples 20 \
- --search-method beam-search|beam_width=4 --transformation word-swap-embedding \
- --constraints repeat stopword max-words-perturbed|max_num_words=2 embedding|min_cos_sim=0.8 part-of-speech \
+ --search-method beam-search^beam_width=4 --transformation word-swap-embedding \
+ --constraints repeat stopword max-words-perturbed^max_num_words=2 embedding^min_cos_sim=0.8 part-of-speech \
  --goal-function untargeted-classification
 ```
 
@@ -220,7 +220,7 @@ This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` datase
 
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
 ```bash
-textattack train --model bert-base-uncased --dataset glue|cola --batch-size 32 --epochs 5
+textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 --epochs 5
 ```
 
 ### `textattack peek-dataset`
@@ -266,7 +266,7 @@ and datasets from the [`nlp` package](https://github.com/huggingface/nlp)! Here'
 and attacking a pre-trained model and dataset:
 
 ```bash
-textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-nlp glue|sst2 --recipe deepwordbug --num-examples 10
+textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-nlp glue^sst2 --recipe deepwordbug --num-examples 10
 ```
 
 You can explore other pre-trained models using the `--model-from-huggingface` argument, or other datasets by changing 
@@ -285,8 +285,8 @@ To experiment with a model you've trained, you could create the following file
 and name it `my_model.py`:
 
 ```python
-model = load_model()
-tokenizer = load_tokenizer()
+model = load_your_model_with_custom_code() # replace this line with your model loading code
+tokenizer = load_your_tokenizer_with_custom_code() # replace this line with your tokenizer loading code
 ```
 
 Then, run an attack with the argument `--model-from-file my_model.py`. The model and tokenizer will be loaded automatically.

@@ -45,7 +45,7 @@ class TrainModelCommand(TextAttackCommand):
             default="yelp",
             help="dataset for training; will be loaded from "
             "`nlp` library. if dataset has a subset, separate with a colon. "
-            " ex: `glue:sst2` or `rotten_tomatoes`",
+            " ex: `glue^sst2` or `rotten_tomatoes`",
         )
         parser.add_argument(
             "--pct-dataset",
@@ -73,7 +73,7 @@ class TrainModelCommand(TextAttackCommand):
         parser.add_argument(
             "--tb-writer-step",
             type=int,
-            default=1000,
+            default=1,
             help="Number of steps before writing to tensorboard",
         )
         parser.add_argument(
@@ -106,6 +106,12 @@ class TrainModelCommand(TextAttackCommand):
             type=str,
             default=None,
             help="Attack recipe to use (enables adversarial training)",
+        )
+        parser.add_argument(
+            "--check-robustness",
+            default=False,
+            action="store_true",
+            help="run attack each epoch to measure robustness, but train normally",
         )
         parser.add_argument(
             "--num-clean-epochs",
@@ -196,4 +202,6 @@ class TrainModelCommand(TextAttackCommand):
             action="store_true",
             help="log metrics to Weights & Biases",
         )
+        parser.add_argument("--random-seed", default=21, type=int)
+
         parser.set_defaults(func=TrainModelCommand())

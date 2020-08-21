@@ -2,6 +2,7 @@ import os
 
 import textattack
 from textattack.commands.attack.attack_args import ATTACK_RECIPE_NAMES
+from textattack.commands.attack.attack_args_helpers import ARGS_SPLIT_TOKEN
 from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 
 logger = textattack.shared.logger
@@ -31,7 +32,7 @@ def prepare_dataset_for_training(nlp_dataset):
 def dataset_from_args(args):
     """Returns a tuple of ``HuggingFaceNlpDataset`` for the train and test
     datasets for ``args.dataset``."""
-    dataset_args = args.dataset.split(":")
+    dataset_args = args.dataset.split(ARGS_SPLIT_TOKEN)
     # TODO `HuggingFaceNlpDataset` -> `HuggingFaceDataset`
     if args.dataset_train_split:
         train_dataset = textattack.datasets.HuggingFaceNlpDataset(
@@ -140,16 +141,20 @@ def model_from_args(train_args, num_labels, model_path=None):
 def attack_from_args(args):
     # note that this returns a recipe type, not an object
     # (we need to wait to have access to the model to initialize)
-    attackCls = None
+    attack_class = None
     if args.attack:
         if args.attack in ATTACK_RECIPE_NAMES:
-            attackCls = eval(ATTACK_RECIPE_NAMES[args.attack])
+            attack_class = eval(ATTACK_RECIPE_NAMES[args.attack])
         else:
             raise ValueError(f"Unrecognized attack recipe: {args.attack}")
 
     # check attack-related args
     assert args.num_clean_epochs > 0, "--num-clean-epochs must be > 0"
-    return attackCls
+    assert not (
+        args.check_robustness and not (args.attack)
+    ), "--check_robustness must be used with --attack"
+
+    return attack_class
 
 
 def augmenter_from_args(args):
@@ -168,7 +173,11 @@ def augmenter_from_args(args):
 def write_readme(args, best_eval_score, best_eval_score_epoch):
     # Save args to file
     readme_save_path = os.path.join(args.output_dir, "README.md")
-    dataset_name = args.dataset.split(":")[0] if ":" in args.dataset else args.dataset
+    dataset_name = (
+        args.dataset.split(ARGS_SPLIT_TOKEN)[0]
+        if ARGS_SPLIT_TOKEN in args.dataset
+        else args.dataset
+    )
     task_name = "regression" if args.do_regression else "classification"
     loss_func = "mean squared error" if args.do_regression else "cross-entropy"
     metric_name = "pearson correlation" if args.do_regression else "accuracy"

@@ -1,19 +1,23 @@
-import textattack
+import numpy as np
 
 from .model_wrapper import ModelWrapper
 
 
 class TensorFlowModelWrapper(ModelWrapper):
-    """Loads a TensorFlow model and tokenizer."""
+    """Loads a TensorFlow model and tokenizer.
 
-    def __init__(self, model, tokenizer):
-        raise NotImplementedError()
+    TensorFlow models can use many different architectures and
+    tokenization strategies. This assumes that the model takes an
+    np.array of strings as input and returns a tf.Tensor of outputs, as
+    is typical with Keras modules. You may need to subclass this for
+    models that have dedicated tokenizers or otherwise take input
+    differently.
+    """
 
-        self.model = model.to(textattack.shared.utils.device)
-        self.tokenizer = tokenizer
-
-    def tokenize(self, text_input_list):
-        raise NotImplementedError()
+    def __init__(self, model):
+        self.model = model
 
     def __call__(self, text_input_list):
-        raise NotImplementedError()
+        text_array = np.array(text_input_list)
+        preds = self.model(text_array)
+        return preds.numpy()

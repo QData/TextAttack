@@ -4,7 +4,6 @@ import numpy as np
 import torch
 
 from textattack.constraints import Constraint
-from textattack.shared import utils
 
 
 class SentenceEncoder(Constraint):
@@ -91,8 +90,11 @@ class SentenceEncoder(Constraint):
             [starting_text_window, transformed_text_window]
         )
 
-        starting_embedding = torch.tensor(starting_embedding).to(utils.device)
-        transformed_embedding = torch.tensor(transformed_embedding).to(utils.device)
+        if not isinstance(starting_embedding, torch.Tensor):
+            starting_embedding = torch.tensor(starting_embedding)
+
+        if not isinstance(transformed_embedding, torch.Tensor):
+            transformed_embedding = torch.tensor(transformed_embedding)
 
         starting_embedding = torch.unsqueeze(starting_embedding, dim=0)
         transformed_embedding = torch.unsqueeze(transformed_embedding, dim=0)
@@ -144,10 +146,8 @@ class SentenceEncoder(Constraint):
             embeddings = self.encode(starting_text_windows + transformed_text_windows)
             if not isinstance(embeddings, torch.Tensor):
                 embeddings = torch.tensor(embeddings)
-            starting_embeddings = embeddings[: len(transformed_texts)].to(utils.device)
-            transformed_embeddings = torch.tensor(
-                embeddings[len(transformed_texts) :]
-            ).to(utils.device)
+            starting_embeddings = embeddings[: len(transformed_texts)]
+            transformed_embeddings = embeddings[len(transformed_texts) :]
         else:
             starting_raw_text = starting_text.text
             transformed_raw_texts = [t.text for t in transformed_texts]
@@ -155,9 +155,9 @@ class SentenceEncoder(Constraint):
             if not isinstance(embeddings, torch.Tensor):
                 embeddings = torch.tensor(embeddings)
 
-            starting_embedding = embeddings[0].to(utils.device)
+            starting_embedding = embeddings[0]
 
-            transformed_embeddings = embeddings[1:].to(utils.device)
+            transformed_embeddings = embeddings[1:]
 
             # Repeat original embedding to size of perturbed embedding.
             starting_embeddings = starting_embedding.unsqueeze(dim=0).repeat(

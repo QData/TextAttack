@@ -211,15 +211,9 @@ class Attack:
             original_text: The original ``AttackedText`` from which the attack started.
         """
         # Remove any occurences of current_text in transformed_texts
-        original_num_texts = len(transformed_texts)
         transformed_texts = [
             t for t in transformed_texts if t.text != current_text.text
         ]
-        if len(transformed_texts) < original_num_texts:
-            # If this happened, warn the user
-            utils.logger.warn(
-                "Warning: transformation returned text with no changes. Skipping."
-            )
         # Populate cache with transformed_texts
         uncached_texts = []
         for transformed_text in transformed_texts:
@@ -285,24 +279,24 @@ class Attack:
             i = indices.popleft()
             try:
                 text_input, ground_truth_output = dataset[i]
-                try:
-                    # get label names from dataset, if possible
-                    label_names = dataset.label_names
-                except AttributeError:
-                    label_names = None
-                attacked_text = AttackedText(
-                    text_input, attack_attrs={"label_names": label_names}
-                )
-                goal_function_result, _ = self.goal_function.init_attack_example(
-                    attacked_text, ground_truth_output
-                )
-                yield goal_function_result
-
             except IndexError:
                 utils.logger.warn(
                     f"Dataset has {len(dataset)} samples but tried to access index {i}. Ending attack early."
                 )
                 break
+
+            try:
+                # get label names from dataset, if possible
+                label_names = dataset.label_names
+            except AttributeError:
+                label_names = None
+            attacked_text = AttackedText(
+                text_input, attack_attrs={"label_names": label_names}
+            )
+            goal_function_result, _ = self.goal_function.init_attack_example(
+                attacked_text, ground_truth_output
+            )
+            yield goal_function_result
 
     def attack_dataset(self, dataset, indices=None):
         """Runs an attack on the given dataset and outputs the results to the

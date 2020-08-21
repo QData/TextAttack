@@ -11,6 +11,9 @@ outputs/
 .c9*
 .idea/
 
+# Jupyter notebook files
+.ipynb_checkpoints/
+
 # Sphinx documentation
 docs/_build/
 
