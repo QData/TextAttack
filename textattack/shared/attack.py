@@ -272,13 +272,16 @@ class Attack:
             )
             yield goal_function_result
 
-    def attack_dataset(self, dataset, indices=None):
+    def attack_dataset(self, dataset, indices=None, log_result=True):
         """Runs an attack on the given dataset and outputs the results to the
         console and the output file.
 
         Args:
             dataset: An iterable of (text, ground_truth_output) pairs.
-            indices: An iterable of indices of the dataset that we want to attack. If None, attack all samples in dataset.
+            indices: An iterable of indices of the dataset that we want to attack.
+                If None, attack all samples in dataset.
+            log_result (bool): If true, logs each attack result to all
+                attached loggers
         """
 
         examples = self._get_init_goal_function_results(dataset, indices=indices)
@@ -288,7 +291,8 @@ class Attack:
                 result = SkippedAttackResult(goal_function_result)
             else:
                 result = self.attack_one(goal_function_result)
-            self.log_result(result)
+            if log_result:
+                self.log_result(result)
             yield result
 
     def __repr__(self):

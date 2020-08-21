@@ -26,7 +26,7 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mPositive (91%)[0m --> [91mNegative (69%)[0m
 
@@ -44,16 +44,17 @@ lovingly photographed in the manner of a golden book sprung to [91mife[0m , st
 
 
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 2      |
-| Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 45.0%  |
-| Average num. words per input: | 12.0   |
-| Avg num queries:              | 25.0   |
-+-------------------------------+--------+
++------------------------------+--------+
+| Attack Results               |        |
++------------------------------+--------+
+| Number of attacks            | 2      |
+| Successful attacks           | 2      |
+| Failed attacks               | 0      |
+| Skipped attacks              | 0      |
+| Model accuracy               | 100.0% |
+| Accuracy under attack        | 0.0%   |
+| Attack success rate          | 100.0% |
+| Average perturbed word %     | 45.0%  |
+| Average num. words per input | 12.0   |
+| Average num. queries         | 25.0   |
++------------------------------+--------+

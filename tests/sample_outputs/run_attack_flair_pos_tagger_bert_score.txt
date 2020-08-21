@@ -1,4 +1,5 @@
-/.*/Attack(
+/.*/2020-08-21 13:43:07,885 loading file /u/jm8wx/.flair/models/en-pos-ontonotes-fast-v0.4.pt
+Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
@@ -24,7 +25,7 @@
     (3): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mPositive (100%)[0m --> [91mNegative (98%)[0m
 
@@ -58,16 +59,17 @@ mostly , [goldbacher] just lets her complicated characters be [91mhaphazard[0m
 
 
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 4      |
-| Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 17.56% |
-| Average num. words per input: | 16.25  |
-| Avg num queries:              | 45.5   |
-+-------------------------------+--------+
++------------------------------+--------+
+| Attack Results               |        |
++------------------------------+--------+
+| Number of attacks            | 4      |
+| Successful attacks           | 4      |
+| Failed attacks               | 0      |
+| Skipped attacks              | 0      |
+| Model accuracy               | 100.0% |
+| Accuracy under attack        | 0.0%   |
+| Attack success rate          | 100.0% |
+| Average perturbed word %     | 17.56% |
+| Average num. words per input | 16.25  |
+| Average num. queries         | 45.5   |
++------------------------------+--------+

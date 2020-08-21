@@ -36,11 +36,17 @@
       )
   (is_black_box):  True
 ) 
-/.*/
+
 Running in interactive mode
 ----------------------------
 Enter a sentence to attack or "q" to quit:
 Attacking...
+--------------------------------------------- Result 1 ---------------------------------------------
+[92m1 (96%)[0m --> [91m0 (74%)[0m
+
+All that [92mglitters[0m is not gold
+
+All that [91msparkly[0m is not gold
 [92m1 (96%)[0m --> [91m0 (74%)[0m
 
 All that [92mglitters[0m is not gold

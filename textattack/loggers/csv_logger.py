@@ -1,8 +1,6 @@
-import csv
-
 import pandas as pd
 
-from textattack.shared import AttackedText, logger
+from textattack.shared import AttackedText
 
 from .file_logger import FileLogger
 from .logger import Logger
@@ -42,4 +40,5 @@ class CSVLogger(Logger):
             self._file_logger.fout.write(df_last_line_str)
         else:
             self._file_logger.fout.write(df_str)
+            self._printed_header = True
         self._file_logger.fout.write("\n")

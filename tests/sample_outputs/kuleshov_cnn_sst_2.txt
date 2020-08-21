@@ -26,7 +26,7 @@
     (4): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mPositive (100%)[0m --> [91mNegative (69%)[0m
 
@@ -44,16 +44,17 @@ unflinchingly bleak and [92mdesperation[0m
 
 
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 2      |
-| Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 25.0%  |
-| Average num. words per input: | 6.0    |
-| Avg num queries:              | 48.5   |
-+-------------------------------+--------+
++------------------------------+--------+
+| Attack Results               |        |
++------------------------------+--------+
+| Number of attacks            | 2      |
+| Successful attacks           | 2      |
+| Failed attacks               | 0      |
+| Skipped attacks              | 0      |
+| Model accuracy               | 100.0% |
+| Accuracy under attack        | 0.0%   |
+| Attack success rate          | 100.0% |
+| Average perturbed word %     | 25.0%  |
+| Average num. words per input | 6.0    |
+| Average num. queries         | 48.5   |
++------------------------------+--------+

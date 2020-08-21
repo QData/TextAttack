@@ -15,7 +15,7 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mEntailment (99%)[0m --> [37m[SKIPPED][0m
 
@@ -44,16 +44,17 @@
 
 
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 2      |
-| Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 1      |
-| Original accuracy:            | 66.67% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 2.78%  |
-| Average num. words per input: | 28.67  |
-| Avg num queries:              | 182.0  |
-+-------------------------------+--------+
++------------------------------+---------+
+| Attack Results               |         |
++------------------------------+---------+
+| Number of attacks            | 3       |
+| Successful attacks           | 2       |
+| Failed attacks               | 0       |
+| Skipped attacks              | 1       |
+| Model accuracy               | 66.67%  |
+| Accuracy under attack        | 0.0%    |
+| Attack success rate          | 100.0%  |
+| Average perturbed word %     | 2.78%   |
+| Average num. words per input | 28.6667 |
+| Average num. queries         | 182.0   |
++------------------------------+---------+

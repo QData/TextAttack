@@ -28,7 +28,7 @@
     (4): StopwordModification
   (is_black_box):  False
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mPositive (96%)[0m --> [91mNegative (77%)[0m
 
@@ -56,16 +56,17 @@ throws in enough clever and unexpected twists to make the formula feel fresh .
 
 
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 1      |
-| Number of failed attacks:     | 2      |
-| Number of skipped attacks:    | 1      |
-| Original accuracy:            | 75.0%  |
-| Accuracy under attack:        | 50.0%  |
-| Attack success rate:          | 33.33% |
-| Average perturbed word %:     | 5.56%  |
-| Average num. words per input: | 15.5   |
-| Avg num queries:              | 1.33   |
-+-------------------------------+--------+
++------------------------------+--------+
+| Attack Results               |        |
++------------------------------+--------+
+| Number of attacks            | 4      |
+| Successful attacks           | 1      |
+| Failed attacks               | 2      |
+| Skipped attacks              | 1      |
+| Model accuracy               | 75.0%  |
+| Accuracy under attack        | 50.0%  |
+| Attack success rate          | 33.33% |
+| Average perturbed word %     | 5.56%  |
+| Average num. words per input | 15.5   |
+| Average num. queries         | 1.3333 |
++------------------------------+--------+

@@ -43,6 +43,28 @@ def set_env_variables(gpu_id):
             print(e)
 
 
+def attack_from_queue(args, in_queue, out_queue):
+    """This function runs on each GPU and iteratively attacks samples from the
+    in queue."""
+    textattack.shared.logger.disabled = True
+    textattack.shared.utils.set_seed(args.random_seed)
+    gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
+    set_env_variables(gpu_id)
+    attack = parse_attack_from_args(args)
+    attack.loggers = []
+    if gpu_id == 0:
+        print(attack, "\n")
+    while not in_queue.empty():
+        try:
+            i, text, output = in_queue.get()
+            results_gen = attack.attack_dataset([(text, output)])
+            result = next(results_gen)
+            out_queue.put((i, result))
+        except Exception as e:
+            out_queue.put(e)
+            exit()
+
+
 def run(args, checkpoint=None):
     """The main thread.
 
@@ -105,34 +127,24 @@ def run(args, checkpoint=None):
         args.num_failures = 0
         args.num_successes = 0
     # Start workers.
-    torch.multiprocessing.Pool(num_gpus, attack_from_queue, (args, in_queue, out_queue))
+    pool = torch.multiprocessing.Pool(
+        num_gpus, attack_from_queue, (args, in_queue, out_queue)
+    )
+    pool.close()
 
-
-def attack_from_queue(args, in_queue, out_queue):
-    """This function runs on each GPU and iteratively attacks samples from the
-    in queue."""
-    textattack.shared.utils.set_seed(args.random_seed)
-    gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
-    set_env_variables(gpu_id)
+    # Disable CUDA on the main worker. Use this attack specifically for logging
+    # purposes.
+    os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+    os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+    # import tensorflow as tf
+    # tf.config.experimental.set_visible_devices([], 'GPU')
+    textattack.shared.device = torch.device("cpu")
     attack = parse_attack_from_args(args)
-    if gpu_id == 0:
-        print(attack, "\n")
-        download_thread = threading.Thread(
-            target=log_attack_results, args=(args, attack, out_queue)
-        )
-        download_thread.start()
-    while not in_queue.empty():
-        try:
-            i, text, output = in_queue.get()
-            results_gen = attack.attack_dataset([(text, output)])
-            result = next(results_gen)
-            out_queue.put((i, result))
-        except Exception as e:
-            out_queue.put(e)
-            exit()
+    del attack.constraints
+    del attack.goal_function
+    del attack.search_method
+    del attack.transformation
 
-
-def log_attack_results(args, attack, out_queue):
     # Log results asynchronously and update progress bar.
     num_results = args.num_results
     num_failures = args.num_failures
@@ -145,6 +157,14 @@ def log_attack_results(args, attack, out_queue):
         if isinstance(result, Exception):
             raise result
         idx, result = result
+        # Set result label names.
+        result.original_result.attacked_text.attack_attrs[
+            "label_names"
+        ] = dataset.label_names
+        result.perturbed_result.attacked_text.attack_attrs[
+            "label_names"
+        ] = dataset.label_names
+
         attack.log_result(result)
         worklist.remove(idx)
         if (not args.attack_n) or (

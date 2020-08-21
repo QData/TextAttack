@@ -326,7 +326,6 @@ def parse_attack_loggers_from_args(args, attack):
     if not args.disable_stdout:
         attack.enable_stdout()
 
-    print("set loggers", attack.loggers)
     return attack
 
 

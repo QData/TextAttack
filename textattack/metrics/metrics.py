@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC
 
 import numpy as np
 import torch
@@ -114,7 +114,10 @@ class ModelAccuracy(Metric):
     def compute(attack_results):
         total_attacks = len(attack_results)
         skipped_attacks = TotalSkippedAttacks.compute(attack_results)
-        return (total_attacks - skipped_attacks) / (total_attacks)
+        if total_attacks == 0:
+            return 0
+        else:
+            return (total_attacks - skipped_attacks) / (total_attacks)
 
 
 class AccuracyUnderAttack(Metric):
@@ -125,7 +128,10 @@ class AccuracyUnderAttack(Metric):
     def compute(attack_results):
         total_attacks = len(attack_results)
         failed_attacks = TotalFailedAttacks.compute(attack_results)
-        return (failed_attacks) / (total_attacks)
+        if total_attacks == 0:
+            return 0
+        else:
+            return (failed_attacks) / (total_attacks)
 
 
 class AttackSuccessRate(Metric):

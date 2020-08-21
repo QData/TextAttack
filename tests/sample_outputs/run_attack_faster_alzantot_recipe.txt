@@ -30,7 +30,7 @@
     (4): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
 [92mPositive (73%)[0m --> [91mNegative (68%)[0m
 
@@ -52,16 +52,17 @@ grown-up quibbles are beside the point here . the little girls understand , and 
 
 
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 1      |
-| Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 2      |
-| Original accuracy:            | 33.33% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 7.14%  |
-| Average num. words per input: | 25.67  |
-| Avg num queries:              | 521.0  |
-+-------------------------------+--------+
++------------------------------+---------+
+| Attack Results               |         |
++------------------------------+---------+
+| Number of attacks            | 3       |
+| Successful attacks           | 1       |
+| Failed attacks               | 0       |
+| Skipped attacks              | 2       |
+| Model accuracy               | 33.33%  |
+| Accuracy under attack        | 0.0%    |
+| Attack success rate          | 100.0%  |
+| Average perturbed word %     | 7.14%   |
+| Average num. words per input | 25.6667 |
+| Average num. queries         | 521.0   |
++------------------------------+---------+
