@@ -50,13 +50,16 @@ class WordSwapChangeNumber(Transformation):
         # find indexes of alphabetical words
         for idx in indices_to_modify:
             word = words[idx].lower()
-            if word in STR_NUM:
-                if word == "point":
-                    if 0 < idx and (idx - 1) in num_idx:
+            for number in STR_NUM:
+                if number in word:
+                    if word in ["point", "and"]:
+                        if 0 < idx and (idx - 1) in num_idx:
+                            num_idx.append(idx)
+                    else:
                         num_idx.append(idx)
-                else:
-                    num_idx.append(idx)
-            elif word.isdigit():
+                    break
+
+            if word.isdigit():
                 num_words.append([[idx], word])
 
         # cluster adjacent indexes to get whole number
@@ -68,7 +71,9 @@ class WordSwapChangeNumber(Transformation):
         for num_word in num_words:
             idx = num_word[0]
             word = num_word[1]
+            print(100,word)
             replacement_words = self._get_new_number(word)
+            print(100,replacement_words)
             for r in replacement_words:
                 if r == word:
                     continue
@@ -78,14 +83,18 @@ class WordSwapChangeNumber(Transformation):
                     for i in idx[1:]:
                         text = text.delete_word_at_index(index)
                 transformed_texts.append(text)
+        print(transformed_texts)
         return transformed_texts
 
     def _get_new_number(self, word):
+        print(word)
         if word.isdigit():
             num = float(word)
         else:
-            num = w2n.word_to_num(word)
-
+            try:
+                num = w2n.word_to_num(word)
+            except ValueError:
+                pass
         if num not in [0, 2, 4]:
             change = int(num * self.max_change) + 1
             if num >= 0:
