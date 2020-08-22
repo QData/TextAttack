@@ -1,10 +1,15 @@
+import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger
 import lru
 import nltk
 
+import textattack
 from textattack.constraints import Constraint
 from textattack.shared.validators import transformation_consists_of_word_swaps
+
+# Set global flair device to be TextAttack's current device
+flair.device = textattack.shared.utils.device
 
 
 class PartOfSpeech(Constraint):

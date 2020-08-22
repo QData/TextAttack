@@ -85,3 +85,7 @@ class WordSwapQWERTY(WordSwap):
                     candidate_words.append(candidate_word)
 
         return candidate_words
+
+    @property
+    def deterministic(self):
+        return not self.random_one

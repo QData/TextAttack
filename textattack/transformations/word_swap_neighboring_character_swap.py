@@ -51,5 +51,9 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
 
         return candidate_words
 
+    @property
+    def deterministic(self):
+        return not self.random_one
+
     def extra_repr_keys(self):
         return super().extra_repr_keys() + ["random_one"]

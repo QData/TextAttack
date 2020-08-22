@@ -19,3 +19,7 @@ class RandomSwap(Transformation):
                 ).replace_word_at_index(swap_idx, word)
                 transformed_texts.append(swapped_text)
         return transformed_texts
+
+    @property
+    def deterministic(self):
+        return False
