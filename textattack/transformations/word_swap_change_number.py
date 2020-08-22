@@ -1,6 +1,9 @@
 import numpy as np
 from word2number import w2n
+from num2words import num2words
 from textattack.transformations import Transformation
+
+print("Hiiiii", num2words(42))
 
 
 def idx_to_words(ls, words):
@@ -90,11 +93,17 @@ class WordSwapChangeNumber(Transformation):
         print(word)
         if word.isdigit():
             num = float(word)
+            return self._alter_number(num)
         else:
             try:
                 num = w2n.word_to_num(word)
+                num_list = self._alter_number(num)
+                return [num2words(n) for n in num_list]
             except ValueError:
-                pass
+                return []
+
+
+    def _alter_number(self, num):
         if num not in [0, 2, 4]:
             change = int(num * self.max_change) + 1
             if num >= 0:
