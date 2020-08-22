@@ -1,9 +1,37 @@
 import numpy as np
-from textattack.transformations.word_swap import WordSwap
+from word2number import w2n
+from textattack.transformations import Transformation
 
 
-class WordSwapChangeNumber(WordSwap):
+def idx_to_words(ls, words):
+    output = []
+    for cluster in ls:
+        word = words[cluster[0]]
+        for idx in cluster[1:]:
+            word = " ".join([word, words[idx]])
+        output.append([cluster, word])
+    return output
 
+
+def cluster_idx(idx_ls):
+    if len(idx_ls) < 2:
+        return [[i] for i in idx_ls]
+    else:
+        output = [[idx_ls[0]]]
+        prev = idx_ls[0]
+        list_pos = 0
+
+        for idx in idx_ls[1:]:
+            if idx - 1 == prev:
+                output[list_pos].append(idx)
+            else:
+                output.append([idx])
+                list_pos += 1
+            prev = idx
+        return output
+
+
+class WordSwapChangeNumber(Transformation):
     """Future implementations:
 
     detect alphabetical numbers as well
@@ -14,12 +42,93 @@ class WordSwapChangeNumber(WordSwap):
         self.max_change = max_change
         self.n = n
 
-    def _get_replacement_words(self, word):
+    def _get_transformations(self, current_text, indices_to_modify):
+        words = current_text.words
+        num_idx = []
+        num_words = []
 
-        if word.isdigit() and word != "2" and word != "4":
-            num = int(word)
+        # find indexes of alphabetical words
+        for idx in indices_to_modify:
+            word = words[idx].lower()
+            if word in STR_NUM:
+                if word == "point":
+                    if 0 < idx and (idx - 1) in num_idx:
+                        num_idx.append(idx)
+                else:
+                    num_idx.append(idx)
+            elif word.isdigit():
+                num_words.append([[idx], word])
+
+        # cluster adjacent indexes to get whole number
+        num_idx = cluster_idx(num_idx)
+        num_words += idx_to_words(num_idx, words)
+        print(num_words)
+
+        transformed_texts = []
+        for num_word in num_words:
+            idx = num_word[0]
+            word = num_word[1]
+            replacement_words = self._get_new_number(word)
+            for r in replacement_words:
+                if r == word:
+                    continue
+                text = current_text.replace_word_at_index(idx[0], str(r))
+                if len(idx) > 1:
+                    index = idx[1]
+                    for i in idx[1:]:
+                        text = text.delete_word_at_index(index)
+                transformed_texts.append(text)
+        return transformed_texts
+
+    def _get_new_number(self, word):
+        if word.isdigit():
+            num = float(word)
+        else:
+            num = w2n.word_to_num(word)
+
+        if num not in [0, 2, 4]:
             change = int(num * self.max_change) + 1
-            num_list = np.random.randint(num - change, num + change, self.n)
-            return num_list.astype(str)
-
+            if num >= 0:
+                num_list = np.random.randint(max(num - change, 1), num + change, self.n)
+            else:
+                num_list = np.random.randint(num - change, min(0, num + change), self.n)
+            return num_list
         return []
+
+
+STR_NUM = [
+    "zero",
+    "one",
+    "two",
+    "three",
+    "four",
+    "five",
+    "six",
+    "seven",
+    "eight",
+    "nine",
+    "ten",
+    "eleven",
+    "twelve",
+    "thirteen",
+    "fourteen",
+    "fifteen",
+    "sixteen",
+    "seventeen",
+    "eighteen",
+    "nineteen",
+    "twenty",
+    "thirty",
+    "forty",
+    "fifty",
+    "sixty",
+    "seventy",
+    "eighty",
+    "ninety",
+    "hundred",
+    "thousand",
+    "million",
+    "billion",
+    "point",
+    "and"
+]
