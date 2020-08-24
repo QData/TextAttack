@@ -216,6 +216,7 @@ class Attack:
         ]
         # Populate cache with transformed_texts
         uncached_texts = []
+        filtered_texts = []
         for transformed_text in transformed_texts:
             if (current_text, transformed_text) not in self.constraints_cache:
                 uncached_texts.append(transformed_text)
@@ -224,13 +225,11 @@ class Attack:
                 self.constraints_cache[
                     (current_text, transformed_text)
                 ] = self.constraints_cache[(current_text, transformed_text)]
-        self._filter_transformations_uncached(
+                if self.constraints_cache[(current_text, transformed_text)]:
+                    filtered_texts.append(transformed_text)
+        filtered_texts += self._filter_transformations_uncached(
             uncached_texts, current_text, original_text=original_text
         )
-        # Return transformed_texts from cache
-        filtered_texts = [
-            t for t in transformed_texts if self.constraints_cache[(current_text, t)]
-        ]
         # Sort transformations to ensure order is preserved between runs
         filtered_texts.sort(key=lambda t: t.text)
         return filtered_texts
