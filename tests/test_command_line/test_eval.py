@@ -23,6 +23,7 @@ def test_command_line_eval(name, command, sample_output_file):
     to *stderr* output of the evaluation.
     """
     desired_text = open(sample_output_file).read().strip()
+    desired_text_lines = desired_text.split("\n")
 
     # Run command and validate outputs.
     result = run_command_and_get_result(command)
@@ -35,6 +36,8 @@ def test_command_line_eval(name, command, sample_output_file):
     stderr = result.stderr.decode().strip()
     print("stderr =>", stderr)
 
-    assert stderr == desired_text
+    print("desired_text =>", desired_text)
+    stderr_lines = stderr.split("\n")
+    assert stderr_lines <= desired_text_lines
 
     assert result.returncode == 0
