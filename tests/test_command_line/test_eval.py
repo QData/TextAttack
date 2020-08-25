@@ -8,9 +8,9 @@ eval_test_params = [
         "tests/sample_outputs/eval_model_hub_rt.txt",
     ),
     (
-        "eval_mnli",
-        "textattack eval --model bert-base-uncased-mnli --dataset-from-nlp glue^mnli --num-examples 10",
-        "tests/sample_outputs/eval_mnli.txt",
+        "eval_snli",
+        "textattack eval --model bert-base-uncased-snli --num-examples 10",
+        "tests/sample_outputs/eval_snli.txt",
     ),
 ]
 
