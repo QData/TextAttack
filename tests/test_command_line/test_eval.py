@@ -38,6 +38,6 @@ def test_command_line_eval(name, command, sample_output_file):
 
     print("desired_text =>", desired_text)
     stderr_lines = stderr.split("\n")
-    assert stderr_lines <= desired_text_lines
+    assert desired_text_lines <= stderr_lines
 
     assert result.returncode == 0
