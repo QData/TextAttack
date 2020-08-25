@@ -56,12 +56,27 @@ TextAttack has some other features that make it a pleasure to use:
    :hidden:
    :caption: Getting Started
 
-
    Installation <quickstart/installation>
    Command-Line Usage <quickstart/command_line_usage>
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+   :caption: Tutorials
+   
    Tutorial 0: TextAttack End-To-End (Train, Eval, Attack) <examples/0_End_to_End.ipynb>
    Tutorial 1: Transformations <examples/1_Introduction_and_Transformations.ipynb>
    Tutorial 2: Constraints <examples/2_Constraints.ipynb>
+
+.. toctree::
+   :maxdepth: 1
+   :hidden:
+   :caption: Models and Tokenizers
+
+   datasets_models/models
+   Example: Attacking TensorFlow models <datasets_models/Example_0_tensorflow>
+   Example: Attacking scikit-learn models <datasets_models/Example_1_sklearn.ipynb>
+   Example: Attacking AllenNLP models <datasets_models/Example_2_allennlp.ipynb>
    
 .. toctree::
    :maxdepth: 1
@@ -90,16 +105,6 @@ TextAttack has some other features that make it a pleasure to use:
    :caption: Data Augmentation
 
    augmentation/augmenter
-
-.. toctree::
-   :maxdepth: 1
-   :hidden:
-   :caption: Models and Tokenizers
-
-   datasets_models/models
-   Example: Attacking TensorFlow models <datasets_models/Example_0_tensorflow>
-   Example: Attacking scikit-learn models <datasets_models/Example_1_sklearn.ipynb>
-   Example: Attacking AllenNLP models <datasets_models/Example_2_allennlp.ipynb>
 
 .. toctree::
    :maxdepth: 3
