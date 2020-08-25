@@ -80,6 +80,7 @@ class EvalModelCommand(TextAttackCommand):
             logger.info(f"Successes {successes}/{len(preds)} ({_cb(perc_accuracy)})")
 
     def run(self, args):
+        textattack.shared.utils.set_seed(args.random_seed)
         # Default to 'all' if no model chosen.
         if not (args.model or args.model_from_huggingface or args.model_from_file):
             for model_name in list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
@@ -101,6 +102,8 @@ class EvalModelCommand(TextAttackCommand):
 
         add_model_args(parser)
         add_dataset_args(parser)
+
+        parser.add_argument("--random-seed", default=1776, type=int)
 
         parser.add_argument(
             "--model-batch-size",

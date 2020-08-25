@@ -1,0 +1,4 @@
+[34;1mtextattack[0m: Loading pre-trained model from HuggingFace model repository: [94mtextattack/bert-base-uncased-MNLI[0m
+[34;1mtextattack[0m: Loading [94mnlp[0m dataset [94mglue[0m, subset [94mmnli[0m, split [94mvalidation_matched[0m.
+[34;1mtextattack[0m: Got 10 predictions.
+[34;1mtextattack[0m: Successes 9/10 ([94m90.00%[0m)

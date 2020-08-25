@@ -1,0 +1,5 @@
+[34;1mtextattack[0m: Loading pre-trained model from HuggingFace model repository: [94mtextattack/distilbert-base-uncased-rotten-tomatoes[0m
+Using custom data configuration default
+[34;1mtextattack[0m: Loading [94mnlp[0m dataset [94mrotten_tomatoes[0m, split [94mtrain[0m.
+[34;1mtextattack[0m: Got 4 predictions.
+[34;1mtextattack[0m: Successes 3/4 ([94m75.00%[0m)
