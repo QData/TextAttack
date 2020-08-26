@@ -3,8 +3,6 @@ from word2number import w2n
 from num2words import num2words
 from textattack.transformations import Transformation
 
-print("Hiiiii", num2words(42))
-
 
 def idx_to_words(ls, words):
     output = []
@@ -68,15 +66,12 @@ class WordSwapChangeNumber(Transformation):
         # cluster adjacent indexes to get whole number
         num_idx = cluster_idx(num_idx)
         num_words += idx_to_words(num_idx, words)
-        print(num_words)
 
         transformed_texts = []
         for num_word in num_words:
             idx = num_word[0]
             word = num_word[1]
-            print(100,word)
             replacement_words = self._get_new_number(word)
-            print(100,replacement_words)
             for r in replacement_words:
                 if r == word:
                     continue
@@ -86,7 +81,6 @@ class WordSwapChangeNumber(Transformation):
                     for i in idx[1:]:
                         text = text.delete_word_at_index(index)
                 transformed_texts.append(text)
-        print(transformed_texts)
         return transformed_texts
 
     def _get_new_number(self, word):
@@ -101,7 +95,6 @@ class WordSwapChangeNumber(Transformation):
                 return [num2words(n) for n in num_list]
             except ValueError:
                 return []
-
 
     def _alter_number(self, num):
         if num not in [0, 2, 4]:
@@ -148,5 +141,5 @@ STR_NUM = [
     "million",
     "billion",
     "point",
-    "and"
+    "and",
 ]

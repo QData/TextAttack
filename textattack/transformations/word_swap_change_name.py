@@ -20,10 +20,10 @@ class WordSwapChangeName(Transformation):
         self.confidence_score = confidence_score
 
     def _get_transformations(self, current_text, indices_to_modify):
-
         # really want to silent this line:
         tagger = SequenceTagger.load("ner")
 
+        # TODO: move ner recognition to AttackedText
         sentence = Sentence(current_text.text)
         tagger.predict(sentence)
         fir_name_idx = []
@@ -37,6 +37,7 @@ class WordSwapChangeName(Transformation):
 
         words = current_text.words
         transformed_texts = []
+
         for i in indices_to_modify:
             word_to_replace = words[i]
             if i in fir_name_idx and not self.last_only:

@@ -1,19 +1,91 @@
 import numpy as np
-from textattack.transformations.word_swap import WordSwap
+from textattack.transformations import Transformation
+from flair.data import Sentence
+from flair.models import SequenceTagger
 
 
-class WordSwapChangeLocation(WordSwap):
+def cluster_idx(idx_ls):
+    if len(idx_ls) < 2:
+        return [[i] for i in idx_ls]
+    else:
+        output = [[idx_ls[0]]]
+        prev = idx_ls[0]
+        list_pos = 0
+
+        for idx in idx_ls[1:]:
+            if idx - 1 == prev:
+                output[list_pos].append(idx)
+            else:
+                output.append([idx])
+                list_pos += 1
+            prev = idx
+        return output
+
+
+def idx_to_words(ls, words):
+    output = []
+    for cluster in ls:
+        word = words[cluster[0]]
+        for idx in cluster[1:]:
+            word = " ".join([word, words[idx]])
+        output.append([cluster, word])
+    return output
+
+
+class WordSwapChangeLocation(Transformation):
     """Future implementations:
 
     Capitalization issue
     """
 
-    def __init__(self, n=10, **kwargs):
+    def __init__(self, n=3, confidence_score=0.7, **kwargs):
         super().__init__(**kwargs)
         self.n = n
+        self.confidence_score = confidence_score
 
-    def _get_replacement_words(self, word):
+    def _get_transformations(self, current_text, indices_to_modify):
+        words = current_text.words
+        # TODO: move ner recognition to AttackedText
+        # really want to silent this line:
+        tagger = SequenceTagger.load("ner")
+        sentence = Sentence(current_text.text)
+        tagger.predict(sentence)
+        location_idx = []
+        for token in sentence:
+            tag = token.get_tag("ner")
+            if (
+                "LOC" in tag.value
+                and tag.score > self.confidence_score
+                and (token.idx - 1) in indices_to_modify
+            ):
+                location_idx.append(token.idx - 1)
 
+        location_idx = cluster_idx(location_idx)
+        print(location_idx)
+        location_words = idx_to_words(location_idx, words)
+        print(location_words)
+
+        transformed_texts = []
+        for location in location_words:
+            idx = location[0]
+            word = location[1]
+            replacement_words = self._get_new_location(word)
+            print(1, replacement_words)
+            for r in replacement_words:
+                if r == word:
+                    continue
+                text = current_text
+                if len(idx) > 1:
+                    index = idx[1]
+                    for i in idx[1:]:
+                        text = text.delete_word_at_index(index)
+                        print(222, text)
+                text = text.replace_word_at_index(idx[0], r)
+                transformed_texts.append(text)
+        print(transformed_texts)
+        return transformed_texts
+
+    def _get_new_location(self, word):
         if word in LOCATION["country"]:
             return np.random.choice(LOCATION["country"], self.n)
         elif word in LOCATION["nationality"]:
