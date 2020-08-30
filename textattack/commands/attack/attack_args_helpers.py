@@ -332,7 +332,9 @@ def parse_model_from_args(args):
         from textattack.commands.train_model.train_args_helpers import model_from_args
 
         model = model_from_args(
-            argparse.Namespace(**model_train_args), num_labels, model_path=args.model,
+            argparse.Namespace(**model_train_args),
+            num_labels,
+            model_path=args.model,
         )
         model = textattack.models.wrappers.PyTorchModelWrapper(
             model, model.tokenizer, batch_size=args.model_batch_size
