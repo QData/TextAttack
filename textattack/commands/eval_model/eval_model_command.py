@@ -103,7 +103,7 @@ class EvalModelCommand(TextAttackCommand):
         add_model_args(parser)
         add_dataset_args(parser)
 
-        parser.add_argument("--random-seed", default=1776, type=int)
+        parser.add_argument("--random-seed", default=765, type=int)
 
         parser.add_argument(
             "--model-batch-size",
