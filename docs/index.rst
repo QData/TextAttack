@@ -58,6 +58,7 @@ TextAttack has some other features that make it a pleasure to use:
 
    Installation <quickstart/installation>
    Command-Line Usage <quickstart/command_line_usage>
+   What is an adversarial attack in NLP? <quickstart/what_is_an_adversarial_attack.md>
 
 .. toctree::
    :maxdepth: 1
