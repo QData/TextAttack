@@ -66,7 +66,8 @@ class Attack:
         self.pre_transformation_constraints = []
         for constraint in constraints:
             if isinstance(
-                constraint, textattack.constraints.PreTransformationConstraint,
+                constraint,
+                textattack.constraints.PreTransformationConstraint,
             ):
                 self.pre_transformation_constraints.append(constraint)
             else:
@@ -79,8 +80,10 @@ class Attack:
         self.search_method.get_transformations = self.get_transformations
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
-        self.search_method.get_goal_results = lambda attacked_text_list: self.goal_function.get_results(
-            attacked_text_list
+        self.search_method.get_goal_results = (
+            lambda attacked_text_list: self.goal_function.get_results(
+                attacked_text_list
+            )
         )
         self.search_method.filter_transformations = self.filter_transformations
 
@@ -203,11 +206,20 @@ class Attack:
         final_result = self.search_method(initial_result)
         self.clear_cache()
         if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
-            return SuccessfulAttackResult(initial_result, final_result,)
+            return SuccessfulAttackResult(
+                initial_result,
+                final_result,
+            )
         elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
-            return FailedAttackResult(initial_result, final_result,)
+            return FailedAttackResult(
+                initial_result,
+                final_result,
+            )
         elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
-            return MaximizedAttackResult(initial_result, final_result,)
+            return MaximizedAttackResult(
+                initial_result,
+                final_result,
+            )
         else:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 

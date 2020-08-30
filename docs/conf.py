@@ -57,9 +57,9 @@ autodoc_mock_imports = []
 # Output file base name for HTML help builder.
 htmlhelp_basename = "textattack_doc"
 html_theme_options = {
-    'logo_only': False,
-    'style_nav_header_background': 'transparent',
-    'analytics_id': 'UA-88637452-2',
+    "logo_only": False,
+    "style_nav_header_background": "transparent",
+    "analytics_id": "UA-88637452-2",
 }
 
 # -- Options for HTML output -------------------------------------------------
@@ -69,9 +69,9 @@ html_theme_options = {
 #
 html_theme = "sphinx_rtd_theme"
 
-html_static_path = ['_static']
+html_static_path = ["_static"]
 html_css_files = [
-    'css/custom.css',
+    "css/custom.css",
 ]
 
 # Path to favicon.

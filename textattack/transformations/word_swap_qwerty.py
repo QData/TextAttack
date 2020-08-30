@@ -21,7 +21,11 @@ class WordSwapQWERTY(WordSwap):
         self.skip_last_char = skip_last_char
 
         self._keyboard_adjacency = {
-            "q": ["w", "a", "s",],
+            "q": [
+                "w",
+                "a",
+                "s",
+            ],
             "w": ["q", "e", "a", "s", "d"],
             "e": ["w", "s", "d", "f", "r"],
             "r": ["e", "d", "f", "g", "t"],

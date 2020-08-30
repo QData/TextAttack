@@ -15,7 +15,11 @@ class AutoTokenizer:
     """
 
     def __init__(
-        self, tokenizer_path=None, tokenizer=None, max_length=256, use_fast=True,
+        self,
+        tokenizer_path=None,
+        tokenizer=None,
+        max_length=256,
+        use_fast=True,
     ):
         if not (tokenizer_path or tokenizer):
             raise ValueError("Must pass tokenizer path or tokenizer")

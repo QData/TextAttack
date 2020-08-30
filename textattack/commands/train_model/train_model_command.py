@@ -36,7 +36,10 @@ class TrainModelCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
-            "--model", type=str, required=True, help="directory of model to train",
+            "--model",
+            type=str,
+            required=True,
+            help="directory of model to train",
         )
         parser.add_argument(
             "--dataset",
@@ -126,7 +129,10 @@ class TrainModelCommand(TextAttackCommand):
             help="How often (in epochs) to generate a new adversarial training set (N/A if --attack unspecified)",
         )
         parser.add_argument(
-            "--augment", type=str, default=None, help="Augmentation recipe to use",
+            "--augment",
+            type=str,
+            default=None,
+            help="Augmentation recipe to use",
         )
         parser.add_argument(
             "--pct-words-to-swap",
