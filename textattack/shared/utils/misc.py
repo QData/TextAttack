@@ -117,3 +117,15 @@ def set_seed(random_seed):
     np.random.seed(random_seed)
     torch.manual_seed(random_seed)
     torch.cuda.manual_seed(random_seed)
+
+
+def hashable(key):
+    try:
+        hash(key)
+        return True
+    except TypeError:
+        return False
+
+
+def sigmoid(n):
+    return 1 / (1 + np.exp(-n))

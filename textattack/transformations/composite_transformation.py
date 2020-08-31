@@ -1,5 +1,5 @@
 from textattack.shared import utils
-from textattack.transformations.transformation import Transformation
+from textattack.transformations import Transformation
 
 
 class CompositeTransformation(Transformation):
