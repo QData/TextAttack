@@ -97,7 +97,11 @@ class WordSwapMaskedLM(WordSwap):
         return replacement_words
 
     def _bert_attack_replacement_words(
-        self, current_text, index, id_preds, masked_lm_logits,
+        self,
+        current_text,
+        index,
+        id_preds,
+        masked_lm_logits,
     ):
         """Get replacement words for the word we want to replace using BERT-
         Attack method.

@@ -59,15 +59,15 @@ class TestPretransformationConstraints:
         )
 
     def test_max_word_index(self, sentence_attacked_text):
-        short_constraint = textattack.constraints.pre_transformation.MaxWordIndexModification(
-            8
+        short_constraint = (
+            textattack.constraints.pre_transformation.MaxWordIndexModification(8)
         )
         assert short_constraint._get_modifiable_indices(sentence_attacked_text) == set(
             range(8)
         )
 
-        long_constraint = textattack.constraints.pre_transformation.MaxWordIndexModification(
-            8000
+        long_constraint = (
+            textattack.constraints.pre_transformation.MaxWordIndexModification(8000)
         )
         assert long_constraint._get_modifiable_indices(sentence_attacked_text) == set(
             range(len(sentence_attacked_text.words))

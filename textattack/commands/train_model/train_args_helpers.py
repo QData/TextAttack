@@ -126,7 +126,8 @@ def model_from_args(train_args, num_labels, model_path=None):
             train_args.model, num_labels=num_labels, finetuning_task=train_args.dataset
         )
         model = transformers.AutoModelForSequenceClassification.from_pretrained(
-            train_args.model, config=config,
+            train_args.model,
+            config=config,
         )
         tokenizer = textattack.models.tokenizers.AutoTokenizer(
             train_args.model, use_fast=True, max_length=train_args.max_length

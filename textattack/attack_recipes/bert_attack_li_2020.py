@@ -54,7 +54,10 @@ def BERTAttackLi2020(model):
     # data, the TextAttack implementation uses a fixed threshold - determined to
     # be 0.2 to be most fair.
     use_constraint = UniversalSentenceEncoder(
-        threshold=0.2, metric="cosine", compare_against_original=True, window_size=None,
+        threshold=0.2,
+        metric="cosine",
+        compare_against_original=True,
+        window_size=None,
     )
     constraints.append(use_constraint)
     #

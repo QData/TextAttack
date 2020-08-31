@@ -5,6 +5,10 @@ from textattack.transformations import Transformation
 
 
 def idx_to_words(ls, words):
+    """Given a list generated from cluster_idx, return a list that contains
+    sub-list (the first element being the idx, and the second element being the
+    words corresponding to the idx)"""
+
     output = []
     for cluster in ls:
         word = words[cluster[0]]
@@ -15,6 +19,9 @@ def idx_to_words(ls, words):
 
 
 def cluster_idx(idx_ls):
+    """Given a list of idx, return a list that contains sub-lists of adjacent
+    idx."""
+
     if len(idx_ls) < 2:
         return [[i] for i in idx_ls]
     else:
@@ -33,12 +40,13 @@ def cluster_idx(idx_ls):
 
 
 class WordSwapChangeNumber(Transformation):
-    """Future implementations:
+    def __init__(self, max_change=1, n=3, **kwargs):
+        """A transformation that recognize numbers in sentence, and return
+        sentences with altered numbers.
 
-    detect alphabetical numbers as well
-    """
-
-    def __init__(self, max_change=1, n=10, **kwargs):
+        :param max_change: Maximum percent of change (1 being 100%)
+        :param n: Numbers of new numbers to generate
+        """
         super().__init__(**kwargs)
         self.max_change = max_change
         self.n = n
@@ -67,6 +75,7 @@ class WordSwapChangeNumber(Transformation):
         num_idx = cluster_idx(num_idx)
         num_words += idx_to_words(num_idx, words)
 
+        # replace original numbers with new numbers
         transformed_texts = []
         for num_word in num_words:
             idx = num_word[0]
@@ -81,10 +90,14 @@ class WordSwapChangeNumber(Transformation):
                     for i in idx[1:]:
                         text = text.delete_word_at_index(index)
                 transformed_texts.append(text)
+
         return transformed_texts
 
     def _get_new_number(self, word):
-        print(word)
+        """Given a word, try altering the value if the word is a number return
+        in digits if word is given in digit, return in alphabetical form if
+        word is given in alphabetical form."""
+
         if word.isdigit():
             num = float(word)
             return self._alter_number(num)
@@ -97,6 +110,8 @@ class WordSwapChangeNumber(Transformation):
                 return []
 
     def _alter_number(self, num):
+        """helper function of _get_new_number, change number base on
+        self.max_change."""
         if num not in [0, 2, 4]:
             change = int(num * self.max_change) + 1
             if num >= 0:

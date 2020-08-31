@@ -18,10 +18,12 @@ def Checklist2020(model, max_num_word_swaps=1):
 
     This attack focuses on a number of attacks used in the Invariance Testing
     Method:
-        - Contracting
-        - Extending
-        - Changing Names
-        - Possibly Negation...
+        - Contraction
+        - Extension
+        - Changing Names, Number, Location
+        - possibly negation (not yet implemented)
+
+    The idea is to alter elements of the sentence without actually changing the semantic of the sentence
 
     https://arxiv.org/abs/2005.04118
 
@@ -39,9 +41,11 @@ def Checklist2020(model, max_num_word_swaps=1):
         ]
     )
 
-    # we need this constraint, or extend and contract start to modify each other's changes and form infinite loop
+    # Need this constraint to prevent extend and contract modifying each others' changes and forming infinite loop
     constraints = [RepeatModification()]
-    # untargeted attack
+
+    # Untargeted attack & GreedySearch
     goal_function = UntargetedClassification(model)
     search_method = GreedySearch()
+
     return Attack(goal_function, constraints, transformation, search_method)

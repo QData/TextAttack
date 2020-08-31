@@ -1,10 +1,9 @@
-import re
-
-from textattack.shared import AttackedText
 from textattack.transformations import Transformation
 
 
 class WordSwapContract(Transformation):
+    """Transforms an input by performing contraction on recognized
+    combinations."""
 
     reverse_contraction_map = {
         "is not": "isn't",
@@ -67,21 +66,25 @@ class WordSwapContract(Transformation):
     }
 
     def _get_transformations(self, current_text, indices_to_modify):
+        """Return all possible transformed sentences, each with one
+        contraction."""
         transformed_texts = []
 
         words = current_text.words
         indices_to_modify = list(indices_to_modify)
 
-        for idx in indices_to_modify:
+        # search for every 2-words combination in reverse_contraction_map
+        for idx in indices_to_modify[:-1]:
             word = words[idx]
+            print(word)
 
-            try:
-                next_idx = indices_to_modify[indices_to_modify.index(idx) + 1]
-                next_word = words[next_idx]
-            except IndexError:
-                continue
+            next_idx = indices_to_modify[indices_to_modify.index(idx) + 1]
+            next_word = words[next_idx]
 
+            # generating the words to search for
             key = " ".join([word, next_word])
+
+            # when a possible contraction is found in map, contract the current text
             if key in self.reverse_contraction_map:
                 transformed_text = current_text.replace_word_at_index(
                     idx, self.reverse_contraction_map[key]

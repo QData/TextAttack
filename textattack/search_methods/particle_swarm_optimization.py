@@ -29,7 +29,9 @@ class ParticleSwarmOptimization(SearchMethod):
     """
 
     def __init__(
-        self, pop_size=60, max_iters=20,
+        self,
+        pop_size=60,
+        max_iters=20,
     ):
         self.max_iters = max_iters
         self.pop_size = pop_size

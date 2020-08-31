@@ -14,7 +14,10 @@ class AutoTokenizer:
     """
 
     def __init__(
-        self, name="bert-base-uncased", max_length=256, use_fast=True,
+        self,
+        name="bert-base-uncased",
+        max_length=256,
+        use_fast=True,
     ):
         self.tokenizer = transformers.AutoTokenizer.from_pretrained(
             name, use_fast=use_fast
