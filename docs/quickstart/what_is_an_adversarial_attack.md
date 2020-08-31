@@ -8,7 +8,7 @@ This article talks about the concept of adversarial examples as applied to NLP (
 
 An adversarial example is an input designed to fool a machine learning model [1]. In TextAttack, we are concerned with adversarial perturbations, changes to benign inputs that cause them to be misclassified by models. ‘Adversarial perturbation’ is more specific than just ‘adversarial example’, as the class of all adversarial examples also includes inputs designed from scratch to fool machine learning models. TextAttack attacks generate a specific kind of adversarial examples, adversarial perturbations.
 
-As alluded to above, an adversarial attack on a machine learning model is a process for generating adversarial perturbations. TextAttack attacks iterate through a dataset (list of inputs to a model), and for each correctly predicted sample, search for an adversarial perturbation (we’ll talk more about this later). If an example is incorrectly predicted to begin with, it is not attacked, since the input already fools the model. TextAttack breaks the attack process up into stages, and provides a [system of interchangeable components](/examples/1_Introduction_and_Transformations.html) for managing each stage of the attack.
+As alluded to above, an adversarial attack on a machine learning model is a process for generating adversarial perturbations. TextAttack attacks iterate through a dataset (list of inputs to a model), and for each correctly predicted sample, search for an adversarial perturbation (we’ll talk more about this later). If an example is incorrectly predicted to begin with, it is not attacked, since the input already fools the model. TextAttack breaks the attack process up into stages, and provides a [system of interchangeable components](/examples/1_Introduction_and_Transformations.ipynb) for managing each stage of the attack.
 
 Adversarial robustness is a measurement of a model’s susceptibility to adversarial examples. TextAttack often measures robustness using attack success rate, the percentage of attack attempts that produce successful adversarial examples, or after-attack accuracy, the percentage of inputs that are both correctly classified and unsuccessfully attacked.
 
@@ -92,7 +92,7 @@ We are excited to see the impact that TextAttack has on the NLP research communi
 
 We hope that use of TextAttack leads to more diversity in adversarial attacks. One thing that all current adversarial attacks have in common is that they make substitutions on the word or character level. We hope that future adversarial attacks in NLP can broaden scope to try different approaches to phrase-level replacements as well as full-sentence paraphrases. Additionally, there has been a focus on English in the adversarial attack literature; we look forward to seeing adversarial attacks applied to more languages.
 
-To get started with TextAttack, you might want to start with one of our [introductory tutorials](examples/0_End_to_End.html).
+To get started with TextAttack, you might want to start with one of our [introductory tutorials](/examples/0_End_to_End.ipynb).
 
 
 .. [1] “Attacking Machine Learning with Adversarial Examples”, Goodfellow, 2013. [https://openai.com/blog/adversarial-example-research/]
