@@ -69,14 +69,16 @@ class PartOfSpeech(Constraint):
             if self.tagger_type == "flair":
                 context_key_sentence = Sentence(context_key)
                 self._flair_pos_tagger.predict(context_key_sentence)
-                word_list, pos_list = zip_flair_result(context_key_sentence)
+                word_list, pos_list = textattack.shared.utils.zip_flair_result(
+                    context_key_sentence
+                )
 
             self._pos_tag_cache[context_key] = (word_list, pos_list)
 
         # idx of `word` in `context_words`
-        idx = len(before_ctx)
-        assert word_list[idx] == word, "POS list not matched with original word list."
-        return pos_list[idx]
+        assert word in word_list, "POS list not matched with original word list."
+        word_idx = word_list.index(word)
+        return pos_list[word_idx]
 
     def _check_constraint(self, transformed_text, reference_text):
         try:
@@ -109,17 +111,3 @@ class PartOfSpeech(Constraint):
             "tagset",
             "allow_verb_noun_swap",
         ] + super().extra_repr_keys()
-
-
-def zip_flair_result(pred):
-    if not isinstance(pred, Sentence):
-        raise TypeError("Result from Flair POS tagger must be a `Sentence` object.")
-
-    tokens = pred.tokens
-    word_list = []
-    pos_list = []
-    for token in tokens:
-        word_list.append(token.text)
-        pos_list.append(token.annotation_layers["pos"][0]._value)
-
-    return word_list, pos_list

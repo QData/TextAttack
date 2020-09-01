@@ -163,3 +163,34 @@ def color_text(text, color=None, method=None):
         return color + text + ANSI_ESCAPE_CODES.STOP
     elif method == "file":
         return "[[" + text + "]]"
+
+
+_flair_pos_tagger = None
+
+
+def flair_tag(sentence):
+    """Tags a `Sentence` object using `flair` part-of-speech tagger."""
+    global _flair_pos_tagger
+    if not _flair_pos_tagger:
+        from flair.models import SequenceTagger
+
+        _flair_pos_tagger = SequenceTagger.load("pos-fast")
+    _flair_pos_tagger.predict(sentence)
+
+
+def zip_flair_result(pred):
+    """Takes a sentence tagging from `flair` and returns two lists, of words
+    and their corresponding parts-of-speech."""
+    from flair.data import Sentence
+
+    if not isinstance(pred, Sentence):
+        raise TypeError("Result from Flair POS tagger must be a `Sentence` object.")
+
+    tokens = pred.tokens
+    word_list = []
+    pos_list = []
+    for token in tokens:
+        word_list.append(token.text)
+        pos_list.append(token.annotation_layers["pos"][0]._value)
+
+    return word_list, pos_list
