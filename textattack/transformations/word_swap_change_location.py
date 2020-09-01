@@ -2,8 +2,9 @@ from flair.data import Sentence
 from flair.models import SequenceTagger
 import numpy as np
 
-from textattack.transformations import Transformation
 from textattack.shared.data import NAMED_ENTITIES
+from textattack.transformations import Transformation
+
 
 def cluster_idx(idx_ls):
     """Given a list of idx, return a list that contains sub-lists of adjacent
@@ -100,7 +101,8 @@ class WordSwapChangeLocation(Transformation):
         return transformed_texts
 
     def _get_new_location(self, word):
-        """Return a list of new locations, with the choice of country, nationality, and city."""
+        """Return a list of new locations, with the choice of country,
+        nationality, and city."""
         if word in NAMED_ENTITIES["country"]:
             return np.random.choice(NAMED_ENTITIES["country"], self.n)
         elif word in NAMED_ENTITIES["nationality"]:
@@ -108,5 +110,3 @@ class WordSwapChangeLocation(Transformation):
         elif word in NAMED_ENTITIES["city"]:
             return np.random.choice(NAMED_ENTITIES["city"], self.n)
         return []
-
-
