@@ -321,7 +321,7 @@ class AttackedText:
                     new_attack_attrs["newly_modified_indices"].add(new_i)
                 new_i += 1
             # Check spaces for deleted text.
-            if adv_num_words == 0:
+            if adv_num_words == 0 and len(original_text):
                 # Remove extra space (or else there would be two spaces for each
                 # deleted word).
                 # @TODO What to do with punctuation in this case? This behavior is undefined.

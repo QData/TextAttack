@@ -32,7 +32,7 @@ class EvalModelCommand(TextAttackCommand):
 
     def get_preds(self, model, inputs):
         with torch.no_grad():
-            preds = textattack.shared.utils.model_predict(model, inputs)
+            preds = textattack.shared.utils.batch_model_predict(model, inputs)
         return preds
 
     def test_model_on_dataset(self, args):
@@ -43,15 +43,21 @@ class EvalModelCommand(TextAttackCommand):
         ground_truth_outputs = []
         i = 0
         while i < min(args.num_examples, len(dataset)):
-            dataset_batch = dataset[i : min(args.num_examples, i + args.batch_size)]
+            dataset_batch = dataset[
+                i : min(args.num_examples, i + args.model_batch_size)
+            ]
             batch_inputs = []
             for (text_input, ground_truth_output) in dataset_batch:
                 attacked_text = textattack.shared.AttackedText(text_input)
-                ids = model.tokenizer.encode(attacked_text.tokenizer_input)
-                batch_inputs.append(ids)
+                batch_inputs.append(attacked_text.tokenizer_input)
                 ground_truth_outputs.append(ground_truth_output)
-            preds.extend(self.get_preds(model, batch_inputs))
-            i += args.batch_size
+            batch_preds = self.get_preds(model, batch_inputs)
+
+            if not isinstance(batch_preds, torch.Tensor):
+                batch_preds = torch.Tensor(batch_preds)
+
+            preds.extend(batch_preds)
+            i += args.model_batch_size
 
         preds = torch.stack(preds).squeeze().cpu()
         ground_truth_outputs = torch.tensor(ground_truth_outputs).cpu()
@@ -74,6 +80,7 @@ class EvalModelCommand(TextAttackCommand):
             logger.info(f"Successes {successes}/{len(preds)} ({_cb(perc_accuracy)})")
 
     def run(self, args):
+        textattack.shared.utils.set_seed(args.random_seed)
         # Default to 'all' if no model chosen.
         if not (args.model or args.model_from_huggingface or args.model_from_file):
             for model_name in list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
@@ -96,8 +103,10 @@ class EvalModelCommand(TextAttackCommand):
         add_model_args(parser)
         add_dataset_args(parser)
 
+        parser.add_argument("--random-seed", default=765, type=int)
+
         parser.add_argument(
-            "--batch-size",
+            "--model-batch-size",
             type=int,
             default=256,
             help="Batch size for model inference.",
