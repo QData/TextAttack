@@ -95,10 +95,13 @@ class WordSwapExtend(Transformation):
             # expend when word in map
             if word in self.contraction_map:
                 expanded = self.contraction_map[word].split()
+                print(word, expanded)
                 transformed_text = current_text.replace_word_at_index(idx, expanded[0])
-                transformed_text = transformed_text.insert_text_after_word_index(
-                    idx, expanded[1]
-                )
+                for e in expanded[1:]:
+                    transformed_text = transformed_text.insert_text_after_word_index(
+                        idx, e
+                    )
+
                 transformed_texts.append(transformed_text)
 
         return transformed_texts
