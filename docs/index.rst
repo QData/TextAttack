@@ -72,7 +72,7 @@ TextAttack has some other features that make it a pleasure to use:
 .. toctree::
    :maxdepth: 1
    :hidden:
-   :caption: Models and Tokenizers
+   :caption: Models
 
    datasets_models/models
    Example: Attacking TensorFlow models <datasets_models/Example_0_tensorflow>
@@ -89,7 +89,7 @@ TextAttack has some other features that make it a pleasure to use:
 .. toctree::
    :maxdepth: 3
    :hidden:
-   :caption: NLP Attacks
+   :caption: Attacks
 
    attacks/attack
    attacks/attack_result
