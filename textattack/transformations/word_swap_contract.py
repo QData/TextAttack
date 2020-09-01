@@ -76,7 +76,6 @@ class WordSwapContract(Transformation):
         # search for every 2-words combination in reverse_contraction_map
         for idx in indices_to_modify[:-1]:
             word = words[idx]
-            print(word)
 
             next_idx = indices_to_modify[indices_to_modify.index(idx) + 1]
             next_word = words[next_idx]

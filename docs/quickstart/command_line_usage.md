@@ -63,12 +63,12 @@ The heart of textattack is running adversarial attacks on NLP models with
 1. Use an **attack recipe** to launch an attack from the literature: `textattack attack --recipe deepwordbug`
 2. Build your attack from components: 
 ```
-textattack attack --model lstm-mr --num-examples 20 --search-method beam-search|beam_width=4 \
+textattack attack --model lstm-mr --num-examples 20 --search-method beam-search^beam_width=4 \
 --transformation word-swap-embedding \
---constraints repeat stopword max-words-perturbed|max_num_words=2 embedding|min_cos_sim=0.8 part-of-speech \
+--constraints repeat stopword max-words-perturbed^max_num_words=2 embedding^min_cos_sim=0.8 part-of-speech \
 --goal-function untargeted-classification
 ```
-3. Create a python file that builds your attack and load it: `textattack attack --attack-from-file my_file.py|my_attack_name`
+3. Create a python file that builds your attack and load it: `textattack attack --attack-from-file my_file.py^my_attack_name`
 
 ## Training Models with `textattack train`
 
@@ -97,6 +97,7 @@ Here are some models from transformers that have worked well for us:
 
 ## Evaluating Models with `textattack eval-model`
 
+Any TextAttack-compatible model can be evaluated using `textattack eval-model`. TextAttack-trained models can be evaluated using `textattack eval --num-examples <num-examples> --model /path/to/trained/model/`
 
 ## Other Commands
 
@@ -130,6 +131,6 @@ whatever dataset you're working with. Whether you're loading a dataset of your
 own from a file, or one from NLP, you can use `textattack peek-dataset` to 
 see some basic information about the dataset.
 
-For example, use `textattack peek-dataset --dataset-from-nlp glue|mrpc` to see
+For example, use `textattack peek-dataset --dataset-from-nlp glue^mrpc` to see
 information about the MRPC dataset (from the GLUE set of datasets). This will
 print statistics like the number of labels, average number of words, etc.

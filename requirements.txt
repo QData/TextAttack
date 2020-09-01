@@ -1,6 +1,6 @@
 bert-score
 editdistance
-flair>=0.5.1
+flair==0.5.1
 filelock
 language_tool_python
 lemminflect
@@ -9,7 +9,6 @@ nlp
 nltk
 numpy
 pandas>=1.0.1
-pyarrow<1.0
 scikit-learn
 scipy==1.4.1
 sentence_transformers>0.2.6

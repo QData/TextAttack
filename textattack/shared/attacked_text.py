@@ -198,15 +198,6 @@ class AttackedText:
             raise TypeError(
                 f"convert_from_original_idxs got invalid idxs type {type(idxs)}"
             )
-
-        # update length of original_index_map, when the length of AttackedText increased
-        while len(self.attack_attrs["original_index_map"]) < len(idxs):
-            missing_index = self.attack_attrs["original_index_map"][-1] + 1
-            while missing_index in self.attack_attrs["modified_indices"]:
-                missing_index += 1
-            self.attack_attrs["original_index_map"] = np.append(
-                self.attack_attrs["original_index_map"], [missing_index]
-            )
         return [self.attack_attrs["original_index_map"][i] for i in idxs]
 
     def replace_words_at_indices(self, indices, new_words):
@@ -330,7 +321,7 @@ class AttackedText:
                     new_attack_attrs["newly_modified_indices"].add(new_i)
                 new_i += 1
             # Check spaces for deleted text.
-            if adv_num_words == 0:
+            if adv_num_words == 0 and len(original_text):
                 # Remove extra space (or else there would be two spaces for each
                 # deleted word).
                 # @TODO What to do with punctuation in this case? This behavior is undefined.
@@ -351,6 +342,14 @@ class AttackedText:
             zip(self._text_input.keys(), perturbed_input_texts)
         )
         return AttackedText(perturbed_input, attack_attrs=new_attack_attrs)
+
+    def words_diff_ratio(self, x):
+        """Get the ratio of words difference between current text and `x`.
+
+        Note that current text and `x` must have same number of words.
+        """
+        assert self.num_words == x.num_words
+        return float(np.sum(self.words != x.words)) / self.num_words
 
     @property
     def tokenizer_input(self):

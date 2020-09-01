@@ -34,6 +34,10 @@ class RandomSynonymInsertion(Transformation):
             )
         return transformed_texts
 
+    @property
+    def deterministic(self):
+        return False
+
 
 def check_if_one_word(word):
     for c in word:

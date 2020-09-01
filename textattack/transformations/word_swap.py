@@ -9,6 +9,7 @@ class WordSwap(Transformation):
     some of its words.
 
     letters_to_insert (string): letters allowed for insertion into words
+    (used by some char-based transformations)
     """
 
     def __init__(self, letters_to_insert=None):

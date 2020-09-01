@@ -56,6 +56,10 @@ class Transformation(ABC):
         """
         raise NotImplementedError()
 
+    @property
+    def deterministic(self):
+        return True
+
     def extra_repr_keys(self):
         return []
 

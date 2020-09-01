@@ -105,16 +105,15 @@ logger.propagate = False
 
 
 def _post_install():
-    logger.info(
-        "First time running textattack: downloading remaining required packages."
-    )
+    logger.info("Updating TextAttack package dependencies.")
     logger.info("Downloading NLTK required packages.")
     import nltk
 
-    nltk.download("wordnet")
     nltk.download("averaged_perceptron_tagger")
-    nltk.download("universal_tagset")
     nltk.download("stopwords")
+    nltk.download("omw")
+    nltk.download("universal_tagset")
+    nltk.download("wordnet")
 
 
 def set_cache_dir(cache_dir):
@@ -132,7 +131,7 @@ def set_cache_dir(cache_dir):
 def _post_install_if_needed():
     """Runs _post_install if hasn't been run since install."""
     # Check for post-install file.
-    post_install_file_path = path_in_cache("post_install_check")
+    post_install_file_path = path_in_cache("post_install_check_2")
     post_install_file_lock_path = post_install_file_path + ".lock"
     post_install_file_lock = filelock.FileLock(post_install_file_lock_path)
     post_install_file_lock.acquire()

@@ -8,8 +8,10 @@ from textattack.search_methods import GreedyWordSwapWIR
 from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
+from .attack_recipe import AttackRecipe
 
-def Seq2SickCheng2018BlackBox(model, goal_function="non_overlapping"):
+
+class Seq2SickCheng2018BlackBox(AttackRecipe):
     """Cheng, Minhao, et al.
 
     Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with
@@ -21,23 +23,26 @@ def Seq2SickCheng2018BlackBox(model, goal_function="non_overlapping"):
     not use gradient descent.
     """
 
-    #
-    # Goal is non-overlapping output.
-    #
-    goal_function = NonOverlappingOutput(model)
-    transformation = WordSwapEmbedding(max_candidates=50)
-    #
-    # Don't modify the same word twice or stopwords
-    #
-    constraints = [RepeatModification(), StopwordModification()]
-    #
-    # In these experiments, we hold the maximum difference
-    # on edit distance (ϵ) to a constant 30 for each sample.
-    #
-    constraints.append(LevenshteinEditDistance(30))
-    #
-    # Greedily swap words with "Word Importance Ranking".
-    #
-    search_method = GreedyWordSwapWIR(wir_method="unk")
+    @staticmethod
+    def build(model, goal_function="non_overlapping"):
 
-    return Attack(goal_function, constraints, transformation, search_method)
+        #
+        # Goal is non-overlapping output.
+        #
+        goal_function = NonOverlappingOutput(model)
+        transformation = WordSwapEmbedding(max_candidates=50)
+        #
+        # Don't modify the same word twice or stopwords
+        #
+        constraints = [RepeatModification(), StopwordModification()]
+        #
+        # In these experiments, we hold the maximum difference
+        # on edit distance (ϵ) to a constant 30 for each sample.
+        #
+        constraints.append(LevenshteinEditDistance(30))
+        #
+        # Greedily swap words with "Word Importance Ranking".
+        #
+        search_method = GreedyWordSwapWIR(wir_method="unk")
+
+        return Attack(goal_function, constraints, transformation, search_method)

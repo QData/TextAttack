@@ -48,7 +48,7 @@ class TrainModelCommand(TextAttackCommand):
             default="yelp",
             help="dataset for training; will be loaded from "
             "`nlp` library. if dataset has a subset, separate with a colon. "
-            " ex: `glue:sst2` or `rotten_tomatoes`",
+            " ex: `glue^sst2` or `rotten_tomatoes`",
         )
         parser.add_argument(
             "--pct-dataset",

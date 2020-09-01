@@ -2,6 +2,7 @@ import os
 
 import textattack
 from textattack.commands.attack.attack_args import ATTACK_RECIPE_NAMES
+from textattack.commands.attack.attack_args_helpers import ARGS_SPLIT_TOKEN
 from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 
 logger = textattack.shared.logger
@@ -31,7 +32,7 @@ def prepare_dataset_for_training(nlp_dataset):
 def dataset_from_args(args):
     """Returns a tuple of ``HuggingFaceNlpDataset`` for the train and test
     datasets for ``args.dataset``."""
-    dataset_args = args.dataset.split(":")
+    dataset_args = args.dataset.split(ARGS_SPLIT_TOKEN)
     # TODO `HuggingFaceNlpDataset` -> `HuggingFaceDataset`
     if args.dataset_train_split:
         train_dataset = textattack.datasets.HuggingFaceNlpDataset(
@@ -173,7 +174,11 @@ def augmenter_from_args(args):
 def write_readme(args, best_eval_score, best_eval_score_epoch):
     # Save args to file
     readme_save_path = os.path.join(args.output_dir, "README.md")
-    dataset_name = args.dataset.split(":")[0] if ":" in args.dataset else args.dataset
+    dataset_name = (
+        args.dataset.split(ARGS_SPLIT_TOKEN)[0]
+        if ARGS_SPLIT_TOKEN in args.dataset
+        else args.dataset
+    )
     task_name = "regression" if args.do_regression else "classification"
     loss_func = "mean squared error" if args.do_regression else "cross-entropy"
     metric_name = "pearson correlation" if args.do_regression else "accuracy"
