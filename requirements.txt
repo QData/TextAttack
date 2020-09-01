@@ -1,6 +1,6 @@
 bert-score
 editdistance
-flair==0.5.1
+flair==0.6.0.post1
 filelock
 language_tool_python
 lemminflect
