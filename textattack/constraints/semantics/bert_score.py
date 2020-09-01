@@ -7,8 +7,6 @@ To decide which two tokens to compare, it greedily chooses the most
 similar token from one text and matches it to a token in the second
 text.
 """
-import warnings
-
 import bert_score
 
 from textattack.constraints import Constraint
@@ -57,11 +55,7 @@ class BERTScore(Constraint):
         `reference_text` is lower than minimum BERT Score."""
         cand = transformed_text.text
         ref = reference_text.text
-        with warnings.catch_warnings():
-            # Catch the many warnings that the huggingface API throws when using
-            # BERT scorer.
-            warnings.filterwarnings("ignore")
-            result = self._bert_scorer.score([cand], [ref])
+        result = self._bert_scorer.score([cand], [ref])
         score = result[BERTScore.SCORE_TYPE2IDX[self.score_type]].item()
         if score >= self.min_bert_score:
             return True

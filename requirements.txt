@@ -1,4 +1,4 @@
-bert-score
+bert-score>=0.3.5
 editdistance
 flair==0.6.0.post1
 filelock
