@@ -198,6 +198,14 @@ class AttackedText:
             raise TypeError(
                 f"convert_from_original_idxs got invalid idxs type {type(idxs)}"
             )
+        # update length of original_index_map, when the length of AttackedText increased
+        while len(self.attack_attrs["original_index_map"]) < len(idxs):
+            missing_index = self.attack_attrs["original_index_map"][-1] + 1
+            while missing_index in self.attack_attrs["modified_indices"]:
+                missing_index += 1
+            self.attack_attrs["original_index_map"] = np.append(
+                self.attack_attrs["original_index_map"], [missing_index]
+            )
         return [self.attack_attrs["original_index_map"][i] for i in idxs]
 
     def replace_words_at_indices(self, indices, new_words):
