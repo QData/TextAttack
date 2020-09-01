@@ -4,12 +4,13 @@ from textattack.search_methods import GreedySearch
 from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
-    WordSwapContract,
-    WordSwapExtend,
-    WordSwapChangeNumber,
     WordSwapChangeLocation,
     WordSwapChangeName,
+    WordSwapChangeNumber,
+    WordSwapContract,
+    WordSwapExtend,
 )
+
 from .attack_recipe import AttackRecipe
 
 

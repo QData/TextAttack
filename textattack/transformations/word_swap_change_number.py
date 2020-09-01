@@ -1,6 +1,7 @@
+from num2words import num2words
 import numpy as np
 from word2number import w2n
-from num2words import num2words
+
 from textattack.transformations import Transformation
 
 

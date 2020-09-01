@@ -1,7 +1,8 @@
-import numpy as np
-from textattack.transformations import Transformation
 from flair.data import Sentence
 from flair.models import SequenceTagger
+import numpy as np
+
+from textattack.transformations import Transformation
 
 
 class WordSwapChangeName(Transformation):
