@@ -1,9 +1,0 @@
-from textattack.transformations import WordSwapHowNet
-from textattack.transformations import WordSwapInflections
-from textattack.shared import AttackedText
-
-t = WordSwapHowNet()
-t2 = WordSwapInflections()
-at = AttackedText('I want to walk as a child of the light')
-t(at)
-t2(AttackedText('A standard slice is caused by an open club face and an outside-to-in swing path. These combine to create the sidespin that causes the ball to go right. The more open the club face is at impact, the more sidespin the ball will have. The swing path determines the starting point of the slice. The more a golfer swings from outside-in, the more the ball will start left of the target before slicing right. A pull slice is caused by a severe outside-to-in swing path. A push slice is caused by an inside-to-out swing path with an open club face.'))
