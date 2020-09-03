@@ -69,7 +69,7 @@ or a specific command using, for example,
 textattack attack --help
 ```
 
-The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The[documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
 ### Running Attacks
 
@@ -127,7 +127,7 @@ Attacks on sequence-to-sequence models:
 
 #### Recipe Usage Examples
 
-Here are some exampes of testing attacks from the literature from the command-line:
+Here are some examples of testing attacks from the literature from the command-line:
 
 *TextFooler against BERT fine-tuned on SST-2:*
 ```bash
