@@ -3,10 +3,10 @@ from flair.models import SequenceTagger
 import numpy as np
 
 from textattack.shared.data import PERSON_NAMES
-from textattack.transformations import Transformation
+from textattack.transformations import WordSwap
 
 
-class WordSwapChangeName(Transformation):
+class WordSwapChangeName(WordSwap):
     def __init__(
         self, n=3, first_only=False, last_only=False, confidence_score=0.7, **kwargs
     ):
@@ -24,53 +24,30 @@ class WordSwapChangeName(Transformation):
         self.confidence_score = confidence_score
 
     def _get_transformations(self, current_text, indices_to_modify):
-        # really want to silent this line:
-        tagger = SequenceTagger.load("ner")
-
-        # TODO: move ner recognition to AttackedText
-        sentence = Sentence(current_text.text)
-        tagger.predict(sentence)
-        fir_name_idx = []
-        last_name_idx = []
-
-        # use flair to screen for actual names and eliminate false-positives
-        for token in sentence:
-            tag = token.get_tag("ner")
-            if tag.value == "B-PER" and tag.score > self.confidence_score:
-                fir_name_idx.append(token.idx - 1)
-            elif tag.value == "E-PER" and tag.score > self.confidence_score:
-                last_name_idx.append(token.idx - 1)
-
-        words = current_text.words
         transformed_texts = []
 
         for i in indices_to_modify:
-            word_to_replace = words[i]
+            word_to_replace = current_text.words[i]
+            word_to_replace_ner = current_text.ner_of_word_index(i)
+            replacement_words = self._get_replacement_words(
+                word_to_replace, word_to_replace_ner
+            )
+            for r in replacement_words:
+                transformed_texts.append(current_text.replace_word_at_index(i, r))
 
-            # search for first name replacement
-            if i in fir_name_idx and not self.last_only:
-                replacement_words = self._get_firstname(word_to_replace)
-                transformed_texts_idx = []
-                for r in replacement_words:
-                    if r == word_to_replace:
-                        continue
-                    transformed_texts_idx.append(
-                        current_text.replace_word_at_index(i, r)
-                    )
-                transformed_texts.extend(transformed_texts_idx)
+        # print(transformed_texts)
 
-            # search for last name replacement
-            elif i in last_name_idx and not self.first_only:
-                replacement_words = self._get_lastname(word_to_replace)
-                transformed_texts_idx = []
-                for r in replacement_words:
-                    if r == word_to_replace:
-                        continue
-                    transformed_texts_idx.append(
-                        current_text.replace_word_at_index(i, r)
-                    )
-                transformed_texts.extend(transformed_texts_idx)
         return transformed_texts
+
+    def _get_replacement_words(self, word, word_part_of_speech):
+
+        replacement_words = []
+        tag = word_part_of_speech
+        if tag.value == "B-PER" and tag.score > self.confidence_score:
+            replacement_words = self._get_firstname(word)
+        elif tag.value == "E-PER" and tag.score > self.confidence_score:
+            replacement_words = self._get_lastname(word)
+        return replacement_words
 
     def _get_lastname(self, word):
         """Return a list of random last names."""

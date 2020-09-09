@@ -55,23 +55,13 @@ class WordSwapChangeLocation(Transformation):
 
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
-        # TODO: move ner recognition to AttackedText
-        # really want to silent this line:
-        tagger = SequenceTagger.load("ner")
-        sentence = Sentence(current_text.text)
-        tagger.predict(sentence)
         location_idx = []
 
-        # pre-screen for actual locations, using flair
-        # summarize location idx into a list (location_idx)
-        for token in sentence:
-            tag = token.get_tag("ner")
-            if (
-                "LOC" in tag.value
-                and tag.score > self.confidence_score
-                and (token.idx - 1) in indices_to_modify
-            ):
-                location_idx.append(token.idx - 1)
+        for i in indices_to_modify:
+            word_to_replace = current_text.words[i]
+            tag = current_text.ner_of_word_index(i)
+            if "LOC" in tag.value and tag.score > self.confidence_score:
+                location_idx.append(i)
 
         # Combine location idx and words to a list ([0] is idx, [1] is location name)
         # For example, [1,2] to [ [1,2] , ["New York"] ]
@@ -98,6 +88,7 @@ class WordSwapChangeLocation(Transformation):
                 text = text.replace_word_at_index(idx[0], r)
 
                 transformed_texts.append(text)
+        print(transformed_texts)
         return transformed_texts
 
     def _get_new_location(self, word):

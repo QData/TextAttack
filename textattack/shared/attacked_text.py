@@ -48,6 +48,7 @@ class AttackedText:
         self._words = None
         self._words_per_input = None
         self._pos_tags = None
+        self._ner_tags = None
         # Format text inputs.
         self._text_input = OrderedDict([(k, v) for k, v in self._text_input.items()])
         if attack_attrs is None:
@@ -146,6 +147,31 @@ class AttackedText:
             f"Did not find word from index {desired_word_idx} in flair POS tag"
         )
 
+    def ner_of_word_index(self, desired_word_idx):
+        """Returns the ner tag of the word at index `word_idx`.
+
+        Uses FLAIR ner tagger.
+        """
+        if not self._ner_tags:
+            sentence = Sentence(self.text)
+            textattack.shared.utils.flair_tag(sentence, "ner")
+            self._ner_tags = sentence
+        flair_word_list, flair_ner_list = textattack.shared.utils.zip_flair_result(
+            self._ner_tags, "ner"
+        )
+
+        for word_idx, word in enumerate(flair_word_list):
+            word_idx_in_flair_tags = flair_word_list.index(word)
+            if word_idx == desired_word_idx:
+                return flair_ner_list[word_idx_in_flair_tags]
+            else:
+                flair_word_list = flair_word_list[word_idx_in_flair_tags + 1 :]
+                flair_ner_list = flair_ner_list[word_idx_in_flair_tags + 1 :]
+
+        raise ValueError(
+            f"Did not find word from index {desired_word_idx} in flair POS tag"
+        )
+
     def _text_index_of_word_index(self, i):
         """Returns the index of word ``i`` in self.text."""
         pre_words = self.words[: i + 1]
@@ -231,6 +257,7 @@ class AttackedText:
             raise TypeError(
                 f"convert_from_original_idxs got invalid idxs type {type(idxs)}"
             )
+
         # update length of original_index_map, when the length of AttackedText increased
         while len(self.attack_attrs["original_index_map"]) < len(idxs):
             missing_index = self.attack_attrs["original_index_map"][-1] + 1
