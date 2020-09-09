@@ -11,9 +11,9 @@ extras = {}
 extras["docs"] = ["recommonmark", "nbsphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
 # Packages required for formatting code & running tests.
 extras["test"] = [
-    "black",
+    "black==20.8b1",
     "docformatter",
-    "isort==5.0.3",
+    "isort==5.4.2",
     "flake8",
     "pytest",
     "pytest-xdist",

@@ -22,7 +22,7 @@ copyright = "2020, UVA QData Lab"
 author = "UVA QData Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.8"
+release = "0.2.9"
 
 # Set master doc to `index.rst`.
 master_doc = "index"
@@ -54,6 +54,14 @@ exclude_patterns = ["_build", "**.ipynb_checkpoints"]
 # Mock expensive textattack imports. Docs imports are in `docs/requirements.txt`.
 autodoc_mock_imports = []
 
+# Output file base name for HTML help builder.
+htmlhelp_basename = "textattack_doc"
+html_theme_options = {
+    "logo_only": False,
+    "style_nav_header_background": "transparent",
+    "analytics_id": "UA-88637452-2",
+}
+
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
@@ -61,10 +69,10 @@ autodoc_mock_imports = []
 #
 html_theme = "sphinx_rtd_theme"
 
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = ["_static"]
+html_css_files = [
+    "css/custom.css",
+]
 
 # Path to favicon.
 html_favicon = "favicon.png"
