@@ -1,5 +1,3 @@
-from flair.data import Sentence
-from flair.models import SequenceTagger
 import numpy as np
 
 from textattack.shared.data import PERSON_NAMES
@@ -34,8 +32,6 @@ class WordSwapChangeName(WordSwap):
             )
             for r in replacement_words:
                 transformed_texts.append(current_text.replace_word_at_index(i, r))
-
-        # print(transformed_texts)
 
         return transformed_texts
 

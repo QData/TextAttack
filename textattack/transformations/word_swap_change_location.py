@@ -1,5 +1,3 @@
-from flair.data import Sentence
-from flair.models import SequenceTagger
 import numpy as np
 
 from textattack.shared.data import NAMED_ENTITIES
@@ -58,7 +56,6 @@ class WordSwapChangeLocation(Transformation):
         location_idx = []
 
         for i in indices_to_modify:
-            word_to_replace = current_text.words[i]
             tag = current_text.ner_of_word_index(i)
             if "LOC" in tag.value and tag.score > self.confidence_score:
                 location_idx.append(i)
