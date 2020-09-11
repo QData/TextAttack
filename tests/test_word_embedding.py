@@ -13,7 +13,7 @@ def test_embedding_paragramcf():
 
 def test_embedding_or_type_required():
     with pytest.raises(ValueError):
-        word_embedding = WordEmbedding(embedding_type=None, embeddings=None)
+        WordEmbedding(embedding_type=None, embeddings=None)
 
 
 def test_embedding_custom_lookup():
