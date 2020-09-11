@@ -51,11 +51,11 @@ class WordEmbedding:
             raise ValueError(f"Could not find word embedding {embedding_type}")
 
         # Download embeddings if they're not cached.
-        word_embeddings_root_path = textattack.shared.utils.download_if_needed(
-            WordEmbedding.PATH
-        )
         word_embeddings_folder = os.path.join(
-            word_embeddings_root_path, word_embeddings_folder
+            WordEmbedding.PATH, word_embeddings_folder
+        )
+        word_embeddings_folder = textattack.shared.utils.download_if_needed(
+            word_embeddings_folder
         )
 
         # Concatenate folder names to create full path to files.
