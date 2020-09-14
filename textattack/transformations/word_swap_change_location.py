@@ -1,28 +1,8 @@
+import more_itertools as mit
 import numpy as np
 
 from textattack.shared.data import NAMED_ENTITIES
 from textattack.transformations import Transformation
-
-
-def cluster_idx(idx_ls):
-    """Given a list of idx, return a list that contains sub-lists of adjacent
-    idx."""
-
-    if len(idx_ls) < 2:
-        return [[i] for i in idx_ls]
-    else:
-        output = [[idx_ls[0]]]
-        prev = idx_ls[0]
-        list_pos = 0
-
-        for idx in idx_ls[1:]:
-            if idx - 1 == prev:
-                output[list_pos].append(idx)
-            else:
-                output.append([idx])
-                list_pos += 1
-            prev = idx
-        return output
 
 
 def idx_to_words(ls, words):
@@ -62,13 +42,13 @@ class WordSwapChangeLocation(Transformation):
 
         # Combine location idx and words to a list ([0] is idx, [1] is location name)
         # For example, [1,2] to [ [1,2] , ["New York"] ]
-        location_idx = cluster_idx(location_idx)
+        location_idx = [list(group) for group in mit.consecutive_groups(location_idx)]
         location_words = idx_to_words(location_idx, words)
 
         transformed_texts = []
         for location in location_words:
             idx = location[0]
-            word = location[1]
+            word = location[1].capitalize()
             replacement_words = self._get_new_location(word)
             for r in replacement_words:
                 if r == word:
@@ -85,7 +65,6 @@ class WordSwapChangeLocation(Transformation):
                 text = text.replace_word_at_index(idx[0], r)
 
                 transformed_texts.append(text)
-        print(transformed_texts)
         return transformed_texts
 
     def _get_new_location(self, word):

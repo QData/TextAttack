@@ -1,3 +1,4 @@
+import more_itertools as mit
 from num2words import num2words
 import numpy as np
 from word2number import w2n
@@ -19,30 +20,9 @@ def idx_to_words(ls, words):
     return output
 
 
-def cluster_idx(idx_ls):
-    """Given a list of idx, return a list that contains sub-lists of adjacent
-    idx."""
-
-    if len(idx_ls) < 2:
-        return [[i] for i in idx_ls]
-    else:
-        output = [[idx_ls[0]]]
-        prev = idx_ls[0]
-        list_pos = 0
-
-        for idx in idx_ls[1:]:
-            if idx - 1 == prev:
-                output[list_pos].append(idx)
-            else:
-                output.append([idx])
-                list_pos += 1
-            prev = idx
-        return output
-
-
 class WordSwapChangeNumber(Transformation):
     def __init__(self, max_change=1, n=3, **kwargs):
-        """A transformation that recognize numbers in sentence, and return
+        """A transformation that recognizes numbers in sentence, and returns
         sentences with altered numbers.
 
         :param max_change: Maximum percent of change (1 being 100%)
@@ -73,14 +53,12 @@ class WordSwapChangeNumber(Transformation):
                 num_words.append([[idx], word])
 
         # cluster adjacent indexes to get whole number
-        num_idx = cluster_idx(num_idx)
+        num_idx = [list(group) for group in mit.consecutive_groups(num_idx)]
         num_words += idx_to_words(num_idx, words)
 
         # replace original numbers with new numbers
         transformed_texts = []
-        for num_word in num_words:
-            idx = num_word[0]
-            word = num_word[1]
+        for (idx, word) in num_words:
             replacement_words = self._get_new_number(word)
             for r in replacement_words:
                 if r == word:
@@ -91,7 +69,6 @@ class WordSwapChangeNumber(Transformation):
                     for i in idx[1:]:
                         text = text.delete_word_at_index(index)
                 transformed_texts.append(text)
-
         return transformed_texts
 
     def _get_new_number(self, word):
@@ -111,8 +88,8 @@ class WordSwapChangeNumber(Transformation):
                 return []
 
     def _alter_number(self, num):
-        """helper function of _get_new_number, change number base on
-        self.max_change."""
+        """helper function of _get_new_number, replace a number with another
+        random number within the range of self.max_change."""
         if num not in [0, 2, 4]:
             change = int(num * self.max_change) + 1
             if num >= 0:

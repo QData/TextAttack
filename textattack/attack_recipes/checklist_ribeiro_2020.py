@@ -14,19 +14,17 @@ from textattack.transformations import (
 from .attack_recipe import AttackRecipe
 
 
-class Checklist2020(AttackRecipe):
+class CheckList2020(AttackRecipe):
     """An implementation of the attack used in "Beyond Accuracy: Behavioral
-    Testing of NLP models with CheckList", Ribeiro et al., 2020.".
+    Testing of NLP models with CheckList", Ribeiro et al., 2020.
     This attack focuses on a number of attacks used in the Invariance Testing
     Method:
         - Contraction
         - Extension
         - Changing Names, Number, Location
-        - possibly negation (not yet implemented)
-    The idea is to alter elements of the sentence without actually changing the semantic of the sentence
     https://arxiv.org/abs/2005.04118
+
     :param model: Model to attack.
-    :param max_num_word_swaps: Maximum number of modifications to allow.
     """
 
     @staticmethod
