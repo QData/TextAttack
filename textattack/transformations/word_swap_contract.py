@@ -34,5 +34,5 @@ class WordSwapContract(Transformation):
                 )
                 transformed_text = transformed_text.delete_word_at_index(next_idx)
                 transformed_texts.append(transformed_text)
-        print(transformed_texts)
+
         return transformed_texts

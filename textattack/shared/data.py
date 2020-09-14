@@ -24,4 +24,3 @@ EXTENSION_MAP = {"ain't": "isn't", "aren't": 'are not', "can't": 'cannot', "can'
 
 # fmt: on
 
-print(EXTENSION_MAP)
