@@ -32,6 +32,7 @@ jobs:
         pip install ipython --upgrade # needed for Github for whatever reason
         python setup.py install_egg_info # Workaround https://github.com/pypa/pip/issues/4537
         pip install -e . ".[dev]" # This should install all packages for development
+        pip install jupyter 'ipykernel<5.0.0' 'ipython<7.0.0' # ipykernel workaround: github.com/jupyter/notebook/issues/4050
     - name: Build docs with Sphinx and check for errors
       run: |
         sphinx-build -b html docs docs/_build/html -W
