@@ -278,13 +278,14 @@ class Attack:
         Returns:
             results (Iterable[GoalFunctionResult]): an iterable of GoalFunctionResults of the original examples
         """
-        indices = indices or range(len(dataset))
-        if not isinstance(indices, deque):
-            indices = deque(sorted(indices))
 
         if not indices:
             return
             yield
+
+        indices = indices or range(len(dataset))
+        if not isinstance(indices, deque):
+            indices = deque(sorted(indices))
 
         while indices:
             i = indices.popleft()
