@@ -4,4 +4,5 @@ from .recipes import (
     EmbeddingAugmenter,
     CharSwapAugmenter,
     EasyDataAugmenter,
+    CheckListAugmenter,
 )

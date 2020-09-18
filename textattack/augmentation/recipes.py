@@ -142,3 +142,29 @@ class CharSwapAugmenter(Augmenter):
             ]
         )
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
+
+
+class CheckListAugmenter(Augmenter):
+    def __init__(self, **kwargs):
+        from textattack.transformations import (
+            CompositeTransformation,
+            WordSwapChangeLocation,
+            WordSwapChangeName,
+            WordSwapChangeNumber,
+            WordSwapContract,
+            WordSwapExtend,
+        )
+
+        transformation = CompositeTransformation(
+            [
+                WordSwapChangeNumber(),
+                WordSwapChangeLocation(),
+                WordSwapChangeName(),
+                WordSwapExtend(),
+                WordSwapContract(),
+            ]
+        )
+
+        constraints = [DEFAULT_CONSTRAINTS[0]]
+
+        super().__init__(transformation, constraints=constraints, **kwargs)
