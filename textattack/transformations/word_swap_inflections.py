@@ -19,6 +19,7 @@ class WordSwapInflections(WordSwap):
         self._flair_to_lemminflect_pos_map = {"NN": "NOUN", "VB": "VERB", "JJ": "ADJ"}
 
     def _get_replacement_words(self, word, word_part_of_speech):
+
         if word_part_of_speech not in self._flair_to_lemminflect_pos_map:
             # Only nouns, verbs, and adjectives have proper inflections.
             return []

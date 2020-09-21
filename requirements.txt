@@ -22,3 +22,5 @@ tokenizers==0.8.1-rc1
 tqdm
 visdom
 wandb
+word2number
+num2words
