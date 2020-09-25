@@ -19,10 +19,7 @@ class CheckList2020(AttackRecipe):
     Testing of NLP models with CheckList", Ribeiro et al., 2020.
 
     This attack focuses on a number of attacks used in the Invariance Testing
-    Method:
-        Contraction
-        Extension
-        Changing Names, Number, Location
+    Method: Contraction, Extension, Changing Names, Number, Location
 
     https://arxiv.org/abs/2005.04118
     """
