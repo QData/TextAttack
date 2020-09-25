@@ -52,7 +52,7 @@ BERT-Attack: (BERT-Attack: Adversarial Attack Against BERT Using BERT)
 CheckList(INV): (Beyond Accuracy: Behavioral Testing of NLP models with CheckList)
 *************************************************************************
 
-.. automodule:: textattack/attack_recipes/checklist_ribeiro_2020.py
+.. automodule:: textattack/attack_recipes/checklist_ribeiro_2020
    :members:
 
 DeepWordBug (Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers)
