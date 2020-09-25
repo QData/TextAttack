@@ -15,17 +15,16 @@ from .attack_recipe import AttackRecipe
 
 
 class CheckList2020(AttackRecipe):
-    
     """An implementation of the attack used in "Beyond Accuracy: Behavioral
     Testing of NLP models with CheckList", Ribeiro et al., 2020.
+    
     This attack focuses on a number of attacks used in the Invariance Testing
     Method:
         - Contraction
         - Extension
         - Changing Names, Number, Location
+        
     https://arxiv.org/abs/2005.04118
-
-    :param model: Model to attack.
     """
 
     @staticmethod
