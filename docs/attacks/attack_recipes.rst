@@ -50,7 +50,7 @@ BERT-Attack: (BERT-Attack: Adversarial Attack Against BERT Using BERT)
    :members:
    
 CheckList(INV): (Beyond Accuracy: Behavioral Testing of NLP models with CheckList)
-*************************************************************************
+***********************************************************************************
 
 .. automodule:: textattack.attack_recipes.checklist_ribeiro_2020
    :members:
