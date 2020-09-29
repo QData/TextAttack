@@ -24,3 +24,4 @@ visdom
 wandb
 word2number
 num2words
+more-itertools
