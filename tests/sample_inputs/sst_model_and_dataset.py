@@ -9,6 +9,6 @@ model = transformers.AutoModelForSequenceClassification.from_pretrained(model_pa
 
 model = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
 
-dataset = textattack.datasets.HuggingFaceNlpDataset(
+dataset = textattack.datasets.HuggingFaceDataset(
     "glue", subset="sst2", split="train", shuffle=False
 )

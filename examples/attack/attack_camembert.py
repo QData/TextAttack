@@ -1,5 +1,5 @@
 from textattack.attack_recipes import PWWSRen2019
-from textattack.datasets import HuggingFaceNlpDataset
+from textattack.datasets import HuggingFaceDataset
 from textattack.models.wrappers import ModelWrapper
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
 
@@ -54,7 +54,7 @@ recipe = PWWSRen2019.build(model_wrapper)
 
 recipe.transformation.language = "fra"
 
-dataset = HuggingFaceNlpDataset("allocine", split="test")
+dataset = HuggingFaceDataset("allocine", split="test")
 for idx, result in enumerate(recipe.attack_dataset(dataset)):
     print(("-" * 20), f"Result {idx+1}", ("-" * 20))
     print(result.__str__(color_method="ansi"))
