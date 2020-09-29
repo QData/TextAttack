@@ -1,20 +1,20 @@
 import collections
 
-import nlp
+import datasets
 import numpy as np
 
-from textattack.datasets import HuggingFaceNlpDataset
+from textattack.datasets import HuggingFaceDataset
 
 
-class TedMultiTranslationDataset(HuggingFaceNlpDataset):
-    """Loads examples from the Ted Talk translation dataset using the `nlp`
-    package.
+class TedMultiTranslationDataset(HuggingFaceDataset):
+    """Loads examples from the Ted Talk translation dataset using the
+    `datasets` package.
 
     dataset source: http://www.cs.jhu.edu/~kevinduh/a/multitarget-tedtalks/
     """
 
     def __init__(self, source_lang="en", target_lang="de", split="test"):
-        self._dataset = nlp.load_dataset("ted_multi")[split]
+        self._dataset = datasets.load_dataset("ted_multi")[split]
         self.examples = self._dataset["translations"]
         language_options = set(self.examples[0]["language"])
         if source_lang not in language_options:

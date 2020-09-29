@@ -122,7 +122,7 @@ def set_cache_dir(cache_dir):
     os.environ["TFHUB_CACHE_DIR"] = cache_dir
     # HuggingFace `transformers` cache directory
     os.environ["PYTORCH_TRANSFORMERS_CACHE"] = cache_dir
-    # HuggingFace `nlp` cache directory
+    # HuggingFace `datasets` cache directory
     os.environ["HF_HOME"] = cache_dir
     # Basic directory for Linux user-specific non-data files
     os.environ["XDG_CACHE_HOME"] = cache_dir
