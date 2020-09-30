@@ -349,7 +349,7 @@ def parse_dataset_from_args(args):
     # Automatically detect dataset for huggingface & textattack models.
     # This allows us to use the --model shortcut without specifying a dataset.
     if args.model in HUGGINGFACE_DATASET_BY_MODEL:
-        _, args.dataset_from_datasets = HUGGINGFACE_DATASET_BY_MODEL[args.model]
+        _, args.dataset_from_huggingface = HUGGINGFACE_DATASET_BY_MODEL[args.model]
     elif args.model in TEXTATTACK_DATASET_BY_MODEL:
         _, dataset = TEXTATTACK_DATASET_BY_MODEL[args.model]
         if dataset[0].startswith("textattack"):
@@ -358,7 +358,7 @@ def parse_dataset_from_args(args):
             dataset = eval(f"{dataset[0]}")(*dataset[1:])
             return dataset
         else:
-            args.dataset_from_datasets = dataset
+            args.dataset_from_huggingface = dataset
     # Automatically detect dataset for models trained with textattack.
     elif args.model and os.path.exists(args.model):
         model_args_json_path = os.path.join(args.model, "train_args.json")
@@ -372,7 +372,7 @@ def parse_dataset_from_args(args):
                 name, subset = model_train_args["dataset"].split(ARGS_SPLIT_TOKEN)
             else:
                 name, subset = model_train_args["dataset"], None
-            args.dataset_from_datasets = (
+            args.dataset_from_huggingface = (
                 name,
                 subset,
                 model_train_args["dataset_dev_split"],
@@ -403,8 +403,8 @@ def parse_dataset_from_args(args):
             raise AttributeError(
                 f"``dataset`` not found in module {args.dataset_from_file}"
             )
-    elif args.dataset_from_datasets:
-        dataset_args = args.dataset_from_datasets
+    elif args.dataset_from_huggingface:
+        dataset_args = args.dataset_from_huggingface
         if isinstance(dataset_args, str):
             if ARGS_SPLIT_TOKEN in dataset_args:
                 dataset_args = dataset_args.split(ARGS_SPLIT_TOKEN)
