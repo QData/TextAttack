@@ -64,7 +64,7 @@ def add_dataset_args(parser):
     """
     dataset_group = parser.add_mutually_exclusive_group()
     dataset_group.add_argument(
-        "--dataset-from-datasets",
+        "--dataset-from-huggingface",
         type=str,
         required=False,
         default=None,

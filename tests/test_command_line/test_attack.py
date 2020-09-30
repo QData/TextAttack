@@ -43,7 +43,7 @@ attack_test_params = [
         (
             "textattack attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
-            "--dataset-from-datasets glue^sst2^train --recipe deepwordbug --num-examples 3 "
+            "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
             "--shuffle=False"
         ),
         "tests/sample_outputs/run_attack_transformers_datasets.txt",

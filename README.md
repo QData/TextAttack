@@ -227,7 +227,7 @@ textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 -
 
 ### `textattack peek-dataset`
 
-To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-datasets snli` will show information about the SNLI dataset from the NLP package.
+To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
 
 
 ### `textattack list`
@@ -268,11 +268,11 @@ and datasets from the [`datasets` package](https://github.com/huggingface/datase
 and attacking a pre-trained model and dataset:
 
 ```bash
-textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-datasets glue^sst2 --recipe deepwordbug --num-examples 10
+textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-huggingface glue^sst2 --recipe deepwordbug --num-examples 10
 ```
 
 You can explore other pre-trained models using the `--model-from-huggingface` argument, or other datasets by changing 
-`--dataset-from-datasets`.
+`--dataset-from-huggingface`.
 
 
 #### Loading a model or dataset from a file

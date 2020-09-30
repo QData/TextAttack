@@ -131,6 +131,6 @@ whatever dataset you're working with. Whether you're loading a dataset of your
 own from a file, or one from NLP, you can use `textattack peek-dataset` to 
 see some basic information about the dataset.
 
-For example, use `textattack peek-dataset --dataset-from-datasets glue^mrpc` to see
+For example, use `textattack peek-dataset --dataset-from-huggingface glue^mrpc` to see
 information about the MRPC dataset (from the GLUE set of datasets). This will
 print statistics like the number of labels, average number of words, etc.
