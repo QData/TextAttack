@@ -142,3 +142,41 @@ class CharSwapAugmenter(Augmenter):
             ]
         )
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
+
+
+class CheckListAugmenter(Augmenter):
+    """Augments words by using the transformation methods provided by CheckList
+    INV testing, which combines:
+
+    - Name Replacement
+    - Location Replacement
+    - Number Alteration
+    - Contraction/Extension
+
+    "Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)
+    https://arxiv.org/abs/2005.04118
+    """
+
+    def __init__(self, **kwargs):
+        from textattack.transformations import (
+            CompositeTransformation,
+            WordSwapChangeLocation,
+            WordSwapChangeName,
+            WordSwapChangeNumber,
+            WordSwapContract,
+            WordSwapExtend,
+        )
+
+        transformation = CompositeTransformation(
+            [
+                WordSwapChangeNumber(),
+                WordSwapChangeLocation(),
+                WordSwapChangeName(),
+                WordSwapExtend(),
+                WordSwapContract(),
+            ]
+        )
+
+        constraints = [DEFAULT_CONSTRAINTS[0]]
+
+        super().__init__(transformation, constraints=constraints, **kwargs)

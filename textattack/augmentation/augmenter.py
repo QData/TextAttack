@@ -32,9 +32,7 @@ class Augmenter:
         assert (
             transformations_per_example > 0
         ), "transformations_per_example must be a positive integer"
-        assert (
-            pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
-        ), "pct_words_to_swap must be in [0., 1.]"
+        assert 0.0 <= pct_words_to_swap <= 1.0, "pct_words_to_swap must be in [0., 1.]"
         self.transformation = transformation
         self.pct_words_to_swap = pct_words_to_swap
         self.transformations_per_example = transformations_per_example
@@ -56,7 +54,8 @@ class Augmenter:
             if C.compare_against_original:
                 if not original_text:
                     raise ValueError(
-                        f"Missing `original_text` argument when constraint {type(C)} is set to compare against `original_text`"
+                        f"Missing `original_text` argument when constraint {type(C)} is set to compare against "
+                        f"`original_text` "
                     )
 
                 transformed_texts = C.call_many(transformed_texts, original_text)
