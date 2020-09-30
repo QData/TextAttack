@@ -4,7 +4,7 @@ import pytest
 eval_test_params = [
     (
         "eval_model_hub_rt",
-        "textattack eval --model-from-huggingface textattack/distilbert-base-uncased-rotten-tomatoes --dataset-from-nlp rotten_tomatoes --num-examples 4",
+        "textattack eval --model-from-huggingface textattack/distilbert-base-uncased-rotten-tomatoes --dataset-from-huggingface rotten_tomatoes --num-examples 4",
         "tests/sample_outputs/eval_model_hub_rt.txt",
     ),
     (

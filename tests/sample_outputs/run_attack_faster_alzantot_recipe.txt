@@ -1,4 +1,4 @@
-Attack(
+/.*/Attack(
   (search_method): AlzantotGeneticAlgorithm(
     (pop_size):  60
     (max_iters):  20

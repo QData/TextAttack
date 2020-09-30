@@ -1,4 +1,4 @@
 from .dataset import TextAttackDataset
-from .huggingface_nlp_dataset import HuggingFaceNlpDataset
+from .huggingface_dataset import HuggingFaceDataset
 
 from . import translation

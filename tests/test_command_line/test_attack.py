@@ -43,10 +43,10 @@ attack_test_params = [
         (
             "textattack attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
-            "--dataset-from-nlp glue^sst2^train --recipe deepwordbug --num-examples 3 "
+            "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
             "--shuffle=False"
         ),
-        "tests/sample_outputs/run_attack_transformers_nlp.txt",
+        "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
     #
     # test running an attack by loading a model and dataset from file
@@ -59,7 +59,7 @@ attack_test_params = [
             "--dataset-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--recipe deepwordbug --num-examples 3 --shuffle=False"
         ),
-        "tests/sample_outputs/run_attack_transformers_nlp.txt",
+        "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
     #
     # test hotflip on 10 samples from LSTM MR

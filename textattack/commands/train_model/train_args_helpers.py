@@ -8,8 +8,9 @@ from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
 logger = textattack.shared.logger
 
 
-def prepare_dataset_for_training(nlp_dataset):
-    """Changes an `nlp` dataset into the proper format for tokenization."""
+def prepare_dataset_for_training(datasets_dataset):
+    """Changes an `datasets` dataset into the proper format for
+    tokenization."""
 
     def prepare_example_dict(ex):
         """Returns the values in order corresponding to the data.
@@ -25,22 +26,22 @@ def prepare_dataset_for_training(nlp_dataset):
             return values[0]
         return tuple(values)
 
-    text, outputs = zip(*((prepare_example_dict(x[0]), x[1]) for x in nlp_dataset))
+    text, outputs = zip(*((prepare_example_dict(x[0]), x[1]) for x in datasets_dataset))
     return list(text), list(outputs)
 
 
 def dataset_from_args(args):
-    """Returns a tuple of ``HuggingFaceNlpDataset`` for the train and test
+    """Returns a tuple of ``HuggingFaceDataset`` for the train and test
     datasets for ``args.dataset``."""
     dataset_args = args.dataset.split(ARGS_SPLIT_TOKEN)
-    # TODO `HuggingFaceNlpDataset` -> `HuggingFaceDataset`
+    # TODO `HuggingFaceDataset` -> `HuggingFaceDataset`
     if args.dataset_train_split:
-        train_dataset = textattack.datasets.HuggingFaceNlpDataset(
+        train_dataset = textattack.datasets.HuggingFaceDataset(
             *dataset_args, split=args.dataset_train_split
         )
     else:
         try:
-            train_dataset = textattack.datasets.HuggingFaceNlpDataset(
+            train_dataset = textattack.datasets.HuggingFaceDataset(
                 *dataset_args, split="train"
             )
             args.dataset_train_split = "train"
@@ -49,31 +50,31 @@ def dataset_from_args(args):
     train_text, train_labels = prepare_dataset_for_training(train_dataset)
 
     if args.dataset_dev_split:
-        eval_dataset = textattack.datasets.HuggingFaceNlpDataset(
+        eval_dataset = textattack.datasets.HuggingFaceDataset(
             *dataset_args, split=args.dataset_dev_split
         )
     else:
         # try common dev split names
         try:
-            eval_dataset = textattack.datasets.HuggingFaceNlpDataset(
+            eval_dataset = textattack.datasets.HuggingFaceDataset(
                 *dataset_args, split="dev"
             )
             args.dataset_dev_split = "dev"
         except KeyError:
             try:
-                eval_dataset = textattack.datasets.HuggingFaceNlpDataset(
+                eval_dataset = textattack.datasets.HuggingFaceDataset(
                     *dataset_args, split="eval"
                 )
                 args.dataset_dev_split = "eval"
             except KeyError:
                 try:
-                    eval_dataset = textattack.datasets.HuggingFaceNlpDataset(
+                    eval_dataset = textattack.datasets.HuggingFaceDataset(
                         *dataset_args, split="validation"
                     )
                     args.dataset_dev_split = "validation"
                 except KeyError:
                     try:
-                        eval_dataset = textattack.datasets.HuggingFaceNlpDataset(
+                        eval_dataset = textattack.datasets.HuggingFaceDataset(
                             *dataset_args, split="test"
                         )
                         args.dataset_dev_split = "test"
@@ -189,7 +190,7 @@ def write_readme(args, best_eval_score, best_eval_score_epoch):
 ## TextAttack Model Card
 
 This `{args.model}` model was fine-tuned for sequence classification using TextAttack
-and the {dataset_name} dataset loaded using the `nlp` library. The model was fine-tuned
+and the {dataset_name} dataset loaded using the `datasets` library. The model was fine-tuned
 for {args.num_train_epochs} epochs with a batch size of {args.batch_size}, a learning
 rate of {args.learning_rate}, and a maximum sequence length of {args.max_length}.
 Since this was a {task_name} task, the model was trained with a {loss_func} loss function.
