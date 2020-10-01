@@ -168,7 +168,7 @@ For example, given the following as `examples.csv`:
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap 4 --transformations-per-example 2 --exclude-original`
+The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap 0.1 --transformations-per-example 2 --exclude-original`
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
