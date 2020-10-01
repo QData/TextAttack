@@ -12,6 +12,7 @@ pandas>=1.0.1
 scikit-learn
 scipy==1.4.1
 sentence_transformers>0.2.6
+stanza
 torch
 transformers==3.3.0
 tensorflow>=2

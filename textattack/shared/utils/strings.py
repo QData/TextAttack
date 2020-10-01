@@ -197,3 +197,26 @@ def zip_flair_result(pred, tag_type="pos-fast"):
             pos_list.append(token.get_tag("ner"))
 
     return word_list, pos_list
+
+
+def zip_stanza_result(pred, tagset="universal"):
+    """Takes the first sentence from a document from `stanza` and returns two
+    lists, one of words and the other of their corresponding parts-of-
+    speech."""
+    from stanza.models.common.doc import Document
+
+    if not isinstance(pred, Document):
+        raise TypeError("Result from Stanza POS tagger must be a `Document` object.")
+
+    word_list = []
+    pos_list = []
+
+    for sentence in pred.sentences:
+        for word in sentence.words:
+            word_list.append(word.text)
+            if tagset == "universal":
+                pos_list.append(word.upos)
+            else:
+                pos_list.append(word.xpos)
+
+    return word_list, pos_list
