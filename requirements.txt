@@ -7,18 +7,18 @@ lemminflect
 lru-dict
 datasets
 nltk
-numpy
+numpy<1.19.0 #TF 2.0 requires this
 pandas>=1.0.1
 scikit-learn
 scipy==1.4.1
 sentence_transformers>0.2.6
 torch
-transformers==3.0.2
+transformers==3.3.0
 tensorflow>=2
 tensorflow_hub
 tensorboardX
 terminaltables
-tokenizers==0.8.1-rc1
+tokenizers==0.8.1-rc2
 tqdm
 visdom
 wandb
