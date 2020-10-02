@@ -3,6 +3,7 @@ from flair.data import Sentence
 from flair.models import SequenceTagger
 import lru
 import nltk
+import stanza
 
 import textattack
 from textattack.constraints import Constraint
@@ -46,10 +47,11 @@ class PartOfSpeech(Constraint):
     of `<https://arxiv.org/abs/1907.11932>`_ adapted from
     `<https://github.com/jind11/TextFooler>`_.
 
-    POS tagger from Flair `<https://github.com/flairNLP/flair>` also available
+    POS taggers from Flair `<https://github.com/flairNLP/flair>`_ and
+    Stanza `<https://github.com/stanfordnlp/stanza>`_ are also available
 
     Args:
-        tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair").
+        tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair", "stanza").
         tagset (str): tagset to use for POS tagging
         allow_verb_noun_swap (bool): If `True`, allow verbs to be swapped with nouns and vice versa.
         compare_against_original (bool): If `True`, compare against the original text.
@@ -75,6 +77,11 @@ class PartOfSpeech(Constraint):
             else:
                 self._flair_pos_tagger = SequenceTagger.load("pos-fast")
 
+        if tagger_type == "stanza":
+            self._stanza_pos_tagger = stanza.Pipeline(
+                lang="en", processors="tokenize, pos", tokenize_pretokenized=True
+            )
+
     def clear_cache(self):
         self._pos_tag_cache.clear()
 
@@ -99,6 +106,11 @@ class PartOfSpeech(Constraint):
                 self._flair_pos_tagger.predict(context_key_sentence)
                 word_list, pos_list = textattack.shared.utils.zip_flair_result(
                     context_key_sentence
+                )
+
+            if self.tagger_type == "stanza":
+                word_list, pos_list = textattack.shared.utils.zip_stanza_result(
+                    self._stanza_pos_tagger(context_key), tagset=self.tagset
                 )
 
             self._pos_tag_cache[context_key] = (word_list, pos_list)
