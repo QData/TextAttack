@@ -16,6 +16,8 @@ Where should I start?
 
 This is a great question, and one we get a lot. First of all, almost everything in TextAttack can be done in two ways: via the command-line or via the Python API. If you're looking to integrate TextAttack into an existing project, the Python API is likely for you. If you'd prefer to use built-in functionality end-to-end (training a model, running an adversarial attack, augmenting a CSV) then you can just use the command-line API.
 
+For future developers, visit the `Installation <https://github.com/QData/TextAttack/blob/master/docs/quickstart/installation.rst>`__ page for more details about installing TextAttack onto your own computer. To start making contributions, read the detailed instructions `here <https://github.com/QData/TextAttack/blob/master/CONTRIBUTING.md>`__.
+
 TextAttack does three things very well:
 
 1. Adversarial attacks (Python: ``textattack.shared.Attack``, Bash: ``textattack attack``)

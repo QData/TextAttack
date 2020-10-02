@@ -278,7 +278,9 @@ class Attack:
         Returns:
             results (Iterable[GoalFunctionResult]): an iterable of GoalFunctionResults of the original examples
         """
-        indices = indices or range(len(dataset))
+        if indices is None:
+            indices = range(len(dataset))
+
         if not isinstance(indices, deque):
             indices = deque(sorted(indices))
 
