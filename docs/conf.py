@@ -16,7 +16,6 @@ import sys
 sys.path.insert(0, os.path.abspath(".."))
 
 # -- Project information -----------------------------------------------------
-
 project = "TextAttack"
 copyright = "2020, UVA QData Lab"
 author = "UVA QData Lab"
@@ -68,6 +67,9 @@ html_theme_options = {
 # a list of builtin themes.
 #
 html_theme = "sphinx_rtd_theme"
+html_theme_options = {
+    "collapse_navigation": False,
+}
 
 html_static_path = ["_static"]
 html_css_files = [
@@ -82,13 +84,3 @@ add_module_names = False
 
 # Sort members by group
 autodoc_member_order = "groupwise"
-
-
-html_theme_options = {
-    # Toc options
-    'collapse_navigation': False,
-    'sticky_navigation': True,
-    'navigation_depth': 4,
-    'includehidden': True,
-    'titles_only': False
-}
