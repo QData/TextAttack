@@ -3,6 +3,7 @@
 .. toctree::
    :maxdepth: 3
    :caption: About
+   :hidden:
 
    1start/basic-Intro.rst
    What is an adversarial attack in NLP? <1start/what_is_an_adversarial_attack.md>
