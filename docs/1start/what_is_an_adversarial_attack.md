@@ -1,4 +1,5 @@
-# What is an adversarial attack in NLP?
+What is an adversarial attack in NLP?
+=======================================
 
 *This documentation page was adapted from [a blog post we wrote about adversarial examples in NLP](https://towardsdatascience.com/what-are-adversarial-examples-in-nlp-f928c574478e).*
 

@@ -2,7 +2,6 @@
 
 .. toctree::
    :maxdepth: 3
-   :hidden:
    :caption: About
 
    1start/basic-Intro.rst
@@ -10,7 +9,6 @@
 
 .. toctree::
    :maxdepth: 1
-   :hidden:
    :caption: Get Started
 
    Installation <1start/installation>
@@ -19,7 +17,6 @@
  
 .. toctree::
    :maxdepth: 3
-   :hidden:
    :caption: Notebook Tutorials
    
    Tutorial 0: TextAttack End-To-End (Train, Eval, Attack) <2notebook/0_End_to_End.ipynb>
@@ -33,7 +30,6 @@
 
 .. toctree::
    :maxdepth: 3
-   :hidden:
    :caption: Recipes
    
    Attack Recipes: <3recipes/attack_recipes>   
