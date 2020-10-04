@@ -32,6 +32,14 @@
    
 
 .. toctree::
+   :maxdepth: 3
+   :hidden:
+   :caption: Recipes
+   
+   Attack Recipes: <3recipes/attack_recipes>   
+ 
+
+.. toctree::
    :glob:
    :titlesonly:
    :caption: API Reference
