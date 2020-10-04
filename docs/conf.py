@@ -82,3 +82,13 @@ add_module_names = False
 
 # Sort members by group
 autodoc_member_order = "groupwise"
+
+
+html_theme_options = {
+    # Toc options
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'navigation_depth': 4,
+    'includehidden': True,
+    'titles_only': False
+}
