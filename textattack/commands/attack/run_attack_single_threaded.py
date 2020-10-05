@@ -31,7 +31,7 @@ def run(args, checkpoint=None):
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "4"
     # Fix TensorFlow GPU memory growth
     import tensorflow as tf
 
