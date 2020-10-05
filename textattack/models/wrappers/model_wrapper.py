@@ -15,6 +15,10 @@ class ModelWrapper(ABC):
     def __call__(self, text_list):
         raise NotImplementedError()
 
+    @abstractmethod
+    def get_grad(self, text_input):
+        raise NotImplementedError()
+
     def tokenize(self, inputs):
         """Helper method that calls ``tokenizer.batch_encode`` if possible, and
         if not, falls back to calling ``tokenizer.encode`` for each input."""
