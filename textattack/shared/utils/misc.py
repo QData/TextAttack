@@ -100,14 +100,6 @@ def load_textattack_model_from_path(model_name, model_path):
         model = textattack.models.helpers.WordCNNForClassification(
             model_path=model_path, num_labels=num_labels
         )
-    elif model_name.startswith("bert"):
-        model_path, num_labels = model_path
-        textattack.shared.logger.info(
-            f"Loading pre-trained TextAttack BERT model: {colored_model_name}"
-        )
-        model = textattack.models.helpers.BERTForClassification(
-            model_path=model_path, num_labels=num_labels
-        )
     elif model_name.startswith("t5"):
         model = textattack.models.helpers.T5ForTextToText(model_path)
     else:

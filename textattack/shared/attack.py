@@ -114,6 +114,8 @@ class Attack:
             )
         )
         self.search_method.filter_transformations = self.filter_transformations
+        if not search_method.is_blackbox:
+            self.search_method.get_model = lambda: self.goal_function.model
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()

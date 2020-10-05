@@ -45,6 +45,7 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
         self.pop_size = pop_size
         self.post_turn_check = post_turn_check
         self.max_turn_retries = 20
+        self.is_blackbox = True
 
         self._search_over = False
         self.omega_1 = 0.8
@@ -328,6 +329,10 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
         """The genetic algorithm is specifically designed for word
         substitutions."""
         return transformation_consists_of_word_swaps(transformation)
+
+    @property
+    def is_blackbox(self):
+        return True
 
     def extra_repr_keys(self):
         return ["pop_size", "max_iters", "post_turn_check", "max_turn_retries"]

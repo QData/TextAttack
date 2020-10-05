@@ -28,6 +28,7 @@ class GreedyWordSwapWIR(SearchMethod):
 
     Args:
         wir_method: method for ranking most important words
+        model_wrapper: model wrapper used for gradient-based ranking
     """
 
     def __init__(self, wir_method="unk"):
@@ -44,6 +45,7 @@ class GreedyWordSwapWIR(SearchMethod):
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
+
         elif self.wir_method == "weighted-saliency":
             # first, compute word saliency
             leave_one_texts = [
@@ -74,12 +76,47 @@ class GreedyWordSwapWIR(SearchMethod):
                 delta_ps.append(max_score_change)
 
             index_scores = softmax_saliency_scores * np.array(delta_ps)
+
         elif self.wir_method == "delete":
             leave_one_texts = [
                 initial_text.delete_word_at_index(i) for i in range(len_text)
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
+
+        elif self.wir_method == "gradient":
+            victim_model = self.get_model()
+            index_scores = np.zeros(initial_text.num_words)
+            grad_output = victim_model.get_grad(initial_text.tokenizer_input)
+            gradient = grad_output["gradient"]
+            j = 0
+            last_matched = 0
+            for i, word in enumerate(initial_text.words):
+                word = initial_text.words[i].lower()
+                matched_tokens = []
+                a = []
+                while j < len(grad_output["tokens"]) and len(word) > 0:
+                    token = grad_output["tokens"][j].lower()
+                    # remove "##" if it's a subword
+                    token = token.replace("##", "")
+                    idx = word.find(token)
+                    if idx == 0:
+                        word = word[idx + len(token) :]
+                        matched_tokens.append(j)
+                        a.append(token)
+                        last_matched = j
+                    j += 1
+
+                if not matched_tokens:
+                    # Reset j to most recent match
+                    j = last_matched
+                    index_scores[i] = 0.0
+                else:
+                    agg_grad = np.mean(gradient[matched_tokens], axis=0)
+                    index_scores[i] = np.linalg.norm(agg_grad, ord=1)
+
+            search_over = False
+
         elif self.wir_method == "random":
             index_order = np.arange(len_text)
             np.random.shuffle(index_order)
@@ -145,6 +182,13 @@ class GreedyWordSwapWIR(SearchMethod):
         """Since it ranks words by their importance, GreedyWordSwapWIR is
         limited to word swap and deletion transformations."""
         return transformation_consists_of_word_swaps_and_deletions(transformation)
+
+    @property
+    def is_blackbox(self):
+        if self.wir_method == "gradient":
+            return False
+        else:
+            return True
 
     def extra_repr_keys(self):
         return ["wir_method"]
