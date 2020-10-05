@@ -1,0 +1,51 @@
+/.*/Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  gradient
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  15
+    (embedding_type):  paragramcf
+  )
+  (constraints): 
+    (0): RepeatModification
+    (1): StopwordModification
+  (is_black_box):  True
+) 
+/.*/
+--------------------------------------------- Result 1 ---------------------------------------------
+[92mPositive (100%)[0m --> [91m[FAILED][0m
+
+scherfig's light-hearted profile of emotional desperation is achingly honest and delightfully cheeky .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92mPositive (100%)[0m --> [91mNegative (87%)[0m
+
+a journey [92mspanning[0m nearly three decades of bittersweet camaraderie and history , in which we feel that we truly know what makes holly and marina tick , and our hearts go out to them as both continue to [92mnegotiate[0m their [92mimperfect[0m , love-hate relationship .
+
+a journey [91mprolonging[0m nearly three decades of bittersweet camaraderie and history , in which we feel that we truly know what makes holly and marina tick , and our hearts go out to them as both continue to [91mbartering[0m their [91mdeficient[0m , love-hate relationship .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92mPositive (100%)[0m --> [91mNegative (99%)[0m
+
+the wonderfully lush morvern callar is [92mpure[0m punk existentialism , and ms . ramsay and her co-writer , liana dognini , have dramatized the alan warner novel , which itself felt like an answer to irvine welsh's book trainspotting .
+
+the wonderfully lush morvern callar is [91mmerely[0m punk existentialism , and ms . ramsay and her co-writer , liana dognini , have dramatized the alan warner novel , which itself felt like an answer to irvine welsh's book trainspotting .
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 1      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 33.33% |
+| Attack success rate:          | 66.67% |
+| Average perturbed word %:     | 5.13%  |
+| Average num. words per input: | 29.0   |
+| Avg num queries:              | 51.0   |
++-------------------------------+--------+
