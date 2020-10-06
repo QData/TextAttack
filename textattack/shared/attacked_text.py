@@ -125,7 +125,9 @@ class AttackedText:
         Uses FLAIR part-of-speech tagger.
         """
         if not self._pos_tags:
-            sentence = Sentence(self.text)
+            sentence = Sentence(
+                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+            )
             textattack.shared.utils.flair_tag(sentence)
             self._pos_tags = sentence
         flair_word_list, flair_pos_list = textattack.shared.utils.zip_flair_result(
@@ -153,7 +155,9 @@ class AttackedText:
         Uses FLAIR ner tagger.
         """
         if not self._ner_tags:
-            sentence = Sentence(self.text)
+            sentence = Sentence(
+                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+            )
             textattack.shared.utils.flair_tag(sentence, "ner")
             self._ner_tags = sentence
         flair_word_list, flair_ner_list = textattack.shared.utils.zip_flair_result(
