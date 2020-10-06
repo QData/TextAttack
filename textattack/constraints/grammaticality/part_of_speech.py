@@ -102,7 +102,9 @@ class PartOfSpeech(Constraint):
                 )
 
             if self.tagger_type == "flair":
-                context_key_sentence = Sentence(context_key)
+                context_key_sentence = Sentence(
+                    context_key, use_tokenizer=textattack.shared.utils.words_from_text
+                )
                 self._flair_pos_tagger.predict(context_key_sentence)
                 word_list, pos_list = textattack.shared.utils.zip_flair_result(
                     context_key_sentence
