@@ -184,7 +184,7 @@ class GreedyWordSwapWIR(SearchMethod):
         return transformation_consists_of_word_swaps_and_deletions(transformation)
 
     @property
-    def is_blackbox(self):
+    def is_black_box(self):
         if self.wir_method == "gradient":
             return False
         else:

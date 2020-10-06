@@ -33,7 +33,7 @@ class SearchMethod(ABC):
                 "Search Method must have access to filter_transformations method"
             )
 
-        if not self.is_blackbox and not hasattr(self, "get_model"):
+        if not self.is_black_box and not hasattr(self, "get_model"):
             raise AttributeError(
                 "Search Method must have access to get_model method if it is a white-box method"
             )
@@ -55,7 +55,7 @@ class SearchMethod(ABC):
         return True
 
     @property
-    def is_blackbox(self):
+    def is_black_box(self):
         """Returns `True` if search method does not require access to victim
         model's internal states."""
         raise NotImplementedError()

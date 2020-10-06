@@ -50,7 +50,7 @@ class BeamSearch(SearchMethod):
         return best_result
 
     @property
-    def is_blackbox(self):
+    def is_black_box(self):
         return True
 
     def extra_repr_keys(self):

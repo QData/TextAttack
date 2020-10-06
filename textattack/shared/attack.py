@@ -67,7 +67,9 @@ class Attack:
         self.transformation = transformation
         if not self.transformation:
             raise NameError("Cannot instantiate attack without transformation")
-        self.is_black_box = getattr(transformation, "is_black_box", True)
+        self.is_black_box = (
+            getattr(transformation, "is_black_box", True) or search_method.is_black_box
+        )
 
         if not self.search_method.check_transformation_compatibility(
             self.transformation
@@ -114,7 +116,7 @@ class Attack:
             )
         )
         self.search_method.filter_transformations = self.filter_transformations
-        if not search_method.is_blackbox:
+        if not search_method.is_black_box:
             self.search_method.get_model = lambda: self.goal_function.model
 
     def clear_cache(self, recursive=True):

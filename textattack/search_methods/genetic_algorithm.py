@@ -286,7 +286,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         return transformation_consists_of_word_swaps(transformation)
 
     @property
-    def is_blackbox(self):
+    def is_black_box(self):
         return True
 
     def extra_repr_keys(self):
