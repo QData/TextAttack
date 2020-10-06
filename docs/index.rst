@@ -35,7 +35,7 @@
    :caption: Recipes
    
    3recipes/attack_recipes  
-   3recipes/api-design-tips
+   3recipes/api-design-tips.md
 
 .. toctree::
    :glob:
