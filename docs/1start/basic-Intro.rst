@@ -32,14 +32,17 @@ All of the other components: datasets, models & model wrappers, loggers, transfo
 NLP Attacks
 -----------
 
-TextAttack provides a framework for constructing and thinking about attacks via perturbation in NLP. TextAttack builds attacks from four components:
+TextAttack provides a framework for constructing and thinking about generating inputs in NLP via perturbation attacks. 
+
+
+TextAttack builds attacks from four components:
 
 - `Goal Functions <api-attacks/goal_function.html>`__ stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
 - `Constraints <api-attacks/constraint.html>`__ determine if a potential perturbation is valid with respect to the original input.
 - `Transformations <api-attacks/transformation.html>`__ take a text input and transform it by inserting and deleting characters, words, and/or phrases.
 - `Search Methods <api-attacks/search_method.html>`__ explore the space of possible **transformations** within the defined **constraints** and attempt to find a successful perturbation which satisfies the **goal function**.
 
-TextAttack provides a set of `Attack Recipes <api-attacks/attack_recipes.html>`__ that assemble attacks from the literature from these four components. Take a look at these recipes (or our `paper on ArXiv <https://arxiv.org/abs/2005.05909>`__) to get a feel for how the four components work together to create an adversarial attack.
+TextAttack provides a set of `Attack Recipes <3recipes/attack_recipes.html>`__ that assemble attacks from the literature from these four components. Take a look at these recipes (or our `paper on ArXiv <https://arxiv.org/abs/2005.05909>`__) to get a feel for how the four components work together to create an adversarial attack.
 
 Data Augmentation
 --------------------

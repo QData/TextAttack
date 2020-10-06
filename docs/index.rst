@@ -6,7 +6,8 @@
    :hidden:
 
    1start/basic-Intro.rst
-   What is an adversarial attack in NLP? <1start/what_is_an_adversarial_attack.md>
+   1start/what_is_an_adversarial_attack.md
+   1start/references.md
 
 .. toctree::
    :maxdepth: 1
@@ -33,8 +34,8 @@
    :maxdepth: 3
    :caption: Recipes
    
-   Attack Recipes: <3recipes/attack_recipes>   
- 
+   3recipes/attack_recipes  
+   3recipes/api-design-tips
 
 .. toctree::
    :glob:
