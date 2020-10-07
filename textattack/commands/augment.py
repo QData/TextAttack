@@ -48,10 +48,15 @@ class AugmentCommand(TextAttackCommand):
                     break
 
                 elif text == "c":
-                    print(f"\nCurrent arguments: {args.recipe}, pct_words_to_swap: {args.pct_words_to_swap}, "
-                          f"transformations_per_example: {args.transformations_per_example}")
+                    print(
+                        f"\nCurrent Arguments:\n\n\t augmentation recipe: {args.recipe}, "
+                        f"\n\t pct_words_to_swap: {args.pct_words_to_swap}, "
+                        f"\n\t transformations_per_example: {args.transformations_per_example}\n"
+                    )
 
-                    change = input("Enter 'c' again to change arguments, any other keys to opt out\n")
+                    change = input(
+                        "Enter 'c' again to change arguments, any other keys to opt out\n"
+                    )
                     if change == "c":
                         print("\nChanging augmenter arguments...\n")
                         recipe = input(
@@ -75,10 +80,11 @@ class AugmentCommand(TextAttackCommand):
                             pct_words_to_swap=args.pct_words_to_swap,
                             transformations_per_example=args.transformations_per_example,
                         )
-                        print("--------------------------------------------------------")
+                        print(
+                            "--------------------------------------------------------"
+                        )
 
                     continue
-
 
                 elif not text:
                     continue
