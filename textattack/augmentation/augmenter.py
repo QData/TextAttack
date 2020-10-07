@@ -73,28 +73,31 @@ class Augmenter:
             int(self.pct_words_to_swap * len(attacked_text.words)), 1
         )
         for _ in range(self.transformations_per_example):
-            index_order = list(range(len(attacked_text.words)))
-            random.shuffle(index_order)
             current_text = attacked_text
-            words_swapped = 0
-            for i in index_order:
+            words_swapped = len(current_text.attack_attrs["modified_indices"])
+
+            while words_swapped <= num_words_to_swap:
                 transformed_texts = self.transformation(
-                    current_text, self.pre_transformation_constraints, [i]
+                    current_text, self.pre_transformation_constraints
                 )
                 # Get rid of transformations we already have
                 transformed_texts = [
                     t for t in transformed_texts if t not in all_transformed_texts
                 ]
+
                 # Filter out transformations that don't match the constraints.
                 transformed_texts = self._filter_transformations(
                     transformed_texts, current_text, original_text
                 )
+
+                # if there's no more transformed texts after filter, terminate
                 if not len(transformed_texts):
-                    continue
-                current_text = random.choice(transformed_texts)
-                words_swapped += 1
-                if words_swapped == num_words_to_swap:
                     break
+
+                current_text = random.choice(transformed_texts)
+
+                words_swapped = len(current_text.attack_attrs["modified_indices"])
+
             all_transformed_texts.add(current_text)
         return sorted([at.printable_text() for at in all_transformed_texts])
 
