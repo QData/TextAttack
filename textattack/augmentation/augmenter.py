@@ -80,11 +80,12 @@ class Augmenter:
                 transformed_texts = self.transformation(
                     current_text, self.pre_transformation_constraints
                 )
+                # print(1, transformed_texts)
                 # Get rid of transformations we already have
                 transformed_texts = [
                     t for t in transformed_texts if t not in all_transformed_texts
                 ]
-
+                # print(2, transformed_texts)
                 # Filter out transformations that don't match the constraints.
                 transformed_texts = self._filter_transformations(
                     transformed_texts, current_text, original_text
@@ -92,13 +93,17 @@ class Augmenter:
 
                 # if there's no more transformed texts after filter, terminate
                 if not len(transformed_texts):
+                    # print("break!!!")
                     break
 
                 current_text = random.choice(transformed_texts)
+                # print(3, current_text)
 
+                # update words_swapped based on modified indices
                 words_swapped = len(current_text.attack_attrs["modified_indices"])
 
             all_transformed_texts.add(current_text)
+            # print(all_transformed_texts)
         return sorted([at.printable_text() for at in all_transformed_texts])
 
     def augment_many(self, text_list, show_progress=False):
