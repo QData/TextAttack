@@ -42,8 +42,5 @@
    :titlesonly:
    :caption: API Reference
 
-   api-attacks/index
-   api-augmentation/index
-   api-datamodels/index
-   api-misc/index
+   api/index
 

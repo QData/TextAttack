@@ -1,8 +1,11 @@
+========================
 Models
-===============
+========================
 
-User-specified models
-=========================
+
+
+Models User-specified 
+--------------------------
 
 TextAttack allows users to provide their own models for testing. Models can be loaded in three ways: 
 
@@ -34,7 +37,8 @@ We've also provided implementations of model wrappers for common patterns in som
 
 
 Pre-trained models
-=====================
+--------------------------
+
 
 TextAttack also provides lots of pre-trained models for common tasks. Testing different attacks on the same model ensures attack comparisons are fair. 
 

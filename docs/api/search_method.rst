@@ -1,5 +1,5 @@
 =====================
-Search Method
+Search Methods
 =====================
 
 Search methods explore the transformation space in an attempt to find a successful attack as determined by a :ref:`goal_function` and list of :ref:`constraint`\s.

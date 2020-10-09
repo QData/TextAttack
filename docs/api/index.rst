@@ -1,6 +1,5 @@
-API on Data Models
-====================
-
+API References
+===============
 
 .. toctree::
    :glob:
