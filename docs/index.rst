@@ -32,15 +32,10 @@
 
 .. toctree::
    :maxdepth: 3
-   :caption: Recipes
+   :glob:
+   :caption: Developer Guide
    
    3recipes/attack_recipes  
    3recipes/api-design-tips.md
-
-.. toctree::
-   :glob:
-   :titlesonly:
-   :caption: API Reference
-
    api/index
 
