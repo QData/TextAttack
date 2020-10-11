@@ -5,7 +5,7 @@ from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 
 class MultilingualUniversalSentenceEncoder(SentenceEncoder):
     """Constraint using similarity between sentence encodings of x and x_adv
-    where the text embeddings are created using the Universal Sentence
+    where the text embeddings are created using the Multilingual Universal Sentence
     Encoder."""
 
     def __init__(self, threshold=0.8, large=False, metric="angular", **kwargs):
