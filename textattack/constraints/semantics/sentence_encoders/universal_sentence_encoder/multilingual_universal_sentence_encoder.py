@@ -1,5 +1,5 @@
 import tensorflow_hub as hub
-import tensorflow_text
+import tensorflow_text  # noqa: F401
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 
