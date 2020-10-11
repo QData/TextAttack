@@ -1,4 +1,5 @@
 import tensorflow_hub as hub
+import tensorflow_text
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 
