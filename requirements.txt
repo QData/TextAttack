@@ -17,6 +17,7 @@ torch
 transformers==3.3.0
 tensorflow>=2
 tensorflow_hub
+tensorflow_text>=2
 tensorboardX
 terminaltables
 tokenizers==0.8.1-rc2

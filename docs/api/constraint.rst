@@ -64,6 +64,10 @@ Universal Sentence Encoder
 .. automodule:: textattack.constraints.semantics.sentence_encoders.universal_sentence_encoder.universal_sentence_encoder
    :members:
 
+Multilingual Universal Sentence Encoder
+*****************************************
+.. automodule:: textattack.constraints.semantics.sentence_encoders.universal_sentence_encoder.multilingual_universal_sentence_encoder
+   :members:
 
 .. _grammaticality:
 
