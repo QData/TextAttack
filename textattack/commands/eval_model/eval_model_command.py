@@ -40,7 +40,7 @@ class EvalModelCommand(TextAttackCommand):
 
     def get_preds(self, model, inputs):
         with torch.no_grad():
-            preds = textattack.shared.utils.batch_model_predict(model, inputs)
+            preds = model(inputs)
         return preds
 
     def test_model_on_dataset(self, args):
