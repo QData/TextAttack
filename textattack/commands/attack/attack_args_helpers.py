@@ -337,7 +337,7 @@ def parse_model_from_args(args):
             model_path=args.model,
         )
         model = textattack.models.wrappers.PyTorchModelWrapper(
-            model, model.tokenizer, batch_size=args.model_batch_size
+            model.model, model.tokenizer, batch_size=args.model_batch_size
         )
     else:
         raise ValueError(f"Error: unsupported TextAttack model {args.model}")
