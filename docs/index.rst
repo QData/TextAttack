@@ -37,4 +37,3 @@
    
    1start/api-design-tips.md
    api/index
-   api/dataset.rst
