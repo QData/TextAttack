@@ -114,6 +114,7 @@ def _post_install():
     nltk.download("omw")
     nltk.download("universal_tagset")
     nltk.download("wordnet")
+    nltk.download("punkt")
 
     import stanza
 

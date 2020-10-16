@@ -366,6 +366,7 @@ CONSTRAINT_CLASS_NAMES = {
     "goog-lm": "textattack.constraints.grammaticality.language_models.GoogleLanguageModel",
     "gpt2": "textattack.constraints.grammaticality.language_models.GPT2",
     "learning-to-write": "textattack.constraints.grammaticality.language_models.LearningToWriteLanguageModel",
+    "cola": "textattack.constraints.grammaticality.COLA",
     #
     # Overlap constraints
     #

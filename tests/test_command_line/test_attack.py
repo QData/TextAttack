@@ -146,6 +146,18 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_stanza_pos_tagger.txt",
     ),
+    #
+    # test: run_attack on CNN Yelp using the WordNet transformation and greedy search WIR
+    #   with a CoLA constraint and BERT score
+    #
+    (
+        "run_attack_cnn_cola",
+        (
+            "textattack attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir "
+            "--transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 --shuffle=False"
+        ),
+        "tests/sample_outputs/run_attack_cnn_cola.txt",
+    ),
 ]
 
 

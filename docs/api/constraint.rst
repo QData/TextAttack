@@ -111,6 +111,11 @@ Part of Speech
 .. automodule:: textattack.constraints.grammaticality.part_of_speech
    :members:
 
+CoLA 
+######
+.. automodule:: textattack.constraints.grammaticality.cola 
+   :members:
+
 .. _overlap:
 
 Overlap
