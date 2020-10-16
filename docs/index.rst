@@ -35,7 +35,6 @@
    :glob:
    :caption: Developer Guide
    
-   3recipes/attack_recipes  
-   3recipes/api-design-tips.md
+   1start/api-design-tips.md
    api/index
-
+   api/dataset.rst
