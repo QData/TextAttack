@@ -16,7 +16,7 @@ class COLA(Constraint):
     own model from the huggingface model hub.
 
     Args:
-        max_diff (float): The absolute (if greater than or equal to 1) or percent (if less than 1)
+        max_diff (float or int): The absolute (if int or greater than or equal to 1) or percent (if float and less than 1)
             maximum difference allowed between the number of valid sentences in the reference
             text and the number of valid sentences in the attacked text.
         model_name (str): The name of the pre-trained model to use for classification. The model must be in huggingface model hub.
@@ -31,8 +31,8 @@ class COLA(Constraint):
         compare_against_original=True,
     ):
         super().__init__(compare_against_original)
-        if not isinstance(max_diff, float):
-            raise TypeError("max_diff must be a float")
+        if not isinstance(max_diff, float) and not isinstance(max_diff, int):
+            raise TypeError("max_diff must be a float or int")
         if max_diff < 0.0:
             raise ValueError("max_diff must be a value greater or equal to than 0.0")
 
@@ -59,10 +59,12 @@ class COLA(Constraint):
         num_valid = predictions.argmax(axis=1).sum()
         reference_score = self._reference_score_cache[reference_text]
 
-        if (
-            self.max_diff < 1.0
-            and num_valid < reference_score - (reference_score * self.max_diff)
-        ) or (self.max_diff >= 1.0 and num_valid < reference_score - self.max_diff):
+        if isinstance(self.max_diff, int) or self.max_diff >= 1:
+            threshold = reference_score - self.max_diff
+        else:
+            threshold = reference_score - (reference_score * self.max_diff)
+
+        if num_valid < threshold:
             return False
         return True
 
