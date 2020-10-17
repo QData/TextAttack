@@ -1,7 +1,9 @@
-TextAttackDataset
+======================
+datasets
 ======================
 
-A wrapper class ``TextAttackDataset`` that allows users to provide their own dataset or load from HuggingFace ``datasets``. 
+
+TextAttack allows users to provide their own dataset or load from HuggingFace. 
 
 
 .. automodule:: textattack.datasets.TextAttackDataset

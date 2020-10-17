@@ -35,5 +35,6 @@
    :glob:
    :caption: Developer Guide
    
+   1start/support.md
    1start/api-design-tips.md
-   api/index
+   api/index.rst
