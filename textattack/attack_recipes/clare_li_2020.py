@@ -16,8 +16,8 @@ from .attack_recipe import AttackRecipe
 
 
 class CLARE2020(AttackRecipe):
-    """"Contextualized Perturbation for Textual Adversarial Attack" (Li et.
-    al., 2020)
+    """
+    "Contextualized Perturbation for Textual Adversarial Attack" (Li et. al., 2020)
 
     https://arxiv.org/abs/2009.07502
 
@@ -94,7 +94,5 @@ class CLARE2020(AttackRecipe):
         #  Each step selects the highest-scoring action from the remaining ones."
         #
         search_method = GreedySearch()
-
-        print("hi")
 
         return CLARE2020(goal_function, constraints, transformation, search_method)
