@@ -14,29 +14,37 @@ from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapMaskedLM(WordSwap):
-    """Generate potential replacements for a word using BERT-Masked LM.
+    """Generate potential replacements for a word using a masked language model.
 
     Based off of following papers
-        - "BAE: BERT-based Adversarial Examples for Text Classification"  https://arxiv.org/abs/2004.01970
-        - "BERT-ATTACK: Adversarial Attack Against BERT Using BERT"  https://arxiv.org/abs/2004.09984
-        - "Robustness to Modification with Shared Words in Paraphrase Identification https://arxiv.org/abs/1909.02560"
-        - "Contextualized Perturbation for Textual Adversarial Attack https://arxiv.org/pdf/2009.07502.pdf"
+        - "Robustness to Modification with Shared Words in Paraphrase Identification" (Shi et al., 2019) https://arxiv.org/abs/1909.02560
+        - "BAE: BERT-based Adversarial Examples for Text Classification" (Garg et al., 2020) https://arxiv.org/abs/2004.01970
+        - "BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al, 2020) https://arxiv.org/abs/2004.09984
+        - "CLARE: Contextualized Perturbation for Textual Adversarial Attack" (Li et al, 2020): https://arxiv.org/abs/2009.07502
 
-    BAE simple masks the word we want to replace and selects top-K replacements predicted by the masked language model.
+    BAE and CLARE simply masks the word we want to replace and selects replacements predicted by the masked language model.
 
     BERT-Attack instead performs replacement on token level. For words that are consisted of two or more sub-word tokens,
         it takes the top-K replacements for seach sub-word token and produces all possible combinations of the top replacments.
         Then, it selects the top-K combinations based on their perplexity calculated using the masked language model.
 
     Choose which method to use by specifying "bae" or "bert-attack" for `method` argument.
+
+    Args:
+        method (str): the name of replacement method (e.g. "bae", "bert-attack")
+        masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default is `bert-base-uncased`.
+        max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
+        max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are ranked by model's confidence.
+        min_confidence (float): minimum confidence threshold each replacement word must pass. 
     """
 
     def __init__(
         self,
         method="bae",
         masked_language_model="bert-base-uncased",
-        max_length=256,
+        max_length=512,
         max_candidates=50,
+        min_confidence=5e-4,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -44,6 +52,7 @@ class WordSwapMaskedLM(WordSwap):
         self.masked_lm_name = masked_language_model
         self.max_length = max_length
         self.max_candidates = max_candidates
+        self.min_confidence = min_confidence
 
         self._lm_tokenizer = AutoTokenizer.from_pretrained(
             masked_language_model, use_fast=True
@@ -93,15 +102,20 @@ class WordSwapMaskedLM(WordSwap):
         with torch.no_grad():
             preds = self._language_model(**inputs)[0]
 
-        mask_token_probs = preds[0, masked_index]
-        topk = torch.topk(mask_token_probs, self.max_candidates)
-        top_ids = topk[1].tolist()
-
+        mask_token_logits = preds[0, masked_index]
+        mask_token_probs = torch.softmax(mask_token_logits, dim=0)
+        ranked_indices = torch.argsort(mask_token_probs)
+        
         replacement_words = []
-        for id in top_ids:
-            token = self._lm_tokenizer.convert_ids_to_tokens(id)
+        for _id in ranked_indices:
+            _id = _id.item()
+            token = self._lm_tokenizer.convert_ids_to_tokens(_id)
             if utils.is_one_word(token) and not check_if_subword(token):
-                replacement_words.append(token)
+                if mask_token_probs[_id] > self.min_confidence:
+                    replacement_words.append(token)
+            
+            if len(replacement_words) >= self.max_candidates:
+                break
 
         return replacement_words
 
