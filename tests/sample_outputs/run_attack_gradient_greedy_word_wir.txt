@@ -14,25 +14,25 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (100%)[0m --> [91m[FAILED][0m
+[92mPositive (99%)[0m --> [91mNegative (98%)[0m
 
-scherfig's light-hearted profile of emotional desperation is achingly honest and delightfully cheeky .
+goldmember is funny enough to [92mjustify[0m the embarrassment of bringing a barf bag to the moviehouse .
+
+goldmember is funny enough to [91mreasoned[0m the embarrassment of bringing a barf bag to the moviehouse .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (87%)[0m
+[92mPositive (100%)[0m --> [91mNegative (100%)[0m
 
-a journey [92mspanning[0m nearly three decades of bittersweet camaraderie and history , in which we feel that we truly know what makes holly and marina tick , and our hearts go out to them as both continue to [92mnegotiate[0m their [92mimperfect[0m , love-hate relationship .
+. . . a fairly disposable yet still [92mentertaining[0m b picture .
 
-a journey [91mprolonging[0m nearly three decades of bittersweet camaraderie and history , in which we feel that we truly know what makes holly and marina tick , and our hearts go out to them as both continue to [91mbartering[0m their [91mdeficient[0m , love-hate relationship .
+. . . a fairly disposable yet still [91mdistracting[0m b picture .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (99%)[0m
+[92mPositive (100%)[0m --> [91m[FAILED][0m
 
-the wonderfully lush morvern callar is [92mpure[0m punk existentialism , and ms . ramsay and her co-writer , liana dognini , have dramatized the alan warner novel , which itself felt like an answer to irvine welsh's book trainspotting .
-
-the wonderfully lush morvern callar is [91mmerely[0m punk existentialism , and ms . ramsay and her co-writer , liana dognini , have dramatized the alan warner novel , which itself felt like an answer to irvine welsh's book trainspotting .
+it may not be particularly innovative , but the film's crisp , unaffected style and air of gentle longing make it unexpectedly rewarding .
 
 
 
@@ -45,7 +45,7 @@ the wonderfully lush morvern callar is [91mmerely[0m punk existentialism , and
 | Original accuracy:            | 100.0% |
 | Accuracy under attack:        | 33.33% |
 | Attack success rate:          | 66.67% |
-| Average perturbed word %:     | 5.13%  |
-| Average num. words per input: | 29.0   |
-| Avg num queries:              | 51.0   |
+| Average perturbed word %:     | 9.38%  |
+| Average num. words per input: | 15.0   |
+| Avg num queries:              | 71.0   |
 +-------------------------------+--------+
