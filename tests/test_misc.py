@@ -47,12 +47,6 @@ def test_easydata_augmenter():
     from textattack.augmentation import EasyDataAugmenter
 
     augmenter = EasyDataAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
-    s = "I love sushi"
-    augmented_text_list = augmenter.augment(s)
-    augmented_s = "sushi I love"
-    assert augmented_s in augmented_text_list
-
-    augmenter = EasyDataAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
     s = "Hakuna Montana"
     augmented_text_list = augmenter.augment(s)
     augmented_s = "Montana Hakuna"
@@ -63,7 +57,7 @@ def test_wordnet_augmenter():
     from textattack.augmentation import WordNetAugmenter
 
     augmenter = WordNetAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
-    s = "The Dragon warrior is a panda "
+    s = "The Dragon warrior is a panda"
     augmented_text_list = augmenter.augment(s)
     augmented_s = "The firedrake warrior is a panda"
     assert augmented_s in augmented_text_list
