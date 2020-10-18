@@ -73,3 +73,33 @@ Word Swap by Random Character Substitution
 
 .. automodule:: textattack.transformations.word_swap_random_character_substitution
    :members:
+
+Word Swap by Changing Location
+-------------------------------
+
+.. automodule:: textattack.transformations.word_swap_change_location
+   :members:
+   
+Word Swap by Changing Number
+-------------------------------
+
+.. automodule:: textattack.transformations.word_swap_change_number
+   :members:
+   
+Word Swap by Changing Name
+-------------------------------
+
+.. automodule:: textattack.transformations.word_swap_change_name
+   :members:
+   
+Word Swap by Contraction
+-------------------------------
+
+.. automodule:: textattack.transformations.word_swap_contract
+   :members:
+   
+Word Swap by Extension
+-------------------------------
+
+.. automodule:: textattack.transformations.word_swap_extend
+   :members:
