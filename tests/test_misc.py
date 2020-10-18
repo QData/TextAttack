@@ -16,3 +16,29 @@ def test_embedding_augmenter():
         "There is nothing either good or unfavourable, but thinking makes it so."
     )
     assert augmented_s in augmented_text_list
+
+
+def test_checklist_augmenter():
+    from textattack.augmentation import CheckListAugmenter
+
+    augmenter = CheckListAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
+    s = "I'll be happy to assist you."
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "I will be happy to assist you."
+    assert augmented_s in augmented_text_list
+
+    s = "I will be happy to assist you."
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "I'll be happy to assist you."
+    assert augmented_s in augmented_text_list
+
+
+def test_charwap_augmenter():
+    from textattack.augmentation import CharSwapAugmenter
+
+    augmenter = CharSwapAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
+    s = "To be or not to be"
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "T be or not to be"
+    assert augmented_s in augmented_text_list
+

@@ -14,6 +14,7 @@ AUGMENTATION_RECIPE_NAMES = {
     "charswap": "textattack.augmentation.CharSwapAugmenter",
     "eda": "textattack.augmentation.EasyDataAugmenter",
     "checklist": "textattack.augmentation.CheckListAugmenter",
+    "deletion": "textattack.augmentation.DeletionAugmenter"
 }
 
 
@@ -63,7 +64,7 @@ class AugmentCommand(TextAttackCommand):
                             "\tAugmentation recipe name ('r' to see available recipes):  "
                         )
                         if recipe == "r":
-                            print("\n\twordnet, embedding, charswap, eda, checklist\n")
+                            print("\n\twordnet, embedding, charswap, eda, checklist, deletion\n")
                             args.recipe = input("\tAugmentation recipe name:  ")
                         else:
                             args.recipe = recipe
