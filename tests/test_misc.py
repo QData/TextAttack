@@ -9,7 +9,9 @@ def test_imports():
 def test_embedding_augmenter():
     from textattack.augmentation import EmbeddingAugmenter
 
-    augmenter = EmbeddingAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
+    augmenter = EmbeddingAugmenter(
+        pct_words_to_swap=0.01, transformations_per_example=64
+    )
     s = "There is nothing either good or bad, but thinking makes it so."
     augmented_text_list = augmenter.augment(s)
     augmented_s = (
@@ -21,7 +23,9 @@ def test_embedding_augmenter():
 def test_checklist_augmenter():
     from textattack.augmentation import CheckListAugmenter
 
-    augmenter = CheckListAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
+    augmenter = CheckListAugmenter(
+        pct_words_to_swap=0.01, transformations_per_example=64
+    )
     s = "I'll be happy to assist you."
     augmented_text_list = augmenter.augment(s)
     augmented_s = "I will be happy to assist you."
@@ -36,7 +40,9 @@ def test_checklist_augmenter():
 def test_charwap_augmenter():
     from textattack.augmentation import CharSwapAugmenter
 
-    augmenter = CharSwapAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
+    augmenter = CharSwapAugmenter(
+        pct_words_to_swap=0.01, transformations_per_example=64
+    )
     s = "To be or not to be"
     augmented_text_list = augmenter.augment(s)
     augmented_s = "T be or not to be"
@@ -46,7 +52,9 @@ def test_charwap_augmenter():
 def test_easydata_augmenter():
     from textattack.augmentation import EasyDataAugmenter
 
-    augmenter = EasyDataAugmenter(pct_words_to_swap=0.01, transformations_per_example=64)
+    augmenter = EasyDataAugmenter(
+        pct_words_to_swap=0.01, transformations_per_example=64
+    )
     s = "Hakuna Montana"
     augmented_text_list = augmenter.augment(s)
     augmented_s = "Montana Hakuna"
