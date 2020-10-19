@@ -151,6 +151,7 @@ for data augmentation:
 - `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
 - `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
 - `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
+- `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -201,6 +202,18 @@ of a string or a list of strings. Here's an example of how to use the `Embedding
 >>> s = 'What I cannot create, I do not understand.'
 >>> augmenter.augment(s)
 ['What I notable create, I do not understand.', 'What I significant create, I do not understand.', 'What I cannot engender, I do not understand.', 'What I cannot creating, I do not understand.', 'What I cannot creations, I do not understand.', 'What I cannot create, I do not comprehend.', 'What I cannot create, I do not fathom.', 'What I cannot create, I do not understanding.', 'What I cannot create, I do not understands.', 'What I cannot create, I do not understood.', 'What I cannot create, I do not realise.']
+```
+You can also create your own augmenter from scratch by importing transformations/constraints from `textattack.transformations` and `textattack.constraints`. Here's an example that generates augmentations of a string using `WordSwapRandomCharacterDeletion`:
+
+```python
+>>> from textattack.transformations import WordSwapRandomCharacterDeletion
+>>> from textattack.transformations import CompositeTransformation
+>>> from textattack.augmentation import Augmenter
+>>> transformation = CompositeTransformation([WordSwapRandomCharacterDeletion()])
+>>> augmenter = Augmenter(transformation=transformation, transformations_per_example=5)
+>>> s = 'What I cannot create, I do not understand.'
+>>> aug.augment(s))
+['What I cannot creae, I do not understand.', 'What I cannot creat, I do not understand.', 'What I cannot create, I do not nderstand.', 'What I cannot create, I do nt understand.', 'Wht I cannot create, I do not understand.']
 ```
 
 ### Training Models
