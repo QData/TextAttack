@@ -5,4 +5,5 @@ from .recipes import (
     CharSwapAugmenter,
     EasyDataAugmenter,
     CheckListAugmenter,
+    DeletionAugmenter,
 )
