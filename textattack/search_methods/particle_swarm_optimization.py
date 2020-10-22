@@ -275,9 +275,12 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
             pop_results, self._search_over = self.get_goal_results(
                 [p.attacked_text for p in population]
             )
-
+            if self._search_over:
+                # if `get_goal_results` gets cut short by query budget, resize population
+                population = population[: len(pop_results)]
             for k in range(len(pop_results)):
                 population[k].result = pop_results[k]
+
             top_member = max(population, key=lambda x: x.score)
             if (
                 self._search_over
