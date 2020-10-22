@@ -50,7 +50,9 @@ class EvalModelCommand(TextAttackCommand):
             )
 
         while i < num_examples_to_test:
-            dataset_batch = dataset[i : min(num_examples_to_test, i + args.model_batch_size)]
+            dataset_batch = dataset[
+                i : min(num_examples_to_test, i + args.model_batch_size)
+            ]
             batch_inputs = []
             for (text_input, ground_truth_output) in dataset_batch:
                 attacked_text = textattack.shared.AttackedText(text_input)
