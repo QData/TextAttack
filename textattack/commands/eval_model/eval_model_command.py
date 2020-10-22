@@ -45,13 +45,12 @@ class EvalModelCommand(TextAttackCommand):
         if args.test_on_full_dataset:
             num_examples_to_test = len(dataset)
         else:
-            num_examples_to_test = args.num_examples if args.num_examples < len(dataset) else len(dataset)
-            
+            num_examples_to_test = (
+                args.num_examples if args.num_examples < len(dataset) else len(dataset)
+            )
 
         while i < num_examples_to_test:
-            dataset_batch = dataset[
-                i : min(num_examples_to_test, i + args.model_batch_size)
-            ]
+            dataset_batch = dataset[i : min(num_examples_to_test, i + args.model_batch_size)]
             batch_inputs = []
             for (text_input, ground_truth_output) in dataset_batch:
                 attacked_text = textattack.shared.AttackedText(text_input)
@@ -106,11 +105,10 @@ class EvalModelCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
 
-        
         add_model_args(parser)
         add_dataset_args(parser)
         parser.add_argument("--random-seed", default=765, type=int)
-				
+
         parser.add_argument(
             "--model-batch-size",
             type=int,
@@ -119,8 +117,8 @@ class EvalModelCommand(TextAttackCommand):
         )
         parser.add_argument(
             "--test-on-full-dataset",
-            action='store_true',
+            action="store_true",
             help="Evaluate on entire dataset.",
         )
-        
+
         parser.set_defaults(func=EvalModelCommand())
