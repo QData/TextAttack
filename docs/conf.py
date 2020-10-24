@@ -41,7 +41,6 @@ extensions = [
     # Enable .md doc files
     "recommonmark",
 ]
-#'sphinxcontrib.versioning.sphinx_',]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
