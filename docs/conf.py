@@ -39,8 +39,9 @@ extensions = [
     # Enable .ipynb doc files
     "nbsphinx",
     # Enable .md doc files
-    "recommonmark",]
-    #'sphinxcontrib.versioning.sphinx_',]
+    "recommonmark",
+]
+#'sphinxcontrib.versioning.sphinx_',]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
