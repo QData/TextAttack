@@ -1,5 +1,5 @@
-API References
-===============
+Selected API References
+========================
 
 .. toctree::
    :glob:
