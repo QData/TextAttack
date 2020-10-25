@@ -1,3 +1,8 @@
+"""
+The result of an attack's attempt to find a successful adversarial perturbation. 
+
+"""
+
 from abc import ABC
 
 from textattack.goal_function_results import GoalFunctionResult

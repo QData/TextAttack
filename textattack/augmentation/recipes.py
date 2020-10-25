@@ -1,3 +1,7 @@
+"""
+Transformations and constraints can be used for simple NLP data augmentations. Here is a list of recipes for NLP data augmentations
+
+"""
 import random
 
 import textattack

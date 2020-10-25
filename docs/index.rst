@@ -10,7 +10,7 @@
    1start/references.md
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Get Started
 
    Installation <1start/installation>
@@ -31,12 +31,12 @@
    
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 5
    :glob:
    :caption: Developer Guide
    
    1start/support.md
    1start/api-design-tips.md
-   api/index.rst
-   source/textattack.rst
+   api/index
+   source/textattack
    
