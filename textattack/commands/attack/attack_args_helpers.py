@@ -341,7 +341,8 @@ def parse_model_from_args(args):
             num_labels,
             model_path=args.model,
         )
-        model = textattack.models.wrappers.PyTorchModelWrapper(
+        # Logic to change this according to model being loaded
+        model = textattack.models.wrappers.HuggingFaceModelWrapper(
             model.model, model.tokenizer, batch_size=args.model_batch_size
         )
     else:

@@ -33,7 +33,10 @@ class PyTorchModelWrapper(ModelWrapper):
 
     def __call__(self, text_input_list):
         model_device = next(self.model.parameters()).device
+<<<<<<< HEAD
         ids = self.encode(text_input_list)
+=======
+>>>>>>> Change model to Huggingface
         ids = torch.tensor(ids).to(model_device)
 
         with torch.no_grad():
