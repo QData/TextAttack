@@ -37,6 +37,4 @@
    
    1start/support.md
    1start/api-design-tips.md
-   api/index.rst
-   source/modules
-   
+   api/index.rst   
