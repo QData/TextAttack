@@ -17,17 +17,17 @@ from .text_to_text_goal_function import TextToTextGoalFunction
 class MinimizeBleu(TextToTextGoalFunction):
     """Attempts to minimize the BLEU score between the current output translation and the reference translation.
 
-    BLEU score was defined in (BLEU: a Method for Automatic Evaluation of Machine Translation).
+        BLEU score was defined in (BLEU: a Method for Automatic Evaluation of Machine Translation).
 
-    `ArxivURL`_
+        `ArxivURL`_
 
-.. _ArxivURL: https://www.aclweb.org/anthology/P02-1040.pdf
+    .. _ArxivURL: https://www.aclweb.org/anthology/P02-1040.pdf
 
-    This goal function is defined in (It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations). 
+        This goal function is defined in (It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations).
 
-    `ArxivURL2`_
+        `ArxivURL2`_
 
-.. _ArxivURL2: https://www.aclweb.org/anthology/2020.acl-main.263
+    .. _ArxivURL2: https://www.aclweb.org/anthology/2020.acl-main.263
 
 
     """
