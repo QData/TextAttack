@@ -60,6 +60,7 @@ Word Swap by Homoglyph
 Word Swap by Neighboring Character Swap
 ---------------------------------------
 
+.. automodule:: textattack.transformations.word_swap_neighboring_character_swap
    :members:
    :noindex:
 
