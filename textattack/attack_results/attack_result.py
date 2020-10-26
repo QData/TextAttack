@@ -1,7 +1,3 @@
-"""
-The result of an attack's attempt to find a successful adversarial perturbation. 
-
-"""
 
 from abc import ABC
 

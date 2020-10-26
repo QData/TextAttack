@@ -16,7 +16,6 @@ outputs/
 
 # Sphinx documentation
 docs/_build/
-docs/source/modules.rst
 
 # Packaging
 *.egg-info/

@@ -6,7 +6,6 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
-
 class WordSwapMaskedLM(WordSwap):
     """Generate potential replacements for a word using BERT-Masked LM.
 
@@ -15,6 +14,7 @@ class WordSwapMaskedLM(WordSwap):
         - "BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al, 2020) https://arxiv.org/abs/2004.09984
 
     BAE simple masks the word we want to replace and selects top-K replacements predicted by the masked language model.
+    
     BERT-Attack instead performs replacement on token level. For words that are consisted of two or more sub-word tokens,
         it takes the top-K replacements for seach sub-word token and produces all possible combinations of the top replacments.
         Then, it selects the top-K combinations based on their perplexity calculated using the masked language model.

@@ -1,3 +1,9 @@
+"""
+
+TextAttack Command Arg Parsing 
+
+"""
+
 #!/usr/bin/env python
 import argparse
 

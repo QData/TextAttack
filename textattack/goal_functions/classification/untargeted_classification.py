@@ -1,3 +1,10 @@
+"""
+
+Determine if an attack has been successful in untargeted Classification 
+
+"""
+
+
 from .classification_goal_function import ClassificationGoalFunction
 
 

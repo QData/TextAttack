@@ -1,3 +1,10 @@
+"""
+
+text_to_text_goal_function_result
+
+
+"""
+
 from .goal_function_result import GoalFunctionResult
 
 

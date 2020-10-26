@@ -1,3 +1,7 @@
+"""
+Part of Speech 
+###############
+"""
 import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger

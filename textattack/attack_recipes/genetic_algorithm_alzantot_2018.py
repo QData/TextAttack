@@ -1,3 +1,13 @@
+"""
+
+Alzantot Genetic Algorithm (Generating Natural Language Adversarial Examples)
+
+.. warning::
+    This attack uses a very slow language model. Consider using the ``fast-alzantot``
+    recipe instead.
+
+"""
+
 from textattack.constraints.grammaticality.language_models import (
     Google1BillionWordsLanguageModel,
 )

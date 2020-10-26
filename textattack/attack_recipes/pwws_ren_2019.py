@@ -1,3 +1,8 @@
+"""
+
+PWWS (Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency)
+
+"""
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,

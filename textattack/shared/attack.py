@@ -1,4 +1,5 @@
-"""TextAttack builds attacks from four components:
+"""
+Attack: TextAttack builds attacks from four components:
 
 - `Goal Functions <../attacks/goal_function.html>`__ stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
 - `Constraints <../attacks/constraint.html>`__ determine if a potential perturbation is valid with respect to the original input.

@@ -1,3 +1,8 @@
+"""
+Word Swap by Random Character Insertion
+---------------------------------------
+
+"""
 import numpy as np
 
 # from textattack.shared import utils

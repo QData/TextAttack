@@ -1,3 +1,10 @@
+"""
+
+TextFooler (Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment)
+
+
+"""
+
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     InputColumnModification,

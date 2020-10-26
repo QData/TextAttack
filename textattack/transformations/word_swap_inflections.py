@@ -2,16 +2,15 @@ import lemminflect
 
 from textattack.transformations.word_swap import WordSwap
 
-
 class WordSwapInflections(WordSwap):
     """Transforms an input by replacing its words with their inflections.
 
-    For example, the inflections of 'schedule' are {'schedule', 'schedules',
-    'scheduling'}.
+    For example, the inflections of 'schedule' are {'schedule', 'schedules', 'scheduling'}.
 
-    Base on ``It’s Morphin’ Time! Combating Linguistic Discrimination with
-    Inflectional Perturbations".
-    (https://www.aclweb.org/anthology/2020.acl-main.263.pdf)
+    Base on ``It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations``. 
+
+    `Paper URL  <Paper URL  <https://www.aclweb.org/anthology/2020.acl-main.263.pdf>'__ 
+
     """
 
     def __init__(self, **kwargs):

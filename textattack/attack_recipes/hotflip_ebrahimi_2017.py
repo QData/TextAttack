@@ -1,3 +1,8 @@
+"""
+
+HotFlip (HotFlip: White-Box Adversarial Examples for Text Classification)
+
+"""
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (

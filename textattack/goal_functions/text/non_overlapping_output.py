@@ -1,3 +1,10 @@
+"""
+
+Goal Function for seq2sick
+
+"""
+
+
 import functools
 
 import numpy as np

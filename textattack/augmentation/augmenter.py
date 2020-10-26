@@ -1,7 +1,3 @@
-"""
-Transformations and constraints can be used outside of an attack for simple NLP data augmentation with the ``Augmenter`` class that returns all possible transformations for a given string.
-
-"""
 import random
 
 import tqdm

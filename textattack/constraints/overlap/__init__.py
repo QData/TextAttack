@@ -1,3 +1,9 @@
+"""
+
+Overlap: Overlap constraints determine if a transformation is valid based on character-level analysis.
+
+"""
+
 from .bleu_score import BLEU
 from .chrf_score import chrF
 from .levenshtein_edit_distance import LevenshteinEditDistance

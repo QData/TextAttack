@@ -1,3 +1,8 @@
+"""
+Population based Search
+
+"""
+
 from abc import ABC, abstractmethod
 
 from textattack.search_methods import SearchMethod

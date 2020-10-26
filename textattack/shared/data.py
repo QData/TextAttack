@@ -1,3 +1,9 @@
+"""
+Shared data
+
+"""
+
+
 # fmt: off
 """Lists of named entities: countries, nationalities, cities."""
 NAMED_ENTITIES = {

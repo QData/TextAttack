@@ -1,3 +1,7 @@
+"""
+goal_function: Goal functions determine if an attack has been successful. 
+"""
+
 from abc import ABC, abstractmethod
 
 import lru

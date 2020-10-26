@@ -1,3 +1,7 @@
+"""
+Greedy Search
+
+"""
 from .beam_search import BeamSearch
 
 

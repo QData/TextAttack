@@ -1,3 +1,8 @@
+"""
+
+Kuleshov (Adversarial Examples for Natural Language Classification Problems)
+
+"""
 from textattack.constraints.grammaticality.language_models import GPT2
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (

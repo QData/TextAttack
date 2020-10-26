@@ -1,3 +1,9 @@
+"""
+Attack Logger
+
+"""
+
+
 from abc import ABC
 
 

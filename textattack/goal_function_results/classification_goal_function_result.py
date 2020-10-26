@@ -1,3 +1,10 @@
+"""
+
+classification_goal_function_result
+
+
+"""
+
 import torch
 
 import textattack

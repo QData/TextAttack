@@ -1,3 +1,8 @@
+"""
+Attack Logs to CSV
+
+"""
+
 import csv
 
 import pandas as pd

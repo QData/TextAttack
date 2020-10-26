@@ -1,3 +1,9 @@
+"""
+
+TextAttack Augment Command
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
 import csv
 import os
@@ -18,7 +24,7 @@ AUGMENTATION_RECIPE_NAMES = {
 
 
 class AugmentCommand(TextAttackCommand):
-    """The TextAttack attack module:
+    """The TextAttack Augment Command module:
 
     A command line parser to run data augmentation from user
     specifications.

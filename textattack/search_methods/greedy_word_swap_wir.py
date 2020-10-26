@@ -1,4 +1,7 @@
-"""When WIR method is set to ``unk``, this is a reimplementation of the search
+"""
+Greedy Word Swap with Word Importance Ranking
+
+When WIR method is set to ``unk``, this is a reimplementation of the search
 method from the paper: Is BERT Really Robust?
 
 A Strong Baseline for Natural Language Attack on Text Classification and

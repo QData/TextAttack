@@ -1,3 +1,8 @@
+"""
+Attacked Text
+
+"""
+
 from collections import OrderedDict
 import math
 

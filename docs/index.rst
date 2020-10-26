@@ -1,7 +1,7 @@
 .. include:: 1start/basic-Intro.rst
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 6
    :caption: About
    :hidden:
 
@@ -10,7 +10,7 @@
    1start/references.md
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 6
    :caption: Get Started
 
    Installation <1start/installation>
@@ -18,7 +18,7 @@
 
  
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 6
    :caption: Notebook Tutorials
    
    Tutorial 0: TextAttack End-To-End (Train, Eval, Attack) <2notebook/0_End_to_End.ipynb>
@@ -31,12 +31,12 @@
    
 
 .. toctree::
-   :maxdepth: 5
+   :maxdepth: 6
    :glob:
    :caption: Developer Guide
    
    1start/support.md
    1start/api-design-tips.md
-   api/index
-   source/textattack
+   3important/index
+   apidoc/textattack
    

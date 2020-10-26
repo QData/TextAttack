@@ -26,6 +26,7 @@ release = "0.2.11"
 # Set master doc to `index.rst`.
 master_doc = "index"
 
+
 # -- General configuration ---------------------------------------------------
 
 # Add any Sphinx extension module names here, as strings. They can be
@@ -41,7 +42,15 @@ extensions = [
     "nbsphinx",
     # Enable .md doc files
     "recommonmark",
+    # Enable auto toc
+    'autodocsumm',
 ]
+
+
+autodoc_default_options = {
+    'autosummary': True,
+}
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []
@@ -81,7 +90,7 @@ html_css_files = [
 html_favicon = "favicon.png"
 
 # Don't show module names in front of class names.
-add_module_names = False
+add_module_names = True
 
 # Sort members by group
 autodoc_member_order = "groupwise"
