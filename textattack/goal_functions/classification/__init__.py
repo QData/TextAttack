@@ -1,6 +1,7 @@
 """
 
-Determine if an attack has been successful in Classification 
+Goal fucntion for Classification 
+=======================================
 
 """
 

@@ -1,6 +1,8 @@
 """
 
-Alzantot Genetic Algorithm (Generating Natural Language Adversarial Examples)
+Alzantot Genetic Algorithm 
+=======================================
+(Generating Natural Language Adversarial Examples)
 
 .. warning::
     This attack uses a very slow language model. Consider using the ``fast-alzantot``

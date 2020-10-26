@@ -1,3 +1,10 @@
+"""
+T5 Tokenizer
+^^^^^^^^^^^^^^^^^
+
+"""
+
+
 from textattack.models.tokenizers import AutoTokenizer
 
 

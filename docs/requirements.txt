@@ -2,3 +2,4 @@ recommonmark
 nbsphinx
 sphinx-autobuild
 sphinx-rtd-theme
+autodocsumm

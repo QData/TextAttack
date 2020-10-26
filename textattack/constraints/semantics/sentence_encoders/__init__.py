@@ -1,3 +1,9 @@
+"""
+Sentence Encoder
+---------------------
+"""
+
+
 from .sentence_encoder import SentenceEncoder
 
 from .bert import BERT

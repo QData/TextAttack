@@ -1,5 +1,6 @@
 """
-
+BERT Score
+---------------------
 BERT Score is introduced in this paper (BERTScore: Evaluating Text Generation with BERT (Zhang et al, 2019)) `Paper URL  <https://arxiv.org/abs/1904.09675>'__ 
 
 BERT Score measures token similarity between two text using contextual embedding. To decide which two tokens to compare, it greedily chooses the most similar token from one text and matches it to a token in the second text.
@@ -25,7 +26,7 @@ class BERTScore(Constraint):
             -(2) ``recall`` :  match words from reference text to candidate text
             -(3) ``f1``: harmonic mean of precision and recall (recommended)
 
-        compare_against_original (bool):  
+        compare_against_original (bool):
             If "True", compare new ``x_adv`` against the original ``x``.
             Otherwise, compare it against the previous ``x_adv``.
 

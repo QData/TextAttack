@@ -1,7 +1,9 @@
-"""Reimplementation of search method from Generating Natural Language
-Adversarial Examples by Alzantot et.
+"""
 
-al `<arxiv.org/abs/1804.07998>`_
+Reimplementation of search method from Generating Natural Language Adversarial Examples 
+=========================================================================================
+
+by Alzantot et. al `<arxiv.org/abs/1804.07998>`_
 `<github.com/nesl/nlp_adversarial_examples>`_
 """
 

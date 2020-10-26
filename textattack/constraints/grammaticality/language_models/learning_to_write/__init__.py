@@ -1,6 +1,6 @@
 """
-"Learning To Write" Language Model
-************************************
+"Learning To Write" 
+--------------------------
 
 """
 from .learning_to_write import LearningToWriteLanguageModel

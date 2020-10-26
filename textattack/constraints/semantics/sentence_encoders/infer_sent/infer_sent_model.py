@@ -1,3 +1,13 @@
+"""
+Infer sent model  
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+This file contains the definition of encoders used in
+https://arxiv.org/pdf/1705.02364.pdf.
+
+"""
+
+
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -5,8 +15,6 @@
 # LICENSE file in the root directory of this source tree.
 #
 
-"""This file contains the definition of encoders used in
-https://arxiv.org/pdf/1705.02364.pdf."""
 import time
 
 import numpy as np

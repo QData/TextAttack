@@ -1,6 +1,7 @@
 """
-
-Kuleshov (Adversarial Examples for Natural Language Classification Problems)
+Kuleshov2017
+==============
+(Adversarial Examples for Natural Language Classification Problems)
 
 """
 from textattack.constraints.grammaticality.language_models import GPT2

@@ -1,7 +1,7 @@
 """
 
-TextAttack Constraint  
-
+TextAttack Constraint Class
+=====================================
 """
 
 from abc import ABC, abstractmethod

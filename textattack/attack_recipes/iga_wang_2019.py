@@ -1,6 +1,9 @@
 """
 
-Improved Genetic Algorithm (Natural Language Adversarial Attacks and Defenses in Word Level)
+Improved Genetic Algorithm 
+=============================
+
+(Natural Language Adversarial Attacks and Defenses in Word Level)
 
 """
 from textattack.constraints.overlap import MaxWordsPerturbed

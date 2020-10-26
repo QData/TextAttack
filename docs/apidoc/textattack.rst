@@ -1,11 +1,13 @@
-Complete API Reference
-=======================
+textattack package
+==================
 
 .. automodule:: textattack
    :members:
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 6

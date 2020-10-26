@@ -1,6 +1,9 @@
 """
 
-Overlap: Overlap constraints determine if a transformation is valid based on character-level analysis.
+Overlap Constraints
+--------------------------
+
+Overlap constraints determine if a transformation is valid based on character-level analysis.
 
 """
 

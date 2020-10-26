@@ -1,7 +1,8 @@
 """
 
-TextFooler (Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment)
-
+TextFooler (Is BERT Really Robust?)
+===================================================
+A Strong Baseline for Natural Language Attack on Text Classification and Entailment)
 
 """
 

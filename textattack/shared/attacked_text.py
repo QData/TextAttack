@@ -1,5 +1,9 @@
 """
-Attacked Text
+Attacked Text Class
+=====================
+
+A helper class that represents a string that can be attacked.
+
 
 """
 

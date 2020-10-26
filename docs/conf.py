@@ -43,12 +43,12 @@ extensions = [
     # Enable .md doc files
     "recommonmark",
     # Enable auto toc
-    'autodocsumm',
+    "autodocsumm",
 ]
 
 
 autodoc_default_options = {
-    'autosummary': True,
+    "autosummary": True,
 }
 
 

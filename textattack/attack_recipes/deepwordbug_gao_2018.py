@@ -1,6 +1,8 @@
 """
 
-DeepWordBug (Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers)
+DeepWordBug 
+========================================
+(Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers)
 
 """
 

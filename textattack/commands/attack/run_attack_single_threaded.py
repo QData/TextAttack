@@ -1,4 +1,12 @@
-"""A command line parser to run an attack from user specifications."""
+"""
+
+TextAttack Command Class for Attack Single Threaded
+-----------------------------------------------------
+
+A command line parser to run an attack in single thread from user specifications.
+
+"""
+
 from collections import deque
 import os
 import time

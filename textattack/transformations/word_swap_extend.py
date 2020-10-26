@@ -1,6 +1,6 @@
 """
 Word Swap by Extension
--------------------------------
+============================================
 """
 
 from textattack.shared.data import EXTENSION_MAP

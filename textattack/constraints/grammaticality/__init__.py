@@ -1,5 +1,8 @@
 """
-Grammaticality:  Grammaticality constraints determine if a transformation is valid based on
+Grammaticality:  
+--------------------------
+
+Grammaticality constraints determine if a transformation is valid based on
 syntactic properties of the perturbation.
 
 """

@@ -1,5 +1,9 @@
 """
-CheckList: (Beyond Accuracy: Behavioral Testing of NLP models with CheckList)
+CheckList: 
+=========================
+
+(Beyond Accuracy: Behavioral Testing of NLP models with CheckList)
+
 """
 from textattack.constraints.pre_transformation import RepeatModification
 from textattack.goal_functions import UntargetedClassification

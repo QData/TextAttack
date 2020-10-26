@@ -1,5 +1,9 @@
 """
-BERT-Attack: (BERT-Attack: Adversarial Attack Against BERT Using BERT)
+BERT-Attack: 
+============================================================
+
+(BERT-Attack: Adversarial Attack Against BERT Using BERT)
+
 """
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (

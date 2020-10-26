@@ -1,3 +1,8 @@
+"""
+Augmenter Class
+===================
+
+"""
 import random
 
 import tqdm

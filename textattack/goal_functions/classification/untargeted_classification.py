@@ -1,7 +1,7 @@
 """
 
-Determine if an attack has been successful in untargeted Classification 
-
+Determine successful in untargeted Classification 
+----------------------------------------------------
 """
 
 

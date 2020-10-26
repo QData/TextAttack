@@ -1,6 +1,6 @@
 """
 Misc Validators
-
+=================
 Validators ensure compatibility between search methods, transformations, constraints, and goal functions.
 
 """

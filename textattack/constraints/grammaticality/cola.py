@@ -1,6 +1,7 @@
 """
-CoLA 
-######
+CoLA for Grammaticality
+--------------------------
+
 """
 import lru
 import nltk

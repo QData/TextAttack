@@ -1,6 +1,6 @@
 """
-Part of Speech 
-###############
+Part of Speech Constraint
+--------------------------
 """
 import flair
 from flair.data import Sentence

@@ -1,3 +1,8 @@
+"""
+Skipped Attack Result
+=====================
+"""
+
 from textattack.shared import utils
 
 from .attack_result import AttackResult

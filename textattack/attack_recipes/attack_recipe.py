@@ -1,3 +1,8 @@
+"""
+Attack Recipe Class
+========================
+
+"""
 
 from abc import ABC, abstractmethod
 

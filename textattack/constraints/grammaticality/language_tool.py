@@ -1,6 +1,6 @@
 """
 LanguageTool Grammar Checker 
-##############################
+------------------------------
 """
 import language_tool_python
 

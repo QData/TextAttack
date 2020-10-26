@@ -1,6 +1,8 @@
 """
 
-HotFlip (HotFlip: White-Box Adversarial Examples for Text Classification)
+HotFlip 
+===========
+(HotFlip: White-Box Adversarial Examples for Text Classification)
 
 """
 from textattack.constraints.grammaticality import PartOfSpeech

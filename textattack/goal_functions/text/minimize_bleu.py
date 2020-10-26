@@ -1,7 +1,7 @@
 """
 
 Goal Function for Attempts to minimize the BLEU score
-
+-------------------------------------------------------
 """
 
 import functools
@@ -19,7 +19,7 @@ class MinimizeBleu(TextToTextGoalFunction):
 
     BLEU score was defined in ``BLEU: a Method for Automatic Evaluation of
     Machine Translation''
-    (https://www.aclweb.org/anthology/P02-1040.pdf>'__ 
+    (https://www.aclweb.org/anthology/P02-1040.pdf>'__
 
     This goal function is defined in ``It’s Morphin’ Time! Combating
     Linguistic Discrimination with Inflectional Perturbations''.

@@ -1,7 +1,7 @@
 """
 
-goal_function_result
-
+goal function result class
+====================================
 
 """
 

@@ -1,3 +1,7 @@
+"""
+Attack Result Class 
+====================
+"""
 
 from abc import ABC
 
