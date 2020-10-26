@@ -1,6 +1,6 @@
 """
 
-Alzantot Genetic Algorithm 
+Alzantot Genetic Algorithm
 =======================================
 (Generating Natural Language Adversarial Examples)
 

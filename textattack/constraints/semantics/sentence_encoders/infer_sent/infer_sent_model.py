@@ -1,5 +1,5 @@
 """
-Infer sent model  
+Infer sent model
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 This file contains the definition of encoders used in

@@ -1,6 +1,6 @@
 """
 
-TextAttack Command Args for Attack 
+TextAttack Command Args for Attack
 ------------------------------------------
 
 """

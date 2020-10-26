@@ -1,7 +1,6 @@
 """
-
-HuggingFaceDataset: TextAttack HuggingFaceDataset 
-==========================================================
+HuggingFaceDataset:
+====================
 """
 
 import collections

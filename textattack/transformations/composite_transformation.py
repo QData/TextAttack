@@ -1,7 +1,7 @@
 """
-Composite Transformation 
+Composite Transformation
 ============================================
-Multiple transformations can be used by providing a list of ``Transformation``\s to ``CompositeTransformation``
+Multiple transformations can be used by providing a list of ``Transformation`` to ``CompositeTransformation``
 
 """
 

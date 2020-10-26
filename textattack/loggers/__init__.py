@@ -1,5 +1,5 @@
 """
-Misc Loggers: Loggers track, visualize, and export attack results. 
+Misc Loggers: Loggers track, visualize, and export attack results.
 ===================================================================
 """
 

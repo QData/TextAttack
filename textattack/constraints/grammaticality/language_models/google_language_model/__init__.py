@@ -1,5 +1,5 @@
 """
-Google Language Models:  
+Google Language Models:
 -----------------------------
 
 """

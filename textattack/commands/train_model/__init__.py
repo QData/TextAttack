@@ -1,6 +1,6 @@
 """
 
-TextAttack Command Package for Training 
+TextAttack Command Package for Training
 ----------------------------------------
 
 

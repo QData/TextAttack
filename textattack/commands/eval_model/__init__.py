@@ -1,6 +1,6 @@
 """
 
-TextAttack Command Package for Evaluation 
+TextAttack Command Package for Evaluation
 ------------------------------------------
 
 """

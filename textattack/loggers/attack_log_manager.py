@@ -1,5 +1,5 @@
 """
-Managing Attack Logs. 
+Managing Attack Logs.
 ========================
 """
 

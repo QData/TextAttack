@@ -1,5 +1,5 @@
 """
-Determine for if an attack has been successful in Classification 
+Determine for if an attack has been successful in Classification
 ---------------------------------------------------------------------
 """
 

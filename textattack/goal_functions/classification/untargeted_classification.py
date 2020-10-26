@@ -1,6 +1,6 @@
 """
 
-Determine successful in untargeted Classification 
+Determine successful in untargeted Classification
 ----------------------------------------------------
 """
 

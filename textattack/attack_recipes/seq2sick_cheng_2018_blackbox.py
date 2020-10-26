@@ -1,6 +1,6 @@
 """
 
-Seq2Sick 
+Seq2Sick
 ================================================
 (Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples)
 """

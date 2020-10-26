@@ -1,5 +1,5 @@
 """
-infer sent for sentence similarity  
+infer sent for sentence similarity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 

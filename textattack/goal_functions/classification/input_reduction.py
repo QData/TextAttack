@@ -1,6 +1,6 @@
 """
 
-Determine if maintaining the same predicted label 
+Determine if maintaining the same predicted label
 ---------------------------------------------------------------------
 """
 

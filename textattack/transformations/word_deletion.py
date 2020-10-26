@@ -1,5 +1,5 @@
 """
-word deletion Transformation 
+word deletion Transformation
 ============================================
 
 """

@@ -1,5 +1,5 @@
 """
-Grammaticality:  
+Grammaticality:
 --------------------------
 
 Grammaticality constraints determine if a transformation is valid based on

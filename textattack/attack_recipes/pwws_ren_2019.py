@@ -1,6 +1,6 @@
 """
 
-PWWS 
+PWWS
 =======
 
 (Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency)

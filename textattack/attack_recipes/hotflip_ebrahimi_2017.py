@@ -1,6 +1,6 @@
 """
 
-HotFlip 
+HotFlip
 ===========
 (HotFlip: White-Box Adversarial Examples for Text Classification)
 

@@ -1,5 +1,5 @@
 """
-BERT-Attack: 
+BERT-Attack:
 ============================================================
 
 (BERT-Attack: Adversarial Attack Against BERT Using BERT)

@@ -1,6 +1,6 @@
 """
 
-TextAttack Command Package for model benchmarking 
+TextAttack Command Package for model benchmarking
 --------------------------------------------------
 
 """

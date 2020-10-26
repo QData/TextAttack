@@ -1,5 +1,5 @@
 """
-Word Embedding Distance 
+Word Embedding Distance
 -------------------------
 """
 import os

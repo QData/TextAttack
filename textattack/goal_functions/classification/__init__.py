@@ -1,6 +1,6 @@
 """
 
-Goal fucntion for Classification 
+Goal fucntion for Classification
 =======================================
 
 """

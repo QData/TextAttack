@@ -1,6 +1,6 @@
 """
 
-TextAttack Command Helpers for Attack 
+TextAttack Command Helpers for Attack
 ------------------------------------------
 
 """

@@ -1,7 +1,7 @@
 """
 BERT Score
 ---------------------
-BERT Score is introduced in this paper (BERTScore: Evaluating Text Generation with BERT (Zhang et al, 2019)) `Paper URL  <https://arxiv.org/abs/1904.09675>'__ 
+BERT Score is introduced in this paper (BERTScore: Evaluating Text Generation with BERT (Zhang et al, 2019)) `Paper URL  <https://arxiv.org/abs/1904.09675>'__
 
 BERT Score measures token similarity between two text using contextual embedding. To decide which two tokens to compare, it greedily chooses the most similar token from one text and matches it to a token in the second text.
 

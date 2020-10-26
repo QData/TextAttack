@@ -1,6 +1,6 @@
 """
 
-Faster Alzantot Genetic Algorithm 
+Faster Alzantot Genetic Algorithm
 ===================================
 (Certified Robustness to Adversarial Word Substitutions)
 

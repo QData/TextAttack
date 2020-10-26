@@ -35,6 +35,7 @@ master_doc = "index"
 extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autodoc",
+    'sphinx.ext.inheritance_diagram',
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx_rtd_theme",
@@ -42,15 +43,8 @@ extensions = [
     "nbsphinx",
     # Enable .md doc files
     "recommonmark",
-    # Enable auto toc
-    "autodocsumm",
 ]
-
-
-autodoc_default_options = {
-    "autosummary": True,
-}
-
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = []

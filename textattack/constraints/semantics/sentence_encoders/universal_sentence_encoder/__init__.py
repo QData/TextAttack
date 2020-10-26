@@ -1,5 +1,5 @@
 """
-universal sentence encoder 
+Universal sentence encoder
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 

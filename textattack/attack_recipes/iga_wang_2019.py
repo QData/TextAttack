@@ -1,6 +1,6 @@
 """
 
-Improved Genetic Algorithm 
+Improved Genetic Algorithm
 =============================
 
 (Natural Language Adversarial Attacks and Defenses in Word Level)

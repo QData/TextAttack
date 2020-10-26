@@ -1,6 +1,6 @@
 """
 
-TextBugger 
+TextBugger
 ===============
 
 (TextBugger: Generating Adversarial Text Against Real-world Applications)

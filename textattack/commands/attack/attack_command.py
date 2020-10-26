@@ -1,6 +1,6 @@
 """
 
-TextAttack Command Class for Attack 
+TextAttack Command Class for Attack
 ------------------------------------------
 
 """

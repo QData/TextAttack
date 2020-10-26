@@ -1,5 +1,5 @@
 """
-Word CNN for Classification 
+Word CNN for Classification
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 """

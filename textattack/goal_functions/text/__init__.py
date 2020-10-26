@@ -1,6 +1,6 @@
 """
 
-Goal Function for Text to Text case 
+Goal Function for Text to Text case
 =======================================
 
 """
