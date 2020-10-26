@@ -1,6 +1,8 @@
 """
 Word Swap by inflections
 ============================================
+
+
 """
 
 
@@ -16,7 +18,9 @@ class WordSwapInflections(WordSwap):
 
     Base on ``It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations``.
 
-    `Paper URL  <Paper URL  <https://www.aclweb.org/anthology/2020.acl-main.263.pdf>'__
+    `Paper URL`_
+
+    .. _Paper URL: https://www.aclweb.org/anthology/2020.acl-main.263.pdf
 
     """
 
