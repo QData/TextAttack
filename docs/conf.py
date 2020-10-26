@@ -35,7 +35,7 @@ master_doc = "index"
 extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autodoc",
-    'sphinx.ext.inheritance_diagram',
+    "sphinx.ext.inheritance_diagram",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx_rtd_theme",
