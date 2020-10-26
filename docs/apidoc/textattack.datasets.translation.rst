@@ -6,8 +6,6 @@ textattack.datasets.translation package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.datasets.translation.ted_multi

@@ -6,8 +6,6 @@ textattack.commands.attack package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.commands.attack.attack_args

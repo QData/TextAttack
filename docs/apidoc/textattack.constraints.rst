@@ -17,8 +17,6 @@ Subpackages
    textattack.constraints.pre_transformation
    textattack.constraints.semantics
 
-Submodules
-----------
 
 
 .. automodule:: textattack.constraints.constraint

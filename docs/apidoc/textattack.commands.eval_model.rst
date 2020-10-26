@@ -6,8 +6,6 @@ textattack.commands.eval\_model package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.commands.eval_model.eval_model_command

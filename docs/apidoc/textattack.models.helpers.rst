@@ -6,9 +6,6 @@ textattack.models.helpers package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
-
 
 .. automodule:: textattack.models.helpers.bert_for_classification
    :members:

@@ -6,8 +6,6 @@ textattack.goal\_functions.text package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.goal_functions.text.minimize_bleu

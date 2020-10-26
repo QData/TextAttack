@@ -16,8 +16,6 @@ Subpackages
    textattack.commands.eval_model
    textattack.commands.train_model
 
-Submodules
-----------
 
 
 .. automodule:: textattack.commands.augment

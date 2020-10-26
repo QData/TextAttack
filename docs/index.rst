@@ -38,4 +38,4 @@
    1start/support.md
    1start/api-design-tips.md
    3important/index
-   apidoc/modules
+   apidoc/textattack

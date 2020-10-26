@@ -6,8 +6,6 @@ textattack.commands.train\_model package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.commands.train_model.run_training

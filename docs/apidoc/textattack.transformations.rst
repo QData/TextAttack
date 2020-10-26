@@ -6,8 +6,6 @@ textattack.transformations package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.transformations.composite_transformation

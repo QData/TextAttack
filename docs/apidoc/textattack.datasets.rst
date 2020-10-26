@@ -14,8 +14,6 @@ Subpackages
 
    textattack.datasets.translation
 
-Submodules
-----------
 
 
 .. automodule:: textattack.datasets.dataset

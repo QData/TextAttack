@@ -14,8 +14,6 @@ Subpackages
 
    textattack.shared.utils
 
-Submodules
-----------
 
 
 .. automodule:: textattack.shared.attack

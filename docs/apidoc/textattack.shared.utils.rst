@@ -6,8 +6,6 @@ textattack.shared.utils package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.shared.utils.install

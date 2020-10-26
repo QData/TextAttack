@@ -6,8 +6,6 @@ textattack.constraints.overlap package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.constraints.overlap.bleu_score
