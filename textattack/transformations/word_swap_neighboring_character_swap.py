@@ -1,3 +1,8 @@
+"""
+Word Swap by Neighboring Character Swap
+============================================
+"""
+
 import numpy as np
 
 # from textattack.shared import utils

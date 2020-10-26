@@ -1,3 +1,8 @@
+"""
+Managing Attack Logs.
+========================
+"""
+
 import numpy as np
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult

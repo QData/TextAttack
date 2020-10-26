@@ -1,3 +1,10 @@
+"""
+
+Stopword Modification
+--------------------------
+
+"""
+
 import nltk
 
 from textattack.constraints import PreTransformationConstraint

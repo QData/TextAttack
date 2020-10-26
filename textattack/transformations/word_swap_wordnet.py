@@ -1,3 +1,9 @@
+"""
+Word Swap by swaping synonyms in WordNet
+==========================================================
+"""
+
+
 from nltk.corpus import wordnet
 
 import textattack

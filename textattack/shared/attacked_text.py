@@ -1,3 +1,12 @@
+"""
+Attacked Text Class
+=====================
+
+A helper class that represents a string that can be attacked.
+
+
+"""
+
 from collections import OrderedDict
 import math
 

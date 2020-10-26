@@ -1,3 +1,8 @@
+"""
+Pre-Transformation Constraint Class
+=====================================
+"""
+
 from abc import ABC, abstractmethod
 
 from textattack.shared.utils import default_class_repr

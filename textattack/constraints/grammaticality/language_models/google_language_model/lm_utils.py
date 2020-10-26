@@ -1,4 +1,7 @@
 """
+Utils for loading 1B word benchmark dataset.
+------------------------------------------------
+
     Author: Moustafa Alzantot (malzantot@ucla.edu)
     All rights reserved.
 """

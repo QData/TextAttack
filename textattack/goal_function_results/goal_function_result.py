@@ -1,3 +1,10 @@
+"""
+
+goal function result class
+====================================
+
+"""
+
 from abc import ABC, abstractmethod
 
 import torch

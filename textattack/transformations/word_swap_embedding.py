@@ -1,3 +1,8 @@
+"""
+Word Swap by Embedding
+============================================
+
+"""
 import os
 
 import numpy as np

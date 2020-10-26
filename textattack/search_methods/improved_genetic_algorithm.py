@@ -1,4 +1,8 @@
-"""Reimplementation of search method from Xiaosen Wang, Hao Jin, Kun He (2019).
+"""
+
+Reimplementation of search method from Xiaosen Wang, Hao Jin, Kun He (2019).
+=========================================================================================
+
 
 Natural Language Adversarial Attack and Defense in Word Level.
 http://arxiv.org/abs/1909.06723

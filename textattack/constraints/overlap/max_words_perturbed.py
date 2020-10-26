@@ -1,3 +1,11 @@
+"""
+
+Max Perturb Words Constraints
+-------------------------------
+
+
+"""
+
 import math
 
 from textattack.constraints import Constraint

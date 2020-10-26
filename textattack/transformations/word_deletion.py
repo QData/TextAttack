@@ -1,3 +1,9 @@
+"""
+word deletion Transformation
+============================================
+
+"""
+
 from .transformation import Transformation
 
 

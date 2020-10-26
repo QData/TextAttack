@@ -1,3 +1,11 @@
+"""
+
+TextAttack Command Package for model benchmarking
+--------------------------------------------------
+
+"""
+
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import scipy

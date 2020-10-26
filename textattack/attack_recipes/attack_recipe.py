@@ -1,3 +1,9 @@
+"""
+Attack Recipe Class
+========================
+
+"""
+
 from abc import ABC, abstractmethod
 
 from textattack.shared import Attack

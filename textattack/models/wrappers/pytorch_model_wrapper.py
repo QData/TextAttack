@@ -1,3 +1,9 @@
+"""
+PyTorch Model Wrapper
+--------------------------
+"""
+
+
 import torch
 
 import textattack

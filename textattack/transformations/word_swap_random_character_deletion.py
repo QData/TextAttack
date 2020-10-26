@@ -1,3 +1,8 @@
+"""
+Word Swap by Random Character Deletion
+==========================================================
+"""
+
 import numpy as np
 
 # from textattack.shared import utils

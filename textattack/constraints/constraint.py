@@ -1,3 +1,9 @@
+"""
+
+TextAttack Constraint Class
+=====================================
+"""
+
 from abc import ABC, abstractmethod
 
 import textattack

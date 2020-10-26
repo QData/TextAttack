@@ -1,3 +1,8 @@
+"""
+Beam Search
+===============
+
+"""
 import numpy as np
 
 from textattack.goal_function_results import GoalFunctionResultStatus

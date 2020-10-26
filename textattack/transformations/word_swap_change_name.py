@@ -1,3 +1,8 @@
+"""
+Word Swap by Changing Name
+============================================
+"""
+
 import numpy as np
 
 from textattack.shared.data import PERSON_NAMES

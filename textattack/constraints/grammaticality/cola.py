@@ -1,3 +1,8 @@
+"""
+CoLA for Grammaticality
+--------------------------
+
+"""
 import lru
 import nltk
 from transformers import AutoModelForSequenceClassification, AutoTokenizer

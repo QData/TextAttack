@@ -1,4 +1,10 @@
-#!/usr/bin/env python
+"""
+
+TextAttack Command Arg Parsing
+=====================================
+"""
+
+# !/usr/bin/env python
 import argparse
 
 from textattack.commands.attack import AttackCommand, AttackResumeCommand

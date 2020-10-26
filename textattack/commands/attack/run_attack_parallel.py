@@ -1,4 +1,13 @@
-"""A command line parser to run an attack from user specifications."""
+"""
+
+TextAttack Command Class for Attack Parralle
+---------------------------------------------
+
+A command line parser to run an attack in parralle from user specifications.
+
+"""
+
+
 from collections import deque
 import os
 import time

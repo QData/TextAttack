@@ -13,7 +13,13 @@
 # limitations under the License.
 # ==============================================================================
 
-"""A library for loading 1B word benchmark dataset."""
+
+"""
+A library for loading 1B word benchmark dataset.
+------------------------------------------------
+
+"""
+
 
 import random
 

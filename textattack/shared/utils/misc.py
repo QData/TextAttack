@@ -14,8 +14,11 @@ def html_style_from_dict(style_dict):
     """Turns.
 
         { 'color': 'red', 'height': '100px'}
+
     into
         style: "color: red; height: 100px"
+
+
     """
     style_str = ""
     for key in style_dict:

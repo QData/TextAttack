@@ -1,6 +1,9 @@
 # Minimal makefile for Sphinx documentation
 #
 
+# First run "sphinx-apidoc  -f -o apidoc -d 6 -E -T -M ../textattack" 
+# Then run "make html"
+
 # You can set these variables from the command line, and also
 # from the environment for the first two.
 SPHINXOPTS    ?=

@@ -1,3 +1,12 @@
+"""
+
+Faster Alzantot Genetic Algorithm
+===================================
+(Certified Robustness to Adversarial Word Substitutions)
+
+
+"""
+
 from textattack.constraints.grammaticality.language_models import (
     LearningToWriteLanguageModel,
 )

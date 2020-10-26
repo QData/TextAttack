@@ -1,3 +1,7 @@
+"""
+Word Embedding Distance
+-------------------------
+"""
 import os
 import pickle
 

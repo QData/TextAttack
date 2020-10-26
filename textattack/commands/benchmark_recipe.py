@@ -1,3 +1,10 @@
+"""
+
+TextAttack benchmark recipe Command
+=====================================
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 from textattack.commands import TextAttackCommand

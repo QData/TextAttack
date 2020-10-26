@@ -1,3 +1,8 @@
+"""
+Shared loads word embeddings and related distances
+=====================================================
+"""
+
 import os
 import pickle
 

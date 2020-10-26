@@ -1,3 +1,8 @@
+"""
+BAE (BAE: BERT-Based Adversarial Examples)
+============================================
+
+"""
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     RepeatModification,

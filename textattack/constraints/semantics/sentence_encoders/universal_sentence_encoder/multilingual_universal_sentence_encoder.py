@@ -1,3 +1,8 @@
+"""
+multilingual universal sentence encoder
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""
+
 import tensorflow_hub as hub
 import tensorflow_text  # noqa: F401
 

@@ -1,12 +1,16 @@
-"""BERT-Score is introduced in this paper "BERTScore: Evaluating Text
-Generation with BERT" (Zhang et al, 2019)  https://arxiv.org/abs/1904.09675
-BERT-Score measures token similarity between two text using contextual
-embedding.
-
-To decide which two tokens to compare, it greedily chooses the most
-similar token from one text and matches it to a token in the second
-text.
 """
+BERT Score
+---------------------
+BERT Score is introduced in this paper (BERTScore: Evaluating Text Generation with BERT) `arxiv link`_.
+
+.. _arxiv link: https://arxiv.org/abs/1904.09675
+
+BERT Score measures token similarity between two text using contextual embedding.
+
+To decide which two tokens to compare, it greedily chooses the most similar token from one text and matches it to a token in the second text.
+
+"""
+
 import bert_score
 
 from textattack.constraints import Constraint
@@ -16,15 +20,20 @@ from textattack.shared import utils
 class BERTScore(Constraint):
     """
     A constraint on BERT-Score difference.
+
     Args:
-        min_bert_score (float): minimum threshold value for BERT-Score
-        model (str): name of model to use for scoring
-        score_type (str): Pick one of following three choices (1) "precision", (2) "recall", (3) "f1"
-            - "precision": match words from candidate text to reference text
-            - "recall": match words from reference text to candidate text
-            - "f1": harmonic mean of precision and recall (recommended)
-        compare_against_original (bool):  If `True`, compare new `x_adv` against the original `x`.
-            Otherwise, compare it against the previous `x_adv`.
+        min_bert_score (float), minimum threshold value for BERT-Score
+        model (str), name of model to use for scoring
+        score_type (str), Pick one of following three choices
+
+            -(1) ``precision`` : match words from candidate text to reference text
+            -(2) ``recall`` :  match words from reference text to candidate text
+            -(3) ``f1``: harmonic mean of precision and recall (recommended)
+
+        compare_against_original (bool):
+            If ``True``, compare new ``x_adv`` against the original ``x``.
+            Otherwise, compare it against the previous ``x_adv``.
+
     """
 
     SCORE_TYPE2IDX = {"precision": 0, "recall": 1, "f1": 2}
@@ -51,8 +60,7 @@ class BERTScore(Constraint):
         )
 
     def _check_constraint(self, transformed_text, reference_text):
-        """Return `True` if BERT Score between `transformed_text` and
-        `reference_text` is lower than minimum BERT Score."""
+        """Return `True` if BERT Score between `transformed_text` and `reference_text` is lower than minimum BERT Score."""
         cand = transformed_text.text
         ref = reference_text.text
         result = self._bert_scorer.score([cand], [ref])
