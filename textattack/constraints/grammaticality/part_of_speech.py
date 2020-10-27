@@ -2,6 +2,9 @@
 Part of Speech Constraint
 --------------------------
 """
+import importlib.util
+import sys
+
 import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger
@@ -16,12 +19,8 @@ from textattack.shared.validators import transformation_consists_of_word_swaps
 flair.device = textattack.shared.utils.device
 
 
-import importlib.util
 # a work around to get stanza lazy load
 # import stanza
-import sys
-
-
 def lazy_load(fullname):
     try:
         return sys.modules[fullname]

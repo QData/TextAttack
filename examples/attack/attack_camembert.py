@@ -1,12 +1,12 @@
+# Quiet TensorFlow.
+import os
+
+import numpy as np
+from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
+
 from textattack.attack_recipes import PWWSRen2019
 from textattack.datasets import HuggingFaceDataset
 from textattack.models.wrappers import ModelWrapper
-from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
-
-import numpy as np
-
-# Quiet TensorFlow.
-import os
 
 if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
