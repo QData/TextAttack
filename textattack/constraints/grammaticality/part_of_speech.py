@@ -8,7 +8,6 @@ from flair.models import SequenceTagger
 import lru
 import nltk
 
-
 import textattack
 from textattack.constraints import Constraint
 from textattack.shared.validators import transformation_consists_of_word_swaps
@@ -17,10 +16,10 @@ from textattack.shared.validators import transformation_consists_of_word_swaps
 flair.device = textattack.shared.utils.device
 
 
+import importlib.util
 # a work around to get stanza lazy load
 # import stanza
 import sys
-import importlib.util
 
 
 def lazy_load(fullname):
