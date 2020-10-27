@@ -58,6 +58,12 @@ class CLARE2020(AttackRecipe):
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
+                WordMergeMaskedLM(
+                    masked_language_model="distilbert-base-uncased",
+                    # max_candidates=float("inf"),
+                    max_candidates=5,
+                    min_confidence=5e-4,
+                )
             ]
         )
 
