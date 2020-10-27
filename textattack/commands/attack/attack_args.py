@@ -23,6 +23,7 @@ ATTACK_RECIPE_NAMES = {
     "pruthi": "textattack.attack_recipes.Pruthi2019",
     "pso": "textattack.attack_recipes.PSOZang2020",
     "checklist": "textattack.attack_recipes.CheckList2020",
+    "clare": "textattack.attack_recipes.CLARE2020",
 }
 
 #
