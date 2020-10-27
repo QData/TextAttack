@@ -14,7 +14,8 @@ from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapMaskedLM(WordSwap):
-    """Generate potential replacements for a word using a masked language model.
+    """Generate potential replacements for a word using a masked language
+    model.
 
     Based off of following papers
         - "Robustness to Modification with Shared Words in Paraphrase Identification" (Shi et al., 2019) https://arxiv.org/abs/1909.02560
@@ -35,7 +36,7 @@ class WordSwapMaskedLM(WordSwap):
         masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default is `bert-base-uncased`.
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
         max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are ranked by model's confidence.
-        min_confidence (float): minimum confidence threshold each replacement word must pass. 
+        min_confidence (float): minimum confidence threshold each replacement word must pass.
     """
 
     def __init__(
