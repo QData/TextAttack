@@ -7,7 +7,7 @@ from flair.data import Sentence
 from flair.models import SequenceTagger
 import lru
 import nltk
-import stanza
+
 
 import textattack
 from textattack.constraints import Constraint
@@ -15,6 +15,27 @@ from textattack.shared.validators import transformation_consists_of_word_swaps
 
 # Set global flair device to be TextAttack's current device
 flair.device = textattack.shared.utils.device
+
+
+# a work around to get stanza lazy load
+# import stanza
+import sys
+import importlib.util
+
+
+def lazy_load(fullname):
+    try:
+        return sys.modules[fullname]
+    except KeyError:
+        spec = importlib.util.find_spec(fullname)
+        module = importlib.util.module_from_spec(spec)
+        loader = importlib.util.LazyLoader(spec.loader)
+        # Make module with proper locking and get it inserted into sys.modules.
+        loader.exec_module(module)
+        return module
+
+
+stanza = lazy_load("stanza")
 
 
 def load_flair_upos_fast():
