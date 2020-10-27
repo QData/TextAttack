@@ -6,9 +6,10 @@ from textattack.constraints.semantics.sentence_encoders import UniversalSentence
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
 from textattack.transformations import (
-    WordSwapMaskedLM,
     CompositeTransformation,
+    WordSwapMaskedLM,
     WordInsertionMaskedLM,
+    WordMergeMaskedLM,
 )
 
 from .attack_recipe import AttackRecipe
@@ -50,6 +51,12 @@ class CLARE2020(AttackRecipe):
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
+                WordMergeMaskedLM(
+                    masked_language_model="distilbert-base-uncased",
+                    # max_candidates=float("inf"),
+                    max_candidates=5,
+                    min_confidence=5e-4,
+                )
             ]
         )
         # TBD
