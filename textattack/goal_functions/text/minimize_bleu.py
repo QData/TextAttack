@@ -15,7 +15,8 @@ from .text_to_text_goal_function import TextToTextGoalFunction
 
 
 class MinimizeBleu(TextToTextGoalFunction):
-    """Attempts to minimize the BLEU score between the current output translation and the reference translation.
+    """Attempts to minimize the BLEU score between the current output
+    translation and the reference translation.
 
         BLEU score was defined in (BLEU: a Method for Automatic Evaluation of Machine Translation).
 
@@ -28,8 +29,6 @@ class MinimizeBleu(TextToTextGoalFunction):
         `ArxivURL2`_
 
     .. _ArxivURL2: https://www.aclweb.org/anthology/2020.acl-main.263
-
-
     """
 
     EPS = 1e-10

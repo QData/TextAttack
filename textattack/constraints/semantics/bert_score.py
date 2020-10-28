@@ -18,8 +18,7 @@ from textattack.shared import utils
 
 
 class BERTScore(Constraint):
-    """
-    A constraint on BERT-Score difference.
+    """A constraint on BERT-Score difference.
 
     Args:
         min_bert_score (float), minimum threshold value for BERT-Score
@@ -33,7 +32,6 @@ class BERTScore(Constraint):
         compare_against_original (bool):
             If ``True``, compare new ``x_adv`` against the original ``x``.
             Otherwise, compare it against the previous ``x_adv``.
-
     """
 
     SCORE_TYPE2IDX = {"precision": 0, "recall": 1, "f1": 2}
@@ -60,7 +58,8 @@ class BERTScore(Constraint):
         )
 
     def _check_constraint(self, transformed_text, reference_text):
-        """Return `True` if BERT Score between `transformed_text` and `reference_text` is lower than minimum BERT Score."""
+        """Return `True` if BERT Score between `transformed_text` and
+        `reference_text` is lower than minimum BERT Score."""
         cand = transformed_text.text
         ref = reference_text.text
         result = self._bert_scorer.score([cand], [ref])

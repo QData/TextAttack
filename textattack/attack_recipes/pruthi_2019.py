@@ -24,7 +24,8 @@ from .attack_recipe import AttackRecipe
 
 
 class Pruthi2019(AttackRecipe):
-    """An implementation of the attack used in "Combating Adversarial Misspellings with Robust Word Recognition", Pruthi et al., 2019.
+    """An implementation of the attack used in "Combating Adversarial
+    Misspellings with Robust Word Recognition", Pruthi et al., 2019.
 
     This attack focuses on a small number of character-level changes that simulate common typos. It combines:
         - Swapping neighboring characters

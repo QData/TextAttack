@@ -1,5 +1,4 @@
-"""
-Welcome to the API references for TextAttack!
+"""Welcome to the API references for TextAttack!
 
 What is TextAttack?
 

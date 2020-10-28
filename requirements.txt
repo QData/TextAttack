@@ -9,7 +9,6 @@ datasets
 nltk
 numpy<1.19.0 #TF 2.0 requires this
 pandas>=1.0.1
-scikit-learn
 scipy==1.4.1
 sentence_transformers>0.2.6
 stanza

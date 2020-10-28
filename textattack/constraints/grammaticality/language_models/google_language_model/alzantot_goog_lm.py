@@ -12,11 +12,12 @@ import os
 
 import lru
 import numpy as np
-import tensorflow as tf
 
 from textattack.shared import utils
 
 from . import lm_data_utils, lm_utils
+
+tf = utils.LazyLoader("tensorflow", globals(), "tensorflow")
 
 tf.get_logger().setLevel("INFO")
 
