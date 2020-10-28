@@ -156,6 +156,9 @@ TEXTATTACK_CACHE_DIR = os.environ.get(
 if "TA_CACHE_DIR" in os.environ:
     set_cache_dir(os.environ["TA_CACHE_DIR"])
 
-if not ("TEXTATTACK_DOC_BUILD" in os.environ and os.environ["TEXTATTACK_DOC_BUILD"] == "TRUE"):
+if not (
+    "TEXTATTACK_DOC_BUILD" in os.environ
+    and os.environ["TEXTATTACK_DOC_BUILD"] == "TRUE"
+):
     # Don't do installation when building docs.
     _post_install_if_needed()
