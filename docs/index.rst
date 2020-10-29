@@ -1,9 +1,7 @@
-.. include:: 1start/basic-Intro.rst
 
 .. toctree::
    :maxdepth: 6
    :caption: About
-   :hidden:
 
    1start/basic-Intro.rst
    1start/what_is_an_adversarial_attack.md
@@ -37,5 +35,6 @@
    
    1start/support.md
    1start/api-design-tips.md
-   3important/index
+   3recipes/attack_recipes
+   3recipes/augmenter_recipes
    apidoc/textattack
