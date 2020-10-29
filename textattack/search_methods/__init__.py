@@ -1,8 +1,12 @@
 """
+
+.. _search_methods:
+
+
 Search Methods:
 ===================
 
-Search methods explore the transformation space in an attempt to find a successful attack as determined by a :ref:`goal_function` and list of :ref:`constraint`
+Search methods explore the transformation space in an attempt to find a successful attack as determined by a :ref:`Goal Functions <goal_function>` and list of :ref:`Constraints <constraint>`
 
 """
 from .search_method import SearchMethod

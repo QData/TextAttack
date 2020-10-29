@@ -1,4 +1,8 @@
 """
+
+.. _attacked_text:
+
+
 Attacked Text Class
 =====================
 

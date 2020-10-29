@@ -1,4 +1,6 @@
 """
+.. _constraint:
+
 Constraint Package
 ===================
 
@@ -6,15 +8,15 @@ Constraints determine whether a given transformation is valid. Since transformat
 
 We split constraints into three main categories.
 
-   :ref:`Semantics`: Based on the meaning of the input and perturbation.
+   :ref:`Semantics <semantics>`: Based on the meaning of the input and perturbation.
 
-   :ref:`Grammaticality`: Based on syntactic properties like part-of-speech and grammar.
+   :ref:`Grammaticality <grammaticality>`: Based on syntactic properties like part-of-speech and grammar.
 
-   :ref:`Overlap`: Based on character-based properties, like edit distance.
+   :ref:`Overlap <overlap>`: Based on character-based properties, like edit distance.
 
 A fourth type of constraint restricts the search method from exploring certain parts of the search space:
 
-   :ref:`pre_transformation`: Based on the input and index of word replacement.
+   :ref:`pre_transformation <pre_transformation>`: Based on the input and index of word replacement.
 
 """
 

@@ -1,7 +1,0 @@
-Important APIs 
-===============
-
-.. toctree::
-   :glob:
-
-   *

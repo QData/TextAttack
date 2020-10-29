@@ -1,4 +1,6 @@
 """
+.. _attack_recipes:
+
 Attack Recipes:
 ======================
 

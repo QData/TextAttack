@@ -1,5 +1,5 @@
-textattack package
-==================
+Complete API Reference
+========================
 
 .. automodule:: textattack
    :members:

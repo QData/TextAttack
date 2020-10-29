@@ -1,4 +1,7 @@
 """
+
+.. _augmentation:
+
 Augmenter:
 ==================
 

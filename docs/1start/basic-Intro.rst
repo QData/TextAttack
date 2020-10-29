@@ -16,7 +16,10 @@ Where should I start?
 
 This is a great question, and one we get a lot. First of all, almost everything in TextAttack can be done in two ways: via the command-line or via the Python API. If you're looking to integrate TextAttack into an existing project, the Python API is likely for you. If you'd prefer to use built-in functionality end-to-end (training a model, running an adversarial attack, augmenting a CSV) then you can just use the command-line API.
 
-For future developers, visit the `Installation <https://github.com/QData/TextAttack/blob/master/docs/1start/installation.rst>`__ page for more details about installing TextAttack onto your own computer. To start making contributions, read the detailed instructions `here <https://github.com/QData/TextAttack/blob/master/CONTRIBUTING.md>`__.
+
+
+
+For future developers, visit the :ref:`Installation <installation>` page for more details about installing TextAttack onto your own computer. To start making contributions, read the detailed instructions `here <https://github.com/QData/TextAttack/blob/master/CONTRIBUTING.md>`__.
 
 TextAttack does three things very well:
 
@@ -35,23 +38,26 @@ NLP Attacks
 TextAttack provides a framework for constructing and thinking about generating inputs in NLP via perturbation attacks. 
 
 
-TextAttack builds attacks from four components:
+TextAttack builds attacks from four components:  
 
-- `Goal Functions <api-attacks/goal_function.html>`__ stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
-- `Constraints <api-attacks/constraint.html>`__ determine if a potential perturbation is valid with respect to the original input.
-- `Transformations <api-attacks/transformation.html>`__ take a text input and transform it by inserting and deleting characters, words, and/or phrases.
-- `Search Methods <api-attacks/search_method.html>`__ explore the space of possible **transformations** within the defined **constraints** and attempt to find a successful perturbation which satisfies the **goal function**.
 
-TextAttack provides a set of `Attack Recipes <3recipes/attack_recipes.html>`__ that assemble attacks from the literature from these four components. Take a look at these recipes (or our `paper on ArXiv <https://arxiv.org/abs/2005.05909>`__) to get a feel for how the four components work together to create an adversarial attack.
+
+- :ref:`Goal Functions  <goal_function>`: stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
+- :ref:`Constraints <constraint>`: determine if a potential perturbation is valid with respect to the original input.
+- :ref:`Transformations  <transformations>`:  take a text input and transform it by inserting and deleting characters, words, and/or phrases.
+- :ref:`Search Methods  <search_methods>`: explore the space of possible **transformations** within the defined **constraints** and attempt to find a successful perturbation which satisfies the **goal function**.
+
+
+TextAttack provides a set of :ref:`Attack Recipes <attack_recipes>` that assemble attacks from the literature from these four components. Take a look at these recipes (or our `paper on ArXiv <https://arxiv.org/abs/2005.05909>`__) to get a feel for how the four components work together to create an adversarial attack.
 
 Data Augmentation
 --------------------
-Data augmentation is easy and extremely common in computer vision but harder and less common in NLP. We provide a `Data Augmentation <api-augmentation/augmenter.html>`__ module using transformations and constraints.
+Data augmentation is easy and extremely common in computer vision but harder and less common in NLP. We provide a :ref:`Data Augmentation <augmentation>` module using transformations and constraints.
 
 Features
 ------------
 TextAttack has some other features that make it a pleasure to use:
 
-- `Pre-trained Models <datasets_models/models.html>`__ for testing attacks and evaluating constraints
-- `Visualization options <api-misc/loggers.html>`__ like Weights & Biases and Visdom
-- `AttackedText <api-misc/attacked_text.rst>`__, a utility class for strings that includes tools for tokenizing and editing text
+- :ref:`Pre-trained Models <models>` for testing attacks and evaluating constraints
+- :ref:`Visualization options   <loggers>` like Weights & Biases and Visdom
+- :ref:`AttackedText   <attacked_text>`, a utility class for strings that includes tools for tokenizing and editing text
