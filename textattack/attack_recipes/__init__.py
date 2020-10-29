@@ -1,5 +1,5 @@
 """
-.. _attack_recipes: 
+.. _attack_recipes:
 
 Attack Recipes:
 ======================
