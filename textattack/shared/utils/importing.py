@@ -1,5 +1,4 @@
 # Code copied from https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/util/lazy_loader.py
-from __future__ import absolute_import, division, print_function
 
 import importlib
 import types
