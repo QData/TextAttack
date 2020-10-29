@@ -20,8 +20,6 @@ def test_embedding_augmenter():
     assert augmented_s in augmented_text_list
 
 
-# TODO: fix flair problem in CheckList, unable to pass tests online
-"""
 def test_checklist_augmenter():
     from textattack.augmentation import CheckListAugmenter
 
@@ -37,7 +35,6 @@ def test_checklist_augmenter():
     augmented_text_list = augmenter.augment(s)
     augmented_s = "I'll be happy to assist you."
     assert augmented_s in augmented_text_list
-"""
 
 
 def test_charwap_augmenter():
