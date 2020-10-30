@@ -3,11 +3,11 @@ multilingual universal sentence encoder
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 
-import textattack
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
+from textattack.shared.utils import LazyLoader
 
-hub = textattack.shared.utils.LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
-tensorflow_text = textattack.shared.utils.LazyLoader(
+hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
+tensorflow_text = LazyLoader(
     "tensorflow_text", globals(), "tensorflow_text"
 )  # noqa: F401
 
