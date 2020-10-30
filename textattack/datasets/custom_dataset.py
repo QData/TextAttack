@@ -2,22 +2,25 @@ import collections
 import random
 
 import datasets
+import pandas as pd
 
 import textattack
-from textattack.datasets import HuggingFaceDataset
+from textattack.datasets import TextAttackDataset
 
 
 def _cb(s):
     """Colors some text blue for printing to the terminal."""
+    if not isinstance(s, str):
+        s = "custom " + str(type(str))
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
 
 
-class CustomDataset(HuggingFaceDataset):
-    """Loads a Custom Dataset like HuggingFace custom ``datasets`` and prepares it as a
+class CustomDataset(TextAttackDataset):
+    """Loads a Custom Dataset from a file/ list of files and prepares it as a
     TextAttack dataset.
 
     - name(str): the dataset file names
-    - file_type(str): Specifies type of file for loading HuggingFaceDataset
+    - file_type(str): Specifies type of file for loading HuggingFaceDataset : csv, json, pandas
       from local_files will be loaded as ``datasets.load_dataset(filetype, data_files=name)``.
     - label_map: Mapping if output labels should be re-mapped. Useful
       if model was trained with a different label arrangement than
@@ -34,9 +37,10 @@ class CustomDataset(HuggingFaceDataset):
     def __init__(
         self,
         name,
-        filetype="csv",
+        input_type="csv",
         split="train",
         label_map=None,
+        subset=None,
         output_scale_factor=None,
         dataset_columns=[("text",), None],
         shuffle=False,
@@ -44,9 +48,16 @@ class CustomDataset(HuggingFaceDataset):
 
         self._name = name
 
-        self._dataset = datasets.load_dataset(filetype, data_files=name)[split]
+        if input_type != "user":
+            self._dataset = datasets.load_dataset(input_type, data_files=self._name)[
+                split
+            ]
+        else:
+            if isinstance(self._name, dict):
+                self._dataset = datasets.Dataset.from_dict(self._name)
+            if isinstance(self._name, pd.DataFrame):
+                self._dataset = datasets.Dataset.from_pandas(self._name)
 
-        subset = None
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
 
         textattack.shared.logger.info(
@@ -114,3 +125,18 @@ class CustomDataset(HuggingFaceDataset):
             output = None
 
         return (input_dict, output)
+
+    def __next__(self):
+        if self._i >= len(self.examples):
+            raise StopIteration
+        raw_example = self.examples[self._i]
+        self._i += 1
+        return self._format_raw_example(raw_example)
+
+    def __getitem__(self, i):
+        if isinstance(i, int):
+            return self._format_raw_example(self.examples[i])
+        else:
+            # `i` could be a slice or an integer. if it's a slice,
+            # return the formatted version of the proper slice of the list
+            return [self._format_raw_example(ex) for ex in self.examples[i]]
