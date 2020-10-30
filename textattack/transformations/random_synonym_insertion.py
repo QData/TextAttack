@@ -6,7 +6,7 @@ random synonym insertation Transformation
 
 import random
 
-from nltk.corpus import wordnet
+import nltk
 
 from textattack.transformations import Transformation
 
@@ -17,7 +17,7 @@ class RandomSynonymInsertion(Transformation):
 
     def _get_synonyms(self, word):
         synonyms = set()
-        for syn in wordnet.synsets(word):
+        for syn in nltk.corpus.wordnet.synsets(word):
             for lemma in syn.lemmas():
                 if lemma.name() != word and check_if_one_word(lemma.name()):
                     synonyms.add(lemma.name())
