@@ -7,9 +7,9 @@ Utils for loading 1B word benchmark dataset.
 """
 import sys
 
-import textattack
+from textattack.shared.utils import LazyLoader
 
-tf = textattack.shared.utils.LazyLoader("tensorflow", globals(), "tensorflow")
+tf = LazyLoader("tensorflow", globals(), "tensorflow")
 
 from google.protobuf import text_format  # noqa: E402
 

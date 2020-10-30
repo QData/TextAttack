@@ -25,9 +25,9 @@ import random
 
 import numpy as np
 
-import textattack
+from textattack.shared.utils import LazyLoader
 
-tf = textattack.shared.utils.LazyLoader("tensorflow", globals(), "tensorflow")
+tf = LazyLoader("tensorflow", globals(), "tensorflow")
 
 
 class Vocabulary(object):

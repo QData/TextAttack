@@ -3,10 +3,10 @@ universal sentence encoder class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 
-import textattack
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
+from textattack.shared.utils import LazyLoader
 
-hub = textattack.shared.utils.LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
+hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
 
 
 class UniversalSentenceEncoder(SentenceEncoder):
