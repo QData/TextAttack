@@ -28,7 +28,7 @@ jobs:
         python -m pip install --upgrade pip setuptools wheel
         pip install black flake8 isort # Testing packages
         python setup.py install_egg_info # Workaround https://github.com/pypa/pip/issues/4537
-        pip install -e .
+        pip install -e . ["dev"]
     - name: Check code format with black and isort
       run: |
         make lint

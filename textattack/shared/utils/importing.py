@@ -23,7 +23,9 @@ class LazyLoader(types.ModuleType):
             module = importlib.import_module(self.__name__)
         except ModuleNotFoundError as e:
             raise ModuleNotFoundError(
-                f"Lazy module loader cannot find module named `{self.__name__}`. Please run `pip install {self.__name__}`."
+                f"Lazy module loader cannot find module named `{self.__name__}`. "
+                f"This might be because TextAttack does not automatically install some optional dependencies. "
+                f"Please run `pip install {self.__name__}` to install the package."
             ) from e
         self._parent_module_globals[self._local_name] = module
 

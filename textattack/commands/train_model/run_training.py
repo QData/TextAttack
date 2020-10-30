@@ -408,7 +408,7 @@ def train_model(args):
     # Use Weights & Biases, if enabled.
     if args.enable_wandb:
         global wandb
-        import wandb
+        wandb = textattack.shared.utils.LazyLoader("wandb", globals(), "wandb")
 
         wandb.init(sync_tensorboard=True)
 

@@ -116,10 +116,6 @@ def _post_install():
     nltk.download("wordnet")
     nltk.download("punkt")
 
-    import stanza
-
-    stanza.download("en")
-
 
 def set_cache_dir(cache_dir):
     """Sets all relevant cache directories to ``TA_CACHE_DIR``."""
