@@ -7,7 +7,10 @@ Transformations and constraints can be used for simple NLP data augmentations. H
 """
 import random
 
-from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
+from textattack.constraints.pre_transformation import (
+    RepeatModification,
+    StopwordModification,
+)
 
 from . import Augmenter
 
