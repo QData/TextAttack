@@ -4,7 +4,7 @@ Word Swap by swaping synonyms in WordNet
 """
 
 
-import nltk
+from nltk.corpus import wordnet
 
 import textattack
 from textattack.transformations.word_swap import WordSwap
@@ -15,17 +15,15 @@ class WordSwapWordNet(WordSwap):
     WordNet."""
 
     def __init__(self, language="eng"):
-        if language not in nltk.corpus.wordnet.langs():
-            raise ValueError(
-                f"Language {language} not one of {nltk.corpus.wordnet.langs()}"
-            )
+        if language not in wordnet.langs():
+            raise ValueError(f"Language {language} not one of {wordnet.langs()}")
         self.language = language
 
     def _get_replacement_words(self, word, random=False):
         """Returns a list containing all possible words with 1 character
         replaced by a homoglyph."""
         synonyms = set()
-        for syn in nltk.corpus.wordnet.synsets(word, lang=self.language):
+        for syn in wordnet.synsets(word, lang=self.language):
             for syn_word in syn.lemma_names(lang=self.language):
                 if (
                     (syn_word != word)
