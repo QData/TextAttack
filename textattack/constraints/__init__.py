@@ -1,5 +1,4 @@
-"""
-.. _constraint:
+""".. _constraint:
 
 Constraint Package
 ===================
@@ -17,7 +16,6 @@ We split constraints into three main categories.
 A fourth type of constraint restricts the search method from exploring certain parts of the search space:
 
    :ref:`pre_transformation <pre_transformation>`: Based on the input and index of word replacement.
-
 """
 
 from .pre_transformation_constraint import PreTransformationConstraint

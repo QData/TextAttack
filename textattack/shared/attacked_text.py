@@ -1,14 +1,9 @@
-"""
-
-.. _attacked_text:
-
+""".. _attacked_text:
 
 Attacked Text Class
 =====================
 
 A helper class that represents a string that can be attacked.
-
-
 """
 
 from collections import OrderedDict

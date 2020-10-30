@@ -1,12 +1,9 @@
-"""
-
-.. _overlap:
+""".. _overlap:
 
 Overlap Constraints
 --------------------------
 
 Overlap constraints determine if a transformation is valid based on character-level analysis.
-
 """
 
 from .bleu_score import BLEU
