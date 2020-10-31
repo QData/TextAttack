@@ -14,7 +14,7 @@ torch==1.6
 transformers==3.3.0
 terminaltables
 tokenizers==0.8.1-rc2
-tqdm
+tqdm>=4.27,<4.50.0
 word2number
 num2words
 more-itertools
