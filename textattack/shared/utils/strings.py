@@ -1,4 +1,4 @@
-import textattack
+from .importing import LazyLoader
 
 
 def has_letter(word):
@@ -202,7 +202,7 @@ def zip_flair_result(pred, tag_type="pos-fast"):
     return word_list, pos_list
 
 
-stanza = textattack.shared.utils.LazyLoader("stanza", globals(), "stanza")
+stanza = LazyLoader("stanza", globals(), "stanza")
 
 
 def zip_stanza_result(pred, tagset="universal"):

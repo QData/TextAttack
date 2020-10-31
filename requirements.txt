@@ -17,3 +17,4 @@ tokenizers==0.8.1-rc2
 tqdm
 word2number
 num2words
+more-itertools
