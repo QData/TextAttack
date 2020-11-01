@@ -50,7 +50,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         (Regular PyTorch ``nn.Module`` models typically take inputs as
         positional arguments.)
         """
-        ids = self.tokenize(text_input_list)
+        ids = self.encode(text_input_list)
 
         with torch.no_grad():
             outputs = textattack.shared.utils.batch_model_predict(
@@ -60,8 +60,8 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         return outputs
 
     def get_grad(self, text_input):
-        """
-        Get gradient with respect to input tokens
+        """Get gradient of loss with respect to input tokens.
+
         Args:
             text_input (str): input string
         Returns:
@@ -86,11 +86,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
         self.model.zero_grad()
         model_device = next(self.model.parameters()).device
-        ids = self.tokenize([text_input])
-        if hasattr(self.tokenizer, "convert_ids_to_tokens"):
-            tokens = self.tokenizer.convert_ids_to_tokens(ids[0]["input_ids"])
-        else:
-            tokens = None
+        ids = self.encode([text_input])
         predictions = self._model_predict(ids)
 
         model_device = next(self.model.parameters()).device
@@ -104,7 +100,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         except TypeError:
             raise TypeError(
                 f"{type(self.model)} class does not take in `labels` to calculate loss. "
-                "One cause for this might be if you instatiated your model using `transformer.AutoModel` "
+                "One cause for this might be if you instantiatedyour model using `transformer.AutoModel` "
                 "(instead of `transformers.AutoModelForSequenceClassification`)."
             )
 
@@ -117,6 +113,6 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         emb_hook.remove()
         self.model.eval()
 
-        output = {"ids": ids[0]["input_ids"], "tokens": tokens, "gradient": grad}
+        output = {"ids": ids[0]["input_ids"], "gradient": grad}
 
         return output

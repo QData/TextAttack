@@ -68,7 +68,7 @@ class Attack:
         if not self.transformation:
             raise NameError("Cannot instantiate attack without transformation")
         self.is_black_box = (
-            getattr(transformation, "is_black_box", True) or search_method.is_black_box
+            getattr(transformation, "is_black_box", True) and search_method.is_black_box
         )
 
         if not self.search_method.check_transformation_compatibility(

@@ -21,7 +21,6 @@ class WordSwapInflections(WordSwap):
     `Paper URL`_
 
     .. _Paper URL: https://www.aclweb.org/anthology/2020.acl-main.263.pdf
-
     """
 
     def __init__(self, **kwargs):

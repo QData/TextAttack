@@ -45,7 +45,6 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
         self.pop_size = pop_size
         self.post_turn_check = post_turn_check
         self.max_turn_retries = 20
-        self.is_black_box = True
 
         self._search_over = False
         self.omega_1 = 0.8

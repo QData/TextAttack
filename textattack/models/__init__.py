@@ -1,5 +1,4 @@
-"""
-.. _models:
+""".. _models:
 
 Models
 =========

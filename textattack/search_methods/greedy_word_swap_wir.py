@@ -89,27 +89,10 @@ class GreedyWordSwapWIR(SearchMethod):
             index_scores = np.zeros(initial_text.num_words)
             grad_output = victim_model.get_grad(initial_text.tokenizer_input)
             gradient = grad_output["gradient"]
-            j = 0
-            last_matched = 0
+            word2token_mapping = initial_text.align_with_model_tokens(victim_model)
             for i, word in enumerate(initial_text.words):
-                word = initial_text.words[i].lower()
-                matched_tokens = []
-                a = []
-                while j < len(grad_output["tokens"]) and len(word) > 0:
-                    token = grad_output["tokens"][j].lower()
-                    # remove "##" if it's a subword
-                    token = token.replace("##", "")
-                    idx = word.find(token)
-                    if idx == 0:
-                        word = word[idx + len(token) :]
-                        matched_tokens.append(j)
-                        a.append(token)
-                        last_matched = j
-                    j += 1
-
+                matched_tokens = word2token_mapping[word]
                 if not matched_tokens:
-                    # Reset j to most recent match
-                    j = last_matched
                     index_scores[i] = 0.0
                 else:
                     agg_grad = np.mean(gradient[matched_tokens], axis=0)
