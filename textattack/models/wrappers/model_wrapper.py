@@ -23,35 +23,36 @@ class ModelWrapper(ABC):
     def encode(self, inputs):
         """Helper method that calls ``tokenizer.batch_encode`` if possible, and
         if not, falls back to calling ``tokenizer.encode`` for each input.
-        
+
         Args:
             inputs (list[str]): list of input strings
 
         Returns:
             tokens (list[list[int]]): List of list of ids
-        """"
+        """
         if hasattr(self.tokenizer, "batch_encode"):
             return self.tokenizer.batch_encode(inputs)
         else:
             return [self.tokenizer.encode(x) for x in inputs]
 
-    def tokenize(self, inputs, strip=True):
-        """Helper method that calls ``tokenizer.tokenize``.
-        
+    def _tokenize(self, inputs):
+        """Helper method for `tokenize`"""
+        raise NotImplementedError()
+
+    def tokenize(self, inputs, strip_prefix=False):
+        """Helper method that tokenizes input strings
         Args:
             inputs (list[str]): list of input strings
-            strip (bool): If `True`, we strip auxiliary characters added to tokens (e.g. "##" for BERT, "Ġ" for RoBERTa)
+            strip_prefix (bool): If `True`, we strip auxiliary characters added to tokens as prefixes (e.g. "##" for BERT, "Ġ" for RoBERTa)
         Returns:
             tokens (list[list[str]]): List of list of tokens as strings
-        """"
-        tokens = [self.tokenizer.tokenize(x) for x in inputs]
-        if strip:
-            #`aux_chars` are known auxiliary characters that are added to tokens
+        """
+        tokens = self._tokenize(inputs)
+        if strip_prefix:
+            # `aux_chars` are known auxiliary characters that are added to tokens
             strip_chars = ["##", "Ġ", "__"]
-            # Try dummy string "aaaaaaaaaaaaaaaaaaaaaaaaaa" and identify possible prefix
-            # TODO: Find a better way to identify prefixes
-            strip_charas.append(self.tokenize(["aaaaaaaaaaaaaaaaaaaaaaaaaa"])[0][2].replace("a", ""))
-            
+            # TODO: Find a better way to identify prefixes. These depend on the model, so cannot be resolved in ModelWrapper.
+
             def strip(s, chars):
                 for c in chars:
                     s = s.replace(c, "")

@@ -10,7 +10,7 @@
   (constraints): 
     (0): RepeatModification
     (1): StopwordModification
-  (is_black_box):  True
+  (is_black_box):  False
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------

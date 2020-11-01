@@ -94,3 +94,15 @@ class PyTorchModelWrapper(ModelWrapper):
         output = {"ids": ids[0].tolist(), "gradient": grad}
 
         return output
+
+    def _tokenize(self, inputs):
+        """Helper method that for `tokenize`
+        Args:
+            inputs (list[str]): list of input strings
+        Returns:
+            tokens (list[list[str]]): List of list of tokens as strings
+        """
+        return [
+            self.tokenizer.convert_ids_to_tokens(self.tokenizer.encode(x))
+            for x in inputs
+        ]

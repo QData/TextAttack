@@ -26,7 +26,7 @@
       )
     (3): RepeatModification
     (4): StopwordModification
-  (is_black_box):  True
+  (is_black_box):  False
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
