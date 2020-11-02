@@ -30,7 +30,8 @@ class CLARE2020(AttackRecipe):
         # "This paper presents CLARE, a ContextuaLized AdversaRial Example generation model
         # that produces fluent and grammatical outputs through a mask-then-infill procedure.
         # CLARE builds on a pre-trained masked language model and modifies the inputs in a context-aware manner.
-        # We propose three contex-tualized  perturbations, Replace, Insert and Merge, allowing for generating outputs of varied lengths."
+        # We propose three contex-tualized  perturbations, Replace, Insert and Merge, allowing for generating outputs of
+        # varied lengths."
         #
         # "We  experiment  with  a  distilled  version  of RoBERTa (RoBERTa_{distill}; Sanh et al., 2019)
         # as the masked language model for contextualized infilling."
@@ -41,13 +42,13 @@ class CLARE2020(AttackRecipe):
                 WordSwapMaskedLM(
                     method="bae",
                     masked_language_model="distilbert-base-uncased",
-                    #max_candidates=float("inf"),
+                    # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
                 WordInsertionMaskedLM(
                     masked_language_model="distilbert-base-uncased",
-                    #max_candidates=float("inf"),
+                    # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
@@ -56,12 +57,9 @@ class CLARE2020(AttackRecipe):
                     # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
-                )
+                ),
             ]
         )
-        # TBD
-        insert_transformation = None
-        merge_transformation = None
 
         #
         # Don't modify the same word twice or stopwords.
@@ -91,7 +89,8 @@ class CLARE2020(AttackRecipe):
         #
         # "Only one of the three actions can be applied at each position, and we select the one with the highest score."
         #
-        # "Actions are iteratively applied to the input, until an adversarial example is found or a limit of actions T is reached.
+        # "Actions are iteratively applied to the input, until an adversarial example is found or a limit of actions T
+        # is reached.
         #  Each step selects the highest-scoring action from the remaining ones."
         #
         search_method = GreedySearch()

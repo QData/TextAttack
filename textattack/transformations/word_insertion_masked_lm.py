@@ -1,5 +1,3 @@
-import itertools
-
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
@@ -10,10 +8,19 @@ from textattack.transformations.word_swap import WordSwap
 class WordInsertionMaskedLM(WordSwap):
     """Generate potential insertion for a word using a masked language model.
 
+    Based off of:
+    CLARE: Contextualized Perturbation for Textual Adversarial Attack" (Li et al, 2020):
+    https://arxiv.org/abs/2009.07502
+
     Args:
-        masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default is `bert-base-uncased`.
+        masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default
+         is `bert-base-uncased`.
+
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
-        max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are ranked by model's confidence.
+
+        max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are
+        ranked by model's confidence.
+
         min_confidence (float): minimum confidence threshold each replacement word must pass.
     """
 
@@ -100,16 +107,8 @@ class WordInsertionMaskedLM(WordSwap):
     def _get_replacement_words(self, current_text, index, **kwargs):
         return self._bae_replacement_words(current_text, index)
 
-
     def _get_transformations(self, current_text, indices_to_modify):
         # extra_args = {}
-
-        current_inputs = self._encode_text(current_text.text)
-        with torch.no_grad():
-            pred_probs = self._language_model(**current_inputs)[0][0]
-        top_probs, top_ids = torch.topk(pred_probs, self.max_candidates)
-        id_preds = top_ids.cpu()
-        masked_lm_logits = pred_probs.cpu()
 
         transformed_texts = []
 
@@ -118,19 +117,15 @@ class WordInsertionMaskedLM(WordSwap):
             replacement_words = self._get_replacement_words(
                 current_text,
                 i,
-                id_preds=id_preds,
-                masked_lm_logits=masked_lm_logits,
             )
 
             transformed_texts_idx = []
             for r in replacement_words:
-                if r != word_at_index:
-                    transformed_texts_idx.append(
-                        current_text.insert_text_after_word_index(i, r)
-                    )
+                transformed_texts_idx.append(
+                    current_text.insert_text_after_word_index(i, r)
+                )
             transformed_texts.extend(transformed_texts_idx)
 
-        print(transformed_texts)
         return transformed_texts
 
     def extra_repr_keys(self):
