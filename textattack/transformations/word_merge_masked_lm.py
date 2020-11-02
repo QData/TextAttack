@@ -3,10 +3,10 @@ import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
 from textattack.shared import utils
-from textattack.transformations.word_swap import WordSwap
+from textattack.transformations.transformation import Transformation
 
 
-class WordMergeMaskedLM(WordSwap):
+class WordMergeMaskedLM(Transformation):
     """Generate potential merge of adjacent using a masked language model.
 
     Based off of:

@@ -2,10 +2,10 @@ import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
 from textattack.shared import utils
-from textattack.transformations.word_swap import WordSwap
+from textattack.transformations import Transformation
 
 
-class WordInsertionMaskedLM(WordSwap):
+class WordInsertionMaskedLM(Transformation):
     """Generate potential insertion for a word using a masked language model.
 
     Based off of:
