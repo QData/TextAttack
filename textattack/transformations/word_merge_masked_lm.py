@@ -13,9 +13,14 @@ class WordMergeMaskedLM(Transformation):
         CLARE: Contextualized Perturbation for Textual Adversarial Attack" (Li et al, 2020) https://arxiv.org/abs/2009.07502
 
     Args:
-        masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default is `bert-base-uncased`.
+        masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default
+         is `bert-base-uncased`.
+
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
-        max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are ranked by model's confidence.
+
+        max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are
+        ranked by model's confidence.
+
         min_confidence (float): minimum confidence threshold each replacement word must pass.
     """
 
@@ -138,6 +143,13 @@ class WordMergeMaskedLM(Transformation):
         return ["masked_lm_name", "max_length", "max_candidates"]
 
 
+<<<<<<< HEAD
+=======
+def check_if_subword(text):
+    return True if "##" in text else False
+
+
+>>>>>>> Add POS Order Constraint to Masked_Merge
 def find_merge_index(token_tags, indices=None):
     merge_indices = []
     if indices is None:

@@ -58,12 +58,6 @@ class CLARE2020(AttackRecipe):
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
-                WordMergeMaskedLM(
-                    masked_language_model="distilbert-base-uncased",
-                    # max_candidates=float("inf"),
-                    max_candidates=5,
-                    min_confidence=5e-4,
-                )
             ]
         )
 
@@ -95,7 +89,8 @@ class CLARE2020(AttackRecipe):
         #
         # "Only one of the three actions can be applied at each position, and we select the one with the highest score."
         #
-        # "Actions are iteratively applied to the input, until an adversarial example is found or a limit of actions T is reached.
+        # "Actions are iteratively applied to the input, until an adversarial example is found or a limit of actions T
+        # is reached.
         #  Each step selects the highest-scoring action from the remaining ones."
         #
         search_method = GreedySearch()
