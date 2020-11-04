@@ -30,7 +30,7 @@ class CustomDataset(TextAttackDataset):
         between 0 and 1. Some datasets test the model's correlation
         with ground-truth output, instead of its accuracy, so these
         outputs may be scaled arbitrarily.
-    - dataset_columns (list): dataset_columns[0]: input columns, dataset_columns[1]: output_columns
+    - dataset_columns (list): dataset_columns[0]: input columns specified as a tuple or list, dataset_columns[1]: output_columns
     - shuffle (bool): Whether to shuffle the dataset on load.
     """
 
@@ -88,12 +88,15 @@ class CustomDataset(TextAttackDataset):
         self.input_columns = dataset_columns[0]
 
         if len(dataset_columns) == 1:
+            # if user hasnt specified an output column or dataset_columns is None, all dataset_columns are
+            # treated as input_columns
             dataset_columns.append(None)
             self.output_column = dataset_columns[1]
         if (
             dataset_columns[1] is not None
             and dataset_columns[1] not in self._dataset.column_names
         ):
+            # if user has specified an output column, user can specify output column as None
             raise ValueError(
                 f"Could not find output column {dataset_columns[1]}. Found keys: {self._dataset.column_names}"
             )
@@ -116,17 +119,11 @@ class CustomDataset(TextAttackDataset):
                     self.label_names[self.label_map[i]]
                     for i in range(len(self.label_map))
                 ]
-                print(self.label_names)
+
         except KeyError:
             # This happens when the dataset doesn't have 'features' or a 'label' column.
 
             self.label_names = None
-
-        except AttributeError:
-            # This happens when self._dataset.features["label"] exists
-            # but is a single value.
-
-            self.label_names = ("label",)
 
         if shuffle:
             random.shuffle(self.examples)
