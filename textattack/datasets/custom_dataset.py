@@ -38,7 +38,7 @@ class CustomDataset(TextAttackDataset):
         self,
         name,
         infile_format=None,
-        split="train",
+        split=None,
         label_map=None,
         subset=None,
         output_scale_factor=None,
@@ -49,19 +49,20 @@ class CustomDataset(TextAttackDataset):
         self._name = name
 
         if infile_format in ["csv", "json", "text", "pandas"]:
-            self._dataset = datasets.load_dataset(infile_format, data_files=self._name)[
-                split
-            ]
+            self._dataset = datasets.load_dataset(infile_format, data_files=self._name)
 
         else:
             if isinstance(self._name, dict):
-                self._dataset = datasets.Dataset.from_dict(self._name)[split]
+                self._dataset = datasets.Dataset.from_dict(self._name)
             elif isinstance(self._name, pd.DataFrame):
-                self._dataset = datasets.Dataset.from_pandas(self._name)[split]
+                self._dataset = datasets.Dataset.from_pandas(self._name)
             else:
                 raise ValueError(
-                    "Only accepts csv, json, text, pandas file infile_format or dicts and pandas DataFrame"
+                    "Only accepts csv, json, text, pandas file infile_format, dict and pandas DataFrame"
                 )
+
+        if split is not None:
+            self._dataset = self._dataset[split]
 
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
 
@@ -91,17 +92,18 @@ class CustomDataset(TextAttackDataset):
             # if user hasnt specified an output column or dataset_columns is None, all dataset_columns are
             # treated as input_columns
             dataset_columns.append(None)
-
+        # if user has specified an output column, check if it exists in the inferred column names
+        # user can explicitly specify output column as None
         if (
             dataset_columns[1] is not None
             and dataset_columns[1] not in self._dataset.column_names
         ):
-            # if user has specified an output column, user can specify output column as None
+
             raise ValueError(
                 f"Could not find output column {dataset_columns[1]}. Found keys: {self._dataset.column_names}"
             )
         self.output_column = dataset_columns[1]
-        print(self.output_column)
+
         self._i = 0
         self.examples = list(self._dataset)
 
