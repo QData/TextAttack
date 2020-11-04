@@ -109,6 +109,9 @@ class CustomDataset(TextAttackDataset):
         self.output_scale_factor = output_scale_factor
 
         try:
+            print(self._dataset.features)
+            print(self._dataset.features["label"])
+
             self.label_names = self._dataset.features["label"].names
 
             # If labels are remapped, the label names have to be remapped as
@@ -124,6 +127,10 @@ class CustomDataset(TextAttackDataset):
             # This happens when the dataset doesn't have 'features' or a 'label' column.
 
             self.label_names = None
+        except AttributeError:
+            # This happens when self._dataset.features["label"] exists
+            # but is a single value.
+            self.label_names = ("label",)
 
         if shuffle:
             random.shuffle(self.examples)
