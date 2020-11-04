@@ -20,7 +20,7 @@ class CustomDataset(TextAttackDataset):
     TextAttack dataset.
 
     - name(Union[str, dict, pd.DataFrame]): the user specified dataset file names, dicts or pandas dataframe
-    - file_type(str): Specifies type of file for loading HuggingFaceDataset : csv, json, pandas, text
+    - infile_format(str): Specifies type of file for loading HuggingFaceDataset : csv, json, pandas, text
       from local_files will be loaded as ``datasets.load_dataset(filetype, data_files=name)``.
     - label_map: Mapping if output labels should be re-mapped. Useful
       if model was trained with a different label arrangement than
