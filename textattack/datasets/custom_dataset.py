@@ -30,7 +30,7 @@ class CustomDataset(TextAttackDataset):
         between 0 and 1. Some datasets test the model's correlation
         with ground-truth output, instead of its accuracy, so these
         outputs may be scaled arbitrarily.
-    - dataset_columns (list): dataset_columns[0]: input columns specified as a tuple or list, dataset_columns[1]: output_columns
+    - dataset_columns (list[str]): dataset_columns[0]: input columns specified as a tuple or list, dataset_columns[1]: output_columns
     - shuffle (bool): Whether to shuffle the dataset on load.
     """
 
@@ -61,7 +61,12 @@ class CustomDataset(TextAttackDataset):
                     "Only accepts csv, json, text, pandas file infile_format, dict and pandas DataFrame"
                 )
 
-        if split is not None:
+        # if no split in custom data, default split is None
+        # if user hasn't specified a split to use, raise error if the dataset has splits
+        if split is None:
+            if set(self._dataset.keys()) <= set(["train", "validation", "test"]):
+                raise ValueError(f"specify a split to use: {self._dataset.keys()}")
+        else:
             self._dataset = self._dataset[split]
 
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
@@ -75,12 +80,6 @@ class CustomDataset(TextAttackDataset):
             # automatically infer from dataset
             dataset_columns = []
             dataset_columns.append(self._dataset.column_names)
-
-        if not (
-            isinstance(dataset_columns[0], list)
-            or isinstance(dataset_columns[0], tuple)
-        ):
-            dataset_columns[0] = [dataset_columns[0]]
 
         if not set(dataset_columns[0]) <= set(self._dataset.column_names):
             raise ValueError(
