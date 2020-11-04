@@ -11,7 +11,7 @@ from textattack.datasets import TextAttackDataset
 def _cb(s):
     """Colors some text blue for printing to the terminal."""
     if not isinstance(s, str):
-        s = "custom " + str(type(str))
+        s = "custom " + str(type(s))
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
 
 
