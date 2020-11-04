@@ -16,11 +16,11 @@ def _cb(s):
 
 
 class CustomDataset(TextAttackDataset):
-    """Loads a Custom Dataset from a file/ list of files and prepares it as a
+    """Loads a Custom Dataset from a file/list of files and prepares it as a
     TextAttack dataset.
 
-    - name(str): the dataset file names
-    - file_type(str): Specifies type of file for loading HuggingFaceDataset : csv, json, pandas
+    - name(Union[str, dict, pd.DataFrame]): the user specified dataset file names, dicts or pandas dataframe
+    - file_type(str): Specifies type of file for loading HuggingFaceDataset : csv, json, pandas, text
       from local_files will be loaded as ``datasets.load_dataset(filetype, data_files=name)``.
     - label_map: Mapping if output labels should be re-mapped. Useful
       if model was trained with a different label arrangement than
@@ -37,26 +37,31 @@ class CustomDataset(TextAttackDataset):
     def __init__(
         self,
         name,
-        input_type="csv",
+        infile_format=None,
         split="train",
         label_map=None,
         subset=None,
         output_scale_factor=None,
-        dataset_columns=[("text",), None],
+        dataset_columns=None,
         shuffle=False,
     ):
 
         self._name = name
 
-        if input_type != "user":
-            self._dataset = datasets.load_dataset(input_type, data_files=self._name)[
+        if infile_format in ["csv", "json", "text", "pandas"]:
+            self._dataset = datasets.load_dataset(infile_format, data_files=self._name)[
                 split
             ]
+
         else:
             if isinstance(self._name, dict):
-                self._dataset = datasets.Dataset.from_dict(self._name)
-            if isinstance(self._name, pd.DataFrame):
-                self._dataset = datasets.Dataset.from_pandas(self._name)
+                self._dataset = datasets.Dataset.from_dict(self._name)[split]
+            elif isinstance(self._name, pd.DataFrame):
+                self._dataset = datasets.Dataset.from_pandas(self._name)[split]
+            else:
+                raise ValueError(
+                    "Only accepts csv, json, text, pandas file infile_format or dicts and pandas DataFrame"
+                )
 
         subset_print_str = f", subset {_cb(subset)}" if subset else ""
 
@@ -64,18 +69,33 @@ class CustomDataset(TextAttackDataset):
             f"Loading {_cb('datasets')} dataset {_cb(name)}{subset_print_str}, split {_cb(split)}."
         )
         # Input/output column order, like (('premise', 'hypothesis'), 'label')
+
+        if dataset_columns is None:
+            # automatically infer from dataset
+            dataset_columns = []
+            dataset_columns.append(self._dataset.column_names)
+
+        if not (
+            isinstance(dataset_columns[0], list)
+            or isinstance(dataset_columns[0], tuple)
+        ):
+            dataset_columns[0] = [dataset_columns[0]]
+
         if not set(dataset_columns[0]) <= set(self._dataset.column_names):
             raise ValueError(
-                f"Could not find input column {dataset_columns[0]} in CSV. Found keys: {self._dataset.column_names}"
+                f"Could not find input column {dataset_columns[0]}. Found keys: {self._dataset.column_names}"
             )
         self.input_columns = dataset_columns[0]
-        self.output_column = dataset_columns[1]
+
+        if len(dataset_columns) == 1:
+            dataset_columns.append(None)
+            self.output_column = dataset_columns[1]
         if (
-            self.output_column is not None
-            and self.output_column not in self._dataset.column_names
+            dataset_columns[1] is not None
+            and dataset_columns[1] not in self._dataset.column_names
         ):
             raise ValueError(
-                f"Could not find input column {dataset_columns[1]} in CSV. Found keys: {self._dataset.column_names}"
+                f"Could not find output column {dataset_columns[1]}. Found keys: {self._dataset.column_names}"
             )
 
         self._i = 0
@@ -121,10 +141,10 @@ class CustomDataset(TextAttackDataset):
                 output = self.label_map[output]
             if self.output_scale_factor:
                 output = output / self.output_scale_factor
-        else:
-            output = None
+            return (input_dict, None)
 
-        return (input_dict, output)
+        else:
+            return (input_dict,)
 
     def __next__(self):
         if self._i >= len(self.examples):
