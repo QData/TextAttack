@@ -109,8 +109,6 @@ class CustomDataset(TextAttackDataset):
         self.output_scale_factor = output_scale_factor
 
         try:
-            print(self._dataset.features)
-            print(self._dataset.features["label"])
 
             self.label_names = self._dataset.features["label"].names
 
