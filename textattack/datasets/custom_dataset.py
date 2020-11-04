@@ -91,7 +91,7 @@ class CustomDataset(TextAttackDataset):
             # if user hasnt specified an output column or dataset_columns is None, all dataset_columns are
             # treated as input_columns
             dataset_columns.append(None)
-            self.output_column = dataset_columns[1]
+
         if (
             dataset_columns[1] is not None
             and dataset_columns[1] not in self._dataset.column_names
@@ -100,7 +100,8 @@ class CustomDataset(TextAttackDataset):
             raise ValueError(
                 f"Could not find output column {dataset_columns[1]}. Found keys: {self._dataset.column_names}"
             )
-
+        self.output_column = dataset_columns[1]
+        print(self.output_column)
         self._i = 0
         self.examples = list(self._dataset)
 
@@ -143,7 +144,7 @@ class CustomDataset(TextAttackDataset):
                 output = self.label_map[output]
             if self.output_scale_factor:
                 output = output / self.output_scale_factor
-            return (input_dict, None)
+            return (input_dict, output)
 
         else:
             return (input_dict,)
