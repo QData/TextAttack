@@ -32,7 +32,7 @@ def words_from_text(s, words_to_ignore=[]):
     for c in " ".join(s.split()):
         if c.isalnum():
             word += c
-        elif c in "'-" and len(word) > 0:
+        elif c in "'-_*@" and len(word) > 0:
             # Allow apostrophes and hyphens as long as they don't begin the
             # word.
             word += c
