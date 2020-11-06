@@ -27,3 +27,6 @@ class SklearnModelWrapper(ModelWrapper):
             encoded_text_matrix, columns=self.tokenizer.get_feature_names()
         )
         return self.model.predict_proba(tokenized_text_df)
+
+    def get_grad(self, text_input):
+        raise NotImplementedError()

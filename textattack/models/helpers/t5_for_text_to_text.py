@@ -57,3 +57,6 @@ class T5ForTextToText(torch.nn.Module):
         )
         # Convert ID tensor to string and return.
         return [self.tokenizer.decode(ids) for ids in output_ids_list]
+
+    def get_input_embeddings(self):
+        return self.model.get_input_embeddings()

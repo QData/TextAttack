@@ -1,5 +1,4 @@
-"""
-.. _attack_recipes:
+""".. _attack_recipes:
 
 Attack Recipes:
 ======================
@@ -17,7 +16,6 @@ For example, ``attack = InputReductionFeng2018.build(model)`` creates `attack`, 
 TextAttack supports the following attack recipes (each recipe's documentation contains a link to the corresponding paper):
 
 .. contents:: :local:
-
 """
 
 from .attack_recipe import AttackRecipe

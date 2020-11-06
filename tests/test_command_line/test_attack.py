@@ -158,6 +158,16 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_cnn_cola.txt",
     ),
+    # test: run_attack on BERT MR using gradient-ranking greedy-word-wir.
+    #
+    (
+        "run_attack_gradient_greedy_word_wir",
+        (
+            "textattack attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' "
+            "--transformation word-swap-embedding --constraints repeat stopword --shuffle=False"
+        ),
+        "tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt",
+    ),
 ]
 
 
@@ -173,6 +183,7 @@ def test_command_line_attack(name, command, sample_output_file):
     # / is escaped in python 3.6, but not 3.7+, so we support both
     desired_re = (
         re.escape(desired_output)
+        .replace("/\\.\\/", ".")
         .replace("/\\.\\*/", ".*")
         .replace("\\/\\.\\*\\/", ".*")
     )

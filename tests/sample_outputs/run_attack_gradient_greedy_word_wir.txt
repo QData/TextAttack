@@ -1,0 +1,51 @@
+/.*/Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  gradient
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  15
+    (embedding_type):  paragramcf
+  )
+  (constraints): 
+    (0): RepeatModification
+    (1): StopwordModification
+  (is_black_box):  False
+) 
+/.*/
+--------------------------------------------- Result 1 ---------------------------------------------
+[92mPositive (99%)[0m --> [91mNegative (98%)[0m
+
+goldmember is funny enough to [92mjustify[0m the embarrassment of bringing a barf bag to the moviehouse .
+
+goldmember is funny enough to [91mreasoned[0m the embarrassment of bringing a barf bag to the moviehouse .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[92mPositive (100%)[0m --> [91mNegative (100%)[0m
+
+. . . a fairly disposable yet still [92mentertaining[0m b picture .
+
+. . . a fairly disposable yet still [91mdistracting[0m b picture .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92mPositive (100%)[0m --> [91m[FAILED][0m
+
+it may not be particularly innovative , but the film's crisp , unaffected style and air of gentle longing make it unexpectedly rewarding .
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 2      |
+| Number of failed attacks:     | 1      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 33.33% |
+| Attack success rate:          | 66.67% |
+| Average perturbed word %:     | 9.38%  |
+| Average num. words per input: | 15.0   |
+| Avg num queries:              | 71.0   |
++-------------------------------+--------+

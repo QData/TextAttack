@@ -1,7 +1,4 @@
-"""
-
-.. _goal_function:
-
+""".. _goal_function:
 
 Goal functions determine if an attack has been successful.
 ===========================================================

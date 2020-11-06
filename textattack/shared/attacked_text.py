@@ -1,14 +1,9 @@
-"""
-
-.. _attacked_text:
-
+""".. _attacked_text:
 
 Attacked Text Class
 =====================
 
 A helper class that represents a string that can be attacked.
-
-
 """
 
 from collections import OrderedDict
@@ -435,6 +430,40 @@ class AttackedText:
         """
         assert self.num_words == x.num_words
         return float(np.sum(self.words != x.words)) / self.num_words
+
+    def align_with_model_tokens(self, model_wrapper):
+        """Align AttackedText's `words` with target model's tokenization scheme
+        (e.g. word, character, subword). Specifically, we map each word to list
+        of indices of tokens that compose the word (e.g. embedding --> ["em",
+        "##bed", "##ding"])
+
+        Args:
+            model_wrapper (textattack.models.wrappers.ModelWrapper): ModelWrapper of the target model
+
+        Returns:
+            word2token_mapping (dict[str. list[int]]): Dictionary that maps word to list of indices.
+        """
+        tokens = model_wrapper.tokenize([self.tokenizer_input], strip_prefix=True)[0]
+        word2token_mapping = {}
+        j = 0
+        last_matched = 0
+        for i, word in enumerate(self.words):
+            matched_tokens = []
+            while j < len(tokens) and len(word) > 0:
+                token = tokens[j].lower()
+                idx = word.find(token)
+                if idx == 0:
+                    word = word[idx + len(token) :]
+                    matched_tokens.append(j)
+                    last_matched = j
+                j += 1
+
+            if not matched_tokens:
+                j = last_matched
+            else:
+                word2token_mapping[self.words[i]] = matched_tokens
+
+        return word2token_mapping
 
     @property
     def tokenizer_input(self):

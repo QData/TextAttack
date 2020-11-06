@@ -1,11 +1,8 @@
-"""
-
-.. _semantics:
+""".. _semantics:
 
 Semantic Constraints
 ---------------------
 Semantic constraints determine if a transformation is valid based on similarity of the semantics of the orignal input and the transformed input.
-
 """
 from . import sentence_encoders
 
