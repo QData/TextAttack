@@ -51,7 +51,8 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     try:
         matching_model_globs = MODELS_BY_GOAL_FUNCTION[goal_function_class]
     except KeyError:
-        raise ValueError(f"No entry found for goal function {goal_function_class}.")
+        matching_model_globs = []
+        logger.warn(f"No entry found for goal function {goal_function_class}.")
     # Get options for this goal function.
     # model_module = model_class.__module__
     model_module_path = ".".join((model_class.__module__, model_class.__name__))
@@ -66,11 +67,11 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     for goal_functions, globs in MODELS_BY_GOAL_FUNCTIONS.items():
         for glob in globs:
             if re.match(glob, model_module_path):
-                raise ValueError(
+                logger.warn(
                     f"Unknown if model {model_class.__name__} compatible with provided goal function {goal_function_class}."
                     " Found match with other goal functions: {goal_functions}."
                 )
-    # If it matches another goal function, throw an error.
+    # If it matches another goal function, warn user.
 
     # Otherwise, this is an unknown model–perhaps user-provided, or we forgot to
     # update the corresponding dictionary. Warn user and return.
