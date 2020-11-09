@@ -1,3 +1,10 @@
+"""
+
+TextAttack Augment Command
+===========================
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
 import csv
 import os
@@ -13,11 +20,12 @@ AUGMENTATION_RECIPE_NAMES = {
     "embedding": "textattack.augmentation.EmbeddingAugmenter",
     "charswap": "textattack.augmentation.CharSwapAugmenter",
     "eda": "textattack.augmentation.EasyDataAugmenter",
+    "checklist": "textattack.augmentation.CheckListAugmenter",
 }
 
 
 class AugmentCommand(TextAttackCommand):
-    """The TextAttack attack module:
+    """The TextAttack Augment Command module:
 
     A command line parser to run data augmentation from user
     specifications.
@@ -39,7 +47,7 @@ class AugmentCommand(TextAttackCommand):
 
             while True:
                 print(
-                    '\nEnter a sentence to augment, "q" to quit, "c" to change arguments:\n'
+                    '\nEnter a sentence to augment, "q" to quit, "c" to view/change arguments:\n'
                 )
                 text = input()
 
@@ -47,29 +55,42 @@ class AugmentCommand(TextAttackCommand):
                     break
 
                 elif text == "c":
-                    print("\nChanging augmenter arguments...\n")
-                    recipe = input(
-                        "\tAugmentation recipe name ('r' to see available recipes):  "
-                    )
-                    if recipe == "r":
-                        print("\n\twordnet, embedding, charswap, eda\n")
-                        args.recipe = input("\tAugmentation recipe name:  ")
-                    else:
-                        args.recipe = recipe
-
-                    args.pct_words_to_swap = float(
-                        input("\tPercentage of words to swap (0.0 ~ 1.0):  ")
-                    )
-                    args.transformations_per_example = int(
-                        input("\tTransformations per input example:  ")
+                    print(
+                        f"\nCurrent Arguments:\n\n\t augmentation recipe: {args.recipe}, "
+                        f"\n\t pct_words_to_swap: {args.pct_words_to_swap}, "
+                        f"\n\t transformations_per_example: {args.transformations_per_example}\n"
                     )
 
-                    print("\nGenerating new augmenter...\n")
-                    augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
-                        pct_words_to_swap=args.pct_words_to_swap,
-                        transformations_per_example=args.transformations_per_example,
+                    change = input(
+                        "Enter 'c' again to change arguments, any other keys to opt out\n"
                     )
-                    print("--------------------------------------------------------")
+                    if change == "c":
+                        print("\nChanging augmenter arguments...\n")
+                        recipe = input(
+                            "\tAugmentation recipe name ('r' to see available recipes):  "
+                        )
+                        if recipe == "r":
+                            print("\n\twordnet, embedding, charswap, eda, checklist\n")
+                            args.recipe = input("\tAugmentation recipe name:  ")
+                        else:
+                            args.recipe = recipe
+
+                        args.pct_words_to_swap = float(
+                            input("\tPercentage of words to swap (0.0 ~ 1.0):  ")
+                        )
+                        args.transformations_per_example = int(
+                            input("\tTransformations per input example:  ")
+                        )
+
+                        print("\nGenerating new augmenter...\n")
+                        augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
+                            pct_words_to_swap=args.pct_words_to_swap,
+                            transformations_per_example=args.transformations_per_example,
+                        )
+                        print(
+                            "--------------------------------------------------------"
+                        )
+
                     continue
 
                 elif not text:

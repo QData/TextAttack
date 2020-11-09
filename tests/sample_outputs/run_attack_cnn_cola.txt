@@ -1,0 +1,59 @@
+/.*/Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapWordNet
+  (constraints): 
+    (0): COLA(
+        (max_diff):  0.1
+        (model_name):  textattack/bert-base-uncased-CoLA
+        (compare_against_original):  True
+      )
+    (1): BERTScore(
+        (min_bert_score):  0.7
+        (model):  bert-base-uncased
+        (score_type):  f1
+        (compare_against_original):  True
+      )
+  (is_black_box):  True
+) 
+/.*/
+--------------------------------------------- Result 1 ---------------------------------------------
+[92m2 (72%)[0m --> [91m1 (53%)[0m
+
+Contrary to other reviews, I have zero complaints about the service or the prices. I have been getting tire service here for the past 5 years now, and compared to my experience with places like Pep Boys, these [92mguys[0m are experienced and know what they're doing. \nAlso, this is one place that I do not feel like I am being taken advantage of, just because of my gender. Other auto mechanics have been notorious for capitalizing on my ignorance of cars, and have sucked my bank account dry. But here, my service and road coverage has all been well explained - and let up to me to decide. \nAnd they just renovated the waiting room. It looks a lot better than it did in previous years.
+
+Contrary to other reviews, I have zero complaints about the service or the prices. I have been getting tire service here for the past 5 years now, and compared to my experience with places like Pep Boys, these [91mblackguard[0m are experienced and know what they're doing. \nAlso, this is one place that I do not feel like I am being taken advantage of, just because of my gender. Other auto mechanics have been notorious for capitalizing on my ignorance of cars, and have sucked my bank account dry. But here, my service and road coverage has all been well explained - and let up to me to decide. \nAnd they just renovated the waiting room. It looks a lot better than it did in previous years.
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[91m1 (61%)[0m --> [92m2 (51%)[0m
+
+Last summer I had an appointment to get new tires and had to wait a super long time. I also went in this week for them to fix a minor problem with a tire they put on. They \""fixed\"" it for free, and the very next morning I had the same issue. I called to complain, and the \""manager\"" didn't even apologize!!! So frustrated. Never going back.  They [91mseem[0m overpriced, too.
+
+Last summer I had an appointment to get new tires and had to wait a super long time. I also went in this week for them to fix a minor problem with a tire they put on. They \""fixed\"" it for free, and the very next morning I had the same issue. I called to complain, and the \""manager\"" didn't even apologize!!! So frustrated. Never going back.  They [92mlook[0m overpriced, too.
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[92m2 (76%)[0m --> [91m1 (63%)[0m
+
+[92mFriendly[0m staff, same starbucks fair you get anywhere else.  Sometimes the lines [92mcan[0m get long.
+
+[91mwell-disposed[0m staff, same starbucks fair you get anywhere else.  Sometimes the lines [91mbehind[0m get long.
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 3      |
+| Number of failed attacks:     | 0      |
+| Number of skipped attacks:    | 0      |
+| Original accuracy:            | 100.0% |
+| Accuracy under attack:        | 0.0%   |
+| Attack success rate:          | 100.0% |
+| Average perturbed word %:     | 5.18%  |
+| Average num. words per input: | 70.33  |
+| Avg num queries:              | 77.67  |
++-------------------------------+--------+

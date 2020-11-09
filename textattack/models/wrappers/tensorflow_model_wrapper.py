@@ -1,3 +1,9 @@
+"""
+TensorFlow Model Wrapper
+--------------------------
+"""
+
+
 import numpy as np
 
 from .model_wrapper import ModelWrapper
@@ -21,3 +27,6 @@ class TensorFlowModelWrapper(ModelWrapper):
         text_array = np.array(text_input_list)
         preds = self.model(text_array)
         return preds.numpy()
+
+    def get_grad(self, text_input):
+        raise NotImplementedError()

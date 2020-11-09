@@ -43,10 +43,10 @@ attack_test_params = [
         (
             "textattack attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
-            "--dataset-from-nlp glue^sst2^train --recipe deepwordbug --num-examples 3 "
+            "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
             "--shuffle=False"
         ),
-        "tests/sample_outputs/run_attack_transformers_nlp.txt",
+        "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
     #
     # test running an attack by loading a model and dataset from file
@@ -59,7 +59,7 @@ attack_test_params = [
             "--dataset-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--recipe deepwordbug --num-examples 3 --shuffle=False"
         ),
-        "tests/sample_outputs/run_attack_transformers_nlp.txt",
+        "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
     #
     # test hotflip on 10 samples from LSTM MR
@@ -120,7 +120,7 @@ attack_test_params = [
         "run_attack_faster_alzantot_recipe",
         (
             "textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 "
-            "--num-examples-offset 20 --shuffle=False"
+            "--num-examples-offset 32 --shuffle=False"
         ),
         "tests/sample_outputs/run_attack_faster_alzantot_recipe.txt",
     ),
@@ -135,6 +135,39 @@ attack_test_params = [
         ),
         "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
     ),
+    #
+    # test: run_attack on LSTM MR using word embedding transformation and greedy search with Stanza part-of-speech tagger as a constraint
+    #
+    (
+        "run_attack_stanza_pos_tagger",
+        (
+            "textattack attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding "
+            "--constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' --shuffle=False"
+        ),
+        "tests/sample_outputs/run_attack_stanza_pos_tagger.txt",
+    ),
+    #
+    # test: run_attack on CNN Yelp using the WordNet transformation and greedy search WIR
+    #   with a CoLA constraint and BERT score
+    #
+    (
+        "run_attack_cnn_cola",
+        (
+            "textattack attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir "
+            "--transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 --shuffle=False"
+        ),
+        "tests/sample_outputs/run_attack_cnn_cola.txt",
+    ),
+    # test: run_attack on BERT MR using gradient-ranking greedy-word-wir.
+    #
+    (
+        "run_attack_gradient_greedy_word_wir",
+        (
+            "textattack attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' "
+            "--transformation word-swap-embedding --constraints repeat stopword --shuffle=False"
+        ),
+        "tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt",
+    ),
 ]
 
 
@@ -142,9 +175,6 @@ attack_test_params = [
 @pytest.mark.slow
 def test_command_line_attack(name, command, sample_output_file):
     """Runs attack tests and compares their outputs to a reference file."""
-    # TEMP: skip mr tests
-    if "-mr" in command:
-        return
     # read in file and create regex
     desired_output = open(sample_output_file, "r").read().strip()
     print("desired_output.encoded =>", desired_output.encode())
@@ -153,6 +183,7 @@ def test_command_line_attack(name, command, sample_output_file):
     # / is escaped in python 3.6, but not 3.7+, so we support both
     desired_re = (
         re.escape(desired_output)
+        .replace("/\\.\\/", ".")
         .replace("/\\.\\*/", ".*")
         .replace("\\/\\.\\*\\/", ".*")
     )

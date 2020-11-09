@@ -1,3 +1,8 @@
+"""
+Maximized Attack Result
+=========================
+"""
+
 from .attack_result import AttackResult
 
 

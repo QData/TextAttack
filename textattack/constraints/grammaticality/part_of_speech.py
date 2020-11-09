@@ -1,10 +1,48 @@
+"""
+Part of Speech Constraint
+--------------------------
+"""
+import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger
 import lru
 import nltk
+import stanza
 
+import textattack
 from textattack.constraints import Constraint
 from textattack.shared.validators import transformation_consists_of_word_swaps
+
+# Set global flair device to be TextAttack's current device
+flair.device = textattack.shared.utils.device
+
+
+def load_flair_upos_fast():
+    """Loads flair 'upos-fast' SequenceTagger.
+
+    This is a temporary workaround for flair v0.6. Will be fixed when
+    flair pushes the bug fix.
+    """
+    import pathlib
+    import warnings
+
+    from flair import file_utils
+    import torch
+
+    hu_path: str = "https://nlp.informatik.hu-berlin.de/resources/models"
+    upos_path = "/".join([hu_path, "upos-fast", "en-upos-ontonotes-fast-v0.4.pt"])
+    model_path = file_utils.cached_path(upos_path, cache_dir=pathlib.Path("models"))
+    model_file = SequenceTagger._fetch_model(model_path)
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore")
+        # load_big_file is a workaround by https://github.com/highway11git to load models on some Mac/Windows setups
+        # see https://github.com/zalandoresearch/flair/issues/351
+        f = file_utils.load_big_file(str(model_file))
+        state = torch.load(f, map_location="cpu")
+    model = SequenceTagger._init_model_with_state_dict(state)
+    model.eval()
+    model.to(textattack.shared.utils.device)
+    return model
 
 
 class PartOfSpeech(Constraint):
@@ -13,10 +51,11 @@ class PartOfSpeech(Constraint):
     of `<https://arxiv.org/abs/1907.11932>`_ adapted from
     `<https://github.com/jind11/TextFooler>`_.
 
-    POS tagger from Flair `<https://github.com/flairNLP/flair>` also available
+    POS taggers from Flair `<https://github.com/flairNLP/flair>`_ and
+    Stanza `<https://github.com/stanfordnlp/stanza>`_ are also available
 
     Args:
-        tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair").
+        tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair", "stanza").
         tagset (str): tagset to use for POS tagging
         allow_verb_noun_swap (bool): If `True`, allow verbs to be swapped with nouns and vice versa.
         compare_against_original (bool): If `True`, compare against the original text.
@@ -38,9 +77,14 @@ class PartOfSpeech(Constraint):
         self._pos_tag_cache = lru.LRU(2 ** 14)
         if tagger_type == "flair":
             if tagset == "universal":
-                self._flair_pos_tagger = SequenceTagger.load("upos-fast")
+                self._flair_pos_tagger = load_flair_upos_fast()
             else:
                 self._flair_pos_tagger = SequenceTagger.load("pos-fast")
+
+        if tagger_type == "stanza":
+            self._stanza_pos_tagger = stanza.Pipeline(
+                lang="en", processors="tokenize, pos", tokenize_pretokenized=True
+            )
 
     def clear_cache(self):
         self._pos_tag_cache.clear()
@@ -62,16 +106,25 @@ class PartOfSpeech(Constraint):
                 )
 
             if self.tagger_type == "flair":
-                context_key_sentence = Sentence(context_key)
+                context_key_sentence = Sentence(
+                    context_key, use_tokenizer=textattack.shared.utils.words_from_text
+                )
                 self._flair_pos_tagger.predict(context_key_sentence)
-                word_list, pos_list = zip_flair_result(context_key_sentence)
+                word_list, pos_list = textattack.shared.utils.zip_flair_result(
+                    context_key_sentence
+                )
+
+            if self.tagger_type == "stanza":
+                word_list, pos_list = textattack.shared.utils.zip_stanza_result(
+                    self._stanza_pos_tagger(context_key), tagset=self.tagset
+                )
 
             self._pos_tag_cache[context_key] = (word_list, pos_list)
 
         # idx of `word` in `context_words`
-        idx = len(before_ctx)
-        assert word_list[idx] == word, "POS list not matched with original word list."
-        return pos_list[idx]
+        assert word in word_list, "POS list not matched with original word list."
+        word_idx = word_list.index(word)
+        return pos_list[word_idx]
 
     def _check_constraint(self, transformed_text, reference_text):
         try:
@@ -104,17 +157,3 @@ class PartOfSpeech(Constraint):
             "tagset",
             "allow_verb_noun_swap",
         ] + super().extra_repr_keys()
-
-
-def zip_flair_result(pred):
-    if not isinstance(pred, Sentence):
-        raise TypeError("Result from Flair POS tagger must be a `Sentence` object.")
-
-    tokens = pred.tokens
-    word_list = []
-    pos_list = []
-    for token in tokens:
-        word_list.append(token.text)
-        pos_list.append(token.annotation_layers["pos"][0]._value)
-
-    return word_list, pos_list

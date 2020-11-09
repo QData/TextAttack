@@ -1,3 +1,8 @@
+"""
+Attack Logs to file
+========================
+"""
+
 import os
 import sys
 

@@ -1,3 +1,10 @@
+"""
+Glove Tokenizer
+^^^^^^^^^^^^^^^^^
+
+"""
+
+
 import json
 import tempfile
 
@@ -97,6 +104,9 @@ class WordLevelTokenizer(hf_tokenizers.implementations.BaseTokenizer):
             "unicode_normalizer": unicode_normalizer,
         }
 
+        self.unk_token = unk_token
+        self.pad_token = pad_token
+
         super().__init__(tokenizer, parameters)
 
 
@@ -115,8 +125,8 @@ class GloveTokenizer(WordLevelTokenizer):
             pad_token_id=pad_token_id,
             lowercase=True,
         )
-        self.pad_id = pad_token_id
-        self.oov_id = unk_token_id
+        self.pad_token_id = pad_token_id
+        self.oov_token_id = unk_token_id
         self.convert_id_to_word = self.id_to_token
         # Set defaults.
         self.enable_padding(length=max_length, pad_id=pad_token_id)
@@ -144,5 +154,11 @@ class GloveTokenizer(WordLevelTokenizer):
     def batch_encode(self, input_text_list):
         """The batch equivalent of ``encode``."""
         input_text_list = list(map(self._process_text, input_text_list))
-        encodings = self.encode_batch(input_text_list, add_special_tokens=False,)
+        encodings = self.encode_batch(
+            input_text_list,
+            add_special_tokens=False,
+        )
         return [x.ids for x in encodings]
+
+    def convert_ids_to_tokens(self, ids):
+        return [self.convert_id_to_word(_id) for _id in ids]

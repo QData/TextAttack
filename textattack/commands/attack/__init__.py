@@ -1,3 +1,11 @@
+"""
+
+TextAttack Command Package for Attack
+------------------------------------------
+
+"""
+
+
 from .attack_command import AttackCommand
 from .attack_resume_command import AttackResumeCommand
 

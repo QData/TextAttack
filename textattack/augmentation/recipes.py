@@ -1,3 +1,10 @@
+"""
+Augmenter Recipes:
+===================
+
+Transformations and constraints can be used for simple NLP data augmentations. Here is a list of recipes for NLP data augmentations
+
+"""
 import random
 
 import textattack
@@ -40,13 +47,16 @@ class EasyDataAugmenter(Augmenter):
         n_aug_each = max(transformations_per_example // 4, 1)
 
         self.synonym_replacement = WordNetAugmenter(
-            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap,
+            transformations_per_example=n_aug_each,
         )
         self.random_deletion = DeletionAugmenter(
-            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap,
+            transformations_per_example=n_aug_each,
         )
         self.random_swap = SwapAugmenter(
-            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap,
+            transformations_per_example=n_aug_each,
         )
         self.random_insertion = SynonymInsertionAugmenter(
             pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each
@@ -139,3 +149,41 @@ class CharSwapAugmenter(Augmenter):
             ]
         )
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
+
+
+class CheckListAugmenter(Augmenter):
+    """Augments words by using the transformation methods provided by CheckList
+    INV testing, which combines:
+
+    - Name Replacement
+    - Location Replacement
+    - Number Alteration
+    - Contraction/Extension
+
+    "Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)
+    https://arxiv.org/abs/2005.04118
+    """
+
+    def __init__(self, **kwargs):
+        from textattack.transformations import (
+            CompositeTransformation,
+            WordSwapChangeLocation,
+            WordSwapChangeName,
+            WordSwapChangeNumber,
+            WordSwapContract,
+            WordSwapExtend,
+        )
+
+        transformation = CompositeTransformation(
+            [
+                WordSwapChangeNumber(),
+                WordSwapChangeLocation(),
+                WordSwapChangeName(),
+                WordSwapExtend(),
+                WordSwapContract(),
+            ]
+        )
+
+        constraints = [DEFAULT_CONSTRAINTS[0]]
+
+        super().__init__(transformation, constraints=constraints, **kwargs)

@@ -1,3 +1,11 @@
+"""
+
+DeepWordBug
+========================================
+(Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers)
+
+"""
+
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.constraints.pre_transformation import (
     RepeatModification,

@@ -36,7 +36,10 @@ class TrainModelCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
-            "--model", type=str, required=True, help="directory of model to train",
+            "--model",
+            type=str,
+            required=True,
+            help="directory of model to train",
         )
         parser.add_argument(
             "--dataset",
@@ -44,7 +47,7 @@ class TrainModelCommand(TextAttackCommand):
             required=True,
             default="yelp",
             help="dataset for training; will be loaded from "
-            "`nlp` library. if dataset has a subset, separate with a colon. "
+            "`datasets` library. if dataset has a subset, separate with a colon. "
             " ex: `glue^sst2` or `rotten_tomatoes`",
         )
         parser.add_argument(
@@ -126,7 +129,10 @@ class TrainModelCommand(TextAttackCommand):
             help="How often (in epochs) to generate a new adversarial training set (N/A if --attack unspecified)",
         )
         parser.add_argument(
-            "--augment", type=str, default=None, help="Augmentation recipe to use",
+            "--augment",
+            type=str,
+            default=None,
+            help="Augmentation recipe to use",
         )
         parser.add_argument(
             "--pct-words-to-swap",

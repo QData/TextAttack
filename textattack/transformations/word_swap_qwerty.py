@@ -1,3 +1,8 @@
+"""
+Word Swap by swaps characters with QWERTY adjacent keys
+==========================================================
+"""
+
 import random
 
 from textattack.transformations.word_swap import WordSwap
@@ -21,7 +26,11 @@ class WordSwapQWERTY(WordSwap):
         self.skip_last_char = skip_last_char
 
         self._keyboard_adjacency = {
-            "q": ["w", "a", "s",],
+            "q": [
+                "w",
+                "a",
+                "s",
+            ],
             "w": ["q", "e", "a", "s", "d"],
             "e": ["w", "s", "d", "f", "r"],
             "r": ["e", "d", "f", "g", "t"],
@@ -85,3 +94,7 @@ class WordSwapQWERTY(WordSwap):
                     candidate_words.append(candidate_word)
 
         return candidate_words
+
+    @property
+    def deterministic(self):
+        return not self.random_one

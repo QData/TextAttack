@@ -1,3 +1,10 @@
+"""
+
+Determine successful in untargeted Classification
+----------------------------------------------------
+"""
+
+
 from .classification_goal_function import ClassificationGoalFunction
 
 

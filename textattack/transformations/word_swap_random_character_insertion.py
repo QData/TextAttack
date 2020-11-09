@@ -1,3 +1,8 @@
+"""
+Word Swap by Random Character Insertion
+==========================================================
+
+"""
 import numpy as np
 
 # from textattack.shared import utils
@@ -11,7 +16,7 @@ class WordSwapRandomCharacterInsertion(WordSwap):
     character deleted. If not, returns all possible options.
     skip_first_char (bool): Whether to disregard inserting as the first
     character. skip_last_char (bool): Whether to disregard inserting as
-    the last     character.
+    the last character.
     """
 
     def __init__(
@@ -46,6 +51,10 @@ class WordSwapRandomCharacterInsertion(WordSwap):
                 candidate_words.append(candidate_word)
 
         return candidate_words
+
+    @property
+    def deterministic(self):
+        return not self.random_one
 
     def extra_repr_keys(self):
         return super().extra_repr_keys() + ["random_one"]

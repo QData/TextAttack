@@ -1,7 +1,18 @@
+"""
+Attack: TextAttack builds attacks from four components:
+========================================================
+
+- `Goal Functions <../attacks/goal_function.html>`__ stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
+- `Constraints <../attacks/constraint.html>`__ determine if a potential perturbation is valid with respect to the original input.
+- `Transformations <../attacks/transformation.html>`__ take a text input and transform it by inserting and deleting characters, words, and/or phrases.
+- `Search Methods <../attacks/search_method.html>`__ explore the space of possible **transformations** within the defined **constraints** and attempt to find a successful perturbation which satisfies the **goal function**.
+
+The ``Attack`` class represents an adversarial attack composed of a goal function, search method, transformation, and constraints.
+"""
+
 from collections import deque
 
 import lru
-import numpy as np
 
 import textattack
 from textattack.attack_results import (
@@ -18,6 +29,7 @@ from textattack.loggers import (
     WeightsAndBiasesLogger,
 )
 from textattack.shared import AttackedText, utils
+from textattack.transformations import CompositeTransformation
 
 
 class Attack:
@@ -34,6 +46,7 @@ class Attack:
         transformation: The transformation applied at each step of the attack.
         search_method: A strategy for exploring the search space of possible perturbations
         metrics (List[Metric]): A list of metrics to print for each attack result
+        transformation_cache_size (int): the number of items to keep in the transformations cache
         constraint_cache_size (int): the number of items to keep in the constraints cache
     """
 
@@ -44,7 +57,8 @@ class Attack:
         transformation=None,
         search_method=None,
         metrics=None,
-        constraint_cache_size=2 ** 20,
+        transformation_cache_size=2 ** 15,
+        constraint_cache_size=2 ** 15,
     ):
         """Initialize an attack object.
 
@@ -61,7 +75,9 @@ class Attack:
         self.transformation = transformation
         if not self.transformation:
             raise NameError("Cannot instantiate attack without transformation")
-        self.is_black_box = getattr(transformation, "is_black_box", True)
+        self.is_black_box = (
+            getattr(transformation, "is_black_box", True) and search_method.is_black_box
+        )
 
         if not self.search_method.check_transformation_compatibility(
             self.transformation
@@ -74,11 +90,26 @@ class Attack:
         self.pre_transformation_constraints = []
         for constraint in constraints or []:
             if isinstance(
-                constraint, textattack.constraints.PreTransformationConstraint,
+                constraint,
+                textattack.constraints.PreTransformationConstraint,
             ):
                 self.pre_transformation_constraints.append(constraint)
             else:
                 self.constraints.append(constraint)
+
+        # Check if we can use transformation cache for our transformation.
+        if not self.transformation.deterministic:
+            self.use_transformation_cache = False
+        elif isinstance(self.transformation, CompositeTransformation):
+            self.use_transformation_cache = True
+            for t in self.transformation.transformations:
+                if not t.deterministic:
+                    self.use_transformation_cache = False
+                    break
+        else:
+            self.use_transformation_cache = True
+        self.transformation_cache_size = transformation_cache_size
+        self.transformation_cache = lru.LRU(transformation_cache_size)
 
         self.constraint_cache_size = constraint_cache_size
         self.constraints_cache = lru.LRU(constraint_cache_size)
@@ -87,10 +118,14 @@ class Attack:
         self.search_method.get_transformations = self.get_transformations
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
-        self.search_method.get_goal_results = lambda attacked_text_list: self.goal_function.get_results(
-            attacked_text_list
+        self.search_method.get_goal_results = (
+            lambda attacked_text_list: self.goal_function.get_results(
+                attacked_text_list
+            )
         )
         self.search_method.filter_transformations = self.filter_transformations
+        if not search_method.is_black_box:
+            self.search_method.get_model = lambda: self.goal_function.model
 
         self.attack_results = []
         self.loggers = []
@@ -103,11 +138,31 @@ class Attack:
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
+        if self.use_transformation_cache:
+            self.transformation_cache.clear()
         if recursive:
             self.goal_function.clear_cache()
             for constraint in self.constraints:
                 if hasattr(constraint, "clear_cache"):
                     constraint.clear_cache()
+
+    def _get_transformations_uncached(self, current_text, original_text=None, **kwargs):
+        """Applies ``self.transformation`` to ``text``, then filters the list
+        of possible transformations through the applicable constraints.
+
+        Args:
+            current_text: The current ``AttackedText`` on which to perform the transformations.
+            original_text: The original ``AttackedText`` from which the attack started.
+        Returns:
+            A filtered list of transformations where each transformation matches the constraints
+        """
+        transformed_texts = self.transformation(
+            current_text,
+            pre_transformation_constraints=self.pre_transformation_constraints,
+            **kwargs,
+        )
+
+        return transformed_texts
 
     def get_transformations(self, current_text, original_text=None, **kwargs):
         """Applies ``self.transformation`` to ``text``, then filters the list
@@ -116,8 +171,6 @@ class Attack:
         Args:
             current_text: The current ``AttackedText`` on which to perform the transformations.
             original_text: The original ``AttackedText`` from which the attack started.
-            apply_constraints: Whether or not to apply post-transformation constraints.
-
         Returns:
             A filtered list of transformations where each transformation matches the constraints
         """
@@ -126,13 +179,25 @@ class Attack:
                 "Cannot call `get_transformations` without a transformation."
             )
 
-        transformed_texts = np.array(
-            self.transformation(
-                current_text,
-                pre_transformation_constraints=self.pre_transformation_constraints,
-                **kwargs,
+        if self.use_transformation_cache:
+            cache_key = tuple([current_text] + sorted(kwargs.items()))
+            if utils.hashable(cache_key) and cache_key in self.transformation_cache:
+                # promote transformed_text to the top of the LRU cache
+                self.transformation_cache[cache_key] = self.transformation_cache[
+                    cache_key
+                ]
+                transformed_texts = list(self.transformation_cache[cache_key])
+            else:
+                transformed_texts = self._get_transformations_uncached(
+                    current_text, original_text, **kwargs
+                )
+                if utils.hashable(cache_key):
+                    self.transformation_cache[cache_key] = tuple(transformed_texts)
+        else:
+            transformed_texts = self._get_transformations_uncached(
+                current_text, original_text, **kwargs
             )
-        )
+
         return self.filter_transformations(
             transformed_texts, current_text, original_text
         )
@@ -187,6 +252,7 @@ class Attack:
         ]
         # Populate cache with transformed_texts
         uncached_texts = []
+        filtered_texts = []
         for transformed_text in transformed_texts:
             if (current_text, transformed_text) not in self.constraints_cache:
                 uncached_texts.append(transformed_text)
@@ -195,13 +261,11 @@ class Attack:
                 self.constraints_cache[
                     (current_text, transformed_text)
                 ] = self.constraints_cache[(current_text, transformed_text)]
-        self._filter_transformations_uncached(
+                if self.constraints_cache[(current_text, transformed_text)]:
+                    filtered_texts.append(transformed_text)
+        filtered_texts += self._filter_transformations_uncached(
             uncached_texts, current_text, original_text=original_text
         )
-        # Return transformed_texts from cache
-        filtered_texts = [
-            t for t in transformed_texts if self.constraints_cache[(current_text, t)]
-        ]
         # Sort transformations to ensure order is preserved between runs
         filtered_texts.sort(key=lambda t: t.text)
         return filtered_texts
@@ -220,11 +284,20 @@ class Attack:
         final_result = self.search_method(initial_result)
         self.clear_cache()
         if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
-            return SuccessfulAttackResult(initial_result, final_result,)
+            return SuccessfulAttackResult(
+                initial_result,
+                final_result,
+            )
         elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
-            return FailedAttackResult(initial_result, final_result,)
+            return FailedAttackResult(
+                initial_result,
+                final_result,
+            )
         elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
-            return MaximizedAttackResult(initial_result, final_result,)
+            return MaximizedAttackResult(
+                initial_result,
+                final_result,
+            )
         else:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 

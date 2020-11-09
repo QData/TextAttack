@@ -1,3 +1,9 @@
+"""
+Transformation Abstract Class
+============================================
+
+"""
+
 from abc import ABC, abstractmethod
 
 from textattack.shared.utils import default_class_repr
@@ -15,7 +21,7 @@ class Transformation(ABC):
         shifted_idxs=True,
     ):
         """Returns a list of all possible transformations for ``current_text``.
-        Applies the ``pre_transformation_constraints`` then calles
+        Applies the ``pre_transformation_constraints`` then calls
         ``_get_transformations``.
 
         Args:
@@ -55,6 +61,10 @@ class Transformation(ABC):
             indicies_to_modify: Which word indices can be modified.
         """
         raise NotImplementedError()
+
+    @property
+    def deterministic(self):
+        return True
 
     def extra_repr_keys(self):
         return []

@@ -1,22 +1,20 @@
-"""Reimplementation of search method from Generating Natural Language
-Adversarial Examples by Alzantot et.
-
-al `<arxiv.org/abs/1804.07998>`_
-`<github.com/nesl/nlp_adversarial_examples>`_
 """
-
-# from copy import deepcopy
+Genetic Algorithm Word Swap
+====================================
+"""
+from abc import ABC, abstractmethod
 
 import numpy as np
 import torch
 
 from textattack.goal_function_results import GoalFunctionResultStatus
-from textattack.search_methods import SearchMethod
+from textattack.search_methods import PopulationBasedSearch, PopulationMember
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
-class GeneticAlgorithm(SearchMethod):
-    """Attacks a model with word substiutitions using a genetic algorithm.
+class GeneticAlgorithm(PopulationBasedSearch, ABC):
+    """Base class for attacking a model with word substiutitions using a
+    genetic algorithm.
 
     Args:
         pop_size (int): The population size. Defaults to 20.
@@ -27,21 +25,17 @@ class GeneticAlgorithm(SearchMethod):
         post_crossover_check (bool): If True, check if child produced from crossover step passes the constraints.
         max_crossover_retries (int): Maximum number of crossover retries if resulting child fails to pass the constraints.
             Applied only when `post_crossover_check` is set to `True`.
-            Setting it to 0 means we immediately take one of the parents at random as the child.
-        improved_genetic_algorithm (bool): If True, we use the improved genetic algorithm.
-        max_replace_times_per_index (int):  The maximum times words at the same index can be replaced in improved genetic algorithm.
+            Setting it to 0 means we immediately take one of the parents at random as the child upon failure.
     """
 
     def __init__(
         self,
-        pop_size=20,
-        max_iters=50,
+        pop_size=60,
+        max_iters=20,
         temp=0.3,
         give_up_if_no_improvement=False,
         post_crossover_check=True,
         max_crossover_retries=20,
-        improved_genetic_algorithm=False,
-        max_replace_times_per_index=5,
     ):
         self.max_iters = max_iters
         self.pop_size = pop_size
@@ -49,47 +43,63 @@ class GeneticAlgorithm(SearchMethod):
         self.give_up_if_no_improvement = give_up_if_no_improvement
         self.post_crossover_check = post_crossover_check
         self.max_crossover_retries = max_crossover_retries
-        self.improved_genetic_algorithm = improved_genetic_algorithm
-        self.max_replace_times_per_index = max_replace_times_per_index
 
         # internal flag to indicate if search should end immediately
         self._search_over = False
 
-    def _perturb(self, pop_member, original_result, specified_idx=-1):
-        """Replaces the word at a random or specified index in pop_member that
-        has not been modified more than the allowed maximum replacement times.
+    @abstractmethod
+    def _modify_population_member(self, pop_member, new_text, new_result, word_idx):
+        """Modify `pop_member` by returning a new copy with `new_text`,
+        `new_result`, and, `attributes` altered appropriately for given
+        `word_idx`"""
+        raise NotImplementedError()
+
+    @abstractmethod
+    def _get_word_select_prob_weights(self, pop_member):
+        """Get the attribute of `pop_member` that is used for determining
+        probability of each word being selected for perturbation."""
+        raise NotImplementedError
+
+    def _perturb(self, pop_member, original_result, index=None):
+        """Perturb `pop_member` and return it. Replaces a word at a random
+        (unless `index` is specified) in `pop_member`.
 
         Args:
             pop_member (PopulationMember): The population member being perturbed.
             original_result (GoalFunctionResult): Result of original sample being attacked
-        Returns: None
+            index (int): Index of word to perturb.
+        Returns:
+            Perturbed `PopulationMember`
         """
-        num_words = pop_member.num_candidates_per_word.shape[0]
-        num_candidates_per_word = np.copy(pop_member.num_candidates_per_word)
-        non_zero_indices = np.count_nonzero(num_candidates_per_word)
+        num_words = pop_member.attacked_text.num_words
+        # `word_select_prob_weights` is a list of values used for sampling one word to transform
+        word_select_prob_weights = np.copy(
+            self._get_word_select_prob_weights(pop_member)
+        )
+        non_zero_indices = np.count_nonzero(word_select_prob_weights)
         if non_zero_indices == 0:
-            return
+            return pop_member
         iterations = 0
         while iterations < non_zero_indices:
-            if specified_idx in range(num_words):
-                idx = specified_idx
+            if index:
+                idx = index
             else:
-                w_select_probs = num_candidates_per_word / np.sum(
-                    num_candidates_per_word
+                w_select_probs = word_select_prob_weights / np.sum(
+                    word_select_prob_weights
                 )
                 idx = np.random.choice(num_words, 1, p=w_select_probs)[0]
 
-            transformations = self.get_transformations(
+            transformed_texts = self.get_transformations(
                 pop_member.attacked_text,
                 original_text=original_result.attacked_text,
                 indices_to_modify=[idx],
             )
 
-            if not len(transformations):
+            if not len(transformed_texts):
                 iterations += 1
                 continue
 
-            new_results, self._search_over = self.get_goal_results(transformations)
+            new_results, self._search_over = self.get_goal_results(transformed_texts)
 
             if self._search_over:
                 break
@@ -99,90 +109,100 @@ class GeneticAlgorithm(SearchMethod):
             )
             if len(diff_scores) and diff_scores.max() > 0:
                 idx_with_max_score = diff_scores.argmax()
-                pop_member.attacked_text = transformations[idx_with_max_score]
-                # For genetic algorithms, the word has been replaced cannot be modified again.
-                # For improved genetic algorithm,
-                # it allows to substitute words at the same index multiple times but not more than `max_replace_times_per_index`.
-                if not self.improved_genetic_algorithm:
-                    pop_member.num_candidates_per_word[idx] = 0
-                else:
-                    pop_member.num_candidates_per_word[idx] -= 1
-                pop_member.results = new_results[idx_with_max_score]
-                break
+                pop_member = self._modify_population_member(
+                    pop_member,
+                    transformed_texts[idx_with_max_score],
+                    new_results[idx_with_max_score],
+                    idx,
+                )
+                return pop_member
 
-            num_candidates_per_word[idx] = 0
+            word_select_prob_weights[idx] = 0
             iterations += 1
+        return pop_member
 
-    def _crossover(self, pop_member1, pop_member2, original_result):
+    @abstractmethod
+    def _crossover_operation(self, pop_member1, pop_member2):
+        """Actual operation that takes `pop_member1` text and `pop_member2`
+        text and mixes the two to generate crossover between `pop_member1` and
+        `pop_member2`.
+
+        Args:
+            pop_member1 (PopulationMember): The first population member.
+            pop_member2 (PopulationMember): The second population member.
+        Returns:
+            Tuple of `AttackedText` and a dictionary of attributes.
+        """
+        raise NotImplementedError()
+
+    def _post_crossover_check(
+        self, new_text, parent_text1, parent_text2, original_text
+    ):
+        """Check if `new_text` that has been produced by performing crossover
+        between `parent_text1` and `parent_text2` aligns with the constraints.
+
+        Args:
+            new_text (AttackedText): Text produced by crossover operation
+            parent_text1 (AttackedText): Parent text of `new_text`
+            parent_text2 (AttackedText): Second parent text of `new_text`
+            original_text (AttackedText): Original text
+        Returns:
+            `True` if `new_text` meets the constraints. If otherwise, return `False`.
+        """
+        if "last_transformation" in new_text.attack_attrs:
+            previous_text = (
+                parent_text1
+                if "last_transformation" in parent_text1.attack_attrs
+                else parent_text2
+            )
+            passed_constraints = self._check_constraints(
+                new_text, previous_text, original_text=original_text
+            )
+            return passed_constraints
+        else:
+            # `new_text` has not been actually transformed, so return True
+            return True
+
+    def _crossover(self, pop_member1, pop_member2, original_text):
         """Generates a crossover between pop_member1 and pop_member2.
 
-        If the child fails to satisfy the constraits, we re-try crossover for a fix number of times,
+        If the child fails to satisfy the constraints, we re-try crossover for a fix number of times,
         before taking one of the parents at random as the resulting child.
         Args:
             pop_member1 (PopulationMember): The first population member.
             pop_member2 (PopulationMember): The second population member.
+            original_text (AttackedText): Original text
         Returns:
             A population member containing the crossover.
         """
         x1_text = pop_member1.attacked_text
         x2_text = pop_member2.attacked_text
-        x2_words = x2_text.words
 
         num_tries = 0
         passed_constraints = False
         while num_tries < self.max_crossover_retries + 1:
-            indices_to_replace = []
-            words_to_replace = []
-            num_candidates_per_word = np.copy(pop_member1.num_candidates_per_word)
+            new_text, attributes = self._crossover_operation(pop_member1, pop_member2)
 
-            if not self.improved_genetic_algorithm:
-                for i in range(len(x1_text.words)):
-                    if np.random.uniform() < 0.5:
-                        indices_to_replace.append(i)
-                        words_to_replace.append(x2_words[i])
-                        num_candidates_per_word[
-                            i
-                        ] = pop_member2.num_candidates_per_word[i]
-            else:
-                # To better simulate the reproduction and biological crossover,
-                # IGA randomly cut the text from two parents and concat two fragments into a new text
-                # rather than randomly choose a word of each position from the two parents.
-                crossover_point = np.random.randint(0, len(x1_text.words))
-                for i in range(crossover_point, len(x1_text.words)):
-                    indices_to_replace.append(i)
-                    words_to_replace.append(x2_words[i])
-                    num_candidates_per_word[i] = pop_member2.num_candidates_per_word[i]
-            new_text = x1_text.replace_words_at_indices(
-                indices_to_replace, words_to_replace
-            )
-
-            if not self.post_crossover_check or (
-                new_text.text == x1_text.text or new_text.text == x2_text.text
-            ):
-                break
+            replaced_indices = new_text.attack_attrs["newly_modified_indices"]
+            new_text.attack_attrs["modified_indices"] = (
+                x1_text.attack_attrs["modified_indices"] - replaced_indices
+            ) | (x2_text.attack_attrs["modified_indices"] & replaced_indices)
 
             if "last_transformation" in x1_text.attack_attrs:
                 new_text.attack_attrs["last_transformation"] = x1_text.attack_attrs[
                     "last_transformation"
                 ]
-                filtered = self.filter_transformations(
-                    [new_text], x1_text, original_text=original_result.attacked_text
-                )
             elif "last_transformation" in x2_text.attack_attrs:
                 new_text.attack_attrs["last_transformation"] = x2_text.attack_attrs[
                     "last_transformation"
                 ]
-                filtered = self.filter_transformations(
-                    [new_text], x2_text, original_text=original_result.attacked_text
-                )
-            else:
-                # In this case, neither x_1 nor x_2 has been transformed,
-                # meaning that new_text == original_text
-                filtered = [new_text]
 
-            if filtered:
-                new_text = filtered[0]
-                passed_constraints = True
+            if self.post_crossover_check:
+                passed_constraints = self._post_crossover_check(
+                    new_text, x1_text, x2_text, original_text
+                )
+
+            if not self.post_crossover_check or passed_constraints:
                 break
 
             num_tries += 1
@@ -190,87 +210,35 @@ class GeneticAlgorithm(SearchMethod):
         if self.post_crossover_check and not passed_constraints:
             # If we cannot find a child that passes the constraints,
             # we just randomly pick one of the parents to be the child for the next iteration.
-            new_text = (
-                pop_member1.attacked_text
-                if np.random.uniform() < 0.5
-                else pop_member2.attacked_text
+            pop_mem = pop_member1 if np.random.uniform() < 0.5 else pop_member2
+            return pop_mem
+        else:
+            new_results, self._search_over = self.get_goal_results([new_text])
+            return PopulationMember(
+                new_text, result=new_results[0], attributes=attributes
             )
 
-        new_results, self._search_over = self.get_goal_results([new_text])
-
-        return PopulationMember(new_text, num_candidates_per_word, new_results[0])
-
-    def _initialize_population(self, initial_result):
+    @abstractmethod
+    def _initialize_population(self, initial_result, pop_size):
         """
-        Initialize a population of texts each with one word replaced
+        Initialize a population of size `pop_size` with `initial_result`
         Args:
-            initial_result (GoalFunctionResult): The result to instantiate the population with
+            initial_result (GoalFunctionResult): Original text
+            pop_size (int): size of population
         Returns:
-            The population.
+            population as `list[PopulationMember]`
         """
-        words = initial_result.attacked_text.words
-        if not self.improved_genetic_algorithm:
-            num_candidates_per_word = np.zeros(len(words))
-            transformations = self.get_transformations(
-                initial_result.attacked_text, original_text=initial_result.attacked_text
-            )
-            for transformed_text in transformations:
-                diff_idx = initial_result.attacked_text.first_word_diff_index(
-                    transformed_text
-                )
-                num_candidates_per_word[diff_idx] += 1
-
-            # Just b/c there are no candidates now doesn't mean we never want to select the word for perturbation
-            # Therefore, we give small non-zero probability for words with no candidates
-            # Epsilon is some small number to approximately assign 1% probability
-            num_total_candidates = np.sum(num_candidates_per_word)
-            epsilon = max(1, int(num_total_candidates * 0.01))
-            for i in range(len(num_candidates_per_word)):
-                if num_candidates_per_word[i] == 0:
-                    num_candidates_per_word[i] = epsilon
-        else:
-            # For IGA, `num_candidates_per_word` represents the number of times the word at each index can be modified
-            num_candidates_per_word = np.array(
-                [self.max_replace_times_per_index for _ in range(len(words))]
-            )
-
-        population = []
-        if not self.improved_genetic_algorithm:
-            for _ in range(self.pop_size):
-                pop_member = PopulationMember(
-                    initial_result.attacked_text,
-                    np.copy(num_candidates_per_word),
-                    initial_result,
-                )
-                # Perturb `pop_member` in-place
-                self._perturb(pop_member, initial_result)
-                population.append(pop_member)
-        else:
-            # IGA initializes the first population by replacing each word by its optimal synonym
-            for idx in range(len(words)):
-                pop_member = PopulationMember(
-                    initial_result.attacked_text,
-                    np.copy(num_candidates_per_word),
-                    initial_result,
-                )
-                self._perturb(pop_member, initial_result, specified_idx=idx)
-                population.append(pop_member)
-        return population
+        raise NotImplementedError()
 
     def _perform_search(self, initial_result):
         self._search_over = False
-        population = self._initialize_population(initial_result)
+        population = self._initialize_population(initial_result, self.pop_size)
+        pop_size = len(population)
         current_score = initial_result.score
-        if not self.improved_genetic_algorithm:
-            pop_size = self.pop_size
-        else:
-            # Due to the distinct initialization,
-            # the pop size of IGA is not necessarily equal to the set value,
-            # here to ensure that the real pop size does not exceed the set value.
-            pop_size = min(len(population), self.pop_size)
+
         for i in range(self.max_iters):
             population = sorted(population, key=lambda x: x.result.score, reverse=True)
-            population = population[:pop_size]
+
             if (
                 self._search_over
                 or population[0].result.goal_status
@@ -295,12 +263,12 @@ class GeneticAlgorithm(SearchMethod):
                 child = self._crossover(
                     population[parent1_idx[idx]],
                     population[parent2_idx[idx]],
-                    initial_result,
+                    initial_result.attacked_text,
                 )
                 if self._search_over:
                     break
 
-                self._perturb(child, initial_result)
+                child = self._perturb(child, initial_result)
                 children.append(child)
 
                 # We need two `search_over` checks b/c value might change both in
@@ -317,19 +285,16 @@ class GeneticAlgorithm(SearchMethod):
         substitutions."""
         return transformation_consists_of_word_swaps(transformation)
 
+    @property
+    def is_black_box(self):
+        return True
+
     def extra_repr_keys(self):
-        return ["pop_size", "max_iters", "temp", "give_up_if_no_improvement"]
-
-
-class PopulationMember:
-    """A member of the population during the course of the genetic algorithm.
-
-    Args:
-        attacked_text: The ``AttackedText`` of the population member.
-        num_candidates_per_word (numpy.array): A list of the number of candidate neighbors list for each word.
-    """
-
-    def __init__(self, attacked_text, num_candidates_per_word, result):
-        self.attacked_text = attacked_text
-        self.num_candidates_per_word = num_candidates_per_word
-        self.result = result
+        return [
+            "pop_size",
+            "max_iters",
+            "temp",
+            "give_up_if_no_improvement",
+            "post_crossover_check",
+            "max_crossover_retries",
+        ]

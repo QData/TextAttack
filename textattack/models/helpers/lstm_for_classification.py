@@ -1,3 +1,10 @@
+"""
+LSTM 4 Classification
+^^^^^^^^^^^^^^^^^^^^^^^
+
+"""
+
+
 import torch
 from torch import nn as nn
 
@@ -55,8 +62,6 @@ class LSTMForClassification(nn.Module):
 
     def load_from_disk(self, model_path):
         self.load_state_dict(load_cached_state_dict(model_path))
-        self.word_embeddings = self.emb_layer.embedding
-        self.lookup_table = self.emb_layer.embedding.weight.data
         self.to(utils.device)
         self.eval()
 
@@ -73,3 +78,6 @@ class LSTMForClassification(nn.Module):
         output = self.drop(output)
         pred = self.out(output)
         return pred
+
+    def get_input_embeddings(self):
+        return self.emb_layer.embedding

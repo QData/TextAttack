@@ -32,8 +32,8 @@ def words_from_text(s, words_to_ignore=[]):
     for c in " ".join(s.split()):
         if c.isalnum():
             word += c
-        elif c in "'-" and len(word) > 0:
-            # Allow apostrophes and hyphens as long as they don't begin the
+        elif c in "'-_*@" and len(word) > 0:
+            # Allow apostrophes, hyphens, underscores, asterisks and at signs as long as they don't begin the
             # word.
             word += c
         elif word:
@@ -163,3 +163,60 @@ def color_text(text, color=None, method=None):
         return color + text + ANSI_ESCAPE_CODES.STOP
     elif method == "file":
         return "[[" + text + "]]"
+
+
+_flair_pos_tagger = None
+
+
+def flair_tag(sentence, tag_type="pos-fast"):
+    """Tags a `Sentence` object using `flair` part-of-speech tagger."""
+    global _flair_pos_tagger
+    if not _flair_pos_tagger:
+        from flair.models import SequenceTagger
+
+        _flair_pos_tagger = SequenceTagger.load(tag_type)
+    _flair_pos_tagger.predict(sentence)
+
+
+def zip_flair_result(pred, tag_type="pos-fast"):
+    """Takes a sentence tagging from `flair` and returns two lists, of words
+    and their corresponding parts-of-speech."""
+    from flair.data import Sentence
+
+    if not isinstance(pred, Sentence):
+        raise TypeError("Result from Flair POS tagger must be a `Sentence` object.")
+
+    tokens = pred.tokens
+    word_list = []
+    pos_list = []
+    for token in tokens:
+        word_list.append(token.text)
+        if tag_type == "pos-fast":
+            pos_list.append(token.annotation_layers["pos"][0]._value)
+        elif tag_type == "ner":
+            pos_list.append(token.get_tag("ner"))
+
+    return word_list, pos_list
+
+
+def zip_stanza_result(pred, tagset="universal"):
+    """Takes the first sentence from a document from `stanza` and returns two
+    lists, one of words and the other of their corresponding parts-of-
+    speech."""
+    from stanza.models.common.doc import Document
+
+    if not isinstance(pred, Document):
+        raise TypeError("Result from Stanza POS tagger must be a `Document` object.")
+
+    word_list = []
+    pos_list = []
+
+    for sentence in pred.sentences:
+        for word in sentence.words:
+            word_list.append(word.text)
+            if tagset == "universal":
+                pos_list.append(word.upos)
+            else:
+                pos_list.append(word.xpos)
+
+    return word_list, pos_list

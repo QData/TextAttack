@@ -1,3 +1,12 @@
+"""
+
+TextBugger
+===============
+
+(TextBugger: Generating Adversarial Text Against Real-world Applications)
+
+"""
+
 # from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     RepeatModification,

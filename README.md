@@ -28,7 +28,7 @@ TextAttack is a Python framework for adversarial attacks, data augmentation, and
 
 ## Slack Channel
 
-For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-ez3ts03b-Nr55tDiqgAvCkRbbz8zz9g)!
+For help and realtime updates related to TextAttack, please [join the TextAttack Slack](https://join.slack.com/t/textattack/shared_invite/zt-huomtd9z-KqdHBPPu2rOP~Z8q3~urgg)!
 
 ### *Why TextAttack?*
 
@@ -69,7 +69,7 @@ or a specific command using, for example,
 textattack attack --help
 ```
 
-The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The[documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
 ### Running Attacks
 
@@ -113,6 +113,9 @@ Attacks on classification tasks, like sentiment classification and entailment:
 - **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998)).
 - **bae**: BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).
 - **bert-attack**: BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984)).
+- **checklist**: Invariance testing implemented in CheckList that contract, extend, and substitutes name entities. (["Beyond Accuracy: Behavioral
+    Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118)).
+- **clare (*coming soon*)**: Greedy attack with word swap, insertion, and merge transformations using RoBERTa masked language model. (["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502)).
 - **faster-alzantot**: modified, faster version of the Alzantot et al. genetic algorithm, from (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986)).
 - **deepwordbug**: Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)).
 - **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751)).
@@ -131,7 +134,7 @@ Attacks on sequence-to-sequence models:
 
 #### Recipe Usage Examples
 
-Here are some exampes of testing attacks from the literature from the command-line:
+Here are some examples of testing attacks from the literature from the command-line:
 
 *TextFooler against BERT fine-tuned on SST-2:*
 ```bash
@@ -152,6 +155,7 @@ for data augmentation:
 - `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
 - `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
 - `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
+- `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -170,7 +174,7 @@ For example, given the following as `examples.csv`:
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap 4 --transformations-per-example 2 --exclude-original`
+The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
@@ -203,12 +207,24 @@ of a string or a list of strings. Here's an example of how to use the `Embedding
 >>> augmenter.augment(s)
 ['What I notable create, I do not understand.', 'What I significant create, I do not understand.', 'What I cannot engender, I do not understand.', 'What I cannot creating, I do not understand.', 'What I cannot creations, I do not understand.', 'What I cannot create, I do not comprehend.', 'What I cannot create, I do not fathom.', 'What I cannot create, I do not understanding.', 'What I cannot create, I do not understands.', 'What I cannot create, I do not understood.', 'What I cannot create, I do not realise.']
 ```
+You can also create your own augmenter from scratch by importing transformations/constraints from `textattack.transformations` and `textattack.constraints`. Here's an example that generates augmentations of a string using `WordSwapRandomCharacterDeletion`:
+
+```python
+>>> from textattack.transformations import WordSwapRandomCharacterDeletion
+>>> from textattack.transformations import CompositeTransformation
+>>> from textattack.augmentation import Augmenter
+>>> transformation = CompositeTransformation([WordSwapRandomCharacterDeletion()])
+>>> augmenter = Augmenter(transformation=transformation, transformations_per_example=5)
+>>> s = 'What I cannot create, I do not understand.'
+>>> aug.augment(s))
+['What I cannot creae, I do not understand.', 'What I cannot creat, I do not understand.', 'What I cannot create, I do not nderstand.', 'What I cannot create, I do nt understand.', 'Wht I cannot create, I do not understand.']
+```
 
 ### Training Models
 
 Our model training code is available via `textattack train` to help you train LSTMs,
 CNNs, and `transformers` models using TextAttack out-of-the-box. Datasets are
-automatically loaded using the `nlp` package.
+automatically loaded using the `datasets` package.
 
 #### Training Examples
 *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
@@ -229,7 +245,7 @@ textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 -
 
 ### `textattack peek-dataset`
 
-To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-nlp snli` will show information about the SNLI dataset from the NLP package.
+To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
 
 
 ### `textattack list`
@@ -263,18 +279,18 @@ Here's an example of using one of the built-in models (the SST-2 dataset is auto
 textattack attack --model roberta-base-sst2 --recipe textfooler --num-examples 10
 ```
 
-#### HuggingFace support: `transformers` models and `nlp` datasets
+#### HuggingFace support: `transformers` models and `datasets` datasets
 
 We also provide built-in support for [`transformers` pretrained models](https://huggingface.co/models) 
-and datasets from the [`nlp` package](https://github.com/huggingface/nlp)! Here's an example of loading
+and datasets from the [`datasets` package](https://github.com/huggingface/datasets)! Here's an example of loading
 and attacking a pre-trained model and dataset:
 
 ```bash
-textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-nlp glue^sst2 --recipe deepwordbug --num-examples 10
+textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-huggingface glue^sst2 --recipe deepwordbug --num-examples 10
 ```
 
 You can explore other pre-trained models using the `--model-from-huggingface` argument, or other datasets by changing 
-`--dataset-from-nlp`.
+`--dataset-from-huggingface`.
 
 
 #### Loading a model or dataset from a file

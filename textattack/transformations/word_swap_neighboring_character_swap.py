@@ -1,3 +1,8 @@
+"""
+Word Swap by Neighboring Character Swap
+============================================
+"""
+
 import numpy as np
 
 # from textattack.shared import utils
@@ -50,6 +55,10 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
                 candidate_words.append(candidate_word)
 
         return candidate_words
+
+    @property
+    def deterministic(self):
+        return not self.random_one
 
     def extra_repr_keys(self):
         return super().extra_repr_keys() + ["random_one"]

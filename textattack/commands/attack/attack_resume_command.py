@@ -1,3 +1,11 @@
+"""
+
+TextAttack Command Class for Attack Resume
+-------------------------------------------
+
+"""
+
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import textattack

@@ -1,7 +1,10 @@
-import pickle
+"""
+Word Swap by OpenHowNet
+============================================
+"""
 
-from flair.data import Sentence
-from flair.models import SequenceTagger
+
+import pickle
 
 from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
@@ -26,7 +29,6 @@ class WordSwapHowNet(WordSwap):
         with open(cache_path, "rb") as fp:
             self.candidates_bank = pickle.load(fp)
 
-        self._flair_pos_tagger = SequenceTagger.load("pos-fast")
         self.pos_dict = {"JJ": "adj", "NN": "noun", "RB": "adv", "VB": "verb"}
 
     def _get_replacement_words(self, word, word_pos):
@@ -52,20 +54,10 @@ class WordSwapHowNet(WordSwap):
             return []
 
     def _get_transformations(self, current_text, indices_to_modify):
-        words = current_text.words
-        sentence = Sentence(" ".join(words))
-        # in-place POS tagging
-        self._flair_pos_tagger.predict(sentence)
-        word_list, pos_list = zip_flair_result(sentence)
-
-        assert len(words) == len(
-            word_list
-        ), "Part-of-speech tagger returned incorrect number of tags"
         transformed_texts = []
-
         for i in indices_to_modify:
-            word_to_replace = words[i]
-            word_to_replace_pos = pos_list[i][:2]  # get the root POS
+            word_to_replace = current_text.words[i]
+            word_to_replace_pos = current_text.pos_of_word_index(i)
             replacement_words = self._get_replacement_words(
                 word_to_replace, word_to_replace_pos
             )
@@ -97,18 +89,3 @@ def recover_word_case(word, reference_word):
     else:
         # if other, just do not alter the word's case
         return word
-
-
-def zip_flair_result(pred):
-    """Parse the output from the FLAIR POS tagger."""
-    if not isinstance(pred, Sentence):
-        raise TypeError("Result from Flair POS tagger must be a `Sentence` object.")
-
-    tokens = pred.tokens
-    word_list = []
-    pos_list = []
-    for token in tokens:
-        word_list.append(token.text)
-        pos_list.append(token.annotation_layers["pos"][0]._value)
-
-    return word_list, pos_list

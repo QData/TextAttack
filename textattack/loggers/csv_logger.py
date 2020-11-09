@@ -1,3 +1,8 @@
+"""
+Attack Logs to CSV
+========================
+"""
+
 import pandas as pd
 
 from textattack.shared import AttackedText

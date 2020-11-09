@@ -1,23 +1,23 @@
-from textattack.attack_recipes import PWWSRen2019
-from textattack.datasets import HuggingFaceNlpDataset
-from textattack.models.wrappers import ModelWrapper
-from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
-
-import numpy as np
-
 # Quiet TensorFlow.
 import os
+
+import numpy as np
+from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
+
+from textattack.attack_recipes import PWWSRen2019
+from textattack.datasets import HuggingFaceDataset
+from textattack.models.wrappers import ModelWrapper
 
 if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 
 class HuggingFaceSentimentAnalysisPipelineWrapper(ModelWrapper):
-    """ Transformers sentiment analysis pipeline returns a list of responses,
-        like
-            [{'label': 'POSITIVE', 'score': 0.7817379832267761}]
-        We need to convert that to a format TextAttack understands, like
-            [[0.218262017, 0.7817379832267761]
+    """Transformers sentiment analysis pipeline returns a list of responses,
+    like
+        [{'label': 'POSITIVE', 'score': 0.7817379832267761}]
+    We need to convert that to a format TextAttack understands, like
+        [[0.218262017, 0.7817379832267761]
     """
 
     def __init__(self, pipeline):
@@ -54,7 +54,7 @@ recipe = PWWSRen2019.build(model_wrapper)
 
 recipe.transformation.language = "fra"
 
-dataset = HuggingFaceNlpDataset("allocine", split="test")
+dataset = HuggingFaceDataset("allocine", split="test")
 for idx, result in enumerate(recipe.attack_dataset(dataset)):
     print(("-" * 20), f"Result {idx+1}", ("-" * 20))
     print(result.__str__(color_method="ansi"))

@@ -1,3 +1,9 @@
+"""
+Misc Validators
+=================
+Validators ensure compatibility between search methods, transformations, constraints, and goal functions.
+
+"""
 import re
 
 import textattack
@@ -14,12 +20,12 @@ from . import logger
 # A list of goal functions and the corresponding available models.
 MODELS_BY_GOAL_FUNCTIONS = {
     (TargetedClassification, UntargetedClassification, InputReduction): [
-        r"^textattack.models.lstm_for_classification.*",
+        r"^textattack.models.helpers.lstm_for_classification.*",
+        r"^textattack.models.helpers.word_cnn_for_classification.*",
         r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
     ],
     (NonOverlappingOutput, MinimizeBleu,): [
-        r"^textattack.models.translation.*",
-        r"^textattack.models.summarization.*",
+        r"^textattack.models.helpers.t5_for_text_to_text.*",
     ],
 }
 
@@ -45,7 +51,8 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
     try:
         matching_model_globs = MODELS_BY_GOAL_FUNCTION[goal_function_class]
     except KeyError:
-        raise ValueError(f"No entry found for goal function {goal_function_class}.")
+        matching_model_globs = []
+        logger.warn(f"No entry found for goal function {goal_function_class}.")
     # Get options for this goal function.
     # model_module = model_class.__module__
     model_module_path = ".".join((model_class.__module__, model_class.__name__))
@@ -55,28 +62,28 @@ def validate_model_goal_function_compatibility(goal_function_class, model_class)
             logger.info(
                 f"Goal function {goal_function_class} compatible with model {model_class.__name__}."
             )
-            return True
+            return
     # If we got here, the model does not match the intended goal function.
     for goal_functions, globs in MODELS_BY_GOAL_FUNCTIONS.items():
         for glob in globs:
             if re.match(glob, model_module_path):
-                raise ValueError(
+                logger.warn(
                     f"Unknown if model {model_class.__name__} compatible with provided goal function {goal_function_class}."
-                    " Found match with other goal functions: {goal_functions}."
+                    f" Found match with other goal functions: {goal_functions}."
                 )
-    # If it matches another goal function, throw an error.
+                return
+    # If it matches another goal function, warn user.
 
     # Otherwise, this is an unknown model–perhaps user-provided, or we forgot to
     # update the corresponding dictionary. Warn user and return.
     logger.warn(
         f"Unknown if model of class {model_class} compatible with goal function {goal_function_class}."
     )
-    return True
 
 
 def validate_model_gradient_word_swap_compatibility(model):
     """Determines if ``model`` is task-compatible with
-    ``radientBasedWordSwap``.
+    ``GradientBasedWordSwap``.
 
     We can only take the gradient with respect to an individual word if
     the model uses a word-based tokenizer.

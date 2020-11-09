@@ -1,4 +1,12 @@
-"""A command line parser to run an attack from user specifications."""
+"""
+
+TextAttack Command Class for Attack Single Threaded
+-----------------------------------------------------
+
+A command line parser to run an attack in single thread from user specifications.
+
+"""
+
 from collections import deque
 import os
 import time
@@ -19,7 +27,7 @@ def run(args, checkpoint=None):
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "4"
     # Fix TensorFlow GPU memory growth
     import tensorflow as tf
 
@@ -127,7 +135,10 @@ def run(args, checkpoint=None):
                 and len(attack.attack_results) % args.checkpoint_interval == 0
             ):
                 new_checkpoint = textattack.shared.Checkpoint(
-                    args, worklist, worklist_tail, attack_results=attack.attack_results,
+                    args,
+                    worklist,
+                    worklist_tail,
+                    attack_results=attack.attack_results,
                 )
                 new_checkpoint.save()
 

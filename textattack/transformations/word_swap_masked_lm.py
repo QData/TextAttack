@@ -1,3 +1,9 @@
+"""
+Word Swap by BERT-Masked LM.
+============================================
+"""
+
+
 import itertools
 
 import torch
@@ -10,11 +16,14 @@ from textattack.transformations.word_swap import WordSwap
 class WordSwapMaskedLM(WordSwap):
     """Generate potential replacements for a word using BERT-Masked LM.
 
-    Based off of two papers
-        - "BAE: BERT-based Adversarial Examples for Text Classification" (Garg et al., 2020) https://arxiv.org/abs/2004.01970
-        - "BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al, 2020) https://arxiv.org/abs/2004.09984
+    Based off of following papers
+        - "BAE: BERT-based Adversarial Examples for Text Classification"  https://arxiv.org/abs/2004.01970
+        - "BERT-ATTACK: Adversarial Attack Against BERT Using BERT"  https://arxiv.org/abs/2004.09984
+        - "Robustness to Modification with Shared Words in Paraphrase Identification https://arxiv.org/abs/1909.02560"
+        - "Contextualized Perturbation for Textual Adversarial Attack https://arxiv.org/pdf/2009.07502.pdf"
 
     BAE simple masks the word we want to replace and selects top-K replacements predicted by the masked language model.
+
     BERT-Attack instead performs replacement on token level. For words that are consisted of two or more sub-word tokens,
         it takes the top-K replacements for seach sub-word token and produces all possible combinations of the top replacments.
         Then, it selects the top-K combinations based on their perplexity calculated using the masked language model.
@@ -97,7 +106,11 @@ class WordSwapMaskedLM(WordSwap):
         return replacement_words
 
     def _bert_attack_replacement_words(
-        self, current_text, index, id_preds, masked_lm_logits,
+        self,
+        current_text,
+        index,
+        id_preds,
+        masked_lm_logits,
     ):
         """Get replacement words for the word we want to replace using BERT-
         Attack method.

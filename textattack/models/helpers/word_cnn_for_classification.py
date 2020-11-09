@@ -1,3 +1,10 @@
+"""
+Word CNN for Classification
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+"""
+
+
 import torch
 from torch import nn as nn
 from torch.nn import functional as F
@@ -57,6 +64,9 @@ class WordCNNForClassification(nn.Module):
         output = self.drop(output)
         pred = self.out(output)
         return pred
+
+    def get_input_embeddings(self):
+        return self.emb_layer.embedding
 
 
 class CNNTextLayer(nn.Module):

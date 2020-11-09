@@ -1,20 +1,26 @@
-"""Reimplementation of search method from Word-level Textual Adversarial
+"""
+
+Particle Swarm Optimization
+====================================
+
+Reimplementation of search method from Word-level Textual Adversarial
 Attacking as Combinatorial Optimization by Zang et.
 
 al
 `<https://www.aclweb.org/anthology/2020.acl-main.540.pdf>`_
 `<https://github.com/thunlp/SememePSO-Attack>`_
 """
-
-from copy import deepcopy
+import copy
 
 import numpy as np
 
 from textattack.goal_function_results import GoalFunctionResultStatus
-from textattack.search_methods import SearchMethod
+from textattack.search_methods import PopulationBasedSearch, PopulationMember
+from textattack.shared import utils
+from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
-class ParticleSwarmOptimization(SearchMethod):
+class ParticleSwarmOptimization(PopulationBasedSearch):
     """Attacks a model with word substiutitions using a Particle Swarm
     Optimization (PSO) algorithm. Some key hyper-parameters are setup according
     to the original paper:
@@ -24,252 +30,318 @@ class ParticleSwarmOptimization(SearchMethod):
     probability of the particles ranges from 0.047 (sigmoid(-3)) to 0.953 (sigmoid(3))."
 
     Args:
-        pop_size (:obj:`int`, optional): The population size. Defauls to 60.
+        pop_size (:obj:`int`, optional): The population size. Defaults to 60.
         max_iters (:obj:`int`, optional): The maximum number of iterations to use. Defaults to 20.
+        post_turn_check (:obj:`bool`, optional): If `True`, check if new position reached by moving passes the constraints. Defaults to `True`
+        max_turn_retries (:obj:`bool`, optional): Maximum number of movement retries if new position after turning fails to pass the constraints.
+            Applied only when `post_movement_check` is set to `True`.
+            Setting it to 0 means we immediately take the old position as the new position upon failure.
     """
 
     def __init__(
-        self, pop_size=60, max_iters=20,
+        self, pop_size=60, max_iters=20, post_turn_check=True, max_turn_retries=20
     ):
         self.max_iters = max_iters
         self.pop_size = pop_size
-        self.search_over = False
+        self.post_turn_check = post_turn_check
+        self.max_turn_retries = 20
 
-        self.Omega_1 = 0.8
-        self.Omega_2 = 0.2
-        self.C1_origin = 0.8
-        self.C2_origin = 0.2
-        self.V_max = 3.0
+        self._search_over = False
+        self.omega_1 = 0.8
+        self.omega_2 = 0.2
+        self.c1_origin = 0.8
+        self.c2_origin = 0.2
+        self.v_max = 3.0
 
-    def _generate_population(self, x_orig, neighbors_list, neighbors_len):
-        h_score, w_list = self._gen_h_score(x_orig, neighbors_len, neighbors_list)
-        return [self._mutate(x_orig, h_score, w_list) for _ in range(self.pop_size)]
+    def _perturb(self, pop_member, original_result):
+        """Perturb `pop_member` in-place.
 
-    def _mutate(self, x_cur, w_select_probs, w_list):
-        rand_idx = np.random.choice(len(w_select_probs), 1, p=w_select_probs)[0]
-        return x_cur.replace_word_at_index(rand_idx, w_list[rand_idx])
-
-    def _gen_h_score(self, x, neighbors_len, neighbors_list):
-
-        w_list = []
-        prob_list = []
-        for i, orig_w in enumerate(x.words):
-            if neighbors_len[i] == 0:
-                w_list.append(orig_w)
-                prob_list.append(0)
-                continue
-            p, w = self._gen_most_change(x, i, neighbors_list[i])
-            w_list.append(w)
-            prob_list.append(p)
-
-        prob_list = self._norm(prob_list)
-
-        h_score = prob_list
-        h_score = np.array(h_score)
-        return h_score, w_list
-
-    def _norm(self, n):
-
-        tn = []
-        for i in n:
-            if i <= 0:
-                tn.append(0)
-            else:
-                tn.append(i)
-        s = np.sum(tn)
-        if s == 0:
-            for i in range(len(tn)):
-                tn[i] = 1
-            return [t / len(tn) for t in tn]
-        new_n = [t / s for t in tn]
-
-        return new_n
-
-    # for un-targeted attacking
-    def _gen_most_change(self, x_cur, pos, replace_list):
-        orig_result, self.search_over = self.get_goal_results([x_cur])
-        if self.search_over:
-            return 0, x_cur.words[pos]
-        new_x_list = [x_cur.replace_word_at_index(pos, w) for w in replace_list]
-        # new_x_list = self.get_transformations(
-        #     x_cur,
-        #     original_text=self.original_attacked_text,
-        #     indices_to_modify=[pos],
-        # )
-        new_x_results, self.search_over = self.get_goal_results(new_x_list)
-        new_x_scores = np.array([r.score for r in new_x_results])
-        new_x_scores = (
-            new_x_scores - orig_result[0].score
-        )  # minimize the score of ground truth
-        if len(new_x_scores):
-            return (
-                np.max(new_x_scores),
-                new_x_list[np.argsort(new_x_scores)[-1]].words[pos],
-            )
-        else:
-            return 0, x_cur.words[pos]
-
-    def _get_neighbors_list(self, attacked_text):
-        """
-        Generates this neighbors_len list
+        Replaces a word at a random in `pop_member` with replacement word that maximizes increase in score.
         Args:
-            attacked_text: The original text
+            pop_member (PopulationMember): The population member being perturbed.
+            original_result (GoalFunctionResult): Result of original sample being attacked
         Returns:
-            A list of number of candidate neighbors for each word
+            `True` if perturbation occured. `False` if not.
         """
-        words = attacked_text.words
-        neighbors_list = [[] for _ in range(len(words))]
-        transformations = self.get_transformations(
-            attacked_text, original_text=self.original_attacked_text
+        # TODO: Below is very slow and is the main cause behind memory build up + slowness
+        best_neighbors, prob_list = self._get_best_neighbors(
+            pop_member.result, original_result
         )
-        for transformed_text in transformations:
-            try:
-                diff_idx = attacked_text.first_word_diff_index(transformed_text)
-                neighbors_list[diff_idx].append(transformed_text.words[diff_idx])
-            except Exception:
-                assert len(attacked_text.words) == len(transformed_text.words)
-                assert all(
-                    [
-                        w1 == w2
-                        for w1, w2 in zip(attacked_text.words, transformed_text.words)
-                    ]
-                )
-        neighbors_list = [np.array(x) for x in neighbors_list]
-        return neighbors_list
+        random_result = np.random.choice(best_neighbors, 1, p=prob_list)[0]
+
+        if random_result == pop_member.result:
+            return False
+        else:
+            pop_member.attacked_text = random_result.attacked_text
+            pop_member.result = random_result
+            return True
 
     def _equal(self, a, b):
-        if a == b:
-            return -self.V_max
+        return -self.v_max if a == b else self.v_max
+
+    def _turn(self, source_text, target_text, prob, original_text):
+        """
+        Based on given probabilities, "move" to `target_text` from `source_text`
+        Args:
+            source_text (PopulationMember): Text we start from.
+            target_text (PopulationMember): Text we want to move to.
+            prob (np.array[float]): Turn probability for each word.
+            original_text (AttackedText): Original text for constraint check if `self.post_turn_check=True`.
+        Returns:
+            New `Position` that we moved to (or if we fail to move, same as `source_text`)
+        """
+        assert len(source_text.words) == len(
+            target_text.words
+        ), "Word length mismatch for turn operation."
+        assert len(source_text.words) == len(
+            prob
+        ), "Length mismatch for words and probability list."
+        len_x = len(source_text.words)
+
+        num_tries = 0
+        passed_constraints = False
+        while num_tries < self.max_turn_retries + 1:
+            indices_to_replace = []
+            words_to_replace = []
+            for i in range(len_x):
+                if np.random.uniform() < prob[i]:
+                    indices_to_replace.append(i)
+                    words_to_replace.append(target_text.words[i])
+            new_text = source_text.attacked_text.replace_words_at_indices(
+                indices_to_replace, words_to_replace
+            )
+            indices_to_replace = set(indices_to_replace)
+            new_text.attack_attrs["modified_indices"] = (
+                source_text.attacked_text.attack_attrs["modified_indices"]
+                - indices_to_replace
+            ) | (
+                target_text.attacked_text.attack_attrs["modified_indices"]
+                & indices_to_replace
+            )
+            if "last_transformation" in source_text.attacked_text.attack_attrs:
+                new_text.attack_attrs[
+                    "last_transformation"
+                ] = source_text.attacked_text.attack_attrs["last_transformation"]
+
+            if not self.post_turn_check or (new_text.words == source_text.words):
+                break
+
+            if "last_transformation" in new_text.attack_attrs:
+                passed_constraints = self._check_constraints(
+                    new_text, source_text.attacked_text, original_text=original_text
+                )
+            else:
+                passed_constraints = True
+
+            if passed_constraints:
+                break
+
+            num_tries += 1
+
+        if self.post_turn_check and not passed_constraints:
+            # If we cannot find a turn that passes the constraints, we do not move.
+            return source_text
         else:
-            return self.V_max
+            return PopulationMember(new_text)
 
-    def _turn(self, x1, x2, prob, x_len):
-        indices_to_replace = []
-        words_to_replace = []
-        x2_words = x2.words
-        for i in range(x_len):
-            if np.random.uniform() < prob[i]:
-                indices_to_replace.append(i)
-                words_to_replace.append(x2_words[i])
-        new_text = x1.replace_words_at_indices(indices_to_replace, words_to_replace)
-        return new_text
+    def _get_best_neighbors(self, current_result, original_result):
+        """For given current text, find its neighboring texts that yields
+        maximum improvement (in goal function score) for each word.
 
-    def _count_change_ratio(self, x1, x2, x_len):
-        change_ratio = float(np.sum(x1.words != x2.words)) / float(x_len)
-        return change_ratio
+        Args:
+            current_result (GoalFunctionResult): `GoalFunctionResult` of current text
+            original_result (GoalFunctionResult): `GoalFunctionResult` of original text.
+        Returns:
+            best_neighbors (list[GoalFunctionResult]): Best neighboring text for each word
+            prob_list (list[float]): discrete probablity distribution for sampling a neighbor from `best_neighbors`
+        """
+        current_text = current_result.attacked_text
+        neighbors_list = [[] for _ in range(len(current_text.words))]
+        transformed_texts = self.get_transformations(
+            current_text, original_text=original_result.attacked_text
+        )
+        for transformed_text in transformed_texts:
+            diff_idx = next(
+                iter(transformed_text.attack_attrs["newly_modified_indices"])
+            )
+            neighbors_list[diff_idx].append(transformed_text)
 
-    def _sigmoid(self, n):
-        return 1 / (1 + np.exp(-n))
+        best_neighbors = []
+        score_list = []
+        for i in range(len(neighbors_list)):
+            if not neighbors_list[i]:
+                best_neighbors.append(current_result)
+                score_list.append(0)
+                continue
+
+            neighbor_results, self._search_over = self.get_goal_results(
+                neighbors_list[i]
+            )
+            if not len(neighbor_results):
+                best_neighbors.append(current_result)
+                score_list.append(0)
+            else:
+                neighbor_scores = np.array([r.score for r in neighbor_results])
+                score_diff = neighbor_scores - current_result.score
+                best_idx = np.argmax(neighbor_scores)
+                best_neighbors.append(neighbor_results[best_idx])
+                score_list.append(score_diff[best_idx])
+
+        prob_list = normalize(score_list)
+
+        return best_neighbors, prob_list
+
+    def _initialize_population(self, initial_result, pop_size):
+        """
+        Initialize a population of size `pop_size` with `initial_result`
+        Args:
+            initial_result (GoalFunctionResult): Original text
+            pop_size (int): size of population
+        Returns:
+            population as `list[PopulationMember]`
+        """
+        best_neighbors, prob_list = self._get_best_neighbors(
+            initial_result, initial_result
+        )
+        population = []
+        for _ in range(pop_size):
+            # Mutation step
+            random_result = np.random.choice(best_neighbors, 1, p=prob_list)[0]
+            population.append(
+                PopulationMember(random_result.attacked_text, random_result)
+            )
+        return population
 
     def _perform_search(self, initial_result):
-        self.original_attacked_text = initial_result.attacked_text
-        x_len = len(self.original_attacked_text.words)
-        self.correct_output = initial_result.output
-
-        # get word substitute candidates and generate population
-        neighbors_list = self._get_neighbors_list(self.original_attacked_text)
-        neighbors_len = [len(x) for x in neighbors_list]
-        pop = self._generate_population(
-            self.original_attacked_text, neighbors_list, neighbors_len
+        self._search_over = False
+        population = self._initialize_population(initial_result, self.pop_size)
+        # Initialize  up velocities of each word for each population
+        v_init = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
+        velocities = np.array(
+            [
+                [v_init[t] for _ in range(initial_result.attacked_text.num_words)]
+                for t in range(self.pop_size)
+            ]
         )
 
-        # test population against target model
-        pop_results, self.search_over = self.get_goal_results(pop)
-        if self.search_over:
-            return max(pop_results, key=lambda x: x.score)
-        pop_scores = np.array([r.score for r in pop_results])
+        global_elite = max(population, key=lambda x: x.score)
+        if (
+            self._search_over
+            or global_elite.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
+        ):
+            return global_elite.result
 
-        # rank the scores from low to high and check if there is a successful attack
-        part_elites = deepcopy(pop)
-        part_elites_scores = pop_scores
-        top_attack = np.argmax(pop_scores)
-        all_elite = pop[top_attack]
-        all_elite_score = pop_scores[top_attack]
-        if pop_results[top_attack].goal_status == GoalFunctionResultStatus.SUCCEEDED:
-            return pop_results[top_attack]
-
-        # set up hyper-parameters
-        V = np.random.uniform(-self.V_max, self.V_max, self.pop_size)
-        V_P = [[V[t] for _ in range(x_len)] for t in range(self.pop_size)]
+        local_elites = copy.copy(population)
 
         # start iterations
         for i in range(self.max_iters):
-
-            Omega = (self.Omega_1 - self.Omega_2) * (
+            omega = (self.omega_1 - self.omega_2) * (
                 self.max_iters - i
-            ) / self.max_iters + self.Omega_2
-            C1 = self.C1_origin - i / self.max_iters * (self.C1_origin - self.C2_origin)
-            C2 = self.C2_origin + i / self.max_iters * (self.C1_origin - self.C2_origin)
+            ) / self.max_iters + self.omega_2
+            C1 = self.c1_origin - i / self.max_iters * (self.c1_origin - self.c2_origin)
+            C2 = self.c2_origin + i / self.max_iters * (self.c1_origin - self.c2_origin)
             P1 = C1
             P2 = C2
 
-            all_elite_words = all_elite.words
-            for id in range(self.pop_size):
-
+            for k in range(len(population)):
                 # calculate the probability of turning each word
-                pop_words = pop[id].words
-                part_elites_words = part_elites[id].words
-                for dim in range(x_len):
-                    V_P[id][dim] = Omega * V_P[id][dim] + (1 - Omega) * (
-                        self._equal(pop_words[dim], part_elites_words[dim])
-                        + self._equal(pop_words[dim], all_elite_words[dim])
+                pop_mem_words = population[k].words
+                local_elite_words = local_elites[k].words
+                assert len(pop_mem_words) == len(
+                    local_elite_words
+                ), "PSO word length mismatch!"
+
+                for d in range(len(pop_mem_words)):
+                    velocities[k][d] = omega * velocities[k][d] + (1 - omega) * (
+                        self._equal(pop_mem_words[d], local_elite_words[d])
+                        + self._equal(pop_mem_words[d], global_elite.words[d])
                     )
-                turn_prob = [self._sigmoid(V_P[id][d]) for d in range(x_len)]
+                turn_prob = utils.sigmoid(velocities[k])
 
                 if np.random.uniform() < P1:
-                    pop[id] = self._turn(part_elites[id], pop[id], turn_prob, x_len)
-                if np.random.uniform() < P2:
-                    pop[id] = self._turn(all_elite, pop[id], turn_prob, x_len)
-
-            # check if there is any successful attack in the current population
-            pop_results, self.search_over = self.get_goal_results(pop)
-            if self.search_over:
-                return max(pop_results, key=lambda x: x.score)
-            pop_scores = np.array([r.score for r in pop_results])
-            top_attack = np.argmax(pop_scores)
-            if (
-                pop_results[top_attack].goal_status
-                == GoalFunctionResultStatus.SUCCEEDED
-            ):
-                return pop_results[top_attack]
-
-            # mutation based on the current change rate
-            new_pop = []
-            for x in pop:
-                change_ratio = self._count_change_ratio(
-                    x, self.original_attacked_text, x_len
-                )
-                p_change = (
-                    1 - 2 * change_ratio
-                )  # referred from the original source code
-                if np.random.uniform() < p_change:
-                    new_h, new_w_list = self._gen_h_score(
-                        x, neighbors_len, neighbors_list
+                    # Move towards local elite
+                    population[k] = self._turn(
+                        local_elites[k],
+                        population[k],
+                        turn_prob,
+                        initial_result.attacked_text,
                     )
-                    new_pop.append(self._mutate(x, new_h, new_w_list))
-                else:
-                    new_pop.append(x)
-            pop = new_pop
 
-            # check if there is any successful attack in the current population
-            pop_results, self.search_over = self.get_goal_results(pop)
-            if self.search_over:
-                return max(pop_results, key=lambda x: x.score)
-            pop_scores = np.array([r.score for r in pop_results])
-            top_attack = np.argmax(pop_scores)
+                if np.random.uniform() < P2:
+                    # Move towards global elite
+                    population[k] = self._turn(
+                        global_elite,
+                        population[k],
+                        turn_prob,
+                        initial_result.attacked_text,
+                    )
+
+            # Check if there is any successful attack in the current population
+            pop_results, self._search_over = self.get_goal_results(
+                [p.attacked_text for p in population]
+            )
+            if self._search_over:
+                # if `get_goal_results` gets cut short by query budget, resize population
+                population = population[: len(pop_results)]
+            for k in range(len(pop_results)):
+                population[k].result = pop_results[k]
+
+            top_member = max(population, key=lambda x: x.score)
             if (
-                pop_results[top_attack].goal_status
-                == GoalFunctionResultStatus.SUCCEEDED
+                self._search_over
+                or top_member.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
             ):
-                return pop_results[top_attack]
+                return top_member.result
 
-            # update the elite if the score is increased
-            for k in range(self.pop_size):
-                if pop_scores[k] > part_elites_scores[k]:
-                    part_elites[k] = pop[k]
-                    part_elites_scores[k] = pop_scores[k]
-            if pop_scores[top_attack] > all_elite_score:
-                all_elite = pop[top_attack]
-                all_elite_score = pop_scores[top_attack]
+            # Mutation based on the current change rate
+            for k in range(len(population)):
+                change_ratio = initial_result.attacked_text.words_diff_ratio(
+                    population[k].attacked_text
+                )
+                # Referred from the original source code
+                p_change = 1 - 2 * change_ratio
+                if np.random.uniform() < p_change:
+                    self._perturb(population[k], initial_result)
 
-        return initial_result
+                if self._search_over:
+                    break
+
+            # Check if there is any successful attack in the current population
+            top_member = max(population, key=lambda x: x.score)
+            if (
+                self._search_over
+                or top_member.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
+            ):
+                return top_member.result
+
+            # Update the elite if the score is increased
+            for k in range(len(population)):
+                if population[k].score > local_elites[k].score:
+                    local_elites[k] = copy.copy(population[k])
+
+            if top_member.score > global_elite.score:
+                global_elite = copy.copy(top_member)
+
+        return global_elite.result
+
+    def check_transformation_compatibility(self, transformation):
+        """The genetic algorithm is specifically designed for word
+        substitutions."""
+        return transformation_consists_of_word_swaps(transformation)
+
+    @property
+    def is_black_box(self):
+        return True
+
+    def extra_repr_keys(self):
+        return ["pop_size", "max_iters", "post_turn_check", "max_turn_retries"]
+
+
+def normalize(n):
+    n = np.array(n)
+    n[n < 0] = 0
+    s = np.sum(n)
+    if s == 0:
+        return np.ones(len(n)) / len(n)
+    else:
+        return n / s

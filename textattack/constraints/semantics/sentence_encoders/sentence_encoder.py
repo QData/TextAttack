@@ -1,3 +1,8 @@
+"""
+Sentence Encoder Class
+------------------------
+"""
+
 import math
 
 import numpy as np

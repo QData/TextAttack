@@ -1,3 +1,10 @@
+"""
+AutoTokenizer
+^^^^^^^^^^^^^^
+
+"""
+
+
 import transformers
 
 
@@ -15,7 +22,11 @@ class AutoTokenizer:
     """
 
     def __init__(
-        self, tokenizer_path=None, tokenizer=None, max_length=256, use_fast=True,
+        self,
+        tokenizer_path=None,
+        tokenizer=None,
+        max_length=256,
+        use_fast=True,
     ):
         if not (tokenizer_path or tokenizer):
             raise ValueError("Must pass tokenizer path or tokenizer")
@@ -75,3 +86,20 @@ class AutoTokenizer:
             return list_of_dicts
         else:
             return [self.encode(input_text) for input_text in input_text_list]
+
+    def convert_ids_to_tokens(self, ids):
+        return self.tokenizer.convert_ids_to_tokens(ids)
+
+    @property
+    def pad_token_id(self):
+        if hasattr(self.tokenizer, "pad_token_id"):
+            return self.tokenizer.pad_token_id
+        else:
+            raise AttributeError("Tokenizer does not have `pad_token_id` attribute.")
+
+    @property
+    def mask_token_id(self):
+        if hasattr(self.tokenizer, "mask_token_id"):
+            return self.tokenizer.mask_token_id
+        else:
+            raise AttributeError("Tokenizer does not have `mask_token_id` attribute.")

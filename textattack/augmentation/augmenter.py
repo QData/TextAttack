@@ -1,3 +1,8 @@
+"""
+Augmenter Class
+===================
+
+"""
 import random
 
 import tqdm
@@ -32,9 +37,7 @@ class Augmenter:
         assert (
             transformations_per_example > 0
         ), "transformations_per_example must be a positive integer"
-        assert (
-            pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
-        ), "pct_words_to_swap must be in [0., 1.]"
+        assert 0.0 <= pct_words_to_swap <= 1.0, "pct_words_to_swap must be in [0., 1.]"
         self.transformation = transformation
         self.pct_words_to_swap = pct_words_to_swap
         self.transformations_per_example = transformations_per_example
@@ -56,7 +59,8 @@ class Augmenter:
             if C.compare_against_original:
                 if not original_text:
                     raise ValueError(
-                        f"Missing `original_text` argument when constraint {type(C)} is set to compare against `original_text`"
+                        f"Missing `original_text` argument when constraint {type(C)} is set to compare against "
+                        f"`original_text` "
                     )
 
                 transformed_texts = C.call_many(transformed_texts, original_text)
@@ -74,28 +78,32 @@ class Augmenter:
             int(self.pct_words_to_swap * len(attacked_text.words)), 1
         )
         for _ in range(self.transformations_per_example):
-            index_order = list(range(len(attacked_text.words)))
-            random.shuffle(index_order)
             current_text = attacked_text
-            words_swapped = 0
-            for i in index_order:
+            words_swapped = len(current_text.attack_attrs["modified_indices"])
+
+            while words_swapped < num_words_to_swap:
                 transformed_texts = self.transformation(
-                    current_text, self.pre_transformation_constraints, [i]
+                    current_text, self.pre_transformation_constraints
                 )
+
                 # Get rid of transformations we already have
                 transformed_texts = [
                     t for t in transformed_texts if t not in all_transformed_texts
                 ]
+
                 # Filter out transformations that don't match the constraints.
                 transformed_texts = self._filter_transformations(
                     transformed_texts, current_text, original_text
                 )
+
+                # if there's no more transformed texts after filter, terminate
                 if not len(transformed_texts):
-                    continue
-                current_text = random.choice(transformed_texts)
-                words_swapped += 1
-                if words_swapped == num_words_to_swap:
                     break
+
+                current_text = random.choice(transformed_texts)
+
+                # update words_swapped based on modified indices
+                words_swapped = len(current_text.attack_attrs["modified_indices"])
             all_transformed_texts.add(current_text)
         return sorted([at.printable_text() for at in all_transformed_texts])
 

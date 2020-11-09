@@ -1,4 +1,9 @@
-"""When WIR method is set to ``unk``, this is a reimplementation of the search
+"""
+Greedy Word Swap with Word Importance Ranking
+===================================================
+
+
+When WIR method is set to ``unk``, this is a reimplementation of the search
 method from the paper: Is BERT Really Robust?
 
 A Strong Baseline for Natural Language Attack on Text Classification and
@@ -23,6 +28,7 @@ class GreedyWordSwapWIR(SearchMethod):
 
     Args:
         wir_method: method for ranking most important words
+        model_wrapper: model wrapper used for gradient-based ranking
     """
 
     def __init__(self, wir_method="unk"):
@@ -39,6 +45,7 @@ class GreedyWordSwapWIR(SearchMethod):
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
+
         elif self.wir_method == "weighted-saliency":
             # first, compute word saliency
             leave_one_texts = [
@@ -55,7 +62,9 @@ class GreedyWordSwapWIR(SearchMethod):
             delta_ps = []
             for idx in range(len_text):
                 transformed_text_candidates = self.get_transformations(
-                    initial_text, original_text=initial_text, indices_to_modify=[idx],
+                    initial_text,
+                    original_text=initial_text,
+                    indices_to_modify=[idx],
                 )
                 if not transformed_text_candidates:
                     # no valid synonym substitutions for this word
@@ -67,12 +76,30 @@ class GreedyWordSwapWIR(SearchMethod):
                 delta_ps.append(max_score_change)
 
             index_scores = softmax_saliency_scores * np.array(delta_ps)
+
         elif self.wir_method == "delete":
             leave_one_texts = [
                 initial_text.delete_word_at_index(i) for i in range(len_text)
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
+
+        elif self.wir_method == "gradient":
+            victim_model = self.get_model()
+            index_scores = np.zeros(initial_text.num_words)
+            grad_output = victim_model.get_grad(initial_text.tokenizer_input)
+            gradient = grad_output["gradient"]
+            word2token_mapping = initial_text.align_with_model_tokens(victim_model)
+            for i, word in enumerate(initial_text.words):
+                matched_tokens = word2token_mapping[word]
+                if not matched_tokens:
+                    index_scores[i] = 0.0
+                else:
+                    agg_grad = np.mean(gradient[matched_tokens], axis=0)
+                    index_scores[i] = np.linalg.norm(agg_grad, ord=1)
+
+            search_over = False
+
         elif self.wir_method == "random":
             index_order = np.arange(len_text)
             np.random.shuffle(index_order)
@@ -138,6 +165,13 @@ class GreedyWordSwapWIR(SearchMethod):
         """Since it ranks words by their importance, GreedyWordSwapWIR is
         limited to word swap and deletion transformations."""
         return transformation_consists_of_word_swaps_and_deletions(transformation)
+
+    @property
+    def is_black_box(self):
+        if self.wir_method == "gradient":
+            return False
+        else:
+            return True
 
     def extra_repr_keys(self):
         return ["wir_method"]

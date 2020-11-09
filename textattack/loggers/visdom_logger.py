@@ -1,3 +1,9 @@
+"""
+Attack Logs to Visdom
+========================
+"""
+
+
 import socket
 
 from visdom import Visdom

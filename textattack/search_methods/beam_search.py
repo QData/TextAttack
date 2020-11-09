@@ -1,3 +1,8 @@
+"""
+Beam Search
+===============
+
+"""
 import numpy as np
 
 from textattack.goal_function_results import GoalFunctionResultStatus
@@ -43,6 +48,10 @@ class BeamSearch(SearchMethod):
             best_indices = (-scores).argsort()[: self.beam_width]
             beam = [potential_next_beam[i] for i in best_indices]
         return best_result
+
+    @property
+    def is_black_box(self):
+        return True
 
     def extra_repr_keys(self):
         return ["beam_width"]

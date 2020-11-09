@@ -1,12 +1,24 @@
+""".. _attacked_text:
+
+Attacked Text Class
+=====================
+
+A helper class that represents a string that can be attacked.
+"""
+
 from collections import OrderedDict
 import math
 
+import flair
+from flair.data import Sentence
 import numpy as np
 import torch
 
 import textattack
 
-from .utils import words_from_text
+from .utils import device, words_from_text
+
+flair.device = device
 
 
 class AttackedText:
@@ -40,9 +52,11 @@ class AttackedText:
             raise TypeError(
                 f"Invalid text_input type {type(text_input)} (required str or OrderedDict)"
             )
-        # Find words in input lazily.
+        # Process input lazily.
         self._words = None
         self._words_per_input = None
+        self._pos_tags = None
+        self._ner_tags = None
         # Format text inputs.
         self._text_input = OrderedDict([(k, v) for k, v in self._text_input.items()])
         if attack_attrs is None:
@@ -112,6 +126,63 @@ class AttackedText:
         text_idx_start = self._text_index_of_word_index(start)
         text_idx_end = self._text_index_of_word_index(end) + len(self.words[end])
         return self.text[text_idx_start:text_idx_end]
+
+    def pos_of_word_index(self, desired_word_idx):
+        """Returns the part-of-speech of the word at index `word_idx`.
+
+        Uses FLAIR part-of-speech tagger.
+        """
+        if not self._pos_tags:
+            sentence = Sentence(
+                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+            )
+            textattack.shared.utils.flair_tag(sentence)
+            self._pos_tags = sentence
+        flair_word_list, flair_pos_list = textattack.shared.utils.zip_flair_result(
+            self._pos_tags
+        )
+
+        for word_idx, word in enumerate(self.words):
+            assert (
+                word in flair_word_list
+            ), "word absent in flair returned part-of-speech tags"
+            word_idx_in_flair_tags = flair_word_list.index(word)
+            if word_idx == desired_word_idx:
+                return flair_pos_list[word_idx_in_flair_tags]
+            else:
+                flair_word_list = flair_word_list[word_idx_in_flair_tags + 1 :]
+                flair_pos_list = flair_pos_list[word_idx_in_flair_tags + 1 :]
+
+        raise ValueError(
+            f"Did not find word from index {desired_word_idx} in flair POS tag"
+        )
+
+    def ner_of_word_index(self, desired_word_idx):
+        """Returns the ner tag of the word at index `word_idx`.
+
+        Uses FLAIR ner tagger.
+        """
+        if not self._ner_tags:
+            sentence = Sentence(
+                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+            )
+            textattack.shared.utils.flair_tag(sentence, "ner")
+            self._ner_tags = sentence
+        flair_word_list, flair_ner_list = textattack.shared.utils.zip_flair_result(
+            self._ner_tags, "ner"
+        )
+
+        for word_idx, word in enumerate(flair_word_list):
+            word_idx_in_flair_tags = flair_word_list.index(word)
+            if word_idx == desired_word_idx:
+                return flair_ner_list[word_idx_in_flair_tags]
+            else:
+                flair_word_list = flair_word_list[word_idx_in_flair_tags + 1 :]
+                flair_ner_list = flair_ner_list[word_idx_in_flair_tags + 1 :]
+
+        raise ValueError(
+            f"Did not find word from index {desired_word_idx} in flair POS tag"
+        )
 
     def _text_index_of_word_index(self, i):
         """Returns the index of word ``i`` in self.text."""
@@ -197,6 +268,15 @@ class AttackedText:
         elif not isinstance(idxs, torch.Tensor):
             raise TypeError(
                 f"convert_from_original_idxs got invalid idxs type {type(idxs)}"
+            )
+
+        # update length of original_index_map, when the length of AttackedText increased
+        while len(self.attack_attrs["original_index_map"]) < len(idxs):
+            missing_index = self.attack_attrs["original_index_map"][-1] + 1
+            while missing_index in self.attack_attrs["modified_indices"]:
+                missing_index += 1
+            self.attack_attrs["original_index_map"] = np.append(
+                self.attack_attrs["original_index_map"], [missing_index]
             )
         return [self.attack_attrs["original_index_map"][i] for i in idxs]
 
@@ -321,7 +401,7 @@ class AttackedText:
                     new_attack_attrs["newly_modified_indices"].add(new_i)
                 new_i += 1
             # Check spaces for deleted text.
-            if adv_num_words == 0:
+            if adv_num_words == 0 and len(original_text):
                 # Remove extra space (or else there would be two spaces for each
                 # deleted word).
                 # @TODO What to do with punctuation in this case? This behavior is undefined.
@@ -342,6 +422,48 @@ class AttackedText:
             zip(self._text_input.keys(), perturbed_input_texts)
         )
         return AttackedText(perturbed_input, attack_attrs=new_attack_attrs)
+
+    def words_diff_ratio(self, x):
+        """Get the ratio of words difference between current text and `x`.
+
+        Note that current text and `x` must have same number of words.
+        """
+        assert self.num_words == x.num_words
+        return float(np.sum(self.words != x.words)) / self.num_words
+
+    def align_with_model_tokens(self, model_wrapper):
+        """Align AttackedText's `words` with target model's tokenization scheme
+        (e.g. word, character, subword). Specifically, we map each word to list
+        of indices of tokens that compose the word (e.g. embedding --> ["em",
+        "##bed", "##ding"])
+
+        Args:
+            model_wrapper (textattack.models.wrappers.ModelWrapper): ModelWrapper of the target model
+
+        Returns:
+            word2token_mapping (dict[str. list[int]]): Dictionary that maps word to list of indices.
+        """
+        tokens = model_wrapper.tokenize([self.tokenizer_input], strip_prefix=True)[0]
+        word2token_mapping = {}
+        j = 0
+        last_matched = 0
+        for i, word in enumerate(self.words):
+            matched_tokens = []
+            while j < len(tokens) and len(word) > 0:
+                token = tokens[j].lower()
+                idx = word.find(token)
+                if idx == 0:
+                    word = word[idx + len(token) :]
+                    matched_tokens.append(j)
+                    last_matched = j
+                j += 1
+
+            if not matched_tokens:
+                j = last_matched
+            else:
+                word2token_mapping[self.words[i]] = matched_tokens
+
+        return word2token_mapping
 
     @property
     def tokenizer_input(self):

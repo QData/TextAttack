@@ -1,3 +1,8 @@
+"""
+infer sent for sentence similarity
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""
+
 import os
 
 import torch

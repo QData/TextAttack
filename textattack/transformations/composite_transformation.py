@@ -1,5 +1,12 @@
+"""
+Composite Transformation
+============================================
+Multiple transformations can be used by providing a list of ``Transformation`` to ``CompositeTransformation``
+
+"""
+
 from textattack.shared import utils
-from textattack.transformations.transformation import Transformation
+from textattack.transformations import Transformation
 
 
 class CompositeTransformation(Transformation):

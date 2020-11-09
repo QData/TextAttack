@@ -1,3 +1,10 @@
+"""
+
+text2text goal function Result
+====================================
+
+"""
+
 from .goal_function_result import GoalFunctionResult
 
 

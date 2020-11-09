@@ -1,4 +1,5 @@
 [94mcharswap[0m (textattack.augmentation.CharSwapAugmenter)
+[94mchecklist[0m (textattack.augmentation.CheckListAugmenter)
 [94meda[0m (textattack.augmentation.EasyDataAugmenter)
 [94membedding[0m (textattack.augmentation.EmbeddingAugmenter)
 [94mwordnet[0m (textattack.augmentation.WordNetAugmenter)

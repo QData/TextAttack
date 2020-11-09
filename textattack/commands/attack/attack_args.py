@@ -1,3 +1,10 @@
+"""
+
+TextAttack Command Args for Attack
+------------------------------------------
+
+"""
+
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
     "bae": "textattack.attack_recipes.BAEGarg2019",
@@ -15,6 +22,7 @@ ATTACK_RECIPE_NAMES = {
     "iga": "textattack.attack_recipes.IGAWang2019",
     "pruthi": "textattack.attack_recipes.Pruthi2019",
     "pso": "textattack.attack_recipes.PSOZang2020",
+    "checklist": "textattack.attack_recipes.CheckList2020",
 }
 
 #
@@ -157,7 +165,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/roberta-base-CoLA",
         ("glue", "cola", "validation"),
     ),
-    "roberta-base-imdb": ("textattack/roberta-base-imdb", ("imdb", None, "test"),),
+    "roberta-base-imdb": (
+        "textattack/roberta-base-imdb",
+        ("imdb", None, "test"),
+    ),
     "roberta-base-mr": (
         "textattack/roberta-base-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
@@ -194,7 +205,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/albert-base-v2-CoLA",
         ("glue", "cola", "validation"),
     ),
-    "albert-base-v2-imdb": ("textattack/albert-base-v2-imdb", ("imdb", None, "test"),),
+    "albert-base-v2-imdb": (
+        "textattack/albert-base-v2-imdb",
+        ("imdb", None, "test"),
+    ),
     "albert-base-v2-mr": (
         "textattack/albert-base-v2-rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
@@ -207,7 +221,10 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "textattack/albert-base-v2-QQP",
         ("glue", "qqp", "validation"),
     ),
-    "albert-base-v2-snli": ("textattack/albert-base-v2-snli", ("snli", None, "test"),),
+    "albert-base-v2-snli": (
+        "textattack/albert-base-v2-snli",
+        ("snli", None, "test"),
+    ),
     "albert-base-v2-sst2": (
         "textattack/albert-base-v2-SST-2",
         ("glue", "sst2", "validation"),
@@ -265,22 +282,37 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     # LSTMs
     #
-    "lstm-ag-news": ("models/classification/lstm/ag-news", ("ag_news", None, "test"),),
+    "lstm-ag-news": (
+        "models/classification/lstm/ag-news",
+        ("ag_news", None, "test"),
+    ),
     "lstm-imdb": ("models/classification/lstm/imdb", ("imdb", None, "test")),
-    "lstm-mr": ("models/classification/lstm/mr", ("rotten_tomatoes", None, "test"),),
+    "lstm-mr": (
+        "models/classification/lstm/mr",
+        ("rotten_tomatoes", None, "test"),
+    ),
     "lstm-sst2": ("models/classification/lstm/sst2", ("glue", "sst2", "validation")),
-    "lstm-yelp": ("models/classification/lstm/yelp", ("yelp_polarity", None, "test"),),
+    "lstm-yelp": (
+        "models/classification/lstm/yelp",
+        ("yelp_polarity", None, "test"),
+    ),
     #
     # CNNs
     #
-    "cnn-ag-news": ("models/classification/cnn/ag-news", ("ag_news", None, "test"),),
+    "cnn-ag-news": (
+        "models/classification/cnn/ag-news",
+        ("ag_news", None, "test"),
+    ),
     "cnn-imdb": ("models/classification/cnn/imdb", ("imdb", None, "test")),
     "cnn-mr": (
         "models/classification/cnn/rotten-tomatoes",
         ("rotten_tomatoes", None, "test"),
     ),
     "cnn-sst2": ("models/classification/cnn/sst", ("glue", "sst2", "validation")),
-    "cnn-yelp": ("models/classification/cnn/yelp", ("yelp_polarity", None, "test"),),
+    "cnn-yelp": (
+        "models/classification/cnn/yelp",
+        ("yelp_polarity", None, "test"),
+    ),
     #
     # T5 for translation
     #
@@ -331,6 +363,7 @@ CONSTRAINT_CLASS_NAMES = {
     "infer-sent": "textattack.constraints.semantics.sentence_encoders.InferSent",
     "thought-vector": "textattack.constraints.semantics.sentence_encoders.ThoughtVector",
     "use": "textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder",
+    "muse": "textattack.constraints.semantics.sentence_encoders.MultilingualUniversalSentenceEncoder",
     "bert-score": "textattack.constraints.semantics.BERTScore",
     #
     # Grammaticality constraints
@@ -340,6 +373,7 @@ CONSTRAINT_CLASS_NAMES = {
     "goog-lm": "textattack.constraints.grammaticality.language_models.GoogleLanguageModel",
     "gpt2": "textattack.constraints.grammaticality.language_models.GPT2",
     "learning-to-write": "textattack.constraints.grammaticality.language_models.LearningToWriteLanguageModel",
+    "cola": "textattack.constraints.grammaticality.COLA",
     #
     # Overlap constraints
     #

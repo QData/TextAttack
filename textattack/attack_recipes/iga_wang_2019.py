@@ -1,8 +1,16 @@
+"""
+
+Improved Genetic Algorithm
+=============================
+
+(Natural Language Adversarial Attacks and Defenses in Word Level)
+
+"""
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import StopwordModification
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
-from textattack.search_methods import GeneticAlgorithm
+from textattack.search_methods import ImprovedGeneticAlgorithm
 from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
@@ -47,10 +55,9 @@ class IGAWang2019(AttackRecipe):
         # Perform word substitution with an improved genetic algorithm.
         # Fix the hyperparameter values to S = 60, M = 20, λ = 5."
         #
-        search_method = GeneticAlgorithm(
+        search_method = ImprovedGeneticAlgorithm(
             pop_size=60,
             max_iters=20,
-            improved_genetic_algorithm=True,
             max_replace_times_per_index=5,
             post_crossover_check=False,
         )

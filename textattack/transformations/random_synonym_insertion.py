@@ -1,3 +1,9 @@
+"""
+random synonym insertation Transformation
+============================================
+
+"""
+
 import random
 
 from nltk.corpus import wordnet
@@ -33,6 +39,10 @@ class RandomSynonymInsertion(Transformation):
                 current_text.insert_text_after_word_index(idx, random_synonym)
             )
         return transformed_texts
+
+    @property
+    def deterministic(self):
+        return False
 
 
 def check_if_one_word(word):
