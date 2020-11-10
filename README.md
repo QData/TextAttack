@@ -128,6 +128,34 @@ Attacks on sequence-to-sequence models:
 - **morpheus**: Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)
 - **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)).
 
+Following table illustrates the comparison of the attack models.
+
+Attacks on classification tasks
+| Attack Recipe(s)                  |  Accessibility  | Perturbation | Main Idea                                                                                         |
+| :-------------------------------: | :-------------: | :----------: | :-----------------------------------------------------------------------------------------------: |
+| Alzantot Genetic Algorithm        |      Score      |     Word     | Genetic algorithm-based word substitution                                                         |
+| BAE*                              |      Score      |     Word     | BERT masked language model transformation attack                                                  |
+| Faster Alzantot Genetic Algorithm |      Score      |     Word     | Genetic algorithm-based word substitution(faster version)                                         |
+| Improved Genetic Algorithm        |      Score      |     Word     | Improved genetic algorithm-based word substitution        		                                     |
+| Input Reduction*                  |    Gradient     |     Word     | Reducing the input while maintaining the prediction through word importance ranking               |
+| Kuleshov							            |      Score      |     Word     | Greedy search and counterfitted embedding swap     		                                           |
+| Particle Swarm Optimization       |      Score      |     Word     | Particle Swarm Optimization-based word substitution                                               |
+| TextFooler                        |      Score      |     Word     | Greedy attack with word importance ranking and counter-fitted embedding swap                      |
+| PWWS                              |      Score      |     Word     | Greedy attack with word importance ranking based on word saliency and synonym swap scores         |
+| TextBugger                        | Gradient, Score |  Word+Char   | Greedy attack with word importance ranking and a combination of synonym and character-based swaps |
+| HotFlip                           |    Gradient     |  Word, Char  | Beam search and gradient-based word swap				                                                   |
+| BERT-Attack*                      |      Score      |  Word, Char  | BERT masked language model transformation attack with subword replacements                        |
+| CheckList*                        |      Score      |  Word, Char  | Invariance testing that contract, extend, and substitutes name entities.                          |
+| DeepWordBug                       |      Score      |     Char     | Greedy replace-1 scoring and multi-transformation character-swap attack                           |
+| pruthi                            |      Score      |     Char     | Character-based attack that simulates common typos		                                             |
+
+Attacks on sequence-to-sequence models:
+| Attack Recipe(s)                  |  Accessibility  | Perturbation | Main Idea                                                                                         |
+| :-------------------------------: | :-------------: | :----------: | :-----------------------------------------------------------------------------------------------: |
+| Seq2Sick                          |      Score      |     Word     | Greedy attack with goal of changing every word in the output translation. 					     |
+| MORPHEUS                          |      Score      |     Word     | Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score   |
+
+
 #### Recipe Usage Examples
 
 Here are some examples of testing attacks from the literature from the command-line:
