@@ -6,11 +6,11 @@ Attack Logs to Visdom
 
 import socket
 
-from visdom import Visdom
-
-from textattack.shared.utils import html_table_from_rows
+from textattack.shared.utils import LazyLoader, html_table_from_rows
 
 from .logger import Logger
+
+visdom = LazyLoader("visdom", globals(), "visdom")
 
 
 def port_is_open(port_num, hostname="127.0.0.1"):
@@ -28,7 +28,7 @@ class VisdomLogger(Logger):
     def __init__(self, env="main", port=8097, hostname="localhost"):
         if not port_is_open(port, hostname=hostname):
             raise socket.error(f"Visdom not running on {hostname}:{port}")
-        self.vis = Visdom(port=port, server=hostname, env=env)
+        self.vis = visdom.Visdom(port=port, server=hostname, env=env)
         self.env = env
         self.port = port
         self.hostname = hostname
@@ -41,7 +41,7 @@ class VisdomLogger(Logger):
 
     def __setstate__(self, state):
         self.__dict__ = state
-        self.vis = Visdom(port=self.port, server=self.hostname, env=self.env)
+        self.vis = visdom.Visdom(port=self.port, server=self.hostname, env=self.env)
 
     def log_attack_result(self, result):
         text_a, text_b = result.diff_color(color_method="html")

@@ -7,9 +7,12 @@ import os
 
 import numpy as np
 import torch
-import torchfile
+
+from textattack.shared.utils import LazyLoader
 
 from .rnn_model import RNNModel
+
+torchfile = LazyLoader("torchfile", globals(), "torchfile")
 
 
 class QueryHandler:

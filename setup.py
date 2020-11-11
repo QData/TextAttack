@@ -13,13 +13,30 @@ extras["docs"] = ["recommonmark", "nbsphinx", "sphinx-autobuild", "sphinx-rtd-th
 extras["test"] = [
     "black==20.8b1",
     "docformatter",
-    "isort==5.4.2",
+    "isort==5.6.4",
     "flake8",
     "pytest",
     "pytest-xdist",
 ]
+
+extras["tensorflow"] = [
+    "tensorflow>=2",
+    "tensorflow_hub",
+    "tensorflow_text>=2",
+    "tensorboardX",
+]
+
+extras["optional"] = [
+    "sentence_transformers>0.2.6",
+    "stanza",
+    "visdom",
+    "wandb",
+]
+
 # For developers, install development tools along with all optional dependencies.
-extras["dev"] = extras["docs"] + extras["test"]
+extras["dev"] = (
+    extras["docs"] + extras["test"] + extras["tensorflow"] + extras["optional"]
+)
 
 setuptools.setup(
     name="textattack",

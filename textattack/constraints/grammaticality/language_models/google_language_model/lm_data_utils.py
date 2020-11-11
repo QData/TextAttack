@@ -24,7 +24,10 @@ A library for loading 1B word benchmark dataset.
 import random
 
 import numpy as np
-import tensorflow as tf
+
+from textattack.shared.utils import LazyLoader
+
+tf = LazyLoader("tensorflow", globals(), "tensorflow")
 
 
 class Vocabulary(object):
