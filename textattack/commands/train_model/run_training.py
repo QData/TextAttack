@@ -250,7 +250,7 @@ def _generate_adversarial_examples(model, attack_class, dataset):
 
     :return: list(AttackResult) of adversarial examples.
     """
-    attack = attack_class(model)
+    attack = attack_class.build(model)
 
     try:
         # Fix TensorFlow GPU memory growth
