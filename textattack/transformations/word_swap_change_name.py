@@ -52,13 +52,13 @@ class WordSwapChangeName(WordSwap):
         replacement_words = []
         tag = word_part_of_speech
         if (
-            tag.value == "B-PER"
+            tag.value in ("B-PER", "S-PER")
             and tag.score >= self.confidence_score
             and not self.last_only
         ):
             replacement_words = self._get_firstname(word)
         elif (
-            tag.value == "E-PER"
+            tag.value in ("E-PER", "S-PER")
             and tag.score >= self.confidence_score
             and not self.first_only
         ):

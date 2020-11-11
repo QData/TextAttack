@@ -49,5 +49,9 @@ class BeamSearch(SearchMethod):
             beam = [potential_next_beam[i] for i in best_indices]
         return best_result
 
+    @property
+    def is_black_box(self):
+        return True
+
     def extra_repr_keys(self):
         return ["beam_width"]

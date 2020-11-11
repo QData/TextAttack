@@ -65,6 +65,9 @@ class WordCNNForClassification(nn.Module):
         pred = self.out(output)
         return pred
 
+    def get_input_embeddings(self):
+        return self.emb_layer.embedding
+
 
 class CNNTextLayer(nn.Module):
     def __init__(self, n_in, widths=[3, 4, 5], filters=100):

@@ -285,6 +285,10 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         substitutions."""
         return transformation_consists_of_word_swaps(transformation)
 
+    @property
+    def is_black_box(self):
+        return True
+
     def extra_repr_keys(self):
         return [
             "pop_size",

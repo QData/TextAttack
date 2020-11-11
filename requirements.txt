@@ -1,6 +1,6 @@
 bert-score>=0.3.5
 editdistance
-flair==0.6.0.post1
+flair==0.6.1.post1
 filelock
 language_tool_python
 lemminflect
@@ -10,7 +10,9 @@ nltk
 numpy<1.19.0 #TF 2.0 requires this
 pandas>=1.0.1
 scipy==1.4.1
-torch==1.6
+sentence_transformers>0.2.6
+stanza
+torch
 transformers==3.3.0
 terminaltables
 tokenizers==0.8.1-rc2

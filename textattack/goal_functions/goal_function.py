@@ -36,7 +36,7 @@ class GoalFunction(ABC):
         model_cache_size=2 ** 20,
     ):
         validators.validate_model_goal_function_compatibility(
-            self.__class__, model_wrapper.__class__
+            self.__class__, model_wrapper.model.__class__
         )
         self.model = model_wrapper
         self.maximizable = maximizable

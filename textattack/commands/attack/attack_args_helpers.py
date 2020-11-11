@@ -312,9 +312,7 @@ def parse_model_from_args(args):
         )
         # Choose the approprate model wrapper (based on whether or not this is
         # a HuggingFace model).
-        if isinstance(
-            model, textattack.models.helpers.BERTForClassification
-        ) or isinstance(model, textattack.models.helpers.T5ForTextToText):
+        if isinstance(model, textattack.models.helpers.T5ForTextToText):
             model = textattack.models.wrappers.HuggingFaceModelWrapper(
                 model, model.tokenizer, batch_size=args.model_batch_size
             )
