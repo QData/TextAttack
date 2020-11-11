@@ -19,7 +19,6 @@ from . import lm_data_utils, lm_utils
 
 tf = utils.LazyLoader("tensorflow", globals(), "tensorflow")
 
-tf.get_logger().setLevel("INFO")
 
 # @TODO automatically choose between GPU and CPU.
 
@@ -31,6 +30,7 @@ class GoogLMHelper:
     CACHE_PATH = "constraints/semantics/language-models/alzantot-goog-lm"
 
     def __init__(self):
+        tf.get_logger().setLevel("INFO")
         lm_folder = utils.download_if_needed(GoogLMHelper.CACHE_PATH)
         self.PBTXT_PATH = os.path.join(lm_folder, "graph-2016-09-10-gpu.pbtxt")
         self.CKPT_PATH = os.path.join(lm_folder, "ckpt-*")

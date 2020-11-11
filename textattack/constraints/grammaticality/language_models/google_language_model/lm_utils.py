@@ -13,8 +13,6 @@ tf = LazyLoader("tensorflow", globals(), "tensorflow")
 
 from google.protobuf import text_format  # noqa: E402
 
-tf.get_logger().setLevel("INFO")
-
 
 def LoadModel(sess, graph, gd_file, ckpt_file):
     """Load the model from GraphDef and Checkpoint.
@@ -26,6 +24,7 @@ def LoadModel(sess, graph, gd_file, ckpt_file):
     Returns:
       TensorFlow session and tensors dict.
     """
+    tf.get_logger().setLevel("INFO")
     with graph.as_default():
         sys.stderr.write("Recovering graph.\n")
         with tf.io.gfile.GFile(gd_file) as f:

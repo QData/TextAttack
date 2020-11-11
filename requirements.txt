@@ -20,3 +20,4 @@ tqdm>=4.27,<4.50.0
 word2number
 num2words
 more-itertools
+PySocks!=1.5.7,>=1.5.6
