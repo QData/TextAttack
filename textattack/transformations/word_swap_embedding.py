@@ -3,11 +3,7 @@ Word Swap by Embedding
 ============================================
 
 """
-import os
-
-import numpy as np
-
-from textattack.shared import utils
+from textattack.shared.word_embedding import WordEmbedding
 from textattack.transformations.word_swap import WordSwap
 
 
@@ -17,36 +13,20 @@ class WordSwapEmbedding(WordSwap):
 
     PATH = "word_embeddings"
 
-    def __init__(self, max_candidates=15, embedding_type="paragramcf", **kwargs):
+    def __init__(
+        self,
+        max_candidates=15,
+        embedding_type="paragramcf",
+        embedding_source=None,
+        **kwargs
+    ):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
         self.embedding_type = embedding_type
-        if embedding_type == "paragramcf":
-            # word_embeddings_folder = "paragramcf"
-            word_embeddings_file = "paragram.npy"
-            word_list_file = "wordlist.pickle"
-            nn_matrix_file = "nn.npy"
-        else:
-            raise ValueError(f"Could not find word embedding {embedding_type}")
-
-        # Download embeddings if they're not cached.
-        cache_path = utils.download_if_needed(
-            "{}/{}".format(WordSwapEmbedding.PATH, embedding_type)
+        self.embedding_source = embedding_source
+        self.embedding = WordEmbedding(
+            embedding_type=embedding_type, embedding_source=embedding_source
         )
-        # Concatenate folder names to create full path to files.
-        word_embeddings_file = os.path.join(cache_path, word_embeddings_file)
-        word_list_file = os.path.join(cache_path, word_list_file)
-        nn_matrix_file = os.path.join(cache_path, nn_matrix_file)
-
-        # Actually load the files from disk.
-        self.word_embeddings = np.load(word_embeddings_file)
-        self.word_embedding_word2index = np.load(word_list_file, allow_pickle=True)
-        self.nn = np.load(nn_matrix_file)
-
-        # Build glove dict and index.
-        self.word_embedding_index2word = {}
-        for word, index in self.word_embedding_word2index.items():
-            self.word_embedding_index2word[index] = word
 
     def _get_replacement_words(self, word):
         """Returns a list of possible 'candidate words' to replace a word in a
@@ -55,11 +35,11 @@ class WordSwapEmbedding(WordSwap):
         Based on nearest neighbors selected word embeddings.
         """
         try:
-            word_id = self.word_embedding_word2index[word.lower()]
-            nnids = self.nn[word_id][1 : self.max_candidates + 1]
+            word_id = self.embedding.word2ind(word.lower())
+            nnids = self.embedding.nn(word_id, self.max_candidates)
             candidate_words = []
             for i, nbr_id in enumerate(nnids):
-                nbr_word = self.word_embedding_index2word[nbr_id]
+                nbr_word = self.embedding.ind2word(nbr_id)
                 candidate_words.append(recover_word_case(nbr_word, word))
             return candidate_words
         except KeyError:

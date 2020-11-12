@@ -2,6 +2,7 @@ bert-score>=0.3.5
 editdistance
 flair==0.6.1.post1
 filelock
+gensim==3.8.3
 language_tool_python
 lemminflect
 lru-dict

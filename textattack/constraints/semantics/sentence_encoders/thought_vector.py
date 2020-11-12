@@ -21,8 +21,8 @@ class ThoughtVector(SentenceEncoder):
         max_mse_dist: the maximum euclidean distance between thought vectors
     """
 
-    def __init__(self, embedding_type="paragramcf", **kwargs):
-        self.word_embedding = WordEmbedding(embedding_type)
+    def __init__(self, embedding_type="paragramcf", embedding_source=None, **kwargs):
+        self.word_embedding = WordEmbedding(embedding_type, embedding_source)
         self.embedding_type = embedding_type
         super().__init__(**kwargs)
 
