@@ -3,10 +3,12 @@ BERT for Sentence Similarity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 
-from sentence_transformers import SentenceTransformer
-
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 from textattack.shared import utils
+
+sentence_transformers = utils.LazyLoader(
+    "sentence_transformers", globals(), "sentence_transformers"
+)
 
 
 class BERT(SentenceEncoder):
@@ -16,7 +18,9 @@ class BERT(SentenceEncoder):
 
     def __init__(self, threshold=0.7, metric="cosine", **kwargs):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
-        self.model = SentenceTransformer("bert-base-nli-stsb-mean-tokens")
+        self.model = sentence_transformers.SentenceTransformer(
+            "bert-base-nli-stsb-mean-tokens"
+        )
         self.model.to(utils.device)
 
     def encode(self, sentences):

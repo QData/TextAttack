@@ -1,3 +1,6 @@
+from .importing import LazyLoader
+
+
 def has_letter(word):
     """Returns true if `word` contains at least one character in [A-Za-z]."""
     # TODO implement w regex
@@ -199,13 +202,14 @@ def zip_flair_result(pred, tag_type="pos-fast"):
     return word_list, pos_list
 
 
+stanza = LazyLoader("stanza", globals(), "stanza")
+
+
 def zip_stanza_result(pred, tagset="universal"):
     """Takes the first sentence from a document from `stanza` and returns two
     lists, one of words and the other of their corresponding parts-of-
     speech."""
-    from stanza.models.common.doc import Document
-
-    if not isinstance(pred, Document):
+    if not isinstance(pred, stanza.models.common.doc.Document):
         raise TypeError("Result from Stanza POS tagger must be a `Document` object.")
 
     word_list = []

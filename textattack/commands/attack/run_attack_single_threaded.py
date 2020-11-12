@@ -27,19 +27,23 @@ def run(args, checkpoint=None):
         os.environ["CUDA_VISIBLE_DEVICES"] = "0"
     # Disable tensorflow logs, except in the case of an error.
     if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
-        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "4"
-    # Fix TensorFlow GPU memory growth
-    import tensorflow as tf
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
-    gpus = tf.config.experimental.list_physical_devices("GPU")
-    if gpus:
-        try:
-            # Currently, memory growth needs to be the same across GPUs
-            for gpu in gpus:
-                tf.config.experimental.set_memory_growth(gpu, True)
-        except RuntimeError as e:
-            # Memory growth must be set before GPUs have been initialized
-            print(e)
+    try:
+        # Fix TensorFlow GPU memory growth
+        import tensorflow as tf
+
+        gpus = tf.config.experimental.list_physical_devices("GPU")
+        if gpus:
+            try:
+                # Currently, memory growth needs to be the same across GPUs
+                for gpu in gpus:
+                    tf.config.experimental.set_memory_growth(gpu, True)
+            except RuntimeError as e:
+                # Memory growth must be set before GPUs have been initialized
+                print(e)
+    except ModuleNotFoundError:
+        pass
 
     if args.checkpoint_resume:
         num_remaining_attacks = checkpoint.num_remaining_attacks

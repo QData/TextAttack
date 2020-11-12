@@ -4,7 +4,7 @@ Attack Logs to WandB
 """
 
 
-from textattack.shared.utils import html_table_from_rows
+from textattack.shared.utils import LazyLoader, html_table_from_rows
 
 from .logger import Logger
 
@@ -14,14 +14,14 @@ class WeightsAndBiasesLogger(Logger):
 
     def __init__(self, filename="", stdout=False):
         global wandb
-        import wandb
+        wandb = LazyLoader("wandb", globals(), "wandb")
 
         wandb.init(project="textattack", resume=True)
         self._result_table_rows = []
 
     def __setstate__(self, state):
         global wandb
-        import wandb
+        wandb = LazyLoader("wandb", globals(), "wandb")
 
         self.__dict__ = state
         wandb.init(project="textattack", resume=True)

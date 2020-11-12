@@ -1,7 +1,7 @@
 """
 
-TextAttack Command Arg Parsing
-=====================================
+TextAttack Command Arg Parsing Main Function
+=============================================
 """
 
 # !/usr/bin/env python
@@ -17,6 +17,17 @@ from textattack.commands.train_model import TrainModelCommand
 
 
 def main():
+
+    """This is the main command line parer and entry function to use TextAttack
+    via command lines.
+
+    texattack <command> [<args>]
+
+    Args:
+        command (string): augment, attack, train, eval-model, attack-resume, list, peek-dataset
+        [<args>] (string): depending on the command string
+    """
+
     parser = argparse.ArgumentParser(
         "TextAttack CLI",
         usage="[python -m] texattack <command> [<args>]",

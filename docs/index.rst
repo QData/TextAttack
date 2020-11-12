@@ -1,3 +1,6 @@
+TextAttack Documentation
+=======================================
+
 
 .. toctree::
    :maxdepth: 6
@@ -6,6 +9,7 @@
    1start/basic-Intro.rst
    1start/what_is_an_adversarial_attack.md
    1start/references.md
+   1start/benchmark-search.md
 
 .. toctree::
    :maxdepth: 6

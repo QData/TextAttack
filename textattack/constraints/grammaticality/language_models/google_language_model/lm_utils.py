@@ -7,10 +7,11 @@ Utils for loading 1B word benchmark dataset.
 """
 import sys
 
-from google.protobuf import text_format
-import tensorflow as tf
+from textattack.shared.utils import LazyLoader
 
-tf.get_logger().setLevel("INFO")
+tf = LazyLoader("tensorflow", globals(), "tensorflow")
+
+from google.protobuf import text_format  # noqa: E402
 
 
 def LoadModel(sess, graph, gd_file, ckpt_file):
@@ -23,6 +24,7 @@ def LoadModel(sess, graph, gd_file, ckpt_file):
     Returns:
       TensorFlow session and tensors dict.
     """
+    tf.get_logger().setLevel("INFO")
     with graph.as_default():
         sys.stderr.write("Recovering graph.\n")
         with tf.io.gfile.GFile(gd_file) as f:

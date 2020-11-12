@@ -116,9 +116,12 @@ def _post_install():
     nltk.download("wordnet")
     nltk.download("punkt")
 
-    import stanza
+    try:
+        import stanza
 
-    stanza.download("en")
+        stanza.download("en")
+    except Exception:
+        pass
 
 
 def set_cache_dir(cache_dir):
@@ -155,5 +158,6 @@ TEXTATTACK_CACHE_DIR = os.environ.get(
 )
 if "TA_CACHE_DIR" in os.environ:
     set_cache_dir(os.environ["TA_CACHE_DIR"])
+
 
 _post_install_if_needed()

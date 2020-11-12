@@ -9,21 +9,15 @@ datasets
 nltk
 numpy<1.19.0 #TF 2.0 requires this
 pandas>=1.0.1
-scikit-learn
 scipy==1.4.1
 sentence_transformers>0.2.6
 stanza
 torch
 transformers==3.3.0
-tensorflow>=2
-tensorflow_hub
-tensorflow_text>=2
-tensorboardX
 terminaltables
 tokenizers==0.8.1-rc2
-tqdm
-visdom
-wandb
+tqdm>=4.27,<4.50.0
 word2number
 num2words
 more-itertools
+PySocks!=1.5.7,>=1.5.6

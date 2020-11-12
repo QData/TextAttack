@@ -14,7 +14,7 @@ test: FORCE ## Run tests using pytest
 	python -m pytest --dist=loadfile -n auto
 
 docs: FORCE ## Build docs using Sphinx.
-	sphinx-build -b html docs docs/_build/html 
+	sphinx-build -b html docs docs/_build/html
 
 docs-check: FORCE ## Builds docs using Sphinx. If there is an error, exit with an error code (instead of warning & continuing).
 	sphinx-build -b html docs docs/_build/html -W
