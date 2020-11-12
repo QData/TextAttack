@@ -22,23 +22,34 @@ class WordSwapInflections(WordSwap):
     `Paper URL`_
 
     .. _Paper URL: https://www.aclweb.org/anthology/2020.acl-main.263.pdf
-
     """
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         # fine-grained en-ptb POS to universal POS mapping
         # (mapping info: https://github.com/slavpetrov/universal-pos-tags)
-        self._enptb_to_universal = {'JJRJR': 'ADJ', 'VBN': 'VERB',
-                                    'VBP': 'VERB', 'JJ': 'ADJ',
-                                    'VBZ': 'VERB', 'VBG': 'VERB',
-                                    'NN': 'NOUN', 'VBD': 'VERB',
-                                    'NP': 'NOUN', 'NNP': 'NOUN',
-                                    'VB': 'VERB', 'NNS': 'NOUN',
-                                    'VP': 'VERB', 'TO': 'VERB',
-                                    'SYM': 'NOUN', 'MD': 'VERB',
-                                    'NNPS': 'NOUN', 'JJS': 'ADJ',
-                                    'JJR': 'ADJ', 'RB': 'ADJ'}
+        self._enptb_to_universal = {
+            "JJRJR": "ADJ",
+            "VBN": "VERB",
+            "VBP": "VERB",
+            "JJ": "ADJ",
+            "VBZ": "VERB",
+            "VBG": "VERB",
+            "NN": "NOUN",
+            "VBD": "VERB",
+            "NP": "NOUN",
+            "NNP": "NOUN",
+            "VB": "VERB",
+            "NNS": "NOUN",
+            "VP": "VERB",
+            "TO": "VERB",
+            "SYM": "NOUN",
+            "MD": "VERB",
+            "NNPS": "NOUN",
+            "JJS": "ADJ",
+            "JJR": "ADJ",
+            "RB": "ADJ",
+        }
 
     def _get_replacement_words(self, word, word_part_of_speech):
         # only nouns, verbs, and adjectives are considered for replacement
@@ -62,7 +73,9 @@ class WordSwapInflections(WordSwap):
             lemma = random.choice(list(replacement_inflections_dict.values()))[0]
 
         # get the available inflections for chosen lemma
-        inflections = lemminflect.getAllInflections(lemma, upos=lemminflect_pos).values()
+        inflections = lemminflect.getAllInflections(
+            lemma, upos=lemminflect_pos
+        ).values()
 
         # merge tuples, remove duplicates, remove copy of the original word
         replacement_words = list(set([infl for tup in inflections for infl in tup]))
