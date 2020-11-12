@@ -29,16 +29,16 @@ class WordSwapInflections(WordSwap):
         super().__init__(**kwargs)
         # fine-grained en-ptb POS to universal POS mapping
         # (mapping info: https://github.com/slavpetrov/universal-pos-tags)
-        self._enptb_to_universal = {'JJRJR': 'ADJ', 'VBN': 'VERB', 'NN': 'NOUN', 'VBG': 'NOUN',
-                                  'VBP': 'VERB', 'JJ': 'ADJ', 'VBZ': 'VERB',
-                                  'VBG': 'VERB', 'NN': 'NOUN', 'VBD': 'VERB',
-                                  'NP': 'NOUN', 'NNS': 'NOUN', 'NNP': 'NOUN',
-                                  'JJ': 'ADJ', 'VBG': 'ADJ', 'VB': 'VERB', 'NN': 'NOUN',
-                                  'NNS': 'NOUN', 'VP': 'VERB', 'TO': 'VERB',
-                                  'VBP': 'VERB', 'NN': 'NOUN', 'SYM': 'NOUN',
-                                  'VBG': 'VERB', 'NN': 'VERB', 'MD': 'VERB',
-                                  'NNPS': 'NOUN', 'VBD': 'VERB', 'VBN': 'VERB',
-                                  'JJS': 'ADJ', 'JJR': 'ADJ', 'JJ': 'ADJ', 'RB': 'ADJ'}
+        self._enptb_to_universal = {'JJRJR': 'ADJ', 'VBN': 'VERB',
+                                    'VBP': 'VERB', 'JJ': 'ADJ',
+                                    'VBZ': 'VERB', 'VBG': 'VERB',
+                                    'NN': 'NOUN', 'VBD': 'VERB',
+                                    'NP': 'NOUN', 'NNP': 'NOUN',
+                                    'VB': 'VERB', 'NNS': 'NOUN',
+                                    'VP': 'VERB', 'TO': 'VERB',
+                                    'SYM': 'NOUN', 'MD': 'VERB',
+                                    'NNPS': 'NOUN', 'JJS': 'ADJ',
+                                    'JJR': 'ADJ', 'RB': 'ADJ'}
 
     def _get_replacement_words(self, word, word_part_of_speech):
         # only nouns, verbs, and adjectives are considered for replacement
