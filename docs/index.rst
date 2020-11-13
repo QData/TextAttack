@@ -32,6 +32,7 @@ TextAttack Documentation
    Tutorial 6: Attacking multilingual models <2notebook/Example_4_CamemBERT.ipynb>
    Tutorial 7: Explaining BERT model using Captum <2notebook/Example_5_Explain_BERT.ipynb> 
 
+
 .. toctree::
    :maxdepth: 6
    :glob:
@@ -43,3 +44,6 @@ TextAttack Documentation
    3recipes/augmenter_recipes
    3recipes/models.md
    apidoc/textattack
+   genindex
+
+
