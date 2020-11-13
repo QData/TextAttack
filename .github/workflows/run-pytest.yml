@@ -33,5 +33,5 @@ jobs:
         pip freeze
     - name: Test with pytest
       run: |
-        pytest tests -vx --dist=loadfile -n auto
+        pytest tests -vx --dist=loadfile
         

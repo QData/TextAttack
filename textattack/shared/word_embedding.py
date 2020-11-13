@@ -20,9 +20,9 @@ class WordEmbedding(ABC):
     This class specifies all the methods that is required to be defined
     so that it can be used for transformation and constraints. For
     custom word embedding not supported by TextAttack, please create a
-    class that inherits this object and implement the required methods.
-    However, please first check if you can use TextAttackWordEmbedding
-    object, which has a lot of internal methods implemented.
+    class that inherits this class and implement the required methods.
+    However, please first check if you can use `TextAttackWordEmbedding`
+    class, which has a lot of internal methods implemented.
     """
 
     @abstractmethod
@@ -37,8 +37,8 @@ class WordEmbedding(ABC):
 
     @abstractmethod
     def get_mse_dist(self, a, b):
-        """Return MSE (i.e. L2-norm) distance between vector for word `a` and
-        vector for word `b`.
+        """Return MSE distance between vector for word `a` and vector for word
+        `b`.
 
         Since this is a metric, `get_mse_dist(a,b)` and `get_mse_dist(b,a)` should return the same value.
         Args:
@@ -101,17 +101,17 @@ class WordEmbedding(ABC):
 
 
 class TextAttackWordEmbedding(WordEmbedding):
-    """An object that loads word embeddings and related distances for
-    TextAttack This has a lot of internal components (e.g. get consine
-    similarity) implemented. Consider using this class if you can provide the
-    appropriate input data to create the object.
+    """Object for loading word embeddings and related distances for TextAttack.
+    This class has a lot of internal components (e.g. get consine similarity)
+    implemented. Consider using this class if you can provide the appropriate
+    input data to create the object.
 
     Args:
-        emedding_matrix (ndarray): 2-D array of NxD where N represents size of vocab and D is the dimension of embedding vectors.
+        emedding_matrix (ndarray): 2-D array of shape N x D where N represents size of vocab and D is the dimension of embedding vectors.
         word2index (Union[dict|object]): dictionary (or a similar object) that maps word to its index with in the embedding matrix.
         index2word (Union[dict|object]): dictionary (or a similar object) that maps index to its word.
-        nn_matrix (ndarray): Matrix for precomputed nearest neighbours matrix. It should be a 2-D integer array of NxK
-            where N represents size of vocab and K is the top-K nearest neighbours. If this is not defined, we have to compute nearest neighbours
+        nn_matrix (ndarray): Matrix for precomputed nearest neighbours. It should be a 2-D integer array of shape N x K
+            where N represents size of vocab and K is the top-K nearest neighbours. If this is set to `None`, we have to compute nearest neighbours
             on the fly for `nearest_neighbours` method, which is costly.
     """
 
@@ -168,8 +168,8 @@ class TextAttackWordEmbedding(WordEmbedding):
         return self._index2word[index]
 
     def get_mse_dist(self, a, b):
-        """Return MSE (i.e. L2-norm) distance between vector for word `a` and
-        vector for word `b`.
+        """Return MSE distance between vector for word `a` and vector for word
+        `b`.
 
         Since this is a metric, `get_mse_dist(a,b)` and `get_mse_dist(b,a)` should return the same value.
         Args:
@@ -297,7 +297,7 @@ class TextAttackWordEmbedding(WordEmbedding):
 
 
 class GensimWordEmbedding(WordEmbedding):
-    """Wraps Gensim's KeyedVectors
+    """Wraps Gensim's `KeyedVectors`
     (https://radimrehurek.com/gensim/models/keyedvectors.html)"""
 
     def __init__(self, keyed_vectors_or_path):
@@ -371,8 +371,8 @@ class GensimWordEmbedding(WordEmbedding):
             raise KeyError(index)
 
     def get_mse_dist(self, a, b):
-        """Return MSE (i.e. L2-norm) distance between vector for word `a` and
-        vector for word `b`.
+        """Return MSE distance between vector for word `a` and vector for word
+        `b`.
 
         Since this is a metric, `get_mse_dist(a,b)` and `get_mse_dist(b,a)` should return the same value.
         Args:
