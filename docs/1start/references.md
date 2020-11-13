@@ -60,7 +60,7 @@ How to Cite TextAttack
 }
 ```
 
-### A summary diagram of TextAttack Ecosystem
+## A summary diagram of TextAttack Ecosystem
 
 ![diagram](/_static/imgs/intro/textattack_ecosystem.png)
 

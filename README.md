@@ -105,55 +105,39 @@ We include attack recipes which implement attacks from the literature. You can l
 
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
-Attacks on classification tasks, like sentiment classification and entailment:
-- **alzantot**: Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998)).
-- **bae**: BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).
-- **bert-attack**: BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984)).
-- **checklist**: Invariance testing implemented in CheckList that contract, extend, and substitutes name entities. (["Beyond Accuracy: Behavioral
-    Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118)).
-- **clare (*coming soon*)**: Greedy attack with word swap, insertion, and merge transformations using RoBERTa masked language model. (["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502)).
-- **faster-alzantot**: modified, faster version of the Alzantot et al. genetic algorithm, from (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986)).
-- **deepwordbug**: Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)).
-- **hotflip**: Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751)).
-- **iga**: Improved genetic algorithm attack from (["Natural Language Adversarial Attacks and Defenses in Word Level (Wang et al., 2019)"](https://arxiv.org/abs/1909.06723)
-- **input-reduction**: Reducing the input while maintaining the prediction through word importance ranking (["Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)](https://arxiv.org/pdf/1804.07781.pdf)).
-- **kuleshov**: Greedy search and counterfitted embedding swap (["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ)).
-- **pruthi**: Character-based attack that simulates common typos (["Combating Adversarial Misspellings with Robust Word Recognition" (Pruthi et al., 2019)](https://arxiv.org/abs/1905.11268)
-- **pso**: Particle swarm optimization and HowNet synonym swap (["Word-level Textual Adversarial Attacking as Combinatorial Optimization" (Zang et al., 2020)](https://www.aclweb.org/anthology/2020.acl-main.540/)).
-- **pwws**: Greedy attack with word importance ranking based on word saliency and synonym swap scores (["Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency" (Ren et al., 2019)](https://www.aclweb.org/anthology/P19-1103/)).
-- **textbugger**: Greedy attack with word importance ranking and a combination of synonym and character-based swaps ([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)).
-- **textfooler**: Greedy attack with word importance ranking and counter-fitted embedding swap (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932)).
+### Attacks on classification tasks, like sentiment classification and entailment:
 
-Attacks on sequence-to-sequence models:
-- **morpheus**: Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)
-- **seq2sick**: Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)).
+- Following table illustrates the comparison of the attack recipes.
 
-Following table illustrates the comparison of the attack models.
 
-Attacks on classification tasks
-| Attack Recipe(s)                  |  Accessibility  | Perturbation | Main Idea                                                                                         |
-| :-------------------------------: | :-------------: | :----------: | :-----------------------------------------------------------------------------------------------: |
-| Alzantot Genetic Algorithm        |      Score      |     Word     | Genetic algorithm-based word substitution                                                         |
-| BAE*                              |      Score      |     Word     | BERT masked language model transformation attack                                                  |
-| Faster Alzantot Genetic Algorithm |      Score      |     Word     | Genetic algorithm-based word substitution(faster version)                                         |
-| Improved Genetic Algorithm        |      Score      |     Word     | Improved genetic algorithm-based word substitution        		                                     |
-| Input Reduction*                  |    Gradient     |     Word     | Reducing the input while maintaining the prediction through word importance ranking               |
-| Kuleshov							            |      Score      |     Word     | Greedy search and counterfitted embedding swap     		                                           |
-| Particle Swarm Optimization       |      Score      |     Word     | Particle Swarm Optimization-based word substitution                                               |
-| TextFooler                        |      Score      |     Word     | Greedy attack with word importance ranking and counter-fitted embedding swap                      |
-| PWWS                              |      Score      |     Word     | Greedy attack with word importance ranking based on word saliency and synonym swap scores         |
-| TextBugger                        | Gradient, Score |  Word+Char   | Greedy attack with word importance ranking and a combination of synonym and character-based swaps |
-| HotFlip                           |    Gradient     |  Word, Char  | Beam search and gradient-based word swap				                                                   |
-| BERT-Attack*                      |      Score      |  Word, Char  | BERT masked language model transformation attack with subword replacements                        |
-| CheckList*                        |      Score      |  Word, Char  | Invariance testing that contract, extend, and substitutes name entities.                          |
-| DeepWordBug                       |      Score      |     Char     | Greedy replace-1 scoring and multi-transformation character-swap attack                           |
-| pruthi                            |      Score      |     Char     | Character-based attack that simulates common typos		                                             |
+| Recipe Arg Name     | Attack Recipe(s)                  |  Accessibility  | Perturbation | Main Idea                                                                                         |
+| :-------------: |  :-------------------------------: | :-------------: | :----------: | :-----------------------------------------------------------------------------------------------: |
+| **alzantot** | Alzantot Genetic Algorithm        |   black-box   Score      |     Word     |  Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))   |
+| **bae** | BAE*                              |   black-box   Score      |     Word     | BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).      |
+| **bert-attack** | BERT-Attack*                      |   black-box   Score      |  Word, Char  | BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984))                      |
+|  **checklist** | CheckList*                        |   black-box   Score      |  Word, Char  | Invariance testing implemented in CheckList that contract, extend, and substitutes name entities. (["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))                      |
+| **clare (*coming soon*)** | RoBERTa-Attack*                      |   black-box   Score      |  Word, Char  | Greedy attack with word swap, insertion, and merge transformations using RoBERTa masked language model. (["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502)) | 
+| **faster-alzantot** | Faster Alzantot Genetic Algorithm |    black-box  Score      |     Word     | modified, faster version of the Alzantot et al. genetic algorithm, from (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986)) |
+| **deepwordbug** | DeepWordBug                       |   black-box   Score      |     Char     | Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354))                    |
+| **hotflip** | HotFlip                           |    Gradient     |  Word, Char  | Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751)) |
+| **iga** | Improved Genetic Algorithm        |    black-box   Score     |  Word  | Improved genetic algorithm -based word substitution from (["Natural Language Adversarial Attacks and Defenses in Word Level (Wang et al., 2019)"](https://arxiv.org/abs/1909.06723) |
+| **input-reduction** | Input Reduction*                  |   white-box Gradient     |     Word     | Reducing the input while maintaining the prediction through word importance ranking (["Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)](https://arxiv.org/pdf/1804.07781.pdf))              |
+| **kuleshov** | Kuleshov							            |    black-box  Score      |     Word     | Greedy search and counterfitted embedding swap (["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ))  |
+| **pruthi** | pruthi                            |   black-box   Score      |     Char     | Character-based attack that simulates common typos (["Combating Adversarial Misspellings with Robust Word Recognition" (Pruthi et al., 2019)](https://arxiv.org/abs/1905.11268)   |
+| **pso** | Particle Swarm Optimization       |   black-box   Score      |     Word     | Particle swarm optimization and HowNet synonym swap (["Word-level Textual Adversarial Attacking as Combinatorial Optimization" (Zang et al., 2020)](https://www.aclweb.org/anthology/2020.acl-main.540/))   |
+| **pwws** | PWWS                              |   black-box   Score      |     Word     | Greedy attack with word importance ranking based on word saliency and synonym swap scores (["Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency" (Ren et al., 2019)](https://www.aclweb.org/anthology/P19-1103/))  |
+| **textbugger** | TextBugger                        | Gradient, Score |  Word+Char   | Greedy attack with word importance ranking and a combination of synonym and character-based swaps ([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)). |
+| **textfooler** | TextFooler                        |  black-box    Score      |     Word     | Greedy attack with word importance ranking and counter-fitted embedding swap (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))      |
 
-Attacks on sequence-to-sequence models:
-| Attack Recipe(s)                  |  Accessibility  | Perturbation | Main Idea                                                                                         |
-| :-------------------------------: | :-------------: | :----------: | :-----------------------------------------------------------------------------------------------: |
-| Seq2Sick                          |      Score      |     Word     | Greedy attack with goal of changing every word in the output translation. 					     |
-| MORPHEUS                          |      Score      |     Word     | Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score   |
+
+
+### Attacks on sequence-to-sequence models:
+
+- Following table illustrates the comparison of the attack recipes.
+| Recipe Arg Name     | Attack Recipe(s)                  |  Accessibility  | Perturbation | Main Idea                                                                                         |
+| :-------------: |  :-------------------------------: | :-------------: | :----------: | :-----------------------------------------------------------------------------------------------: |
+| **seq2sick** | Seq2Sick                          |   black-box   Score      |     Word     | Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128))     |
+| **morpheus** | MORPHEUS                          |   black-box   Score      |     Word     | Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)  |
 
 
 #### Recipe Usage Examples
