@@ -41,4 +41,5 @@ TextAttack Documentation
    1start/api-design-tips.md
    3recipes/attack_recipes
    3recipes/augmenter_recipes
+   3recipes/models.md
    apidoc/textattack
