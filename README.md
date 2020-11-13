@@ -173,7 +173,7 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
 ### Augmenting Text
 
 Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
-uses a transformation and a list of constraints to augment data. We also offer three built-in recipes
+uses a transformation and a list of constraints to augment data. We also offer five built-in recipes
 for data augmentation:
 - `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
 - `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
@@ -240,7 +240,7 @@ You can also create your own augmenter from scratch by importing transformations
 >>> transformation = CompositeTransformation([WordSwapRandomCharacterDeletion()])
 >>> augmenter = Augmenter(transformation=transformation, transformations_per_example=5)
 >>> s = 'What I cannot create, I do not understand.'
->>> aug.augment(s))
+>>> augmenter.augment(s)
 ['What I cannot creae, I do not understand.', 'What I cannot creat, I do not understand.', 'What I cannot create, I do not nderstand.', 'What I cannot create, I do nt understand.', 'Wht I cannot create, I do not understand.']
 ```
 
