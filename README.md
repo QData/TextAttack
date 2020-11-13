@@ -110,8 +110,8 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 - Following table illustrates the comparison of the attack recipes.
 
 
-| Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation | Main Idea      |
-| :-------: |  :---------: | :---------: | :-------: | :-----------------------------------------------------------------------------------------------: |
+| Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation on| Main Idea      |
+| :-------: |  :---------: | :---------: | :-------: | :---------------------------------------------------------------------- |
 | **alzantot** | Alzantot Genetic Algorithm        |   black-box   Score      |     Word     |  Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))   |
 | **bae** | BAE*                              |   black-box   Score      |     Word     | BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).      |
 | **bert-attack** | BERT-Attack*                      |   black-box   Score      |  Word, Char  | BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984))                      |
@@ -136,7 +136,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 - Following table illustrates the comparison of the attack recipes.
 
 | Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation | Main Idea      |
-| :-------: |  :---------: | :---------: | :-------: | :-----------------------------------------------------------------------------------------------: |
+| :-------: |  :---------: | :---------: | :-------: | :---------------------------------------------------------------------- |
 | **seq2sick** | Seq2Sick      |   black-box   Score      |     Word     | Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128))     |
 | **morpheus** | MORPHEUS   |   black-box   Score      |     Word     | Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)  |
 
