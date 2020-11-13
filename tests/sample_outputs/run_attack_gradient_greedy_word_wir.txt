@@ -5,7 +5,7 @@
   (goal_function):  UntargetedClassification
   (transformation):  WordSwapEmbedding(
     (max_candidates):  15
-    (embedding_type):  paragramcf
+    (embedding):  TextAttackWordEmbedding
   )
   (constraints): 
     (0): RepeatModification

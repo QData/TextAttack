@@ -3,7 +3,7 @@
   (goal_function):  UntargetedClassification
   (transformation):  WordSwapEmbedding(
     (max_candidates):  15
-    (embedding_type):  paragramcf
+    (embedding):  TextAttackWordEmbedding
   )
   (constraints): 
     (0): MaxWordsPerturbed(
@@ -11,7 +11,7 @@
         (compare_against_original):  True
       )
     (1): ThoughtVector(
-        (embedding_type):  paragramcf
+        (word_embedding):  TextAttackWordEmbedding
         (metric):  max_euclidean
         (threshold):  -0.2
         (window_size):  inf

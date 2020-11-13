@@ -7,7 +7,7 @@ import functools
 
 import torch
 
-from textattack.shared import WordEmbedding, utils
+from textattack.shared import TextAttackWordEmbedding, WordEmbedding, utils
 
 from .sentence_encoder import SentenceEncoder
 
@@ -16,14 +16,19 @@ class ThoughtVector(SentenceEncoder):
     """A constraint on the distance between two sentences' thought vectors.
 
     Args:
-        word_embedding (str): The word embedding to use
-        min_cos_sim: the minimum cosine similarity between thought vectors
-        max_mse_dist: the maximum euclidean distance between thought vectors
+        word_embedding (textattack.shared.WordEmbedding): The word embedding to use
     """
 
-    def __init__(self, embedding_type="paragramcf", embedding_source=None, **kwargs):
-        self.word_embedding = WordEmbedding(embedding_type, embedding_source)
-        self.embedding_type = embedding_type
+    def __init__(
+        self,
+        embedding=TextAttackWordEmbedding.counterfitted_GLOVE_embedding(),
+        **kwargs
+    ):
+        if not isinstance(embedding, WordEmbedding):
+            raise ValueError(
+                "`embedding` object must be of type `textattack.shared.WordEmbedding`."
+            )
+        self.word_embedding = embedding
         super().__init__(**kwargs)
 
     def clear_cache(self):
@@ -46,4 +51,4 @@ class ThoughtVector(SentenceEncoder):
 
     def extra_repr_keys(self):
         """Set the extra representation of the constraint using these keys."""
-        return ["embedding_type"] + super().extra_repr_keys()
+        return ["word_embedding"] + super().extra_repr_keys()

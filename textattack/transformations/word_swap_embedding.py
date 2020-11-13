@@ -3,30 +3,32 @@ Word Swap by Embedding
 ============================================
 
 """
-from textattack.shared.word_embedding import WordEmbedding
+from textattack.shared import TextAttackWordEmbedding, WordEmbedding
 from textattack.transformations.word_swap import WordSwap
 
 
 class WordSwapEmbedding(WordSwap):
     """Transforms an input by replacing its words with synonyms in the word
-    embedding space."""
+    embedding space.
 
-    PATH = "word_embeddings"
+    Args:
+        max_candidates (int): maximum number of synonyms to pick
+        embedding (textattack.shared.WordEmbedding): Wrapper for word embedding
+    """
 
     def __init__(
         self,
         max_candidates=15,
-        embedding_type="paragramcf",
-        embedding_source=None,
+        embedding=TextAttackWordEmbedding.counterfitted_GLOVE_embedding(),
         **kwargs
     ):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
-        self.embedding_type = embedding_type
-        self.embedding_source = embedding_source
-        self.embedding = WordEmbedding(
-            embedding_type=embedding_type, embedding_source=embedding_source
-        )
+        if not isinstance(embedding, WordEmbedding):
+            raise ValueError(
+                "`embedding` object must be of type `textattack.shared.WordEmbedding`."
+            )
+        self.embedding = embedding
 
     def _get_replacement_words(self, word):
         """Returns a list of possible 'candidate words' to replace a word in a
@@ -35,11 +37,11 @@ class WordSwapEmbedding(WordSwap):
         Based on nearest neighbors selected word embeddings.
         """
         try:
-            word_id = self.embedding.word2ind(word.lower())
-            nnids = self.embedding.nn(word_id, self.max_candidates)
+            word_id = self.embedding.word2index(word.lower())
+            nnids = self.embedding.nearest_neighbours(word_id, self.max_candidates)
             candidate_words = []
             for i, nbr_id in enumerate(nnids):
-                nbr_word = self.embedding.ind2word(nbr_id)
+                nbr_word = self.embedding.index2word(nbr_id)
                 candidate_words.append(recover_word_case(nbr_word, word))
             return candidate_words
         except KeyError:
@@ -47,7 +49,7 @@ class WordSwapEmbedding(WordSwap):
             return []
 
     def extra_repr_keys(self):
-        return ["max_candidates", "embedding_type"]
+        return ["max_candidates", "embedding"]
 
 
 def recover_word_case(word, reference_word):

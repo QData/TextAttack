@@ -3,11 +3,11 @@ import os
 import numpy as np
 import pytest
 
-from textattack.shared import WordEmbedding
+from textattack.shared import GensimWordEmbedding, TextAttackWordEmbedding
 
 
 def test_embedding_paragramcf():
-    word_embedding = WordEmbedding()
+    word_embedding = TextAttackWordEmbedding.counterfitted_GLOVE_embedding()
     assert pytest.approx(word_embedding[0][0]) == -0.022007
     assert pytest.approx(word_embedding["fawn"][0]) == -0.022007
     assert word_embedding[10 ** 9] is None
@@ -28,7 +28,7 @@ bye-bye -1 1
     """
     )
     f.close()
-    word_embedding = WordEmbedding(embedding_type=path, embedding_source="gensim")
+    word_embedding = GensimWordEmbedding(path)
     assert pytest.approx(word_embedding[0][0]) == 1
     assert pytest.approx(word_embedding["bye-bye"][0]) == -1 / np.sqrt(2)
     assert word_embedding[10 ** 9] is None
@@ -38,8 +38,8 @@ bye-bye -1 1
     # mse dist
     assert pytest.approx(word_embedding.get_mse_dist(0, 2)) == 4
     # nearest neighbour of hi is hello
-    assert word_embedding.nn(0, 1)[0] == 1
-    assert word_embedding.word2ind("bye") == 2
-    assert word_embedding.ind2word(3) == "bye-bye"
+    assert word_embedding.nearest_neighbours(0, 1)[0] == 1
+    assert word_embedding.word2index("bye") == 2
+    assert word_embedding.index2word(3) == "bye-bye"
     # remove test file
     os.remove(path)

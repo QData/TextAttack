@@ -31,6 +31,7 @@ extras["optional"] = [
     "stanza",
     "visdom",
     "wandb",
+    "gensim==3.8.3",
 ]
 
 # For developers, install development tools along with all optional dependencies.
