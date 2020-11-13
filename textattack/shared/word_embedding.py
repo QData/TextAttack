@@ -253,6 +253,16 @@ class TextAttackWordEmbedding(WordEmbedding):
         """Returns a prebuilt counter-fitted GLOVE word embedding proposed by
         "Counter-fitting Word Vectors to Linguistic Constraints" (Mrkšić et
         al., 2016)"""
+        if (
+            "textattack_counterfitted_GLOVE_embedding" in utils.GLOBAL_OBJECTS
+            and isinstance(
+                utils.GLOBAL_OBJECTS["textattack_counterfitted_GLOVE_embedding"],
+                TextAttackWordEmbedding,
+            )
+        ):
+            # avoid recreating same embedding (same memory) and instead share across different components
+            return utils.GLOBAL_OBJECTS["textattack_counterfitted_GLOVE_embedding"]
+
         word_embeddings_folder = "paragramcf"
         word_embeddings_file = "paragram.npy"
         word_list_file = "wordlist.pickle"
@@ -282,18 +292,21 @@ class TextAttackWordEmbedding(WordEmbedding):
             index2word[index] = word
         nn_matrix = np.load(nn_matrix_file)
 
-        word_embedding = TextAttackWordEmbedding(
+        embedding = TextAttackWordEmbedding(
             embedding_matrix, word2index, index2word, nn_matrix
         )
+
         with open(mse_dist_file, "rb") as f:
             mse_dist_mat = pickle.load(f)
         with open(cos_sim_file, "rb") as f:
             cos_sim_mat = pickle.load(f)
 
-        word_embedding._mse_dist_mat = mse_dist_mat
-        word_embedding._cos_sim_mat = cos_sim_mat
+        embedding._mse_dist_mat = mse_dist_mat
+        embedding._cos_sim_mat = cos_sim_mat
 
-        return word_embedding
+        utils.GLOBAL_OBJECTS["textattack_counterfitted_GLOVE_embedding"] = embedding
+
+        return embedding
 
 
 class GensimWordEmbedding(WordEmbedding):
