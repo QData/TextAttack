@@ -10,8 +10,7 @@ import sys
 from textattack.shared.utils import LazyLoader
 
 tf = LazyLoader("tensorflow", globals(), "tensorflow")
-
-from google.protobuf import text_format  # noqa: E402
+protobuf = LazyLoader("google.protobuf", globals(), "google.protobuf")
 
 
 def LoadModel(sess, graph, gd_file, ckpt_file):
@@ -30,7 +29,7 @@ def LoadModel(sess, graph, gd_file, ckpt_file):
         with tf.io.gfile.GFile(gd_file) as f:
             s = f.read()
             gd = tf.compat.v1.GraphDef()
-            text_format.Merge(s, gd)
+            protobuf.text_format.Merge(s, gd)
 
         tf.compat.v1.logging.info("Recovering Graph %s", gd_file)
         t = {}
