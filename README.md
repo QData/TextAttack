@@ -110,7 +110,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 - Following table illustrates the comparison of the attack recipes.
 
 
-
+<font face="Courier New" size="12">
 <table>
 <thead>
 <tr class="header">
@@ -232,7 +232,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 </tr>
 </tbody>
 </table>
-
+</font>
 
 
 | Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation | Main Idea      |
