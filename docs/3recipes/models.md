@@ -9,6 +9,29 @@ users to get started with TextAttack. It also enables a more fair comparison of 
 the literature.
 
 
+## Available Models
+### TextAttack Models
+TextAttack has two build-in model types, a 1-layer bidirectional LSTM with a hidden
+state size of 150 (`lstm`), and a WordCNN with 3 window sizes
+(3, 4, 5) and 100 filters for the window size (`cnn`). Both models set dropout
+to 0.3 and use a base of the 200-dimensional GLoVE embeddings.
+
+### `transformers` Models
+Along with the `lstm` and `cnn`, you can theoretically fine-tune any model based
+in the huggingface [transformers](https://github.com/huggingface/transformers/)
+repo. Just type the model name (like `bert-base-cased`) and it will be automatically
+loaded.
+
+Here are some models from transformers that have worked well for us:
+- `bert-base-uncased` and `bert-base-cased`
+- `distilbert-base-uncased` and `distilbert-base-cased`
+- `albert-base-v2`
+- `roberta-base`
+- `xlnet-base-cased`
+
+
+## Evaluation Results of Available Models
+
 All evaluation results were obtained using `textattack eval` to evaluate models on their default
 test dataset (test set, if labels are available, otherwise, eval/validation set). You can use
 this command to verify the accuracies for yourself: for example, `textattack eval --model roberta-base-mr`.
@@ -18,6 +41,7 @@ The LSTM and wordCNN models' code is available in `textattack.models.helpers`. A
 imported from the [`transformers`](https://github.com/huggingface/transformers/) package. To list evaluate all 
 TextAttack pretrained models, invoke `textattack eval` without specifying a model: `textattack eval --num-examples 1000`.
 All evaluations shown are on the full validation or test set up to 1000 examples.
+
 
 ### `LSTM`
 
