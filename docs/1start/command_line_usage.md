@@ -136,6 +136,3 @@ information about the MRPC dataset (from the GLUE set of datasets). This will
 print statistics like the number of labels, average number of words, etc.
 
 
-## A summary diagram of TextAttack Ecosystem
-
-![diagram](/_static/imgs/intro/textattack_ecosystem.png)

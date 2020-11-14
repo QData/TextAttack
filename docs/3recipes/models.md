@@ -1,8 +1,13 @@
 # TextAttack Model Zoo
 
-TextAttack includes pre-trained models for different common NLP tasks. This makes it easier for
+TextAttack is model-agnostic - meaning it can run attacks on models implemented in any deep learning framework. Model objects must be able to take a string (or list of strings) and return an output that can be processed by the goal function. For example, machine translation models take a list of strings as input and produce a list of strings as output. Classification and entailment models return an array of scores. As long as the user's model meets this specification, the model is fit to use with TextAttack.
+
+
+
+To help users, TextAttack includes pre-trained models for different common NLP tasks. This makes it easier for
 users to get started with TextAttack. It also enables a more fair comparison of attacks from
 the literature.
+
 
 All evaluation results were obtained using `textattack eval` to evaluate models on their default
 test dataset (test set, if labels are available, otherwise, eval/validation set). You can use
