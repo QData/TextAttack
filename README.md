@@ -230,8 +230,10 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 </tbody>
 </table>
 
-| Attack Recipe   |  Goal Function  | Constraints | Transformation | Search Strategies | Main Idea      |
-| :------: |  :------: | :------: | :-------: | :---------------------------------------------------------------------- |
+
+
+| Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation | Main Idea      |
+| :-------: |  :---------: | :---------: | :-------: | :---------------------------------------------------------------------- |
 | **alzantot** | Alzantot Genetic Algorithm        |   black-box   Score      |     Word     |  Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))   |
 | **bae** | BAE*                              |   black-box   Score      |     Word     | BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).      |
 | **bert-attack** | BERT-Attack*                      |   black-box   Score      |  Word, Char  | BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984))                      |
