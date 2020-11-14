@@ -5,11 +5,12 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
+from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
-    WordSwapMaskedLM,
     WordInsertionMaskedLM,
     WordMergeMaskedLM,
+    WordSwapMaskedLM,
 )
 
 from .attack_recipe import AttackRecipe
@@ -95,6 +96,4 @@ class CLARE2020(AttackRecipe):
         #
         search_method = GreedySearch()
 
-        print("hi")
-
-        return CLARE2020(goal_function, constraints, transformation, search_method)
+        return Attack(goal_function, constraints, transformation, search_method)

@@ -13,14 +13,11 @@ class WordInsertionMaskedLM(Transformation):
     https://arxiv.org/abs/2009.07502
 
     Args:
-        masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default
-         is `bert-base-uncased`.
-
+        masked_language_model (Union[str|transformers.AutoModelForMaskedLM]): Either the name of pretrained masked language model from `transformers` model hub 
+            or the actual model. Default is `bert-base-uncased`.
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
-
         max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are
-        ranked by model's confidence.
-
+            ranked by model's confidence.
         min_confidence (float): minimum confidence threshold each replacement word must pass.
     """
 
@@ -33,7 +30,6 @@ class WordInsertionMaskedLM(Transformation):
         **kwargs,
     ):
         super().__init__(**kwargs)
-        self.masked_lm_name = masked_language_model
         self.max_length = max_length
         self.max_candidates = max_candidates
         self.min_confidence = min_confidence
@@ -41,11 +37,15 @@ class WordInsertionMaskedLM(Transformation):
         self._lm_tokenizer = AutoTokenizer.from_pretrained(
             masked_language_model, use_fast=True
         )
-        self._language_model = AutoModelForMaskedLM.from_pretrained(
-            masked_language_model
-        )
+        if isinstance(masked_language_model):
+            self._language_model = AutoModelForMaskedLM.from_pretrained(
+                masked_language_model
+            )
+        else:
+            self._language_model = masked_language_model
         self._language_model.to(utils.device)
         self._language_model.eval()
+        self.masked_lm_name = self._language_model.__class__.__name__
 
     def _encode_text(self, text):
         """Encodes ``text`` using an ``AutoTokenizer``, ``self._lm_tokenizer``.
@@ -63,7 +63,7 @@ class WordInsertionMaskedLM(Transformation):
         )
         return {k: v.to(utils.device) for k, v in encoding.items()}
 
-    def _bae_replacement_words(self, current_text, index):
+    def _get_new_words(self, current_text, index):
         """Get replacement words for the word we want to replace using BAE
         method.
 
@@ -71,7 +71,7 @@ class WordInsertionMaskedLM(Transformation):
             current_text (AttackedText): Text we want to get replacements for.
             index (int): index of word we want to replace
         """
-        masked_attacked_text = current_text.insert_text_after_word_index(
+        masked_attacked_text = current_text.insert_text_before_word_index(
             index, self._lm_tokenizer.mask_token
         )
         inputs = self._encode_text(masked_attacked_text.text)
@@ -84,7 +84,6 @@ class WordInsertionMaskedLM(Transformation):
             return []
 
         with torch.no_grad():
-            # don't understand this
             preds = self._language_model(**inputs)[0]
 
         mask_token_logits = preds[0, masked_index]
@@ -104,29 +103,5 @@ class WordInsertionMaskedLM(Transformation):
 
         return replacement_words
 
-    def _get_replacement_words(self, current_text, index, **kwargs):
-        return self._bae_replacement_words(current_text, index)
-
-    def _get_transformations(self, current_text, indices_to_modify):
-        # extra_args = {}
-
-        transformed_texts = []
-
-        for i in indices_to_modify:
-            word_at_index = current_text.words[i]
-            replacement_words = self._get_replacement_words(
-                current_text,
-                i,
-            )
-
-            transformed_texts_idx = []
-            for r in replacement_words:
-                transformed_texts_idx.append(
-                    current_text.insert_text_after_word_index(i, r)
-                )
-            transformed_texts.extend(transformed_texts_idx)
-
-        return transformed_texts
-
     def extra_repr_keys(self):
-        return ["masked_lm_name", "max_length", "max_candidates"]
+        return ["masked_lm_name ", "max_length", "max_candidates", "min_confidence"]

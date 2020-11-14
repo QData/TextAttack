@@ -7,7 +7,8 @@ Word Swap by swaping synonyms in WordNet
 from nltk.corpus import wordnet
 
 import textattack
-from textattack.transformations.word_swap import WordSwap
+
+from .word_swap import WordSwap
 
 
 class WordSwapWordNet(WordSwap):

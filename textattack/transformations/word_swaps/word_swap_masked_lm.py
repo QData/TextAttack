@@ -10,7 +10,8 @@ import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
 from textattack.shared import utils
-from textattack.transformations.word_swap import WordSwap
+
+from .word_swap import WordSwap
 
 
 class WordSwapMaskedLM(WordSwap):
@@ -33,7 +34,8 @@ class WordSwapMaskedLM(WordSwap):
 
     Args:
         method (str): the name of replacement method (e.g. "bae", "bert-attack")
-        masked_language_model (str): the name of pretrained masked language model from `transformers` model hub. Default is `bert-base-uncased`.
+        masked_language_model (Union[str|transformers.AutoModelForMaskedLM]): Either the name of pretrained masked language model from `transformers` model hub 
+            or the actual model. Default is `bert-base-uncased`.
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
         max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are ranked by model's confidence.
         min_confidence (float): minimum confidence threshold each replacement word must pass.
@@ -50,7 +52,6 @@ class WordSwapMaskedLM(WordSwap):
     ):
         super().__init__(**kwargs)
         self.method = method
-        self.masked_lm_name = masked_language_model
         self.max_length = max_length
         self.max_candidates = max_candidates
         self.min_confidence = min_confidence
@@ -58,11 +59,15 @@ class WordSwapMaskedLM(WordSwap):
         self._lm_tokenizer = AutoTokenizer.from_pretrained(
             masked_language_model, use_fast=True
         )
-        self._language_model = AutoModelForMaskedLM.from_pretrained(
-            masked_language_model
-        )
+        if isinstance(masked_language_model):
+            self._language_model = AutoModelForMaskedLM.from_pretrained(
+                masked_language_model
+            )
+        else:
+            self._language_model = masked_language_model
         self._language_model.to(utils.device)
         self._language_model.eval()
+        self.masked_lm_name = self._language_model.__class__.__name__
 
     def _encode_text(self, text):
         """Encodes ``text`` using an ``AutoTokenizer``, ``self._lm_tokenizer``.
@@ -239,7 +244,7 @@ class WordSwapMaskedLM(WordSwap):
         return transformed_texts
 
     def extra_repr_keys(self):
-        return ["method", "masked_lm_name", "max_length", "max_candidates"]
+        return ["method", "masked_lm_name", "max_length", "max_candidates", "min_confidence"]
 
 
 def recover_word_case(word, reference_word):

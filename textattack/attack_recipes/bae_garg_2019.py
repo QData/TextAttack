@@ -50,7 +50,9 @@ class BAEGarg2019(AttackRecipe):
         # the sub-words and only retain the whole words (by checking if they are
         # present in the GloVE vocabulary)"
         #
-        transformation = WordSwapMaskedLM(method="bae", max_candidates=50, min_confidence=0.0)
+        transformation = WordSwapMaskedLM(
+            method="bae", max_candidates=50, min_confidence=0.0
+        )
         #
         # Don't modify the same word twice or stopwords.
         #

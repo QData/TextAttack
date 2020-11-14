@@ -7,7 +7,8 @@ Word Swap by OpenHowNet
 import pickle
 
 from textattack.shared import utils
-from textattack.transformations.word_swap import WordSwap
+
+from .word_swap import WordSwap
 
 
 class WordSwapHowNet(WordSwap):
