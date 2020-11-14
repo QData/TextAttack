@@ -258,7 +258,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><sub>Inflection Word Swap</sub> </td>
 <td style="text-align: left;"><sub>Greedy search</sub> </td>
-<td >Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)</sub> </td>
+<td ><sub>Greedy to replace words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)</sub> </td>
 </tr>
 
 </tr>
