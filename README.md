@@ -128,6 +128,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td style="text-align: left;">USE sentence encoding cosine similarity</td>
 <td style="text-align: left;">BERT Masked Token Prediction</td>
 <td style="text-align: left;">Greedy-WIR</td>
+<td colspan="6" class="odd">BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)). </td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>bert-attack</code> <span class="citation" data-cites="li2020bertattack"></span></td>
@@ -235,7 +236,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 | Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation | Main Idea      |
 | :-------: |  :---------: | :---------: | :-------: | :---------------------------------------------------------------------- |
 | **alzantot** | Alzantot Genetic Algorithm        |   black-box   Score      |     Word     |  Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))   |
-| **bae** | BAE*                              |   black-box   Score      |     Word     | BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).      |
+| **bae** | BAE*                              |   black-box   Score      |     Word     |      |
 | **bert-attack** | BERT-Attack*                      |   black-box   Score      |  Word, Char  | BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984))                      |
 |  **checklist** | CheckList*                        |   black-box   Score      |  Word, Char  | Invariance testing implemented in CheckList that contract, extend, and substitutes name entities. (["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))                      |
 | **clare (*coming soon*)** | RoBERTa-Attack*                      |   black-box   Score      |  Word, Char  | Greedy attack with word swap, insertion, and merge transformations using RoBERTa masked language model. (["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502)) | 
