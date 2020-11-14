@@ -112,7 +112,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <tr class="header">
 <th style="text-align: left;"><strong>Attack Recipe Name</strong></th>
 <th style="text-align: left;"><strong>Goal Function</strong></th>
-<th style="text-align: left;"><strong>Constraints Enforced</strong></th>
+<th style="text-align: left;"><strong>Constraints-Enforced</strong></th>
 <th style="text-align: left;"><strong>Transformation</strong></th>
 <th style="text-align: left;"><strong>Search Method</strong></th>
 <th style="text-align: left;"><strong>Main Idea</strong></th>
