@@ -61,3 +61,10 @@ TextAttack has some other features that make it a pleasure to use:
 - :ref:`Pre-trained Models <models>` for testing attacks and evaluating constraints
 - :ref:`Visualization options   <loggers>` like Weights & Biases and Visdom
 - :ref:`AttackedText   <attacked_text>`, a utility class for strings that includes tools for tokenizing and editing text
+
+
+
+Indices and Glossary of TextAttack 
+-----------------------------------
+
+   * :ref:`modindex`

@@ -44,6 +44,5 @@ TextAttack Documentation
    3recipes/augmenter_recipes
    3recipes/models.md
    apidoc/textattack
-   genindex
 
 
