@@ -9,6 +9,7 @@ TextAttack Documentation
    1start/basic-Intro.rst
    1start/what_is_an_adversarial_attack.md
    1start/references.md
+   1start/attacks4Components.md
    1start/benchmark-search.md
 
 .. toctree::

@@ -106,7 +106,6 @@ We include attack recipes which implement attacks from the literature. You can l
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 
-
 <table>
 <thead>
 <tr class="header">
@@ -470,7 +469,10 @@ You can then run attacks on samples from this dataset by adding the argument `--
 
 ### Attacks
 
-The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
+The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. 
+
+
+We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
 
 ### Goal Functions
 

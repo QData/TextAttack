@@ -227,4 +227,8 @@ You can run TextAttack tests with `pytest`. Just type `make test`.
 
 
 
+### A summary diagram of TextAttack Ecosystem
+
+![diagram](/_static/imgs/intro/textattack_ecosystem.png)
+
 
