@@ -110,15 +110,135 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 - Following table illustrates the comparison of the attack recipes.
 
 
-| Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation on| Main Idea      |
-| :-------: |  :---------: | :---------: | :-------: | :---------------------------------------------------------------------- |
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;"><strong>Attack Recipe</strong></th>
+<th style="text-align: left;"><strong>Goal Function</strong></th>
+<th style="text-align: left;"><strong>Constraints</strong></th>
+<th style="text-align: left;"><strong>Transformation</strong></th>
+<th style="text-align: left;"><strong>Search Method</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>bae</code> <span class="citation" data-cites="garg2020bae"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;">USE sentence encoding cosine similarity</td>
+<td style="text-align: left;">BERT Masked Token Prediction</td>
+<td style="text-align: left;">Greedy-WIR</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>bert-attack</code> <span class="citation" data-cites="li2020bertattack"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;">USE sentence encoding cosine similarity, Maximum number of words perturbed</td>
+<td style="text-align: left;">BERT Masked Token Prediction (with subword expansion)</td>
+<td style="text-align: left;">Greedy-WIR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>deepwordbug</code> <span class="citation" data-cites="Gao2018BlackBoxGO"></span></td>
+<td style="text-align: left;">{Untargeted, Targeted} Classification</td>
+<td style="text-align: left;">Levenshtein edit distance</td>
+<td style="text-align: left;">{Character Insertion, Character Deletion, Neighboring Character Swap, Character Substitution}</td>
+<td style="text-align: left;">Greedy-WIR</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>alzantot,</code><code>fast-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
+<td style="text-align: left;">Untargeted {Classification, Entailment}</td>
+<td style="text-align: left;">Percentage of words perturbed, Language Model perplexity, Word embedding distance</td>
+<td style="text-align: left;">Counter-fitted word embedding swap</td>
+<td style="text-align: left;">Genetic Algorithm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>iga</code> <span class="citation" data-cites="iga-wang2019natural"></span></td>
+<td style="text-align: left;">Untargeted {Classification, Entailment}</td>
+<td style="text-align: left;">Percentage of words perturbed, Word embedding distance</td>
+<td style="text-align: left;">Counter-fitted word embedding swap</td>
+<td style="text-align: left;">Genetic Algorithm</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>input-reduction</code> <span class="citation" data-cites="feng2018pathologies"></span></td>
+<td style="text-align: left;">Input Reduction</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Word deletion</td>
+<td style="text-align: left;">Greedy-WIR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>kuleshov</code> <span class="citation" data-cites="Kuleshov2018AdversarialEF"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;">Thought vector encoding cosine similarity, Language model similarity probability</td>
+<td style="text-align: left;">Counter-fitted word embedding swap</td>
+<td style="text-align: left;">Greedy word swap</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>hotflip</code> (word swap) <span class="citation" data-cites="Ebrahimi2017HotFlipWA"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;">Word Embedding Cosine Similarity, Part-of-speech match, Number of words perturbed</td>
+<td style="text-align: left;">Gradient-Based Word Swap</td>
+<td style="text-align: left;">Beam search</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>morpheus</code> <span class="citation" data-cites="morpheus-tan-etal-2020-morphin"></span></td>
+<td style="text-align: left;">Minimum BLEU Score</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Inflection Word Swap</td>
+<td style="text-align: left;">Greedy search</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>pruthi</code> <span class="citation" data-cites="pruthi2019combating"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;">Minimum word length, Maximum number of words perturbed</td>
+<td style="text-align: left;">{Neighboring Character Swap, Character Deletion, Character Insertion, Keyboard-Based Character Swap}</td>
+<td style="text-align: left;">Greedy search</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>pso</code> <span class="citation" data-cites="pso-zang-etal-2020-word"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">HowNet Word Swap</td>
+<td style="text-align: left;">Particle Swarm Optimization</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>pwws</code> <span class="citation" data-cites="pwws-ren-etal-2019-generating"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">WordNet-based synonym swap</td>
+<td style="text-align: left;">Greedy-WIR (saliency)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>seq2sick</code> (black-box) <span class="citation" data-cites="cheng2018seq2sick"></span></td>
+<td style="text-align: left;">Non-overlapping output</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Counter-fitted word embedding swap</td>
+<td style="text-align: left;">Greedy-WIR</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>textbugger</code> (black-box) <span class="citation" data-cites="Li2019TextBuggerGA"></span></td>
+<td style="text-align: left;">Untargeted Classification</td>
+<td style="text-align: left;">USE sentence encoding cosine similarity</td>
+<td style="text-align: left;">{Character Insertion, Character Deletion, Neighboring Character Swap, Character Substitution}</td>
+<td style="text-align: left;">Greedy-WIR</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>textfooler</code> <span class="citation" data-cites="Jin2019TextFooler"></span></td>
+<td style="text-align: left;">Untargeted {Classification, Entailment}</td>
+<td style="text-align: left;">Word Embedding Distance, Part-of-speech match, USE sentence encoding cosine similarity</td>
+<td style="text-align: left;">Counter-fitted word embedding swap</td>
+<td style="text-align: left;">Greedy-WIR</td>
+</tr>
+</tbody>
+</table>
+
+| Attack Recipe   |  Goal Function  | Constraints | Transformation | Search Strategies | Main Idea      |
+| :------: |  :------: | :------: | :-------: | :---------------------------------------------------------------------- |
 | **alzantot** | Alzantot Genetic Algorithm        |   black-box   Score      |     Word     |  Genetic algorithm attack from (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))   |
 | **bae** | BAE*                              |   black-box   Score      |     Word     | BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)).      |
 | **bert-attack** | BERT-Attack*                      |   black-box   Score      |  Word, Char  | BERT masked language model transformation attack with subword replacements (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984))                      |
 |  **checklist** | CheckList*                        |   black-box   Score      |  Word, Char  | Invariance testing implemented in CheckList that contract, extend, and substitutes name entities. (["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))                      |
 | **clare (*coming soon*)** | RoBERTa-Attack*                      |   black-box   Score      |  Word, Char  | Greedy attack with word swap, insertion, and merge transformations using RoBERTa masked language model. (["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502)) | 
-| **faster-alzantot** | Faster Alzantot Genetic Algorithm |    black-box  Score      |     Word     | modified, faster version of the Alzantot et al. genetic algorithm, from (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986)) |
 | **deepwordbug** | DeepWordBug                       |   black-box   Score      |     Char     | Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354))                    |
+| **faster-alzantot** | Faster Alzantot Genetic Algorithm |    black-box  Score      |     Word     | modified, faster version of the Alzantot et al. genetic algorithm, from (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986)) |
 | **hotflip** | HotFlip                           |    Gradient     |  Word, Char  | Beam search and gradient-based word swap (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751)) |
 | **iga** | Improved Genetic Algorithm        |    black-box   Score     |  Word  | Improved genetic algorithm -based word substitution from (["Natural Language Adversarial Attacks and Defenses in Word Level (Wang et al., 2019)"](https://arxiv.org/abs/1909.06723) |
 | **input-reduction** | Input Reduction*                  |   white-box Gradient     |     Word     | Reducing the input while maintaining the prediction through word importance ranking (["Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)](https://arxiv.org/pdf/1804.07781.pdf))              |
@@ -137,8 +257,8 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 | Attack Recipe Name     | Search Strategies  |  Accessibility  | Perturbation | Main Idea      |
 | :-------: |  :---------: | :---------: | :-------: | :---------------------------------------------------------------------- |
-| **seq2sick** | Seq2Sick      |   black-box   Score      |     Word     | Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128))     |
 | **morpheus** | MORPHEUS   |   black-box   Score      |     Word     | Greedy attack that replaces words with their inflections with the goal of minimizing BLEU score (["It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations"](https://www.aclweb.org/anthology/2020.acl-main.263.pdf)  |
+| **seq2sick** | Seq2Sick      |   black-box   Score      |     Word     | Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128))     |
 
 
 #### Recipe Usage Examples
