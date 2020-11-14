@@ -128,7 +128,9 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td style="text-align: left;">USE sentence encoding cosine similarity</td>
 <td style="text-align: left;">BERT Masked Token Prediction</td>
 <td style="text-align: left;">Greedy-WIR</td>
-<td colspan="6" class="odd">BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)). </td>
+<tr class="odd"><td></td>
+  <td colspan="5" class="odd">BERT masked language model transformation attack from (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)). 
+</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code>bert-attack</code> <span class="citation" data-cites="li2020bertattack"></span></td>
