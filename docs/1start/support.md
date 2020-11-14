@@ -224,3 +224,7 @@ You can run TextAttack tests with `pytest`. Just type `make test`.
 
 
 #### This guide was heavily inspired by the awesome [transformers guide to contributing](https://github.com/huggingface/transformers/blob/master/CONTRIBUTING.md)
+
+
+
+

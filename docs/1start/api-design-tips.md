@@ -29,6 +29,9 @@ We provide the following broad advice to help other future developers create use
  Our modular and extendable design allows us to reuse many components to offer 15+ different adversarial attack methods proposed by literature. Our model-agnostic and dataset-agnostic design allows users to easily run adversarial attacks against their own models built using any deep learning framework. We hope that our lessons from developing TextAttack will help others create user-friendly open-source NLP libraries.
 
 
+
+
+
 ## More Details in Reference
 
 ```

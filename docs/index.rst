@@ -30,7 +30,8 @@ TextAttack Documentation
    Tutorial 4: Attacking scikit-learn models <2notebook/Example_1_sklearn.ipynb>
    Tutorial 5: Attacking AllenNLP models <2notebook/Example_2_allennlp.ipynb>
    Tutorial 6: Attacking multilingual models <2notebook/Example_4_CamemBERT.ipynb>
-   
+   Tutorial 7: Explaining BERT model using Captum <2notebook/Example_5_Explain_BERT.ipynb> 
+
 
 .. toctree::
    :maxdepth: 6
@@ -41,4 +42,7 @@ TextAttack Documentation
    1start/api-design-tips.md
    3recipes/attack_recipes
    3recipes/augmenter_recipes
+   3recipes/models.md
    apidoc/textattack
+
+

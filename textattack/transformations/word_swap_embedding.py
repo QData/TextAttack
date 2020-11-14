@@ -2,6 +2,10 @@
 Word Swap by Embedding
 ============================================
 
+Based on paper: `<arxiv.org/abs/1603.00892>`_
+
+Paper title: Counter-fitting Word Vectors to Linguistic Constraints
+
 """
 import os
 
