@@ -106,7 +106,7 @@ We include attack recipes which implement attacks from the literature. You can l
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 
-<table>
+<table  style="width:100%" border="1">
 <thead>
 <tr class="header">
 <th style="text-align: left;"><strong>Attack Recipe Name</strong></th>
@@ -118,7 +118,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 </tr>
 </thead>
 <tbody>
-  <tr><td colspan="6"><strong>Attacks on classification tasks, like sentiment classification and entailment:</strong></td></tr>
+  <tr><td style="text-align: center;" colspan="6"><strong><br>Attacks on classification tasks, like sentiment classification and entailment:<br></strong></td></tr>
 
 <tr class="even">
 <td style="text-align: left;"><code>alzantot</code>  <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
@@ -249,7 +249,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>Greedy attack with word importance ranking  (["Is Bert Really Robust?" (Jin et al., 2019)](https://arxiv.org/abs/1907.11932))</sub> </td>
 </tr>
 
-<tr><td colspan="6"><strong>Attacks on sequence-to-sequence models:</strong></td></tr>
+<tr><td style="text-align: center;" colspan="6"><strong><br>Attacks on sequence-to-sequence models: <br></strong></td></tr>
 
 <tr class="odd">
 <td style="text-align: left;"><code>morpheus</code> <span class="citation" data-cites="morpheus-tan-etal-2020-morphin"></span></td>
