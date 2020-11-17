@@ -12,6 +12,7 @@ TextAttack Documentation
    1start/attacks4Components.md
    1start/benchmark-search.md
    3recipes/models.md
+   1start/FAQ.md
 
 .. toctree::
    :maxdepth: 6

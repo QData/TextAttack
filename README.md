@@ -56,7 +56,7 @@ or via python module (`python -m textattack ...`).
 > dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
 > environment variable `TA_CACHE_DIR`. (for example: `TA_CACHE_DIR=/tmp/ textattack attack ...`).
 
-## Usage
+## Usage  `textattack --help`
 
 TextAttack's main features can all be accessed via the `textattack` command. Two very
 common commands are `textattack attack <args>`, and `textattack augment <args>`. You can see more
@@ -71,7 +71,7 @@ textattack attack --help
 
 The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
-### Running Attacks
+### Running Attacks `textattack attack --help`
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
 
@@ -99,7 +99,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 > **Tip:** Instead of specifying a dataset and number of examples, you can pass `--interactive` to attack samples inputted by the user.
 
-### Attacks and Papers Implemented ("Attack Recipes")
+### Attacks and Papers Implemented ("Attack Recipes") `textattack attack --recipe [recipe_name]`
 
 We include attack recipes which implement attacks from the literature. You can list attack recipes using `textattack list attack-recipes`.
 
@@ -291,7 +291,7 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
  textattack attack --model t5-en-de --recipe seq2sick --num-examples 100
 ```
 
-### Augmenting Text
+### Augmenting Text `textattack augment`
 
 Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
 uses a transformation and a list of constraints to augment data. We also offer five built-in recipes
@@ -365,7 +365,7 @@ You can also create your own augmenter from scratch by importing transformations
 ['What I cannot creae, I do not understand.', 'What I cannot creat, I do not understand.', 'What I cannot create, I do not nderstand.', 'What I cannot create, I do nt understand.', 'Wht I cannot create, I do not understand.']
 ```
 
-### Training Models
+### Training Models  `textattack train`
 
 Our model training code is available via `textattack train` to help you train LSTMs,
 CNNs, and `transformers` models using TextAttack out-of-the-box. Datasets are
@@ -393,9 +393,10 @@ textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 -
 To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
 
 
-### `textattack list`
+### To list components `textattack list`
 
 There are lots of pieces in TextAttack, and it can be difficult to keep track of all of them. You can use `textattack list` to list components, for example, pretrained models (`textattack list models`) or available search methods (`textattack list search-methods`).
+
 
 ## Design
 
@@ -406,7 +407,11 @@ which maintains both a list of tokens and the original text, with punctuation. W
 
 ### Models and Datasets
 
-TextAttack is model-agnostic! You can use `TextAttack` to analyze any model that outputs IDs, tensors, or strings.
+TextAttack is model-agnostic!  You can use `TextAttack` to analyze any model that outputs IDs, tensors, or strings. To help users, TextAttack includes pre-trained models for different common NLP tasks. This makes it easier for
+users to get started with TextAttack. It also enables a more fair comparison of attacks from
+the literature.
+
+
 
 #### Built-in Models
 
@@ -467,12 +472,22 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 
 You can then run attacks on samples from this dataset by adding the argument `--dataset-from-file my_dataset.py`.
 
+
+
 ### Attacks
 
 The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. 
 
 
-We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. 
+We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. The attack attempts to perturb an input text such that the model output fulfills the goal function (i.e., indicating whether the attack is successful) and the perturbation adheres to the set of constraints (e.g., grammar constraint, semantic similarity constraint). A search method is used to find a sequence of transformations that produce a successful adversarial example.
+
+
+This modular design unifies adversarial attack methods into one system, enables us to easily assemble attacks from the literature while re-using components that are shared across attacks. We provides clean, readable implementations of 16 adversarial attack recipes from the literature (see above table). For the first time, these attacks can be benchmarked, compared, and analyzed in a standardized setting.
+
+
+TextAttack is model-agnostic - meaning it can run attacks on models implemented in any deep learning framework. Model objects must be able to take a string (or list of strings) and return an output that can be processed by the goal function. For example, machine translation models take a list of strings as input and produce a list of strings as output. Classification and entailment models return an array of scores. As long as the user's model meets this specification, the model is fit to use with TextAttack.
+
+
 
 ### Goal Functions
 
