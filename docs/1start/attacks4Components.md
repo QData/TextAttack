@@ -5,7 +5,13 @@ To unify adversarial attack methods into one system, We formulate an attack as c
 
 
 
-This modular design enables us to easily assemble attacks from the literature while re-using components that are shared across attacks. \texttt{TextAttack} provides clean, readable implementations of 16 adversarial attacks from the literature. For the first time, these attacks can be benchmarked, compared, and analyzed in a standardized setting.
+This modular design enables us to easily assemble attacks from the literature while re-using components that are shared across attacks. TextAttack provides clean, readable implementations of 16 adversarial attacks from the literature. For the first time, these attacks can be benchmarked, compared, and analyzed in a standardized setting.
+
+
+- Two examples showing four components of two SOTA attacks
+![two-categorized-attacks](/_static/imgs/intro/01-categorized-attacks.png)
+
+
 
 
 
@@ -26,7 +32,12 @@ A `Transformation` takes as input an `AttackedText` and returns a list of possib
 A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input an `AttackedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
 
+
+
 ### Four components in Attack Recipes we have implemented 
+
+
+
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 
@@ -206,8 +217,8 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 ```
 @misc{morris2020textattack,
-    title={TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
-    author={John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
+    title={TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP},
+    author={John X. Morris and Eli Lifland and Jin Yong Yoo and Jake Grigsby and Di Jin and Yanjun Qi},
     year={2020},
     eprint={2005.05909},
     archivePrefix={arXiv},

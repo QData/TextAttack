@@ -87,6 +87,7 @@ The following figure shows an overview of the main functionality of TextAttack:
 ![TextAttack flowchart](/_static/imgs/intro/textattack_components.png)
 
 
+
 ## The future of adversarial attacks in NLP
 
 We are excited to see the impact that TextAttack has on the NLP research community! One thing we would like to see research in is the combination of components from various papers. TextAttack makes it easy to run ablation studies to compare the effects of swapping out, say, search method from paper A with the search method from paper B, without making any other changes. (And these tests can be run across dozens of pre-trained models and datasets with no downloads!)
