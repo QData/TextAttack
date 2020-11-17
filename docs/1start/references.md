@@ -1,11 +1,11 @@
 How to Cite TextAttack  
 ===========================
 
-## Main Paper:  TextAttack: A Framework for Adversarial Attacks in Natural Language Processing
+## Main Paper:  TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP
 
 - Paper [EMNLP Demo](https://arxiv.org/abs/2005.05909)
 
-- Abstract: TextAttack is a library for generating natural language adversarial examples to fool natural language processing (NLP) models. TextAttack builds attacks from four components: a search method, goal function, transformation, and a set of constraints. Researchers can use these components to easily assemble new attacks. Individual components can be isolated and compared for easier ablation studies. TextAttack currently supports attacks on models trained for text classification and entailment across a variety of datasets. Additionally, TextAttack's modular design makes it easily extensible to new NLP tasks, models, and attack strategies. 
+- Abstract: While there has been substantial research using adversarial attacks to analyze NLP models, each attack is implemented in its own code repository. It remains challenging to develop NLP attacks and utilize them to improve model performance. This paper introduces TextAttack, a Python framework for adversarial attacks, data augmentation, and adversarial training in NLP. TextAttack builds attacks from four components: a goal function, a set of constraints, a transformation, and a search method. TextAttack's modular design enables researchers to easily construct attacks from combinations of novel and existing components. TextAttack provides implementations of 16 adversarial attacks from the literature and supports a variety of models and datasets, including BERT and other transformers, and all GLUE tasks. TextAttack also includes data augmentation and adversarial training modules for using components of adversarial attacks to improve model accuracy and robustness. TextAttack is democratizing NLP: anyone can try data augmentation and adversarial training on any model or dataset, with just a few lines of code. Code and tutorials are available at this site.
 
 ### Our Github on TextAttack: `TextAttack <https://github.com/QData/TextAttack>`_
 
@@ -13,8 +13,8 @@ How to Cite TextAttack
 
 ```
 @misc{morris2020textattack,
-    title={TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
-    author={John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
+    title={TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP},
+    author={John X. Morris and Eli Lifland and Jin Yong Yoo and Jake Grigsby and Di Jin and Yanjun Qi},
     year={2020},
     eprint={2005.05909},
     archivePrefix={arXiv},
