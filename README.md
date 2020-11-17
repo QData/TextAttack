@@ -56,7 +56,7 @@ or via python module (`python -m textattack ...`).
 > dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
 > environment variable `TA_CACHE_DIR`. (for example: `TA_CACHE_DIR=/tmp/ textattack attack ...`).
 
-## Usage  `textattack --help`
+## Usage:  `textattack --help`
 
 TextAttack's main features can all be accessed via the `textattack` command. Two very
 common commands are `textattack attack <args>`, and `textattack augment <args>`. You can see more
@@ -71,7 +71,7 @@ textattack attack --help
 
 The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
-### Running Attacks `textattack attack --help`
+### Running Attacks: `textattack attack --help`
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
 
@@ -99,7 +99,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 > **Tip:** Instead of specifying a dataset and number of examples, you can pass `--interactive` to attack samples inputted by the user.
 
-### Attacks and Papers Implemented ("Attack Recipes") `textattack attack --recipe [recipe_name]`
+### Attacks and Papers Implemented ("Attack Recipes"): `textattack attack --recipe [recipe_name]`
 
 We include attack recipes which implement attacks from the literature. You can list attack recipes using `textattack list attack-recipes`.
 
@@ -291,7 +291,7 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
  textattack attack --model t5-en-de --recipe seq2sick --num-examples 100
 ```
 
-### Augmenting Text `textattack augment`
+### Augmenting Text: `textattack augment`
 
 Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
 uses a transformation and a list of constraints to augment data. We also offer five built-in recipes
@@ -365,7 +365,7 @@ You can also create your own augmenter from scratch by importing transformations
 ['What I cannot creae, I do not understand.', 'What I cannot creat, I do not understand.', 'What I cannot create, I do not nderstand.', 'What I cannot create, I do nt understand.', 'Wht I cannot create, I do not understand.']
 ```
 
-### Training Models  `textattack train`
+### Training Models:  `textattack train`
 
 Our model training code is available via `textattack train` to help you train LSTMs,
 CNNs, and `transformers` models using TextAttack out-of-the-box. Datasets are
@@ -388,12 +388,13 @@ This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` datase
 textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 --epochs 5
 ```
 
-### `textattack peek-dataset`
+
+### To check datasets: `textattack peek-dataset`
 
 To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
 
 
-### To list components `textattack list`
+### To list components: `textattack list`
 
 There are lots of pieces in TextAttack, and it can be difficult to keep track of all of them. You can use `textattack list` to list components, for example, pretrained models (`textattack list models`) or available search methods (`textattack list search-methods`).
 
@@ -474,7 +475,7 @@ You can then run attacks on samples from this dataset by adding the argument `--
 
 
 
-### Attacks
+### Attacks and how to design a new attack 
 
 The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. 
 
