@@ -1,4 +1,4 @@
-Four Components of TextAttack Attack
+Four Components of TextAttack Attacks
 ========================================
 
 To unify adversarial attack methods into one system, We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations.  The attack attempts to perturb an input text such that the model output fulfills the goal function (i.e., indicating whether the attack is successful) and the perturbation adheres to the set of constraints (e.g., grammar constraint, semantic similarity constraint). A search method is used to find a sequence of transformations that produce a successful adversarial example.
@@ -200,3 +200,17 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 </font>
 </table>
 
+
+
+- Citations
+
+```
+@misc{morris2020textattack,
+    title={TextAttack: A Framework for Adversarial Attacks in Natural Language Processing},
+    author={John X. Morris and Eli Lifland and Jin Yong Yoo and Yanjun Qi},
+    year={2020},
+    eprint={2005.05909},
+    archivePrefix={arXiv},
+    primaryClass={cs.CL}
+}
+```
