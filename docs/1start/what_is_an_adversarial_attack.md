@@ -82,9 +82,10 @@ We define the adversarial attack processing using four components: a goal functi
 
 TextAttack also includes code for loading popular NLP datasets and training models on them. By integrating this training code with adversarial attacks and data augmentation techniques, TextAttack provides an environment for researchers to test adversarial training in many different scenarios.
 
-The following figure shows an overview of the main functionality of TextAttack:
++ The following figure shows an overview of the main functionality of TextAttack:
 <br>
 ![TextAttack flowchart](/_static/imgs/intro/textattack_components.png)
+
 
 
 ## The future of adversarial attacks in NLP

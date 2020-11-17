@@ -30,13 +30,13 @@ Benchmarking Search Algorithms for Generating NLP Adversarial Examples
 ### Our benchmarking results on comparing search methods used in the past attacks. 
 
 
-![Table1](/_static/imgs/benchmark/search-example.pdf)
+![search-example](/_static/imgs/benchmark/search-example.pdf)
 
-![Table1](/_static/imgs/benchmark/search-table2.png)
-![Table1](/_static/imgs/benchmark/search-table31.png)
-![Table1](/_static/imgs/benchmark/search-table32.png)
-![Table1](/_static/imgs/benchmark/search-fig1.png)
-![Table1](/_static/imgs/benchmark/search-fig2.png)
+![Table2](/_static/imgs/benchmark/search-table2.png)
+![Table31](/_static/imgs/benchmark/search-table31.png)
+![Table32](/_static/imgs/benchmark/search-table32.png)
+![Figure1](/_static/imgs/benchmark/search-fig1.png)
+![Figure2](/_static/imgs/benchmark/search-fig2.png)
 
 ![Table1](/_static/imgs/benchmark/search-table1.png)
 

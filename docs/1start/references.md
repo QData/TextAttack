@@ -63,10 +63,3 @@ How to Cite TextAttack
       primaryClass={cs.CL}
 }
 ```
-
-
-
-## A summary diagram of TextAttack Ecosystem
-
-![diagram](/_static/imgs/intro/textattack_ecosystem.png)
-
