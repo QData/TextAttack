@@ -1,5 +1,7 @@
 # TextAttack Model Zoo
 
+## More details at [https://textattack.readthedocs.io/en/latest/3recipes/models.html](https://textattack.readthedocs.io/en/latest/3recipes/models.html)
+
 TextAttack includes pre-trained models for different common NLP tasks. This makes it easier for
 users to get started with TextAttack. It also enables a more fair comparison of attacks from
 the literature.

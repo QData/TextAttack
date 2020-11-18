@@ -24,7 +24,7 @@
 
 TextAttack is a Python framework for adversarial attacks, data augmentation, and model training in NLP.
 
-> If you're looking for information about TextAttack's menagerie of pre-trained models, you might want the [TextAttack Model Zoo](textattack/models/README.md) readme.
+> If you're looking for information about TextAttack's menagerie of pre-trained models, you might want the [TextAttack Model Zoo](https://textattack.readthedocs.io/en/latest/3recipes/models.html) page.
 
 ## Slack Channel
 
@@ -111,7 +111,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <tr class="header">
 <th style="text-align: left;"><strong>Attack Recipe Name</strong></th>
 <th style="text-align: left;"><strong>Goal Function</strong></th>
-<th style="text-align: left; width:130px" ><strong>Constraints-Enforced</strong></th>
+<th style="text-align: left; width:130px" ><strong>ConstraintsEnforced</strong></th>
 <th style="text-align: left;"><strong>Transformation</strong></th>
 <th style="text-align: left;"><strong>Search Method</strong></th>
 <th style="text-align: left;"><strong>Main Idea</strong></th>
@@ -394,7 +394,7 @@ textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 -
 To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
 
 
-### To list components: `textattack list`
+### To list functional components: `textattack list`
 
 There are lots of pieces in TextAttack, and it can be difficult to keep track of all of them. You can use `textattack list` to list components, for example, pretrained models (`textattack list models`) or available search methods (`textattack list search-methods`).
 
