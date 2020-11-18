@@ -10,6 +10,7 @@ the literature.
 
 
 ## Available Models
+
 ### TextAttack Models
 TextAttack has two build-in model types, a 1-layer bidirectional LSTM with a hidden
 state size of 150 (`lstm`), and a WordCNN with 3 window sizes
@@ -387,4 +388,31 @@ All evaluations shown are on the full validation or test set up to 1000 examples
         - Accuracy: 57.75%
 
 </section>
+
+
+## How we have trained the TextAttack Models
+
+
+- By Oct 2020, TextAttack provides users with 82 pre-trained TextAttack models, including word-level LSTM, word-level CNN, BERT, and other transformer based models pre-trained on various datasets provided by [HuggingFace](https://github.com/huggingface/nlp/). 
+
+- Since TextAttack is integrated with the  [https://github.com/huggingface/nlp/](https://github.com/huggingface/nlp) library, it can automatically load the test or validation data set for the corresponding pre-trained model. While the literature has mainly focused on classification and entailment, TextAttack's pretrained models enable research on the robustness of models across all GLUE tasks.
+
+- We host all TextAttack Models at huggingface Model Hub: [https://huggingface.co/textattack](https://huggingface.co/textattack)
+
+
+### Training details for each TextAttack Model 
+
+
+All of our models have model cards on the HuggingFace model hub. So for now, the easiest way to figure this out is as follows:
+
+
+- Please Go to our page on the model hub: [https://huggingface.co/textattack](https://huggingface.co/textattack)
+
+- Find the model you're looking for and select its page, for instance: [https://huggingface.co/textattack/roberta-base-imdb](https://huggingface.co/textattack/roberta-base-imdb)
+
+- Scroll down to the end of the page, looking for **model card** section. Here it is the details of the model training for that specific TextAttack model. 
+
+- BTW: For each of our transformers, we selected the best out of a grid search over a bunch of possible hyperparameters. So the model training hyperparemeter actually varies from model to model.
+
+
 

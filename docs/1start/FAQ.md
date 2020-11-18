@@ -30,7 +30,7 @@ For help and realtime updates related to TextAttack, please [join the TextAttack
 
 ### 1. Training Examples
 
-*Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
+For example, you can *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
 ```bash
 textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
 ```

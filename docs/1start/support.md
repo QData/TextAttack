@@ -225,7 +225,7 @@ You can run TextAttack tests with `pytest`. Just type `make test`.
 
 #### This guide was heavily inspired by the awesome [transformers guide to contributing](https://github.com/huggingface/transformers/blob/master/CONTRIBUTING.md)
 
-
++ More details on how we design our APIs at [API-Design-Tips](https://textattack.readthedocs.io/en/latest/1start/api-design-tips.html)
 + Here is a summary diagram of TextAttack Ecosystem
 
 ![diagram](/_static/imgs/intro/textattack_ecosystem.png)
