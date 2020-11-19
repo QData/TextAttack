@@ -109,8 +109,6 @@ class WordMergeMaskedLM(Transformation):
         return self._bae_replacement_words(current_text, index, indices_to_modify)
 
     def _get_transformations(self, current_text, indices_to_modify):
-        # extra_args = {}
-
         transformed_texts = []
 
         # find indices that are suitable to merge

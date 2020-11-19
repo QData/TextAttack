@@ -36,7 +36,7 @@ class WordInsertionRandomSynonym(WordInsertion):
                     return [current_text]
             random_synonym = random.choice(synonyms)
             transformed_texts.append(
-                current_text.insert_text_after_word_index(idx, random_synonym)
+                current_text.insert_text_before_word_index(idx, random_synonym)
             )
         return transformed_texts
 
