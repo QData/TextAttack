@@ -18,34 +18,6 @@ flair.device = textattack.shared.utils.device
 stanza = textattack.shared.utils.LazyLoader("stanza", globals(), "stanza")
 
 
-def load_flair_upos_fast():
-    """Loads flair 'upos-fast' SequenceTagger.
-
-    This is a temporary workaround for flair v0.6. Will be fixed when
-    flair pushes the bug fix.
-    """
-    import pathlib
-    import warnings
-
-    from flair import file_utils
-    import torch
-
-    hu_path: str = "https://nlp.informatik.hu-berlin.de/resources/models"
-    upos_path = "/".join([hu_path, "upos-fast", "en-upos-ontonotes-fast-v0.4.pt"])
-    model_path = file_utils.cached_path(upos_path, cache_dir=pathlib.Path("models"))
-    model_file = SequenceTagger._fetch_model(model_path)
-    with warnings.catch_warnings():
-        warnings.filterwarnings("ignore")
-        # load_big_file is a workaround by https://github.com/highway11git to load models on some Mac/Windows setups
-        # see https://github.com/zalandoresearch/flair/issues/351
-        f = file_utils.load_big_file(str(model_file))
-        state = torch.load(f, map_location="cpu")
-    model = SequenceTagger._init_model_with_state_dict(state)
-    model.eval()
-    model.to(textattack.shared.utils.device)
-    return model
-
-
 class PartOfSpeech(Constraint):
     """Constraints word swaps to only swap words with the same part of speech.
     Uses the NLTK universal part-of-speech tagger by default. An implementation
@@ -57,7 +29,7 @@ class PartOfSpeech(Constraint):
 
     Args:
         tagger_type (str): Name of the tagger to use (available choices: "nltk", "flair", "stanza").
-        tagset (str): tagset to use for POS tagging
+        tagset (str): tagset to use for POS tagging (e.g. "universal")
         allow_verb_noun_swap (bool): If `True`, allow verbs to be swapped with nouns and vice versa.
         compare_against_original (bool): If `True`, compare against the original text.
             Otherwise, compare against the most recent text.
@@ -78,7 +50,7 @@ class PartOfSpeech(Constraint):
         self._pos_tag_cache = lru.LRU(2 ** 14)
         if tagger_type == "flair":
             if tagset == "universal":
-                self._flair_pos_tagger = load_flair_upos_fast()
+                self._flair_pos_tagger = SequenceTagger.load("upos-fast")
             else:
                 self._flair_pos_tagger = SequenceTagger.load("pos-fast")
 
