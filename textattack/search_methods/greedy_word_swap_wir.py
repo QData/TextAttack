@@ -136,6 +136,7 @@ class GreedyWordSwapWIR(SearchMethod):
             if results[0].score > cur_result.score:
                 cur_result = results[0]
             else:
+                cur_result.num_queries = results[0].num_queries
                 continue
             # If we succeeded, return the index with best similarity.
             if cur_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
