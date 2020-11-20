@@ -5,9 +5,9 @@
 <p align="center">
   <a href="https://textattack.readthedocs.io/">[TextAttack 的 ReadTheDocs 文档]</a> 
   <br> <br>
-  <a href="#关于">简介</a> •
+  <a href="#简介">简介</a> •
   <a href="#环境配置">环境配置</a> •
-  <a href="#使用方法">使用方法</a> •
+  <a href="#使用方法textattack---help">使用方法</a> •
   <a href="#设计模式">设计模式</a> 
   <br> <br>
   <a target="_blank">
@@ -20,7 +20,7 @@
 
 <img src="http://jackxmorris.com/files/textattack.gif" alt="TextAttack Demo GIF" style="display: block; margin: 0 auto;" />
 
-## 关于
+## 简介
 
 TextAttack 是一个 NLP 应用的 Python 框架。帮助你方便快捷的进行对抗攻击，增强数据，以及训练模型。
 
