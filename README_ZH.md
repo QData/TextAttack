@@ -106,12 +106,12 @@ textattack attack --model lstm-mr --num-examples 20 \
 <table>
 <thead>
 <tr class="header">
-<th><div><strong>攻击策略</strong></div></th>
-<th><div><strong>目标函数</strong></div></th>
-<th><div><strong>约束条件</strong></div></th>
-<th><div><strong>变换方式</strong></div></th>
-<th><div><strong>搜索方法</strong></div></th>
-<th><div><strong>主要思想</strong></div></th>
+<th><strong>—————— 攻击策略 ——————</strong></th>
+<th><strong>—————— 目标函数 ——————</strong></th>
+<th><strong>—————— 约束条件 ——————</strong></th>
+<th><strong>—————— 变换方式 ——————</strong></th>
+<th><strong>——————— 搜索方法 ———————</strong></th>
+<th><strong>主要思想</strong></th>
 </tr>
 </thead>
 <tbody>
