@@ -103,7 +103,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 运行攻击策略：`textattack attack --recipe [recipe_name]`
 
 
-<table  style="width:100%" border="1">
+<table  style="width:1200px" border="1">
 <thead>
 <tr class="header">
 <th style="text-align: left;"><strong>攻击策略</strong></th>
