@@ -106,12 +106,12 @@ textattack attack --model lstm-mr --num-examples 20 \
 <table>
 <thead>
 <tr class="header">
-<th><strong>攻击策略</strong></th>
-<th><strong>目标函数</strong></th>
-<th><strong>约束条件</strong></th>
-<th><strong>变换方式</strong></th>
-<th><strong>搜索方法</strong></th>
-<th><strong>主要思想</strong></th>
+<th><div><strong>攻击策略</strong></div></th>
+<th><div><strong>目标函数</strong></div></th>
+<th><div><strong>约束条件</strong></div></th>
+<th><div><strong>变换方式</strong></div></th>
+<th><div><strong>搜索方法</strong></div></th>
+<th><div><strong>主要思想</strong></div></th>
 </tr>
 </thead>
 <tbody>
@@ -265,7 +265,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>Counter-fitted 词嵌入替换</sub> </td>
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>贪心攻击方法，以改变全部的翻译结果为目标。目前实现的是黑盒攻击，计划改为与论文中一样的白盒攻击(["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)) </sub>  </td>
-</tr>s
+</tr>
 
 </tbody>
 </font>
