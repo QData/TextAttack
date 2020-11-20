@@ -103,7 +103,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 运行攻击策略：`textattack attack --recipe [recipe_name]`
 
 
-<table  style="width:1200px" border="1">
+<table  style="width:100%" border="1" min-width="120px">
 <thead>
 <tr class="header">
 <th style="text-align: left;"><strong>攻击策略</strong></th>
@@ -260,7 +260,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code>seq2sick</code> :(black-box) <span class="citation" data-cites="cheng2018seq2sick"></span></td>
-<td style="text-align: left;"><sub>原样本与其对抗样本的翻译结果没有相同的词</sub> </td>
+<td style="text-align: left;"><sub>翻译结果无重叠</sub> </td>
 <td style="text-align: left;"></td>
 <td style="text-align: left;"><sub>Counter-fitted 词嵌入替换</sub> </td>
 <td style="text-align: left;"><sub>对 WIR 的贪心搜索</sub></td>
