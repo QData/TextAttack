@@ -401,12 +401,8 @@ There are lots of pieces in TextAttack, and it can be difficult to keep track of
 
 ## Design
 
-### AttackedText
 
-To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
-which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
-
-### Models and Datasets
+### Models 
 
 TextAttack is model-agnostic!  You can use `TextAttack` to analyze any model that outputs IDs, tensors, or strings. To help users, TextAttack includes pre-trained models for different common NLP tasks. This makes it easier for
 users to get started with TextAttack. It also enables a more fair comparison of attacks from
@@ -462,6 +458,11 @@ tokenizer = load_your_tokenizer_with_custom_code() # replace this line with your
 
 Then, run an attack with the argument `--model-from-file my_model.py`. The model and tokenizer will be loaded automatically.
 
+
+
+### Datasets
+
+
 #### Dataset from a file
 
 Loading a dataset from a file is very similar to loading a model from a file. A 'dataset' is any iterable of `(input, output)` pairs.
@@ -472,6 +473,16 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 ```
 
 You can then run attacks on samples from this dataset by adding the argument `--dataset-from-file my_dataset.py`.
+
+
+### Dataset via AttackedText class
+
+To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
+which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
+
+
+
+### Dataset via Data Frames (*coming soon*)
 
 
 
@@ -506,6 +517,14 @@ A `Transformation` takes as input an `AttackedText` and returns a list of possib
 
 A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input an `AttackedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
+
+### Benchmarking Attacks
+
+- See our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+
+- As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
+
+- This comment is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could from an improved search or transformation method or a less restrictive search space. 
 
 ## Contributing to TextAttack
 
