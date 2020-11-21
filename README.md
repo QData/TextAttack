@@ -475,14 +475,14 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 You can then run attacks on samples from this dataset by adding the argument `--dataset-from-file my_dataset.py`.
 
 
-### Dataset via AttackedText class
+#### Dataset via AttackedText class
 
 To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
 which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
 
 
 
-### Dataset via Data Frames (*coming soon*)
+#### Dataset via Data Frames (*coming soon*)
 
 
 
@@ -501,19 +501,19 @@ TextAttack is model-agnostic - meaning it can run attacks on models implemented 
 
 
 
-### Goal Functions
+#### Goal Functions
 
 A `GoalFunction` takes as input an `AttackedText` object, scores it, and determines whether the attack has succeeded, returning a `GoalFunctionResult`.
 
-### Constraints
+#### Constraints
 
 A `Constraint` takes as input a current `AttackedText`, and a list of transformed `AttackedText`s. For each transformed option, it returns a boolean representing whether the constraint is met.
 
-### Transformations
+#### Transformations
 
 A `Transformation` takes as input an `AttackedText` and returns a list of possible transformed `AttackedText`s. For example, a transformation might return all possible synonym replacements.
 
-### Search Methods
+#### Search Methods
 
 A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input an `AttackedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
