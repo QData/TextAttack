@@ -33,12 +33,22 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 
 
+### On Benchmarking Attack Recipes
+
+- Please read our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+
+- As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
+
+- This is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could from an improved search or a better transformation method or a less restrictive search space. 
+
+
 
 ### Four components in Attack Recipes we have implemented 
 
 
+- TextAttack provides clean, readable implementations of 16 adversarial attacks from the literature.
 
-To run an attack recipe: `textattack attack --recipe [recipe_name]`
+- To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 
 

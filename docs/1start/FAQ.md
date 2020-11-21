@@ -107,7 +107,7 @@ which maintains both a list of tokens and the original text, with punctuation. W
 - This comment is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could from an improved search or transformation method or a less restrictive search space. 
 
 
-### 5. Create Custome Attacks
+### 5. Create Custom or New Attacks
 
 The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. 
 
