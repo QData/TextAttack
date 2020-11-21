@@ -17,7 +17,6 @@ One of the challenges for building such tools is that the tool should be flexibl
 
 We provide the following broad advice to help other future developers create user-friendly NLP libraries in Python:
 - To become model-agnostic, implement a model wrapper class: a model is anything that takes string input(s) and returns a prediction.
-- To become model-agnostic, implement a model wrapper class.
 - To become data-agnostic, take dataset inputs as (input, output) pairs, where each model input is represented as an OrderedDict.
 - Do not plan for inputs (tensors, lists, etc.) to be a certain size or shape unless explicitly necessary.
 - Centralize common text operations, like parsing and string-level operations, in one class.
