@@ -49,7 +49,7 @@ textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 -
 
 
 
-### 2. Custom  Models  
+### 2. Use Custom  Models  
 
 TextAttack is model-agnostic!  You can use `TextAttack` to analyze any model that outputs IDs, tensors, or strings. To help users, TextAttack includes pre-trained models for different common NLP tasks. This makes it easier for
 users to get started with TextAttack. It also enables a more fair comparison of attacks from the literature. A list of available pretrained models and their validation accuracies is available at [HERE](https://textattack.readthedocs.io/en/latest/3recipes/models.html).
@@ -73,7 +73,10 @@ Then, run an attack with the argument `--model-from-file my_model.py`. The model
 TextAttack is model-agnostic - meaning it can run attacks on models implemented in any deep learning framework. Model objects must be able to take a string (or list of strings) and return an output that can be processed by the goal function. For example, machine translation models take a list of strings as input and produce a list of strings as output. Classification and entailment models return an array of scores. As long as the user's model meets this specification, the model is fit to use with TextAttack.
 
 
-### 3. Custome Dataset from a file
+### 3. Use Custom Datasets 
+
+
+#### From a file
 
 Loading a dataset from a file is very similar to loading a model from a file. A 'dataset' is any iterable of `(input, output)` pairs.
 The following example would load a sentiment classification dataset from file `my_dataset.py`:
@@ -86,18 +89,25 @@ You can then run attacks on samples from this dataset by adding the argument `--
 
 
 
-### 4. Dataset via AttackedText class
+#### Custom Dataset via AttackedText class
 
 To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
 which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
 
 
-### 5. Dataset via Data Frames and other python data objects (*coming soon*)
+#### Custome Dataset via Data Frames or other python data objects (*coming soon*)
 
 
+### 4. Benchmarking Attacks
+
+- See our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+
+- As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
+
+- This comment is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could from an improved search or transformation method or a less restrictive search space. 
 
 
-### 6. Create Custome Attacks
+### 5. Create Custome Attacks
 
 The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. 
 
