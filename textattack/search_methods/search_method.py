@@ -37,8 +37,10 @@ class SearchMethod(ABC):
             raise AttributeError(
                 "Search Method must have access to get_model method if it is a white-box method"
             )
-
-        return self._perform_search(initial_result)
+        result = self._perform_search(initial_result)
+        # ensure that the number of queries for this GoalFunctionResult is up-to-date
+        result.num_queries = self.goal_function.num_queries
+        return result
 
     @abstractmethod
     def _perform_search(self, initial_result):
