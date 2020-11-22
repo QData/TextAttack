@@ -101,9 +101,6 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             new_results, self._search_over = self.get_goal_results(transformed_texts)
 
-            if self._search_over:
-                break
-
             diff_scores = (
                 torch.Tensor([r.score for r in new_results]) - pop_member.result.score
             )
@@ -119,6 +116,10 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
             word_select_prob_weights[idx] = 0
             iterations += 1
+
+            if self._search_over:
+                break
+
         return pop_member
 
     @abstractmethod

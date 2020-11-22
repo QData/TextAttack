@@ -56,16 +56,16 @@ hugh grant , who has a good line in charm , has never been more [91mloveable[0
 
 
 
-+-------------------------------+--------+
-| Attack Results                |        |
-+-------------------------------+--------+
-| Number of successful attacks: | 2      |
-| Number of failed attacks:     | 1      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 33.33% |
-| Attack success rate:          | 66.67% |
-| Average perturbed word %:     | 17.34% |
-| Average num. words per input: | 15.0   |
-| Avg num queries:              | 551.67 |
-+-------------------------------+--------+
++-------------------------------+---------+
+| Attack Results                |         |
++-------------------------------+---------+
+| Number of successful attacks: | 2       |
+| Number of failed attacks:     | 1       |
+| Number of skipped attacks:    | 0       |
+| Original accuracy:            | 100.0%  |
+| Accuracy under attack:        | 33.33%  |
+| Attack success rate:          | 66.67%  |
+| Average perturbed word %:     | 17.34%  |
+| Average num. words per input: | 15.0    |
+| Avg num queries:              | 1132.67 |
++-------------------------------+---------+
