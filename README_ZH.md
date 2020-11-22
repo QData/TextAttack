@@ -22,9 +22,9 @@
 
 ## 简介
 
-TextAttack 是一个 NLP 应用的 Python 框架。帮助你方便快捷的进行对抗攻击，增强数据，以及训练模型。
+TextAttack 是一个可以实行自然语言处理的 Python 框架，用于方便快捷地进行对抗攻击，增强数据，以及训练模型。
 
-> 如果你在寻找 TextAttacks 支持的预训练模型，也许 [TextAttack Model Zoo](https://textattack.readthedocs.io/en/latest/3recipes/models.html) 页面是你的菜。
+> 如果你在寻找 TextAttacks 支持的预训练模型，请访问 [TextAttack Model Zoo](https://textattack.readthedocs.io/en/latest/3recipes/models.html)。
 
 ## Slack 频道
 
@@ -32,16 +32,16 @@ TextAttack 是一个 NLP 应用的 Python 框架。帮助你方便快捷的进�
 
 ### *选择 TextAttack 的原因*
 
-1. **深入理解 NLP 模型** 通过使用各种对抗攻击，观察模型的表现
-2. **研究与开发 NLP 对抗攻击** 在你的项目中使用 TextAttack 的框架与组件库
-3. **进行数据增强** 提升模型的泛化性与鲁棒性
-3. **训练 NLP 模型** 只需一行命令，轻松训练模型 (包括下载所有的依赖资源！)
+1. **深入理解 NLP 模型**： 通过使用各种对抗攻击，观察模型的表现
+2. **研究与开发 NLP 对抗攻击**： 在你的项目中使用 TextAttack 的框架与组件库
+3. **进行数据增强**： 提升模型的泛化性与鲁棒性
+3. **训练 NLP 模型**： 只需一行命令，轻松训练模型 (包括下载所有的依赖资源！)
 
 ## 环境配置
 
 ### 安装
 
-支持 Python 3.6 及以上。支持 CPU ，使用兼容 CUDA 的 GPU ，还可以让你的代码起飞。使用 pip 轻松安装 TextAttack:
+支持 Python 3.6 及以上。支持 CPU ，使用兼容 CUDA 的 GPU ，还可以大幅度提高代码运行速度。使用 pip 轻松安装 TextAttack:
 
 ```bash
 pip install textattack
@@ -85,7 +85,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
 ```
 
-*对 MR 数据集上训练的 LSTM 模型，设置束搜索宽度为 4，使用词嵌入转换进行无目标攻击*:
+*对 MR 数据集上训练的 LSTM 模型：设置束搜索宽度为 4，使用词嵌入转换进行无目标攻击*:
 
 ```bash
 textattack attack --model lstm-mr --num-examples 20 \
@@ -106,12 +106,12 @@ textattack attack --model lstm-mr --num-examples 20 \
 <table>
 <thead>
 <tr class="header">
-<th><strong>—————— 攻击策略 ——————</strong></th>
-<th><strong>—————— 目标函数 ——————</strong></th>
-<th><strong>—————— 约束条件 ——————</strong></th>
-<th><strong>—————— 变换方式 ——————</strong></th>
-<th><strong>——————— 搜索方法 ———————</strong></th>
-<th><strong>主要思想</strong></th>
+<th><strong> 攻击策略 </strong></th>
+<th><strong> 目标函数 </strong></th>
+<th><strong> 约束条件 </strong></th>
+<th><strong> 变换方式 </strong></th>
+<th><strong> 搜索方法 </strong></th>
+<th><strong> 主要思想 </strong></th>
 </tr>
 </thead>
 <tbody>
@@ -357,7 +357,7 @@ it's a enigma how the filmmaking wo be publicized in this condition .,0
 
 ### 训练模型：`textattack train`
 
-通过 `textattack train` 可以便捷的使用 TextAttack 框架来训练 LSTM，CNN，以及 `transofrmers` 模型。数据集通过 `datasets` 包会自动加载。
+通过 `textattack train` 可以便捷地使用 TextAttack 框架来训练 LSTM，CNN，以及 `transofrmers` 模型。数据集会通过 `datasets` 包自动加载。
 
 #### 运行训练的例子
 *在 Yelp 分类数据集上对 TextAttack 中默认的 LSTM 模型训练 50 个 epoch：*
@@ -369,7 +369,7 @@ textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 5
 ```bash
 textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
 ```
-上面这个例子中，在训练之前使用 `EasyDataAugmenter` 策略对 `rotten_tomatoes` 数据集进行数据增强。
+上面这个例子在训练之前使用 `EasyDataAugmenter` 策略对 `rotten_tomatoes` 数据集进行数据增强。
 
 *在 `CoLA` 数据集上对 `bert-base` 模型精调 5 个 epoch：*
 ```bash
@@ -395,23 +395,23 @@ TextAttack 中有很多组件，有时很难跟进所有组件的情况。你可
 
 ### 模型和数据集
 
-TextAttack 不依赖具体模型！你可以使用 TextAttack 来分析任何模型，只要模型的输出是 ID，张量，或者字符串。为了方便使用，TextAttack 内置了常见 NLP 任务的各种预训练模型。你可以轻松愉悦的上手 TextAttack。同时还可以更公平的比较不同文献的 attack 策略。
+TextAttack 不依赖具体模型！你可以使用 TextAttack 来分析任何模型，只要模型的输出是 ID，张量，或者字符串。为了方便使用，TextAttack 内置了常见 NLP 任务的各种预训练模型。你可以轻松愉悦地上手 TextAttack。同时还可以更公平的比较不同文献的 attack 策略。
 
 
 
 #### 内置的模型
 
-TextAttack 提供了各种内置模型和数据集。使用 TextAttack 命令行接口，可以自动的匹配模型和数据集。
+TextAttack 提供了各种内置模型和数据集。使用 TextAttack 命令行接口，可以自动匹配模型和数据集。
 我们为 [GLUE](https://gluebenchmark.com/) 中的九个任务内置了多种预训练模型，并且还内置了很多常见的分类任务、翻译任务和摘要任务的数据集。
 
-[textattack/models/README.md](textattack/models/README.md) 是一个列表，其中有可用的预训练模型以及这些模型的准确率。你还可以通过 `textattack attack --help` 查看完整列表，包括所有的内置模型与数据集。
+[textattack/models/README.md](textattack/models/README.md) 这个列表包含可用的预训练模型以及这些模型的准确率。你还可以通过 `textattack attack --help` 查看完整列表，包括所有的内置模型与数据集。
 
 下面是一个使用内置模型的例子（SST-2 数据集会自动的加载）：
 ```bash
 textattack attack --model roberta-base-sst2 --recipe textfooler --num-examples 10
 ```
 
-#### 支持 HuggingFace：`transformers` 模型和 `datasets` 数据集
+#### HuggingFace 支持 ：`transformers` 模型和 `datasets` 数据集
 
 TextAttack 兼容 [`transformers` 预训练模型](https://huggingface.co/models) 
 和 [`datasets` 数据集](https://github.com/huggingface/datasets)! 下面是一个例子，加载数据集并攻击相应预训练模型：
@@ -426,7 +426,7 @@ textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst
 
 #### 加载本地文件中的模型与数据集
 
-你可以快捷的对本地模型或数据样本进行攻击。通过创建一个简单的文件就可以加载预训练模型，在文件中通过对象 `model` 与 `tokenizer` 对象加载模型。`tokenizer` 对象必须实现了 `encoder()` 方法，该方法将输入字符串转为一个列表或一个 ID 张量。`model` 对象必须通过实现 `__call__` 方法来加载模型。
+你可以快捷地对本地模型或数据样本进行攻击：创建一个简单的文件就可以加载预训练模型，然后在文件中可以通过对象 `model` 与 `tokenizer` 对象加载模型。`tokenizer` 对象必须实现 `encode()` 方法，该方法将输入字符串转为一个列表或一个 ID 张量。`model` 对象必须通过实现 `__call__` 方法来加载模型。
 
 ##### 使用本地模型
 对于你已经训练完成的模型，可以通过创建下面这样的文件，将其命名为 `my_model.py`:
@@ -440,7 +440,7 @@ tokenizer = load_your_tokenizer_with_custom_code() # replace this line with your
 
 #### 使用本地数据集
 
-加载本地数据集与加载本地预训练模型的方法相似。`dataset` 对象可以是任意可迭代的`(input, output)` 对。下面这个例子为 `my_dataset.py` 的内容，在 `my_dataset.py` 脚本中加载一个情感分类数据集：
+加载本地数据集与加载本地预训练模型的方法相似。`dataset` 对象可以是任意可迭代的`(input, output)` 对。下面这个例子演示了如何在 `my_dataset.py` 脚本中加载一个情感分类数据集：
 
 ```python
 dataset = [('Today was....', 1), ('This movie is...', 0), ...]
@@ -455,10 +455,10 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 `Attack` 中的 `attack_one` 方法以 `AttackedText` 对象作为输入，若攻击成功，返回 `SuccessfulAttackResult`，若攻击失败，返回 `FailedAttackResult`。
 
 
-我们将攻击策略形式化，由四部分组成：**目标函数** 定义怎样的攻击是一次成功的攻击，**约束条件** 定义怎样的扰动是可行的，**变换规则** 对输入文本生成一系列可行的扰动结果，**搜索方法** 在搜索空间中遍历所有可行的扰动结果。在一次攻击中，尝试对输入的文本添加扰动，使其通过目标函数（即判断攻击是否成功），并且扰动要符合约束（如语法约束，语义相似性约束）。最后用搜索方法在所有可行的变换结果中，挑选出优质的对抗样本。
+我们将攻击划分并定义为四个组成部分：**目标函数** 定义怎样的攻击是一次成功的攻击，**约束条件** 定义怎样的扰动是可行的，**变换规则** 对输入文本生成一系列可行的扰动结果，**搜索方法** 在搜索空间中遍历所有可行的扰动结果。每一次攻击都尝试对输入的文本添加扰动，使其通过目标函数（即判断攻击是否成功），并且扰动要符合约束（如语法约束，语义相似性约束）。最后用搜索方法在所有可行的变换结果中，挑选出优质的对抗样本。
 
 
-通过这种模块化的设计，可以将各种对抗攻击策略整合在一个系统里。这使得我们可以方便的将文献中的方法集成在一起，同时复用攻击策略之间相同的部分。我们已经实现了 16 种简明易读的攻击策略（见上表）。史上首次！各种攻击方法终于可以在标准的设置下作为基准方法，进行比较与分析。
+这种模块化的设计可以将各种对抗攻击策略整合在一个系统里。这使得我们可以方便地将文献中的方法集成在一起，同时复用攻击策略之间相同的部分。我们已经实现了 16 种简明易读的攻击策略（见上表）。史上首次！各种攻击方法终于可以在标准的设置下作为基准方法，进行比较与分析。
 
 
 TextAttack 是不依赖具体模型的，这意味着可以对任何深度学习框架训练的模型进行攻击。只要被攻击的模型可以读取字符串（或一组字符串），并根据目标函数返回一个结果。比如说，机器翻译模型读取一句话，返回一句对应的翻译结果。分类或蕴含任务的模型输入字符串，返回一组分数。只要你的模型满足这两点，就可以使用 TextAttack 进行攻击。
@@ -479,12 +479,12 @@ TextAttack 是不依赖具体模型的，这意味着可以对任何深度学习
 
 ### 搜索方法
 
-搜索方法 `SearchMethod` 以初始的 `GoalFunctionResult` 作为输入，返回最终的 `GoalFunctionResult`。`get_transformations` 方法，以一个 `AttackedText` 对象作为输入，返货所有符合约束条件的变换结果。搜索方法不断的调用 `get_transformations` 函数，直到攻击成功 (由 `get_goal_results` 决定) 或搜索结束。
+搜索方法 `SearchMethod` 以初始的 `GoalFunctionResult` 作为输入，返回最终的 `GoalFunctionResult`。`get_transformations` 方法，以一个 `AttackedText` 对象作为输入，返还所有符合约束条件的变换结果。搜索方法不断地调用 `get_transformations` 函数，直到攻击成功 (由 `get_goal_results` 决定) 或搜索结束。
 
 
 ## 帮助改进 TextAttack
 
-欢迎任何建议与改进！提交 Issues（议题）和 Pull requests（拉取请求），我们会竭尽所能的做出即时反馈。TextAttack 当前处于 "alpha" 版本，我们仍在完善它的设计与功能。
+我们欢迎任何建议与改进！请提交 Issues（议题）和 Pull requests（拉取请求），我们会竭尽所能的做出即时反馈。TextAttack 当前处于 "alpha" 版本，我们仍在完善它的设计与功能。
 
 关于提交建议与改进的详细指引，查看 [CONTRIBUTING.md](https://github.com/QData/TextAttack/blob/master/CONTRIBUTING.md) 。
 
