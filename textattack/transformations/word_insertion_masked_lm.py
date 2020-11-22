@@ -95,7 +95,7 @@ class WordInsertionMaskedLM(Transformation):
         for _id in ranked_indices:
             _id = _id.item()
             token = self._lm_tokenizer.convert_ids_to_tokens(_id)
-            if utils.is_one_word(token) and not check_if_subword(token):
+            if utils.is_one_word(token) and not utils.check_if_subword(self.masked_lm_name, token):
                 if mask_token_probs[_id] > self.min_confidence:
                     replacement_words.append(token)
 
@@ -130,7 +130,3 @@ class WordInsertionMaskedLM(Transformation):
 
     def extra_repr_keys(self):
         return ["masked_lm_name", "max_length", "max_candidates"]
-
-
-def check_if_subword(text):
-    return True if "##" in text else False

@@ -227,3 +227,14 @@ def zip_stanza_result(pred, tagset="universal"):
                 pos_list.append(word.xpos)
 
     return word_list, pos_list
+
+
+def check_if_subword(model_name, text):
+    if "distilbert" in model_name:
+        return True if "##" in text else False
+    elif "distilroberta" in model_name:
+        return True if "Ġ" in text else False
+    elif "XLNet" in model_name:
+        return True if "__" in text else False
+
+    return False

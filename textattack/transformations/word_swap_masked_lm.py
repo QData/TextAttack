@@ -111,7 +111,7 @@ class WordSwapMaskedLM(WordSwap):
         for _id in ranked_indices:
             _id = _id.item()
             token = self._lm_tokenizer.convert_ids_to_tokens(_id)
-            if utils.is_one_word(token) and not check_if_subword(token):
+            if utils.is_one_word(token) and not utils.check_if_subword(self.masked_lm_name, token):
                 if mask_token_probs[_id] > self.min_confidence:
                     replacement_words.append(token)
 
@@ -167,7 +167,7 @@ class WordSwapMaskedLM(WordSwap):
             replacement_words = []
             for id in top_preds:
                 token = self._lm_tokenizer.convert_ids_to_tokens(id)
-                if utils.is_one_word(token) and not check_if_subword(token):
+                if utils.is_one_word(token) and not utils.check_if_subword(self.masked_lm_name, token):
                     replacement_words.append(token)
             return replacement_words
         else:
@@ -257,7 +257,3 @@ def recover_word_case(word, reference_word):
     else:
         # if other, just do not alter the word's case
         return word
-
-
-def check_if_subword(text):
-    return True if "##" in text else False

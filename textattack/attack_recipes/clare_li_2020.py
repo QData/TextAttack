@@ -41,19 +41,19 @@ class CLARE2020(AttackRecipe):
             [
                 WordSwapMaskedLM(
                     method="bae",
-                    masked_language_model="distilbert-base-uncased",
+                    masked_language_model="distilroberta-base",
                     # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
                 WordInsertionMaskedLM(
-                    masked_language_model="distilbert-base-uncased",
+                    masked_language_model="distilroberta-base",
                     # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
                 WordMergeMaskedLM(
-                    masked_language_model="distilbert-base-uncased",
+                    masked_language_model="distilroberta-base",
                     # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
