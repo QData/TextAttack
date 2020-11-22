@@ -1,4 +1,3 @@
-
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
@@ -13,7 +12,7 @@ class WordMergeMaskedLM(Transformation):
         CLARE: Contextualized Perturbation for Textual Adversarial Attack" (Li et al, 2020) https://arxiv.org/abs/2009.07502
 
     Args:
-        masked_language_model (Union[str|transformers.AutoModelForMaskedLM]): Either the name of pretrained masked language model from `transformers` model hub 
+        masked_language_model (Union[str|transformers.AutoModelForMaskedLM]): Either the name of pretrained masked language model from `transformers` model hub
             or the actual model. Default is `bert-base-uncased`.
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
         max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are
@@ -63,7 +62,7 @@ class WordMergeMaskedLM(Transformation):
         )
         return {k: v.to(utils.device) for k, v in encoding.items()}
 
-    def _bae_replacement_words(self, current_text, index, indices_to_modify):
+    def _get_merged_words(self, current_text, indices_to_modify):
         """Get replacement words for the word we want to replace using BAE
         method.
 
@@ -71,37 +70,44 @@ class WordMergeMaskedLM(Transformation):
             current_text (AttackedText): Text we want to get replacements for.
             index (int): index of word we want to replace
         """
-        masked_attacked_text = current_text.replace_word_at_index(
-            index, self._lm_tokenizer.mask_token
-        )
-        if index + 1 in indices_to_modify:
-            masked_attacked_text = masked_attacked_text.delete_word_at_index(index + 1)
-        inputs = self._encode_text(masked_attacked_text.text)
-        ids = inputs["input_ids"].tolist()[0]
-
-        try:
-            # Need try-except b/c mask-token located past max_length might be truncated by tokenizer
-            masked_index = ids.index(self._lm_tokenizer.mask_token_id)
-        except ValueError:
-            return []
-
-        with torch.no_grad():
-            preds = self._language_model(**inputs)[0]
-
-        mask_token_logits = preds[0, masked_index]
-        mask_token_probs = torch.softmax(mask_token_logits, dim=0)
-        ranked_indices = torch.argsort(mask_token_probs)
-
+        masked_texts = []
+        for index in indicies_to_modify:
+            temp_text = current_text.replace_word_at_index(index, self._lm_tokenizer.mask_token)
+            masked_texts.append(temp_text.delete_word_at_index(index+1).text)
+        
+        i = 0
+        # 2-D list where for each index to modify we have a list of replacement words
         replacement_words = []
-        for _id in ranked_indices:
-            _id = _id.item()
-            token = self._lm_tokenizer.convert_ids_to_tokens(_id)
-            if utils.is_one_word(token) and not utils.check_if_subword(self.masked_lm_name, token):
-                if mask_token_probs[_id] > self.min_confidence:
-                    replacement_words.append(token)
+        while i < len(masked_texts):
+            inputs = self._encode_text(masked_texts[i : i + self.batch_size])
+            ids = inputs["input_ids"].tolist()
+            with torch.no_grad():
+                preds = self._language_model(**inputs)[0]
 
-            if len(replacement_words) >= self.max_candidates:
-                break
+            for j in range(len(ids)):
+                try:
+                    # Need try-except b/c mask-token located past max_length might be truncated by tokenizer
+                    masked_index = ids[j].index(self._lm_tokenizer.mask_token_id)
+                except ValueError:
+                    replacement_words.append([])
+
+                mask_token_logits = preds[j, masked_index]
+                mask_token_probs = torch.softmax(mask_token_logits, dim=0)
+                ranked_indices = torch.argsort(mask_token_probs)
+                top_words = []
+                for _id in ranked_indices:
+                    _id = _id.item()
+                    token = self._lm_tokenizer.convert_ids_to_tokens(_id)
+                    if utils.is_one_word(token) and not utils.check_if_subword(token, self._language_model.config.model_type, (masked_index==1)):
+                        if mask_token_probs[_id] > self.min_confidence:
+                            top_words.append(token)
+
+                    if len(top_words) >= self.max_candidates:
+                        break
+
+                replacement_words.append(top_words)
+
+            i += self.batch_size
 
         return replacement_words
 
@@ -112,42 +118,25 @@ class WordMergeMaskedLM(Transformation):
         transformed_texts = []
 
         # find indices that are suitable to merge
-        text = current_text.words
-        token_tags = [current_text.pos_of_word_index(i) for i in range(current_text.num_words)]
+        token_tags = [
+            current_text.pos_of_word_index(i) for i in range(current_text.num_words)
+        ]
         merge_indices = find_merge_index(token_tags)
-
-        for i in merge_indices:
-            word_at_index = current_text.words[i]
-            replacement_words = self._get_replacement_words(
-                current_text,
-                i,
-                indices_to_modify,
-            )
-
-            transformed_texts_idx = []
-            for r in replacement_words:
-                if r != word_at_index:
-                    if i + 1 in indices_to_modify:
-                        temp_text = current_text.delete_word_at_index(i + 1)
-                        transformed_texts_idx.append(
-                            temp_text.replace_word_at_index(i, r)
-                        )
-
-            transformed_texts.extend(transformed_texts_idx)
-
+        merge_words = self._get_merged_words(current_text, merge_indices)
+        transformed_texts = []
+        for i in range(len(new_words)):
+            index_to_modify = indices_to_modify[i]
+            word_at_index = current_text.words[index_to_modify]
+            for word in replacement_words[i]:
+                if word != word_at_index:
+                    temp_text = current_text.replace_word_at_index(index_to_modify, word)
+                    transformed_texts.append(temp_text.delete_word_at_index(index_to_modify+1))
         return transformed_texts
 
     def extra_repr_keys(self):
         return ["masked_lm_name", "max_length", "max_candidates", "min_confidence"]
 
 
-<<<<<<< HEAD
-=======
-def check_if_subword(text):
-    return True if "##" in text else False
-
-
->>>>>>> Add POS Order Constraint to Masked_Merge
 def find_merge_index(token_tags, indices=None):
     merge_indices = []
     if indices is None:

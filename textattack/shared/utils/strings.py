@@ -229,12 +229,24 @@ def zip_stanza_result(pred, tagset="universal"):
     return word_list, pos_list
 
 
-def check_if_subword(model_name, text):
-    if "distilbert" in model_name:
+def check_if_subword(token, model_type, starting=False):
+    """Return `True` if `word` is a subword token
+    Args:
+        token (str)
+        model_type (str): type of model (options: "bert", "roberta", "xlnet")
+        starting (bool): Should be set ``True`` if this token is the starting token of the overall text.
+            This matters because models like RoBERTa does not add "Ġ" to beginning token.
+    """
+    avail_models = ["bert", "gpt", "gpt2", "roberta", "bart", "electra", "longformer"]
+    if model_type not in avail_models
+        raise ValueError(f"Model type {model_type} is not available. Options are {avail_models}.") 
+    if model_type in ["bert", "electra"]
         return True if "##" in text else False
-    elif "distilroberta" in model_name:
-        return True if "Ġ" in text else False
-    elif "XLNet" in model_name:
-        return True if "__" in text else False
+    elif model_type in ["gpt", "gpt2", "roberta", "bart", "longformer"]:
+        if starting:
+            return False
+        else:
+            return False if token[0] == "Ġ" else True 
+    elif model_type == "xlnet":
 
-    return False
+    return 

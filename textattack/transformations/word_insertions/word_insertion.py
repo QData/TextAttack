@@ -1,7 +1,9 @@
 """
 Word Insertion
 ============================================
-Word Insertion transformations act by replacing some words in the input. Subclasses can implement the abstract ``WordInsertion`` class by overriding ``self._get_new_words``
+Word Insertion transformations act by inserting a new word at a specific word index.
+For example, if we insert "new" in position 3 in the text "I like the movie", we get "I like the new movie".
+Subclasses can implement the abstract ``WordInsertion`` class by overriding ``self._get_new_words``.
 """
 import random
 import string
@@ -10,13 +12,7 @@ from textattack.transformations import Transformation
 
 
 class WordInsertion(Transformation):
-    """An abstract class that takes a sentence and transforms it by inserting a
-    new word at a specific word index. For example, if we insert "new" in
-    position 3 in the text "I like the movie", we get "I like the new movie".
-
-    letters_to_insert (string): letters allowed for insertion into words
-    (used by some char-based transformations)
-    """
+    """An abstract class for word insertions."""
 
     def _get_new_words(self, current_text, index):
         """Returns a set of new words we can insert at position `index` of `current_text`

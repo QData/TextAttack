@@ -1,3 +1,5 @@
+import transformers
+
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
@@ -38,23 +40,26 @@ class CLARE2020(AttackRecipe):
         # as the masked language model for contextualized infilling."
         # Because BAE and CLARE both use similar replacement papers, we use BAE's replacement method here.
 
+        shared_masked_lm = transformers.AutoModelForCausalLM.from_pretrained(
+            "distilroberta-base"
+        )
         transformation = CompositeTransformation(
             [
                 WordSwapMaskedLM(
                     method="bae",
-                    masked_language_model="distilroberta-base",
+                    masked_language_model=shared_masked_lm,
                     # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
                 WordInsertionMaskedLM(
-                    masked_language_model="distilroberta-base",
+                    masked_language_model=shared_masked_lm,
                     # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
                 ),
                 WordMergeMaskedLM(
-                    masked_language_model="distilroberta-base",
+                    masked_language_model=shared_masked_lm,
                     # max_candidates=float("inf"),
                     max_candidates=5,
                     min_confidence=5e-4,
