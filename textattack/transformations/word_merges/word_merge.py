@@ -5,9 +5,6 @@ Word Merge transformations act by taking two adjacent words, and "merges" them i
 For example, if we can merge the words "the" and "movie" in the text "I like the movie" and get following text: "I like film".
 When we choose to "merge" word at index ``i``, we merge it with the next word at ``i+1``.
 """
-import random
-import string
-
 from textattack.transformations import Transformation
 
 
@@ -35,7 +32,7 @@ class WordMerge(Transformation):
                 their original position in the text.
         """
         if indices_to_modify is None:
-            indices_to_modify = set(range(len(current_text.words)-1))
+            indices_to_modify = set(range(len(current_text.words) - 1))
         else:
             indices_to_modify = set(indices_to_modify)
 
@@ -47,12 +44,14 @@ class WordMerge(Transformation):
         for constraint in pre_transformation_constraints:
             allowed_indices = constraint(current_text, self)
             for i in indices_to_modify:
-                if i not in allowed_indices and i+1 not in allowed_indices:
+                if i not in allowed_indices and i + 1 not in allowed_indices:
                     indices_to_modify.remove(i)
 
         transformed_texts = self._get_transformations(current_text, indices_to_modify)
         for text in transformed_texts:
             text.attack_attrs["last_transformation"] = self
+            if len(text.attack_attrs["newly_modified_indices"]) == 0:
+                print("xcv", text, len(text.attack_attrs["newly_modified_indices"]))
         return transformed_texts
 
     def _get_new_words(self, current_text, index):
@@ -82,6 +81,6 @@ class WordMerge(Transformation):
 
             for w in new_words:
                 temp_text = current_text.replace_word_at_index(i, w)
-                transformed_texts.append(temp_text.delete_word_at_index(i+1))
+                transformed_texts.append(temp_text.delete_word_at_index(i + 1))
 
         return transformed_texts

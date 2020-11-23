@@ -36,6 +36,9 @@ class WordSwapMaskedLM(WordSwap):
         method (str): the name of replacement method (e.g. "bae", "bert-attack")
         masked_language_model (Union[str|transformers.AutoModelForMaskedLM]): Either the name of pretrained masked language model from `transformers` model hub
             or the actual model. Default is `bert-base-uncased`.
+        tokenizer (obj): The tokenizer of the corresponding model. If you passed in name of a pretrained model for `masked_language_model`,
+            you can skip this argument as the correct tokenizer can be infered from the name. However, if you're passing the actual model, you must
+            provide a tokenizer.
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
         max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are ranked by model's confidence.
         min_confidence (float): minimum confidence threshold each replacement word must pass.
@@ -46,6 +49,7 @@ class WordSwapMaskedLM(WordSwap):
         self,
         method="bae",
         masked_language_model="bert-base-uncased",
+        tokenizer=None,
         max_length=512,
         max_candidates=50,
         min_confidence=5e-4,
@@ -59,15 +63,20 @@ class WordSwapMaskedLM(WordSwap):
         self.min_confidence = min_confidence
         self.batch_size = batch_size
 
-        self._lm_tokenizer = AutoTokenizer.from_pretrained(
-            masked_language_model, use_fast=True
-        )
-        if isinstance(masked_language_model):
+        if isinstance(masked_language_model, str):
             self._language_model = AutoModelForMaskedLM.from_pretrained(
                 masked_language_model
             )
+            self._lm_tokenizer = AutoTokenizer.from_pretrained(
+                masked_language_model, use_fast=True
+            )
         else:
             self._language_model = masked_language_model
+            if tokenizer is None:
+                raise ValueError(
+                    "`tokenizer` argument must be provided when passing an actual model as `masked_language_model`."
+                )
+            self._lm_tokenizer = tokenizer
         self._language_model.to(utils.device)
         self._language_model.eval()
         self.masked_lm_name = self._language_model.__class__.__name__
@@ -88,7 +97,7 @@ class WordSwapMaskedLM(WordSwap):
         )
         return {k: v.to(utils.device) for k, v in encoding.items()}
 
-    def _bae_replacement_words(self, current_text, indicies_to_modify):
+    def _bae_replacement_words(self, current_text, indices_to_modify):
         """Get replacement words for the word we want to replace using BAE
         method.
 
@@ -97,10 +106,12 @@ class WordSwapMaskedLM(WordSwap):
             index (int): index of word we want to replace
         """
         masked_texts = []
-        for index in indicies_to_modify:
+        for index in indices_to_modify:
             masked_texts.append(
-                current_text.replace_word_at_index(index, self._lm_tokenizer.mask_token)
-            ).text
+                current_text.replace_word_at_index(
+                    index, self._lm_tokenizer.mask_token
+                ).text
+            )
 
         i = 0
         # 2-D list where for each index to modify we have a list of replacement words
@@ -117,6 +128,7 @@ class WordSwapMaskedLM(WordSwap):
                     masked_index = ids[j].index(self._lm_tokenizer.mask_token_id)
                 except ValueError:
                     replacement_words.append([])
+                    continue
 
                 mask_token_logits = preds[j, masked_index]
                 mask_token_probs = torch.softmax(mask_token_logits, dim=0)
@@ -125,27 +137,18 @@ class WordSwapMaskedLM(WordSwap):
                 for _id in ranked_indices:
                     _id = _id.item()
                     token = self._lm_tokenizer.convert_ids_to_tokens(_id)
-                    if utils.is_one_word(token) and not utils.check_if_subword(token, self._language_model.config.model_type, (masked_index==1)):
+                    if utils.is_one_word(token) and not utils.check_if_subword(
+                        token,
+                        self._language_model.config.model_type,
+                        (masked_index == 1),
+                    ):
                         if mask_token_probs[_id] > self.min_confidence:
                             top_words.append(token)
 
-<<<<<<< HEAD
-        mask_token_logits = preds[0, masked_index]
-        mask_token_probs = torch.softmax(mask_token_logits, dim=0)
-        ranked_indices = torch.argsort(mask_token_probs)
-        replacement_words = []
-        for _id in ranked_indices:
-            _id = _id.item()
-            token = self._lm_tokenizer.convert_ids_to_tokens(_id)
-            if utils.is_one_word(token) and not utils.check_if_subword(self.masked_lm_name, token):
-                if mask_token_probs[_id] > self.min_confidence:
-                    replacement_words.append(token)
-=======
                     if len(top_words) >= self.max_candidates:
                         break
 
                 replacement_words.append(top_words)
->>>>>>> wip: fix word merge
 
             i += self.batch_size
 
@@ -198,11 +201,9 @@ class WordSwapMaskedLM(WordSwap):
             replacement_words = []
             for id in top_preds:
                 token = self._lm_tokenizer.convert_ids_to_tokens(id)
-<<<<<<< HEAD
-                if utils.is_one_word(token) and not utils.check_if_subword(self.masked_lm_name, token):
-=======
-                if utils.is_one_word(token) and not utils.check_if_subword(token, self._language_model.config.model_type, index==0):
->>>>>>> wip: fix word merge
+                if utils.is_one_word(token) and not utils.check_if_subword(
+                    token, self._language_model.config.model_type, index == 0
+                ):
                     replacement_words.append(token)
             return replacement_words
         else:
@@ -234,6 +235,7 @@ class WordSwapMaskedLM(WordSwap):
             return top_replacements
 
     def _get_transformations(self, current_text, indices_to_modify):
+        indices_to_modify = list(indices_to_modify)
         if self.method == "bert-attack":
             current_inputs = self._encode_text(current_text.text)
             with torch.no_grad():
@@ -270,7 +272,10 @@ class WordSwapMaskedLM(WordSwap):
                 index_to_modify = indices_to_modify[i]
                 word_at_index = current_text.words[index_to_modify]
                 for word in replacement_words[i]:
-                    if word != word_at_index:
+                    word = utils.strip_BPE_artifacts(
+                        word, self._language_model.config.model_type
+                    )
+                    if word != word_at_index and len(utils.words_from_text(word)) == 1:
                         transformed_texts.append(
                             current_text.replace_word_at_index(index_to_modify, word)
                         )

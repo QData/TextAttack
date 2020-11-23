@@ -1,3 +1,3 @@
 from .word_insertion import WordInsertion
-from .random_synonym_insertion import RandomSynonymInsertion
+from .word_insertion_random_synonym import WordInsertionRandomSynonym
 from .word_insertion_masked_lm import WordInsertionMaskedLM

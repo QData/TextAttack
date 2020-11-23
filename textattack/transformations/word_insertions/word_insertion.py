@@ -5,14 +5,11 @@ Word Insertion transformations act by inserting a new word at a specific word in
 For example, if we insert "new" in position 3 in the text "I like the movie", we get "I like the new movie".
 Subclasses can implement the abstract ``WordInsertion`` class by overriding ``self._get_new_words``.
 """
-import random
-import string
-
 from textattack.transformations import Transformation
 
 
 class WordInsertion(Transformation):
-    """An abstract class for word insertions."""
+    """A base class for word insertions."""
 
     def _get_new_words(self, current_text, index):
         """Returns a set of new words we can insert at position `index` of `current_text`
