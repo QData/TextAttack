@@ -13,4 +13,4 @@ from .word_merges import *
 
 from .composite_transformation import CompositeTransformation
 from .word_deletion import WordDeletion
-from .word_interchange_random import WordInterchangeRandom
+from .word_innerswap_random import WordInnerSwapRandom

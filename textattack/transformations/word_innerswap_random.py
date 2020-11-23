@@ -9,7 +9,7 @@ import random
 from textattack.transformations import Transformation
 
 
-class WordInterchangeRandom(Transformation):
+class WordInnerSwapRandom(Transformation):
     """Transformation that randomly swaps the order of words in a sequence."""
 
     def _get_transformations(self, current_text, indices_to_modify):
