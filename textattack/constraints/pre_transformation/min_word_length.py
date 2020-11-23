@@ -6,6 +6,8 @@ Min Word Lenth
 """
 
 from textattack.constraints import PreTransformationConstraint
+from textattack.shared import AttackedText
+from typing import Set
 
 
 class MinWordLength(PreTransformationConstraint):
@@ -15,10 +17,10 @@ class MinWordLength(PreTransformationConstraint):
     :param min_length: Minimum length needed for changes to be made to a word.
     """
 
-    def __init__(self, min_length):
+    def __init__(self, min_length: int):
         self.min_length = min_length
 
-    def _get_modifiable_indices(self, current_text):
+    def _get_modifiable_indices(self, current_text: AttackedText) -> Set[int]:
         idxs = []
         for i, word in enumerate(current_text.words):
             if len(word) >= self.min_length:

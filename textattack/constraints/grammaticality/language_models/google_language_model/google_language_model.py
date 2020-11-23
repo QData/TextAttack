@@ -24,7 +24,7 @@ class GoogleLanguageModel(Constraint):
             Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, top_n=None, top_n_per_index=None, compare_against_original=True):
+    def __init__(self, top_n=None : int, top_n_per_index=None : int, compare_against_original=True : bool):
         if not (top_n or top_n_per_index):
             raise ValueError(
                 "Cannot instantiate GoogleLanguageModel without top_n or top_n_per_index"

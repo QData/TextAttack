@@ -5,8 +5,9 @@ Word Swap by OpenHowNet
 
 
 import pickle
+from typing import List, Set
 
-from textattack.shared import utils
+from textattack.shared import AttackedText, utils
 from textattack.transformations.word_swap import WordSwap
 
 
@@ -16,7 +17,7 @@ class WordSwapHowNet(WordSwap):
 
     PATH = "transformations/hownet"
 
-    def __init__(self, max_candidates=-1, **kwargs):
+    def __init__(self, max_candidates: int = -1, **kwargs):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
 
@@ -31,7 +32,7 @@ class WordSwapHowNet(WordSwap):
 
         self.pos_dict = {"JJ": "adj", "NN": "noun", "RB": "adv", "VB": "verb"}
 
-    def _get_replacement_words(self, word, word_pos):
+    def _get_replacement_words(self, word: str, word_pos: str) -> List[str]:
         """Returns a list of possible 'candidate words' to replace a word in a
         sentence or phrase.
 
@@ -53,7 +54,9 @@ class WordSwapHowNet(WordSwap):
             # This word is not in our synonym bank, so return an empty list.
             return []
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         transformed_texts = []
         for i in indices_to_modify:
             word_to_replace = current_text.words[i]
@@ -71,11 +74,11 @@ class WordSwapHowNet(WordSwap):
 
         return transformed_texts
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["max_candidates"]
 
 
-def recover_word_case(word, reference_word):
+def recover_word_case(word: str, reference_word: str) -> str:
     """Makes the case of `word` like the case of `reference_word`.
 
     Supports lowercase, UPPERCASE, and Capitalized.

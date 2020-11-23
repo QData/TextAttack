@@ -8,6 +8,7 @@ Paper title: Counter-fitting Word Vectors to Linguistic Constraints
 
 """
 import os
+from typing import List
 
 import numpy as np
 
@@ -21,7 +22,9 @@ class WordSwapEmbedding(WordSwap):
 
     PATH = "word_embeddings"
 
-    def __init__(self, max_candidates=15, embedding_type="paragramcf", **kwargs):
+    def __init__(
+        self, max_candidates: int = 15, embedding_type: str = "paragramcf", **kwargs
+    ):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
         self.embedding_type = embedding_type
@@ -52,7 +55,7 @@ class WordSwapEmbedding(WordSwap):
         for word, index in self.word_embedding_word2index.items():
             self.word_embedding_index2word[index] = word
 
-    def _get_replacement_words(self, word):
+    def _get_replacement_words(self, word: str) -> List[str]:
         """Returns a list of possible 'candidate words' to replace a word in a
         sentence or phrase.
 
@@ -70,11 +73,11 @@ class WordSwapEmbedding(WordSwap):
             # This word is not in our word embedding database, so return an empty list.
             return []
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["max_candidates", "embedding_type"]
 
 
-def recover_word_case(word, reference_word):
+def recover_word_case(word: str, reference_word: str) -> str:
     """Makes the case of `word` like the case of `reference_word`.
 
     Supports lowercase, UPPERCASE, and Capitalized.

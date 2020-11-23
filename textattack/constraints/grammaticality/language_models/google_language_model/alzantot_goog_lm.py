@@ -14,6 +14,7 @@ import lru
 import numpy as np
 
 from textattack.shared import utils
+from typing import List
 
 from . import lm_data_utils, lm_utils
 
@@ -54,7 +55,9 @@ class GoogLMHelper:
     def clear_cache(self):
         self.lm_cache.clear()
 
-    def get_words_probs_uncached(self, prefix_words, list_words):
+    def get_words_probs_uncached(
+        self, prefix_words: str, list_words: List[str]
+    ) -> np.array:
         targets = np.zeros([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.int32)
         weights = np.ones([self.BATCH_SIZE, self.NUM_TIMESTEPS], np.float32)
 
@@ -85,7 +88,7 @@ class GoogLMHelper:
         word_probs = [softmax[0][w_id] for w_id in words_ids]
         return np.array(word_probs)
 
-    def get_words_probs(self, prefix, list_words):
+    def get_words_probs(self, prefix: str, list_words: List[str]) -> List[float]:
         """Retrieves the probability of words.
 
         Args:

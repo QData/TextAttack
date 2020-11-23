@@ -7,9 +7,11 @@ Word Swap by inflections
 
 
 import random
+from typing import List, Set
 
 import lemminflect
 
+from textattack.shared import AttackedText
 from textattack.transformations.word_swap import WordSwap
 
 
@@ -52,7 +54,7 @@ class WordSwapInflections(WordSwap):
             "RB": "ADJ",
         }
 
-    def _get_replacement_words(self, word, word_part_of_speech):
+    def _get_replacement_words(self, word: str, word_part_of_speech: str) -> List[str]:
         # only nouns, verbs, and adjectives are considered for replacement
         if word_part_of_speech not in self._enptb_to_universal:
             return []
@@ -84,7 +86,9 @@ class WordSwapInflections(WordSwap):
 
         return replacement_words
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         transformed_texts = []
         for i in indices_to_modify:
             word_to_replace = current_text.words[i]

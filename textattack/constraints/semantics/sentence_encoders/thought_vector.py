@@ -21,7 +21,7 @@ class ThoughtVector(SentenceEncoder):
         max_mse_dist: the maximum euclidean distance between thought vectors
     """
 
-    def __init__(self, embedding_type="paragramcf", **kwargs):
+    def __init__(self, embedding_type="paragramcf" : str, **kwargs):
         self.word_embedding = WordEmbedding(embedding_type)
         self.embedding_type = embedding_type
         super().__init__(**kwargs)
@@ -30,7 +30,7 @@ class ThoughtVector(SentenceEncoder):
         self._get_thought_vector.cache_clear()
 
     @functools.lru_cache(maxsize=2 ** 10)
-    def _get_thought_vector(self, text):
+    def _get_thought_vector(self, text : str) -> torch.Tensor:
         """Sums the embeddings of all the words in ``text`` into a "thought
         vector"."""
         embeddings = []
@@ -41,9 +41,9 @@ class ThoughtVector(SentenceEncoder):
         embeddings = torch.tensor(embeddings)
         return torch.mean(embeddings, dim=0)
 
-    def encode(self, raw_text_list):
+    def encode(self, raw_text_list : List[str]) -> torch.Tensor:
         return torch.stack([self._get_thought_vector(text) for text in raw_text_list])
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         """Set the extra representation of the constraint using these keys."""
         return ["embedding_type"] + super().extra_repr_keys()

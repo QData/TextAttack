@@ -3,15 +3,20 @@ Word Swap by Changing Number
 ============================================
 
 """
+from typing import List, Set, Union
+
 import more_itertools as mit
 from num2words import num2words
 import numpy as np
 from word2number import w2n
 
+from textattack.shared import AttackedText
 from textattack.transformations import Transformation
 
 
-def idx_to_words(ls, words):
+def idx_to_words(
+    ls: List[List[int]], words: List[str]
+) -> List[List[Union[List[int], str]]]:
     """Given a list generated from cluster_idx, return a list that contains
     sub-list (the first element being the idx, and the second element being the
     words corresponding to the idx)"""
@@ -26,7 +31,7 @@ def idx_to_words(ls, words):
 
 
 class WordSwapChangeNumber(Transformation):
-    def __init__(self, max_change=1, n=3, **kwargs):
+    def __init__(self, max_change: int = 1, n: int = 3, **kwargs):
         """A transformation that recognizes numbers in sentence, and returns
         sentences with altered numbers.
 
@@ -37,7 +42,9 @@ class WordSwapChangeNumber(Transformation):
         self.max_change = max_change
         self.n = n
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         words = current_text.words
         num_idx = []
         num_words = []
@@ -76,7 +83,7 @@ class WordSwapChangeNumber(Transformation):
                 transformed_texts.append(text)
         return transformed_texts
 
-    def _get_new_number(self, word):
+    def _get_new_number(self, word: str) -> List[str]:
         """Given a word, try altering the value if the word is a number return
         in digits if word is given in digit, return in alphabetical form if
         word is given in alphabetical form."""
@@ -92,7 +99,7 @@ class WordSwapChangeNumber(Transformation):
             except ValueError:
                 return []
 
-    def _alter_number(self, num):
+    def _alter_number(self, num: int) -> List[int]:
         """helper function of _get_new_number, replace a number with another
         random number within the range of self.max_change."""
         if num not in [0, 2, 4]:

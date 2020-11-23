@@ -5,7 +5,9 @@ Multiple transformations can be used by providing a list of ``Transformation`` t
 
 """
 
-from textattack.shared import utils
+from typing import List, Tuple, Union
+
+from textattack.shared import AttackedText, utils
 from textattack.transformations import Transformation
 
 
@@ -17,7 +19,9 @@ class CompositeTransformation(Transformation):
         transformations: The list of ``Transformation`` to apply.
     """
 
-    def __init__(self, transformations):
+    def __init__(
+        self, transformations: Union[List[Transformation], Tuple[Transformation]]
+    ):
         if not (
             isinstance(transformations, list) or isinstance(transformations, tuple)
         ):
@@ -33,7 +37,7 @@ class CompositeTransformation(Transformation):
             "CompositeTransformation does not support _get_transformations()."
         )
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs) -> List[AttackedText]:
         new_attacked_texts = set()
         for transformation in self.transformations:
             new_attacked_texts.update(transformation(*args, **kwargs))

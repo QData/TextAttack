@@ -7,6 +7,8 @@ Language Models Constraint
 from abc import ABC, abstractmethod
 
 from textattack.constraints import Constraint
+from textattack.shared import AttackedText
+from typing import List
 
 
 class LanguageModelConstraint(Constraint, ABC):
@@ -20,19 +22,19 @@ class LanguageModelConstraint(Constraint, ABC):
             Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, max_log_prob_diff=None, compare_against_original=True):
+    def __init__(self, max_log_prob_diff=None : float, compare_against_original=True : bool):
         if max_log_prob_diff is None:
             raise ValueError("Must set max_log_prob_diff")
         self.max_log_prob_diff = max_log_prob_diff
         super().__init__(compare_against_original)
 
     @abstractmethod
-    def get_log_probs_at_index(self, text_list, word_index):
+    def get_log_probs_at_index(self, text_list : List[str], word_index : int) -> List[float]:
         """Gets the log-probability of items in `text_list` at index
         `word_index` according to a language model."""
         raise NotImplementedError()
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
         try:
             indices = transformed_text.attack_attrs["newly_modified_indices"]
         except KeyError:
@@ -52,5 +54,5 @@ class LanguageModelConstraint(Constraint, ABC):
 
         return True
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["max_log_prob_diff"] + super().extra_repr_keys()

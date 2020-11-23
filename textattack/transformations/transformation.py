@@ -5,7 +5,10 @@ Transformation Abstract Class
 """
 
 from abc import ABC, abstractmethod
+from typing import List, Set
 
+from textattack.constraints import PreTransformationConstraint
+from textattack.shared import AttackedText
 from textattack.shared.utils import default_class_repr
 
 
@@ -15,11 +18,11 @@ class Transformation(ABC):
 
     def __call__(
         self,
-        current_text,
-        pre_transformation_constraints=[],
-        indices_to_modify=None,
-        shifted_idxs=True,
-    ):
+        current_text: AttackedText,
+        pre_transformation_constraints: List[PreTransformationConstraint] = [],
+        indices_to_modify: Set[int] = None,
+        shifted_idxs: bool = True,
+    ) -> List[AttackedText]:
         """Returns a list of all possible transformations for ``current_text``.
         Applies the ``pre_transformation_constraints`` then calls
         ``_get_transformations``.
@@ -51,7 +54,9 @@ class Transformation(ABC):
         return transformed_texts
 
     @abstractmethod
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         """Returns a list of all possible transformations for ``current_text``,
         only modifying ``indices_to_modify``. Must be overridden by specific
         transformations.
@@ -63,10 +68,10 @@ class Transformation(ABC):
         raise NotImplementedError()
 
     @property
-    def deterministic(self):
+    def deterministic(self) -> bool:
         return True
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return []
 
     __repr__ = __str__ = default_class_repr

@@ -15,6 +15,8 @@ import bert_score
 
 from textattack.constraints import Constraint
 from textattack.shared import utils
+from textattack.shared import AttackedText
+from typing import List
 
 
 class BERTScore(Constraint):
@@ -38,10 +40,10 @@ class BERTScore(Constraint):
 
     def __init__(
         self,
-        min_bert_score,
-        model="bert-base-uncased",
-        score_type="f1",
-        compare_against_original=True,
+        min_bert_score : float,
+        model="bert-base-uncased" : str,
+        score_type="f1" : str,
+        compare_against_original=True : bool,
     ):
         super().__init__(compare_against_original)
         if not isinstance(min_bert_score, float):
@@ -57,7 +59,7 @@ class BERTScore(Constraint):
             model_type=model, idf=False, device=utils.device
         )
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
         """Return `True` if BERT Score between `transformed_text` and
         `reference_text` is lower than minimum BERT Score."""
         cand = transformed_text.text
@@ -69,5 +71,5 @@ class BERTScore(Constraint):
         else:
             return False
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["min_bert_score", "model", "score_type"] + super().extra_repr_keys()

@@ -5,11 +5,12 @@ Word Swap by BERT-Masked LM.
 
 
 import itertools
+from typing import Dict, List, Set
 
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-from textattack.shared import utils
+from textattack.shared import AttackedText, utils
 from textattack.transformations.word_swap import WordSwap
 
 
@@ -33,10 +34,10 @@ class WordSwapMaskedLM(WordSwap):
 
     def __init__(
         self,
-        method="bae",
-        masked_language_model="bert-base-uncased",
-        max_length=256,
-        max_candidates=50,
+        method: str = "bae",
+        masked_language_model: str = "bert-base-uncased",
+        max_length: int = 256,
+        max_candidates: int = 50,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -54,7 +55,7 @@ class WordSwapMaskedLM(WordSwap):
         self._language_model.to(utils.device)
         self._language_model.eval()
 
-    def _encode_text(self, text):
+    def _encode_text(self, text: str) -> Dict[str, torch.Tensor]:
         """Encodes ``text`` using an ``AutoTokenizer``, ``self._lm_tokenizer``.
 
         Returns a ``dict`` where keys are strings (like 'input_ids') and
@@ -70,7 +71,9 @@ class WordSwapMaskedLM(WordSwap):
         )
         return {k: v.to(utils.device) for k, v in encoding.items()}
 
-    def _bae_replacement_words(self, current_text, index):
+    def _bae_replacement_words(
+        self, current_text: AttackedText, index: int
+    ) -> List[str]:
         """Get replacement words for the word we want to replace using BAE
         method.
 
@@ -107,11 +110,11 @@ class WordSwapMaskedLM(WordSwap):
 
     def _bert_attack_replacement_words(
         self,
-        current_text,
-        index,
-        id_preds,
-        masked_lm_logits,
-    ):
+        current_text: AttackedText,
+        index: int,
+        id_preds: torch.Tensor,
+        masked_lm_logits: torch.Tensor,
+    ) -> List[str]:
         """Get replacement words for the word we want to replace using BERT-
         Attack method.
 
@@ -183,7 +186,9 @@ class WordSwapMaskedLM(WordSwap):
             ]
             return top_replacements
 
-    def _get_replacement_words(self, current_text, index, **kwargs):
+    def _get_replacement_words(
+        self, current_text: AttackedText, index: int, **kwargs
+    ) -> List[str]:
         if self.method == "bae":
             return self._bae_replacement_words(current_text, index)
         elif self.method == "bert-attack":
@@ -191,7 +196,9 @@ class WordSwapMaskedLM(WordSwap):
         else:
             raise ValueError(f"Unrecognized value {self.method} for `self.method`.")
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         # extra_args = {}
         if self.method == "bert-attack":
             current_inputs = self._encode_text(current_text.text)
@@ -224,11 +231,11 @@ class WordSwapMaskedLM(WordSwap):
 
         return transformed_texts
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["method", "masked_lm_name", "max_length", "max_candidates"]
 
 
-def recover_word_case(word, reference_word):
+def recover_word_case(word: str, reference_word: str) -> str:
     """Makes the case of `word` like the case of `reference_word`.
 
     Supports lowercase, UPPERCASE, and Capitalized.
@@ -244,5 +251,5 @@ def recover_word_case(word, reference_word):
         return word
 
 
-def check_if_subword(text):
+def check_if_subword(text: str) -> bool:
     return True if "##" in text else False

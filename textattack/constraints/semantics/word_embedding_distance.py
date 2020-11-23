@@ -11,6 +11,9 @@ import torch
 from textattack.constraints import Constraint
 from textattack.shared import utils
 from textattack.shared.validators import transformation_consists_of_word_swaps
+from textattack.transformations import Transformation
+from textattack.shared import AttackedText
+from typing import List, Set, Union
 
 
 class WordEmbeddingDistance(Constraint):
@@ -34,12 +37,12 @@ class WordEmbeddingDistance(Constraint):
 
     def __init__(
         self,
-        embedding_type="paragramcf",
-        include_unknown_words=True,
-        min_cos_sim=None,
-        max_mse_dist=None,
-        cased=False,
-        compare_against_original=True,
+        embedding_type="paragramcf" : str,
+        include_unknown_words=True : bool,
+        min_cos_sim=None : float,
+        max_mse_dist=None : float,
+        cased=False : bool,
+        compare_against_original=True : bool,
     ):
         super().__init__(compare_against_original)
         self.include_unknown_words = include_unknown_words
@@ -88,7 +91,7 @@ class WordEmbeddingDistance(Constraint):
         else:
             self.cos_sim_mat = {}
 
-    def get_cos_sim(self, a, b):
+    def get_cos_sim(self, a : Union[int, str], b : Union[int, str]) -> float:
         """Returns the cosine similarity of words with IDs a and b."""
         if isinstance(a, str):
             a = self.word_embedding_word2index[a]
@@ -106,7 +109,7 @@ class WordEmbeddingDistance(Constraint):
             self.cos_sim_mat[a][b] = cos_sim
         return cos_sim
 
-    def get_mse_dist(self, a, b):
+    def get_mse_dist(self, a : int, b : int) -> float:
         """Returns the MSE distance of words with IDs a and b."""
         a, b = min(a, b), max(a, b)
         try:
@@ -120,7 +123,7 @@ class WordEmbeddingDistance(Constraint):
             self.mse_dist_mat[a][b] = mse_dist
         return mse_dist
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
         """Returns true if (``transformed_text`` and ``reference_text``) are
         closer than ``self.min_cos_sim`` and ``self.max_mse_dist``."""
         try:
@@ -161,13 +164,13 @@ class WordEmbeddingDistance(Constraint):
 
         return True
 
-    def check_compatibility(self, transformation):
+    def check_compatibility(self, transformation : Transformation) -> bool:
         """WordEmbeddingDistance requires a word being both deleted and
         inserted at the same index in order to compare their embeddings,
         therefore it's restricted to word swaps."""
         return transformation_consists_of_word_swaps(transformation)
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         """Set the extra representation of the constraint using these keys.
 
         To print customized extra information, you should reimplement

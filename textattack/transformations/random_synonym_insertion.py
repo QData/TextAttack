@@ -5,9 +5,11 @@ random synonym insertation Transformation
 """
 
 import random
+from typing import List, Set
 
 from nltk.corpus import wordnet
 
+from textattack.shared import AttackedText
 from textattack.transformations import Transformation
 
 
@@ -15,7 +17,7 @@ class RandomSynonymInsertion(Transformation):
     """Transformation that inserts synonyms of words that are already in the
     sequence."""
 
-    def _get_synonyms(self, word):
+    def _get_synonyms(self, word: str) -> Set(str):
         synonyms = set()
         for syn in wordnet.synsets(word):
             for lemma in syn.lemmas():
@@ -23,7 +25,9 @@ class RandomSynonymInsertion(Transformation):
                     synonyms.add(lemma.name())
         return list(synonyms)
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         transformed_texts = []
         for idx in indices_to_modify:
             synonyms = []
@@ -41,11 +45,11 @@ class RandomSynonymInsertion(Transformation):
         return transformed_texts
 
     @property
-    def deterministic(self):
+    def deterministic(self) -> bool:
         return False
 
 
-def check_if_one_word(word):
+def check_if_one_word(word: str) -> bool:
     for c in word:
         if not c.isalpha():
             return False

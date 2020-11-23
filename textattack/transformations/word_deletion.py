@@ -4,6 +4,10 @@ word deletion Transformation
 
 """
 
+from typing import List, Set
+
+from textattack.shared import AttackedText
+
 from .transformation import Transformation
 
 
@@ -14,7 +18,9 @@ class WordDeletion(Transformation):
     letters_to_insert (string): letters allowed for insertion into words
     """
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         # words = current_text.words
         transformed_texts = []
         if len(current_text.words) > 1:

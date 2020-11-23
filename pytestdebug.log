@@ -1,0 +1,1264 @@
+versions pytest-6.1.2, py-1.9.0, python-3.8.5.final.0
+cwd=/Users/alan/Documents/cs/workspace/TextAttack
+args=('--lf', '--debug')
+
+  pytest_cmdline_main [hook]
+      config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+    pytest_plugin_registered [hook]
+        plugin: <Session TextAttack exitstatus=None testsfailed=0 testscollected=0>
+        manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+    finish pytest_plugin_registered --> [] [hook]
+    pytest_configure [hook]
+        config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPluginCollWrapper object at 0x7fb700f03f70>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x7fb700f03fd0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x7fb700f035b0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+    early skip of rewriting module: faulthandler [assertion]
+      pytest_configure [hook]
+          config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+      finish pytest_configure --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.faulthandler.FaultHandlerHooks object at 0x7fb700f142e0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.stepwise.StepwisePlugin object at 0x7fb700f14100>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+    early skip of rewriting module: pdb [assertion]
+    early skip of rewriting module: cmd [assertion]
+    early skip of rewriting module: code [assertion]
+    early skip of rewriting module: codeop [assertion]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.mark' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/mark/__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.main' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/main.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.runner' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/runner.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.fixtures' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/fixtures.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.helpconfig' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/helpconfig.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.python' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/python.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.terminal' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/terminal.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.debugging' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/debugging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.unittest' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/unittest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.capture' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/capture.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.skipping' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/skipping.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.tmpdir' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/tmpdir.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.monkeypatch' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/monkeypatch.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.recwarn' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/recwarn.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.pastebin' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/pastebin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.nose' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/nose.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.assertion' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/assertion/__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.junitxml' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/junitxml.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.doctest' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/doctest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.cacheprovider' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/cacheprovider.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.freeze_support' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/freeze_support.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setuponly' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/setuponly.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setupplan' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/setupplan.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.stepwise' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/stepwise.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.warnings' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/warnings.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.logging' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/logging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.reports' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/reports.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.faulthandler' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/faulthandler.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.plugin' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/xdist/plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.looponfail' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/xdist/looponfail.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_forked' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/pytest_forked/__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <CaptureManager _method='fd' _global_capturing=<MultiCapture out=<FDCapture 1 oldfd=6 _state='suspended' tmpfile=<_io.TextIOWrapper name="<_io.FileIO name=7 mode='rb+' closefd=True>" mode='r+' encoding='utf-8'>> err=<FDCapture 2 oldfd=8 _state='suspended' tmpfile=<_io.TextIOWrapper name="<_io.FileIO name=9 mode='rb+' closefd=True>" mode='r+' encoding='utf-8'>> in_=<FDCapture 0 oldfd=4 _state='started' tmpfile=<_io.TextIOWrapper name='/dev/null' mode='r' encoding='UTF-8'>> _state='suspended' _in_suspended=False> _capture_fixture=None>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPluginCollWrapper object at 0x7fb700f03f70>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x7fb700f03fd0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x7fb700f035b0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.faulthandler.FaultHandlerHooks object at 0x7fb700f142e0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.stepwise.StepwisePlugin object at 0x7fb700f14100>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.terminal.TerminalReporter object at 0x7fb700f14a90>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.logging.LoggingPlugin object at 0x7fb700f9e730>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+    finish pytest_configure --> [] [hook]
+    pytest_sessionstart [hook]
+        session: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.mark' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/mark/__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.main' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/main.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.runner' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/runner.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.fixtures' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/fixtures.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.helpconfig' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/helpconfig.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.python' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/python.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.terminal' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/terminal.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.debugging' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/debugging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.unittest' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/unittest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.capture' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/capture.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.skipping' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/skipping.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.tmpdir' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/tmpdir.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.monkeypatch' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/monkeypatch.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.recwarn' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/recwarn.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.pastebin' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/pastebin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.nose' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/nose.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.assertion' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/assertion/__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.junitxml' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/junitxml.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.doctest' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/doctest.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.cacheprovider' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/cacheprovider.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.freeze_support' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/freeze_support.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setuponly' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/setuponly.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.setupplan' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/setupplan.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.stepwise' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/stepwise.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.warnings' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/warnings.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.logging' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/logging.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.reports' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/reports.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module '_pytest.faulthandler' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/faulthandler.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.plugin' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/xdist/plugin.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'xdist.looponfail' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/xdist/looponfail.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <module 'pytest_forked' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/pytest_forked/__init__.py'>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <CaptureManager _method='fd' _global_capturing=<MultiCapture out=<FDCapture 1 oldfd=6 _state='suspended' tmpfile=<_io.TextIOWrapper name="<_io.FileIO name=7 mode='rb+' closefd=True>" mode='r+' encoding='utf-8'>> err=<FDCapture 2 oldfd=8 _state='suspended' tmpfile=<_io.TextIOWrapper name="<_io.FileIO name=9 mode='rb+' closefd=True>" mode='r+' encoding='utf-8'>> in_=<FDCapture 0 oldfd=4 _state='started' tmpfile=<_io.TextIOWrapper name='/dev/null' mode='r' encoding='UTF-8'>> _state='suspended' _in_suspended=False> _capture_fixture=None>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPluginCollWrapper object at 0x7fb700f03f70>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.LFPlugin object at 0x7fb700f03fd0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.cacheprovider.NFPlugin object at 0x7fb700f035b0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.faulthandler.FaultHandlerHooks object at 0x7fb700f142e0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.stepwise.StepwisePlugin object at 0x7fb700f14100>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.terminal.TerminalReporter object at 0x7fb700f14a90>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.logging.LoggingPlugin object at 0x7fb700f9e730>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_plugin_registered [hook]
+          plugin: <_pytest.fixtures.FixtureManager object at 0x7fb700f9eeb0>
+          manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+      finish pytest_plugin_registered --> [] [hook]
+      pytest_report_header [hook]
+          config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+          startdir: /Users/alan/Documents/cs/workspace/TextAttack
+      early skip of rewriting module: email.parser [assertion]
+      early skip of rewriting module: email.feedparser [assertion]
+      early skip of rewriting module: email.errors [assertion]
+      early skip of rewriting module: email._policybase [assertion]
+      early skip of rewriting module: email.header [assertion]
+      early skip of rewriting module: email.quoprimime [assertion]
+      early skip of rewriting module: email.base64mime [assertion]
+      early skip of rewriting module: base64 [assertion]
+      early skip of rewriting module: email.charset [assertion]
+      early skip of rewriting module: email.encoders [assertion]
+      early skip of rewriting module: quopri [assertion]
+      early skip of rewriting module: email.utils [assertion]
+      early skip of rewriting module: socket [assertion]
+      early skip of rewriting module: _socket [assertion]
+      early skip of rewriting module: email._parseaddr [assertion]
+      early skip of rewriting module: calendar [assertion]
+      early skip of rewriting module: email.message [assertion]
+      early skip of rewriting module: uu [assertion]
+      early skip of rewriting module: email._encoded_words [assertion]
+      early skip of rewriting module: email.iterators [assertion]
+      finish pytest_report_header --> [['rootdir: /Users/alan/Documents/cs/workspace/TextAttack, configfile: pytest.ini, testpaths: tests', 'plugins: xdist-2.1.0, forked-1.3.0'], ['using: pytest-6.1.2 pylib-1.9.0', 'setuptools registered plugins:', '  pytest-xdist-2.1.0 at /Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/xdist/plugin.py', '  pytest-xdist-2.1.0 at /Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/xdist/looponfail.py', '  pytest-forked-1.3.0 at /Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/pytest_forked/__init__.py']] [hook]
+    finish pytest_sessionstart --> [] [hook]
+    pytest_collection [hook]
+        session: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+    perform_collect <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0> ['tests'] [collection]
+        pytest_collectstart [hook]
+            collector: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+        finish pytest_collectstart --> [] [hook]
+        pytest_make_collect_report [hook]
+            collector: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+        processing argument (local('/Users/alan/Documents/cs/workspace/TextAttack/tests'), []) [collection]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_attacked_text.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_attacked_text.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_attacked_text.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_attacked_text.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_attacked_text.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_misc.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_misc.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_misc.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_misc.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_misc.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_tokenizers.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_tokenizers.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_tokenizers.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_tokenizers.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_tokenizers.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_word_embedding.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_word_embedding.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_word_embedding.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_word_embedding.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_word_embedding.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+          early skip of rewriting module: py._code [assertion]
+          early skip of rewriting module: py._code.code [assertion]
+          early skip of rewriting module: repr [assertion]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/__init__.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/__init__.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/__init__.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Package sample_inputs> [hook]
+            finish pytest_collect_file --> [<Package sample_inputs>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/augment_test.csv.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/augment_test.csv.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/eval_model_hub_rt.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/eval_model_hub_rt.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/eval_snli.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/eval_snli.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/interactive_mode.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/interactive_mode.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/kuleshov_cnn_sst_2.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/kuleshov_cnn_sst_2.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/list_augmentation_recipes.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/list_augmentation_recipes.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_cnn_cola.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_cnn_cola.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_deepwordbug_bert_snli_10.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_faster_alzantot_recipe.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_faster_alzantot_recipe.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_from_file.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_from_file.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_nonoverlapping_t5ende_editdistance_bleu.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_nonoverlapping_t5ende_editdistance_bleu.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_stanza_pos_tagger.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_stanza_pos_tagger.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_transformers_datasets.txt
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_outputs/run_attack_transformers_datasets.txt
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/helpers.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/helpers.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_attack.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_attack.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_attack.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_command_line/test_attack.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_command_line/test_attack.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_augment.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_augment.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_augment.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_command_line/test_augment.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_command_line/test_augment.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_eval.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_eval.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_eval.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_command_line/test_eval.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_command_line/test_eval.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_list.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_list.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_list.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_command_line/test_list.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_command_line/test_list.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_train.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_train.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_train.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_command_line/test_train.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_command_line/test_train.py>] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/update_test_outputs.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/update_test_outputs.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+            finish pytest_collect_file --> [] [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_constraints
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_ignore_collect [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_constraints/test_pretransformation_constraints.py
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            finish pytest_ignore_collect --> None [hook]
+            pytest_collect_file [hook]
+                path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_constraints/test_pretransformation_constraints.py
+                parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              pytest_pycollect_makemodule [hook]
+                  path: /Users/alan/Documents/cs/workspace/TextAttack/tests/test_constraints/test_pretransformation_constraints.py
+                  parent: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+              finish pytest_pycollect_makemodule --> <Module tests/test_constraints/test_pretransformation_constraints.py> [hook]
+            finish pytest_collect_file --> [<Module tests/test_constraints/test_pretransformation_constraints.py>] [hook]
+        finish pytest_make_collect_report --> <CollectReport '' lenresult=11 outcome='passed'> [hook]
+        pytest_collectreport [hook]
+            report: <CollectReport '' lenresult=11 outcome='passed'>
+        finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_command_line/test_attack.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_command_line/test_attack.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_command_line/test_attack.py>
+      find_module called for: test_attack [assertion]
+      matched test file '/Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_attack.py' [assertion]
+      found cached rewritten pyc for /Users/alan/Documents/cs/workspace/TextAttack/tests/test_command_line/test_attack.py [assertion]
+      early skip of rewriting module: helpers [assertion]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: @py_builtins
+            obj: <module 'builtins' (built-in)>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: @pytest_ar
+            obj: <module '_pytest.assertion.rewrite' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/_pytest/assertion/rewrite.py'>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: pdb
+            obj: <module 'pdb' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/pdb.py'>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: re
+            obj: <module 're' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/re.py'>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: run_command_and_get_result
+            obj: <function run_command_and_get_result at 0x7fb701092ee0>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: pytest
+            obj: <module 'pytest' from '/Users/alan/anaconda3/envs/type-hinting/lib/python3.8/site-packages/pytest/__init__.py'>
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: DEBUG
+            obj: False
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: attack_test_params
+            obj: [('attack_from_file', 'textattack attack --model cnn-imdb --attack-from-file tests/sample_inputs/attack_from_file.py^Attack --num-examples 2  --num-examples-offset 18 --attack-n --shuffle=False', 'tests/sample_outputs/run_attack_from_file.txt'), ('interactive_mode', ('printf "All that glitters is not gold\nq\n"', 'textattack attack --recipe textfooler --model bert-base-uncased-imdb --interactive'), 'tests/sample_outputs/interactive_mode.txt'), ('attack_from_transformers', 'textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 --shuffle=False', 'tests/sample_outputs/run_attack_transformers_datasets.txt'), ('load_model_and_dataset_from_file', 'textattack attack --model-from-file tests/sample_inputs/sst_model_and_dataset.py --dataset-from-file tests/sample_inputs/sst_model_and_dataset.py --recipe deepwordbug --num-examples 3 --shuffle=False', 'tests/sample_outputs/run_attack_transformers_datasets.txt'), ('run_attack_hotflip_lstm_mr_4', 'textattack attack --model lstm-mr --recipe hotflip --num-examples 4 --num-examples-offset 3 --shuffle=False', 'tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt'), ('run_attack_deepwordbug_lstm_mr_2', 'textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False', 'tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt'), ('run_attack_targeted_mnli_misc', 'textattack attack --attack-n --goal-function targeted-classification^target_class=2 --log-to-csv /tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search^beam_width=2 --shuffle=False ', 'tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt'), ('run_attack_flair_pos_tagger_bert_score', "textattack attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding --constraints repeat stopword bert-score^min_bert_score=0.8 part-of-speech^tagger_type=\\'flair\\' --num-examples 4 --num-examples-offset 10 --shuffle=False", 'tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt'), ('run_attack_faster_alzantot_recipe', 'textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 --num-examples-offset 32 --shuffle=False', 'tests/sample_outputs/run_attack_faster_alzantot_recipe.txt'), ('run_attack_kuleshov_nn', 'textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst2 --attack-n --query-budget 200 --shuffle=False', 'tests/sample_outputs/kuleshov_cnn_sst_2.txt'), ('run_attack_stanza_pos_tagger', "textattack attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding --constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' --shuffle=False", 'tests/sample_outputs/run_attack_stanza_pos_tagger.txt'), ('run_attack_cnn_cola', 'textattack attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir --transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 --shuffle=False', 'tests/sample_outputs/run_attack_cnn_cola.txt'), ('run_attack_gradient_greedy_word_wir', "textattack attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' --transformation word-swap-embedding --constraints repeat stopword --shuffle=False", 'tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt')]
+        finish pytest_pycollect_makeitem --> None [hook]
+        pytest_pycollect_makeitem [hook]
+            collector: <Module tests/test_command_line/test_attack.py>
+            name: test_command_line_attack
+            obj: <function test_command_line_attack at 0x7fb701092e50>
+          pytest_generate_tests [hook]
+              metafunc: <_pytest.python.Metafunc object at 0x7fb70109d400>
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: attack_from_file
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+          early skip of rewriting module: encodings.unicode_escape [assertion]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model cnn-imdb --attack-from-file tests/sample_inputs/attack_from_file.py^Attack --num-examples 2  --num-examples-offset 18 --attack-n --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_from_file.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: interactive_mode
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: ('printf "All that glitters is not gold\nq\n"', 'textattack attack --recipe textfooler --model bert-base-uncased-imdb --interactive')
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/interactive_mode.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: attack_from_transformers
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_transformers_datasets.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: load_model_and_dataset_from_file
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model-from-file tests/sample_inputs/sst_model_and_dataset.py --dataset-from-file tests/sample_inputs/sst_model_and_dataset.py --recipe deepwordbug --num-examples 3 --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_transformers_datasets.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_hotflip_lstm_mr_4
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model lstm-mr --recipe hotflip --num-examples 4 --num-examples-offset 3 --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_deepwordbug_lstm_mr_2
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_targeted_mnli_misc
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --attack-n --goal-function targeted-classification^target_class=2 --log-to-csv /tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search^beam_width=2 --shuffle=False 
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_flair_pos_tagger_bert_score
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding --constraints repeat stopword bert-score^min_bert_score=0.8 part-of-speech^tagger_type=\'flair\' --num-examples 4 --num-examples-offset 10 --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_faster_alzantot_recipe
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 --num-examples-offset 32 --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_faster_alzantot_recipe.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_kuleshov_nn
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst2 --attack-n --query-budget 200 --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/kuleshov_cnn_sst_2.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_stanza_pos_tagger
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding --constraints repeat stopword part-of-speech^tagger_type=\'stanza\' --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_stanza_pos_tagger.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_cnn_cola
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir --transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_cnn_cola.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: run_attack_gradient_greedy_word_wir
+                argname: name
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: textattack attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\'gradient\' --transformation word-swap-embedding --constraints repeat stopword --shuffle=False
+                argname: command
+            finish pytest_make_parametrize_id --> None [hook]
+            pytest_make_parametrize_id [hook]
+                config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+                val: tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt
+                argname: sample_output_file
+            finish pytest_make_parametrize_id --> None [hook]
+          finish pytest_generate_tests --> [] [hook]
+        finish pytest_pycollect_makeitem --> [<Function test_command_line_attack[attack_from_file-textattack attack --model cnn-imdb --attack-from-file tests/sample_inputs/attack_from_file.py^Attack --num-examples 2  --num-examples-offset 18 --attack-n --shuffle=False-tests/sample_outputs/run_attack_from_file.txt]>, <Function test_command_line_attack[interactive_mode-command1-tests/sample_outputs/interactive_mode.txt]>, <Function test_command_line_attack[attack_from_transformers-textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst-2-english --dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 --shuffle=False-tests/sample_outputs/run_attack_transformers_datasets.txt]>, <Function test_command_line_attack[load_model_and_dataset_from_file-textattack attack --model-from-file tests/sample_inputs/sst_model_and_dataset.py --dataset-from-file tests/sample_inputs/sst_model_and_dataset.py --recipe deepwordbug --num-examples 3 --shuffle=False-tests/sample_outputs/run_attack_transformers_datasets.txt]>, <Function test_command_line_attack[run_attack_hotflip_lstm_mr_4-textattack attack --model lstm-mr --recipe hotflip --num-examples 4 --num-examples-offset 3 --shuffle=False-tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt]>, <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>, <Function test_command_line_attack[run_attack_targeted_mnli_misc-textattack attack --attack-n --goal-function targeted-classification^target_class=2 --log-to-csv /tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search^beam_width=2 --shuffle=False -tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt]>, <Function test_command_line_attack[run_attack_flair_pos_tagger_bert_score-textattack attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding --constraints repeat stopword bert-score^min_bert_score=0.8 part-of-speech^tagger_type=\\'flair\\' --num-examples 4 --num-examples-offset 10 --shuffle=False-tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt]>, <Function test_command_line_attack[run_attack_faster_alzantot_recipe-textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 --num-examples-offset 32 --shuffle=False-tests/sample_outputs/run_attack_faster_alzantot_recipe.txt]>, <Function test_command_line_attack[run_attack_kuleshov_nn-textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst2 --attack-n --query-budget 200 --shuffle=False-tests/sample_outputs/kuleshov_cnn_sst_2.txt]>, <Function test_command_line_attack[run_attack_stanza_pos_tagger-textattack attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding --constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' --shuffle=False-tests/sample_outputs/run_attack_stanza_pos_tagger.txt]>, <Function test_command_line_attack[run_attack_cnn_cola-textattack attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir --transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 --shuffle=False-tests/sample_outputs/run_attack_cnn_cola.txt]>, <Function test_command_line_attack[run_attack_gradient_greedy_word_wir-textattack attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' --transformation word-swap-embedding --constraints repeat stopword --shuffle=False-tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt]>] [hook]
+        pytest_plugin_registered [hook]
+            plugin: <_pytest.cacheprovider.LFPluginCollSkipfiles object at 0x7fb700faea90>
+            manager: <_pytest.config.PytestPluginManager object at 0x7fb6fdba0250>
+        finish pytest_plugin_registered --> [] [hook]
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_command_line/test_attack.py' lenresult=1 outcome='passed'> [hook]
+    genitems <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]> [collection]
+      pytest_itemcollected [hook]
+          item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+      finish pytest_itemcollected --> [] [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_command_line/test_attack.py' lenresult=1 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_attacked_text.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_attacked_text.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_attacked_text.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_attacked_text.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_attacked_text.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_misc.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_misc.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_misc.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_misc.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_misc.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_tokenizers.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_tokenizers.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_tokenizers.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_tokenizers.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_tokenizers.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_word_embedding.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_word_embedding.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_word_embedding.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_word_embedding.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_word_embedding.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Package sample_inputs> [collection]
+      pytest_collectstart [hook]
+          collector: <Package sample_inputs>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Package sample_inputs>
+        pytest_ignore_collect [hook]
+            path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/attack_from_file.py
+            config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+        finish pytest_ignore_collect --> None [hook]
+        pytest_collect_file [hook]
+            path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/attack_from_file.py
+            parent: <Package sample_inputs>
+        finish pytest_collect_file --> [] [hook]
+        pytest_ignore_collect [hook]
+            path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/augment.csv.txt
+            config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+        finish pytest_ignore_collect --> None [hook]
+        pytest_collect_file [hook]
+            path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/augment.csv.txt
+            parent: <Package sample_inputs>
+        finish pytest_collect_file --> [] [hook]
+        pytest_ignore_collect [hook]
+            path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/sst_model_and_dataset.py
+            config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+        finish pytest_ignore_collect --> None [hook]
+        pytest_collect_file [hook]
+            path: /Users/alan/Documents/cs/workspace/TextAttack/tests/sample_inputs/sst_model_and_dataset.py
+            parent: <Package sample_inputs>
+        finish pytest_collect_file --> [] [hook]
+      finish pytest_make_collect_report --> <CollectReport 'tests/sample_inputs/__init__.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/sample_inputs/__init__.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_command_line/test_augment.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_command_line/test_augment.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_command_line/test_augment.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_command_line/test_augment.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_command_line/test_augment.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_command_line/test_eval.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_command_line/test_eval.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_command_line/test_eval.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_command_line/test_eval.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_command_line/test_eval.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_command_line/test_list.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_command_line/test_list.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_command_line/test_list.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_command_line/test_list.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_command_line/test_list.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_command_line/test_train.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_command_line/test_train.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_command_line/test_train.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_command_line/test_train.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_command_line/test_train.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+    genitems <Module tests/test_constraints/test_pretransformation_constraints.py> [collection]
+      pytest_collectstart [hook]
+          collector: <Module tests/test_constraints/test_pretransformation_constraints.py>
+      finish pytest_collectstart --> [] [hook]
+      pytest_make_collect_report [hook]
+          collector: <Module tests/test_constraints/test_pretransformation_constraints.py>
+      finish pytest_make_collect_report --> <CollectReport 'tests/test_constraints/test_pretransformation_constraints.py' lenresult=0 outcome='passed'> [hook]
+      pytest_collectreport [hook]
+          report: <CollectReport 'tests/test_constraints/test_pretransformation_constraints.py' lenresult=0 outcome='passed'>
+      finish pytest_collectreport --> [] [hook]
+      pytest_collection_modifyitems [hook]
+          session: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+          config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+          items: [<Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>]
+        pytest_deselected [hook]
+            items: []
+        finish pytest_deselected --> [] [hook]
+      finish pytest_collection_modifyitems --> [] [hook]
+      pytest_collection_finish [hook]
+          session: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=0>
+        pytest_report_collectionfinish [hook]
+            config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+            startdir: /Users/alan/Documents/cs/workspace/TextAttack
+            items: [<Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>]
+        finish pytest_report_collectionfinish --> ['run-last-failure: rerun previous 1 failure (skipped 9 files)'] [hook]
+      finish pytest_collection_finish --> [] [hook]
+    finish pytest_collection --> None [hook]
+    pytest_runtestloop [hook]
+        session: <Session TextAttack exitstatus=<ExitCode.OK: 0> testsfailed=0 testscollected=1>
+      pytest_runtest_protocol [hook]
+          item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+          nextitem: None
+        pytest_runtest_logstart [hook]
+            nodeid: tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]
+            location: ('tests/test_command_line/test_attack.py', 173, 'test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]')
+        finish pytest_runtest_logstart --> [] [hook]
+        pytest_runtest_setup [hook]
+            item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='name' scope='function' baseid=''>
+              request: <SubRequest 'name' for <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>>
+          finish pytest_fixture_setup --> run_attack_deepwordbug_lstm_mr_2 [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='command' scope='function' baseid=''>
+              request: <SubRequest 'command' for <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>>
+          finish pytest_fixture_setup --> textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False [hook]
+          pytest_fixture_setup [hook]
+              fixturedef: <FixtureDef argname='sample_output_file' scope='function' baseid=''>
+              request: <SubRequest 'sample_output_file' for <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>>
+          finish pytest_fixture_setup --> tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt [hook]
+        finish pytest_runtest_setup --> [] [hook]
+        pytest_runtest_makereport [hook]
+            item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+            call: <CallInfo when='setup' result: []>
+        finish pytest_runtest_makereport --> <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='setup' outcome='passed'> [hook]
+        pytest_runtest_logreport [hook]
+            report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='setup' outcome='passed'>
+          pytest_report_teststatus [hook]
+              report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='setup' outcome='passed'>
+              config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+          finish pytest_report_teststatus --> ('', '', '') [hook]
+        finish pytest_runtest_logreport --> [] [hook]
+        pytest_runtest_call [hook]
+            item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+          pytest_pyfunc_call [hook]
+              pyfuncitem: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+        pytest_runtest_makereport [hook]
+            item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+            call: <CallInfo when='call' excinfo=<ExceptionInfo AssertionError("assert None\n +  where None = <function match at 0x7fb6fdb99790>('.*Attack\\\\(\\\\\\n\\\\ \\\\ \\\\(s...--------+', flags=re.DOTALL)\n +    where <function match at 0x7fb6fdb99790> = re.match\n +    and   re.DOTALL = re.S") tblen=27>>
+        finish pytest_runtest_makereport --> <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='call' outcome='failed'> [hook]
+        pytest_runtest_logreport [hook]
+            report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='call' outcome='failed'>
+          pytest_report_teststatus [hook]
+              report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='call' outcome='failed'>
+              config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+          finish pytest_report_teststatus --> ('failed', 'F', 'FAILED') [hook]
+        finish pytest_runtest_logreport --> [] [hook]
+        pytest_exception_interact [hook]
+            node: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+            call: <CallInfo when='call' excinfo=<ExceptionInfo AssertionError("assert None\n +  where None = <function match at 0x7fb6fdb99790>('.*Attack\\\\(\\\\\\n\\\\ \\\\ \\\\(s...--------+', flags=re.DOTALL)\n +    where <function match at 0x7fb6fdb99790> = re.match\n +    and   re.DOTALL = re.S") tblen=1>>
+            report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='call' outcome='failed'>
+        finish pytest_exception_interact --> [] [hook]
+        pytest_runtest_teardown [hook]
+            item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+            nextitem: None
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='sample_output_file' scope='function' baseid=''>
+              request: <SubRequest 'sample_output_file' for <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='command' scope='function' baseid=''>
+              request: <SubRequest 'command' for <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+          pytest_fixture_post_finalizer [hook]
+              fixturedef: <FixtureDef argname='name' scope='function' baseid=''>
+              request: <SubRequest 'name' for <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>>
+          finish pytest_fixture_post_finalizer --> [] [hook]
+        finish pytest_runtest_teardown --> [] [hook]
+        pytest_runtest_makereport [hook]
+            item: <Function test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]>
+            call: <CallInfo when='teardown' result: []>
+        finish pytest_runtest_makereport --> <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='teardown' outcome='passed'> [hook]
+        pytest_runtest_logreport [hook]
+            report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='teardown' outcome='passed'>
+          pytest_report_teststatus [hook]
+              report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='teardown' outcome='passed'>
+              config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+          finish pytest_report_teststatus --> ('', '', '') [hook]
+        finish pytest_runtest_logreport --> [] [hook]
+        pytest_runtest_logfinish [hook]
+            nodeid: tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]
+            location: ('tests/test_command_line/test_attack.py', 173, 'test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]')
+        finish pytest_runtest_logfinish --> [] [hook]
+      finish pytest_runtest_protocol --> True [hook]
+    finish pytest_runtestloop --> True [hook]
+    pytest_sessionfinish [hook]
+        session: <Session TextAttack exitstatus=<ExitCode.TESTS_FAILED: 1> testsfailed=1 testscollected=1>
+        exitstatus: ExitCode.TESTS_FAILED
+      pytest_terminal_summary [hook]
+          terminalreporter: <_pytest.terminal.TerminalReporter object at 0x7fb700f14a90>
+          exitstatus: ExitCode.TESTS_FAILED
+          config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+      early skip of rewriting module: pygments [assertion]
+      early skip of rewriting module: pygments.formatters [assertion]
+      early skip of rewriting module: pygments.formatters._mapping [assertion]
+      early skip of rewriting module: pygments.plugin [assertion]
+      early skip of rewriting module: pygments.util [assertion]
+      early skip of rewriting module: pygments.formatters.terminal [assertion]
+      early skip of rewriting module: pygments.formatter [assertion]
+      early skip of rewriting module: pygments.styles [assertion]
+      early skip of rewriting module: pygments.token [assertion]
+      early skip of rewriting module: pygments.console [assertion]
+      early skip of rewriting module: pygments.lexers [assertion]
+      early skip of rewriting module: pygments.lexers._mapping [assertion]
+      early skip of rewriting module: pygments.modeline [assertion]
+      early skip of rewriting module: pygments.lexers.python [assertion]
+      early skip of rewriting module: pygments.lexer [assertion]
+      early skip of rewriting module: pygments.filter [assertion]
+      early skip of rewriting module: pygments.filters [assertion]
+      early skip of rewriting module: pygments.regexopt [assertion]
+      early skip of rewriting module: pygments.unistring [assertion]
+      early skip of rewriting module: pygments.styles.default [assertion]
+      early skip of rewriting module: pygments.style [assertion]
+        pytest_report_teststatus [hook]
+            report: <TestReport 'tests/test_command_line/test_attack.py::test_command_line_attack[run_attack_deepwordbug_lstm_mr_2-textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n --shuffle=False-tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt]' when='call' outcome='failed'>
+            config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+        finish pytest_report_teststatus --> ('failed', 'F', 'FAILED') [hook]
+      finish pytest_terminal_summary --> [] [hook]
+    finish pytest_sessionfinish --> [] [hook]
+    pytest_unconfigure [hook]
+        config: <_pytest.config.Config object at 0x7fb6fdea2eb0>
+    finish pytest_unconfigure --> [] [hook]

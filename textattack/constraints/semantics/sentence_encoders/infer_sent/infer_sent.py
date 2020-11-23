@@ -25,7 +25,7 @@ class InferSent(SentenceEncoder):
         self.model = self.get_infersent_model()
         self.model.to(utils.device)
 
-    def get_infersent_model(self):
+    def get_infersent_model(self) -> InferSentModel:
         """Retrieves the InferSent model.
 
         Returns:
@@ -52,5 +52,5 @@ class InferSent(SentenceEncoder):
         infersent.build_vocab_k_words(K=100000)
         return infersent
 
-    def encode(self, sentences):
+    def encode(self, sentences: List[str]) -> np.ndarray:
         return self.model.encode(sentences, tokenize=True)

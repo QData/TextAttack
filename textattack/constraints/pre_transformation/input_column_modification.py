@@ -6,6 +6,8 @@ Input Column Modification
 """
 
 from textattack.constraints import PreTransformationConstraint
+from textattack.shared import AttackedText
+from typing import List, Set
 
 
 class InputColumnModification(PreTransformationConstraint):
@@ -20,7 +22,7 @@ class InputColumnModification(PreTransformationConstraint):
         self.matching_column_labels = matching_column_labels
         self.columns_to_ignore = columns_to_ignore
 
-    def _get_modifiable_indices(self, current_text):
+    def _get_modifiable_indices(self, current_text: AttackedText) -> Set[int]:
         """Returns the word indices in current_text which are able to be
         deleted.
 
@@ -45,5 +47,5 @@ class InputColumnModification(PreTransformationConstraint):
             idx += num_words
         return indices_to_modify
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["matching_column_labels", "columns_to_ignore"]

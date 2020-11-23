@@ -3,8 +3,11 @@ Word Swap by Changing Name
 ============================================
 """
 
+from typing import List, Set
+
 import numpy as np
 
+from textattack.shared import AttackedText
 from textattack.shared.data import PERSON_NAMES
 from textattack.transformations import WordSwap
 
@@ -12,10 +15,10 @@ from textattack.transformations import WordSwap
 class WordSwapChangeName(WordSwap):
     def __init__(
         self,
-        num_name_replacements=3,
-        first_only=False,
-        last_only=False,
-        confidence_score=0.7,
+        num_name_replacements: int = 3,
+        first_only: bool = False,
+        last_only: bool = False,
+        confidence_score: float = 0.7,
         **kwargs
     ):
         """Transforms an input by replacing names of recognized name entity.
@@ -33,7 +36,9 @@ class WordSwapChangeName(WordSwap):
         self.last_only = last_only
         self.confidence_score = confidence_score
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         transformed_texts = []
 
         for i in indices_to_modify:
@@ -47,7 +52,7 @@ class WordSwapChangeName(WordSwap):
 
         return transformed_texts
 
-    def _get_replacement_words(self, word, word_part_of_speech):
+    def _get_replacement_words(self, word: str, word_part_of_speech: str) -> List[str]:
 
         replacement_words = []
         tag = word_part_of_speech
@@ -65,10 +70,10 @@ class WordSwapChangeName(WordSwap):
             replacement_words = self._get_lastname(word)
         return replacement_words
 
-    def _get_lastname(self, word):
+    def _get_lastname(self, word: str) -> List[str]:
         """Return a list of random last names."""
         return np.random.choice(PERSON_NAMES["last"], self.num_name_replacements)
 
-    def _get_firstname(self, word):
+    def _get_firstname(self, word: str) -> List[str]:
         """Return a list of random first names."""
         return np.random.choice(PERSON_NAMES["first"], self.num_name_replacements)

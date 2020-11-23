@@ -3,10 +3,13 @@ Word Swap by Gradient
 ============================================
 
 """
+from typing import List, Set, Tuple
+
 import torch
 
 import textattack
-from textattack.shared import utils
+from textattack.models.wrappers import ModelWrapper
+from textattack.shared import AttackedText, utils
 from textattack.shared.validators import validate_model_gradient_word_swap_compatibility
 from textattack.transformations import Transformation
 
@@ -24,7 +27,7 @@ class WordSwapGradientBased(Transformation):
         top_n (int): the number of top words to return at each index
     """
 
-    def __init__(self, model_wrapper, top_n=1):
+    def __init__(self, model_wrapper: ModelWrapper, top_n: int = 1):
         # Unwrap model wrappers. Need raw model for gradient.
         if not isinstance(model_wrapper, textattack.models.wrappers.ModelWrapper):
             raise TypeError(f"Got invalid model wrapper type {type(model_wrapper)}")
@@ -46,7 +49,9 @@ class WordSwapGradientBased(Transformation):
         self.top_n = top_n
         self.is_black_box = False
 
-    def _get_replacement_words_by_grad(self, attacked_text, indices_to_replace):
+    def _get_replacement_words_by_grad(
+        self, attacked_text: AttackedText, indices_to_replace: Set[int]
+    ) -> List[Tuple[str, int]]:
         """Returns returns a list containing all possible words to replace
         `word` with, based off of the model's gradient.
 
@@ -96,7 +101,9 @@ class WordSwapGradientBased(Transformation):
 
         return candidates
 
-    def _get_transformations(self, attacked_text, indices_to_replace):
+    def _get_transformations(
+        self, attacked_text: AttackedText, indices_to_replace: Set[int]
+    ) -> List[AttackedText]:
         """Returns a list of all possible transformations for `text`.
 
         If indices_to_replace is set, only replaces words at those
@@ -109,5 +116,5 @@ class WordSwapGradientBased(Transformation):
             transformations.append(attacked_text.replace_word_at_index(idx, word))
         return transformations
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["top_n"]

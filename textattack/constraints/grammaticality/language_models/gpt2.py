@@ -12,6 +12,7 @@ import torch
 from textattack.shared import utils
 
 from .language_model_constraint import LanguageModelConstraint
+from typing import List
 
 # temporarily silence W&B to ignore log-in warning
 os.environ["WANDB_SILENT"] = "1"
@@ -34,7 +35,9 @@ class GPT2(LanguageModelConstraint):
         self.tokenizer = transformers.GPT2Tokenizer.from_pretrained("gpt2")
         super().__init__(**kwargs)
 
-    def get_log_probs_at_index(self, text_list, word_index):
+    def get_log_probs_at_index(
+        self, text_list: List[str], word_index: int
+    ) -> List[float]:
         """Gets the probability of the word at index `word_index` according to
         GPT-2.
 

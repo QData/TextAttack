@@ -6,11 +6,12 @@ Word Swap by swaps characters with QWERTY adjacent keys
 import random
 
 from textattack.transformations.word_swap import WordSwap
+from typing import List
 
 
 class WordSwapQWERTY(WordSwap):
     def __init__(
-        self, random_one=True, skip_first_char=False, skip_last_char=False, **kwargs
+        self, random_one: bool=True, skip_first_char: bool=False, skip_last_char: bool=False, **kwargs
     ):
         """A transformation that swaps characters with adjacent keys on a
         QWERTY keyboard, replicating the kind of errors that come from typing
@@ -58,7 +59,7 @@ class WordSwapQWERTY(WordSwap):
             "m": ["n", "j", "k"],
         }
 
-    def _get_adjacent(self, s):
+    def _get_adjacent(self, s: str) -> List[str]:
         s_lower = s.lower()
         if s_lower in self._keyboard_adjacency:
             adjacent_keys = self._keyboard_adjacency[s_lower]
@@ -69,7 +70,7 @@ class WordSwapQWERTY(WordSwap):
         else:
             return []
 
-    def _get_replacement_words(self, word):
+    def _get_replacement_words(self, word: str) -> List[str]:
         if len(word) <= 1:
             return []
 
@@ -96,5 +97,5 @@ class WordSwapQWERTY(WordSwap):
         return candidate_words
 
     @property
-    def deterministic(self):
+    def deterministic(self) -> bool:
         return not self.random_one

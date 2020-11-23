@@ -9,6 +9,8 @@ Max Perturb Words Constraints
 import math
 
 from textattack.constraints import Constraint
+from textattack.shared import AttackedText
+from typing import List
 
 
 class MaxWordsPerturbed(Constraint):
@@ -22,7 +24,7 @@ class MaxWordsPerturbed(Constraint):
     """
 
     def __init__(
-        self, max_num_words=None, max_percent=None, compare_against_original=True
+        self, max_num_words=None : int, max_percent=None : float, compare_against_original=True : bool
     ):
         super().__init__(compare_against_original)
         if not compare_against_original:
@@ -37,7 +39,7 @@ class MaxWordsPerturbed(Constraint):
         self.max_num_words = max_num_words
         self.max_percent = max_percent
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
 
         num_words_diff = len(transformed_text.all_words_diff(reference_text))
         if self.max_percent:
@@ -53,7 +55,7 @@ class MaxWordsPerturbed(Constraint):
 
         return max_percent_met and max_num_words_met
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         metric = []
         if self.max_percent is not None:
             metric.append("max_percent")

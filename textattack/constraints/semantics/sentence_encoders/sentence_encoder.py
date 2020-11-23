@@ -9,6 +9,8 @@ import numpy as np
 import torch
 
 from textattack.constraints import Constraint
+from textattack.shared import AttackedText
+from typing import List
 
 
 class SentenceEncoder(Constraint):
@@ -29,11 +31,11 @@ class SentenceEncoder(Constraint):
 
     def __init__(
         self,
-        threshold=0.8,
-        metric="cosine",
-        compare_against_original=True,
-        window_size=None,
-        skip_text_shorter_than_window=False,
+        threshold=0.8 : float,
+        metric="cosine" : str,
+        compare_against_original=True : bool,
+        window_size=None : int,
+        skip_text_shorter_than_window=False : bool,
     ):
         super().__init__(compare_against_original)
         self.metric = metric
@@ -64,7 +66,7 @@ class SentenceEncoder(Constraint):
         """
         raise NotImplementedError()
 
-    def _sim_score(self, starting_text, transformed_text):
+    def _sim_score(self, starting_text : AttackedText, transformed_text : AttackedText) -> float:
         """Returns the metric similarity between the embedding of the starting
         text and the transformed text.
 
@@ -106,7 +108,7 @@ class SentenceEncoder(Constraint):
 
         return self.sim_metric(starting_embedding, transformed_embedding)
 
-    def _score_list(self, starting_text, transformed_texts):
+    def _score_list(self, starting_text : AttackedText, transformed_texts : List[AttackedText]) -> List[float]:
         """Returns the metric similarity between the embedding of the starting
         text and a list of transformed texts.
 
@@ -171,7 +173,7 @@ class SentenceEncoder(Constraint):
 
         return self.sim_metric(starting_embeddings, transformed_embeddings)
 
-    def _check_constraint_many(self, transformed_texts, reference_text):
+    def _check_constraint_many(self, transformed_texts : List[AttackedText], reference_text : AttackedText) -> np.array:
         """Filters the list ``transformed_texts`` so that the similarity
         between the ``reference_text`` and the transformed text is greater than
         the ``self.threshold``."""
@@ -189,7 +191,7 @@ class SentenceEncoder(Constraint):
         mask = (scores >= self.threshold).cpu().numpy().nonzero()
         return np.array(transformed_texts)[mask]
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
         if (
             self.skip_text_shorter_than_window
             and len(transformed_text.words) < self.window_size
@@ -201,7 +203,7 @@ class SentenceEncoder(Constraint):
         transformed_text.attack_attrs["similarity_score"] = score
         return score >= self.threshold
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return [
             "metric",
             "threshold",
@@ -210,14 +212,14 @@ class SentenceEncoder(Constraint):
         ] + super().extra_repr_keys()
 
 
-def get_angular_sim(emb1, emb2):
+def get_angular_sim(emb1 : np.array, emb2 : np.array) -> float:
     """Returns the _angular_ similarity between a batch of vector and a batch
     of vectors."""
     cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
     return 1 - (torch.acos(cos_sim) / math.pi)
 
 
-def get_neg_euclidean_dist(emb1, emb2):
+def get_neg_euclidean_dist(emb1 : np.array, emb2 : np.array) -> float:
     """Returns the Euclidean distance between a batch of vectors and a batch of
     vectors."""
     return -torch.sum((emb1 - emb2) ** 2, dim=1)

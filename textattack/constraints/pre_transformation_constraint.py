@@ -6,6 +6,9 @@ Pre-Transformation Constraint Class
 from abc import ABC, abstractmethod
 
 from textattack.shared.utils import default_class_repr
+from textattack.transformations import Transformation
+from textattack.shared import AttackedText
+from typing import List, Set
 
 
 class PreTransformationConstraint(ABC):
@@ -17,7 +20,9 @@ class PreTransformationConstraint(ABC):
     modified.
     """
 
-    def __call__(self, current_text, transformation):
+    def __call__(
+        self, current_text: AttackedText, transformation: Transformation
+    ) -> Set[int]:
         """Returns the word indices in ``current_text`` which are able to be
         modified. First checks compatibility with ``transformation`` then calls
         ``_get_modifiable_indices``
@@ -31,7 +36,7 @@ class PreTransformationConstraint(ABC):
         return self._get_modifiable_indices(current_text)
 
     @abstractmethod
-    def _get_modifiable_indices(current_text):
+    def _get_modifiable_indices(current_text: AttackedText) -> Set[int]:
         """Returns the word indices in ``current_text`` which are able to be
         modified. Must be overridden by specific pre-transformation
         constraints.
@@ -41,7 +46,7 @@ class PreTransformationConstraint(ABC):
         """
         raise NotImplementedError()
 
-    def check_compatibility(self, transformation):
+    def check_compatibility(self, transformation: Transformation) -> bool:
         """Checks if this constraint is compatible with the given
         transformation. For example, the ``WordEmbeddingDistance`` constraint
         compares the embedding of the word inserted with that of the word
@@ -54,7 +59,7 @@ class PreTransformationConstraint(ABC):
         """
         return True
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         """Set the extra representation of the constraint using these keys.
 
         To print customized extra information, you should reimplement

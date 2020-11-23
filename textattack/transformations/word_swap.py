@@ -6,6 +6,9 @@ Word swap transformations act by replacing some words in the input. Subclasses c
 """
 import random
 import string
+from typing import List, Set
+
+from textattack.shared import AttackedText
 
 from .transformation import Transformation
 
@@ -18,12 +21,12 @@ class WordSwap(Transformation):
     (used by some char-based transformations)
     """
 
-    def __init__(self, letters_to_insert=None):
+    def __init__(self, letters_to_insert: str = None):
         self.letters_to_insert = letters_to_insert
         if not self.letters_to_insert:
             self.letters_to_insert = string.ascii_letters
 
-    def _get_replacement_words(self, word):
+    def _get_replacement_words(self, word: str) -> Set[str]:
         """Returns a set of replacements given an input word. Must be overriden
         by specific word swap transformations.
 
@@ -32,12 +35,14 @@ class WordSwap(Transformation):
         """
         raise NotImplementedError()
 
-    def _get_random_letter(self):
+    def _get_random_letter(self) -> str:
         """Helper function that returns a random single letter from the English
         alphabet that could be lowercase or uppercase."""
         return random.choice(self.letters_to_insert)
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         words = current_text.words
         transformed_texts = []
 

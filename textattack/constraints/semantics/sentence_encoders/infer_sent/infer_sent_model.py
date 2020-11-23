@@ -20,10 +20,11 @@ import time
 import numpy as np
 import torch
 from torch import nn as nn
+from typing import Dict, Union, List, Tuple
 
 
 class InferSentModel(nn.Module):
-    def __init__(self, config):
+    def __init__(self, config : Dict[str, Union[float, int]]):
         super().__init__()
         self.bsize = config["bsize"]
         self.word_emb_dim = config["word_emb_dim"]
@@ -52,11 +53,11 @@ class InferSentModel(nn.Module):
             self.max_pad = False
             self.moses_tok = True
 
-    def is_cuda(self):
+    def is_cuda(self) -> bool:
         # either all weights are on cpu or they are on gpu
         return self.enc_lstm.bias_hh_l0.data.is_cuda
 
-    def forward(self, sent_tuple):
+    def forward(self, sent_tuple : Tuple[torch.Tensor, List[int]]) -> torch.Tensor:
         # sent_len: [max_len, ..., min_len] (bsize)
         # sent: (seqlen x bsize x worddim)
         sent, sent_len = sent_tuple
@@ -101,10 +102,10 @@ class InferSentModel(nn.Module):
 
         return emb
 
-    def set_w2v_path(self, w2v_path):
+    def set_w2v_path(self, w2v_path : str):
         self.w2v_path = w2v_path
 
-    def get_word_dict(self, sentences, tokenize=True):
+    def get_word_dict(self, sentences : List[str], tokenize=True : bool) -> Dict[str, str]:
         # create vocab of words
         word_dict = {}
         sentences = [s.split() if not tokenize else self.tokenize(s) for s in sentences]
@@ -116,7 +117,7 @@ class InferSentModel(nn.Module):
         word_dict[self.eos] = ""
         return word_dict
 
-    def get_w2v(self, word_dict):
+    def get_w2v(self, word_dict : Dict[str, str]) -> Dict[str, np.array]:
         assert hasattr(self, "w2v_path"), "w2v path not set"
         # create word_vec with w2v vectors
         word_vec = {}
@@ -128,7 +129,7 @@ class InferSentModel(nn.Module):
         print("Found %s(/%s) words with w2v vectors" % (len(word_vec), len(word_dict)))
         return word_vec
 
-    def get_w2v_k(self, K):
+    def get_w2v_k(self, K : int) -> Dict[str, np.array]:
         assert hasattr(self, "w2v_path"), "w2v path not set"
         # create word_vec with k first w2v vectors
         k = 0
@@ -147,19 +148,19 @@ class InferSentModel(nn.Module):
                     break
         return word_vec
 
-    def build_vocab(self, sentences, tokenize=True):
+    def build_vocab(self, sentences : List[str], tokenize=True : bool):
         assert hasattr(self, "w2v_path"), "w2v path not set"
         word_dict = self.get_word_dict(sentences, tokenize)
         self.word_vec = self.get_w2v(word_dict)
         # print('Vocab size : %s' % (len(self.word_vec)))
 
     # build w2v vocab with k most frequent words
-    def build_vocab_k_words(self, K):
+    def build_vocab_k_words(self, K : int):
         assert hasattr(self, "w2v_path"), "w2v path not set"
         self.word_vec = self.get_w2v_k(K)
         # print('Vocab size : %s' % (K))
 
-    def update_vocab(self, sentences, tokenize=True):
+    def update_vocab(self, sentences : List[str], tokenize=True : bool):
         assert hasattr(self, "w2v_path"), "warning : w2v path not set"
         assert hasattr(self, "word_vec"), "build_vocab before updating it"
         word_dict = self.get_word_dict(sentences, tokenize)
@@ -180,7 +181,7 @@ class InferSentModel(nn.Module):
             % (len(self.word_vec), len(new_word_vec))
         )
 
-    def get_batch(self, batch):
+    def get_batch(self, batch : np.array) -> torch.FloatTensor:
         # sent in batch in decreasing order of lengths
         # batch: (bsize, max_len, word_dim)
         embed = np.zeros((len(batch[0]), len(batch), self.word_emb_dim))
@@ -191,7 +192,7 @@ class InferSentModel(nn.Module):
 
         return torch.FloatTensor(embed)
 
-    def tokenize(self, s):
+    def tokenize(self, s : str) -> List[str]:
         from nltk.tokenize import word_tokenize
 
         if self.moses_tok:
@@ -201,7 +202,7 @@ class InferSentModel(nn.Module):
         else:
             return word_tokenize(s)
 
-    def prepare_samples(self, sentences, bsize, tokenize, verbose):
+    def prepare_samples(self, sentences : List[str], bsize : int, tokenize : bool, verbose : bool) -> Tuple[np.array, np.array, np.array]:
         sentences = [
             [self.bos] + s.split() + [self.eos]
             if not tokenize
@@ -237,7 +238,7 @@ class InferSentModel(nn.Module):
 
         return sentences, lengths, idx_sort
 
-    def encode(self, sentences, bsize=64, tokenize=True, verbose=False):
+    def encode(self, sentences : List[str], bsize=64 : int, tokenize=True : bool, verbose=False : bool) -> np.ndarray:
         tic = time.time()
         sentences, lengths, idx_sort = self.prepare_samples(
             sentences, bsize, tokenize, verbose

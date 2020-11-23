@@ -3,6 +3,9 @@ Word Swap by Contraction
 ============================================
 """
 
+from typing import List, Set
+
+from textattack.shared import AttackedText
 from textattack.shared.data import EXTENSION_MAP
 from textattack.transformations import Transformation
 
@@ -13,7 +16,9 @@ class WordSwapContract(Transformation):
 
     reverse_contraction_map = {v: k for k, v in EXTENSION_MAP.items()}
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         """Return all possible transformed sentences, each with one
         contraction."""
         transformed_texts = []

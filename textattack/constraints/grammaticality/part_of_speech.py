@@ -11,6 +11,9 @@ import nltk
 import textattack
 from textattack.constraints import Constraint
 from textattack.shared.validators import transformation_consists_of_word_swaps
+from textattack.transformations import Transformation
+from textattack.shared import AttackedText
+from typing import List
 
 # Set global flair device to be TextAttack's current device
 flair.device = textattack.shared.utils.device
@@ -37,10 +40,10 @@ class PartOfSpeech(Constraint):
 
     def __init__(
         self,
-        tagger_type="nltk",
-        tagset="universal",
-        allow_verb_noun_swap=True,
-        compare_against_original=True,
+        tagger_type="nltk" : str,
+        tagset="universal" : str,
+        allow_verb_noun_swap=True : bool,
+        compare_against_original=True : bool,
     ):
         super().__init__(compare_against_original)
         self.tagger_type = tagger_type
@@ -62,12 +65,12 @@ class PartOfSpeech(Constraint):
     def clear_cache(self):
         self._pos_tag_cache.clear()
 
-    def _can_replace_pos(self, pos_a, pos_b):
+    def _can_replace_pos(self, pos_a : str, pos_b : str):
         return (pos_a == pos_b) or (
             self.allow_verb_noun_swap and set([pos_a, pos_b]) <= set(["NOUN", "VERB"])
         )
 
-    def _get_pos(self, before_ctx, word, after_ctx):
+    def _get_pos(self, before_ctx : str, word : str, after_ctx : str) -> str:
         context_words = before_ctx + [word] + after_ctx
         context_key = " ".join(context_words)
         if context_key in self._pos_tag_cache:
@@ -99,7 +102,7 @@ class PartOfSpeech(Constraint):
         word_idx = word_list.index(word)
         return pos_list[word_idx]
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
         try:
             indices = transformed_text.attack_attrs["newly_modified_indices"]
         except KeyError:
@@ -121,10 +124,10 @@ class PartOfSpeech(Constraint):
 
         return True
 
-    def check_compatibility(self, transformation):
+    def check_compatibility(self, transformation : Transformation) -> bool:
         return transformation_consists_of_word_swaps(transformation)
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return [
             "tagger_type",
             "tagset",

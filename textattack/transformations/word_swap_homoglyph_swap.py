@@ -2,9 +2,10 @@
 Word Swap by Homoglyph
 ============================================
 """
+from typing import List
+
 import numpy as np
 
-# from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
 
 
@@ -12,7 +13,7 @@ class WordSwapHomoglyphSwap(WordSwap):
     """Transforms an input by replacing its words with visually similar words
     using homoglyph swaps."""
 
-    def __init__(self, random_one=False, **kwargs):
+    def __init__(self, random_one: bool = False, **kwargs):
         super().__init__(**kwargs)
         self.homos = {
             "-": "˗",
@@ -56,7 +57,7 @@ class WordSwapHomoglyphSwap(WordSwap):
         }
         self.random_one = random_one
 
-    def _get_replacement_words(self, word):
+    def _get_replacement_words(self, word: str) -> List[str]:
         """Returns a list containing all possible words with 1 character
         replaced by a homoglyph."""
         candidate_words = []
@@ -77,8 +78,8 @@ class WordSwapHomoglyphSwap(WordSwap):
         return candidate_words
 
     @property
-    def deterministic(self):
+    def deterministic(self) -> bool:
         return not self.random_one
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return super().extra_repr_keys()

@@ -9,6 +9,8 @@ from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from textattack.constraints import Constraint
 from textattack.models.wrappers import HuggingFaceModelWrapper
+from textattack.shared import AttackedText
+from typing import List, Union
 
 
 class COLA(Constraint):
@@ -31,9 +33,9 @@ class COLA(Constraint):
 
     def __init__(
         self,
-        max_diff,
-        model_name="textattack/bert-base-uncased-CoLA",
-        compare_against_original=True,
+        max_diff : Union[float, int],
+        model_name="textattack/bert-base-uncased-CoLA" : str,
+        compare_against_original=True : bool,
     ):
         super().__init__(compare_against_original)
         if not isinstance(max_diff, float) and not isinstance(max_diff, int):
@@ -51,7 +53,7 @@ class COLA(Constraint):
     def clear_cache(self):
         self._reference_score_cache.clear()
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
         if reference_text not in self._reference_score_cache:
             # Split the text into sentences before predicting validity
             reference_sentences = nltk.sent_tokenize(reference_text.text)
@@ -73,7 +75,7 @@ class COLA(Constraint):
             return False
         return True
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return [
             "max_diff",
             "model_name",

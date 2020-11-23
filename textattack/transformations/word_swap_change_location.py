@@ -2,14 +2,19 @@
 Word Swap by Changing Location
 ============================================
 """
+from typing import List, Set, Union
+
 import more_itertools as mit
 import numpy as np
 
+from textattack.shared import AttackedText
 from textattack.shared.data import NAMED_ENTITIES
 from textattack.transformations import Transformation
 
 
-def idx_to_words(ls, words):
+def idx_to_words(
+    ls: List[List[int]], words: List[str]
+) -> List[List[Union[List[int], str]]]:
     """Given a list generated from cluster_idx, return a list that contains
     sub-list (the first element being the idx, and the second element being the
     words corresponding to the idx)"""
@@ -24,7 +29,7 @@ def idx_to_words(ls, words):
 
 
 class WordSwapChangeLocation(Transformation):
-    def __init__(self, n=3, confidence_score=0.7, **kwargs):
+    def __init__(self, n: int = 3, confidence_score: float = 0.7, **kwargs):
         """Transformation that changes recognized locations of a sentence to
         another location that is given in the location map.
 
@@ -35,7 +40,9 @@ class WordSwapChangeLocation(Transformation):
         self.n = n
         self.confidence_score = confidence_score
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         words = current_text.words
         location_idx = []
 
@@ -71,7 +78,7 @@ class WordSwapChangeLocation(Transformation):
                 transformed_texts.append(text)
         return transformed_texts
 
-    def _get_new_location(self, word):
+    def _get_new_location(self, word: str) -> List[str]:
         """Return a list of new locations, with the choice of country,
         nationality, and city."""
         if word in NAMED_ENTITIES["country"]:

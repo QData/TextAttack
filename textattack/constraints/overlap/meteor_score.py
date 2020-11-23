@@ -10,6 +10,8 @@ METEOR Constraints
 import nltk
 
 from textattack.constraints import Constraint
+from textattack.shared import AttackedText
+from typing import List
 
 
 class METEOR(Constraint):
@@ -21,15 +23,15 @@ class METEOR(Constraint):
             Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, max_meteor, compare_against_original=True):
+    def __init__(self, max_meteor : float, compare_against_original=True : bool):
         super().__init__(compare_against_original)
         if not isinstance(max_meteor, int):
             raise TypeError("max_meteor must be an int")
         self.max_meteor = max_meteor
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText):
         meteor = nltk.translate.meteor([reference_text], transformed_text)
         return meteor <= self.max_meteor
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["max_meteor"] + super().extra_repr_keys()

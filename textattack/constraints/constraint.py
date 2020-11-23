@@ -8,6 +8,9 @@ from abc import ABC, abstractmethod
 
 import textattack
 from textattack.shared.utils import default_class_repr
+from textattack.transformations import Transformation
+from textattack.shared import AttackedText
+from typing import List, Set
 
 
 class Constraint(ABC):
@@ -21,10 +24,12 @@ class Constraint(ABC):
             All constraints must have this attribute.
     """
 
-    def __init__(self, compare_against_original):
+    def __init__(self, compare_against_original: bool):
         self.compare_against_original = compare_against_original
 
-    def call_many(self, transformed_texts, reference_text):
+    def call_many(
+        self, transformed_texts: List[AttackedText], reference_text: AttackedText
+    ) -> List[AttackedText]:
         """Filters ``transformed_texts`` based on which transformations fulfill
         the constraint. First checks compatibility with latest
         ``Transformation``, then calls ``_check_constraint_many``
@@ -52,7 +57,9 @@ class Constraint(ABC):
         )
         return list(filtered_texts) + incompatible_transformed_texts
 
-    def _check_constraint_many(self, transformed_texts, reference_text):
+    def _check_constraint_many(
+        self, transformed_texts: List[AttackedText], reference_text: AttackedText
+    ) -> List[AttackedText]:
         """Filters ``transformed_texts`` based on which transformations fulfill
         the constraint. Calls ``check_constraint``
 
@@ -66,7 +73,9 @@ class Constraint(ABC):
             if self._check_constraint(transformed_text, reference_text)
         ]
 
-    def __call__(self, transformed_text, reference_text):
+    def __call__(
+        self, transformed_text: AttackedText, reference_text: AttackedText
+    ) -> bool:
         """Returns True if the constraint is fulfilled, False otherwise. First
         checks compatibility with latest ``Transformation``, then calls
         ``_check_constraint``
@@ -92,7 +101,9 @@ class Constraint(ABC):
         return self._check_constraint(transformed_text, reference_text)
 
     @abstractmethod
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(
+        self, transformed_text: AttackedText, reference_text: AttackedText
+    ) -> bool:
         """Returns True if the constraint is fulfilled, False otherwise. Must
         be overridden by the specific constraint.
 
@@ -102,7 +113,7 @@ class Constraint(ABC):
         """
         raise NotImplementedError()
 
-    def check_compatibility(self, transformation):
+    def check_compatibility(self, transformation: Transformation) -> bool:
         """Checks if this constraint is compatible with the given
         transformation. For example, the ``WordEmbeddingDistance`` constraint
         compares the embedding of the word inserted with that of the word
@@ -115,7 +126,7 @@ class Constraint(ABC):
         """
         return True
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         """Set the extra representation of the constraint using these keys.
 
         To print customized extra information, you should reimplement

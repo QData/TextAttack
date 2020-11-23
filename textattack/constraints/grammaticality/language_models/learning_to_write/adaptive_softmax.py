@@ -10,10 +10,11 @@ from torch.autograd import Variable
 from torch.nn.functional import log_softmax
 
 import textattack
+from typing import List
 
 
 class AdaptiveSoftmax(nn.Module):
-    def __init__(self, input_size, cutoffs, scale_down=4):
+    def __init__(self, input_size : int, cutoffs : List[int], scale_down=4 : int):
         super().__init__()
         self.input_size = input_size
         self.cutoffs = cutoffs
@@ -27,13 +28,13 @@ class AdaptiveSoftmax(nn.Module):
             )
             self.tail.append(seq)
 
-    def reset(self, init=0.1):
+    def reset(self, init=0.1 : float):
         self.head.weight.data.uniform_(-init, init)
         for tail in self.tail:
             for layer in tail:
                 layer.weight.data.uniform_(-init, init)
 
-    def set_target(self, target):
+    def set_target(self, target : torch.Tensor):
         self.id = []
         for i in range(len(self.cutoffs) - 1):
             mask = target.ge(self.cutoffs[i]).mul(target.lt(self.cutoffs[i + 1]))
@@ -42,7 +43,7 @@ class AdaptiveSoftmax(nn.Module):
             else:
                 self.id.append(None)
 
-    def forward(self, inp):
+    def forward(self, inp : torch.Tensor) -> List[float]:
         assert len(inp.size()) == 2
         output = [self.head(inp)]
         for i in range(len(self.id)):
@@ -52,7 +53,7 @@ class AdaptiveSoftmax(nn.Module):
                 output.append(None)
         return output
 
-    def log_prob(self, inp):
+    def log_prob(self, inp : torch.Tensor) -> torch.Tensor:
         assert len(inp.size()) == 2
         head_out = self.head(inp)
         n = inp.size(0)
@@ -73,7 +74,7 @@ class AdaptiveSoftmax(nn.Module):
 
 
 class AdaptiveLoss(nn.Module):
-    def __init__(self, cutoffs):
+    def __init__(self, cutoffs : List[int]):
         super().__init__()
         self.cutoffs = cutoffs
         self.criterions = nn.ModuleList()
@@ -84,7 +85,7 @@ class AdaptiveLoss(nn.Module):
         for criterion in self.criterions:
             criterion.zero_grad()
 
-    def remap_target(self, target):
+    def remap_target(self, target : torch.Tensor) -> List[torch.Tensor]:
         new_target = [target.clone()]
         for i in range(len(self.cutoffs) - 1):
             mask = target.ge(self.cutoffs[i]).mul(target.lt(self.cutoffs[i + 1]))
@@ -96,7 +97,7 @@ class AdaptiveLoss(nn.Module):
                 new_target.append(None)
         return new_target
 
-    def forward(self, inp, target):
+    def forward(self, inp : torch.Tensor, target : torch.Tensor) -> float:
         n = inp[0].size(0)
         target = self.remap_target(target.data)
         loss = 0

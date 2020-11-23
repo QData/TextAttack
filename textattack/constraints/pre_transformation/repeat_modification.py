@@ -5,6 +5,8 @@ Repeat Modification
 """
 
 from textattack.constraints import PreTransformationConstraint
+from textattack.shared import AttackedText
+from typing import Set
 
 # from textattack.shared.utils import default_class_repr
 
@@ -13,7 +15,7 @@ class RepeatModification(PreTransformationConstraint):
     """A constraint disallowing the modification of words which have already
     been modified."""
 
-    def _get_modifiable_indices(self, current_text):
+    def _get_modifiable_indices(self, current_text: AttackedText) -> Set[int]:
         """Returns the word indices in current_text which are able to be
         deleted."""
         try:

@@ -3,6 +3,9 @@ Word Swap by Extension
 ============================================
 """
 
+from typing import List, Set
+
+from textattack.shared import AttackedText
 from textattack.shared.data import EXTENSION_MAP
 from textattack.transformations import Transformation
 
@@ -11,7 +14,9 @@ class WordSwapExtend(Transformation):
     """Transforms an input by performing extension on recognized
     combinations."""
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ) -> List[AttackedText]:
         """Return all possible transformed sentences, each with one
         extension."""
         transformed_texts = []

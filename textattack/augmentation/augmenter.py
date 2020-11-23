@@ -9,7 +9,9 @@ import tqdm
 
 from textattack.constraints import PreTransformationConstraint
 from textattack.shared import AttackedText, utils
-
+from textattack.transformations import Transformation
+from textattack.shared import AttackedText
+from typing import List, Set, Tuple
 
 class Augmenter:
     """A class for performing data augmentation using TextAttack.
@@ -29,10 +31,10 @@ class Augmenter:
 
     def __init__(
         self,
-        transformation,
-        constraints=[],
-        pct_words_to_swap=0.1,
-        transformations_per_example=1,
+        transformation : Transformation,
+        constraints=[] : List[Constraint],
+        pct_words_to_swap: float=0.1,
+        transformations_per_example: int=1,
     ):
         assert (
             transformations_per_example > 0
@@ -50,7 +52,8 @@ class Augmenter:
             else:
                 self.constraints.append(constraint)
 
-    def _filter_transformations(self, transformed_texts, current_text, original_text):
+    def _filter_transformations(self, transformed_texts : List[AttackedText], current_text : AttackedText, 
+                                original_text : AttackedText) -> List[AttackedText]:
         """Filters a list of ``AttackedText`` objects to include only the ones
         that pass ``self.constraints``."""
         for C in self.constraints:
@@ -68,7 +71,7 @@ class Augmenter:
                 transformed_texts = C.call_many(transformed_texts, current_text)
         return transformed_texts
 
-    def augment(self, text):
+    def augment(self, text : str) -> List[str]:
         """Returns all possible augmentations of ``text`` according to
         ``self.transformation``."""
         attacked_text = AttackedText(text)
@@ -107,7 +110,7 @@ class Augmenter:
             all_transformed_texts.add(current_text)
         return sorted([at.printable_text() for at in all_transformed_texts])
 
-    def augment_many(self, text_list, show_progress=False):
+    def augment_many(self, text_list : List[str], show_progress=False : bool) -> List[List[str]]:
         """Returns all possible augmentations of a list of strings according to
         ``self.transformation``.
 
@@ -120,7 +123,7 @@ class Augmenter:
             text_list = tqdm.tqdm(text_list, desc="Augmenting data...")
         return [self.augment(text) for text in text_list]
 
-    def augment_text_with_ids(self, text_list, id_list, show_progress=True):
+    def augment_text_with_ids(self, text_list -> List[str], id_list -> List[int], show_progress=True : bool) -> Tuple[List[str], List[int]]:
         """Supplements a list of text with more text data.
 
         Returns the augmented text along with the corresponding IDs for
@@ -143,7 +146,7 @@ class Augmenter:
             all_id_list.extend([_id] * (1 + len(augmented_texts)))
         return all_text_list, all_id_list
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         main_str = "Augmenter" + "("
         lines = []
         # self.transformation
