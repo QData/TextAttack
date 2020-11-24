@@ -80,3 +80,26 @@ class TextAttackDataset(ABC):
         Only necessary for some datasets.
         """
         return ex
+		
+
+		def _from_df(self, path):
+				""" loads from pandas dataframe
+				path: path where dataframe is saved
+				"""
+				self.examples = 
+				return 
+
+
+		def _from_csv(self, path):
+				"""Loads from csv file
+				"""
+				return 
+
+		def _from_lists(self, path):
+				"""Loads from a list
+				"""
+				return
+
+
+
+
