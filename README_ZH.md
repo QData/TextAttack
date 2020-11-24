@@ -22,9 +22,9 @@
 
 ## 简介
 
-TextAttack 是一个 NLP 应用的 Python 框架。帮助你方便快捷的进行对抗攻击，增强数据，以及训练模型。
+TextAttack 是一个可以实行自然语言处理的 Python 框架，用于方便快捷地进行对抗攻击，增强数据，以及训练模型。
 
-> 如果你在寻找 TextAttacks 支持的预训练模型，也许 [TextAttack Model Zoo](https://textattack.readthedocs.io/en/latest/3recipes/models.html) 页面是你的菜。
+> 如果你在寻找 TextAttacks 支持的预训练模型，请访问 [TextAttack Model Zoo](https://textattack.readthedocs.io/en/latest/3recipes/models.html)。
 
 ## Slack 频道
 
@@ -32,16 +32,16 @@ TextAttack 是一个 NLP 应用的 Python 框架。帮助你方便快捷的进�
 
 ### *选择 TextAttack 的原因*
 
-1. **深入理解 NLP 模型** 通过使用各种对抗攻击，观察模型的表现
-2. **研究与开发 NLP 对抗攻击** 在你的项目中使用 TextAttack 的框架与组件库
-3. **进行数据增强** 提升模型的泛化性与鲁棒性
-3. **训练 NLP 模型** 只需一行命令，轻松训练模型 (包括下载所有的依赖资源！)
+1. **深入理解 NLP 模型**： 通过使用各种对抗攻击，观察模型的表现
+2. **研究与开发 NLP 对抗攻击**： 在你的项目中使用 TextAttack 的框架与组件库
+3. **进行数据增强**： 提升模型的泛化性与鲁棒性
+3. **训练 NLP 模型**： 只需一行命令，轻松训练模型 (包括下载所有的依赖资源！)
 
 ## 环境配置
 
 ### 安装
 
-支持 Python 3.6 及以上。支持 CPU ，使用兼容 CUDA 的 GPU ，还可以让你的代码起飞。使用 pip 轻松安装 TextAttack:
+支持 Python 3.6 及以上。支持 CPU ，使用兼容 CUDA 的 GPU ，还可以大幅度提高代码运行速度。使用 pip 轻松安装 TextAttack:
 
 ```bash
 pip install textattack
@@ -85,7 +85,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
 ```
 
-*对 MR 数据集上训练的 LSTM 模型，设置束搜索宽度为 4，使用词嵌入转换进行无目标攻击*:
+*对 MR 数据集上训练的 LSTM 模型：设置束搜索宽度为 4，使用词嵌入转换进行无目标攻击*:
 
 ```bash
 textattack attack --model lstm-mr --num-examples 20 \
@@ -105,19 +105,19 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 <table>
 <thead>
-<tr>
-<th><strong>—————— 攻击策略 ——————</strong></th>
-<th><strong>—————— 目标函数 ——————</strong></th>
-<th><strong>—————— 约束条件 ——————</strong></th>
-<th><strong>—————— 变换方式 ——————</strong></th>
-<th><strong>——————— 搜索方法 ———————</strong></th>
-<th><strong>主要思想</strong></th>
+<tr class="header">
+<th><strong> 攻击策略 </strong></th>
+<th><strong> 目标函数 </strong></th>
+<th><strong> 约束条件 </strong></th>
+<th><strong> 变换方式 </strong></th>
+<th><strong> 搜索方法 </strong></th>
+<th><strong> 主要思想 </strong></th>
 </tr>
 </thead>
 <tbody>
   <tr><td colspan="6"><strong><br>对于分类任务的攻击策略，例如情感分类和文本蕴含任务：<br></strong></td></tr>
 
-<tr>
+<tr class="even">
 <td><code>alzantot</code>  <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>被扰动词的比例，语言模型的困惑度，词嵌入的距离</sub></td>
@@ -125,7 +125,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>遗传算法</sub></td>
 <td ><sub>来自 (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))</sub></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>bae</code> <span class="citation" data-cites="garg2020bae"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>USE 通用句子编码向量的 cosine 相似度</sub></td>
@@ -133,7 +133,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td><sub>使用 BERT 语言模型作为变换的攻击方法，来自 (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)). </sub></td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>bert-attack</code> <span class="citation" data-cites="li2020bertattack"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>USE 通用句子编码向量的 cosine 相似度, 被扰动词的最大数量</sub></td>
@@ -141,7 +141,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub> (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984))</sub></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>checklist</code> <span class="citation" data-cites="Gao2018BlackBoxGO"></span></td>
 <td><sub>{无目标，有目标}<br/>分类</sub></td>
 <td><sub>checklist 距离</sub></td>
@@ -149,7 +149,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>CheckList 中实现的不变性检验(["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))</sub></td>
 </tr>
-<tr>
+<tr class="even">
 <td> <code>clare (*coming soon*)</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>RoBERTa 掩码语言模型</sub></td>
@@ -157,7 +157,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>贪心搜索</sub></td>
 <td ><sub>["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502))</sub></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>deepwordbug</code> <span class="citation" data-cites="Gao2018BlackBoxGO"></span></td>
 <td><sub>{无目标，有目标}<br/>分类</sub></td>
 <td><sub>Levenshtein 编辑距离</sub></td>
@@ -165,7 +165,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>贪心搜索 replace-1 分数，多种变换的字符交换式的攻击 (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)</sub></td>
 </tr>
-<tr>
+<tr class="even">
 <td> <code>fast-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>被扰动词的比例，语言模型的困惑度，词嵌入的距离</sub></td>
@@ -173,7 +173,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>遗传算法</sub></td>
 <td ><sub>改进过的更快的 Alzantot et al. 遗传算法, 来自 (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986))</sub></td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>hotflip</code> (word swap) <span class="citation" data-cites="Ebrahimi2017HotFlipWA"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>词嵌入的 cosine 相似度，词性的匹配，被扰动词的数量</sub></td>
@@ -181,7 +181,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>束搜索</sub></td>
 <td ><sub> (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751))</sub></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>iga</code> <span class="citation" data-cites="iga-wang2019natural"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>被扰动词的比例，词嵌入的距离</sub></td>
@@ -189,7 +189,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>遗传算法</sub></td>
 <td ><sub>改进的基于遗传算法的词替换，来自 (["Natural Language Adversarial Attacks and Defenses in Word Level (Wang et al., 2019)"](https://arxiv.org/abs/1909.06723)</sub></td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>input-reduction</code> <span class="citation" data-cites="feng2018pathologies"></span></td>
 <td><sub>输入归约</sub></td>
 <td></td>
@@ -197,7 +197,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>基于词重要性排序的贪心攻击方法，在缩减输入词的同时保持预测结果不变 (["Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)](https://arxiv.org/pdf/1804.07781.pdf))</sub></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>kuleshov</code> <span class="citation" data-cites="Kuleshov2018AdversarialEF"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>Thought vector 编码的 cosine 相似度, 语言模型给出的相似度概率</sub></td>
@@ -205,7 +205,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>贪心的词的替换</sub></td>
 <td ><sub>(["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ)) </sub></td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>pruthi</code> <span class="citation" data-cites="pruthi2019combating"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>词的最短长度，被扰动词的最大数量</sub></td>
@@ -213,7 +213,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>贪心搜索</sub></td>
 <td ><sub>模拟常见的打字错误 (["Combating Adversarial Misspellings with Robust Word Recognition" (Pruthi et al., 2019)](https://arxiv.org/abs/1905.11268) </sub></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>pso</code> <span class="citation" data-cites="pso-zang-etal-2020-word"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td></td>
@@ -221,7 +221,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>粒子群优化算法</sub></td>
 <td ><sub>(["Word-level Textual Adversarial Attacking as Combinatorial Optimization" (Zang et al., 2020)](https://www.aclweb.org/anthology/2020.acl-main.540/)) </sub></td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>pwws</code> <span class="citation" data-cites="pwws-ren-etal-2019-generating"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td></td>
@@ -229,7 +229,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>贪心的攻击方法，基于词重要性排序，词的显著性，以及同义词替换分数(["Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency" (Ren et al., 2019)](https://www.aclweb.org/anthology/P19-1103/))</sub> </td>
 </tr>
-<tr>
+<tr class="even">
 <td><code>textbugger</code> : (black-box) <span class="citation" data-cites="Li2019TextBuggerGA"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>USE 通用句子编码向量的 cosine 相似度</sub></td>
@@ -237,7 +237,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)).</sub></td>
 </tr>
-<tr>
+<tr class="odd">
 <td><code>textfooler</code> <span class="citation" data-cites="Jin2019TextFooler"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>词嵌入的距离，词性的匹配，USE 通用句子编码向量的 cosine 相似度</sub></td>
@@ -248,7 +248,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 <tr><td colspan="6"><strong><br>对 seq2seq 模型的攻击策略：<br></strong></td></tr>
 
-<tr>
+<tr class="odd">
 <td><code>morpheus</code> <span class="citation" data-cites="morpheus-tan-etal-2020-morphin"></span></td>
 <td><sub>最小 BLEU 分数</sub> </td>
 <td></td>
@@ -258,7 +258,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 </tr>
 
 </tr>
-<tr>
+<tr class="odd">
 <td><code>seq2sick</code> :(black-box) <span class="citation" data-cites="cheng2018seq2sick"></span></td>
 <td><sub>翻译结果无重叠</sub> </td>
 <td></td>
@@ -357,7 +357,7 @@ it's a enigma how the filmmaking wo be publicized in this condition .,0
 
 ### 训练模型：`textattack train`
 
-通过 `textattack train` 可以便捷的使用 TextAttack 框架来训练 LSTM，CNN，以及 `transofrmers` 模型。数据集通过 `datasets` 包会自动加载。
+通过 `textattack train` 可以便捷地使用 TextAttack 框架来训练 LSTM，CNN，以及 `transofrmers` 模型。数据集会通过 `datasets` 包自动加载。
 
 #### 运行训练的例子
 *在 Yelp 分类数据集上对 TextAttack 中默认的 LSTM 模型训练 50 个 epoch：*
@@ -369,7 +369,7 @@ textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 5
 ```bash
 textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
 ```
-上面这个例子中，在训练之前使用 `EasyDataAugmenter` 策略对 `rotten_tomatoes` 数据集进行数据增强。
+上面这个例子在训练之前使用 `EasyDataAugmenter` 策略对 `rotten_tomatoes` 数据集进行数据增强。
 
 *在 `CoLA` 数据集上对 `bert-base` 模型精调 5 个 epoch：*
 ```bash
@@ -395,23 +395,23 @@ TextAttack 中有很多组件，有时很难跟进所有组件的情况。你可
 
 ### 模型和数据集
 
-TextAttack 不依赖具体模型！你可以使用 TextAttack 来分析任何模型，只要模型的输出是 ID，张量，或者字符串。为了方便使用，TextAttack 内置了常见 NLP 任务的各种预训练模型。你可以轻松愉悦的上手 TextAttack。同时还可以更公平的比较不同文献的 attack 策略。
+TextAttack 不依赖具体模型！你可以使用 TextAttack 来分析任何模型，只要模型的输出是 ID，张量，或者字符串。为了方便使用，TextAttack 内置了常见 NLP 任务的各种预训练模型。你可以轻松愉悦地上手 TextAttack。同时还可以更公平的比较不同文献的 attack 策略。
 
 
 
 #### 内置的模型
 
-TextAttack 提供了各种内置模型和数据集。使用 TextAttack 命令行接口，可以自动的匹配模型和数据集。
+TextAttack 提供了各种内置模型和数据集。使用 TextAttack 命令行接口，可以自动匹配模型和数据集。
 我们为 [GLUE](https://gluebenchmark.com/) 中的九个任务内置了多种预训练模型，并且还内置了很多常见的分类任务、翻译任务和摘要任务的数据集。
 
-[textattack/models/README.md](textattack/models/README.md) 是一个列表，其中有可用的预训练模型以及这些模型的准确率。你还可以通过 `textattack attack --help` 查看完整列表，包括所有的内置模型与数据集。
+[textattack/models/README.md](textattack/models/README.md) 这个列表包含可用的预训练模型以及这些模型的准确率。你还可以通过 `textattack attack --help` 查看完整列表，包括所有的内置模型与数据集。
 
 下面是一个使用内置模型的例子（SST-2 数据集会自动的加载）：
 ```bash
 textattack attack --model roberta-base-sst2 --recipe textfooler --num-examples 10
 ```
 
-#### 支持 HuggingFace：`transformers` 模型和 `datasets` 数据集
+#### HuggingFace 支持 ：`transformers` 模型和 `datasets` 数据集
 
 TextAttack 兼容 [`transformers` 预训练模型](https://huggingface.co/models) 
 和 [`datasets` 数据集](https://github.com/huggingface/datasets)! 下面是一个例子，加载数据集并攻击相应预训练模型：
@@ -426,7 +426,7 @@ textattack attack --model-from-huggingface distilbert-base-uncased-finetuned-sst
 
 #### 加载本地文件中的模型与数据集
 
-你可以快捷的对本地模型或数据样本进行攻击。通过创建一个简单的文件就可以加载预训练模型，在文件中通过对象 `model` 与 `tokenizer` 对象加载模型。`tokenizer` 对象必须实现了 `encoder()` 方法，该方法将输入字符串转为一个列表或一个 ID 张量。`model` 对象必须通过实现 `__call__` 方法来加载模型。
+你可以快捷地对本地模型或数据样本进行攻击：创建一个简单的文件就可以加载预训练模型，然后在文件中可以通过对象 `model` 与 `tokenizer` 对象加载模型。`tokenizer` 对象必须实现 `encode()` 方法，该方法将输入字符串转为一个列表或一个 ID 张量。`model` 对象必须通过实现 `__call__` 方法来加载模型。
 
 ##### 使用本地模型
 对于你已经训练完成的模型，可以通过创建下面这样的文件，将其命名为 `my_model.py`:
@@ -440,7 +440,7 @@ tokenizer = load_your_tokenizer_with_custom_code() # replace this line with your
 
 #### 使用本地数据集
 
-加载本地数据集与加载本地预训练模型的方法相似。`dataset` 对象可以是任意可迭代的`(input, output)` 对。下面这个例子为 `my_dataset.py` 的内容，在 `my_dataset.py` 脚本中加载一个情感分类数据集：
+加载本地数据集与加载本地预训练模型的方法相似。`dataset` 对象可以是任意可迭代的`(input, output)` 对。下面这个例子演示了如何在 `my_dataset.py` 脚本中加载一个情感分类数据集：
 
 ```python
 dataset = [('Today was....', 1), ('This movie is...', 0), ...]
@@ -455,10 +455,10 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 `Attack` 中的 `attack_one` 方法以 `AttackedText` 对象作为输入，若攻击成功，返回 `SuccessfulAttackResult`，若攻击失败，返回 `FailedAttackResult`。
 
 
-我们将攻击策略形式化，由四部分组成：**目标函数** 定义怎样的攻击是一次成功的攻击，**约束条件** 定义怎样的扰动是可行的，**变换规则** 对输入文本生成一系列可行的扰动结果，**搜索方法** 在搜索空间中遍历所有可行的扰动结果。在一次攻击中，尝试对输入的文本添加扰动，使其通过目标函数（即判断攻击是否成功），并且扰动要符合约束（如语法约束，语义相似性约束）。最后用搜索方法在所有可行的变换结果中，挑选出优质的对抗样本。
+我们将攻击划分并定义为四个组成部分：**目标函数** 定义怎样的攻击是一次成功的攻击，**约束条件** 定义怎样的扰动是可行的，**变换规则** 对输入文本生成一系列可行的扰动结果，**搜索方法** 在搜索空间中遍历所有可行的扰动结果。每一次攻击都尝试对输入的文本添加扰动，使其通过目标函数（即判断攻击是否成功），并且扰动要符合约束（如语法约束，语义相似性约束）。最后用搜索方法在所有可行的变换结果中，挑选出优质的对抗样本。
 
 
-通过这种模块化的设计，可以将各种对抗攻击策略整合在一个系统里。这使得我们可以方便的将文献中的方法集成在一起，同时复用攻击策略之间相同的部分。我们已经实现了 16 种简明易读的攻击策略（见上表）。史上首次！各种攻击方法终于可以在标准的设置下作为基准方法，进行比较与分析。
+这种模块化的设计可以将各种对抗攻击策略整合在一个系统里。这使得我们可以方便地将文献中的方法集成在一起，同时复用攻击策略之间相同的部分。我们已经实现了 16 种简明易读的攻击策略（见上表）。史上首次！各种攻击方法终于可以在标准的设置下作为基准方法，进行比较与分析。
 
 
 TextAttack 是不依赖具体模型的，这意味着可以对任何深度学习框架训练的模型进行攻击。只要被攻击的模型可以读取字符串（或一组字符串），并根据目标函数返回一个结果。比如说，机器翻译模型读取一句话，返回一句对应的翻译结果。分类或蕴含任务的模型输入字符串，返回一组分数。只要你的模型满足这两点，就可以使用 TextAttack 进行攻击。
@@ -479,12 +479,12 @@ TextAttack 是不依赖具体模型的，这意味着可以对任何深度学习
 
 ### 搜索方法
 
-搜索方法 `SearchMethod` 以初始的 `GoalFunctionResult` 作为输入，返回最终的 `GoalFunctionResult`。`get_transformations` 方法，以一个 `AttackedText` 对象作为输入，返货所有符合约束条件的变换结果。搜索方法不断的调用 `get_transformations` 函数，直到攻击成功 (由 `get_goal_results` 决定) 或搜索结束。
+搜索方法 `SearchMethod` 以初始的 `GoalFunctionResult` 作为输入，返回最终的 `GoalFunctionResult`。`get_transformations` 方法，以一个 `AttackedText` 对象作为输入，返还所有符合约束条件的变换结果。搜索方法不断地调用 `get_transformations` 函数，直到攻击成功 (由 `get_goal_results` 决定) 或搜索结束。
 
 
 ## 帮助改进 TextAttack
 
-欢迎任何建议与改进！提交 Issues（议题）和 Pull requests（拉取请求），我们会竭尽所能的做出即时反馈。TextAttack 当前处于 "alpha" 版本，我们仍在完善它的设计与功能。
+我们欢迎任何建议与改进！请提交 Issues（议题）和 Pull requests（拉取请求），我们会竭尽所能的做出即时反馈。TextAttack 当前处于 "alpha" 版本，我们仍在完善它的设计与功能。
 
 关于提交建议与改进的详细指引，查看 [CONTRIBUTING.md](https://github.com/QData/TextAttack/blob/master/CONTRIBUTING.md) 。
 
