@@ -106,18 +106,18 @@ textattack attack --model lstm-mr --num-examples 20 \
 <table>
 <thead>
 <tr class="header">
-<th><strong> 攻击策略 </strong></th>
-<th><strong> 目标函数 </strong></th>
-<th><strong> 约束条件 </strong></th>
-<th><strong> 变换方式 </strong></th>
-<th><strong> 搜索方法 </strong></th>
-<th><strong> 主要思想 </strong></th>
+<th><strong>—————— 攻击策略 ——————</strong></th>
+<th><strong>—————— 目标函数 ——————</strong></th>
+<th><strong>—————— 约束条件 ——————</strong></th>
+<th><strong>—————— 变换方式 ——————</strong></th>
+<th><strong>——————— 搜索方法 ———————</strong></th>
+<th><strong>主要思想</strong></th>
 </tr>
 </thead>
 <tbody>
   <tr><td colspan="6"><strong><br>对于分类任务的攻击策略，例如情感分类和文本蕴含任务：<br></strong></td></tr>
 
-<tr class="even">
+<tr>
 <td><code>alzantot</code>  <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>被扰动词的比例，语言模型的困惑度，词嵌入的距离</sub></td>
@@ -125,7 +125,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>遗传算法</sub></td>
 <td ><sub>来自 (["Generating Natural Language Adversarial Examples" (Alzantot et al., 2018)](https://arxiv.org/abs/1804.07998))</sub></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>bae</code> <span class="citation" data-cites="garg2020bae"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>USE 通用句子编码向量的 cosine 相似度</sub></td>
@@ -133,7 +133,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td><sub>使用 BERT 语言模型作为变换的攻击方法，来自 (["BAE: BERT-based Adversarial Examples for Text Classification" (Garg & Ramakrishnan, 2019)](https://arxiv.org/abs/2004.01970)). </sub></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>bert-attack</code> <span class="citation" data-cites="li2020bertattack"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>USE 通用句子编码向量的 cosine 相似度, 被扰动词的最大数量</sub></td>
@@ -141,7 +141,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub> (["BERT-ATTACK: Adversarial Attack Against BERT Using BERT" (Li et al., 2020)](https://arxiv.org/abs/2004.09984))</sub></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>checklist</code> <span class="citation" data-cites="Gao2018BlackBoxGO"></span></td>
 <td><sub>{无目标，有目标}<br/>分类</sub></td>
 <td><sub>checklist 距离</sub></td>
@@ -149,7 +149,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>CheckList 中实现的不变性检验(["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))</sub></td>
 </tr>
-<tr class="even">
+<tr>
 <td> <code>clare (*coming soon*)</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>RoBERTa 掩码语言模型</sub></td>
@@ -157,7 +157,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>贪心搜索</sub></td>
 <td ><sub>["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502))</sub></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>deepwordbug</code> <span class="citation" data-cites="Gao2018BlackBoxGO"></span></td>
 <td><sub>{无目标，有目标}<br/>分类</sub></td>
 <td><sub>Levenshtein 编辑距离</sub></td>
@@ -165,7 +165,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>贪心搜索 replace-1 分数，多种变换的字符交换式的攻击 (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)</sub></td>
 </tr>
-<tr class="even">
+<tr>
 <td> <code>fast-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>被扰动词的比例，语言模型的困惑度，词嵌入的距离</sub></td>
@@ -173,7 +173,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>遗传算法</sub></td>
 <td ><sub>改进过的更快的 Alzantot et al. 遗传算法, 来自 (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986))</sub></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>hotflip</code> (word swap) <span class="citation" data-cites="Ebrahimi2017HotFlipWA"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>词嵌入的 cosine 相似度，词性的匹配，被扰动词的数量</sub></td>
@@ -181,7 +181,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>束搜索</sub></td>
 <td ><sub> (["HotFlip: White-Box Adversarial Examples for Text Classification" (Ebrahimi et al., 2017)](https://arxiv.org/abs/1712.06751))</sub></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>iga</code> <span class="citation" data-cites="iga-wang2019natural"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>被扰动词的比例，词嵌入的距离</sub></td>
@@ -189,7 +189,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>遗传算法</sub></td>
 <td ><sub>改进的基于遗传算法的词替换，来自 (["Natural Language Adversarial Attacks and Defenses in Word Level (Wang et al., 2019)"](https://arxiv.org/abs/1909.06723)</sub></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>input-reduction</code> <span class="citation" data-cites="feng2018pathologies"></span></td>
 <td><sub>输入归约</sub></td>
 <td></td>
@@ -197,7 +197,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>基于词重要性排序的贪心攻击方法，在缩减输入词的同时保持预测结果不变 (["Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)](https://arxiv.org/pdf/1804.07781.pdf))</sub></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>kuleshov</code> <span class="citation" data-cites="Kuleshov2018AdversarialEF"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>Thought vector 编码的 cosine 相似度, 语言模型给出的相似度概率</sub></td>
@@ -205,7 +205,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>贪心的词的替换</sub></td>
 <td ><sub>(["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ)) </sub></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>pruthi</code> <span class="citation" data-cites="pruthi2019combating"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>词的最短长度，被扰动词的最大数量</sub></td>
@@ -213,7 +213,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>贪心搜索</sub></td>
 <td ><sub>模拟常见的打字错误 (["Combating Adversarial Misspellings with Robust Word Recognition" (Pruthi et al., 2019)](https://arxiv.org/abs/1905.11268) </sub></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>pso</code> <span class="citation" data-cites="pso-zang-etal-2020-word"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td></td>
@@ -221,7 +221,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>粒子群优化算法</sub></td>
 <td ><sub>(["Word-level Textual Adversarial Attacking as Combinatorial Optimization" (Zang et al., 2020)](https://www.aclweb.org/anthology/2020.acl-main.540/)) </sub></td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>pwws</code> <span class="citation" data-cites="pwws-ren-etal-2019-generating"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td></td>
@@ -229,7 +229,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>贪心的攻击方法，基于词重要性排序，词的显著性，以及同义词替换分数(["Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency" (Ren et al., 2019)](https://www.aclweb.org/anthology/P19-1103/))</sub> </td>
 </tr>
-<tr class="even">
+<tr>
 <td><code>textbugger</code> : (black-box) <span class="citation" data-cites="Li2019TextBuggerGA"></span></td>
 <td><sub>无目标<br/>分类</sub></td>
 <td><sub>USE 通用句子编码向量的 cosine 相似度</sub></td>
@@ -237,7 +237,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td><sub>对 WIR 的贪心搜索</sub></td>
 <td ><sub>([(["TextBugger: Generating Adversarial Text Against Real-world Applications" (Li et al., 2018)](https://arxiv.org/abs/1812.05271)).</sub></td>
 </tr>
-<tr class="odd">
+<tr>
 <td><code>textfooler</code> <span class="citation" data-cites="Jin2019TextFooler"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>词嵌入的距离，词性的匹配，USE 通用句子编码向量的 cosine 相似度</sub></td>
@@ -248,7 +248,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 <tr><td colspan="6"><strong><br>对 seq2seq 模型的攻击策略：<br></strong></td></tr>
 
-<tr class="odd">
+<tr>
 <td><code>morpheus</code> <span class="citation" data-cites="morpheus-tan-etal-2020-morphin"></span></td>
 <td><sub>最小 BLEU 分数</sub> </td>
 <td></td>
@@ -258,7 +258,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 </tr>
 
 </tr>
-<tr class="odd">
+<tr>
 <td><code>seq2sick</code> :(black-box) <span class="citation" data-cites="cheng2018seq2sick"></span></td>
 <td><sub>翻译结果无重叠</sub> </td>
 <td></td>
