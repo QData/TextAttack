@@ -14,7 +14,6 @@ import tqdm
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.datasets import CustomDataset
 
 AUGMENTATION_RECIPE_NAMES = {
     "wordnet": "textattack.augmentation.WordNetAugmenter",
