@@ -410,10 +410,10 @@ the literature.
 
 
 
-#### Built-in Models
+#### Built-in Models and Datasets
 
 TextAttack also comes built-in with models and datasets. Our command-line interface will automatically match the correct 
-dataset to the correct model. We include various pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
+dataset to the correct model. We include 82 different (Oct 2020) pre-trained models for each of the nine [GLUE](https://gluebenchmark.com/) 
 tasks, as well as some common datasets for classification, translation, and summarization. 
 
 A list of available pretrained models and their validation accuracies is available at
@@ -460,7 +460,7 @@ Then, run an attack with the argument `--model-from-file my_model.py`. The model
 
 
 
-### Datasets
+### Custom Datasets
 
 
 #### Dataset from a file
@@ -525,6 +525,16 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 - As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
 
 - This comment is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could from an improved search or transformation method or a less restrictive search space. 
+
+
+## Multi-lingual Support
+
+- See [README_ZH.md](https://github.com/QData/TextAttack/blob/master/README_ZH.md) for our README in Chinese 
+
+
+
+
+
 
 ## Contributing to TextAttack
 
