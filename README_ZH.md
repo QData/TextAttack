@@ -389,11 +389,8 @@ TextAttack 中有很多组件，有时很难跟进所有组件的情况。你可
 
 ## 设计模式
 
-### AttackedText
 
-为了对分词后的句子运行攻击方法，我们设计了 `AttackedText` 对象。它同时维护 token 列表与含有标点符号的原始文本。我们使用这个对象来处理原始的与分词后的文本。
-
-### 模型和数据集
+### 模型
 
 TextAttack 不依赖具体模型！你可以使用 TextAttack 来分析任何模型，只要模型的输出是 ID，张量，或者字符串。为了方便使用，TextAttack 内置了常见 NLP 任务的各种预训练模型。你可以轻松愉悦地上手 TextAttack。同时还可以更公平的比较不同文献的 attack 策略。
 
@@ -438,6 +435,8 @@ tokenizer = load_your_tokenizer_with_custom_code() # replace this line with your
 
 然后，在运行攻击时指定参数 `--model-from-file my_model.py`，就可以自动载入你的模型与分词器。
 
+### 数据集
+
 #### 使用本地数据集
 
 加载本地数据集与加载本地预训练模型的方法相似。`dataset` 对象可以是任意可迭代的`(input, output)` 对。下面这个例子演示了如何在 `my_dataset.py` 脚本中加载一个情感分类数据集：
@@ -448,6 +447,11 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 
 然后，在运行攻击时指定参数 `--dataset-from-file my_dataset.py`，就可以对这个本地数据集进行攻击。
 
+#### 通过 AttackedText 类调用数据集
+
+为了对分词后的句子运行攻击方法，我们设计了 `AttackedText` 对象。它同时维护 token 列表与含有标点符号的原始文本。我们使用这个对象来处理原始的与分词后的文本。
+
+#### 通过 Data Frames 调用数据集(*即將上線*)
 
 
 ### 何为攻击 & 如何设计新的攻击 
@@ -481,6 +485,13 @@ TextAttack 是不依赖具体模型的，这意味着可以对任何深度学习
 
 搜索方法 `SearchMethod` 以初始的 `GoalFunctionResult` 作为输入，返回最终的 `GoalFunctionResult`。`get_transformations` 方法，以一个 `AttackedText` 对象作为输入，返还所有符合约束条件的变换结果。搜索方法不断地调用 `get_transformations` 函数，直到攻击成功 (由 `get_goal_results` 决定) 或搜索结束。
 
+### 公平比较攻击策略（Benchmarking Attacks）
+
+- 详细情况参见我们的分析文章：Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+
+- 正如我们在上面的文章中所强调的，我们不推荐在对攻击策略没有约束的情况下直接进行比较。
+
+- 对这点进行强调，是由于最近的文献中在设置约束时使用了不同的方法或者阈值。在不固定约束空间时，攻击成功率的增加可能是源于改进的搜索方法或变换方式，又或是降低了对搜索空间的约束。
 
 ## 帮助改进 TextAttack
 
