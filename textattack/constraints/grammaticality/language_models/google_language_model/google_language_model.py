@@ -4,11 +4,13 @@ Google 1-Billion Words Language Model
 
 """
 from collections import defaultdict
+from typing import List
 
 import numpy as np
 
 from textattack.constraints import Constraint
-from textattack.transformations import WordSwap
+from textattack.shared import AttackedText
+from textattack.transformations import Transformation, WordSwap
 
 from .alzantot_goog_lm import GoogLMHelper
 
@@ -24,7 +26,12 @@ class GoogleLanguageModel(Constraint):
             Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, top_n=None : int, top_n_per_index=None : int, compare_against_original=True : bool):
+    def __init__(
+        self,
+        top_n: int = None,
+        top_n_per_index: int = None,
+        compare_against_original: bool = True,
+    ):
         if not (top_n or top_n_per_index):
             raise ValueError(
                 "Cannot instantiate GoogleLanguageModel without top_n or top_n_per_index"
@@ -34,16 +41,20 @@ class GoogleLanguageModel(Constraint):
         self.top_n_per_index = top_n_per_index
         super().__init__(compare_against_original)
 
-    def check_compatibility(self, transformation):
+    def check_compatibility(self, transformation: Transformation):
         return isinstance(transformation, WordSwap)
 
-    def _check_constraint_many(self, transformed_texts, reference_text):
+    def _check_constraint_many(
+        self, transformed_texts: List[AttackedText], reference_text: AttackedText
+    ):
         """Returns the `top_n` of transformed_texts, as evaluated by the
         language model."""
         if not len(transformed_texts):
             return []
 
-        def get_probs(reference_text, transformed_texts):
+        def get_probs(
+            reference_text: AttackedText, transformed_texts: List[TransformedText]
+        ) -> List[float]:
             word_swap_index = reference_text.first_word_diff_index(transformed_texts[0])
             if word_swap_index is None:
                 return []
@@ -97,8 +108,10 @@ class GoogleLanguageModel(Constraint):
 
         return [transformed_texts[i] for i in max_el_indices]
 
-    def _check_constraint(self, transformed_text, reference_text):
+    def _check_constraint(
+        self, transformed_text: AttackedText, reference_text: AttackedText
+    ) -> bool:
         return self._check_constraint_many([transformed_text], reference_text)
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return ["top_n", "top_n_per_index"] + super().extra_repr_keys()

@@ -30,12 +30,12 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
 
     def __init__(
         self,
-        pop_size=60 : int,
-        max_iters=20 : int,
-        temp=0.3 : float,
-        give_up_if_no_improvement=False : bool,
-        post_crossover_check=True : bool,
-        max_crossover_retries=20 : int,
+        pop_size: int = 60,
+        max_iters: int = 20,
+        temp: float = 0.3,
+        give_up_if_no_improvement: bool = False,
+        post_crossover_check: bool = True,
+        max_crossover_retries: int = 20,
     ):
         self.max_iters = max_iters
         self.pop_size = pop_size

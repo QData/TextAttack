@@ -5,9 +5,10 @@ Input Column Modification
 
 """
 
+from typing import List, Set
+
 from textattack.constraints import PreTransformationConstraint
 from textattack.shared import AttackedText
-from typing import List, Set
 
 
 class InputColumnModification(PreTransformationConstraint):

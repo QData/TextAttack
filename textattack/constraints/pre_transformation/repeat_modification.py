@@ -4,9 +4,10 @@ Repeat Modification
 
 """
 
+from typing import Set
+
 from textattack.constraints import PreTransformationConstraint
 from textattack.shared import AttackedText
-from typing import Set
 
 # from textattack.shared.utils import default_class_repr
 

@@ -11,12 +11,12 @@ To decide which two tokens to compare, it greedily chooses the most similar toke
 
 """
 
+from typing import List
+
 import bert_score
 
 from textattack.constraints import Constraint
-from textattack.shared import utils
-from textattack.shared import AttackedText
-from typing import List
+from textattack.shared import AttackedText, utils
 
 
 class BERTScore(Constraint):
@@ -40,10 +40,10 @@ class BERTScore(Constraint):
 
     def __init__(
         self,
-        min_bert_score : float,
-        model="bert-base-uncased" : str,
-        score_type="f1" : str,
-        compare_against_original=True : bool,
+        min_bert_score: float,
+        model: str = "bert-base-uncased",
+        score_type: str = "f1",
+        compare_against_original: bool = True,
     ):
         super().__init__(compare_against_original)
         if not isinstance(min_bert_score, float):
@@ -59,7 +59,9 @@ class BERTScore(Constraint):
             model_type=model, idf=False, device=utils.device
         )
 
-    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
+    def _check_constraint(
+        self, transformed_text: AttackedText, reference_text: AttackedText
+    ) -> bool:
         """Return `True` if BERT Score between `transformed_text` and
         `reference_text` is lower than minimum BERT Score."""
         cand = transformed_text.text

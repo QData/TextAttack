@@ -2,6 +2,8 @@
 Word Swap by Random Character Substitution
 ==========================================================
 """
+from typing import List
+
 import numpy as np
 
 # from textattack.shared import utils
@@ -17,11 +19,11 @@ class WordSwapRandomCharacterSubstitution(WordSwap):
             character deleted. If not set, returns all possible options.
     """
 
-    def __init__(self, random_one=True, **kwargs):
+    def __init__(self, random_one: bool = True, **kwargs):
         super().__init__(**kwargs)
         self.random_one = random_one
 
-    def _get_replacement_words(self, word):
+    def _get_replacement_words(self, word: str) -> List[str]:
         """Returns returns a list containing all possible words with 1 letter
         substituted for a random letter."""
         if len(word) <= 1:
@@ -41,8 +43,8 @@ class WordSwapRandomCharacterSubstitution(WordSwap):
         return candidate_words
 
     @property
-    def deterministic(self):
+    def deterministic(self) -> bool:
         return not self.random_one
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return super().extra_repr_keys() + ["random_one"]

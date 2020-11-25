@@ -4,6 +4,8 @@
 
 """
 
+from typing import List
+
 import torch
 
 import textattack
@@ -11,7 +13,6 @@ from textattack.constraints.grammaticality.language_models import (
     LanguageModelConstraint,
 )
 from textattack.shared import AttackedText
-from typing import List
 
 from .language_model_helpers import QueryHandler
 
@@ -36,7 +37,7 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
 
     CACHE_PATH = "constraints/grammaticality/language-models/learning-to-write"
 
-    def __init__(self, window_size=5 : int, **kwargs):
+    def __init__(self, window_size: int = 5, **kwargs):
         self.window_size = window_size
         lm_folder_path = textattack.shared.utils.download_if_needed(
             LearningToWriteLanguageModel.CACHE_PATH
@@ -46,7 +47,7 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
         )
         super().__init__(**kwargs)
 
-    def get_log_probs_at_index(self, text_list : List[AttackedText], word_index : int):
+    def get_log_probs_at_index(self, text_list: List[AttackedText], word_index: int):
         """Gets the probability of the word at index `word_index` according to
         the language model."""
         queries = []

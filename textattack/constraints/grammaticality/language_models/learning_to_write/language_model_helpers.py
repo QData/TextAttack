@@ -4,12 +4,12 @@ Language model helpers
 """
 
 import os
+from typing import List
 
 import numpy as np
 import torch
 
 from textattack.shared.utils import LazyLoader
-from typing import List
 
 from .rnn_model import RNNModel
 

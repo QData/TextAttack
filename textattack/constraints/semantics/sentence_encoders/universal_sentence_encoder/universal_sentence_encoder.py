@@ -3,10 +3,12 @@ universal sentence encoder class
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 
+from typing import List
+
 import numpy as np
+
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 from textattack.shared.utils import LazyLoader
-from typing import List
 
 hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
 
@@ -16,7 +18,13 @@ class UniversalSentenceEncoder(SentenceEncoder):
     where the text embeddings are created using the Universal Sentence
     Encoder."""
 
-    def __init__(self, threshold=0.8 : float, large=False : bool, metric="angular" : str, **kwargs):
+    def __init__(
+        self,
+        threshold: float = 0.8,
+        large: bool = False,
+        metric: str = "angular",
+        **kwargs
+    ):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
         if large:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
@@ -25,5 +33,5 @@ class UniversalSentenceEncoder(SentenceEncoder):
 
         self.model = hub.load(tfhub_url)
 
-    def encode(self, sentences : List[str]) -> np.ndarray:
+    def encode(self, sentences: List[str]) -> np.ndarray:
         return self.model(sentences).numpy()

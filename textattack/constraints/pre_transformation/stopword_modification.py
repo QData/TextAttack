@@ -5,25 +5,26 @@ Stopword Modification
 
 """
 
+from typing import List, Set
+
 import nltk
 
 from textattack.constraints import PreTransformationConstraint
-from textattack.shared.validators import transformation_consists_of_word_swaps
 from textattack.shared import AttackedText
+from textattack.shared.validators import transformation_consists_of_word_swaps
 from textattack.transformations import Transformation
-from typing import List, Set
 
 
 class StopwordModification(PreTransformationConstraint):
     """A constraint disallowing the modification of stopwords."""
 
-    def __init__(self, stopwords=None : Set[str]):
+    def __init__(self, stopwords: Set[str] = None):
         if stopwords is not None:
             self.stopwords = set(stopwords)
         else:
             self.stopwords = set(nltk.corpus.stopwords.words("english"))
 
-    def _get_modifiable_indices(self, current_text : AttackedText) -> Set[int]:
+    def _get_modifiable_indices(self, current_text: AttackedText) -> Set[int]:
         """Returns the word indices in ``current_text`` which are able to be
         modified."""
         non_stopword_indices = set()
@@ -32,7 +33,7 @@ class StopwordModification(PreTransformationConstraint):
                 non_stopword_indices.add(i)
         return non_stopword_indices
 
-    def check_compatibility(self, transformation : Transformation) -> bool:
+    def check_compatibility(self, transformation: Transformation) -> bool:
         """The stopword constraint only is concerned with word swaps since
         paraphrasing phrases containing stopwords is OK.
 

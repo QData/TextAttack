@@ -6,15 +6,14 @@ Transformations and constraints can be used for simple NLP data augmentations. H
 
 """
 import random
-
-import textattack
-from textattack.shared import AttackedText
 from typing import List, Tuple
 
+import textattack
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
+from textattack.shared import AttackedText
 
 from . import Augmenter
 
@@ -39,7 +38,9 @@ class EasyDataAugmenter(Augmenter):
     https://arxiv.org/abs/1901.11196
     """
 
-    def __init__(self, pct_words_to_swap=0.1 : float, transformations_per_example=4 : int):
+    def __init__(
+        self, pct_words_to_swap: float = 0.1, transformations_per_example: int = 4
+    ):
         assert (
             pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
         ), "pct_words_to_swap must be in [0., 1.]"
@@ -66,7 +67,7 @@ class EasyDataAugmenter(Augmenter):
             pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each
         )
 
-    def augment(self, text : str) -> List[str]:
+    def augment(self, text: str) -> List[str]:
         augmented_text = []
         augmented_text += self.synonym_replacement.augment(text)
         augmented_text += self.random_deletion.augment(text)

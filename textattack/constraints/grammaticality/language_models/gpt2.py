@@ -6,13 +6,13 @@ GPT2 Language Models:
 
 
 import os
+from typing import List
 
 import torch
 
 from textattack.shared import utils
 
 from .language_model_constraint import LanguageModelConstraint
-from typing import List
 
 # temporarily silence W&B to ignore log-in warning
 os.environ["WANDB_SILENT"] = "1"

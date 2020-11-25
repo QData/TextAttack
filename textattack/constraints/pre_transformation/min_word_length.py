@@ -5,9 +5,10 @@ Min Word Lenth
 
 """
 
+from typing import Set
+
 from textattack.constraints import PreTransformationConstraint
 from textattack.shared import AttackedText
-from typing import Set
 
 
 class MinWordLength(PreTransformationConstraint):

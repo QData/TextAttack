@@ -6,11 +6,12 @@ chrF Constraints
 
 """
 
+from typing import List
+
 import nltk.translate.chrf_score
 
 from textattack.constraints import Constraint
 from textattack.shared import AttackedText
-from typing import List
 
 
 class chrF(Constraint):
@@ -22,13 +23,15 @@ class chrF(Constraint):
             Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, max_chrf : float, compare_against_original=True : bool):
+    def __init__(self, max_chrf: float, compare_against_original: bool = True):
         super().__init__(compare_against_original)
         if not isinstance(max_chrf, int):
             raise TypeError("max_chrf must be an int")
         self.max_chrf = max_chrf
 
-    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
+    def _check_constraint(
+        self, transformed_text: AttackedText, reference_text: AttackedText
+    ) -> bool:
         ref = reference_text.words
         hyp = transformed_text.words
         chrf = nltk.translate.chrf_score.sentence_chrf(ref, hyp)

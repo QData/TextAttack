@@ -5,14 +5,18 @@ Word Swap by swaping the order of words
 
 
 import random
+from typing import List, Set
 
+from textattack.shared import AttackedText
 from textattack.transformations import Transformation
 
 
 class RandomSwap(Transformation):
     """Transformation that swaps the order of words in a sequence."""
 
-    def _get_transformations(self, current_text, indices_to_modify):
+    def _get_transformations(
+        self, current_text: AttackedText, indices_to_modify: Set[int]
+    ):
         transformed_texts = []
         words = current_text.words
         for idx in indices_to_modify:
@@ -27,5 +31,5 @@ class RandomSwap(Transformation):
         return transformed_texts
 
     @property
-    def deterministic(self):
+    def deterministic(self) -> bool:
         return False

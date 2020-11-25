@@ -4,8 +4,11 @@ Population based Search
 """
 
 from abc import ABC, abstractmethod
+from typing import List
 
+from textattack.goal_function_results import GoalFunctionResult
 from textattack.search_methods import SearchMethod
+from textattack.shared import AttackedText
 
 
 class PopulationBasedSearch(SearchMethod, ABC):
@@ -14,7 +17,12 @@ class PopulationBasedSearch(SearchMethod, ABC):
     Examples include: genetic algorithm, particle swarm optimization
     """
 
-    def _check_constraints(self, transformed_text, current_text, original_text):
+    def _check_constraints(
+        self,
+        transformed_text: AttackedText,
+        current_text: AttackedText,
+        original_text: AttackedText,
+    ) -> bool:
         """Check if `transformted_text` still passes the constraints with
         respect to `current_text` and `original_text`.
 
@@ -33,7 +41,12 @@ class PopulationBasedSearch(SearchMethod, ABC):
         return True if filtered else False
 
     @abstractmethod
-    def _perturb(self, pop_member, original_result, **kwargs):
+    def _perturb(
+        self,
+        pop_member: PopulationMember,
+        original_result: GoalFunctionResult,
+        **kwargs
+    ):
         """Perturb `pop_member` in-place.
 
         Must be overridden by specific population-based method
@@ -46,7 +59,7 @@ class PopulationBasedSearch(SearchMethod, ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def _initialize_population(self, initial_result, pop_size):
+    def _initialize_population(self, initial_result: GoalFunctionResult, pop_size: int):
         """
         Initialize a population of size `pop_size` with `initial_result`
         Args:
@@ -61,7 +74,9 @@ class PopulationBasedSearch(SearchMethod, ABC):
 class PopulationMember:
     """Represent a single member of population."""
 
-    def __init__(self, attacked_text, result=None, attributes={}, **kwargs):
+    def __init__(
+        self, attacked_text: AttackedText, result=None, attributes={}, **kwargs
+    ):
         self.attacked_text = attacked_text
         self.result = result
         self.attributes = attributes
@@ -69,7 +84,7 @@ class PopulationMember:
             setattr(self, key, value)
 
     @property
-    def score(self):
+    def score(self) -> float:
         if not self.result:
             raise ValueError(
                 "Result must be obtained for PopulationMember to get its score."
@@ -77,9 +92,9 @@ class PopulationMember:
         return self.result.score
 
     @property
-    def words(self):
+    def words(self) -> List[str]:
         return self.attacked_text.words
 
     @property
-    def num_words(self):
+    def num_words(self) -> int:
         return self.attacked_text.num_words

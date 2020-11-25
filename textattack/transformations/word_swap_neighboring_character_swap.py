@@ -3,12 +3,12 @@ Word Swap by Neighboring Character Swap
 ============================================
 """
 
+from typing import List
+
 import numpy as np
 
 # from textattack.shared import utils
 from textattack.transformations.word_swap import WordSwap
-
-from typing import List
 
 
 class WordSwapNeighboringCharacterSwap(WordSwap):
@@ -25,7 +25,11 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
     """
 
     def __init__(
-        self, random_one: bool=True, skip_first_char: bool=False, skip_last_char: bool=False, **kwargs
+        self,
+        random_one: bool = True,
+        skip_first_char: bool = False,
+        skip_last_char: bool = False,
+        **kwargs
     ):
         super().__init__(**kwargs)
         self.random_one = random_one

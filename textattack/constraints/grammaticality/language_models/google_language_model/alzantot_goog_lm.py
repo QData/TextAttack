@@ -9,12 +9,12 @@ Google Language Models from Alzantot
 
 
 import os
+from typing import List
 
 import lru
 import numpy as np
 
 from textattack.shared import utils
-from typing import List
 
 from . import lm_data_utils, lm_utils
 

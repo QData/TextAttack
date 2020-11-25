@@ -20,13 +20,15 @@ class BLEU(Constraint):
             Otherwise, compare it against the previous `x_adv`.
     """
 
-    def __init__(self, max_bleu_score : float, compare_against_original=True : bool):
+    def __init__(self, max_bleu_score: float, compare_against_original: bool = True):
         super().__init__(compare_against_original)
         if not isinstance(max_bleu_score, int):
             raise TypeError("max_bleu_score must be an int")
         self.max_bleu_score = max_bleu_score
 
-    def _check_constraint(self, transformed_text : AttackedText, reference_text : AttackedText) -> bool:
+    def _check_constraint(
+        self, transformed_text: AttackedText, reference_text: AttackedText
+    ) -> bool:
         ref = reference_text.words
         hyp = transformed_text.words
         bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)

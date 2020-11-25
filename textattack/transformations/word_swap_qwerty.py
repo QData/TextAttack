@@ -4,14 +4,18 @@ Word Swap by swaps characters with QWERTY adjacent keys
 """
 
 import random
+from typing import List
 
 from textattack.transformations.word_swap import WordSwap
-from typing import List
 
 
 class WordSwapQWERTY(WordSwap):
     def __init__(
-        self, random_one: bool=True, skip_first_char: bool=False, skip_last_char: bool=False, **kwargs
+        self,
+        random_one: bool = True,
+        skip_first_char: bool = False,
+        skip_last_char: bool = False,
+        **kwargs
     ):
         """A transformation that swaps characters with adjacent keys on a
         QWERTY keyboard, replicating the kind of errors that come from typing

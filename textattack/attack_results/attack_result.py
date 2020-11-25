@@ -19,7 +19,9 @@ class AttackResult(ABC):
             perturbed text. May or may not have been successful.
     """
 
-    def __init__(self, original_result, perturbed_result):
+    def __init__(
+        self, original_result: GoalFunctionResult, perturbed_result: GoalFunctionResult
+    ):
         if original_result is None:
             raise ValueError("Attack original result cannot be None")
         elif not isinstance(original_result, GoalFunctionResult):

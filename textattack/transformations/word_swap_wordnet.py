@@ -4,6 +4,8 @@ Word Swap by swaping synonyms in WordNet
 """
 
 
+from typing import List
+
 from nltk.corpus import wordnet
 
 import textattack
@@ -14,12 +16,12 @@ class WordSwapWordNet(WordSwap):
     """Transforms an input by replacing its words with synonyms provided by
     WordNet."""
 
-    def __init__(self, language="eng"):
+    def __init__(self, language: str = "eng"):
         if language not in wordnet.langs():
             raise ValueError(f"Language {language} not one of {wordnet.langs()}")
         self.language = language
 
-    def _get_replacement_words(self, word, random=False):
+    def _get_replacement_words(self, word: str, random: bool = False) -> List[str]:
         """Returns a list containing all possible words with 1 character
         replaced by a homoglyph."""
         synonyms = set()

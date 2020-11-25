@@ -5,12 +5,12 @@ TextAttack Constraint Class
 """
 
 from abc import ABC, abstractmethod
+from typing import List, Set
 
 import textattack
+from textattack.shared import AttackedText
 from textattack.shared.utils import default_class_repr
 from textattack.transformations import Transformation
-from textattack.shared import AttackedText
-from typing import List, Set
 
 
 class Constraint(ABC):

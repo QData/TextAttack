@@ -3,6 +3,8 @@ Word Swap by Random Character Deletion
 ==========================================================
 """
 
+from typing import List
+
 import numpy as np
 
 # from textattack.shared import utils
@@ -22,14 +24,18 @@ class WordSwapRandomCharacterDeletion(WordSwap):
     """
 
     def __init__(
-        self, random_one=True, skip_first_char=False, skip_last_char=False, **kwargs
+        self,
+        random_one: bool = True,
+        skip_first_char: bool = False,
+        skip_last_char: bool = False,
+        **kwargs
     ):
         super().__init__(**kwargs)
         self.random_one = random_one
         self.skip_first_char = skip_first_char
         self.skip_last_char = skip_last_char
 
-    def _get_replacement_words(self, word):
+    def _get_replacement_words(self, word: str) -> List[str]:
         """Returns returns a list containing all possible words with 1 letter
         deleted."""
         if len(word) <= 1:
@@ -55,8 +61,8 @@ class WordSwapRandomCharacterDeletion(WordSwap):
         return candidate_words
 
     @property
-    def deterministic(self):
+    def deterministic(self) -> bool:
         return not self.random_one
 
-    def extra_repr_keys(self):
+    def extra_repr_keys(self) -> List[str]:
         return super().extra_repr_keys() + ["random_one"]
