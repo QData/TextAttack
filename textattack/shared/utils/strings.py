@@ -230,12 +230,15 @@ def zip_stanza_result(pred, tagset="universal"):
 
 
 def check_if_subword(token, model_type, starting=False):
-    """Return `True` if `word` is a subword token
+    """Check if ``token`` is a subword token that is not a standalone word.
+
     Args:
-        token (str)
-        model_type (str): type of model (options: "bert", "roberta", "xlnet")
+        token (str): token to check.
+        model_type (str): type of model (options: "bert", "roberta", "xlnet").
         starting (bool): Should be set ``True`` if this token is the starting token of the overall text.
             This matters because models like RoBERTa does not add "Ġ" to beginning token.
+    Returns:
+        (bool): ``True`` if ``token`` is a subword token.
     """
     avail_models = [
         "bert",
@@ -260,7 +263,8 @@ def check_if_subword(token, model_type, starting=False):
             return False if token[0] == "Ġ" else True
     elif model_type == "xlnet":
         return False if token[0] == "_" else True
-    return False
+    else:
+        return False
 
 
 def strip_BPE_artifacts(token, model_type):
