@@ -119,5 +119,13 @@ class EvalModelCommand(TextAttackCommand):
             default=256,
             help="Batch size for model inference.",
         )
+<<<<<<< HEAD
+=======
+        parser.add_argument(
+            "--test-on-full-dataset",
+            action="store_true",
+            help="Evaluate on entire dataset.",
+        )
+>>>>>>> 13bc18aa411ef497218383e5d61128691285a40d
 
         parser.set_defaults(func=EvalModelCommand())
