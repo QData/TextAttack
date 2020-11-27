@@ -50,16 +50,10 @@ class EvalModelCommand(TextAttackCommand):
         preds = []
         ground_truth_outputs = []
         i = 0
-        if args.test_on_full_dataset:
-            num_examples_to_test = len(dataset)
-        else:
-            num_examples_to_test = (
-                args.num_examples if args.num_examples < len(dataset) else len(dataset)
-            )
 
-        while i < num_examples_to_test:
+        while i < args.num_examples:
             dataset_batch = dataset[
-                i : min(num_examples_to_test, i + args.model_batch_size)
+                i : min(args.num_examples, i + args.model_batch_size)
             ]
             batch_inputs = []
             for (text_input, ground_truth_output) in dataset_batch:
@@ -124,11 +118,6 @@ class EvalModelCommand(TextAttackCommand):
             type=int,
             default=256,
             help="Batch size for model inference.",
-        )
-        parser.add_argument(
-            "--test-on-full-dataset",
-            action="store_true",
-            help="Evaluate on entire dataset.",
         )
 
         parser.set_defaults(func=EvalModelCommand())
