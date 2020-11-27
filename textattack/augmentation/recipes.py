@@ -115,9 +115,7 @@ class EmbeddingAugmenter(Augmenter):
     def __init__(self, **kwargs):
         from textattack.transformations import WordSwapEmbedding
 
-        transformation = WordSwapEmbedding(
-            max_candidates=50, embedding_type="paragramcf"
-        )
+        transformation = WordSwapEmbedding(max_candidates=50)
         from textattack.constraints.semantics import WordEmbeddingDistance
 
         constraints = DEFAULT_CONSTRAINTS + [WordEmbeddingDistance(min_cos_sim=0.8)]
