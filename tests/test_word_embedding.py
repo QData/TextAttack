@@ -3,11 +3,11 @@ import os
 import numpy as np
 import pytest
 
-from textattack.shared import GensimWordEmbedding, TextAttackWordEmbedding
+from textattack.shared import GensimWordEmbedding, WordEmbedding
 
 
 def test_embedding_paragramcf():
-    word_embedding = TextAttackWordEmbedding.counterfitted_GLOVE_embedding()
+    word_embedding = WordEmbedding.counterfitted_GLOVE_embedding()
     assert pytest.approx(word_embedding[0][0]) == -0.022007
     assert pytest.approx(word_embedding["fawn"][0]) == -0.022007
     assert word_embedding[10 ** 9] is None

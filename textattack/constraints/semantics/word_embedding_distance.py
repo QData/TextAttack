@@ -4,7 +4,7 @@ Word Embedding Distance
 """
 
 from textattack.constraints import Constraint
-from textattack.shared import TextAttackWordEmbedding, WordEmbedding
+from textattack.shared import AbstractWordEmbedding, WordEmbedding
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 
@@ -24,7 +24,7 @@ class WordEmbeddingDistance(Constraint):
 
     def __init__(
         self,
-        embedding=TextAttackWordEmbedding.counterfitted_GLOVE_embedding(),
+        embedding=WordEmbedding.counterfitted_GLOVE_embedding(),
         include_unknown_words=True,
         min_cos_sim=None,
         max_mse_dist=None,
@@ -40,9 +40,9 @@ class WordEmbeddingDistance(Constraint):
         self.min_cos_sim = min_cos_sim
         self.max_mse_dist = max_mse_dist
 
-        if not isinstance(embedding, WordEmbedding):
+        if not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(
-                "`embedding` object must be of type `textattack.shared.WordEmbedding`."
+                "`embedding` object must be of type `textattack.shared.AbstractWordEmbedding`."
             )
         self.embedding = embedding
 

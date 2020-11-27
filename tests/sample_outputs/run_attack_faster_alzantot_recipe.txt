@@ -10,7 +10,7 @@
   (goal_function):  UntargetedClassification
   (transformation):  WordSwapEmbedding(
     (max_candidates):  8
-    (embedding):  TextAttackWordEmbedding
+    (embedding):  WordEmbedding
   )
   (constraints): 
     (0): MaxWordsPerturbed(
@@ -18,7 +18,7 @@
         (compare_against_original):  True
       )
     (1): WordEmbeddingDistance(
-        (embedding):  TextAttackWordEmbedding
+        (embedding):  WordEmbedding
         (max_mse_dist):  0.5
         (cased):  False
         (include_unknown_words):  True

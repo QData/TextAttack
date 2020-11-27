@@ -14,15 +14,15 @@ import torch
 from textattack.shared import utils
 
 
-class WordEmbedding(ABC):
+class AbstractWordEmbedding(ABC):
     """Abstract class representing word embedding used by TextAttack.
 
     This class specifies all the methods that is required to be defined
     so that it can be used for transformation and constraints. For
     custom word embedding not supported by TextAttack, please create a
     class that inherits this class and implement the required methods.
-    However, please first check if you can use `TextAttackWordEmbedding`
-    class, which has a lot of internal methods implemented.
+    However, please first check if you can use `WordEmbedding` class,
+    which has a lot of internal methods implemented.
     """
 
     @abstractmethod
@@ -100,7 +100,7 @@ class WordEmbedding(ABC):
     __repr__ = __str__ = utils.default_class_repr
 
 
-class TextAttackWordEmbedding(WordEmbedding):
+class WordEmbedding(AbstractWordEmbedding):
     """Object for loading word embeddings and related distances for TextAttack.
     This class has a lot of internal components (e.g. get consine similarity)
     implemented. Consider using this class if you can provide the appropriate
@@ -257,7 +257,7 @@ class TextAttackWordEmbedding(WordEmbedding):
             "textattack_counterfitted_GLOVE_embedding" in utils.GLOBAL_OBJECTS
             and isinstance(
                 utils.GLOBAL_OBJECTS["textattack_counterfitted_GLOVE_embedding"],
-                TextAttackWordEmbedding,
+                WordEmbedding,
             )
         ):
             # avoid recreating same embedding (same memory) and instead share across different components
@@ -272,7 +272,7 @@ class TextAttackWordEmbedding(WordEmbedding):
 
         # Download embeddings if they're not cached.
         word_embeddings_folder = os.path.join(
-            TextAttackWordEmbedding.PATH, word_embeddings_folder
+            WordEmbedding.PATH, word_embeddings_folder
         )
         word_embeddings_folder = utils.download_if_needed(word_embeddings_folder)
         # Concatenate folder names to create full path to files.
@@ -292,9 +292,7 @@ class TextAttackWordEmbedding(WordEmbedding):
             index2word[index] = word
         nn_matrix = np.load(nn_matrix_file)
 
-        embedding = TextAttackWordEmbedding(
-            embedding_matrix, word2index, index2word, nn_matrix
-        )
+        embedding = WordEmbedding(embedding_matrix, word2index, index2word, nn_matrix)
 
         with open(mse_dist_file, "rb") as f:
             mse_dist_mat = pickle.load(f)
@@ -309,7 +307,7 @@ class TextAttackWordEmbedding(WordEmbedding):
         return embedding
 
 
-class GensimWordEmbedding(WordEmbedding):
+class GensimWordEmbedding(AbstractWordEmbedding):
     """Wraps Gensim's `KeyedVectors`
     (https://radimrehurek.com/gensim/models/keyedvectors.html)"""
 

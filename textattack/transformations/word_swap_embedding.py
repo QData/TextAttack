@@ -3,7 +3,7 @@ Word Swap by Embedding
 ============================================
 
 """
-from textattack.shared import TextAttackWordEmbedding, WordEmbedding
+from textattack.shared import AbstractWordEmbedding, WordEmbedding
 from textattack.transformations.word_swap import WordSwap
 
 
@@ -13,20 +13,20 @@ class WordSwapEmbedding(WordSwap):
 
     Args:
         max_candidates (int): maximum number of synonyms to pick
-        embedding (textattack.shared.WordEmbedding): Wrapper for word embedding
+        embedding (textattack.shared.AbstractWordEmbedding): Wrapper for word embedding
     """
 
     def __init__(
         self,
         max_candidates=15,
-        embedding=TextAttackWordEmbedding.counterfitted_GLOVE_embedding(),
+        embedding=WordEmbedding.counterfitted_GLOVE_embedding(),
         **kwargs
     ):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
-        if not isinstance(embedding, WordEmbedding):
+        if not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(
-                "`embedding` object must be of type `textattack.shared.WordEmbedding`."
+                "`embedding` object must be of type `textattack.shared.AbstractWordEmbedding`."
             )
         self.embedding = embedding
 

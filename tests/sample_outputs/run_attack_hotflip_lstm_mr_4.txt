@@ -12,7 +12,7 @@
         (compare_against_original):  True
       )
     (1): WordEmbeddingDistance(
-        (embedding):  TextAttackWordEmbedding
+        (embedding):  WordEmbedding
         (min_cos_sim):  0.8
         (cased):  False
         (include_unknown_words):  True

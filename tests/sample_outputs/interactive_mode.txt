@@ -5,11 +5,11 @@
   (goal_function):  UntargetedClassification
   (transformation):  WordSwapEmbedding(
     (max_candidates):  50
-    (embedding):  TextAttackWordEmbedding
+    (embedding):  WordEmbedding
   )
   (constraints): 
     (0): WordEmbeddingDistance(
-        (embedding):  TextAttackWordEmbedding
+        (embedding):  WordEmbedding
         (min_cos_sim):  0.5
         (cased):  False
         (include_unknown_words):  True
