@@ -98,7 +98,7 @@ def add_dataset_args(parser):
         type=int,
         required=False,
         default="5",
-        help="The number of examples to process.",
+        help="The number of examples to process, -1 for entire dataset",
     )
 
     parser.add_argument(
@@ -419,6 +419,8 @@ def parse_dataset_from_args(args):
         dataset.examples = dataset.examples[args.num_examples_offset :]
     else:
         raise ValueError("Must supply pretrained model or dataset")
+    if args.num_examples == -1 or args.num_examples > len(dataset):
+        args.num_examples = len(dataset)
     return dataset
 
 
@@ -480,7 +482,7 @@ def parse_logger_from_args(args):
     if args.log_to_txt == "" or args.log_to_txt:
         attack_log_manager.add_output_file(os.path.join(out_dir_txt, filename_txt))
 
-    # if "--log-to-csv" specified in terminal command(with  or without arg), save to a csv file
+    # if "--log-to-csv" specified in terminal command(with	or without arg), save to a csv file
     if args.log_to_csv == "" or args.log_to_csv:
         # "--csv-style used to swtich from 'fancy' to 'plain'
         color_method = None if args.csv_style == "plain" else "file"

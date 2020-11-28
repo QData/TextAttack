@@ -61,6 +61,8 @@ def run(args, checkpoint=None):
         )
         print(checkpoint, "\n")
     else:
+        if not args.interactive:
+            dataset = parse_dataset_from_args(args)
         num_remaining_attacks = args.num_examples
         worklist = deque(range(0, args.num_examples))
         worklist_tail = worklist[-1]
@@ -103,7 +105,6 @@ def run(args, checkpoint=None):
 
     else:
         # Not interactive? Use default dataset.
-        dataset = parse_dataset_from_args(args)
 
         pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
         if args.checkpoint_resume:

@@ -50,7 +50,8 @@ class EvalModelCommand(TextAttackCommand):
         preds = []
         ground_truth_outputs = []
         i = 0
-        while i < min(args.num_examples, len(dataset)):
+
+        while i < args.num_examples:
             dataset_batch = dataset[
                 i : min(args.num_examples, i + args.model_batch_size)
             ]
@@ -110,7 +111,6 @@ class EvalModelCommand(TextAttackCommand):
 
         add_model_args(parser)
         add_dataset_args(parser)
-
         parser.add_argument("--random-seed", default=765, type=int)
 
         parser.add_argument(
@@ -119,4 +119,5 @@ class EvalModelCommand(TextAttackCommand):
             default=256,
             help="Batch size for model inference.",
         )
+
         parser.set_defaults(func=EvalModelCommand())
