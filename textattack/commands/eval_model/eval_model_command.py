@@ -87,7 +87,9 @@ class EvalModelCommand(TextAttackCommand):
             successes = (guess_labels == ground_truth_outputs).sum().item()
             perc_accuracy = successes / len(preds) * 100.0
             perc_accuracy = "{:.2f}%".format(perc_accuracy)
-            logger.info(f"True Positive/Positive {successes}/{len(preds)} ({_cb(perc_accuracy)})")
+            logger.info(
+                f"True Positive/Positive {successes}/{len(preds)} ({_cb(perc_accuracy)})"
+            )
 
     def run(self, args):
         textattack.shared.utils.set_seed(args.random_seed)
@@ -120,6 +122,5 @@ class EvalModelCommand(TextAttackCommand):
             default=256,
             help="Batch size for model inference.",
         )
-
 
         parser.set_defaults(func=EvalModelCommand())
