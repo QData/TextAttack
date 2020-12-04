@@ -105,13 +105,13 @@ class AugmentCommand(TextAttackCommand):
         else:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
-            if not (args.infile and args.input_column):
+            if not (args.csv and args.input_column):
                 raise ArgumentError(
-                    "The following arguments are required: --infile, --input-column/--i"
+                    "The following arguments are required: --csv, --input-column/--i"
                 )
             # Validate input/output paths.
-            if not os.path.exists(args.infile):
-                raise FileNotFoundError(f"Can't find file at location {args.infile}")
+            if not os.path.exists(args.csv):
+                raise FileNotFoundError(f"Can't find CSV at location {args.csv}")
             if os.path.exists(args.outfile):
                 if args.overwrite:
                     textattack.shared.logger.info(
@@ -121,9 +121,25 @@ class AugmentCommand(TextAttackCommand):
                     raise OSError(
                         f"Outfile {args.outfile} exists and --overwrite not set."
                     )
-            # Read in  file using huggingface dataloader
-            dataset_to_augment = CustomDataset(
-                infile_format=args.infile_format, name=args.infile
+            # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
+            # try and automatically infer the correct CSV format.
+            csv_file = open(args.csv, "r")
+            dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
+            csv_file.seek(0)
+            rows = [
+                row
+                for row in csv.DictReader(
+                    csv_file, dialect=dialect, skipinitialspace=True
+                )
+            ]
+            # Validate input column.
+            row_keys = set(rows[0].keys())
+            if args.input_column not in row_keys:
+                raise ValueError(
+                    f"Could not find input column {args.input_column} in CSV. Found keys: {row_keys}"
+                )
+            textattack.shared.logger.info(
+                f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
             )
 
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
@@ -132,16 +148,13 @@ class AugmentCommand(TextAttackCommand):
             )
 
             output_rows = []
-
-            for row in tqdm.tqdm(dataset_to_augment, desc="Augmenting rows"):
-
-                text_input = row[0][args.input_column]
+            for row in tqdm.tqdm(rows, desc="Augmenting rows"):
+                text_input = row[args.input_column]
                 if not args.exclude_original:
                     output_rows.append(row)
                 for augmentation in augmenter.augment(text_input):
-                    augmented_row = row
-
-                    augmented_row[0][args.input_column] = augmentation
+                    augmented_row = row.copy()
+                    augmented_row[args.input_column] = augmentation
                     output_rows.append(augmented_row)
             # Print to file.
             with open(args.outfile, "w") as outfile:
@@ -149,11 +162,10 @@ class AugmentCommand(TextAttackCommand):
                     outfile, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
                 # Write header.
-                csv_writer.writerow(output_rows[0][0].keys())
+                csv_writer.writerow(output_rows[0].keys())
                 # Write rows.
                 for row in output_rows:
-
-                    csv_writer.writerow(row[0].values())
+                    csv_writer.writerow(row.values())
             textattack.shared.logger.info(
                 f"Wrote {len(output_rows)} augmentations to {args.outfile} in {time.time() - start_time}s."
             )
@@ -166,14 +178,7 @@ class AugmentCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
         parser.add_argument(
-            "--infile_format",
-            help="input file type ",
-            type=str,
-            required=False,
-            default="csv",
-        )
-        parser.add_argument(
-            "--infile",
+            "--csv",
             help="input csv file to augment",
             type=str,
             required=False,
