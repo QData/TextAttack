@@ -49,11 +49,7 @@ class Kuleshov2017(AttackRecipe):
         #
         # Maximum thought vector Euclidean distance of λ_1 = 0.2. (eq. 4)
         #
-        constraints.append(
-            ThoughtVector(
-                embedding_type="paragramcf", threshold=0.2, metric="max_euclidean"
-            )
-        )
+        constraints.append(ThoughtVector(threshold=0.2, metric="max_euclidean"))
         #
         #
         # Maximum language model log-probability difference of λ_2 = 2. (eq. 5)

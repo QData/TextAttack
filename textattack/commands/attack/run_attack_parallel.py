@@ -79,6 +79,7 @@ def attack_from_queue(args, in_queue, out_queue):
 def run(args, checkpoint=None):
     pytorch_multiprocessing_workaround()
 
+    dataset = parse_dataset_from_args(args)
     num_total_examples = args.num_examples
 
     if args.checkpoint_resume:
@@ -108,8 +109,6 @@ def run(args, checkpoint=None):
 
     # We reserve the first GPU for coordinating workers.
     num_gpus = torch.cuda.device_count()
-
-    dataset = parse_dataset_from_args(args)
 
     textattack.shared.logger.info(f"Running on {num_gpus} GPUs")
     start_time = time.time()

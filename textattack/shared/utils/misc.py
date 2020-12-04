@@ -122,3 +122,6 @@ def hashable(key):
 
 def sigmoid(n):
     return 1 / (1 + np.exp(-n))
+
+
+GLOBAL_OBJECTS = {}
