@@ -39,7 +39,7 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 - As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
 
-- This is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could from an improved search or a better transformation method or a less restrictive search space. 
+- This is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could come from an improved search or a better transformation method or a less restrictive search space. 
 
 
 
