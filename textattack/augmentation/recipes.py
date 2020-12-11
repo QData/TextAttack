@@ -68,6 +68,7 @@ class EasyDataAugmenter(Augmenter):
         augmented_text += self.random_deletion.augment(text)
         augmented_text += self.random_swap.augment(text)
         augmented_text += self.random_insertion.augment(text)
+        augmented_text = list(set(augmented_text))
         random.shuffle(augmented_text)
         return augmented_text[: self.transformations_per_example]
 
