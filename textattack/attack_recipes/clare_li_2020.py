@@ -53,20 +53,20 @@ class CLARE2020(AttackRecipe):
                     method="bae",
                     masked_language_model=shared_masked_lm,
                     tokenizer=shared_tokenizer,
-                    max_candidates=20,
+                    max_candidates=50,
                     min_confidence=5e-4,
                 ),
                 WordInsertionMaskedLM(
                     masked_language_model=shared_masked_lm,
                     tokenizer=shared_tokenizer,
-                    max_candidates=20,
-                    min_confidence=5e-4,
+                    max_candidates=50,
+                    min_confidence=0.0,
                 ),
                 WordMergeMaskedLM(
                     masked_language_model=shared_masked_lm,
                     tokenizer=shared_tokenizer,
-                    max_candidates=20,
-                    min_confidence=5e-4,
+                    max_candidates=50,
+                    min_confidence=5e-3,
                 ),
             ]
         )
@@ -80,7 +80,7 @@ class CLARE2020(AttackRecipe):
         # and calculate their cosine similarity in the embedding space (Jin et al., 2020)."
         # The original implementation uses similarity of 0.7. Since the CLARE code is based on the TextFooler code,
         # we need to adjust the threshold to account for the missing / pi in the cosine similarity comparison
-        #  So the final threshold is 1 - (1 - 0.7) / pi =  0.904507034.
+        #  So the final threshold is 1 - arccos(1 - 0.7) / pi =  0.904507034.
         use_constraint = UniversalSentenceEncoder(
             threshold=0.904507034,
             metric="cosine",

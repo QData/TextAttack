@@ -18,7 +18,7 @@ class Transformation(ABC):
         current_text,
         pre_transformation_constraints=[],
         indices_to_modify=None,
-        shifted_idxs=True,
+        shifted_idxs=False,
     ):
         """Returns a list of all possible transformations for ``current_text``.
         Applies the ``pre_transformation_constraints`` then calls
@@ -30,11 +30,13 @@ class Transformation(ABC):
                 beginning the transformation.
             indices_to_modify: Which word indices should be modified as dictated by the
                 ``SearchMethod``.
-            shifted_idxs (bool): Whether indices have been shifted from
+            shifted_idxs (bool): Whether indices could have been shifted from
                 their original position in the text.
         """
         if indices_to_modify is None:
             indices_to_modify = set(range(len(current_text.words)))
+            # If we are modifying all indices, we don't care if some of the indices might have been shifted.
+            shifted_idxs = False
         else:
             indices_to_modify = set(indices_to_modify)
 

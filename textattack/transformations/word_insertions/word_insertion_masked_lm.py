@@ -32,7 +32,7 @@ class WordInsertionMaskedLM(WordInsertion):
         max_length=512,
         max_candidates=50,
         min_confidence=5e-4,
-        batch_size=32,
+        batch_size=16,
     ):
         super().__init__()
         self.max_length = max_length
@@ -114,15 +114,12 @@ class WordInsertionMaskedLM(WordInsertion):
                 for _id in ranked_indices:
                     _id = _id.item()
                     token = self._lm_tokenizer.convert_ids_to_tokens(_id)
-                    if utils.is_one_word(token) and not utils.check_if_subword(
-                        token,
-                        self._language_model.config.model_type,
-                        (masked_index == 1),
-                    ):
-                        if mask_token_probs[_id] > self.min_confidence:
+                    if utils.check_if_subword(token, self._language_model.config.model_type, (masked_index == 1)):
+                        word = utils.strip_BPE_artifacts(token, self._language_model.config.model_type)
+                        if mask_token_probs[_id] >= self.min_confidence and utils.is_one_word(word) and not utils.check_if_punctuations(word):
                             top_words.append(token)
 
-                    if len(top_words) >= self.max_candidates:
+                    if len(top_words) >= self.max_candidates or mask_token_probs[_id] < self.min_confidence:
                         break
 
                 new_words.append(top_words)
@@ -139,9 +136,6 @@ class WordInsertionMaskedLM(WordInsertion):
             index_to_modify = indices_to_modify[i]
             word_at_index = current_text.words[index_to_modify]
             for word in new_words[i]:
-                word = utils.strip_BPE_artifacts(
-                    word, self._language_model.config.model_type
-                )
                 if word != word_at_index:
                     transformed_texts.append(
                         current_text.insert_text_before_word_index(
