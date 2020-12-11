@@ -96,8 +96,14 @@ class Augmenter:
                     transformed_texts, current_text, original_text
                 )
 
-                # if there's no more transformed texts after filter or that transformed texts only contain duplicated words, or there is no synonym to insert, terminate
-                if (not len(transformed_texts)) or (len(set(transformed_texts)) == 1) or (transformed_texts == [current_text]):
+                # if there's no more transformed texts after filter, terminate
+                if not len(transformed_texts):
+                    break
+                # if transformed texts only contain duplicated words, terminate
+                elif len(set(transformed_texts)) == 1:
+                    break
+                # if there is no synonym to insert, terminate
+                elif transformed_texts == [current_text]
                     break
 
                 current_text = random.choice(transformed_texts)
