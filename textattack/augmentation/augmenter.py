@@ -103,7 +103,7 @@ class Augmenter:
                 elif len(set(transformed_texts)) == 1:
                     break
                 # if there is no synonym to insert, terminate
-                elif transformed_texts == [current_text]
+                elif transformed_texts == [current_text]:
                     break
 
                 current_text = random.choice(transformed_texts)
