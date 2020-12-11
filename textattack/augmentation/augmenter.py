@@ -97,7 +97,7 @@ class Augmenter:
                 )
 
                 # if there's no more transformed texts after filter, terminate
-                if not len(transformed_texts) or transformed_texts == [current_text]:
+                if not len(transformed_texts) or transformed_texts == [current_text] or len(set(transformed_texts)) == 1:
                     break
 
                 current_text = random.choice(transformed_texts)
