@@ -34,7 +34,6 @@ class BeamSearch(SearchMethod):
                 )
                 potential_next_beam += transformations
 
-            print("n", len(potential_next_beam))
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
                 return best_result

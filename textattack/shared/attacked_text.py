@@ -386,10 +386,10 @@ class AttackedText:
                     # Word deletion
                     new_idx_map[new_idx_map == i] = -1
                 new_idx_map[new_idx_map > i] += num_words_diff
-            
+
                 if num_words_diff > 0 and input_word != adv_words[0]:
-                        # If insertion happens before the `input_word`
-                        new_idx_map[new_idx_map == i] += num_words_diff
+                    # If insertion happens before the `input_word`
+                    new_idx_map[new_idx_map == i] += num_words_diff
 
                 new_attack_attrs["original_index_map"] = new_idx_map
             # Move pointer and save indices of new modified words.

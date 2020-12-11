@@ -114,12 +114,25 @@ class WordInsertionMaskedLM(WordInsertion):
                 for _id in ranked_indices:
                     _id = _id.item()
                     token = self._lm_tokenizer.convert_ids_to_tokens(_id)
-                    if utils.check_if_subword(token, self._language_model.config.model_type, (masked_index == 1)):
-                        word = utils.strip_BPE_artifacts(token, self._language_model.config.model_type)
-                        if mask_token_probs[_id] >= self.min_confidence and utils.is_one_word(word) and not utils.check_if_punctuations(word):
+                    if utils.check_if_subword(
+                        token,
+                        self._language_model.config.model_type,
+                        (masked_index == 1),
+                    ):
+                        word = utils.strip_BPE_artifacts(
+                            token, self._language_model.config.model_type
+                        )
+                        if (
+                            mask_token_probs[_id] >= self.min_confidence
+                            and utils.is_one_word(word)
+                            and not utils.check_if_punctuations(word)
+                        ):
                             top_words.append(token)
 
-                    if len(top_words) >= self.max_candidates or mask_token_probs[_id] < self.min_confidence:
+                    if (
+                        len(top_words) >= self.max_candidates
+                        or mask_token_probs[_id] < self.min_confidence
+                    ):
                         break
 
                 new_words.append(top_words)

@@ -1,5 +1,7 @@
-from .importing import LazyLoader
 import string
+
+from .importing import LazyLoader
+
 
 def has_letter(word):
     """Returns true if `word` contains at least one character in [A-Za-z]."""
@@ -302,7 +304,7 @@ def strip_BPE_artifacts(token, model_type):
 
 
 def check_if_punctuations(word):
-    """Returns ``True`` if ``word`` is just a sequence of punctuations"""
+    """Returns ``True`` if ``word`` is just a sequence of punctuations."""
     for c in word:
         if c not in string.punctuation:
             return False
