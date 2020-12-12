@@ -6,7 +6,8 @@ import more_itertools as mit
 import numpy as np
 
 from textattack.shared.data import NAMED_ENTITIES
-from textattack.transformations import Transformation
+
+from .word_swap import WordSwap
 
 
 def idx_to_words(ls, words):
@@ -23,7 +24,7 @@ def idx_to_words(ls, words):
     return output
 
 
-class WordSwapChangeLocation(Transformation):
+class WordSwapChangeLocation(WordSwap):
     def __init__(self, n=3, confidence_score=0.7, **kwargs):
         """Transformation that changes recognized locations of a sentence to
         another location that is given in the location map.

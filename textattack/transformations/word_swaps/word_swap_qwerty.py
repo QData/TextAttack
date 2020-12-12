@@ -5,7 +5,7 @@ Word Swap by swaps characters with QWERTY adjacent keys
 
 import random
 
-from textattack.transformations.word_swap import WordSwap
+from .word_swap import WordSwap
 
 
 class WordSwapQWERTY(WordSwap):

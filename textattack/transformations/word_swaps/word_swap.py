@@ -7,7 +7,7 @@ Word swap transformations act by replacing some words in the input. Subclasses c
 import random
 import string
 
-from .transformation import Transformation
+from textattack.transformations import Transformation
 
 
 class WordSwap(Transformation):

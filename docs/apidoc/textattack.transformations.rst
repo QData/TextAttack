@@ -14,12 +14,6 @@ textattack.transformations package
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.random_synonym_insertion
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.transformations.transformation
    :members:
    :undoc-members:
@@ -32,115 +26,147 @@ textattack.transformations package
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap
+.. automodule:: textattack.transformations.word_innerswap_random
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_change_location
+
+.. automodule:: textattack.transformations.word_swaps.word_swap
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_change_name
+.. automodule:: textattack.transformations.word_swaps.word_swap_change_location
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_change_number
+.. automodule:: textattack.transformations.word_swaps.word_swap_change_name
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_contract
+.. automodule:: textattack.transformations.word_swaps.word_swap_change_number
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_embedding
+.. automodule:: textattack.transformations.word_swaps.word_swap_contract
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_extend
+.. automodule:: textattack.transformations.word_swaps.word_swap_embedding
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_gradient_based
+.. automodule:: textattack.transformations.word_swaps.word_swap_extend
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_homoglyph_swap
+.. automodule:: textattack.transformations.word_swaps.word_swap_gradient_based
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_hownet
+.. automodule:: textattack.transformations.word_swaps.word_swap_homoglyph_swap
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_inflections
+.. automodule:: textattack.transformations.word_swaps.word_swap_hownet
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_masked_lm
+.. automodule:: textattack.transformations.word_swaps.word_swap_inflections
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_neighboring_character_swap
+.. automodule:: textattack.transformations.word_swaps.word_swap_masked_lm
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_qwerty
+.. automodule:: textattack.transformations.word_swaps.word_swap_neighboring_character_swap
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_random_character_deletion
+.. automodule:: textattack.transformations.word_swaps.word_swap_qwerty
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_random_character_insertion
+.. automodule:: textattack.transformations.word_swaps.word_swap_random_character_deletion
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_random_character_substitution
+.. automodule:: textattack.transformations.word_swaps.word_swap_random_character_insertion
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_random_word
+.. automodule:: textattack.transformations.word_swaps.word_swap_random_character_substitution
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.transformations.word_swap_wordnet
+.. automodule:: textattack.transformations.word_swaps.word_swap_wordnet
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_insertions.word_insertion
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_insertions.word_insertion_random_synonym
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_insertions.word_insertion_masked_lm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_merges.word_merge
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_merges.word_merge_masked_lm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

@@ -263,21 +263,12 @@ class AttackedText:
             return idxs
         elif isinstance(idxs, set):
             idxs = list(idxs)
-        if isinstance(idxs, list) or isinstance(idxs, np.ndarray):
-            idxs = torch.tensor(idxs)
-        elif not isinstance(idxs, torch.Tensor):
+
+        elif not isinstance(idxs, [list, np.ndarray]):
             raise TypeError(
                 f"convert_from_original_idxs got invalid idxs type {type(idxs)}"
             )
 
-        # update length of original_index_map, when the length of AttackedText increased
-        while len(self.attack_attrs["original_index_map"]) < len(idxs):
-            missing_index = self.attack_attrs["original_index_map"][-1] + 1
-            while missing_index in self.attack_attrs["modified_indices"]:
-                missing_index += 1
-            self.attack_attrs["original_index_map"] = np.append(
-                self.attack_attrs["original_index_map"], [missing_index]
-            )
         return [self.attack_attrs["original_index_map"][i] for i in idxs]
 
     def replace_words_at_indices(self, indices, new_words):
@@ -372,7 +363,8 @@ class AttackedText:
             word_end = word_start + len(input_word)
             perturbed_text += original_text[:word_start]
             original_text = original_text[word_end:]
-            adv_num_words = len(words_from_text(adv_word_seq))
+            adv_words = words_from_text(adv_word_seq)
+            adv_num_words = len(adv_words)
             num_words_diff = adv_num_words - len(words_from_text(input_word))
             # Track indices on insertions and deletions.
             if num_words_diff != 0:
@@ -391,8 +383,14 @@ class AttackedText:
                 # original_modification_idx = i
                 new_idx_map = new_attack_attrs["original_index_map"].copy()
                 if num_words_diff == -1:
+                    # Word deletion
                     new_idx_map[new_idx_map == i] = -1
                 new_idx_map[new_idx_map > i] += num_words_diff
+
+                if num_words_diff > 0 and input_word != adv_words[0]:
+                    # If insertion happens before the `input_word`
+                    new_idx_map[new_idx_map == i] += num_words_diff
+
                 new_attack_attrs["original_index_map"] = new_idx_map
             # Move pointer and save indices of new modified words.
             for j in range(i, i + adv_num_words):
