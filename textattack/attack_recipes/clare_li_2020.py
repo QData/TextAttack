@@ -78,11 +78,9 @@ class CLARE2020(AttackRecipe):
 
         # "A  common  choice  of sim(·,·) is to encode sentences using neural networks,
         # and calculate their cosine similarity in the embedding space (Jin et al., 2020)."
-        # The original implementation uses similarity of 0.7. Since the CLARE code is based on the TextFooler code,
-        # we need to adjust the threshold to account for the missing / pi in the cosine similarity comparison
-        #  So the final threshold is 1 - arccos(1 - 0.7) / pi =  0.904507034.
+        # The original implementation uses similarity of 0.7.
         use_constraint = UniversalSentenceEncoder(
-            threshold=0.904507034,
+            threshold=0.7,
             metric="cosine",
             compare_against_original=True,
             window_size=15,
