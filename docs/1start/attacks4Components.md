@@ -35,7 +35,7 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 ### On Benchmarking Attack Recipes
 
-- Please read our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+- Please read our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackBoxNLP](https://arxiv.org/abs/2009.06368). 
 
 - As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
 
