@@ -487,7 +487,7 @@ TextAttack 是不依赖具体模型的，这意味着可以对任何深度学习
 
 ### 公平比较攻击策略（Benchmarking Attacks）
 
-- 详细情况参见我们的分析文章：Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+- 详细情况参见我们的分析文章：Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackBoxNLP](https://arxiv.org/abs/2009.06368). 
 
 - 正如我们在上面的文章中所强调的，我们不推荐在对攻击策略没有约束的情况下直接进行比较。
 

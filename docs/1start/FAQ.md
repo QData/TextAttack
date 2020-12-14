@@ -100,7 +100,7 @@ which maintains both a list of tokens and the original text, with punctuation. W
 
 ### 4. Benchmarking Attacks
 
-- See our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+- See our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackBoxNLP](https://arxiv.org/abs/2009.06368). 
 
 - As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
 
