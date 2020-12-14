@@ -8,10 +8,11 @@ import torch
 import textattack
 from textattack.shared import utils
 from textattack.shared.validators import validate_model_gradient_word_swap_compatibility
-from textattack.transformations import Transformation
+
+from .word_swap import WordSwap
 
 
-class WordSwapGradientBased(Transformation):
+class WordSwapGradientBased(WordSwap):
     """Uses the model's gradient to suggest replacements for a given word.
 
     Based off of HotFlip: White-Box Adversarial Examples for Text

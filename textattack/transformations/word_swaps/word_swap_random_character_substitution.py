@@ -5,7 +5,7 @@ Word Swap by Random Character Substitution
 import numpy as np
 
 # from textattack.shared import utils
-from textattack.transformations.word_swap import WordSwap
+from .word_swap import WordSwap
 
 
 class WordSwapRandomCharacterSubstitution(WordSwap):

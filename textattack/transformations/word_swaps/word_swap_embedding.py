@@ -8,7 +8,8 @@ Paper title: Counter-fitting Word Vectors to Linguistic Constraints
 
 """
 from textattack.shared import AbstractWordEmbedding, WordEmbedding
-from textattack.transformations.word_swap import WordSwap
+
+from .word_swap import WordSwap
 
 
 class WordSwapEmbedding(WordSwap):

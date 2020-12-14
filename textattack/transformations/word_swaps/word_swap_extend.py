@@ -4,10 +4,11 @@ Word Swap by Extension
 """
 
 from textattack.shared.data import EXTENSION_MAP
-from textattack.transformations import Transformation
+
+from .word_swap import WordSwap
 
 
-class WordSwapExtend(Transformation):
+class WordSwapExtend(WordSwap):
     """Transforms an input by performing extension on recognized
     combinations."""
 

@@ -6,7 +6,8 @@ Word Swap by Changing Name
 import numpy as np
 
 from textattack.shared.data import PERSON_NAMES
-from textattack.transformations import WordSwap
+
+from .word_swap import WordSwap
 
 
 class WordSwapChangeName(WordSwap):

@@ -37,3 +37,4 @@ from .iga_wang_2019 import IGAWang2019
 from .pruthi_2019 import Pruthi2019
 from .pso_zang_2020 import PSOZang2020
 from .checklist_ribeiro_2020 import CheckList2020
+from .clare_li_2020 import CLARE2020

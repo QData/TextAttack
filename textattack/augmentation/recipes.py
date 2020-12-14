@@ -77,17 +77,17 @@ class EasyDataAugmenter(Augmenter):
 
 class SwapAugmenter(Augmenter):
     def __init__(self, **kwargs):
-        from textattack.transformations import RandomSwap
+        from textattack.transformations import WordInnerSwapRandom
 
-        transformation = RandomSwap()
+        transformation = WordInnerSwapRandom()
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
 
 class SynonymInsertionAugmenter(Augmenter):
     def __init__(self, **kwargs):
-        from textattack.transformations import RandomSynonymInsertion
+        from textattack.transformations import WordInsertionRandomSynonym
 
-        transformation = RandomSynonymInsertion()
+        transformation = WordInsertionRandomSynonym()
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
 

@@ -10,7 +10,7 @@ import random
 
 import lemminflect
 
-from textattack.transformations.word_swap import WordSwap
+from .word_swap import WordSwap
 
 
 class WordSwapInflections(WordSwap):
