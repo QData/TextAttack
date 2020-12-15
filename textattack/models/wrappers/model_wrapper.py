@@ -15,7 +15,6 @@ class ModelWrapper(ABC):
     def __call__(self, text_list):
         raise NotImplementedError()
 
-    @abstractmethod
     def get_grad(self, text_input):
         """Get gradient of loss with respect to input tokens."""
         raise NotImplementedError()
