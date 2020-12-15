@@ -30,7 +30,7 @@ class WordSwapHowNet(WordSwap):
         with open(cache_path, "rb") as fp:
             self.candidates_bank = pickle.load(fp)
 
-        self.pos_dict = {"JJ": "adj", "NN": "noun", "RB": "adv", "VB": "verb"}
+        self.pos_dict = {"ADJ": "adj", "NOUN": "noun", "ADV": "adv", "VERB": "verb"}
 
     def _get_replacement_words(self, word, word_pos):
         """Returns a list of possible 'candidate words' to replace a word in a
