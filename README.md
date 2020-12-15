@@ -526,8 +526,10 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 - This comment is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could come from an improved search or transformation method or a less restrictive search space. 
 
+- Our Github on benchmarking scripts and results:  [TextAttack-Search-Benchmark Github](https://github.com/QData/TextAttack-Search-Benchmark)
 
-## On Reevaluating the Quality of Generated Adversarial Examples in Natural Language
+
+## On Quality of Generated Adversarial Examples in Natural Language
 
 - Our analysis Paper in [EMNLP Findings](https://arxiv.org/abs/2004.14174)
 - We analyze the generated adversarial examples of two state-of-the-art synonym substitution attacks. We find that their perturbations often do not preserve semantics, and 38% introduce grammatical errors. Human surveys reveal that to successfully preserve semantics, we need to significantly increase the minimum cosine similarities between the embeddings of swapped words and between the sentence encodings of original and perturbed sentences.With constraints adjusted to better preserve semantics and grammaticality, the attack success rate drops by over 70 percentage points.
