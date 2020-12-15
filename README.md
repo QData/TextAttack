@@ -153,10 +153,10 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>Invariance testing implemented in CheckList . (["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))</sub></td>
 </tr>
 <tr>
-<td> <code>clare (*coming soon*)</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
+<td> <code>clare</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>Untargeted {Classification, Entailment}</sub></td>
-<td><sub>RoBERTa masked language model</sub></td>
-<td><sub>word swap, insertion, and merge</sub></td>
+<td><sub>USE sentence encoding cosine similarity</sub></td>
+<td><sub>RoBERTa Masked Prediction for token swap, insert and merge</sub></td>
 <td><sub>Greedy</sub></td>
 <td ><sub>["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502))</sub></td>
 </tr>
