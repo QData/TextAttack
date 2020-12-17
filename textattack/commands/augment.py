@@ -21,7 +21,7 @@ AUGMENTATION_RECIPE_NAMES = {
     "charswap": "textattack.augmentation.CharSwapAugmenter",
     "eda": "textattack.augmentation.EasyDataAugmenter",
     "checklist": "textattack.augmentation.CheckListAugmenter",
-    "clare": "textattack.augmentation.CLAREAugmenter"
+    "clare": "textattack.augmentation.CLAREAugmenter",
 }
 
 

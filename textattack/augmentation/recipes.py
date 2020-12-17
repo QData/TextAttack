@@ -194,11 +194,14 @@ class CLAREAugmenter(Augmenter):
 
     https://arxiv.org/abs/2009.07502
 
-    This method uses greedy search with replace, merge, and insertion transformations that leverage a
-    pretrained language model. It also uses USE similarity constraint.
+    CLARE builds on a pre-trained masked language model and modifies the inputs in a contextaware manner.
+    We propose three contextualized perturbations, Replace, Insert and Merge, allowing for generating outputs
+    of varied lengths.
     """
 
-    def __init__(self, model="distilroberta-base", tokenizer="distilroberta-base", **kwargs):
+    def __init__(
+        self, model="distilroberta-base", tokenizer="distilroberta-base", **kwargs
+    ):
         from textattack.transformations import (
             CompositeTransformation,
             WordInsertionMaskedLM,
@@ -206,7 +209,9 @@ class CLAREAugmenter(Augmenter):
             WordSwapMaskedLM,
         )
         import transformers
-        from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
+        from textattack.constraints.semantics.sentence_encoders import (
+            UniversalSentenceEncoder,
+        )
 
         shared_masked_lm = transformers.AutoModelForCausalLM.from_pretrained(model)
         shared_tokenizer = transformers.AutoTokenizer.from_pretrained(tokenizer)
