@@ -222,19 +222,19 @@ class CLAREAugmenter(Augmenter):
                     method="bae",
                     masked_language_model=shared_masked_lm,
                     tokenizer=shared_tokenizer,
-                    max_candidates=20,
+                    max_candidates=50,
                     min_confidence=5e-4,
                 ),
                 WordInsertionMaskedLM(
                     masked_language_model=shared_masked_lm,
                     tokenizer=shared_tokenizer,
-                    max_candidates=20,
+                    max_candidates=50,
                     min_confidence=0.0,
                 ),
                 WordMergeMaskedLM(
                     masked_language_model=shared_masked_lm,
                     tokenizer=shared_tokenizer,
-                    max_candidates=20,
+                    max_candidates=50,
                     min_confidence=5e-3,
                 ),
             ]
