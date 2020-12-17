@@ -13,4 +13,6 @@ from .recipes import (
     EasyDataAugmenter,
     CheckListAugmenter,
     DeletionAugmenter,
+    CLAREAugmenter
 )
+

@@ -185,3 +185,64 @@ class CheckListAugmenter(Augmenter):
         constraints = [DEFAULT_CONSTRAINTS[0]]
 
         super().__init__(transformation, constraints=constraints, **kwargs)
+
+
+class CLAREAugmenter(Augmenter):
+    """Li, Zhang, Peng, Chen, Brockett, Sun, Dolan.
+
+    "Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)
+
+    https://arxiv.org/abs/2009.07502
+
+    This method uses greedy search with replace, merge, and insertion transformations that leverage a
+    pretrained language model. It also uses USE similarity constraint.
+    """
+
+    def __init__(self, model="distilroberta-base", tokenizer="distilroberta-base", **kwargs):
+        from textattack.transformations import (
+            CompositeTransformation,
+            WordInsertionMaskedLM,
+            WordMergeMaskedLM,
+            WordSwapMaskedLM,
+        )
+        import transformers
+        from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
+
+        shared_masked_lm = transformers.AutoModelForCausalLM.from_pretrained(model)
+        shared_tokenizer = transformers.AutoTokenizer.from_pretrained(tokenizer)
+
+        transformation = CompositeTransformation(
+            [
+                WordSwapMaskedLM(
+                    method="bae",
+                    masked_language_model=shared_masked_lm,
+                    tokenizer=shared_tokenizer,
+                    max_candidates=20,
+                    min_confidence=5e-4,
+                ),
+                WordInsertionMaskedLM(
+                    masked_language_model=shared_masked_lm,
+                    tokenizer=shared_tokenizer,
+                    max_candidates=20,
+                    min_confidence=0.0,
+                ),
+                WordMergeMaskedLM(
+                    masked_language_model=shared_masked_lm,
+                    tokenizer=shared_tokenizer,
+                    max_candidates=20,
+                    min_confidence=5e-3,
+                ),
+            ]
+        )
+
+        use_constraint = UniversalSentenceEncoder(
+            threshold=0.7,
+            metric="cosine",
+            compare_against_original=True,
+            window_size=15,
+            skip_text_shorter_than_window=True,
+        )
+
+        constraints = DEFAULT_CONSTRAINTS + [use_constraint]
+
+        super().__init__(transformation, constraints=constraints, **kwargs)
