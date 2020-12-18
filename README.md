@@ -301,6 +301,7 @@ for data augmentation:
 - `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
 - `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
 - `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
+- `textattack.CLAREAugmenter` augments text by replacing, inserting, and merging with a pre-trained masked language model.
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -322,6 +323,9 @@ For example, given the following as `examples.csv`:
 The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
+
+> **Tip:** Just as running attacks interactively, you can also pass `--interactive` to augment samples inputted by the user to quickly try out different augmentation recipes!
+
 
 After augmentation, here are the contents of `augment.csv`:
 ```csv
