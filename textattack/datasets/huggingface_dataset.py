@@ -9,7 +9,6 @@ import random
 import datasets
 
 import textattack
-from textattack.datasets import TextAttackDataset
 
 # from textattack.shared import AttackedText
 
@@ -59,11 +58,12 @@ def get_datasets_dataset_columns(dataset):
     return input_columns, output_column
 
 
-class HuggingFaceDataset(TextAttackDataset):
+class HuggingFaceDataset:
     """Loads a dataset from HuggingFace ``datasets`` and prepares it as a
     TextAttack dataset.
 
-    - name: the dataset name
+    - name_or_dataset: the dataset name or actual ``datasets.Dataset`` object. If it's your custom ``datasets.Dataset`` object,
+        please pass the input and output columns via ``dataset_columns`` argument.
     - subset: the subset of the main dataset. Dataset will be loaded as ``datasets.load_dataset(name, subset)``.
     - label_map: Mapping if output labels should be re-mapped. Useful
       if model was trained with a different label arrangement than
@@ -73,12 +73,14 @@ class HuggingFaceDataset(TextAttackDataset):
         between 0 and 1. Some datasets test the model's correlation
         with ground-truth output, instead of its accuracy, so these
         outputs may be scaled arbitrarily.
+    - dataset_columns (tuple(list[str], str))): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and
+        ``str`` representing the output column name (e.g. ``label``).
     - shuffle (bool): Whether to shuffle the dataset on load.
     """
 
     def __init__(
         self,
-        name,
+        name_or_dataset,
         subset=None,
         split="train",
         label_map=None,
@@ -86,12 +88,15 @@ class HuggingFaceDataset(TextAttackDataset):
         dataset_columns=None,
         shuffle=False,
     ):
-        self._name = name
-        self._dataset = datasets.load_dataset(name, subset)[split]
-        subset_print_str = f", subset {_cb(subset)}" if subset else ""
-        textattack.shared.logger.info(
-            f"Loading {_cb('datasets')} dataset {_cb(name)}{subset_print_str}, split {_cb(split)}."
-        )
+        if isinstance(name_or_dataset, datasets.Dataset):
+            self._dataset = name_or_dataset
+        else:
+            self._name = name_or_dataset
+            self._dataset = datasets.load_dataset(self._name, subset)[split]
+            subset_print_str = f", subset {_cb(subset)}" if subset else ""
+            textattack.shared.logger.info(
+                f"Loading {_cb('datasets')} dataset {_cb(self._name)}{subset_print_str}, split {_cb(split)}."
+            )
         # Input/output column order, like (('premise', 'hypothesis'), 'label')
         (
             self.input_columns,
@@ -120,12 +125,12 @@ class HuggingFaceDataset(TextAttackDataset):
         if shuffle:
             random.shuffle(self.examples)
 
-    def _format_raw_example(self, raw_example):
+    def _format_as_dict(self, example):
         input_dict = collections.OrderedDict(
-            [(c, raw_example[c]) for c in self.input_columns]
+            [(c, example[c]) for c in self.input_columns]
         )
 
-        output = raw_example[self.output_column]
+        output = example[self.output_column]
         if self.label_map:
             output = self.label_map[output]
         if self.output_scale_factor:
@@ -136,14 +141,17 @@ class HuggingFaceDataset(TextAttackDataset):
     def __next__(self):
         if self._i >= len(self.examples):
             raise StopIteration
-        raw_example = self.examples[self._i]
+        example = self.examples[self._i]
         self._i += 1
-        return self._format_raw_example(raw_example)
+        return self._format_as_dict(example)
 
     def __getitem__(self, i):
         if isinstance(i, int):
-            return self._format_raw_example(self.examples[i])
+            return self._format_as_dict(self.examples[i])
         else:
             # `i` could be a slice or an integer. if it's a slice,
             # return the formatted version of the proper slice of the list
-            return [self._format_raw_example(ex) for ex in self.examples[i]]
+            return [self._format_as_dict(ex) for ex in self.examples[i]]
+
+    def __len__(self):
+        return len(self.examples)
