@@ -202,15 +202,15 @@ class CLAREAugmenter(Augmenter):
     def __init__(
         self, model="distilroberta-base", tokenizer="distilroberta-base", **kwargs
     ):
+        import transformers
+        from textattack.constraints.semantics.sentence_encoders import (
+            UniversalSentenceEncoder,
+        )
         from textattack.transformations import (
             CompositeTransformation,
             WordInsertionMaskedLM,
             WordMergeMaskedLM,
             WordSwapMaskedLM,
-        )
-        import transformers
-        from textattack.constraints.semantics.sentence_encoders import (
-            UniversalSentenceEncoder,
         )
 
         shared_masked_lm = transformers.AutoModelForCausalLM.from_pretrained(model)
