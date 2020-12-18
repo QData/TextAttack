@@ -38,9 +38,7 @@ class EasyDataAugmenter(Augmenter):
     """
 
     def __init__(self, pct_words_to_swap=0.1, transformations_per_example=4):
-        assert (
-                0.0 <= pct_words_to_swap <= 1.0
-        ), "pct_words_to_swap must be in [0., 1.]"
+        assert 0.0 <= pct_words_to_swap <= 1.0, "pct_words_to_swap must be in [0., 1.]"
         assert (
             transformations_per_example > 0
         ), "transformations_per_example must be a positive integer"
