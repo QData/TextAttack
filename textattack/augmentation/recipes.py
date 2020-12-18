@@ -7,6 +7,8 @@ Transformations and constraints can be used for simple NLP data augmentations. H
 """
 import random
 
+from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
+
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
@@ -37,7 +39,7 @@ class EasyDataAugmenter(Augmenter):
 
     def __init__(self, pct_words_to_swap=0.1, transformations_per_example=4):
         assert (
-            pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
+                0.0 <= pct_words_to_swap <= 1.0
         ), "pct_words_to_swap must be in [0., 1.]"
         assert (
             transformations_per_example > 0
@@ -203,10 +205,6 @@ class CLAREAugmenter(Augmenter):
         self, model="distilroberta-base", tokenizer="distilroberta-base", **kwargs
     ):
         import transformers
-
-        from textattack.constraints.semantics.sentence_encoders import (
-            UniversalSentenceEncoder,
-        )
 
         from textattack.transformations import (
             CompositeTransformation,
