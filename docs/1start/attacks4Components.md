@@ -98,12 +98,12 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 <td style="text-align: left;"><sub>Greedy-WIR</sub></td>
 <td ><sub>Invariance testing implemented in CheckList . (["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))</sub></td>
 </tr>
-<tr class="even">
-<td style="text-align: left;"> <code>clare (*coming soon*)</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
-<td style="text-align: left;"><sub>Untargeted {Classification, Entailment}</sub></td>
-<td style="text-align: left;"><sub>RoBERTa masked language model</sub></td>
-<td style="text-align: left;"><sub>word swap, insertion, and merge</sub></td>
-<td style="text-align: left;"><sub>Greedy</sub></td>
+<tr>
+<td> <code>clare</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
+<td><sub>Untargeted {Classification, Entailment}</sub></td>
+<td><sub>USE sentence encoding cosine similarity</sub></td>
+<td><sub>RoBERTa Masked Prediction for token swap, insert and merge</sub></td>
+<td><sub>Greedy</sub></td>
 <td ><sub>["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502))</sub></td>
 </tr>
 <tr class="odd">
