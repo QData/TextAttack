@@ -3,7 +3,6 @@
 ## Summary
 *Example: This PR adds [CLARE](https://arxiv.org/abs/2009.07502) attack, which uses distilled RoBERTa masked language model to perform word swaps, word insertions, word merges (which is where we combine two adjacent words and replace it with another word) in a greedy manner.  s*
 
-
 ## Additions
 - *Example: Added `clare` recipe as `textattack.attack_recipes.CLARE2020`.*
 
