@@ -108,7 +108,7 @@ class WordMergeMaskedLM(Transformation):
 
                 mask_token_logits = preds[j, masked_index]
                 mask_token_probs = torch.softmax(mask_token_logits, dim=0)
-                ranked_indices = torch.argsort(mask_token_probs)
+                ranked_indices = torch.argsort(mask_token_probs, descending=True)
                 top_words = []
                 for _id in ranked_indices:
                     _id = _id.item()
