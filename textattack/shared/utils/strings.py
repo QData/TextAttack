@@ -1,3 +1,5 @@
+import string
+
 from .importing import LazyLoader
 
 
@@ -27,13 +29,53 @@ def add_indent(s_, numSpaces):
 
 
 def words_from_text(s, words_to_ignore=[]):
+    homos = {
+        "-": "˗",
+        "9": "৭",
+        "8": "Ȣ",
+        "7": "𝟕",
+        "6": "б",
+        "5": "Ƽ",
+        "4": "Ꮞ",
+        "3": "Ʒ",
+        "2": "ᒿ",
+        "1": "l",
+        "0": "O",
+        "'": "`",
+        "a": "ɑ",
+        "b": "Ь",
+        "c": "ϲ",
+        "d": "ԁ",
+        "e": "е",
+        "f": "𝚏",
+        "g": "ɡ",
+        "h": "հ",
+        "i": "і",
+        "j": "ϳ",
+        "k": "𝒌",
+        "l": "ⅼ",
+        "m": "ｍ",
+        "n": "ո",
+        "o": "о",
+        "p": "р",
+        "q": "ԛ",
+        "r": "ⲅ",
+        "s": "ѕ",
+        "t": "𝚝",
+        "u": "ս",
+        "v": "ѵ",
+        "w": "ԝ",
+        "x": "×",
+        "y": "у",
+        "z": "ᴢ",
+    }
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
     # TODO implement w regex
     words = []
     word = ""
     for c in " ".join(s.split()):
-        if c.isalnum():
+        if c.isalnum() or c in homos.values():
             word += c
         elif c in "'-_*@" and len(word) > 0:
             # Allow apostrophes, hyphens, underscores, asterisks and at signs as long as they don't begin the
@@ -227,3 +269,83 @@ def zip_stanza_result(pred, tagset="universal"):
                 pos_list.append(word.xpos)
 
     return word_list, pos_list
+
+
+def check_if_subword(token, model_type, starting=False):
+    """Check if ``token`` is a subword token that is not a standalone word.
+
+    Args:
+        token (str): token to check.
+        model_type (str): type of model (options: "bert", "roberta", "xlnet").
+        starting (bool): Should be set ``True`` if this token is the starting token of the overall text.
+            This matters because models like RoBERTa does not add "Ġ" to beginning token.
+    Returns:
+        (bool): ``True`` if ``token`` is a subword token.
+    """
+    avail_models = [
+        "bert",
+        "gpt",
+        "gpt2",
+        "roberta",
+        "bart",
+        "electra",
+        "longformer",
+        "xlnet",
+    ]
+    if model_type not in avail_models:
+        raise ValueError(
+            f"Model type {model_type} is not available. Options are {avail_models}."
+        )
+    if model_type in ["bert", "electra"]:
+        return True if "##" in token else False
+    elif model_type in ["gpt", "gpt2", "roberta", "bart", "longformer"]:
+        if starting:
+            return False
+        else:
+            return False if token[0] == "Ġ" else True
+    elif model_type == "xlnet":
+        return False if token[0] == "_" else True
+    else:
+        return False
+
+
+def strip_BPE_artifacts(token, model_type):
+    """Strip characters such as "Ġ" that are left over from BPE tokenization.
+
+    Args:
+        token (str)
+        model_type (str): type of model (options: "bert", "roberta", "xlnet")
+    """
+    avail_models = [
+        "bert",
+        "gpt",
+        "gpt2",
+        "roberta",
+        "bart",
+        "electra",
+        "longformer",
+        "xlnet",
+    ]
+    if model_type not in avail_models:
+        raise ValueError(
+            f"Model type {model_type} is not available. Options are {avail_models}."
+        )
+    if model_type in ["bert", "electra"]:
+        return token.replace("##", "")
+    elif model_type in ["gpt", "gpt2", "roberta", "bart", "longformer"]:
+        return token.replace("Ġ", "")
+    elif model_type == "xlnet":
+        if len(token) > 1 and token[0] == "_":
+            return token[1:]
+        else:
+            return token
+    else:
+        return token
+
+
+def check_if_punctuations(word):
+    """Returns ``True`` if ``word`` is just a sequence of punctuations."""
+    for c in word:
+        if c not in string.punctuation:
+            return False
+    return True

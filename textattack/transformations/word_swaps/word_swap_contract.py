@@ -4,10 +4,11 @@ Word Swap by Contraction
 """
 
 from textattack.shared.data import EXTENSION_MAP
-from textattack.transformations import Transformation
+
+from .word_swap import WordSwap
 
 
-class WordSwapContract(Transformation):
+class WordSwapContract(WordSwap):
     """Transforms an input by performing contraction on recognized
     combinations."""
 

@@ -576,7 +576,7 @@ def train_model(args):
                     break
 
         if args.check_robustness:
-            samples_to_attack = list(zip(train_text, train_labels))
+            samples_to_attack = list(zip(eval_text, eval_labels))
             samples_to_attack = random.sample(samples_to_attack, 1000)
             adv_attack_results = _generate_adversarial_examples(
                 model_wrapper, attack_class, samples_to_attack

@@ -1,24 +1,22 @@
 """
-Word Swap by Random Character Deletion
+Word Swap by Random Character Insertion
 ==========================================================
-"""
 
+"""
 import numpy as np
 
 # from textattack.shared import utils
-from textattack.transformations.word_swap import WordSwap
+from .word_swap import WordSwap
 
 
-class WordSwapRandomCharacterDeletion(WordSwap):
-    """Transforms an input by deleting its characters.
+class WordSwapRandomCharacterInsertion(WordSwap):
+    """Transforms an input by inserting a random character.
 
-    Args:
-        random_one (bool): Whether to return a single word with a random
-            character deleted. If not, returns all possible options.
-        skip_first_char (bool): Whether to disregard deleting the first
-            character.
-        skip_last_char (bool): Whether to disregard deleting the last
-            character.
+    random_one (bool): Whether to return a single word with a random
+    character deleted. If not, returns all possible options.
+    skip_first_char (bool): Whether to disregard inserting as the first
+    character. skip_last_char (bool): Whether to disregard inserting as
+    the last character.
     """
 
     def __init__(
@@ -30,8 +28,8 @@ class WordSwapRandomCharacterDeletion(WordSwap):
         self.skip_last_char = skip_last_char
 
     def _get_replacement_words(self, word):
-        """Returns returns a list containing all possible words with 1 letter
-        deleted."""
+        """Returns returns a list containing all possible words with 1 random
+        character inserted."""
         if len(word) <= 1:
             return []
 
@@ -45,11 +43,11 @@ class WordSwapRandomCharacterDeletion(WordSwap):
 
         if self.random_one:
             i = np.random.randint(start_idx, end_idx)
-            candidate_word = word[:i] + word[i + 1 :]
+            candidate_word = word[:i] + self._get_random_letter() + word[i:]
             candidate_words.append(candidate_word)
         else:
             for i in range(start_idx, end_idx):
-                candidate_word = word[:i] + word[i + 1 :]
+                candidate_word = word[:i] + self._get_random_letter() + word[i:]
                 candidate_words.append(candidate_word)
 
         return candidate_words

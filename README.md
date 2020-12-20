@@ -153,10 +153,10 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>Invariance testing implemented in CheckList . (["Beyond Accuracy: Behavioral Testing of NLP models with CheckList" (Ribeiro et al., 2020)](https://arxiv.org/abs/2005.04118))</sub></td>
 </tr>
 <tr>
-<td> <code>clare (*coming soon*)</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
+<td> <code>clare</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>Untargeted {Classification, Entailment}</sub></td>
-<td><sub>RoBERTa masked language model</sub></td>
-<td><sub>word swap, insertion, and merge</sub></td>
+<td><sub>USE sentence encoding cosine similarity</sub></td>
+<td><sub>RoBERTa Masked Prediction for token swap, insert and merge</sub></td>
 <td><sub>Greedy</sub></td>
 <td ><sub>["Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)](https://arxiv.org/abs/2009.07502))</sub></td>
 </tr>
@@ -301,6 +301,7 @@ for data augmentation:
 - `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
 - `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
 - `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
+- `textattack.CLAREAugmenter` augments text by replacing, inserting, and merging with a pre-trained masked language model.
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -322,6 +323,9 @@ For example, given the following as `examples.csv`:
 The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
+
+> **Tip:** Just as running attacks interactively, you can also pass `--interactive` to augment samples inputted by the user to quickly try out different augmentation recipes!
+
 
 After augmentation, here are the contents of `augment.csv`:
 ```csv
@@ -518,21 +522,30 @@ A `Transformation` takes as input an `AttackedText` and returns a list of possib
 A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input an `AttackedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
 
-### Benchmarking Attacks
+## On Benchmarking Attacks
 
-- See our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackNLP](https://arxiv.org/abs/2009.06368). 
+- See our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackBoxNLP](https://arxiv.org/abs/2009.06368). 
 
 - As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
 
-- This comment is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could from an improved search or transformation method or a less restrictive search space. 
+- This comment is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could come from an improved search or transformation method or a less restrictive search space. 
+
+- Our Github on benchmarking scripts and results:  [TextAttack-Search-Benchmark Github](https://github.com/QData/TextAttack-Search-Benchmark)
+
+
+## On Quality of Generated Adversarial Examples in Natural Language
+
+- Our analysis Paper in [EMNLP Findings](https://arxiv.org/abs/2004.14174)
+- We analyze the generated adversarial examples of two state-of-the-art synonym substitution attacks. We find that their perturbations often do not preserve semantics, and 38% introduce grammatical errors. Human surveys reveal that to successfully preserve semantics, we need to significantly increase the minimum cosine similarities between the embeddings of swapped words and between the sentence encodings of original and perturbed sentences.With constraints adjusted to better preserve semantics and grammaticality, the attack success rate drops by over 70 percentage points.
+- Our Github on Reevaluation results: [Reevaluating-NLP-Adversarial-Examples Github](https://github.com/QData/Reevaluating-NLP-Adversarial-Examples)
+- As we have emphasized in this analysis paper, we recommend researchers and users to be EXTREMELY mindful on the quality of generated adversarial examples in natural language 
+- We recommend the field to use human-evaluation derived thresholds for setting up constraints 
+
 
 
 ## Multi-lingual Support
 
 - See [README_ZH.md](https://github.com/QData/TextAttack/blob/master/README_ZH.md) for our README in Chinese 
-
-
-
 
 
 

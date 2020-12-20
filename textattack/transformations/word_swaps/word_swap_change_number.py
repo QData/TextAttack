@@ -8,7 +8,7 @@ from num2words import num2words
 import numpy as np
 from word2number import w2n
 
-from textattack.transformations import Transformation
+from .word_swap import WordSwap
 
 
 def idx_to_words(ls, words):
@@ -25,7 +25,7 @@ def idx_to_words(ls, words):
     return output
 
 
-class WordSwapChangeNumber(Transformation):
+class WordSwapChangeNumber(WordSwap):
     def __init__(self, max_change=1, n=3, **kwargs):
         """A transformation that recognizes numbers in sentence, and returns
         sentences with altered numbers.

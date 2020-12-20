@@ -32,8 +32,8 @@ class BeamSearch(SearchMethod):
                 transformations = self.get_transformations(
                     text, original_text=initial_result.attacked_text
                 )
-                for next_text in transformations:
-                    potential_next_beam.append(next_text)
+                potential_next_beam += transformations
+
             if len(potential_next_beam) == 0:
                 # If we did not find any possible perturbations, give up.
                 return best_result
@@ -47,6 +47,7 @@ class BeamSearch(SearchMethod):
             # in descending order and filling the beam from there.
             best_indices = (-scores).argsort()[: self.beam_width]
             beam = [potential_next_beam[i] for i in best_indices]
+
         return best_result
 
     @property

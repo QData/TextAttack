@@ -86,7 +86,7 @@ class EvalModelCommand(TextAttackCommand):
             successes = (guess_labels == ground_truth_outputs).sum().item()
             perc_accuracy = successes / len(preds) * 100.0
             perc_accuracy = "{:.2f}%".format(perc_accuracy)
-            logger.info(f"Successes {successes}/{len(preds)} ({_cb(perc_accuracy)})")
+            logger.info(f"Correct {successes}/{len(preds)} ({_cb(perc_accuracy)})")
 
     def run(self, args):
         textattack.shared.utils.set_seed(args.random_seed)

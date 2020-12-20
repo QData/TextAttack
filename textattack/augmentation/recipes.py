@@ -11,6 +11,7 @@ from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
+from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 
 from . import Augmenter
 
@@ -36,9 +37,7 @@ class EasyDataAugmenter(Augmenter):
     """
 
     def __init__(self, pct_words_to_swap=0.1, transformations_per_example=4):
-        assert (
-            pct_words_to_swap >= 0.0 and pct_words_to_swap <= 1.0
-        ), "pct_words_to_swap must be in [0., 1.]"
+        assert 0.0 <= pct_words_to_swap <= 1.0, "pct_words_to_swap must be in [0., 1.]"
         assert (
             transformations_per_example > 0
         ), "transformations_per_example must be a positive integer"
@@ -78,17 +77,17 @@ class EasyDataAugmenter(Augmenter):
 
 class SwapAugmenter(Augmenter):
     def __init__(self, **kwargs):
-        from textattack.transformations import RandomSwap
+        from textattack.transformations import WordInnerSwapRandom
 
-        transformation = RandomSwap()
+        transformation = WordInnerSwapRandom()
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
 
 class SynonymInsertionAugmenter(Augmenter):
     def __init__(self, **kwargs):
-        from textattack.transformations import RandomSynonymInsertion
+        from textattack.transformations import WordInsertionRandomSynonym
 
-        transformation = RandomSynonymInsertion()
+        transformation = WordInsertionRandomSynonym()
         super().__init__(transformation, constraints=DEFAULT_CONSTRAINTS, **kwargs)
 
 
@@ -184,5 +183,69 @@ class CheckListAugmenter(Augmenter):
         )
 
         constraints = [DEFAULT_CONSTRAINTS[0]]
+
+        super().__init__(transformation, constraints=constraints, **kwargs)
+
+
+class CLAREAugmenter(Augmenter):
+    """Li, Zhang, Peng, Chen, Brockett, Sun, Dolan.
+
+    "Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)
+
+    https://arxiv.org/abs/2009.07502
+
+    CLARE builds on a pre-trained masked language model and modifies the inputs in a contextaware manner.
+    We propose three contextualized perturbations, Replace, Insert and Merge, allowing for generating outputs
+    of varied lengths.
+    """
+
+    def __init__(
+        self, model="distilroberta-base", tokenizer="distilroberta-base", **kwargs
+    ):
+        import transformers
+
+        from textattack.transformations import (
+            CompositeTransformation,
+            WordInsertionMaskedLM,
+            WordMergeMaskedLM,
+            WordSwapMaskedLM,
+        )
+
+        shared_masked_lm = transformers.AutoModelForCausalLM.from_pretrained(model)
+        shared_tokenizer = transformers.AutoTokenizer.from_pretrained(tokenizer)
+
+        transformation = CompositeTransformation(
+            [
+                WordSwapMaskedLM(
+                    method="bae",
+                    masked_language_model=shared_masked_lm,
+                    tokenizer=shared_tokenizer,
+                    max_candidates=50,
+                    min_confidence=5e-4,
+                ),
+                WordInsertionMaskedLM(
+                    masked_language_model=shared_masked_lm,
+                    tokenizer=shared_tokenizer,
+                    max_candidates=50,
+                    min_confidence=0.0,
+                ),
+                WordMergeMaskedLM(
+                    masked_language_model=shared_masked_lm,
+                    tokenizer=shared_tokenizer,
+                    max_candidates=50,
+                    min_confidence=5e-3,
+                ),
+            ]
+        )
+
+        use_constraint = UniversalSentenceEncoder(
+            threshold=0.7,
+            metric="cosine",
+            compare_against_original=True,
+            window_size=15,
+            skip_text_shorter_than_window=True,
+        )
+
+        constraints = DEFAULT_CONSTRAINTS + [use_constraint]
 
         super().__init__(transformation, constraints=constraints, **kwargs)
