@@ -150,7 +150,7 @@ class WordSwapMaskedLM(WordSwap):
                             and utils.is_one_word(word)
                             and not utils.check_if_punctuations(word)
                         ):
-                            top_words.append(token)
+                            top_words.append(word)
 
                     if (
                         len(top_words) >= self.max_candidates
