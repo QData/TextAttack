@@ -15,6 +15,7 @@ def test_embedding_paragramcf():
 
 def test_embedding_gensim():
     # download a trained word2vec model
+    from textattack.shared.utils import LazyLoader
     from textattack.shared.utils.install import TEXTATTACK_CACHE_DIR
 
     path = os.path.join(TEXTATTACK_CACHE_DIR, "test_gensim_embedding.txt")
@@ -28,7 +29,10 @@ bye-bye -1 1
     """
     )
     f.close()
-    word_embedding = GensimWordEmbedding(path)
+
+    gensim = LazyLoader("gensim", globals(), "gensim")
+    keyed_vectors = gensim.models.keyedvectors.Word2VecKeyedVectors.load_word2vec_format(path)
+    word_embedding = GensimWordEmbedding(keyed_vectors)
     assert pytest.approx(word_embedding[0][0]) == 1
     assert pytest.approx(word_embedding["bye-bye"][0]) == -1 / np.sqrt(2)
     assert word_embedding[10 ** 9] is None
