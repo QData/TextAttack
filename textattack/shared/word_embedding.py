@@ -308,27 +308,20 @@ class WordEmbedding(AbstractWordEmbedding):
 
 
 class GensimWordEmbedding(AbstractWordEmbedding):
-    """Wraps Gensim's `KeyedVectors`
+    """Wraps Gensim's `models.keyedvectors` module
     (https://radimrehurek.com/gensim/models/keyedvectors.html)"""
 
-    def __init__(self, keyed_vectors_or_path):
+    def __init__(self, keyed_vectors):
         gensim = utils.LazyLoader("gensim", globals(), "gensim")
 
-        if isinstance(keyed_vectors_or_path, str):
-            if keyed_vectors_or_path.endswith(".bin"):
-                self.keyed_vectors = gensim.models.KeyedVectors.load_word2vec_format(
-                    keyed_vectors_or_path, binary=True
-                )
-            else:
-                self.keyed_vectors = gensim.models.KeyedVectors.load_word2vec_format(
-                    keyed_vectors_or_path
-                )
-        elif isinstance(keyed_vectors_or_path, gensim.models.KeyedVectors):
-            self.keyed_vectors = keyed_vectors_or_path
+        if isinstance(
+            keyed_vectors, gensim.models.keyedvectors.WordEmbeddingsKeyedVectors
+        ):
+            self.keyed_vectors = keyed_vectors
         else:
             raise ValueError(
-                "`keyed_vectors_or_path` argument must either be `gensim.models.KeyedVectors` object "
-                "or a path pointing to the saved KeyedVector object"
+                "`keyed_vectors` argument must be a "
+                "`gensim.models.keyedvectors.WordEmbeddingsKeyedVectors` object"
             )
 
         self.keyed_vectors.init_sims()
