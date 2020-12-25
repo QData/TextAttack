@@ -7,12 +7,6 @@ textattack.models.helpers package
    :show-inheritance:
 
 
-.. automodule:: textattack.models.helpers.bert_for_classification
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.models.helpers.glove_embedding_layer
    :members:
    :undoc-members:
