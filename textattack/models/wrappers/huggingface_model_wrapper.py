@@ -4,7 +4,6 @@ HuggingFace Model Wrapper
 """
 
 import torch
-import transformers
 
 import textattack
 
@@ -14,11 +13,10 @@ from .pytorch_model_wrapper import PyTorchModelWrapper
 class HuggingFaceModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""
 
-    def __init__(self, model, tokenizer, batch_size=32):
+    def __init__(self, model, tokenizer, max_length=512, batch_size=32):
         self.model = model.to(textattack.shared.utils.device)
-        if isinstance(tokenizer, transformers.PreTrainedTokenizer):
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(tokenizer=tokenizer)
         self.tokenizer = tokenizer
+        self.max_length = max_length
         self.batch_size = batch_size
 
     def _model_predict(self, inputs):
@@ -27,10 +25,16 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         Then make lists (values of dict) into tensors.
         """
         model_device = next(self.model.parameters()).device
-        input_dict = {k: [_dict[k] for _dict in inputs] for k in inputs[0]}
-        input_dict = {
-            k: torch.tensor(v).to(model_device) for k, v in input_dict.items()
-        }
+        input_dict = self.tokenizer(
+            inputs,
+            truncation=True,
+            max_length=self.max_length,
+            add_special_tokens=True,
+            padding="max_length",
+            return_tensors="pt",
+        )
+        for k in input_dict:
+            input_dict[k] = input_dict[k].to(model_device)
         outputs = self.model(**input_dict)
 
         if isinstance(outputs[0], str):
@@ -50,11 +54,10 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         (Regular PyTorch ``nn.Module`` models typically take inputs as
         positional arguments.)
         """
-        ids = self.encode(text_input_list)
 
         with torch.no_grad():
             outputs = textattack.shared.utils.batch_model_predict(
-                self._model_predict, ids, batch_size=self.batch_size
+                self._model_predict, text_input_list, batch_size=self.batch_size
             )
 
         return outputs
@@ -86,21 +89,26 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
         self.model.zero_grad()
         model_device = next(self.model.parameters()).device
-        ids = self.encode([text_input])
-        predictions = self._model_predict(ids)
+        predictions = self._model_predict(text_input)
 
         model_device = next(self.model.parameters()).device
-        input_dict = {k: [_dict[k] for _dict in ids] for k in ids[0]}
-        input_dict = {
-            k: torch.tensor(v).to(model_device) for k, v in input_dict.items()
-        }
+        input_dict = self.tokenizer(
+            text_input,
+            truncation=True,
+            max_length=self.max_length,
+            add_special_tokens=True,
+            padding="max_length",
+            return_tensors="pt",
+        )
+        for k in input_dict:
+            input_dict[k] = input_dict[k].to(model_device)
         try:
             labels = predictions.argmax(dim=1)
             loss = self.model(**input_dict, labels=labels)[0]
         except TypeError:
             raise TypeError(
                 f"{type(self.model)} class does not take in `labels` to calculate loss. "
-                "One cause for this might be if you instantiatedyour model using `transformer.AutoModel` "
+                "One cause for this might be if you instantiated your model using `transformer.AutoModel` "
                 "(instead of `transformers.AutoModelForSequenceClassification`)."
             )
 
@@ -113,7 +121,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         emb_hook.remove()
         self.model.eval()
 
-        output = {"ids": ids[0]["input_ids"], "gradient": grad}
+        output = {"ids": input_dict["input_ids"].tolist(), "gradient": grad}
 
         return output
 
@@ -125,6 +133,6 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             tokens (list[list[str]]): List of list of tokens as strings
         """
         return [
-            self.tokenizer.convert_ids_to_tokens(self.tokenizer.encode(x)["input_ids"])
+            self.tokenizer.convert_ids_to_tokens(self.tokenizer.encode(x))
             for x in inputs
         ]

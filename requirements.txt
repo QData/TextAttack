@@ -11,9 +11,8 @@ numpy<1.19.0 #TF 2.0 requires this
 pandas>=1.0.1
 scipy==1.4.1
 torch
-transformers==3.3.0
+transformers>=4.0.0
 terminaltables
-tokenizers==0.8.1-rc2
 tqdm>=4.27,<4.50.0
 word2number
 num2words

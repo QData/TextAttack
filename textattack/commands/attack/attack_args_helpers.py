@@ -300,7 +300,7 @@ def parse_model_from_args(args):
             f"Loading pre-trained model from HuggingFace model repository: {colored_model_name}"
         )
         model = model_class.from_pretrained(model_name)
-        tokenizer = textattack.models.tokenizers.AutoTokenizer(model_name)
+        tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
         model = textattack.models.wrappers.HuggingFaceModelWrapper(
             model, tokenizer, batch_size=args.model_batch_size
         )
