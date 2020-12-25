@@ -14,11 +14,11 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (99%)[0m --> [91mNegative (98%)[0m
+[92mPositive (99%)[0m --> [91mNegative (100%)[0m
 
-goldmember is funny enough to [92mjustify[0m the embarrassment of bringing a barf bag to the moviehouse .
+goldmember is [92mfunny[0m enough to justify the embarrassment of bringing a barf bag to the moviehouse .
 
-goldmember is funny enough to [91mreasoned[0m the embarrassment of bringing a barf bag to the moviehouse .
+goldmember is [91modd[0m enough to justify the embarrassment of bringing a barf bag to the moviehouse .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
