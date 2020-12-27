@@ -29,8 +29,7 @@ from textattack.transformations import CompositeTransformation
 class Attack:
     """An attack generates adversarial examples on text.
 
-    This is an abstract class that contains main helper functionality for
-    attacks. An attack is comprised of a search method, goal function,
+    An attack is comprised of a search method, goal function,
     a transformation, and a set of one or more linguistic constraints that
     successful examples must meet.
 
@@ -255,7 +254,7 @@ class Attack:
         filtered_texts.sort(key=lambda t: t.text)
         return filtered_texts
 
-    def attack_one(self, initial_result):
+    def _attack(self, initial_result):
         """Calls the ``SearchMethod`` to perturb the ``AttackedText`` stored in
         ``initial_result``.
 
@@ -286,66 +285,24 @@ class Attack:
         else:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 
-    def _get_examples_from_dataset(self, dataset, indices=None):
-        """Gets examples from a dataset and tokenizes them.
 
+    def attack(self, example, ground_truth_output):
+        """Attack a single example represented as ``AttackedText``
         Args:
-            dataset: An iterable of (text_input, ground_truth_output) pairs
-            indices: An iterable of indices of the dataset that we want to attack. If None, attack all samples in dataset.
-
+            example (Union[AttackedText]): example to attack. 
+            ground_truth_output: ground truth output of ``example``.
         Returns:
-            results (Iterable[GoalFunctionResult]): an iterable of GoalFunctionResults of the original examples
+            AttackResult
         """
-        if indices is None:
-            indices = range(len(dataset))
+        assert isinstance(example, AttackedText), "`example` must be of type `AttackedText`."
+        assert isinstance(ground_truth_output, [int, str]), "`ground_truth_output` must either be `str` or `int`."
+        goal_function_result, _ = self.goal_function.init_attack_example(example, ground_truth_output)
+        if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
+            return SkippedAttackResult(goal_function_result)
+        else:
+            result = self._attack(goal_function_result)
+            return result
 
-        if not isinstance(indices, deque):
-            indices = deque(sorted(indices))
-
-        if not indices:
-            return
-            yield
-
-        while indices:
-            i = indices.popleft()
-            try:
-                text_input, ground_truth_output = dataset[i]
-            except IndexError:
-                utils.logger.warn(
-                    f"Dataset has {len(dataset)} samples but tried to access index {i}. Ending attack early."
-                )
-                break
-
-            try:
-                # get label names from dataset, if possible
-                label_names = dataset.label_names
-            except AttributeError:
-                label_names = None
-            attacked_text = AttackedText(
-                text_input, attack_attrs={"label_names": label_names}
-            )
-            goal_function_result, _ = self.goal_function.init_attack_example(
-                attacked_text, ground_truth_output
-            )
-            yield goal_function_result
-
-    def attack_dataset(self, dataset, indices=None):
-        """Runs an attack on the given dataset and outputs the results to the
-        console and the output file.
-
-        Args:
-            dataset: An iterable of (text, ground_truth_output) pairs.
-            indices: An iterable of indices of the dataset that we want to attack. If None, attack all samples in dataset.
-        """
-
-        examples = self._get_examples_from_dataset(dataset, indices=indices)
-
-        for goal_function_result in examples:
-            if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
-                yield SkippedAttackResult(goal_function_result)
-            else:
-                result = self.attack_one(goal_function_result)
-                yield result
 
     def __repr__(self):
         """Prints attack parameters in a human-readable string.
