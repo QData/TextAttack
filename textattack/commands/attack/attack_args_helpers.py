@@ -357,7 +357,7 @@ def parse_dataset_from_args(args):
         _, dataset = TEXTATTACK_DATASET_BY_MODEL[args.model]
         if dataset[0].startswith("textattack"):
             # unsavory way to pass custom dataset classes
-            # ex: dataset = ('textattack.datasets.translation.TedMultiTranslationDataset', 'en', 'de')
+            # ex: dataset = ('textattack.datasets.helpers.TedMultiTranslationDataset', 'en', 'de')
             dataset = eval(f"{dataset[0]}")(*dataset[1:])
             return dataset
         else:

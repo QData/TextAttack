@@ -21,8 +21,11 @@ class Dataset:
         data (list_like): A list-like iterable of ``(input, output)`` pairs. Here, `output` can either be an integer representing labels for classification
             or a string for seq2seq tasks. If input consists of multiple sequences (e.g. SNLI), iterable
             should be of the form ``([input_1, input_2, ...], output)`` and ``input_columns`` parameter must be set.
-        lang (str): Two letter ISO 639-1 code representing the language of the input data (e.g. "en", "fr", "ko", "zh"). Default is "en".
-        input_columns (list[str]): List of column names of inputs in order. Default is ``["text"]`` for single text input.
+        lang (str, optional): Two letter ISO 639-1 code representing the language of the input data (e.g. "en", "fr", "ko", "zh"). Default is "en".
+        input_columns (list[str], optional): List of column names of inputs in order. Default is ``["text"]`` for single text input.
+        label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
+            If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to ``None`` for non-classification datasets.
+        shuffle (bool): Whether to shuffle the dataset on load.
 
     Examples::
 
@@ -30,23 +33,24 @@ class Dataset:
 
         >>> # Example of sentiment-classification dataset
         >>> data = [("I enjoyed the movie a lot!", 1), ("Absolutely horrible film.", 0), ("Our family had a fun time!", 1)]
-        >>> dataset = textattack.dataset.Dataset(data, lang="en")
+        >>> dataset = textattack.datasets.Dataset(data, lang="en")
         >>> dataset[1:2]
 
 
         >>> # Example for pair of sequence inputs (e.g. SNLI)
         >>> data = [("A man inspects the uniform of a figure in some East Asian country.", "The man is sleeping"), 1)]
-        >>> dataset = textattack.dataset.Dataset(data, lang="en", input_columns=("premise", "hypothesis"))
+        >>> dataset = textattack.datasets.Dataset(data, lang="en", input_columns=("premise", "hypothesis"))
 
         >>> # Example for seq2seq
         >>> data = [("J'aime le film.", "I love the movie.")]
-        >>> dataset = textattack.dataset.Dataset(data, lang="fr")
+        >>> dataset = textattack.datasets.Dataset(data, lang="fr")
     """
 
-    def __init__(self, data, lang="en", input_columns=["text"], shuffle=False):
-        self.data = data
+    def __init__(self, data, lang="en", input_columns=["text"], label_names=None, shuffle=False):
+        self._data = data
         self.lang = lang
         self.input_columns = input_columns
+        self.label_names = label_names
         self.shuffled = shuffle
 
         if shuffle:
@@ -72,27 +76,27 @@ class Dataset:
 
     def __getitem__(self, i):
         if isinstance(i, int):
-            return self._format_example(self.data[i])
+            return self._format_as_dict(self.data[i])
         else:
             # `i` could be a slice or an integer. if it's a slice,
             # return the formatted version of the proper slice of the list
-            return [self._format_example(ex) for ex in self.data[i]]
+            return [self._format_as_dict(ex) for ex in self.data[i]]
 
     def __len__(self):
         return len(self.data)
 
 
-class IterableDataset(ABC):
+class IterableDataset(Dataset, ABC):
     """Basic class for datasets that fetch data via ``__iter__`` protocol. Idea
     is similar to PyTorch's ``IterableDataset``. This is useful if you cannot
     load the entire dataset to memory, such as reading from a large file.
     Unlike ``Dataset``, ``IterableDataset` is an abstract base class, meaning
     that you need to extend it with your own custom child class and define the
-    ``format_example`` method. This is to suppport flexible preprocessing of
-    each example returned by the underlying iterator.
+    ``format_example`` method, which is responsible for formatting each example into a tuple of ``(input, output)`` pair.
 
     However, for most cases that involve loading from a txt, CSV, or JSON files, we recommend loading it as Huggingface's ``datasets.Dataset`` object and
-    pass it to TextAttack's ``HuggingFaceDataset`` class. This class is designed for cases where you really need to load data via ``__iter__`` protocol.
+    pass it to TextAttack's ``HuggingFaceDataset`` class. It uses Apache Arrow as backend and will be sufficient for loading large datasets.
+    This class is designed for cases where you really need to load data via ``__iter__`` protocol.
 
     For more information about loading files as ``datasets.Dataset`` object, visit https://huggingface.co/docs/datasets/loading_datasets.html.
 
@@ -100,6 +104,9 @@ class IterableDataset(ABC):
         data_iterator: Iterator that returns next element when ``next(data_iterator)`` is called.
         lang (str): Two letter ISO 639-1 code representing the language of the data (e.g. "en", "fr", "ko", "zh"). Default is "en".
         input_columns (list[str]): List of column names of inputs in order. Default is ``["text"]`` for single text input.
+        label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
+            If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to ``None`` for non-classification datasets.
+
 
     Examples::
         Suppose `data.csv` looks like the following:
@@ -127,12 +134,11 @@ class IterableDataset(ABC):
         (OrderedDict([('text', 'Our family had a fun time!')]), 1)
     """
 
-    def __init__(self, data_iterator, lang="en", input_columns=["text"]):
+    def __init__(self, data_iterator, lang="en", input_columns=["text"], label_names=None):
         self.data_iterator = data_iterator
         self.lang = lang
         self.input_columns = input_columns
-
-        self._i = 0
+        self.label_names = label_names
 
     def _format_as_dict(self, example):
         output = example[1]

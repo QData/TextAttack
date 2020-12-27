@@ -34,8 +34,6 @@ class TedMultiTranslationDataset(HuggingFaceDataset):
             )
         self.source_lang = source_lang
         self.target_lang = target_lang
-        self.label_names = ("Translation",)
-        self._i = 0
 
     def _format_raw_example(self, raw_example):
         translations = np.array(raw_example["translation"])

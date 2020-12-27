@@ -319,15 +319,15 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     "t5-en-de": (
         "english_to_german",
-        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+        ("textattack.datasets.helpers.TedMultiTranslationDataset", "en", "de"),
     ),
     "t5-en-fr": (
         "english_to_french",
-        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "fr"),
+        ("textattack.datasets.helpers.TedMultiTranslationDataset", "en", "fr"),
     ),
     "t5-en-ro": (
         "english_to_romanian",
-        ("textattack.datasets.translation.TedMultiTranslationDataset", "en", "de"),
+        ("textattack.datasets.helpers.TedMultiTranslationDataset", "en", "de"),
     ),
     #
     # T5 for summarization
