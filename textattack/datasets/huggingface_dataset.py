@@ -4,11 +4,11 @@ HuggingFaceDataset:
 """
 
 import collections
-import random
 
 import datasets
 
 import textattack
+
 from .dataset import Dataset
 
 # from textattack.shared import AttackedText
@@ -20,7 +20,7 @@ def _cb(s):
 
 
 def get_datasets_dataset_columns(dataset):
-    """Common schemas for datasets found in dataset hub"""
+    """Common schemas for datasets found in dataset hub."""
     schema = set(dataset.column_names)
     if {"premise", "hypothesis", "label"} <= schema:
         input_columns = ("premise", "hypothesis")
@@ -70,7 +70,7 @@ class HuggingFaceDataset(Dataset):
     - split (str, optioanl): the split of the dataset. Default is "train".
     - lang (str, optional): Two letter ISO 639-1 code representing the language of the input data (e.g. "en", "fr", "ko", "zh"). Default is "en".
     - dataset_columns (tuple(list[str], str)), optional): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and
-        ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs. 
+        ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs.
     - label_map (dict, optional): Mapping if output labels should be re-mapped. Useful if model was trained with a different label arrangement than
         provided in the ``datasets`` version of the dataset. For example, to remap "Positive" label to 1 and "Negative" label to 0, pass `{"Positive": 1, "Negative": 0}`.
     - label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
@@ -109,6 +109,7 @@ class HuggingFaceDataset(Dataset):
         except KeyError:
             # This happens when the dataset doesn't have 'features' or a 'label' column.
             self.label_names = None
+        self.shuffled = shuffle
         if shuffle:
             self._dataset.shuffle()
 
@@ -122,6 +123,10 @@ class HuggingFaceDataset(Dataset):
             output = self.label_map[output]
 
         return (input_dict, output)
+
+    def shuffle(self):
+        self._dataset.shuffle()
+        self.shuffled = True
 
     def __getitem__(self, i):
         if isinstance(i, int):

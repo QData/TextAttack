@@ -10,8 +10,6 @@ Attack: TextAttack builds attacks from four components:
 The ``Attack`` class represents an adversarial attack composed of a goal function, search method, transformation, and constraints.
 """
 
-from collections import deque
-
 import lru
 
 import textattack
@@ -285,24 +283,28 @@ class Attack:
         else:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 
-
     def attack(self, example, ground_truth_output):
         """Attack a single example represented as ``AttackedText``
         Args:
-            example (Union[AttackedText]): example to attack. 
+            example (Union[AttackedText]): example to attack.
             ground_truth_output: ground truth output of ``example``.
         Returns:
             AttackResult
         """
-        assert isinstance(example, AttackedText), "`example` must be of type `AttackedText`."
-        assert isinstance(ground_truth_output, [int, str]), "`ground_truth_output` must either be `str` or `int`."
-        goal_function_result, _ = self.goal_function.init_attack_example(example, ground_truth_output)
+        assert isinstance(
+            example, AttackedText
+        ), "`example` must be of type `AttackedText`."
+        assert isinstance(
+            ground_truth_output, [int, str]
+        ), "`ground_truth_output` must either be `str` or `int`."
+        goal_function_result, _ = self.goal_function.init_attack_example(
+            example, ground_truth_output
+        )
         if goal_function_result.goal_status == GoalFunctionResultStatus.SKIPPED:
             return SkippedAttackResult(goal_function_result)
         else:
             result = self._attack(goal_function_result)
             return result
-
 
     def __repr__(self):
         """Prints attack parameters in a human-readable string.

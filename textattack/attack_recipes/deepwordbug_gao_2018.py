@@ -6,6 +6,7 @@ DeepWordBug
 
 """
 
+from textattack import Attack
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.constraints.pre_transformation import (
     RepeatModification,
@@ -13,7 +14,6 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
     WordSwapNeighboringCharacterSwap,
@@ -35,7 +35,7 @@ class DeepWordBugGao2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model, use_all_transformations=True):
+    def build(model_wrapper, use_all_transformations=True):
         #
         # Swap characters out from words. Choose the best of four potential transformations.
         #
@@ -70,7 +70,7 @@ class DeepWordBugGao2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Greedily swap words with "Word Importance Ranking".
         #

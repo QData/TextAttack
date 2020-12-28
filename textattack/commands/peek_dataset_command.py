@@ -1,9 +1,3 @@
-"""
-
-TextAttack peek dataset Command
-=====================================
-"""
-
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import collections
 import re
@@ -12,10 +6,7 @@ import numpy as np
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.commands.attack.attack_args_helpers import (
-    add_dataset_args,
-    parse_dataset_from_args,
-)
+from textattack.commands.shared_args import add_dataset_args, parse_dataset_from_args
 
 
 def _cb(s):

@@ -14,5 +14,4 @@ from . import validators
 
 from .attacked_text import AttackedText
 from .word_embedding import *
-from .attack import Attack
-from .checkpoint import Checkpoint
+from .checkpoint import AttackCheckpoint

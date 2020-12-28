@@ -1,11 +1,3 @@
-"""
-
-TextAttack Command Package for model benchmarking
---------------------------------------------------
-
-"""
-
-
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import scipy
@@ -13,18 +5,16 @@ import torch
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.commands.attack.attack_args import (
+from textattack.commands.shared_args import (
     HUGGINGFACE_DATASET_BY_MODEL,
     TEXTATTACK_DATASET_BY_MODEL,
-)
-from textattack.commands.attack.attack_args_helpers import (
     add_dataset_args,
     add_model_args,
     parse_dataset_from_args,
     parse_model_from_args,
 )
 
-logger = textattack.shared.logger
+logger = textattack.shared.utils.logger
 
 
 def _cb(s):
@@ -50,8 +40,7 @@ class EvalModelCommand(TextAttackCommand):
         preds = []
         ground_truth_outputs = []
         i = 0
-
-        while i < args.num_examples:
+        while i < min(args.num_examples, len(dataset)):
             dataset_batch = dataset[
                 i : min(args.num_examples, i + args.model_batch_size)
             ]
@@ -111,6 +100,7 @@ class EvalModelCommand(TextAttackCommand):
 
         add_model_args(parser)
         add_dataset_args(parser)
+
         parser.add_argument("--random-seed", default=765, type=int)
 
         parser.add_argument(
@@ -119,5 +109,4 @@ class EvalModelCommand(TextAttackCommand):
             default=256,
             help="Batch size for model inference.",
         )
-
         parser.set_defaults(func=EvalModelCommand())

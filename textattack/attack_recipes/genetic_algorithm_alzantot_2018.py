@@ -5,11 +5,12 @@ Alzantot Genetic Algorithm
 (Generating Natural Language Adversarial Examples)
 
 .. warning::
-    This attack uses a very slow language model. Consider using the ``fast-alzantot``
+    This attack uses a very slow language model_wrapper. Consider using the ``fast-alzantot``
     recipe instead.
 
 """
 
+from textattack import Attack
 from textattack.constraints.grammaticality.language_models import (
     Google1BillionWordsLanguageModel,
 )
@@ -22,7 +23,6 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import AlzantotGeneticAlgorithm
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 from .attack_recipe import AttackRecipe
@@ -38,7 +38,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # Swap words with their embedding nearest-neighbors.
         #
@@ -70,7 +70,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
             WordEmbeddingDistance(max_mse_dist=0.5, compare_against_original=False)
         )
         #
-        # Language Model
+        # Language model_wrapper
         #
         constraints.append(
             Google1BillionWordsLanguageModel(
@@ -80,7 +80,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Perform word substitution with a genetic algorithm.
         #

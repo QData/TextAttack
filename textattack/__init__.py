@@ -24,5 +24,8 @@ from . import (
     shared,
     transformations,
 )
+from .args import AttackArgs, CliAttackArgs
+from .attack import Attack
+from .attacker import Attacker
 
 name = "textattack"

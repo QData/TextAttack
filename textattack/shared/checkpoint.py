@@ -2,7 +2,7 @@
 Misc Checkpoints
 ===================
 
-The ``Checkpoint`` class saves in-progress attacks and loads saved attacks from disk.
+The ``AttackCheckpoint`` class saves in-progress attacks and loads saved attacks from disk.
 """
 import copy
 import datetime
@@ -10,6 +10,7 @@ import os
 import pickle
 import time
 
+import textattack
 from textattack.attack_results import (
     FailedAttackResult,
     MaximizedAttackResult,
@@ -19,21 +20,30 @@ from textattack.attack_results import (
 from textattack.shared import logger, utils
 
 
-class Checkpoint:
+class AttackCheckpoint:
     """An object that stores necessary information for saving and loading
     checkpoints.
 
-    Args:
-        args: Arguments of the original attack
-        attack_log_manager (AttackLogManager): Object for storing attack results
+    attack_args:
+        attack_args (textattack.AttackArgs): Arguments of the original attack
+        attack_log_manager (textattack.loggers.AttackLogManager): Object for storing attack results
         worklist (deque[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
         worklist_tail (int): Highest index that had been in the worklist at any given time. Used to get the next dataset element
             when attacking with `attack_n` = True.
         chkpt_time (float): epoch time representing when checkpoint was made
     """
 
-    def __init__(self, args, attack_log_manager, worklist, worklist_tail, chkpt_time=None):
-        self.args = copy.deepcopy(args)
+    def __init__(
+        self, attack_args, attack_log_manager, worklist, worklist_tail, chkpt_time=None
+    ):
+        assert isinstance(
+            attack_args, textattack.AttackArgs
+        ), "`attack_args` must be of type `textattack.AttackArgs`."
+        assert isinstance(
+            attack_log_manager, textattack.loggers.AttackLogManager
+        ), "`attack_log_manager` must be of type `textattack.loggers.AttackLogManager`."
+
+        self.attack_args = copy.deepcopy(attack_args)
         self.attack_log_manager = attack_log_manager
         self.worklist = worklist
         self.worklist_tail = worklist_tail
@@ -45,49 +55,52 @@ class Checkpoint:
         self._verify()
 
     def __repr__(self):
-        main_str = "Checkpoint("
+        main_str = "AttackCheckpoint("
         lines = []
         lines.append(utils.add_indent(f"(Time):  {self.datetime}", 2))
 
         args_lines = []
         recipe_set = (
             True
-            if "recipe" in self.args.__dict__ and self.args.__dict__["recipe"]
+            if "recipe" in self.attack_args.__dict__
+            and self.attack_args.__dict__["recipe"]
             else False
         )
         mutually_exclusive_args = ["search", "transformation", "constraints", "recipe"]
         if recipe_set:
             args_lines.append(
-                utils.add_indent(f'(recipe): {self.args.__dict__["recipe"]}', 2)
+                utils.add_indent(f'(recipe): {self.attack_args.__dict__["recipe"]}', 2)
             )
         else:
             args_lines.append(
-                utils.add_indent(f'(search): {self.args.__dict__["search"]}', 2)
+                utils.add_indent(f'(search): {self.attack_args.__dict__["search"]}', 2)
             )
             args_lines.append(
                 utils.add_indent(
-                    f'(transformation): {self.args.__dict__["transformation"]}', 2
+                    f'(transformation): {self.attack_args.__dict__["transformation"]}',
+                    2,
                 )
             )
             args_lines.append(
                 utils.add_indent(
-                    f'(constraints): {self.args.__dict__["constraints"]}', 2
+                    f'(constraints): {self.attack_args.__dict__["constraints"]}', 2
                 )
             )
 
-        for key in self.args.__dict__:
+        for key in self.attack_args.__dict__:
             if key not in mutually_exclusive_args:
                 args_lines.append(
-                    utils.add_indent(f"({key}): {self.args.__dict__[key]}", 2)
+                    utils.add_indent(f"({key}): {self.attack_args.__dict__[key]}", 2)
                 )
 
         args_str = utils.add_indent("\n" + "\n".join(args_lines), 2)
-        lines.append(utils.add_indent(f"(Args):  {args_str}", 2))
+        lines.append(utils.add_indent(f"(attack_args):  {args_str}", 2))
 
         attack_logger_lines = []
         attack_logger_lines.append(
             utils.add_indent(
-                f"(Total number of examples to attack): {self.args.num_examples}", 2
+                f"(Total number of examples to attack): {self.attack_args.num_examples}",
+                2,
             )
         )
         attack_logger_lines.append(
@@ -141,38 +154,44 @@ class Checkpoint:
 
     @property
     def num_skipped_attacks(self):
-        return sum(isinstance(r, SkippedAttackResult) for r in self.attack_log_manager.results)
+        return sum(
+            isinstance(r, SkippedAttackResult) for r in self.attack_log_manager.results
+        )
 
     @property
     def num_failed_attacks(self):
-        return sum(isinstance(r, FailedAttackResult) for r in self.attack_log_manager.results)
+        return sum(
+            isinstance(r, FailedAttackResult) for r in self.attack_log_manager.results
+        )
 
     @property
     def num_successful_attacks(self):
         return sum(
-            isinstance(r, SuccessfulAttackResult) for r in self.attack_log_manager.results
+            isinstance(r, SuccessfulAttackResult)
+            for r in self.attack_log_manager.results
         )
 
     @property
     def num_maximized_attacks(self):
         return sum(
-            isinstance(r, MaximizedAttackResult) for r in self.attack_log_manager.results
+            isinstance(r, MaximizedAttackResult)
+            for r in self.attack_log_manager.results
         )
 
     @property
     def num_remaining_attacks(self):
-        if self.args.attack_n:
+        if self.attack_args.attack_n:
             non_skipped_attacks = self.num_successful_attacks + self.num_failed_attacks
-            count = self.args.num_examples - non_skipped_attacks
+            count = self.attack_args.num_examples - non_skipped_attacks
         else:
-            count = self.args.num_examples - self.results_count
+            count = self.attack_args.num_examples - self.results_count
         return count
 
     @property
     def dataset_offset(self):
         """Calculate offset into the dataset to start from."""
         # Original offset + # of results processed so far
-        return self.args.num_examples_offset + self.results_count
+        return self.attack_args.num_examples_offset + self.results_count
 
     @property
     def datetime(self):
@@ -180,9 +199,9 @@ class Checkpoint:
 
     def save(self, quiet=False):
         file_name = "{}.ta.chkpt".format(int(self.time * 1000))
-        if not os.path.exists(self.args.checkpoint_dir):
-            os.makedirs(self.args.checkpoint_dir)
-        path = os.path.join(self.args.checkpoint_dir, file_name)
+        if not os.path.exists(self.attack_args.checkpoint_dir):
+            os.makedirs(self.attack_args.checkpoint_dir)
+        path = os.path.join(self.attack_args.checkpoint_dir, file_name)
         if not quiet:
             print("\n\n" + "=" * 125)
             logger.info(
@@ -195,10 +214,10 @@ class Checkpoint:
             pickle.dump(self, f, protocol=pickle.HIGHEST_PROTOCOL)
 
     @classmethod
-    def load(self, path):
+    def load(cls, path):
         with open(path, "rb") as f:
             checkpoint = pickle.load(f)
-        assert isinstance(checkpoint, Checkpoint)
+        assert isinstance(checkpoint, cls)
 
         return checkpoint
 
@@ -212,4 +231,6 @@ class Checkpoint:
         for result in self.attack_log_manager.results:
             results_set.add(result.original_text)
 
-        assert len(results_set) == self.results_count, "Duplicate `AttackResults` found."
+        assert (
+            len(results_set) == self.results_count
+        ), "Duplicate `AttackResults` found."
