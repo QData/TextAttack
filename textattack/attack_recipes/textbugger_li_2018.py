@@ -7,7 +7,7 @@ TextBugger
 
 """
 
-# from textattack.constraints.grammaticality import PartOfSpeech
+from textattack import Attack
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
@@ -15,7 +15,6 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
     WordSwapEmbedding,
@@ -37,7 +36,7 @@ class TextBuggerLi2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         #  we propose five bug generation methods for TEXTBUGGER:
         #
@@ -70,7 +69,7 @@ class TextBuggerLi2018(AttackRecipe):
                 # (5) Substitute-W
                 # (Sub-W): Replace a word with its topk nearest neighbors in a
                 # context-aware word vector space. Specifically, we use the pre-trained
-                # GloVe model [30] provided by Stanford for word embedding and set
+                # GloVe model_wrapper [30] provided by Stanford for word embedding and set
                 # topk = 5 in the experiment.
                 WordSwapEmbedding(max_candidates=5),
             ]
@@ -78,7 +77,7 @@ class TextBuggerLi2018(AttackRecipe):
 
         constraints = [RepeatModification(), StopwordModification()]
         # In our experiment, we first use the Universal Sentence
-        # Encoder [7], a model trained on a number of natural language
+        # Encoder [7], a model_wrapper trained on a number of natural language
         # prediction tasks that require modeling the meaning of word
         # sequences, to encode sentences into high dimensional vectors.
         # Then, we use the cosine similarity to measure the semantic
@@ -90,7 +89,7 @@ class TextBuggerLi2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Greedily swap words with "Word Importance Ranking".
         #

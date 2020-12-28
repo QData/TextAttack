@@ -1,9 +1,3 @@
-"""
-
-TextAttack Command Class
-=====================================
-"""
-
 from abc import ABC, abstractmethod
 
 

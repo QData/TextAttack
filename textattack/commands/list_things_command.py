@@ -1,9 +1,3 @@
-"""
-
-TextAttack list Command
-=====================================
-"""
-
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import textattack
@@ -13,12 +7,14 @@ from textattack.commands.attack.attack_args import (
     BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
     CONSTRAINT_CLASS_NAMES,
     GOAL_FUNCTION_CLASS_NAMES,
-    HUGGINGFACE_DATASET_BY_MODEL,
     SEARCH_METHOD_CLASS_NAMES,
-    TEXTATTACK_DATASET_BY_MODEL,
     WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
 )
-from textattack.commands.augment import AUGMENTATION_RECIPE_NAMES
+from textattack.commands.shared_args import (
+    AUGMENTATION_RECIPE_NAMES,
+    HUGGINGFACE_DATASET_BY_MODEL,
+    TEXTATTACK_DATASET_BY_MODEL,
+)
 
 
 def _cb(s):
