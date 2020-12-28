@@ -14,11 +14,11 @@ protobuf = LazyLoader("google.protobuf", globals(), "google.protobuf")
 
 
 def LoadModel(sess, graph, gd_file, ckpt_file):
-    """Load the model from GraphDef and Checkpoint.
+    """Load the model from GraphDef and AttackCheckpoint.
 
     Args:
       gd_file: GraphDef proto text file.
-      ckpt_file: TensorFlow Checkpoint file.
+      ckpt_file: TensorFlow AttackCheckpoint file.
 
     Returns:
       TensorFlow session and tensors dict.

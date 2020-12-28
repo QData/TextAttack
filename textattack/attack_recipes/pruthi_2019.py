@@ -3,6 +3,7 @@ Combating Adversarial Misspellings with Robust Word Recognition
 =================================================================
 
 """
+from textattack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
     MinWordLength,
@@ -11,7 +12,6 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
-from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
     WordSwapNeighboringCharacterSwap,
@@ -35,12 +35,12 @@ class Pruthi2019(AttackRecipe):
 
     https://arxiv.org/abs/1905.11268
 
-    :param model: Model to attack.
+    :param model_wrapper: model_wrapper to attack.
     :param max_num_word_swaps: Maximum number of modifications to allow.
     """
 
     @staticmethod
-    def build(model, max_num_word_swaps=1):
+    def build(model_wrapper, max_num_word_swaps=1):
         # a combination of 4 different character-based transforms
         # ignore the first and last letter of each word, as in the paper
         transformation = CompositeTransformation(
@@ -70,6 +70,6 @@ class Pruthi2019(AttackRecipe):
             RepeatModification(),
         ]
         # untargeted attack
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         search_method = GreedySearch()
         return Attack(goal_function, constraints, transformation, search_method)

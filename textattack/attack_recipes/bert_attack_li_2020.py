@@ -5,6 +5,7 @@ BERT-Attack:
 (BERT-Attack: Adversarial Attack Against BERT Using BERT)
 
 """
+from textattack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
     RepeatModification,
@@ -13,7 +14,6 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapMaskedLM
 
 from .attack_recipe import AttackRecipe
@@ -30,7 +30,7 @@ class BERTAttackLi2020(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         # [from correspondence with the author]
         # Candidate size K is set to 48 for all data-sets.
         transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=48)
@@ -75,11 +75,11 @@ class BERTAttackLi2020(AttackRecipe):
         #
         # Goal is untargeted classification.
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # "We first select the words in the sequence which have a high significance
         # influence on the final output logit. Let S = [w0, ··· , wi ··· ] denote
-        # the input sentence, and oy(S) denote the logit output by the target model
+        # the input sentence, and oy(S) denote the logit output by the target model_wrapper
         # for correct label y, the importance score Iwi is defined as
         # Iwi = oy(S) − oy(S\wi), where S\wi = [w0, ··· , wi−1, [MASK], wi+1, ···]
         # is the sentence after replacing wi with [MASK]. Then we rank all the words
