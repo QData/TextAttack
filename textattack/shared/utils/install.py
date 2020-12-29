@@ -4,6 +4,7 @@ import pathlib
 import shutil
 import tempfile
 import zipfile
+import sys
 
 import filelock
 import requests
@@ -91,8 +92,10 @@ def http_get(folder_name, out_file, proxies=None):
             out_file.write(chunk)
     progress.close()
 
-
-LOG_STRING = "\033[34;1mtextattack\033[0m"
+if sys.stdout.isatty():
+    LOG_STRING = "\033[34;1mtextattack\033[0m"
+else:
+    LOG_STRING = "textattack"
 logger = logging.getLogger(__name__)
 logging.config.dictConfig(
     {"version": 1, "loggers": {__name__: {"level": logging.INFO}}}
