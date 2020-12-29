@@ -125,12 +125,7 @@ class ModelArgs:
 
     @classmethod
     def add_parser_args(cls, parser):
-        """Adds model-related arguments to an argparser.
-
-        This is useful because we want to load pretrained models using
-        multiple different parsers that share these, but not all,
-        arguments.
-        """
+        """Adds model-related arguments to an argparser."""
         model_group = parser.add_mutually_exclusive_group()
 
         model_names = list(HUGGINGFACE_MODELS.keys()) + list(TEXTATTACK_MODELS.keys())
@@ -156,7 +151,9 @@ class ModelArgs:
         )
 
     @classmethod
-    def parse_model_from_args(cls, args):
+    def create_model_from_args(cls, args):
+        """Given ``ModelArgs``, return specified ``textattack.models.wrappers.ModelWrapper`` object."""
+
         assert isinstance(
             args, cls
         ), f"Expect args to be of type `{type(cls)}`, but got type `{type(args)}`."
@@ -195,7 +192,7 @@ class ModelArgs:
             import transformers
 
             model_name = (
-                HUGGINGFACE_MODELS[args.model][0]
+                HUGGINGFACE_MODELS[args.model]
                 if (args.model in HUGGINGFACE_MODELS)
                 else args.model_from_huggingface
             )
@@ -221,7 +218,7 @@ class ModelArgs:
             )
         elif args.model in TEXTATTACK_MODELS:
             # Support loading TextAttack pre-trained models via just a keyword.
-            model_path, _ = TEXTATTACK_MODELS[args.model]
+            model_path = TEXTATTACK_MODELS[args.model]
             model = textattack.shared.utils.load_textattack_model_from_path(
                 args.model, model_path
             )

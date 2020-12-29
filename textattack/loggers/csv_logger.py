@@ -16,6 +16,7 @@ class CSVLogger(Logger):
     """Logs attack results to a CSV."""
 
     def __init__(self, filename="results.csv", color_method="file"):
+        logger.info(f"Logging to CSV at path {filename}.")
         self.filename = filename
         self.color_method = color_method
         self.df = pd.DataFrame()
@@ -43,6 +44,9 @@ class CSVLogger(Logger):
     def flush(self):
         self.df.to_csv(self.filename, quoting=csv.QUOTE_NONNUMERIC, index=False)
         self._flushed = True
+
+    def close(self):
+        self.fout.close()
 
     def __del__(self):
         if not self._flushed:
