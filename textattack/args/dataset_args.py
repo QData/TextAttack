@@ -106,17 +106,17 @@ TEXTATTACK_DATASET_BY_MODEL = {
     # T5 for translation
     #
     "t5-en-de": (
-        "textattack.datasets.translation.TedMultiTranslationDataset",
+        "textattack.datasets.helpers.TedMultiTranslationDataset",
         "en",
         "de",
     ),
     "t5-en-fr": (
-        "textattack.datasets.translation.TedMultiTranslationDataset",
+        "textattack.datasets.helpers.TedMultiTranslationDataset",
         "en",
         "fr",
     ),
     "t5-en-ro": (
-        "textattack.datasets.translation.TedMultiTranslationDataset",
+        "textattack.datasets.helpers.TedMultiTranslationDataset",
         "en",
         "de",
     ),
@@ -129,7 +129,7 @@ TEXTATTACK_DATASET_BY_MODEL = {
 
 @dataclass
 class DatasetArgs:
-    """Arguments for loading model from command line input."""
+    """Arguments for loading dataset from command line input."""
 
     dataset_from_huggingface: str
     dataset_from_file: str
@@ -137,12 +137,8 @@ class DatasetArgs:
 
     @classmethod
     def add_parser_args(cls, parser):
-        """Adds dataset-related arguments to an argparser.
+        """Adds dataset-related arguments to an argparser."""
 
-        This is useful because we want to load pretrained models using
-        multiple different parsers that share these, but not all,
-        arguments.
-        """
         dataset_group = parser.add_mutually_exclusive_group()
         dataset_group.add_argument(
             "--dataset-from-huggingface",
@@ -169,7 +165,9 @@ class DatasetArgs:
         return parser
 
     @classmethod
-    def parse_dataset_from_args(cls, args):
+    def create_dataset_from_args(cls, args):
+        """Given ``DatasetArgs``, return specified ``textattack.dataset.Dataset`` object."""
+
         assert isinstance(
             args, cls
         ), f"Expect args to be of type `{type(cls)}`, but got type `{type(args)}`."

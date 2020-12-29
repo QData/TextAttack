@@ -8,6 +8,8 @@ import sys
 
 import terminaltables
 
+from textattack.shared import logger
+
 from .logger import Logger
 
 
@@ -24,6 +26,7 @@ class FileLogger(Logger):
             if not os.path.exists(directory):
                 os.makedirs(directory)
             self.fout = open(filename, "w")
+            logger.info(f"Logging to text file at path {filename}.")
         else:
             self.fout = filename
         self.num_results = 0
@@ -42,7 +45,10 @@ class FileLogger(Logger):
 
     def log_attack_result(self, result):
         self.num_results += 1
-        color_method = "ansi" if self.stdout else "file"
+        if self.stdout and sys.stdout.isatty():
+            color_method = "ansi"
+        else:
+            color_method = "file"
         self.fout.write(
             "-" * 45 + " Result " + str(self.num_results) + " " + "-" * 45 + "\n"
         )
@@ -63,3 +69,6 @@ class FileLogger(Logger):
 
     def flush(self):
         self.fout.flush()
+
+    def close(self):
+        self.fout.close()
