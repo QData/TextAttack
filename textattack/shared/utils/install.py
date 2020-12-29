@@ -25,12 +25,13 @@ def s3_url(uri):
     return "https://textattack.s3.amazonaws.com/" + uri
 
 
-def download_if_needed(folder_name):
-    """Folder name will be saved as `.cache/textattack/[folder name]`. If it
+def download_from_s3(folder_name, skip_if_cached=True):
+    """Folder name will be saved as `<cache_dir>/textattack/<folder_name>`. If it
     doesn't exist on disk, the zip file will be downloaded and extracted.
 
     Args:
         folder_name (str): path to folder or file in cache
+        skip_if_cached (bool): If `True`, skip downloading if content is already cached.
 
     Returns:
         str: path to the downloaded folder or file on disk
@@ -42,14 +43,56 @@ def download_if_needed(folder_name):
     cache_file_lock = filelock.FileLock(cache_dest_lock_path)
     cache_file_lock.acquire()
     # Check if already downloaded.
-    if os.path.exists(cache_dest_path):
+    if skip_if_cached and os.path.exists(cache_dest_path):
         cache_file_lock.release()
         return cache_dest_path
     # If the file isn't found yet, download the zip file to the cache.
     downloaded_file = tempfile.NamedTemporaryFile(
         dir=TEXTATTACK_CACHE_DIR, suffix=".zip", delete=False
     )
-    http_get(folder_name, downloaded_file)
+    folder_s3_url = s3_url(folder_name)
+    http_get(folder_s3_url, downloaded_file)
+    # Move or unzip the file.
+    downloaded_file.close()
+    if zipfile.is_zipfile(downloaded_file.name):
+        unzip_file(downloaded_file.name, cache_dest_path)
+    else:
+        logger.info(f"Copying {downloaded_file.name} to {cache_dest_path}.")
+        shutil.copyfile(downloaded_file.name, cache_dest_path)
+    cache_file_lock.release()
+    # Remove the temporary file.
+    os.remove(downloaded_file.name)
+    logger.info(f"Successfully saved {folder_name} to cache.")
+    return cache_dest_path
+
+
+def download_from_url(url, save_path, skip_if_cached=True):
+    """Downloaded file will be saved under `<cache_dir>/textattack/<save_path>`. If it
+    doesn't exist on disk, the zip file will be downloaded and extracted.
+
+    Args:
+        url (str): URL path from which to download.
+        save_path (str): path to which to save the downloaded content.
+        skip_if_cached (bool): If `True`, skip downloading if content is already cached.
+
+    Returns:
+        str: path to the downloaded folder or file on disk
+    """
+    cache_dest_path = path_in_cache(save_path)
+    os.makedirs(os.path.dirname(cache_dest_path), exist_ok=True)
+    # Use a lock to prevent concurrent downloads.
+    cache_dest_lock_path = cache_dest_path + ".lock"
+    cache_file_lock = filelock.FileLock(cache_dest_lock_path)
+    cache_file_lock.acquire()
+    # Check if already downloaded.
+    if skip_if_cached and os.path.exists(cache_dest_path):
+        cache_file_lock.release()
+        return cache_dest_path
+    # If the file isn't found yet, download the zip file to the cache.
+    downloaded_file = tempfile.NamedTemporaryFile(
+        dir=TEXTATTACK_CACHE_DIR, suffix=".zip", delete=False
+    )
+    http_get(url, downloaded_file)
     # Move or unzip the file.
     downloaded_file.close()
     if zipfile.is_zipfile(downloaded_file.name):
@@ -72,18 +115,17 @@ def unzip_file(path_to_zip_file, unzipped_folder_path):
         zip_ref.extractall(enclosing_unzipped_path)
 
 
-def http_get(folder_name, out_file, proxies=None):
+def http_get(url, out_file, proxies=None):
     """Get contents of a URL and save to a file.
 
     https://github.com/huggingface/transformers/blob/master/src/transformers/file_utils.py
     """
-    folder_s3_url = s3_url(folder_name)
-    logger.info(f"Downloading {folder_s3_url}.")
-    req = requests.get(folder_s3_url, stream=True, proxies=proxies)
+    logger.info(f"Downloading {url}.")
+    req = requests.get(url, stream=True, proxies=proxies)
     content_length = req.headers.get("Content-Length")
     total = int(content_length) if content_length is not None else None
-    if req.status_code == 403:  # Not found on AWS
-        raise Exception(f"Could not find {folder_name} on server.")
+    if req.status_code == 403 or req.status_code == 404:
+        raise Exception(f"Could not reach {url}.")
     progress = tqdm.tqdm(unit="B", unit_scale=True, total=total)
     for chunk in req.iter_content(chunk_size=1024):
         if chunk:  # filter out keep-alive new chunks

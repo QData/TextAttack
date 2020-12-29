@@ -45,7 +45,7 @@ class TextAttackDataset(ABC):
 
     def _load_pickle_file(self, file_name, offset=0):
         self._i = 0
-        file_path = utils.download_if_needed(file_name)
+        file_path = utils.download_from_s3(file_name)
         with open(file_path, "rb") as f:
             self.examples = pickle.load(f)
         self.examples = self.examples[offset:]
@@ -64,7 +64,7 @@ class TextAttackDataset(ABC):
             offset (int): line to start reading from
             shuffle (bool): If True, randomly shuffle loaded data
         """
-        text_file_path = utils.download_if_needed(text_file_name)
+        text_file_path = utils.download_from_s3(text_file_name)
         text_file = open(text_file_path, "r")
         raw_lines = text_file.readlines()[offset:]
         raw_lines = [self._clean_example(ex) for ex in raw_lines]

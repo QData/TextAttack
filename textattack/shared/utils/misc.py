@@ -60,7 +60,7 @@ def html_table_from_rows(rows, title=None, header=None, style_dict=None):
 def get_textattack_model_num_labels(model_name, model_path):
     """Reads `train_args.json` and gets the number of labels for a trained
     model, if present."""
-    model_cache_path = textattack.shared.utils.download_if_needed(model_path)
+    model_cache_path = textattack.shared.utils.download_from_s3(model_path)
     train_args_path = os.path.join(model_cache_path, "train_args.json")
     if not os.path.exists(train_args_path):
         textattack.shared.logger.warn(
