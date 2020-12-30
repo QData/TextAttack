@@ -2,8 +2,7 @@ from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import os
 
 import textattack
-from textattack import Attacker
-from textattack.args import CommandLineAttackArgs, DatasetArgs, ModelArgs
+from textattack import Attacker, CommandLineAttackArgs, DatasetArgs, ModelArgs
 from textattack.commands import TextAttackCommand
 
 
@@ -33,13 +32,8 @@ class AttackResumeCommand(TextAttackCommand):
         attack = CommandLineAttackArgs.parse_attack_from_args(
             checkpoint.attack_args, model_wrapper
         )
-        attacker = Attacker(attack)
-        if checkpoint.attack_args.parallel:
-            attacker.resume_attack_parallel(
-                dataset, checkpoint, num_workers_per_device=1
-            )
-        else:
-            attacker.resume_attack(dataset, checkpoint)
+        attacker = Attacker.from_checkpoint(attack, dataset, checkpoint)
+        attacker.attack_dataset()
 
     def _parse_checkpoint_from_args(self, args):
         file_name = os.path.basename(args.checkpoint_file)

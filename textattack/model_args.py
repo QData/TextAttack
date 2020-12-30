@@ -119,9 +119,10 @@ TEXTATTACK_MODELS = {
 class ModelArgs:
     """Arguments for loading model from command line input."""
 
-    model: str
-    model_from_file: str
-    model_from_huggingface: str
+    model: str = None
+    model_from_file: str = None
+    model_from_huggingface: str = None
+    model_batch_size: int = 32
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -149,10 +150,18 @@ class ModelArgs:
             required=False,
             help="huggingface.co ID of pre-trained model to load",
         )
+        parser.add_argument(
+            "--model-batch-size",
+            type=int,
+            default=32,
+            help="The batch size for making calls to the model.",
+        )
+        return parser
 
     @classmethod
     def create_model_from_args(cls, args):
-        """Given ``ModelArgs``, return specified ``textattack.models.wrappers.ModelWrapper`` object."""
+        """Given ``ModelArgs``, return specified
+        ``textattack.models.wrappers.ModelWrapper`` object."""
 
         assert isinstance(
             args, cls
@@ -224,9 +233,7 @@ class ModelArgs:
             )
             # Choose the approprate model wrapper (based on whether or not this is
             # a HuggingFace model).
-            if isinstance(
-                model, textattack.models.helpers.BERTForClassification
-            ) or isinstance(model, textattack.models.helpers.T5ForTextToText):
+            if isinstance(model, textattack.models.helpers.T5ForTextToText):
                 model = textattack.models.wrappers.HuggingFaceModelWrapper(
                     model, model.tokenizer, batch_size=args.model_batch_size
                 )

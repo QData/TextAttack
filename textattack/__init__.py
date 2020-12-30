@@ -9,6 +9,13 @@ TextAttack makes experimenting with the robustness of NLP models seamless, fast,
 TextAttack provides components for common NLP tasks like sentence encoding, grammar-checking, and word replacement that can be used on their own.
 """
 
+from .attack_args import AttackArgs, CommandLineAttackArgs
+from .augment_args import AugmenterArgs
+from .dataset_args import DatasetArgs
+from .model_args import ModelArgs
+from .attack import Attack
+from .attacker import Attacker
+
 from . import (
     attack_recipes,
     attack_results,
@@ -24,8 +31,5 @@ from . import (
     shared,
     transformations,
 )
-from .args import AttackArgs, CliAttackArgs
-from .attack import Attack
-from .attacker import Attacker
 
 name = "textattack"

@@ -24,7 +24,7 @@ class AttackCheckpoint:
     """An object that stores necessary information for saving and loading
     checkpoints.
 
-    attack_args:
+    Args:
         attack_args (textattack.AttackArgs): Arguments of the original attack
         attack_log_manager (textattack.loggers.AttackLogManager): Object for storing attack results
         worklist (deque[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.

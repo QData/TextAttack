@@ -1,7 +1,6 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
-from textattack import Attacker
-from textattack.args import CommandLineAttackArgs, DatasetArgs, ModelArgs, LoggingArgs
+from textattack import Attacker, CommandLineAttackArgs, DatasetArgs, ModelArgs
 from textattack.commands import TextAttackCommand
 
 
@@ -12,20 +11,18 @@ class AttackCommand(TextAttackCommand):
     """
 
     def run(self, args):
-        attack_args = CommandLineAttackArgs(**dict(args))
+        attack_args = CommandLineAttackArgs(**vars(args))
         model_wrapper = ModelArgs.create_model_from_args(attack_args)
         dataset = DatasetArgs.create_dataset_from_args(attack_args)
 
         attack = CommandLineAttackArgs.create_attack_from_args(
             attack_args, model_wrapper
         )
-        attack_log_manager = LoggingArgs.create_loggers_from_args(attack_args)
-
-        attacker = Attacker(attack)
-        if attack_args.parallel:
-            attacker.attack_parallel(dataset, attack_args, num_workers_per_device=1)
+        if attack_args.interactive:
+            Attacker.attack_interactive(attack)
         else:
-            attacker.attack(dataset, attack_args)
+            attacker = Attacker(attack, dataset, attack_args)
+            attacker.attack_dataset()
 
     @staticmethod
     def register_subcommand(main_parser: ArgumentParser):

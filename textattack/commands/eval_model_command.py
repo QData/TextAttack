@@ -1,24 +1,26 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
+from dataclasses import dataclass
 
 import scipy
 import torch
 
 import textattack
+from textattack import DatasetArgs, ModelArgs
 from textattack.commands import TextAttackCommand
-from textattack.commands.shared_args import (
-    HUGGINGFACE_DATASET_BY_MODEL,
-    TEXTATTACK_DATASET_BY_MODEL,
-    add_dataset_args,
-    add_model_args,
-    parse_dataset_from_args,
-    parse_model_from_args,
-)
+from textattack.model_args import HUGGINGFACE_MODELS, TEXTATTACK_MODELS
 
 logger = textattack.shared.utils.logger
 
 
 def _cb(s):
     return textattack.shared.utils.color_text(str(s), color="blue", method="ansi")
+
+
+@dataclass
+class ModelEvalArgs(ModelArgs, DatasetArgs):
+    random_seed: int = 765
+    num_examples: int = 5
+    num_examples_offset: int = 0
 
 
 class EvalModelCommand(TextAttackCommand):
@@ -34,8 +36,8 @@ class EvalModelCommand(TextAttackCommand):
         return preds
 
     def test_model_on_dataset(self, args):
-        model = parse_model_from_args(args)
-        dataset = parse_dataset_from_args(args)
+        model = ModelArgs.create_model_from_args(args)
+        dataset = DatasetArgs.create_dataset_from_args(args)
 
         preds = []
         ground_truth_outputs = []
@@ -78,11 +80,13 @@ class EvalModelCommand(TextAttackCommand):
             logger.info(f"Correct {successes}/{len(preds)} ({_cb(perc_accuracy)})")
 
     def run(self, args):
+        args = ModelEvalArgs(**vars(args))
         textattack.shared.utils.set_seed(args.random_seed)
+
         # Default to 'all' if no model chosen.
         if not (args.model or args.model_from_huggingface or args.model_from_file):
-            for model_name in list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
-                TEXTATTACK_DATASET_BY_MODEL.keys()
+            for model_name in list(HUGGINGFACE_MODELS.keys()) + list(
+                TEXTATTACK_MODELS.keys()
             ):
                 args.model = model_name
                 self.test_model_on_dataset(args)
@@ -98,15 +102,25 @@ class EvalModelCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
 
-        add_model_args(parser)
-        add_dataset_args(parser)
+        parser = ModelArgs.add_parser_args(parser)
+        parser = DatasetArgs.add_parser_args(parser)
 
         parser.add_argument("--random-seed", default=765, type=int)
-
         parser.add_argument(
-            "--model-batch-size",
+            "--num-examples",
+            "-n",
             type=int,
-            default=256,
-            help="Batch size for model inference.",
+            required=False,
+            default=5,
+            help="The number of examples to process, -1 for entire dataset",
         )
+        parser.add_argument(
+            "--num-examples-offset",
+            "-o",
+            type=int,
+            required=False,
+            default=0,
+            help="The offset to start at in the dataset.",
+        )
+
         parser.set_defaults(func=EvalModelCommand())

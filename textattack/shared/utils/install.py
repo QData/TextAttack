@@ -2,9 +2,9 @@ import logging.config
 import os
 import pathlib
 import shutil
+import sys
 import tempfile
 import zipfile
-import sys
 
 import filelock
 import requests
@@ -91,6 +91,7 @@ def http_get(folder_name, out_file, proxies=None):
             progress.update(len(chunk))
             out_file.write(chunk)
     progress.close()
+
 
 if sys.stdout.isatty():
     LOG_STRING = "\033[34;1mtextattack\033[0m"

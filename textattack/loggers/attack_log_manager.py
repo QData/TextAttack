@@ -57,7 +57,7 @@ class AttackLogManager:
         for logger in self.loggers:
             logger.flush()
 
-    def close(self:
+    def close(self):
         for logger in self.loggers:
             logger.close()
 
