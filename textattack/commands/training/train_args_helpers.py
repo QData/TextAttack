@@ -1,8 +1,8 @@
 import os
 
 import textattack
-from textattack.commands.attack.attack_args import ATTACK_RECIPE_NAMES
-from textattack.commands.shared_args import AUGMENTATION_RECIPE_NAMES
+from textattack.attack_args import ATTACK_RECIPE_NAMES
+from textattack.augment_args import AUGMENTATION_RECIPE_NAMES
 from textattack.shared.utils import ARGS_SPLIT_TOKEN
 
 logger = textattack.shared.logger

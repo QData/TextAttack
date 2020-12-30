@@ -12,7 +12,7 @@ Subpackages
 .. toctree::
    :maxdepth: 6
 
-   textattack.datasets.translation
+   textattack.datasets.helpers
 
 
 

@@ -37,7 +37,9 @@ def main():
         exit(1)
 
     # Run
-    args.func.run(args)
+    func = args.func
+    del args.func
+    func.run(args)
 
 
 if __name__ == "__main__":

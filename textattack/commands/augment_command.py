@@ -6,16 +6,8 @@ import time
 import tqdm
 
 import textattack
+from textattack.augment_args import AUGMENTATION_RECIPE_NAMES
 from textattack.commands import TextAttackCommand
-
-AUGMENTATION_RECIPE_NAMES = {
-    "wordnet": "textattack.augmentation.WordNetAugmenter",
-    "embedding": "textattack.augmentation.EmbeddingAugmenter",
-    "charswap": "textattack.augmentation.CharSwapAugmenter",
-    "eda": "textattack.augmentation.EasyDataAugmenter",
-    "checklist": "textattack.augmentation.CheckListAugmenter",
-    "clare": "textattack.augmentation.CLAREAugmenter",
-}
 
 
 class AugmentCommand(TextAttackCommand):
@@ -30,6 +22,7 @@ class AugmentCommand(TextAttackCommand):
 
         Preserves all columns except for the input (augmneted) column.
         """
+        args = textattack.AugmenterArgs(**vars(args))
         if args.interactive:
 
             print("\nRunning in interactive mode...\n")
@@ -99,25 +92,25 @@ class AugmentCommand(TextAttackCommand):
         else:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
-            if not (args.csv and args.input_column):
+            if not (args.input_csv and args.input_column):
                 raise ArgumentError(
                     "The following arguments are required: --csv, --input-column/--i"
                 )
             # Validate input/output paths.
-            if not os.path.exists(args.csv):
-                raise FileNotFoundError(f"Can't find CSV at location {args.csv}")
-            if os.path.exists(args.outfile):
+            if not os.path.exists(args.input_csv):
+                raise FileNotFoundError(f"Can't find CSV at location {args.input_csv}")
+            if os.path.exists(args.output_csv):
                 if args.overwrite:
                     textattack.shared.logger.info(
-                        f"Preparing to overwrite {args.outfile}."
+                        f"Preparing to overwrite {args.output_csv}."
                     )
                 else:
                     raise OSError(
-                        f"Outfile {args.outfile} exists and --overwrite not set."
+                        f"Outfile {args.output_csv} exists and --overwrite not set."
                     )
             # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
             # try and automatically infer the correct CSV format.
-            csv_file = open(args.csv, "r")
+            csv_file = open(args.input_csv, "r")
             dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
             csv_file.seek(0)
             rows = [
@@ -133,7 +126,7 @@ class AugmentCommand(TextAttackCommand):
                     f"Could not find input column {args.input_column} in CSV. Found keys: {row_keys}"
                 )
             textattack.shared.logger.info(
-                f"Read {len(rows)} rows from {args.csv}. Found columns {row_keys}."
+                f"Read {len(rows)} rows from {args.input_csv}. Found columns {row_keys}."
             )
 
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
@@ -151,7 +144,7 @@ class AugmentCommand(TextAttackCommand):
                     augmented_row[args.input_column] = augmentation
                     output_rows.append(augmented_row)
             # Print to file.
-            with open(args.outfile, "w") as outfile:
+            with open(args.output_csv, "w") as outfile:
                 csv_writer = csv.writer(
                     outfile, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
                 )
@@ -161,7 +154,7 @@ class AugmentCommand(TextAttackCommand):
                 for row in output_rows:
                     csv_writer.writerow(row.values())
             textattack.shared.logger.info(
-                f"Wrote {len(output_rows)} augmentations to {args.outfile} in {time.time() - start_time}s."
+                f"Wrote {len(output_rows)} augmentations to {args.output_csv} in {time.time() - start_time}s."
             )
 
     @staticmethod
@@ -171,66 +164,5 @@ class AugmentCommand(TextAttackCommand):
             help="augment text data",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
-        parser.add_argument(
-            "--csv",
-            help="input csv file to augment",
-            type=str,
-            required=False,
-            default=None,
-        )
-        parser.add_argument(
-            "--input-column",
-            "--i",
-            help="csv input column to be augmented",
-            type=str,
-            required=False,
-            default=None,
-        )
-        parser.add_argument(
-            "--recipe",
-            "--r",
-            help="recipe for augmentation",
-            type=str,
-            default="embedding",
-            choices=AUGMENTATION_RECIPE_NAMES.keys(),
-        )
-        parser.add_argument(
-            "--pct-words-to-swap",
-            "--p",
-            help="Percentage of words to modify when generating each augmented example.",
-            type=float,
-            default=0.1,
-        )
-
-        parser.add_argument(
-            "--transformations-per-example",
-            "--t",
-            help="number of augmentations to return for each input",
-            type=int,
-            default=2,
-        )
-        parser.add_argument(
-            "--outfile", "--o", help="path to outfile", type=str, default="augment.csv"
-        )
-        parser.add_argument(
-            "--exclude-original",
-            default=False,
-            action="store_true",
-            help="exclude original example from augmented CSV",
-        )
-        parser.add_argument(
-            "--overwrite",
-            default=False,
-            action="store_true",
-            help="overwrite output file, if it exists",
-        )
-        parser.add_argument(
-            "--interactive",
-            default=False,
-            action="store_true",
-            help="Whether to run attacks interactively.",
-        )
-        parser.add_argument(
-            "--random-seed", default=42, type=int, help="random seed to set"
-        )
+        parser = textattack.AugmenterArgs.add_parser_args(parser)
         parser.set_defaults(func=AugmentCommand())

@@ -6,7 +6,6 @@ import numpy as np
 
 import textattack
 from textattack.commands import TextAttackCommand
-from textattack.commands.shared_args import add_dataset_args, parse_dataset_from_args
 
 
 def _cb(s):
@@ -25,8 +24,8 @@ class PeekDatasetCommand(TextAttackCommand):
     def run(self, args):
         UPPERCASE_LETTERS_REGEX = re.compile("[A-Z]")
 
-        args.model = None  # set model to None for parse_dataset_from_args to work
-        dataset = parse_dataset_from_args(args)
+        dataset_args = textattack.DatasetArgs(**vars(args))
+        dataset = textattack.DatasetArgs.create_dataset_from_args(dataset_args)
 
         num_words = []
         attacked_texts = []
@@ -74,5 +73,5 @@ class PeekDatasetCommand(TextAttackCommand):
             help="show main statistics about a dataset",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
-        add_dataset_args(parser)
+        parser = textattack.DatasetArgs.add_parser_args(parser)
         parser.set_defaults(func=PeekDatasetCommand())

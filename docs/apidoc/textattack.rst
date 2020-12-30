@@ -23,3 +23,38 @@ Complete API Reference
    textattack.search_methods
    textattack.shared
    textattack.transformations
+
+.. automodule:: textattack.attack_args
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: textattack.attack
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: textattack.attacker
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: textattack.augment_args
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: textattack.dataset_args
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: textattack.model_args
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: textattack.training_args
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -295,7 +295,7 @@ class Attack:
             example, AttackedText
         ), "`example` must be of type `AttackedText`."
         assert isinstance(
-            ground_truth_output, [int, str]
+            ground_truth_output, (int, str)
         ), "`ground_truth_output` must either be `str` or `int`."
         goal_function_result, _ = self.goal_function.init_attack_example(
             example, ground_truth_output

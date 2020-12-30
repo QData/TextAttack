@@ -16,12 +16,6 @@ Subpackages
 
 
 
-.. automodule:: textattack.shared.attack
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.shared.attacked_text
    :members:
    :undoc-members:

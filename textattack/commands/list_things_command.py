@@ -1,8 +1,7 @@
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import textattack
-from textattack.commands import TextAttackCommand
-from textattack.commands.attack.attack_args import (
+from textattack.attack_args import (
     ATTACK_RECIPE_NAMES,
     BLACK_BOX_TRANSFORMATION_CLASS_NAMES,
     CONSTRAINT_CLASS_NAMES,
@@ -10,11 +9,9 @@ from textattack.commands.attack.attack_args import (
     SEARCH_METHOD_CLASS_NAMES,
     WHITE_BOX_TRANSFORMATION_CLASS_NAMES,
 )
-from textattack.commands.shared_args import (
-    AUGMENTATION_RECIPE_NAMES,
-    HUGGINGFACE_DATASET_BY_MODEL,
-    TEXTATTACK_DATASET_BY_MODEL,
-)
+from textattack.augment_args import AUGMENTATION_RECIPE_NAMES
+from textattack.commands import TextAttackCommand
+from textattack.model_args import HUGGINGFACE_MODELS, TEXTATTACK_MODELS
 
 
 def _cb(s):
@@ -50,8 +47,8 @@ class ListThingsCommand(TextAttackCommand):
     @staticmethod
     def things():
         list_dict = {}
-        list_dict["models"] = list(HUGGINGFACE_DATASET_BY_MODEL.keys()) + list(
-            TEXTATTACK_DATASET_BY_MODEL.keys()
+        list_dict["models"] = list(HUGGINGFACE_MODELS.keys()) + list(
+            TEXTATTACK_MODELS.keys()
         )
         list_dict["search-methods"] = SEARCH_METHOD_CLASS_NAMES
         list_dict["transformations"] = {
