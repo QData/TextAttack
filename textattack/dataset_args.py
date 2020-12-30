@@ -10,16 +10,32 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "bert-base-uncased-ag-news": ("ag_news", None, "test"),
     "bert-base-uncased-cola": ("glue", "cola", "validation"),
     "bert-base-uncased-imdb": ("imdb", None, "test"),
-    "bert-base-uncased-mnli": ("glue", "mnli", "validation_matched", [1, 2, 0]),
+    "bert-base-uncased-mnli": (
+        "glue",
+        "mnli",
+        "validation_matched",
+        "en",
+        None,
+        {0: 1, 1: 2, 2: 0},
+    ),
     "bert-base-uncased-mrpc": ("glue", "mrpc", "validation"),
     "bert-base-uncased-qnli": ("glue", "qnli", "validation"),
     "bert-base-uncased-qqp": ("glue", "qqp", "validation"),
     "bert-base-uncased-rte": ("glue", "rte", "validation"),
     "bert-base-uncased-sst2": ("glue", "sst2", "validation"),
-    "bert-base-uncased-stsb": ("glue", "stsb", "validation", None, 5.0),
+    "bert-base-uncased-stsb": (
+        "glue",
+        "stsb",
+        "validation",
+        "en",
+        None,
+        None,
+        None,
+        5.0,
+    ),
     "bert-base-uncased-wnli": ("glue", "wnli", "validation"),
     "bert-base-uncased-mr": ("rotten_tomatoes", None, "test"),
-    "bert-base-uncased-snli": ("snli", None, "test", [1, 2, 0]),
+    "bert-base-uncased-snli": ("snli", None, "test", "en", None, {0: 1, 1: 2, 2: 0}),
     "bert-base-uncased-yelp": ("yelp_polarity", None, "test"),
     #
     # distilbert-base-cased
@@ -29,14 +45,27 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "distilbert-base-cased-qqp": ("glue", "qqp", "validation"),
     "distilbert-base-cased-snli": ("snli", None, "test"),
     "distilbert-base-cased-sst2": ("glue", "sst2", "validation"),
-    "distilbert-base-cased-stsb": ("glue", "stsb", "validation", None, 5.0),
-    #
-    # distilbert-base-uncased
-    #
+    "distilbert-base-cased-stsb": (
+        "glue",
+        "stsb",
+        "validation",
+        "en",
+        None,
+        None,
+        None,
+        5.0,
+    ),
     "distilbert-base-uncased-ag-news": ("ag_news", None, "test"),
     "distilbert-base-uncased-cola": ("glue", "cola", "validation"),
     "distilbert-base-uncased-imdb": ("imdb", None, "test"),
-    "distilbert-base-uncased-mnli": ("glue", "mnli", "validation_matched", [1, 2, 0]),
+    "distilbert-base-uncased-mnli": (
+        "glue",
+        "mnli",
+        "validation_matched",
+        "en",
+        None,
+        {0: 1, 1: 2, 2: 0},
+    ),
     "distilbert-base-uncased-mr": ("rotten_tomatoes", None, "test"),
     "distilbert-base-uncased-mrpc": ("glue", "mrpc", "validation"),
     "distilbert-base-uncased-qnli": ("glue", "qnli", "validation"),
@@ -53,7 +82,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "roberta-base-qnli": ("glue", "qnli", "validation"),
     "roberta-base-rte": ("glue", "rte", "validation"),
     "roberta-base-sst2": ("glue", "sst2", "validation"),
-    "roberta-base-stsb": ("glue", "stsb", "validation", None, 5.0),
+    "roberta-base-stsb": ("glue", "stsb", "validation", "en", None, None, None, 5.0),
     "roberta-base-wnli": ("glue", "wnli", "validation"),
     #
     # albert-base-v2 (ALBERT is cased by default)
@@ -66,7 +95,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "albert-base-v2-qqp": ("glue", "qqp", "validation"),
     "albert-base-v2-snli": ("snli", None, "test"),
     "albert-base-v2-sst2": ("glue", "sst2", "validation"),
-    "albert-base-v2-stsb": ("glue", "stsb", "validation", None, 5.0),
+    "albert-base-v2-stsb": ("glue", "stsb", "validation", "en", None, None, None, 5.0),
     "albert-base-v2-wnli": ("glue", "wnli", "validation"),
     "albert-base-v2-yelp": ("yelp_polarity", None, "test"),
     #
@@ -77,7 +106,16 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "xlnet-base-cased-mr": ("rotten_tomatoes", None, "test"),
     "xlnet-base-cased-mrpc": ("glue", "mrpc", "validation"),
     "xlnet-base-cased-rte": ("glue", "rte", "validation"),
-    "xlnet-base-cased-stsb": ("glue", "stsb", "validation", None, 5.0),
+    "xlnet-base-cased-stsb": (
+        "glue",
+        "stsb",
+        "validation",
+        "en",
+        None,
+        None,
+        None,
+        5.0,
+    ),
     "xlnet-base-cased-wnli": ("glue", "wnli", "validation"),
 }
 
@@ -131,9 +169,9 @@ TEXTATTACK_DATASET_BY_MODEL = {
 class DatasetArgs:
     """Arguments for loading dataset from command line input."""
 
-    dataset_from_huggingface: str
-    dataset_from_file: str
-    shuffle: bool
+    dataset_from_huggingface: str = None
+    dataset_from_file: str = None
+    shuffle: bool = None
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -166,7 +204,8 @@ class DatasetArgs:
 
     @classmethod
     def create_dataset_from_args(cls, args):
-        """Given ``DatasetArgs``, return specified ``textattack.dataset.Dataset`` object."""
+        """Given ``DatasetArgs``, return specified
+        ``textattack.dataset.Dataset`` object."""
 
         assert isinstance(
             args, cls
@@ -180,7 +219,7 @@ class DatasetArgs:
             dataset = TEXTATTACK_DATASET_BY_MODEL[args.model]
             if dataset[0].startswith("textattack"):
                 # unsavory way to pass custom dataset classes
-                # ex: dataset = ('textattack.datasets.translation.TedMultiTranslationDataset', 'en', 'de')
+                # ex: dataset = ('textattack.datasets.helpers.TedMultiTranslationDataset', 'en', 'de')
                 dataset = eval(f"{dataset[0]}")(*dataset[1:])
                 if args.shuffle:
                     dataset.shuffle()

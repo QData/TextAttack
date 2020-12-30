@@ -4,7 +4,7 @@ Attack Logger Wrapper
 """
 
 
-from abc import ABC, abstractmethod
+from abc import ABC
 
 
 class Logger(ABC):
@@ -12,12 +12,10 @@ class Logger(ABC):
 
     def __init__(self):
         pass
-    
-    @abstractmethod
+
     def log_attack_result(self, result, examples_completed):
         pass
 
-    @abstractmethod
     def log_summary_rows(self, rows, title, window_id):
         pass
 
@@ -26,7 +24,7 @@ class Logger(ABC):
 
     def log_sep(self):
         pass
-    
+
     def flush(self):
         pass
 

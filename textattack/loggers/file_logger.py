@@ -45,7 +45,8 @@ class FileLogger(Logger):
 
     def log_attack_result(self, result):
         self.num_results += 1
-        if self.stdout and sys.stdout.isatty():
+        # if self.stdout and sys.stdout.isatty():
+        if self.stdout:
             color_method = "ansi"
         else:
             color_method = "file"

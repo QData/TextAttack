@@ -11,8 +11,6 @@ import textattack
 
 from .dataset import Dataset
 
-# from textattack.shared import AttackedText
-
 
 def _cb(s):
     """Colors some text blue for printing to the terminal."""
@@ -64,18 +62,24 @@ class HuggingFaceDataset(Dataset):
     """Loads a dataset from HuggingFace ``datasets`` and prepares it as a
     TextAttack dataset.
 
-    - name_or_dataset (Union[datasets.Dataset, str]): the dataset name or actual ``datasets.Dataset`` object. If it's your custom ``datasets.Dataset`` object,
-        please pass the input and output columns via ``dataset_columns`` argument.
-    - subset (str, optional): the subset of the main dataset. Dataset will be loaded as ``datasets.load_dataset(name, subset)``. Default is ``None``.
-    - split (str, optioanl): the split of the dataset. Default is "train".
-    - lang (str, optional): Two letter ISO 639-1 code representing the language of the input data (e.g. "en", "fr", "ko", "zh"). Default is "en".
-    - dataset_columns (tuple(list[str], str)), optional): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and
-        ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs.
-    - label_map (dict, optional): Mapping if output labels should be re-mapped. Useful if model was trained with a different label arrangement than
-        provided in the ``datasets`` version of the dataset. For example, to remap "Positive" label to 1 and "Negative" label to 0, pass `{"Positive": 1, "Negative": 0}`.
-    - label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
-        If ``datasets.Dataset`` object already has label names, then this is not required. Also, this should be set to ``None`` for non-classification datasets.
-    - shuffle (bool): Whether to shuffle the dataset on load.
+    Args:
+        name_or_dataset (Union[datasets.Dataset, str]): the dataset name or actual ``datasets.Dataset`` object. If it's your custom ``datasets.Dataset`` object,
+            please pass the input and output columns via ``dataset_columns`` argument.
+        subset (str, optional): the subset of the main dataset. Dataset will be loaded as ``datasets.load_dataset(name, subset)``. Default is ``None``.
+        split (str, optioanl): the split of the dataset. Default is "train".
+        lang (str, optional): Two letter ISO 639-1 code representing the language of the input data (e.g. "en", "fr", "ko", "zh"). Default is "en".
+        dataset_columns (tuple(list[str], str)), optional): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and
+            ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs.
+        label_map (dict, optional): Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than
+            provided in the ``datasets`` version of the dataset. For example, if dataset's arrangement is 0 for negative and 1 for positive, but model's label
+            arrangement is 1 for negative and 0 for positive, pass ``{0: 1, 1: 0}``. Could also be used to remap literal labels to numerical labels,
+            (e.g. ``{"positive": 1, "negative": 0}``)
+        label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
+            If ``datasets.Dataset`` object already has label names, then this is not required. Also, this should be set to ``None`` for non-classification datasets.
+        output_scale_factor (float): Factor to divide ground-truth outputs by.
+            Generally, TextAttack goal functions require model outputs between 0 and 1.
+            Some datasets are regression tasks, in which case this is necessary.
+        shuffle (bool): Whether to shuffle the dataset on load.
     """
 
     def __init__(
@@ -87,6 +91,7 @@ class HuggingFaceDataset(Dataset):
         dataset_columns=None,
         label_map=None,
         label_names=None,
+        output_scale_factor=None,
         shuffle=False,
     ):
         if isinstance(name_or_dataset, datasets.Dataset):
@@ -104,14 +109,22 @@ class HuggingFaceDataset(Dataset):
             self.output_column,
         ) = dataset_columns or get_datasets_dataset_columns(self._dataset)
         self.label_map = label_map
+        self.output_scale_factor = output_scale_factor
         try:
             self.label_names = self._dataset.features["label"].names
+            # If labels are remapped, the label names have to be remapped as well.
+            if label_map:
+                self.label_names = [
+                    self.label_names[self.label_map[i]] for i in self.label_map
+                ]
         except KeyError:
             # This happens when the dataset doesn't have 'features' or a 'label' column.
             self.label_names = None
         self.shuffled = shuffle
         if shuffle:
             self._dataset.shuffle()
+
+        print(self.label_map)
 
     def _format_as_dict(self, example):
         input_dict = collections.OrderedDict(
@@ -121,12 +134,10 @@ class HuggingFaceDataset(Dataset):
         output = example[self.output_column]
         if self.label_map:
             output = self.label_map[output]
+        if self.output_scale_factor:
+            output = output / self.output_scale_factor
 
         return (input_dict, output)
-
-    def shuffle(self):
-        self._dataset.shuffle()
-        self.shuffled = True
 
     def __getitem__(self, i):
         if isinstance(i, int):
@@ -134,7 +145,10 @@ class HuggingFaceDataset(Dataset):
         else:
             # `i` could be a slice or an integer. if it's a slice,
             # return the formatted version of the proper slice of the list
-            return [self._format_as_dict(ex) for ex in self._dataset[i]]
+            return [
+                self._format_as_dict(self._dataset[j]) for j in range(i.start, i.stop)
+            ]
 
-    def __len__(self):
-        return len(self._dataset)
+    def shuffle(self):
+        self._dataset.shuffle()
+        self.shuffled = True

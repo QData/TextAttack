@@ -14,63 +14,117 @@ from textattack.attack_results import (
 from textattack.shared.utils import logger
 
 from .attack import Attack
+from .attack_args import AttackArgs
 
 
 class Attacker:
     """Class for running attacks on a dataset with specified parameters. This
-    class uses the ``textattack.shared.Attack`` to actually run the attacks,
-    while also providing useful features such as parallel processing,
-    saving/resuming from a checkpint, logging to files and stdout.
+    class uses the ``textattack.Attack`` to actually run the attacks, while
+    also providing useful features such as parallel processing, saving/resuming
+    from a checkpint, logging to files and stdout.
 
     Args:
         attack (textattack.Attack): Attack object used to run an attack. It is composed of a goal function, transformation, set of constraints, and search method.
-        attack_log_manager (textattack.loggers.AttackLogManager): Object that manages loggers to log to text files, CSV files, Wandb, etc. If not set, the default is stdout output.
-            Note that this is replaced when resuming attack from a saved ``AttackCheckpoint``.
+        dataset (textattack.datasets.Dataset): Dataset to attack.
+        attack_args (textattack.AttackArgs): Arguments for attacking the dataset. For default settings, look at the `AttackArgs` class.
+
+    Examples::
+
+        >>> import textattack
+        >>> import transformers
+
+        >>> model = transformers.AutoModelForSequenceClassification("textattack/bert-base-uncased-imdb")
+        >>> tokenizer = transformers.AutoTokenizer("textattack/bert-base-uncased-imdb")
+        >>> model_wrapper = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
+
+        >>> attack = textattack.attack_recipes.TextFoolerJin2019.build(model_wrapper)
+        >>> dataset = textattack.datasets.HuggingFaceDataset("imdb", split="test")
+
+        >>> # Attack 1000 samples with CSV logging and checkpoint saved every 100 interval
+        >>> attack_args = textattack.AttackArgs(num_examples=1000, log_to_csv="log.csv", checkpoint_interval=100, checkpoint_dir="checkpoints")
+
+        >>> attacker = textattack.Attacker(attack, dataset, attack_args)
+        >>> attacker.attack_data()
     """
 
-    def __init__(self, attack, attack_log_manager=None):
+    def __init__(self, attack, dataset, attack_args=AttackArgs()):
         assert isinstance(
             attack, Attack
         ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
+        assert isinstance(
+            dataset, textattack.datasets.Dataset
+        ), f"`dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(dataset)}`."
+        assert isinstance(
+            attack_args, textattack.AttackArgs
+        ), f"`attack_args` must be of type `textattack.AttackArgs`, but got type `{type(attack_args)}`."
 
         self.attack = attack
-        if attack_log_manager is None:
-            self.attack_log_manager = textattack.logger.AttackLogManager()
-            self.attack_log_manager.enable_stdout()
-        else:
-            self.attack_log_manager = attack_log_manager
+        self.dataset = dataset
+        self.attack_args = attack_args
+        self.attack_log_manager = AttackArgs.create_loggers_from_args(attack_args)
 
-    def _attack(self, dataset, attack_args=None, checkpoint=None):
-        """Internal method that carries out attack. No parallel processing is
-        involved.
+        # This is to be set if loading from a checkpoint
+        self._checkpoint = None
 
-        Args:
-            dataset (textattack.datasets.Dataset): Dataset to attack
-            attack_args (textattack.args.AttackArgs, optional): Arguments for attack. This will be overrided by checkpoint's argument if `checkpoint` is not `None`.
-            checkpoint (textattack.shared.AttackCheckpoint, optional): AttackCheckpoint from which to resume the attack.
+    def update_attack_args(self, **kwargs):
+        """To update any attack args, pass the new argument as keyword argument
+        to this function.
+
+        Examples::
+
+        >>> attacker = #some instance of Attacker
+        >>> # To switch to parallel mode and increase checkpoint interval from 100 to 500
+        >>> attacker.update_attack_args(parallel=True, checkpoint_interval=500)
         """
-        if checkpoint is not None and attack_args is not None:
-            raise ValueError("`attack_args` and `checkpoint` cannot be both set.")
+        for k in kwargs:
+            if hasattr(self.attack_args, k):
+                self.attack_args.k = kwargs[k]
+            else:
+                raise ValueError(f"`AttackArgs` does not have field {k}.")
 
-        if checkpoint:
-            num_remaining_attacks = checkpoint.num_remaining_attacks
-            worklist = checkpoint.worklist
-            worklist_tail = checkpoint.worklist_tail
+    def attack_dataset(self):
+        """Start the attack."""
+        textattack.shared.utils.set_seed(self.attack_args.random_seed)
+        if self.dataset.shuffled and self.attack_args.checkpoint_interval:
+            # Not allowed b/c we cannot recover order of shuffled data
+            raise ValueError("Cannot use `--checkpoint-interval` with `--shuffle=True`")
+
+        self.attack_args.num_examples = (
+            len(self.dataset)
+            if self.attack_args.num_examples == -1
+            else self.attack_args.num_examples
+        )
+        if self.attack_args.parallel:
+            self._attack_parallel()
+        else:
+            self._attack()
+
+    def _attack(self):
+        """Internal method that carries out attack.
+
+        No parallel processing is involved.
+        """
+        if self._checkpoint:
+            num_remaining_attacks = self._checkpoint.num_remaining_attacks
+            worklist = self._checkpoint.worklist
+            worklist_tail = self._checkpoint.worklist_tail
             logger.info(
-                "Recovered from checkpoint previously saved at {}.".format(
-                    checkpoint.datetime
-                )
+                f"Recovered from checkpoint previously saved at {self._checkpoint.datetime}."
             )
         else:
-            num_remaining_attacks = attack_args.num_examples
-            worklist = collections.deque(range(0, attack_args.num_examples))
+            num_remaining_attacks = self.attack_args.num_examples
+            start = self.attack_args.num_examples_offset
+            end = start + self.attack_args.num_examples
+            worklist = collections.deque(range(start, end))
             worklist_tail = worklist[-1]
 
+        print(self.attack, "\n")
+
         pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
-        if checkpoint:
-            num_results = checkpoint.results_count
-            num_failures = checkpoint.num_failed_attacks
-            num_successes = checkpoint.num_successful_attacks
+        if self._checkpoint:
+            num_results = self._checkpoint.results_count
+            num_failures = self._checkpoint.num_failed_attacks
+            num_successes = self._checkpoint.num_successful_attacks
         else:
             num_results = 0
             num_failures = 0
@@ -80,17 +134,17 @@ class Attacker:
         while worklist:
             idx = worklist.popleft()
             i += 1
-            example, ground_truth_output = dataset[idx]
+            example, ground_truth_output = self.dataset[idx]
             example = textattack.shared.AttackedText(example)
-            if dataset.label_names is not None:
-                example.attack_attrs["label_names"] = dataset.label_names
+            if self.dataset.label_names is not None:
+                example.attack_attrs["label_names"] = self.dataset.label_names
             result = self.attack.attack(example, ground_truth_output)
             self.attack_log_manager.log_result(result)
 
-            if not attack_args.disable_stdout:
+            if not self.attack_args.disable_stdout:
                 print("\n")
 
-            if isinstance(result, SkippedAttackResult) and attack_args.attack_n:
+            if isinstance(result, SkippedAttackResult) and self.attack_args.attack_n:
                 # `worklist_tail` keeps track of highest idx that has been part of worklist.
                 # This is useful for async-logging that can happen when using parallel processing.
                 # Used to get the next dataset element when attacking with `attack_n` = True.
@@ -110,13 +164,13 @@ class Attacker:
             )
 
             if (
-                attack_args.checkpoint_interval
+                self.attack_args.checkpoint_interval
                 and len(self.attack_log_manager.results)
-                % attack_args.checkpoint_interval
+                % self.attack_args.checkpoint_interval
                 == 0
             ):
                 new_checkpoint = textattack.shared.AttackCheckpoint(
-                    attack_args, self.attack_log_manager, worklist, worklist_tail
+                    self.attack_args, self.attack_log_manager, worklist, worklist_tail
                 )
                 new_checkpoint.save()
                 self.attack_log_manager.flush()
@@ -124,62 +178,59 @@ class Attacker:
         pbar.close()
         print()
         # Enable summary stdout
-        if attack_args.disable_stdout:
+        if self.attack_args.disable_stdout:
             self.attack_log_manager.enable_stdout()
         self.attack_log_manager.log_summary()
         self.attack_log_manager.flush()
         print()
 
-    def _attack_parallel(
-        self, dataset, num_workers_per_device, attack_args=None, checkpoint=None
-    ):
-        if checkpoint is not None and attack_args is not None:
-            raise ValueError("`attack_args` and `checkpoint` cannot be both set.")
-
+    def _attack_parallel(self):
         pytorch_multiprocessing_workaround()
 
-        if checkpoint:
-            num_remaining_attacks = checkpoint.num_remaining_attacks
-            worklist = checkpoint.worklist
-            worklist_tail = checkpoint.worklist_tail
+        if self._checkpoint:
+            num_remaining_attacks = self._checkpoint.num_remaining_attacks
+            worklist = self._checkpoint.worklist
+            worklist_tail = self._checkpoint.worklist_tail
             logger.info(
-                f"Recovered from checkpoint previously saved at {checkpoint.datetime}."
+                f"Recovered from checkpoint previously saved at {self._checkpoint.datetime}."
             )
         else:
-            num_remaining_attacks = attack_args.num_examples
-            worklist = collections.deque(range(0, attack_args.num_examples))
+            num_remaining_attacks = self.attack_args.num_examples
+            start = self.attack_args.num_examples_offset
+            end = start + self.attack_args.num_examples
+            worklist = collections.deque(range(start, end))
             worklist_tail = worklist[-1]
 
         in_queue = torch.multiprocessing.Queue()
         out_queue = torch.multiprocessing.Queue()
         for i in worklist:
             try:
-                example, ground_truth_output = dataset[i]
+                example, ground_truth_output = self.dataset[i]
                 example = textattack.shared.AttackedText(example)
-                if dataset.label_names is not None:
-                    example.attack_attrs["label_names"] = dataset.label_names
+                if self.dataset.label_names is not None:
+                    example.attack_attrs["label_names"] = self.dataset.label_names
                 in_queue.put((i, example, ground_truth_output))
             except IndexError:
                 raise IndexError(
-                    f"Tried to access element at {i} in dataset of size {len(dataset)}."
+                    f"Tried to access element at {i} in dataset of size {len(self.dataset)}."
                 )
 
         # We reserve the first GPU for coordinating workers.
         num_gpus = torch.cuda.device_count()
-        num_workers = num_workers_per_device * num_gpus
+        num_workers = self.attack_args.num_workers_per_device * num_gpus
         logger.info(f"Running {num_workers} workers on {num_gpus} GPUs")
 
         # Start workers.
         torch.multiprocessing.Pool(
             num_workers,
             attack_from_queue,
-            (attack_args, self.attack, in_queue, out_queue),
+            (self.attack_args, self.attack, in_queue, out_queue),
         )
         # Log results asynchronously and update progress bar.
-        if checkpoint:
-            num_results = checkpoint.results_count
-            num_failures = checkpoint.num_failed_attacks
-            num_successes = checkpoint.num_successful_attacks
+        if self._checkpoint:
+            num_results = self._checkpoint.results_count
+            num_failures = self._checkpoint.num_failed_attacks
+            num_successes = self._checkpoint.num_successful_attacks
         else:
             num_results = 0
             num_failures = 0
@@ -192,21 +243,21 @@ class Attacker:
             idx, result = result
             self.attack_log_manager.log_result(result)
             worklist.remove(idx)
-            if attack_args.attack_n and isinstance(result, SkippedAttackResult):
+            if self.attack_args.attack_n and isinstance(result, SkippedAttackResult):
                 # worklist_tail keeps track of highest idx that has been part of worklist
                 # Used to get the next dataset element when attacking with `attack_n` = True.
                 worklist_tail += 1
                 try:
-                    example, ground_truth_output = dataset[worklist_tail]
+                    example, ground_truth_output = self.dataset[worklist_tail]
                     example = textattack.shared.AttackedText(example)
-                    if dataset.label_names is not None:
-                        example.attack_attrs["label_names"] = dataset.label_names
+                    if self.dataset.label_names is not None:
+                        example.attack_attrs["label_names"] = self.dataset.label_names
                     worklist.append(worklist_tail)
                     in_queue.put((worklist_tail, example, ground_truth_output))
                 except IndexError:
                     logger.warn(
-                        f"Attempted to attack {attack_args.num_examples} examples with but ran out of examples. "
-                        f"You might see fewer number of results than {attack_args.num_examples}."
+                        f"Attempted to attack {self.attack_args.num_examples} examples with but ran out of examples. "
+                        f"You might see fewer number of results than {self.attack_args.num_examples}."
                     )
             else:
                 pbar.update()
@@ -221,13 +272,13 @@ class Attacker:
                 )
 
             if (
-                attack_args.checkpoint_interval
+                self.attack_args.checkpoint_interval
                 and len(self.attack_log_manager.results)
-                % attack_args.checkpoint_interval
+                % self.attack_args.checkpoint_interval
                 == 0
             ):
                 new_checkpoint = textattack.shared.AttackCheckpoint(
-                    attack_args, self.attack_log_manager, worklist, worklist_tail
+                    self.attack_args, self.attack_log_manager, worklist, worklist_tail
                 )
                 new_checkpoint.save()
                 self.attack_log_manager.flush()
@@ -235,49 +286,35 @@ class Attacker:
         pbar.close()
         print()
         # Enable summary stdout.
-        if attack_args.disable_stdout:
+        if self.attack_args.disable_stdout:
             self.attack_log_manager.enable_stdout()
         self.attack_log_manager.log_summary()
         self.attack_log_manager.flush()
         print()
 
-    def attack(self, dataset, attack_args):
-        """Attack `dataset` and record results to specified loggers.
+    @classmethod
+    def from_checkpoint(cls, attack, dataset, checkpoint):
+        """Resume attacking from a saved checkpoint. Attacker and dataset must
+        be recovered by the user again, while attack args are loaded from the
+        saved checkpoint.
 
         Args:
-            dataset (textattack.datasets.Dataset): dataset to attack.
-            attack_args (textattack.args.AttackArgs): arguments for attack.
+            attack (textattack.Attack): Attack object used to run an attack. It is composed of a goal function, transformation, set of constraints, and search method.
+            dataset (textattack.datasets.Dataset): Dataset to attack.
+            checkpoint (textattack.shared.AttackChecpoint): Saved checkpoint.
         """
         assert isinstance(
-            dataset, textattack.datasets.Dataset
-        ), f"`dataset` argument must be of type `textattack.datasets.Dataset`, but got type of`{type(dataset)}`."
-        assert isinstance(
-            dataset, textattack.args.AttackArgs
-        ), f"`attack_args` argument must be of type `textattack.args.AttackArgs`, but got type of `{type(attack_args)}`."
+            checkpoint, textattack.shared.AttackCheckpoint
+        ), f"`checkpoint` must be of type `textattack.shared.AttackCheckpoint`, but got type `{type(checkpoint)}`."
+        attacker = cls(attack, dataset, checkpoint.attack_args)
+        attacker.attack_log_manager = checkpoint.attack_log_manager
+        attacker._checkpoint = checkpoint
+        return attacker
 
-        textattack.shared.utils.set_seed(attack_args.random_seed)
-        self._attack(dataset, attack_args=attack_args)
+    @staticmethod
+    def attack_interactive(attack):
+        print(attack, "\n")
 
-    def attack_parallel(self, dataset, attack_args, num_workers_per_device):
-        """Attack `dataset` with single worker and record results to specified
-        loggers.
-
-        Args:
-            dataset (textattack.datasets.Dataset): dataset to attack.
-            num_workers_per_device (int): Number of worker threads to run per device. For example, if you are using GPUs and ``num_workers_per_device=2``,
-                then 2 processes will be running in each GPU. If you are only using CPU, then this is equivalent to running 2 processes concurrently.
-        """
-        assert isinstance(
-            dataset, textattack.datasets.Dataset
-        ), f"`dataset` argument must be of type `textattack.datasets.Dataset`, but got type of `{type(dataset)}`."
-        assert isinstance(
-            dataset, textattack.args.AttackArgs
-        ), f"`attack_args` argument must be of type `textattack.args.AttackArgs`, but got type of `{type(attack_args)}`."
-
-        textattack.shared.utils.set_seed(attack_args.random_seed)
-        self._attack_parallel(dataset, num_workers_per_device, attack_args=attack_args)
-
-    def attack_interactive(self):
         print("Running in interactive mode")
         print("----------------------------")
 
@@ -294,47 +331,14 @@ class Attacker:
             print("Attacking...")
 
             example = textattack.shared.attacked_text.AttackedText(text)
-            output = self.attack.goal_function.get_output(example)
-            result = self.attack.attack(example, output)
+            output = attack.goal_function.get_output(example)
+            result = attack.attack(example, output)
             print(result.__str__(color_method="ansi") + "\n")
 
-    def resume_attack(self, dataset, checkpoint):
-        """Resume attacking `dataset` from saved `checkpoint`.
 
-        Args:
-            dataset (textattack.datasets.Dataset): dataset to attack.
-            checkpoint (textattack.shared.AttackCheckpoint): checkpoint object that has previously been saved.
-        """
-        assert isinstance(
-            dataset, textattack.datasets.Dataset
-        ), f"`dataset` argument must be of type `textattack.datasets.Dataset`, but got type of `{type(dataset)}`."
-        assert isinstance(
-            dataset, textattack.shared.AttackCheckpoint
-        ), f"`checkpoint` argument must be of type `textattack.shared.AttackCheckpoint`, but got type of `{type(checkpoint)}`."
-
-        textattack.shared.utils.set_seed(checkpoint.attack_args.random_seed)
-        self.attack_log_manager = checkpoint.attack_log_manager
-        self._attack(dataset, checkpoint=checkpoint)
-
-    def resume_attack_parallel(self, dataset, checkpoint, num_workers_per_device):
-        """Resume attacking `dataset` from saved `checkpoint`.
-
-        Args:
-            dataset (textattack.datasets.Dataset): dataset to attack.
-            checkpoint (textattack.shared.AttackCheckpoint): checkpoint object that has previously been saved.
-        """
-        assert isinstance(
-            dataset, textattack.datasets.Dataset
-        ), f"`dataset` argument must be of type `textattack.datasets.Dataset`, but got type of `{type(dataset)}`."
-        assert isinstance(
-            dataset, textattack.shared.AttackCheckpoint
-        ), f"`checkpoint` argument must be of type `textattack.shared.AttackCheckpoint`, but got type of `{type(checkpoint)}`."
-
-        textattack.shared.utils.set_seed(checkpoint.attack_args.random_seed)
-        self.attack_log_manager = checkpoint.attack_log_manager
-        self._attack(dataset, checkpoint=checkpoint)
-
-
+#
+# Helper Methods for multiprocess attacks
+#
 def pytorch_multiprocessing_workaround():
     # This is a fix for a known bug
     try:

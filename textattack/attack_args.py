@@ -1,13 +1,14 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+import json
 import os
 import time
 
 import textattack
 from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file
 
+from .attack import Attack
 from .dataset_args import DatasetArgs
 from .model_args import ModelArgs
-from .logging_args import LoggingArgs
 
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
@@ -110,9 +111,9 @@ GOAL_FUNCTION_CLASS_NAMES = {
 
 @dataclass
 class AttackArgs:
-    """Attack args for running attacks via API.
-    This assumes that ``Attack`` has already been created by the user.
-    
+    """Attack args for running attacks via API. This assumes that ``Attack``
+    has already been created by the user.
+
     Args:
         num_examples (int): The number of examples to attack. -1 for entire dataset.
         num_examples_offset (int): The offset to start at in the dataset.
@@ -120,16 +121,35 @@ class AttackArgs:
         checkpoint_dir (str): The directory to save checkpoint files.
         checkpoint_interval (int): If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.
         random_seed (int): Random seed for reproducibility. Default is 765.
-        disable_stdout (bool): Disable logging result of each attack to stdout (only produce summary at the end). Default is `False`.
+        parallel (bool): Run attack using multiple CPUs/GPUs.
+        num_workers_per_device (int): Number of worker threads to run per device. For example, if you are using GPUs and ``num_workers_per_device=2``,
+            then 2 processes will be running in each GPU. If you are only using CPU, then this is equivalent to running 2 processes concurrently.
+        log_to_txt (str): Path to which to save attack logs as a text file. Set this argument if you want to save text logs.
+            If the last part of the path ends with `.txt` extension, the path is assumed to path for output file.
+        log_to_csv (str): Path to which to save attack logs as a CSV file. Set this argument if you want to save CSV logs.
+            If the last part of the path ends with `.csv` extension, the path is assumed to path for output file.
+        csv_coloring_style (str): Method for choosing how to mark perturbed parts of the text. Options are "file" and "plain".
+            "file" wraps text with double brackets `[[ <text> ]]` while "plain" does not mark any text. Default is "file".
+        log_to_visdom (dict): Set this argument if you want to log attacks to Visdom. The dictionary should have the following
+            three keys and their corresponding values: `"env", "port", "hostname"` (e.g. `{"env": "main", "port": 8097, "hostname": "localhost"}`).
+        log_to_wandb (str): Name of the wandb project. Set this argument if you want to log attacks to Wandb.
+        disable_stdout (bool): Disable logging to stdout.
     """
 
-    num_examples: int
-    num_examples_offset: int
-    attack_n: bool
-    checkpoint_dir: str
-    checkpoint_interval: int = -1
+    num_examples: int = 5
+    num_examples_offset: int = 0
+    attack_n: bool = False
+    checkpoint_dir: str = "checkpoints"
+    checkpoint_interval: int = None
     random_seed: int = 765  # equivalent to sum((ord(c) for c in "TEXTATTACK"))
-    disable_stdout: bool = False
+    parallel: bool = False
+    num_workers_per_device: int = 1
+    log_to_txt: str = None
+    log_to_csv: str = None
+    csv_coloring_style: str = "file"
+    log_to_visdom: dict = None
+    log_to_wandb: str = None
+    disable_stdout: str = False
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -139,7 +159,7 @@ class AttackArgs:
             "-n",
             type=int,
             required=False,
-            default="5",
+            default=5,
             help="The number of examples to process, -1 for entire dataset",
         )
         parser.add_argument(
@@ -157,18 +177,11 @@ class AttackArgs:
             help="Whether to run attack until `n` examples have been attacked (not skipped).",
         )
 
-        def default_checkpoint_dir():
-            current_dir = os.path.dirname(os.path.realpath(__file__))
-            checkpoints_dir = os.path.join(
-                current_dir, os.pardir, os.pardir, os.pardir, "checkpoints"
-            )
-            return os.path.normpath(checkpoints_dir)
-
         parser.add_argument(
             "--checkpoint-dir",
             required=False,
             type=str,
-            default=default_checkpoint_dir(),
+            default="checkpoints",
             help="The directory to save checkpoint files.",
         )
         parser.add_argument(
@@ -182,44 +195,158 @@ class AttackArgs:
             return sum((ord(c) for c in s))
 
         parser.add_argument("--random-seed", default=str_to_int("TEXTATTACK"), type=int)
+
+        parser.add_argument(
+            "--parallel",
+            action="store_true",
+            default=False,
+            help="Run attack using multiple GPUs.",
+        )
+        parser.add_argument(
+            "--num-workers-per-device",
+            default=1,
+            type=int,
+            help="Number of worker threads to run per device.",
+        )
+
+        parser.add_argument(
+            "--log-to-txt",
+            nargs="?",
+            default=None,
+            const="",
+            type=str,
+            help="Path to which to save attack logs as a text file. Set this argument if you want to save text logs. "
+            "If the last part of the path ends with `.txt` extension, the path is assumed to path for output file.",
+        )
+
+        parser.add_argument(
+            "--log-to-csv",
+            nargs="?",
+            default=None,
+            const="",
+            type=str,
+            help="Path to which to save attack logs as a CSV file. Set this argument if you want to save CSV logs. "
+            "If the last part of the path ends with `.csv` extension, the path is assumed to path for output file.",
+        )
+
+        parser.add_argument(
+            "--csv-coloring-style",
+            default="file",
+            type=str,
+            help='Method for choosing how to mark perturbed parts of the text in CSV logs. Options are "file" and "plain". '
+            '"file" wraps text with double brackets `[[ <text> ]]` while "plain" does not mark any text. Default is "file".',
+        )
+
+        parser.add_argument(
+            "--log-to-visdom",
+            nargs="?",
+            default=None,
+            const='{"env": "main", "port": 8097, "hostname": "localhost"}',
+            type=json.loads,
+            help="Set this argument if you want to log attacks to Visdom. The dictionary should have the following "
+            'three keys and their corresponding values: `"env", "port", "hostname"`. '
+            'Example for command line use: `--log-to-visdom {"env": "main", "port": 8097, "hostname": "localhost"}`.',
+        )
+
+        parser.add_argument(
+            "--log-to-wandb",
+            nargs="?",
+            default=None,
+            const="textattack",
+            type=str,
+            help="Name of the wandb project. Set this argument if you want to log attacks to Wandb.",
+        )
+
         parser.add_argument(
             "--disable-stdout", action="store_true", help="Disable logging to stdout"
         )
+
         return parser
+
+    @classmethod
+    def create_loggers_from_args(cls, args):
+        assert isinstance(
+            args, cls
+        ), f"Expect args to be of type `{type(cls)}`, but got type `{type(args)}`."
+
+        # Create logger
+        attack_log_manager = textattack.loggers.AttackLogManager()
+
+        # Get current time for file naming
+        timestamp = time.strftime("%Y-%m-%d-%H-%M")
+
+        # if '--log-to-txt' specified with arguments
+        if args.log_to_txt is not None:
+            if args.log_to_txt.lower().endswith(".txt"):
+                txt_file_path = args.log_to_txt
+            else:
+                txt_file_path = os.path.join(args.log_to_txt, f"{timestamp}-log.txt")
+
+            if not os.path.exists(os.path.dirname(txt_file_path)):
+                os.makedirs(os.path.dirname(txt_file_path))
+
+            attack_log_manager.add_output_file(txt_file_path)
+
+        # if '--log-to-csv' specified with arguments
+        if args.log_to_csv is not None:
+            if args.log_to_csv.lower().endswith(".csv"):
+                csv_file_path = args.log_to_csv
+            else:
+                csv_file_path = os.path.join(args.log_to_csv, f"{timestamp}-log.csv")
+
+            if not os.path.exists(os.path.dirname(csv_file_path)):
+                os.makedirs(os.path.dirname(csv_file_path))
+
+            color_method = (
+                None if args.csv_coloring_style == "plain" else args.csv_coloring_style
+            )
+            attack_log_manager.add_output_csv(csv_file_path, color_method)
+
+        # Visdom
+        if args.log_to_visdom is not None:
+            attack_log_manager.enable_visdom(**args.log_to_visdom)
+
+        # Weights & Biases
+        if args.log_to_visdom is not None:
+            attack_log_manager.enable_wandb(args.log_to_visdom)
+
+        # Stdout
+        if not args.disable_stdout:
+            attack_log_manager.enable_stdout()
+
+        return attack_log_manager
 
 
 @dataclass
-class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
-    """Command line interface attack args.
+class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
+    """Command line interface attack args. This requires more arguments to
+    create ``Attack`` object as specified.
 
-    This requires more arguments to create ``Attack`` object as specified.
     Args:
         transformation (str): Name of transformation to use.
         constraints (list[str]): List of names of constraints to use.
         goal_function (str): Name of goal function to use.
         search_method (str): Name of search method to use.
-        attack_recipe (str): Name of attack recipe to use. 
+        attack_recipe (str): Name of attack recipe to use.
             If this is set, it overrides any previous selection of transformation, constraints, goal function, and search method.
         attack_from_file (str): Path of `.py` file from which to load attack from. Use `<path>^<variable_name>` to specifiy which variable to import from the file.
             If this is set, it overrides any previous selection of transformation, constraints, goal function, and search method
-        interactive (bool): If `True`, carry attack in interactive mode. Default is `False`. 
-        parallel (bool): If `True`, attack in parallel. Default is `False`. 
+        interactive (bool): If `True`, carry attack in interactive mode. Default is `False`.
+        parallel (bool): If `True`, attack in parallel. Default is `False`.
         query_budget (int): The maximum number of model queries allowed per example attacked.
-        model_batch_size (int): The batch size for making calls to the model.
         model_cache_size (int): The maximum number of items to keep in the model results cache at once.
         constraint-cache-size (int): The maximum number of items to keep in the constraints cache at once.
     """
 
-    transformation: str
-    constraints: list[str]
-    goal_function: str
-    search_method: str
-    attack_recipe: str
-    attack_from_file: str
+    transformation: str = "word-swap-embedding"
+    constraints: list = field(default_factory=lambda: ["repeat", "stopword"])
+    goal_function: str = "untargeted-classification"
+    search_method: str = "greedy-word-wir"
+    attack_recipe: str = None
+    attack_from_file: str = None
     interactive: bool = False
     parallel: bool = False
     query_budget: int = float("inf")
-    model_batch_size: int = 32
     model_cache_size: int = 2 ** 18
     constraint_cache_size: int = 2 ** 18
 
@@ -259,8 +386,8 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
         attack_group = parser.add_mutually_exclusive_group(required=False)
         search_choices = ", ".join(SEARCH_METHOD_CLASS_NAMES.keys())
         attack_group.add_argument(
-            "--search",
             "--search-method",
+            "--search",
             "-s",
             type=str,
             required=False,
@@ -268,8 +395,8 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
             help=f"The search method to use. choices: {search_choices}",
         )
         attack_group.add_argument(
-            "--recipe",
             "--attack-recipe",
+            "--recipe",
             "-r",
             type=str,
             required=False,
@@ -282,7 +409,7 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
             type=str,
             required=False,
             default=None,
-            help="Path of `.py` file from which to load attack from. Use `<path>^<variable_name>` to specifiy which variable to import from the file."
+            help="Path of `.py` file from which to load attack from. Use `<path>^<variable_name>` to specifiy which variable to import from the file.",
         )
         parser.add_argument(
             "--interactive",
@@ -291,23 +418,11 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
             help="Whether to run attacks interactively.",
         )
         parser.add_argument(
-            "--parallel",
-            action="store_true",
-            default=False,
-            help="Run attack using multiple GPUs.",
-        )
-        parser.add_argument(
             "--query-budget",
             "-q",
             type=int,
             default=float("inf"),
             help="The maximum number of model queries allowed per example attacked.",
-        )
-        parser.add_argument(
-            "--model-batch-size",
-            type=int,
-            default=32,
-            help="The batch size for making calls to the model.",
         )
         parser.add_argument(
             "--model-cache-size",
@@ -323,13 +438,13 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
         )
 
         parser = AttackArgs.add_parser_args(parser)
-        parser = LoggingArgs.add_parser_args(parser)
 
         return parser
 
     @classmethod
     def _create_transformation_from_args(cls, args, model_wrapper):
-        """Create `Transformation` based on provided `args` and `model_wrapper`."""
+        """Create `Transformation` based on provided `args` and
+        `model_wrapper`."""
 
         transformation_name = args.transformation
         if ARGS_SPLIT_TOKEN in transformation_name:
@@ -364,8 +479,9 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
 
     @classmethod
     def _create_goal_function_from_args(cls, args, model_wrapper):
-        """Create `GoalFunction` based on provided `args` and `model_wrapper`."""
-        
+        """Create `GoalFunction` based on provided `args` and
+        `model_wrapper`."""
+
         goal_function = args.goal_function
         if ARGS_SPLIT_TOKEN in goal_function:
             goal_function_name, params = goal_function.split(ARGS_SPLIT_TOKEN)
@@ -383,7 +499,6 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
         else:
             raise ValueError(f"Error: unsupported goal_function {goal_function}")
         goal_function.query_budget = args.query_budget
-        goal_function.model_batch_size = args.model_batch_size
         goal_function.model_cache_size = args.model_cache_size
         return goal_function
 
@@ -412,28 +527,28 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
 
     @classmethod
     def create_attack_from_args(cls, args, model_wrapper):
-        """Given ``CommandLineArgs`` and ``ModelWrapper``, return specified ``Attack`` object."""
+        """Given ``CommandLineArgs`` and ``ModelWrapper``, return specified
+        ``Attack`` object."""
 
         assert isinstance(
             args, cls
         ), f"Expect args to be of type `{type(cls)}`, but got type `{type(args)}`."
 
-        if args.recipe:
-            if ARGS_SPLIT_TOKEN in args.recipe:
-                recipe_name, params = args.recipe.split(ARGS_SPLIT_TOKEN)
+        if args.attack_recipe:
+            if ARGS_SPLIT_TOKEN in args.attack_recipe:
+                recipe_name, params = args.attack_recipe.split(ARGS_SPLIT_TOKEN)
                 if recipe_name not in ATTACK_RECIPE_NAMES:
                     raise ValueError(f"Error: unsupported recipe {recipe_name}")
                 recipe = eval(
                     f"{ATTACK_RECIPE_NAMES[recipe_name]}.build(model_wrapper, {params})"
                 )
-            elif args.recipe in ATTACK_RECIPE_NAMES:
+            elif args.attack_recipe in ATTACK_RECIPE_NAMES:
                 recipe = eval(
-                    f"{ATTACK_RECIPE_NAMES[args.recipe]}.build(model_wrapper)"
+                    f"{ATTACK_RECIPE_NAMES[args.attack_recipe]}.build(model_wrapper)"
                 )
             else:
-                raise ValueError(f"Invalid recipe {args.recipe}")
+                raise ValueError(f"Invalid recipe {args.attack_recipe}")
             recipe.goal_function.query_budget = args.query_budget
-            recipe.goal_function.model_batch_size = args.model_batch_size
             recipe.goal_function.model_cache_size = args.model_cache_size
             recipe.constraint_cache_size = args.constraint_cache_size
             return recipe
@@ -453,19 +568,21 @@ class CommandLineAttackArgs(AttackArgs, ModelArgs, DatasetArgs, LoggingArgs):
             goal_function = cls._create_goal_function_from_args(args, model_wrapper)
             transformation = cls._create_transformation_from_args(args, model_wrapper)
             constraints = cls._create_constraints_from_args(args)
-            if ARGS_SPLIT_TOKEN in args.search:
-                search_name, params = args.search.split(ARGS_SPLIT_TOKEN)
+            if ARGS_SPLIT_TOKEN in args.search_method:
+                search_name, params = args.search_method.split(ARGS_SPLIT_TOKEN)
                 if search_name not in SEARCH_METHOD_CLASS_NAMES:
                     raise ValueError(f"Error: unsupported search {search_name}")
                 search_method = eval(
                     f"{SEARCH_METHOD_CLASS_NAMES[search_name]}({params})"
                 )
-            elif args.search in SEARCH_METHOD_CLASS_NAMES:
-                search_method = eval(f"{SEARCH_METHOD_CLASS_NAMES[args.search]}()")
+            elif args.search_method in SEARCH_METHOD_CLASS_NAMES:
+                search_method = eval(
+                    f"{SEARCH_METHOD_CLASS_NAMES[args.search_method]}()"
+                )
             else:
-                raise ValueError(f"Error: unsupported attack {args.search}")
+                raise ValueError(f"Error: unsupported attack {args.search_method}")
 
-        return textattack.Attack(
+        return Attack(
             goal_function,
             constraints,
             transformation,

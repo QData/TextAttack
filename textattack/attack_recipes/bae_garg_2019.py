@@ -3,6 +3,7 @@ BAE (BAE: BERT-Based Adversarial Examples)
 ============================================
 
 """
+from textattack import Attack
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     RepeatModification,
@@ -120,4 +121,4 @@ class BAEGarg2019(AttackRecipe):
         #
         search_method = GreedyWordSwapWIR(wir_method="delete")
 
-        return BAEGarg2019(goal_function, constraints, transformation, search_method)
+        return Attack(goal_function, constraints, transformation, search_method)
