@@ -124,8 +124,6 @@ class HuggingFaceDataset(Dataset):
         if shuffle:
             self._dataset.shuffle()
 
-        print(self.label_map)
-
     def _format_as_dict(self, example):
         input_dict = collections.OrderedDict(
             [(c, example[c]) for c in self.input_columns]
