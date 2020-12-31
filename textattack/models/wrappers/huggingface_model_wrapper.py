@@ -16,7 +16,10 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
     def __init__(self, model, tokenizer, batch_size=32):
         self.model = model.to(textattack.shared.utils.device)
-        if isinstance(tokenizer, transformers.PreTrainedTokenizer):
+        if isinstance(
+            tokenizer,
+            (transformers.PreTrainedTokenizer, transformers.PreTrainedTokenizerFast),
+        ):
             tokenizer = textattack.models.tokenizers.AutoTokenizer(tokenizer=tokenizer)
         self.tokenizer = tokenizer
         self.batch_size = batch_size
