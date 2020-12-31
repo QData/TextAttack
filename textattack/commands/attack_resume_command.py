@@ -26,13 +26,16 @@ class AttackResumeCommand(TextAttackCommand):
         if args.checkpoint_interval:
             checkpoint.attack_args.checkpoint_interval = args.checkpoint_interval
 
-        model_wrapper = ModelArgs.parse_model_from_args(checkpoint.attack_args)
-        dataset = DatasetArgs.parse_dataset_from_args(checkpoint.attack_args)
+        def attack_build_fn():
+            model_wrapper = ModelArgs.create_model_from_args(attack_args)  # noqa: F821
 
-        attack = CommandLineAttackArgs.parse_attack_from_args(
-            checkpoint.attack_args, model_wrapper
-        )
-        attacker = Attacker.from_checkpoint(attack, dataset, checkpoint)
+            attack = CommandLineAttackArgs.create_attack_from_args(
+                attack_args, model_wrapper  # noqa: F821
+            )
+            return attack
+
+        dataset = DatasetArgs.parse_dataset_from_args(checkpoint.attack_args)
+        attacker = Attacker.from_checkpoint(attack_build_fn, dataset, checkpoint)
         attacker.attack_dataset()
 
     def _parse_checkpoint_from_args(self, args):

@@ -12,15 +12,31 @@ class AttackCommand(TextAttackCommand):
 
     def run(self, args):
         attack_args = CommandLineAttackArgs(**vars(args))
-        model_wrapper = ModelArgs.create_model_from_args(attack_args)
         dataset = DatasetArgs.create_dataset_from_args(attack_args)
 
-        attack = CommandLineAttackArgs.create_attack_from_args(
-            attack_args, model_wrapper
-        )
         if attack_args.interactive:
+            model_wrapper = ModelArgs.create_model_from_args(attack_args)
+            attack = CommandLineAttackArgs.create_attack_from_args(
+                attack_args, model_wrapper
+            )
             Attacker.attack_interactive(attack)
+        elif attack_args.parallel:
+
+            def attack_build_fn():
+                model_wrapper = ModelArgs.create_model_from_args(attack_args)
+
+                attack = CommandLineAttackArgs.create_attack_from_args(
+                    attack_args, model_wrapper
+                )
+                return attack
+
+            attacker = Attacker(attack_build_fn, dataset, attack_args)
+            attacker.attack_dataset()
         else:
+            model_wrapper = ModelArgs.create_model_from_args(attack_args)
+            attack = CommandLineAttackArgs.create_attack_from_args(
+                attack_args, model_wrapper
+            )
             attacker = Attacker(attack, dataset, attack_args)
             attacker.attack_dataset()
 

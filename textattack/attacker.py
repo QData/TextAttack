@@ -1,6 +1,9 @@
 import collections
+import logging
+import multiprocessing as mp
 import os
 
+import dill
 import torch
 import tqdm
 
@@ -24,7 +27,9 @@ class Attacker:
     from a checkpint, logging to files and stdout.
 
     Args:
-        attack (textattack.Attack): Attack object used to run an attack. It is composed of a goal function, transformation, set of constraints, and search method.
+        attack_or_attack_build_fn (Union[textattack.Attack, callable]): ``Attack`` object or a zero-argument callable that returns the desired ``Attack`` object.
+            Zero-argument callable is required when attacking in parallel because the attack has to be newly initialized in each worker process (it is slow and difficult to
+            seralize ``Attack`` and share it across proccesses).
         dataset (textattack.datasets.Dataset): Dataset to attack.
         attack_args (textattack.AttackArgs): Arguments for attacking the dataset. For default settings, look at the `AttackArgs` class.
 
@@ -47,10 +52,10 @@ class Attacker:
         >>> attacker.attack_data()
     """
 
-    def __init__(self, attack, dataset, attack_args=AttackArgs()):
-        assert isinstance(
-            attack, Attack
-        ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
+    def __init__(self, attack_or_attack_build_fn, dataset, attack_args=AttackArgs()):
+        assert isinstance(attack_or_attack_build_fn, Attack) or callable(
+            attack_or_attack_build_fn
+        ), f"`attack` argument must be of type `textattack.Attack` or a callable, but got type of `{type(attack_or_attack_build_fn)}`."
         assert isinstance(
             dataset, textattack.datasets.Dataset
         ), f"`dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(dataset)}`."
@@ -58,7 +63,18 @@ class Attacker:
             attack_args, textattack.AttackArgs
         ), f"`attack_args` must be of type `textattack.AttackArgs`, but got type `{type(attack_args)}`."
 
-        self.attack = attack
+        if isinstance(attack_or_attack_build_fn, Attack):
+            if attack_args.parallel:
+                raise ValueError(
+                    "To performing parallel attacks, `attack_or_attack_build_fn` must "
+                    "be a zero-argument callable that returns the desired `Attack` object."
+                )
+            else:
+                self.attack = attack_or_attack_build_fn
+        else:
+            self.attack = None
+            self._attack_build_fn = attack_or_attack_build_fn
+
         self.dataset = dataset
         self.attack_args = attack_args
         self.attack_log_manager = AttackArgs.create_loggers_from_args(attack_args)
@@ -95,8 +111,17 @@ class Attacker:
             else self.attack_args.num_examples
         )
         if self.attack_args.parallel:
+            if torch.cuda.device_count() == 0:
+                raise Exception(
+                    "Found no GPU on your system. To run attacks in parallel, GPU is required."
+                )
             self._attack_parallel()
         else:
+            if self.attack is None:
+                self.attack = self._attack_build_fn()
+                assert isinstance(
+                    self.attack, Attack
+                ), f"`attack_or_attack_build_fn` must return an instance of `Attack` class, but return type `{type(self.attack)}`."
             self._attack()
 
     def _attack(self):
@@ -218,13 +243,26 @@ class Attacker:
         # We reserve the first GPU for coordinating workers.
         num_gpus = torch.cuda.device_count()
         num_workers = self.attack_args.num_workers_per_device * num_gpus
-        logger.info(f"Running {num_workers} workers on {num_gpus} GPUs")
+        logger.info(f"Running {num_workers} worker(s) on {num_gpus} GPU(s).")
+
+        # Barrier for synchronizing worker processes.
+        # We want them to all wait until last process has loaded its attack
+        barrier = mp.Barrier(num_workers)
 
         # Start workers.
+        # Use dill to serialize the function/callable.
+        attack_build_fn_str = dill.dumps(self._attack_build_fn)
         torch.multiprocessing.Pool(
             num_workers,
             attack_from_queue,
-            (self.attack_args, self.attack, in_queue, out_queue),
+            (
+                self.attack_args,
+                attack_build_fn_str,
+                num_gpus,
+                barrier,
+                in_queue,
+                out_queue,
+            ),
         )
         # Log results asynchronously and update progress bar.
         if self._checkpoint:
@@ -293,20 +331,22 @@ class Attacker:
         print()
 
     @classmethod
-    def from_checkpoint(cls, attack, dataset, checkpoint):
+    def from_checkpoint(cls, attack_or_attack_build_fn, dataset, checkpoint):
         """Resume attacking from a saved checkpoint. Attacker and dataset must
         be recovered by the user again, while attack args are loaded from the
         saved checkpoint.
 
         Args:
-            attack (textattack.Attack): Attack object used to run an attack. It is composed of a goal function, transformation, set of constraints, and search method.
+            attack_or_attack_build_fn (Union[textattack.Attack, callable]): ``Attack`` object or a zero-argument callable that returns the desired ``Attack`` object.
+                Zero-argument callable is required when attacking in parallel because the attack has to be newly initialized in each worker process (it is slow and difficult to
+                seralize ``Attack`` and share it across proccesses).
             dataset (textattack.datasets.Dataset): Dataset to attack.
             checkpoint (textattack.shared.AttackChecpoint): Saved checkpoint.
         """
         assert isinstance(
             checkpoint, textattack.shared.AttackCheckpoint
         ), f"`checkpoint` must be of type `textattack.shared.AttackCheckpoint`, but got type `{type(checkpoint)}`."
-        attacker = cls(attack, dataset, checkpoint.attack_args)
+        attacker = cls(attack_or_attack_build_fn, dataset, checkpoint.attack_args)
         attacker.attack_log_manager = checkpoint.attack_log_manager
         attacker._checkpoint = checkpoint
         return attacker
@@ -342,7 +382,7 @@ class Attacker:
 def pytorch_multiprocessing_workaround():
     # This is a fix for a known bug
     try:
-        torch.multiprocessing.set_start_method("spawn")
+        torch.multiprocessing.set_start_method("spawn", force=True)
         torch.multiprocessing.set_sharing_strategy("file_system")
     except RuntimeError:
         pass
@@ -380,12 +420,26 @@ def set_env_variables(gpu_id):
         pass
 
 
-def attack_from_queue(attack_args, attack, in_queue, out_queue):
-    gpu_id = torch.multiprocessing.current_process()._identity[0] - 2
+def attack_from_queue(
+    attack_args, attack_build_fn_str, num_gpus, barrier, in_queue, out_queue
+):
+    gpu_id = (torch.multiprocessing.current_process()._identity[0] - 1) % num_gpus
     set_env_variables(gpu_id)
     textattack.shared.utils.set_seed(attack_args.random_seed)
-    if gpu_id == 0:
+    if torch.multiprocessing.current_process()._identity[0] > 1:
+        logging.disable()
+
+    attack_build_fn = dill.loads(attack_build_fn_str)
+    attack = attack_build_fn()
+    assert isinstance(
+        attack, Attack
+    ), f"`attack_build_fn` must return an instance of `Attack` class, but return type `{type(attack)}`."
+
+    proc = barrier.wait()
+    if proc == 0:
+        # Print attack if it's the last process to call `barrier.wait()`
         print(attack, "\n")
+
     while not in_queue.empty():
         try:
             i, example, ground_truth_output = in_queue.get()
