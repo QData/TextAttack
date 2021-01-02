@@ -16,7 +16,7 @@ class CSVLogger(Logger):
     """Logs attack results to a CSV."""
 
     def __init__(self, filename="results.csv", color_method="file"):
-        logger.info(f"Logging to CSV at path {filename}.")
+        logger.info(f"Logging to CSV at path {filename}")
         self.filename = filename
         self.color_method = color_method
         self.df = pd.DataFrame()

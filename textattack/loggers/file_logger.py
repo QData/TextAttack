@@ -26,7 +26,7 @@ class FileLogger(Logger):
             if not os.path.exists(directory):
                 os.makedirs(directory)
             self.fout = open(filename, "w")
-            logger.info(f"Logging to text file at path {filename}.")
+            logger.info(f"Logging to text file at path {filename}")
         else:
             self.fout = filename
         self.num_results = 0
