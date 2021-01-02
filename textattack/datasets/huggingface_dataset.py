@@ -110,16 +110,21 @@ class HuggingFaceDataset(Dataset):
         ) = dataset_columns or get_datasets_dataset_columns(self._dataset)
         self.label_map = label_map
         self.output_scale_factor = output_scale_factor
-        try:
-            self.label_names = self._dataset.features["label"].names
-            # If labels are remapped, the label names have to be remapped as well.
-            if label_map:
-                self.label_names = [
-                    self.label_names[self.label_map[i]] for i in self.label_map
-                ]
-        except KeyError:
-            # This happens when the dataset doesn't have 'features' or a 'label' column.
-            self.label_names = None
+        if label_names:
+            self.label_names = label_names
+        else:
+            try:
+                self.label_names = self._dataset.features[self.output_column].names
+            except (KeyError, AttributeError):
+                # This happens when the dataset doesn't have 'features' or a 'label' column.
+                self.label_names = None
+
+        # If labels are remapped, the label names have to be remapped as well.
+        if self.label_names and label_map:
+            self.label_names = [
+                self.label_names[self.label_map[i]] for i in self.label_map
+            ]
+
         self.shuffled = shuffle
         if shuffle:
             self._dataset.shuffle()
