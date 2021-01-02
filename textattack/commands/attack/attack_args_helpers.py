@@ -422,11 +422,11 @@ def parse_dataset_from_args(args):
             else:
                 dataset_args = (dataset_args,)
         if args.split:
+            dataset_try = list(dataset_args)
+            dataset_try[2] = args.split
             dataset = textattack.datasets.HuggingFaceDataset(
-                dataset_args[0][0],
-                dataset_args[0][1],
-                shuffle=args.shuffle,
-                split=args.split,
+                *dataset_try,
+                shuffle=args.shuffle
             )
         else:
             dataset = textattack.datasets.HuggingFaceDataset(
