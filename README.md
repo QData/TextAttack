@@ -179,6 +179,14 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>Modified, faster version of the Alzantot et al. genetic algorithm, from (["Certified Robustness to Adversarial Word Substitutions" (Jia et al., 2019)](https://arxiv.org/abs/1909.00986))</sub></td>
 </tr>
 <tr>
+<td><code>hard-label</code> (word swap) <span class="citation" data-cites="Maheshwary2021Generating"></span></td>
+<td><sub>Untargeted Classification</sub></td>
+<td><sub>Word Embedding Cosine Similarity, Part-of-speech match</sub></td>
+<td><sub>Counter-fitted word embedding swap</sub></td>
+<td><sub>Genetic Algorithm</sub></td>
+<td ><sub> (["Generating Natural Language Attacks in a Hard Label Black Box Setting" (Maheshwary et al., 2021)](https://arxiv.org/abs/2012.14956))</sub></td>
+</tr>
+<tr>
 <td><code>hotflip</code> (word swap) <span class="citation" data-cites="Ebrahimi2017HotFlipWA"></span></td>
 <td><sub>Untargeted Classification</sub></td>
 <td><sub>Word Embedding Cosine Similarity, Part-of-speech match, Number of words perturbed</sub></td>

@@ -24,6 +24,7 @@ ATTACK_RECIPE_NAMES = {
     "pso": "textattack.attack_recipes.PSOZang2020",
     "checklist": "textattack.attack_recipes.CheckList2020",
     "clare": "textattack.attack_recipes.CLARE2020",
+    "hard-label-attack": "textattack.attack_recipes.HardLabelMaheshwary2021",
 }
 
 #
