@@ -7,6 +7,7 @@ TextAttack Command Arg Parsing Main Function
 # !/usr/bin/env python
 import argparse
 
+from textattack.attack_results.attack_result import AttackResult
 from textattack.commands.attack import AttackCommand, AttackResumeCommand
 from textattack.commands.augment import AugmentCommand
 from textattack.commands.benchmark_recipe import BenchmarkRecipeCommand
@@ -47,6 +48,10 @@ def main():
 
     # Let's go
     args = parser.parse_args()
+    if args.nocolor:
+        AttackResult.color(False)
+    else:
+        AttackResult.color(True)
 
     if not hasattr(args, "func"):
         parser.print_help()
