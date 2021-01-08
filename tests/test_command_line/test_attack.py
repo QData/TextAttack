@@ -203,8 +203,8 @@ def test_command_line_attack(name, command, sample_output_file):
 
     if DEBUG and not re.match(desired_re, stdout, flags=re.S):
         pdb.set_trace()
-    print("??????????desired_re",desired_re)
-    print("??????????desired_re",stdout)
+    print("??????????desired_re", desired_re)
+    print("??????????desired_re", stdout)
 
     assert re.match(desired_re, stdout, flags=re.S)
 
