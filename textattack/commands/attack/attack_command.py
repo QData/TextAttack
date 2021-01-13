@@ -207,6 +207,12 @@ class AttackCommand(TextAttackCommand):
             help="Print result with or without color",
         )
 
+        parser.add_argument(
+            "--nocolor",
+            action="store_true",
+            help="Print result with or without color",
+        )
+
         attack_group = parser.add_mutually_exclusive_group(required=False)
         search_choices = ", ".join(SEARCH_METHOD_CLASS_NAMES.keys())
         attack_group.add_argument(
