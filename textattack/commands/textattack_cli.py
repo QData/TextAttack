@@ -15,6 +15,7 @@ from textattack.commands.eval_model import EvalModelCommand
 from textattack.commands.list_things import ListThingsCommand
 from textattack.commands.peek_dataset import PeekDatasetCommand
 from textattack.commands.train_model import TrainModelCommand
+from textattack.loggers.file_logger import FileLogger
 
 
 def main():
@@ -52,6 +53,11 @@ def main():
         AttackResult.color(False)
     else:
         AttackResult.color(True)
+
+    if args.nocolor:
+        FileLogger.nocolor = True
+    else:
+        FileLogger.nocolor = False
 
     if not hasattr(args, "func"):
         parser.print_help()
