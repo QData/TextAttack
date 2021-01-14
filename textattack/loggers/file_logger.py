@@ -14,8 +14,6 @@ from .logger import Logger
 class FileLogger(Logger):
     """Logs the results of an attack to a file, or `stdout`."""
 
-    nocolor = False
-
     def __init__(self, filename="", stdout=False):
         self.stdout = stdout
         self.filename = filename
