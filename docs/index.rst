@@ -36,7 +36,7 @@ TextAttack Documentation
    Tutorial 6: Attacking AllenNLP models <2notebook/Example_2_allennlp.ipynb>
    Tutorial 7: Attacking multilingual models <2notebook/Example_4_CamemBERT.ipynb>
    Tutorial 8: Explaining Attacking BERT model using Captum <2notebook/Example_5_Explain_BERT.ipynb>
-   Tutorial 9: Attacking Keras models <2notebook/Example_6_keras.ipynb>
+   Tutorial 9: Attacking Keras models <2notebook/Example_6_Keras.ipynb>
 
 .. toctree::
    :maxdepth: 6
