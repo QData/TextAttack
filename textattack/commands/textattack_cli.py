@@ -49,10 +49,10 @@ def main():
 
     # Let's go
     args = parser.parse_args()
-    # if args.nocolor:
-    #     FileLogger.nocolor = True
-    # else:
-    #     FileLogger.nocolor = False
+    if args.nocolor:
+        FileLogger.nocolor = True
+    else:
+        FileLogger.nocolor = False
 
     if not hasattr(args, "func"):
         parser.print_help()
