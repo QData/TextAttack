@@ -50,11 +50,6 @@ def main():
     # Let's go
     args = parser.parse_args()
     if args.nocolor:
-        AttackResult.color(False)
-    else:
-        AttackResult.color(True)
-
-    if args.nocolor:
         FileLogger.nocolor = True
     else:
         FileLogger.nocolor = False
