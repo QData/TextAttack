@@ -21,9 +21,6 @@ class AttackResult(ABC):
     """
 
     @staticmethod
-    def color(output):
-        global color
-        color = output
 
     def __init__(self, original_result, perturbed_result):
         if original_result is None:
@@ -52,8 +49,6 @@ class AttackResult(ABC):
 
         Helper method.
         """
-        if not color:
-            color_method = None
         return self.original_result.attacked_text.printable_text(
             key_color=("bold", "underline"), key_color_method=color_method
         )
@@ -63,8 +58,6 @@ class AttackResult(ABC):
 
         Helper method.
         """
-        if not color:
-            color_method = None
 
         return self.perturbed_result.attacked_text.printable_text(
             key_color=("bold", "underline"), key_color_method=color_method
@@ -73,23 +66,17 @@ class AttackResult(ABC):
     def str_lines(self, color_method=None):
         """A list of the lines to be printed for this result's string
         representation."""
-        if not color:
-            color_method = None
 
         lines = [self.goal_function_result_str(color_method=color_method)]
         lines.extend(self.diff_color(color_method))
         return lines
 
     def __str__(self, color_method=None):
-        if not color:
-            color_method = None
 
         return "\n\n".join(self.str_lines(color_method=color_method))
 
     def goal_function_result_str(self, color_method=None):
         """Returns a string illustrating the results of the goal function."""
-        if not color:
-            color_method = None
 
         orig_colored = self.original_result.get_colored_output(color_method)
         pert_colored = self.perturbed_result.get_colored_output(color_method)
@@ -102,8 +89,6 @@ class AttackResult(ABC):
         perturbed. Relies on the index map stored in
         ``self.original_result.attacked_text.attack_attrs["original_index_map"]``.
         """
-        if not color:
-            color_method = None
 
         t1 = self.original_result.attacked_text
         t2 = self.perturbed_result.attacked_text
