@@ -38,7 +38,7 @@ class Dataset:
 
         >>> # Example of sentiment-classification dataset
         >>> data = [("I enjoyed the movie a lot!", 1), ("Absolutely horrible film.", 0), ("Our family had a fun time!", 1)]
-        >>> dataset = textattack.datasets.Dataset(data, lang="en")
+        >>> dataset = textattack.datasets.Dataset(data)
         >>> dataset[1:2]
 
 
