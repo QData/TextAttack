@@ -1,0 +1,125 @@
+Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  delete
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapEmbedding(
+    (max_candidates):  50
+    (embedding):  WordEmbedding
+  )
+  (constraints): 
+    (0): WordEmbeddingDistance(
+        (embedding):  WordEmbedding
+        (min_cos_sim):  0.5
+        (cased):  False
+        (include_unknown_words):  True
+        (compare_against_original):  True
+      )
+    (1): PartOfSpeech(
+        (tagger_type):  nltk
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+        (compare_against_original):  True
+      )
+    (2): UniversalSentenceEncoder(
+        (metric):  angular
+        (threshold):  0.840845057
+        (window_size):  15
+        (skip_text_shorter_than_window):  True
+        (compare_against_original):  False
+      )
+    (3): RepeatModification
+    (4): StopwordModification
+    (5): InputColumnModification(
+        (matching_column_labels):  ['premise', 'hypothesis']
+        (columns_to_ignore):  {'premise'}
+      )
+  (is_black_box):  True
+) 
+
+--------------------------------------------- Result 1 ---------------------------------------------
+Negative (99%) --> Positive (100%)
+
+bears is even worse than i imagined a movie ever could be .
+
+bears is even greatest than i imagined a movie ever could be .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+Positive (100%) --> Negative (90%)
+
+although estela bravo's documentary is cloyingly hagiographic in its portrait of cuban leader fidel castro , it's still a guilty pleasure to watch .
+
+although estela bravo's documentary is cloyingly hagiographic in its portrait of cuban leader fidel castro , it's anyway a guilty placing to tracked .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+Negative (100%) --> [SKIPPED]
+
+i have a new favorite musical -- and i'm not even a fan of the genre
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+Negative (100%) --> Positive (81%)
+
+it's lazy for a movie to avoid solving one problem by trying to distract us with the solution to another .
+
+it's shiftless for a cinematographer to avoid resolved one problem by wanting to distract us with the solution to another .
+
+
+--------------------------------------------- Result 5 ---------------------------------------------
+Positive (100%) --> Negative (65%)
+
+even when he's not at his most critically insightful , godard can still be smarter than any 50 other filmmakers still at work .
+
+even when he's not at his most critically insightful , godard can otherwise be smarter than any 50 other cameramen still at work .
+
+
+--------------------------------------------- Result 6 ---------------------------------------------
+Positive (99%) --> [SKIPPED]
+
+more successful at relating history than in creating an emotionally complex , dramatically satisfying heroine
+
+
+--------------------------------------------- Result 7 ---------------------------------------------
+Negative (100%) --> [SKIPPED]
+
+it's unlikely we'll see a better thriller this year .
+
+
+--------------------------------------------- Result 8 ---------------------------------------------
+Positive (100%) --> Negative (99%)
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with tremendous skill .
+
+the story poses ample hazard for large-scale action and suspense , which director shekhar kapur supplies with huge jurisdictional .
+
+
+--------------------------------------------- Result 9 ---------------------------------------------
+Negative (100%) --> Positive (98%)
+
+ultimately this is a frustrating patchwork : an uneasy marriage of louis begley's source novel ( about schmidt ) and an old payne screenplay .
+
+ultimately this is a unnerving patchwork : an uneasy marriage of louis begley's source novel ( about schmidt ) and an old payne screenplay .
+
+
+--------------------------------------------- Result 10 ---------------------------------------------
+Positive (98%) --> [SKIPPED]
+
+the threat implied in the title pokémon 4ever is terrifying  like locusts in a horde these things will keep coming .
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 6      |
+| Number of failed attacks:     | 0      |
+| Number of skipped attacks:    | 4      |
+| Original accuracy:            | 60.0%  |
+| Accuracy under attack:        | 0.0%   |
+| Attack success rate:          | 100.0% |
+| Average perturbed word %:     | 13.01% |
+| Average num. words per input: | 17.3   |
+| Avg num queries:              | 101.67 |
++-------------------------------+--------+
