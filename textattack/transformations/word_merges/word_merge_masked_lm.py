@@ -17,10 +17,13 @@ class WordMergeMaskedLM(Transformation):
         tokenizer (obj): The tokenizer of the corresponding model. If you passed in name of a pretrained model for `masked_language_model`,
             you can skip this argument as the correct tokenizer can be infered from the name. However, if you're passing the actual model, you must
             provide a tokenizer.
-        max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
-        max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are
+        max_length (int): The max sequence length the masked language model is designed to work with. Default is 512.
+        window_size (int): The number of surrounding words to include when making top word prediction.
+            For each position to merge, we take `window_size // 2` words to the left and `window_size // 2` words to the right and pass the text within the window
+            to the masked language model. Default is `float("inf")`, which is equivalent to using the whole text.
+        max_candidates (int): Maximum number of candidates to consider as replacements for each word. Replacements are
             ranked by model's confidence.
-        min_confidence (float): minimum confidence threshold each replacement word must pass.
+        min_confidence (float): Minimum confidence threshold each replacement word must pass.
     """
 
     def __init__(
