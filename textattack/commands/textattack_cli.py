@@ -6,6 +6,7 @@ TextAttack Command Arg Parsing Main Function
 
 # !/usr/bin/env python
 import argparse
+import sys
 
 from textattack.commands.attack import AttackCommand, AttackResumeCommand
 from textattack.commands.augment import AugmentCommand
@@ -14,6 +15,7 @@ from textattack.commands.eval_model import EvalModelCommand
 from textattack.commands.list_things import ListThingsCommand
 from textattack.commands.peek_dataset import PeekDatasetCommand
 from textattack.commands.train_model import TrainModelCommand
+from textattack.loggers.file_logger import FileLogger
 
 
 def main():
@@ -47,6 +49,12 @@ def main():
 
     # Let's go
     args = parser.parse_args()
+    if "--nocolor" in sys.argv:
+        FileLogger.nocolor = True
+    # if args.nocolor:
+    #     FileLogger.nocolor = True
+    else:
+        FileLogger.nocolor = False
 
     if not hasattr(args, "func"):
         parser.print_help()
