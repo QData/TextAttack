@@ -51,6 +51,7 @@ class WordSwapMaskedLM(WordSwap):
         masked_language_model="bert-base-uncased",
         tokenizer=None,
         max_length=512,
+        window_size=float("inf"),
         max_candidates=50,
         min_confidence=5e-4,
         batch_size=16,
@@ -59,6 +60,7 @@ class WordSwapMaskedLM(WordSwap):
         super().__init__(**kwargs)
         self.method = method
         self.max_length = max_length
+        self.window_size = window_size
         self.max_candidates = max_candidates
         self.min_confidence = min_confidence
         self.batch_size = batch_size
@@ -107,11 +109,12 @@ class WordSwapMaskedLM(WordSwap):
         """
         masked_texts = []
         for index in indices_to_modify:
-            masked_texts.append(
-                current_text.replace_word_at_index(
+            masked_text = current_text.replace_word_at_index(
                     index, self._lm_tokenizer.mask_token
-                ).text
-            )
+                )
+            # Obtain window
+            masked_text = masked_text.text_window_around_index(index, self.window_size)
+            masked_texts.append(masked_text)
 
         i = 0
         # 2-D list where for each index to modify we have a list of replacement words

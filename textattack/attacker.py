@@ -49,7 +49,7 @@ class Attacker:
         >>> attack_args = textattack.AttackArgs(num_examples=1000, log_to_csv="log.csv", checkpoint_interval=100, checkpoint_dir="checkpoints")
 
         >>> attacker = textattack.Attacker(attack, dataset, attack_args)
-        >>> attacker.attack_data()
+        >>> attacker.attack_dataset()
     """
 
     def __init__(self, attack_or_attack_build_fn, dataset, attack_args=AttackArgs()):
@@ -341,11 +341,14 @@ class Attacker:
                 Zero-argument callable is required when attacking in parallel because the attack has to be newly initialized in each worker process (it is slow and difficult to
                 seralize ``Attack`` and share it across proccesses).
             dataset (textattack.datasets.Dataset): Dataset to attack.
-            checkpoint (textattack.shared.AttackChecpoint): Saved checkpoint.
+            checkpoint (Union[str, textattack.shared.AttackChecpoint]): Saved checkpoint or path of the saved checkpoint.
         """
         assert isinstance(
-            checkpoint, textattack.shared.AttackCheckpoint
-        ), f"`checkpoint` must be of type `textattack.shared.AttackCheckpoint`, but got type `{type(checkpoint)}`."
+            checkpoint, (str, textattack.shared.AttackCheckpoint)
+        ), f"`checkpoint` must be of type `str` or `textattack.shared.AttackCheckpoint`, but got type `{type(checkpoint)}`."
+
+        if isinstance(checkpoint, str):
+            checkpoint = textattack.shared.AttackCheckpoint.load(checkpoint)
         attacker = cls(attack_or_attack_build_fn, dataset, checkpoint.attack_args)
         attacker.attack_log_manager = checkpoint.attack_log_manager
         attacker._checkpoint = checkpoint
