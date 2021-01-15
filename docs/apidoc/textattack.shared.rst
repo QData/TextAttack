@@ -40,7 +40,7 @@ Subpackages
    :show-inheritance:
 
 
-.. automodule:: textattack.shared.word_embedding
+.. automodule:: textattack.shared.word_embeddings
    :members:
    :undoc-members:
    :show-inheritance:
