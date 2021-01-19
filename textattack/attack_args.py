@@ -307,8 +307,8 @@ class AttackArgs:
             attack_log_manager.enable_visdom(**args.log_to_visdom)
 
         # Weights & Biases
-        if args.log_to_visdom is not None:
-            attack_log_manager.enable_wandb(args.log_to_visdom)
+        if args.log_to_wandb is not None:
+            attack_log_manager.enable_wandb(args.log_to_wandb)
 
         # Stdout
         if not args.disable_stdout:
