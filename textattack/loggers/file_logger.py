@@ -19,6 +19,7 @@ class FileLogger(Logger):
     def __init__(self, filename="", stdout=False):
         self.stdout = stdout
         self.filename = filename
+
         if stdout:
             self.fout = sys.stdout
         elif isinstance(filename, str):
@@ -44,9 +45,10 @@ class FileLogger(Logger):
 
     def log_attack_result(self, result):
         self.num_results += 1
-        color_method = "ansi" if self.stdout else "file"
-        if self.nocolor:
-            color_method = None
+        if self.stdout:
+            color_method = "file" if self.nocolor else "ansi"
+        else:
+            color_method = "file"
         self.fout.write(
             "-" * 45 + " Result " + str(self.num_results) + " " + "-" * 45 + "\n"
         )

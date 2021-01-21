@@ -10,9 +10,11 @@ import copy
 import importlib
 import json
 import os
+import sys
 import time
 
 import textattack
+from textattack.loggers.file_logger import FileLogger
 
 from .attack_args import (
     ATTACK_RECIPE_NAMES,
@@ -471,6 +473,14 @@ def parse_logger_from_args(args):
         # otherwise, customize filename
         else:
             filename_csv = f"{args.log_to_csv}.csv"
+
+    # if "--nocolor" is called or stdout is redirected
+    if "--nocolor" in sys.argv:
+        FileLogger.nocolor = True
+    elif not sys.stdout.isatty():
+        FileLogger.nocolor = True
+    else:
+        FileLogger.nocolor = False
 
     # in case directory doesn't exist
     if not os.path.exists(out_dir_txt):
