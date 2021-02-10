@@ -477,8 +477,8 @@ def parse_logger_from_args(args):
     # if "--nocolor" is called or stdout is redirected
     if "--nocolor" in sys.argv:
         FileLogger.nocolor = True
-    elif not sys.stdout.isatty():
-        FileLogger.nocolor = True
+    # elif not sys.stdout.isatty():
+    #     FileLogger.nocolor = True
     else:
         FileLogger.nocolor = False
 

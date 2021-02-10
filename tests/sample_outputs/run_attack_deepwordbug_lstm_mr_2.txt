@@ -26,21 +26,21 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[[Positive (91%)]] --> [[Negative (69%)]]
+[92mPositive (91%)[0m --> [91mNegative (69%)[0m
 
-lovingly photographed in the manner of a golden book sprung to [[life]] , stuart little 2 [[manages]] [[sweetness]] largely without stickiness .
+lovingly photographed in the manner of a golden book sprung to [92mlife[0m , stuart little 2 [92mmanages[0m [92msweetness[0m largely without stickiness .
 
-lovingly photographed in the manner of a golden book sprung to [[ife]] , stuart little 2 [[manager]] [[sweecness]] largely without stickiness .
+lovingly photographed in the manner of a golden book sprung to [91mife[0m , stuart little 2 [91mmanager[0m [91mseetness[0m largely without stickiness .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[[Positive (99%)]] --> [[Negative (82%)]]
+[92mPositive (99%)[0m --> [91mNegative (82%)[0m
 
-[[consistently]] [[clever]] and [[suspenseful]] .
+[92mconsistently[0m [92mclever[0m and [92msuspenseful[0m .
 
-[[conisstently]] [[celver]] and [[Huspenseful]] .
+[91mconisstently[0m [91mcelver[0m and [91mHuspenseful[0m .
 
 
 

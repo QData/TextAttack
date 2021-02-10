@@ -34,25 +34,25 @@
 ) 
 
 --------------------------------------------- Result 1 ---------------------------------------------
-[[Positive (90%)]] --> [[[FAILED]]]
+[92mPositive (90%)[0m --> [91m[FAILED][0m
 
 the performances are immaculate , with roussillon providing comic relief .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[[Positive (98%)]] --> [[Negative (57%)]]
+[92mPositive (98%)[0m --> [91mNegative (57%)[0m
 
-kinnear . . . gives his [[best]] screen performance with an [[oddly]] winning [[portrayal]] of one of life's [[ultimate]] [[losers]] .
+kinnear . . . gives his [92mbest[0m screen performance with an [92moddly[0m winning [92mportrayal[0m of one of life's [92multimate[0m [92mlosers[0m .
 
-kinnear . . . gives his [[higher]] screen performance with an [[interestingly]] winning [[description]] of one of life's [[final]] [[mugs]] .
+kinnear . . . gives his [91mhigher[0m screen performance with an [91minterestingly[0m winning [91mdescription[0m of one of life's [91mfinal[0m [91mmugs[0m .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[[Positive (83%)]] --> [[Negative (51%)]]
+[92mPositive (83%)[0m --> [91mNegative (51%)[0m
 
-hugh grant , who has a good line in charm , has never been more [[charming]] than in about a boy .
+hugh grant , who has a good line in charm , has never been more [92mcharming[0m than in about a boy .
 
-hugh grant , who has a good line in charm , has never been more [[loveable]] than in about a boy .
+hugh grant , who has a good line in charm , has never been more [91mloveable[0m than in about a boy .
 
 
 

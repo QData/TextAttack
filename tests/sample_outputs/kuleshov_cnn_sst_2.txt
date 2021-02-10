@@ -26,21 +26,21 @@
     (4): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[[Positive (100%)]] --> [[Negative (69%)]]
+[92mPositive (100%)[0m --> [91mNegative (69%)[0m
 
-it 's a [[charming]] and [[often]] affecting journey . 
+it 's a [92mcharming[0m and [92moften[0m affecting journey . 
 
-it 's a [[loveable]] and [[ordinarily]] affecting journey . 
+it 's a [91mloveable[0m and [91mordinarily[0m affecting journey . 
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[[Negative (83%)]] --> [[Positive (90%)]]
+[91mNegative (83%)[0m --> [92mPositive (90%)[0m
 
-unflinchingly bleak and [[desperate]] 
+unflinchingly bleak and [91mdesperate[0m 
 
-unflinchingly bleak and [[desperation]] 
+unflinchingly bleak and [92mdesperation[0m 
 
 
 

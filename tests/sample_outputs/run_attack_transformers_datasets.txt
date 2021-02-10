@@ -26,27 +26,27 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-
+/.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[[Negative (100%)]] --> [[Positive (71%)]]
+[91mNegative (100%)[0m --> [92mPositive (71%)[0m
 
-[[hide]] [[new]] secretions from the parental units 
+[91mhide[0m [91mnew[0m secretions from the parental units 
 
-[[Ehide]] [[enw]] secretions from the parental units 
+[92mEhide[0m [92menw[0m secretions from the parental units 
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[[Negative (100%)]] --> [[[FAILED]]]
+[91mNegative (100%)[0m --> [91m[FAILED][0m
 
 contains no wit , only labored gags 
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[[Positive (100%)]] --> [[Negative (96%)]]
+[92mPositive (100%)[0m --> [91mNegative (96%)[0m
 
-that [[loves]] its characters and communicates [[something]] [[rather]] [[beautiful]] about human nature 
+that [92mloves[0m its characters and communicates [92msomething[0m [92mrather[0m [92mbeautiful[0m about human nature 
 
-that [[lodes]] its characters and communicates [[somethNng]] [[rathrer]] [[beautifdul]] about human nature 
+that [91mlodes[0m its characters and communicates [91msomethNng[0m [91mrathrer[0m [91mbeautifdul[0m about human nature 
 
 
 
