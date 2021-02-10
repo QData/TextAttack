@@ -425,6 +425,6 @@ class GensimWordEmbedding(AbstractWordEmbedding):
         """
         word = self.keyed_vectors.index2word[index]
         return [
-            self.keyed_vectors.index2word.index(i[0])
+            self.word2index(i[0])
             for i in self.keyed_vectors.similar_by_word(word, topn)
         ]
