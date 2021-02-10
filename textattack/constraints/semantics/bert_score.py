@@ -40,6 +40,7 @@ class BERTScore(Constraint):
         self,
         min_bert_score,
         model="bert-base-uncased",
+        num_layers=None,
         score_type="f1",
         compare_against_original=True,
     ):
@@ -54,7 +55,7 @@ class BERTScore(Constraint):
         self.score_type = score_type
         # Turn off idf-weighting scheme b/c reference sentence set is small
         self._bert_scorer = bert_score.BERTScorer(
-            model_type=model, idf=False, device=utils.device
+            model_type=model, idf=False, device=utils.device, num_layers=num_layers
         )
 
     def _check_constraint(self, transformed_text, reference_text):
