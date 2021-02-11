@@ -46,7 +46,7 @@ class PartOfSpeech(Constraint):
         allow_verb_noun_swap=True,
         compare_against_original=True,
         language_nltk="eng",
-        language_stanza="en"
+        language_stanza="en",
     ):
         super().__init__(compare_against_original)
         self.tagger_type = tagger_type
@@ -64,7 +64,9 @@ class PartOfSpeech(Constraint):
 
         if tagger_type == "stanza":
             self._stanza_pos_tagger = stanza.Pipeline(
-                lang=self.language_stanza, processors="tokenize, pos", tokenize_pretokenized=True
+                lang=self.language_stanza,
+                processors="tokenize, pos",
+                tokenize_pretokenized=True,
             )
 
     def clear_cache(self):
@@ -83,7 +85,9 @@ class PartOfSpeech(Constraint):
         else:
             if self.tagger_type == "nltk":
                 word_list, pos_list = zip(
-                    *nltk.pos_tag(context_words, tagset=self.tagset, lang=self.language_nltk)
+                    *nltk.pos_tag(
+                        context_words, tagset=self.tagset, lang=self.language_nltk
+                    )
                 )
 
             if self.tagger_type == "flair":

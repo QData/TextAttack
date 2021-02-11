@@ -3,13 +3,13 @@ Sentence Encoder Class
 ------------------------
 """
 
+from abc import ABC
 import math
 
 import numpy as np
 import torch
 
 from textattack.constraints import Constraint
-from abc import ABC
 
 
 class SentenceEncoder(Constraint, ABC):

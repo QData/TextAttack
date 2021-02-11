@@ -19,7 +19,9 @@ class LanguageTool(Constraint):
         language: language to use for languagetool (available choices: https://dev.languagetool.org/languages)
     """
 
-    def __init__(self, grammar_error_threshold=0, compare_against_original=True, language="en-US"):
+    def __init__(
+        self, grammar_error_threshold=0, compare_against_original=True, language="en-US"
+    ):
         super().__init__(compare_against_original)
         self.lang_tool = language_tool_python.LanguageTool(language)
         self.grammar_error_threshold = grammar_error_threshold
