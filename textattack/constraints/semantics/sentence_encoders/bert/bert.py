@@ -17,10 +17,10 @@ class BERT(SentenceEncoder):
     fine- tuned on the STS benchmark dataset.
     Available models can be found here: https://huggingface.co/sentence-transformers"""
 
-    def __init__(self, threshold=0.7, metric="cosine", model="bert-base-nli-stsb-mean-tokens", **kwargs):
+    def __init__(self, threshold=0.7, metric="cosine", model_name="bert-base-nli-stsb-mean-tokens", **kwargs):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
         self.model = sentence_transformers.SentenceTransformer(
-            model
+            model_name
         )
         self.model.to(utils.device)
 

@@ -16,6 +16,7 @@ class LanguageTool(Constraint):
             relative to `x`
         compare_against_original (bool): If `True`, compare against the original text.
             Otherwise, compare against the most recent text.
+        language: language to use for languagetool (available choices: https://dev.languagetool.org/languages)
     """
 
     def __init__(self, grammar_error_threshold=0, compare_against_original=True, language="en-US"):

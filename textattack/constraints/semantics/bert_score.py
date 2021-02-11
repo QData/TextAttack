@@ -22,7 +22,8 @@ class BERTScore(Constraint):
 
     Args:
         min_bert_score (float), minimum threshold value for BERT-Score
-        model (str), name of model to use for scoring
+        model_name (str), name of model to use for scoring
+        num_layers (int), number of hidden layers in the model
         score_type (str), Pick one of following three choices
 
             -(1) ``precision`` : match words from candidate text to reference text
@@ -39,7 +40,7 @@ class BERTScore(Constraint):
     def __init__(
         self,
         min_bert_score,
-        model="bert-base-uncased",
+        model_name="bert-base-uncased",
         num_layers=None,
         score_type="f1",
         compare_against_original=True,
@@ -51,11 +52,11 @@ class BERTScore(Constraint):
             raise ValueError("max_bert_score must be a value between 0.0 and 1.0")
 
         self.min_bert_score = min_bert_score
-        self.model = model
+        self.model = model_name
         self.score_type = score_type
         # Turn off idf-weighting scheme b/c reference sentence set is small
         self._bert_scorer = bert_score.BERTScorer(
-            model_type=model, idf=False, device=utils.device, num_layers=num_layers
+            model_type=model_name, idf=False, device=utils.device, num_layers=num_layers
         )
 
     def _check_constraint(self, transformed_text, reference_text):
