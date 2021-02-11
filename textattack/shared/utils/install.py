@@ -103,7 +103,7 @@ def download_from_url(url, save_path, skip_if_cached=True):
     cache_file_lock.release()
     # Remove the temporary file.
     os.remove(downloaded_file.name)
-    logger.info(f"Successfully saved {folder_name} to cache.")
+    logger.info(f"Successfully saved {url} to cache.")
     return cache_dest_path
 
 

@@ -2,12 +2,12 @@
 multilingual universal sentence encoder
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
+import tensorflow_text  # noqa: F401
 
 from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 from textattack.shared.utils import LazyLoader
 
 hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
-import tensorflow_text  # noqa: F401
 
 
 class MultilingualUniversalSentenceEncoder(SentenceEncoder):
