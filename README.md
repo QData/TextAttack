@@ -56,7 +56,9 @@ or via python module (`python -m textattack ...`).
 > dataset samples, and the configuration file `config.yaml`. To change the cache path, set the 
 > environment variable `TA_CACHE_DIR`. (for example: `TA_CACHE_DIR=/tmp/ textattack attack ...`).
 
-## Usage:  `textattack --help`
+## Usage
+
+### Help: `textattack --help`
 
 TextAttack's main features can all be accessed via the `textattack` command. Two very
 common commands are `textattack attack <args>`, and `textattack augment <args>`. You can see more
