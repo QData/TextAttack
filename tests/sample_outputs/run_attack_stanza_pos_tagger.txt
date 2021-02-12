@@ -18,27 +18,33 @@
 ) 
 /.*/
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (56%)[0m --> [91mNegative (80%)[0m
+[92mPositive (91%)[0m --> [91mNegative (62%)[0m
 
-it's up to you to decide whether to admire these people's dedication to their cause or be repelled by their dogmatism , manipulativeness and narrow , fearful view of american [92mlife[0m .
+lovingly photographed in the manner of a golden book sprung to [92mlife[0m , stuart little 2 manages sweetness largely without stickiness .
 
-it's up to you to decide whether to admire these people's dedication to their cause or be repelled by their dogmatism , manipulativeness and narrow , fearful view of american [91msubsistence[0m .
+lovingly photographed in the manner of a golden book sprung to [91msubsistence[0m , stuart little 2 manages sweetness largely without stickiness .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92mPositive (69%)[0m --> [91mNegative (62%)[0m
+[92mPositive (99%)[0m --> [91mNegative (91%)[0m
 
-mostly , [goldbacher] just lets her complicated characters be unruly , [92mconfusing[0m and , through it all , human .
+[92mconsistently[0m [92mclever[0m and suspenseful .
 
-mostly , [goldbacher] just lets her complicated characters be unruly , [91mdisoriented[0m and , through it all , human .
+[91mpersistently[0m [91mmalin[0m and suspenseful .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (58%)[0m --> [91mNegative (78%)[0m
+[91mNegative (78%)[0m --> [37m[SKIPPED][0m
 
-. . . quite [92mgood[0m at providing some good old fashioned spooks .
+it's like a " big chill " reunion of the baader-meinhof gang , only these guys are more harmless pranksters than political activists .
 
-. . . quite [91mallright[0m at providing some good old fashioned spooks .
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[92mPositive (96%)[0m --> [91mNegative (85%)[0m
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with [92mtremendous[0m [92mskill[0m .
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur supplies with [91mcolossal[0m [91mjurisdiction[0m .
 
 
 
@@ -47,11 +53,11 @@ mostly , [goldbacher] just lets her complicated characters be unruly , [91mdiso
 +-------------------------------+--------+
 | Number of successful attacks: | 3      |
 | Number of failed attacks:     | 0      |
-| Number of skipped attacks:    | 0      |
-| Original accuracy:            | 100.0% |
+| Number of skipped attacks:    | 1      |
+| Original accuracy:            | 75.0%  |
 | Accuracy under attack:        | 0.0%   |
 | Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 7.08%  |
-| Average num. words per input: | 17.67  |
-| Avg num queries:              | 95.33  |
+| Average perturbed word %:     | 22.04% |
+| Average num. words per input: | 15.5   |
+| Avg num queries:              | 174.67 |
 +-------------------------------+--------+
