@@ -3,6 +3,8 @@ Managing Attack Logs.
 ========================
 """
 
+import sys
+
 import numpy as np
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
@@ -18,7 +20,13 @@ class AttackLogManager:
         self.results = []
 
     def enable_stdout(self):
-        self.loggers.append(FileLogger(stdout=True))
+        logger = FileLogger(stdout=True)
+        if "--nocolor" in sys.argv:
+            logger.nocolor = True
+        else:
+            logger.nocolor = False
+        self.loggers.append(logger)
+        return None
 
     def enable_visdom(self):
         self.loggers.append(VisdomLogger())
@@ -27,7 +35,13 @@ class AttackLogManager:
         self.loggers.append(WeightsAndBiasesLogger())
 
     def add_output_file(self, filename):
-        self.loggers.append(FileLogger(filename=filename))
+        logger = FileLogger(filename=filename)
+        if "--nocolor" in sys.argv:
+            logger.nocolor = True
+        else:
+            logger.nocolor = False
+        self.loggers.append(logger)
+        return None
 
     def add_output_csv(self, filename, color_method):
         self.loggers.append(CSVLogger(filename=filename, color_method=color_method))
