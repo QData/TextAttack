@@ -141,7 +141,7 @@ attack_test_params = [
     (
         "run_attack_stanza_pos_tagger",
         (
-            "textattack attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding "
+            "textattack attack --model lstm-mr --num-examples 3 --num-examples-offset 11 --search-method greedy --transformation word-swap-embedding "
             "--constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' --shuffle=False"
         ),
         "tests/sample_outputs/run_attack_stanza_pos_tagger.txt",
