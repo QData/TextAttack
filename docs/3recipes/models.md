@@ -400,7 +400,7 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 - We host all TextAttack Models at huggingface Model Hub: [https://huggingface.co/textattack](https://huggingface.co/textattack)
 
 
-### Training details for each TextAttack Model 
+## Training details for each TextAttack Model 
 
 
 All of our models have model cards on the HuggingFace model hub. So for now, the easiest way to figure this out is as follows:
@@ -417,13 +417,13 @@ All of our models have model cards on the HuggingFace model hub. So for now, the
 
 
 
-### More details on TextAttack fine-tuned NLP models (details on the NLP task, output type, SOTA on paperswithcode; model card on huggingface):
+## More details on TextAttack fine-tuned NLP models (details on target NLP task, input type, output type, SOTA results on paperswithcode; model card on huggingface):
 
-<section>
+
 
 
 Fine-tuned Model                         |  NLP Task                                       |  Input type                                   |  Output Type                                        |  paperswithcode.com SOTA                                                       |  huggingface.co Model Card
-------------------------------|-----------------------------|------------------------------|-----------------------------|------------------------------|-------------------------------------
+--------------|-----------------|--------------------|--------------------|--------------------------|-------------------------------
 albert-base-v2-CoLA                      |  linguistic acceptability                       |  single sentences                             |  binary (1=acceptable/ 0=unacceptable)               |  <sub><sup>https://paperswithcode.com/sota/linguistic-acceptability-on-cola  </sub></sup>            |  <sub><sup>https://huggingface.co/textattack/albert-base-v2-CoLA </sub></sup>
 bert-base-uncased-CoLA                   |  linguistic acceptability                       |  single sentences                             |  binary (1=acceptable/ 0=unacceptable)               |  none yet                                                                      |  <sub><sup>https://huggingface.co/textattack/bert-base-uncased-CoLA </sub></sup>
 distilbert-base-cased-CoLA               |  linguistic acceptability                       |  single sentences                             |  binary (1=acceptable/ 0=unacceptable)               | <sub><sup> https://paperswithcode.com/sota/linguistic-acceptability-on-cola  </sub></sup>            |  <sub><sup>https://huggingface.co/textattack/distilbert-base-cased-CoLA </sub></sup>
@@ -492,5 +492,5 @@ distilbert-base-uncased-ag-news          |  text classification                 
 lstm-ag-news                             |  text classification                            |  news articles                                |  news category                                      | <sub><sup> https://paperswithcode.com/sota/text-classification-on-ag-news  </sub></sup>              |  none
 roberta-base-ag-news                     |  text classification                            |  news articles                                |  news category                                      |  none yet                                                                      | <sub><sup> https://huggingface.co/textattack/roberta-base-ag-news </sub></sup>
 
-</section>
+
 

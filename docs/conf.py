@@ -43,6 +43,7 @@ extensions = [
     "nbsphinx",
     # Enable .md doc files
     "recommonmark",
+    "sphinx_markdown_tables",
 ]
 autosummary_generate = True
 
