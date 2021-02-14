@@ -362,7 +362,7 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 </section>
 
 
-# Comparison of TextAttack models based on NLP tasks:
+# More details on TextAttack models (details on NLP task, output type, SOTA on paperswithcode; model card on huggingface):
 
 <section>
 
