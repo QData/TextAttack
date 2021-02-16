@@ -204,7 +204,7 @@ class AttackCommand(TextAttackCommand):
             "--nocolor",
             required=False,
             action="store_true",
-            help="Print result with or without color",
+            help="Redirect/print result with or without color",
         )
 
         attack_group = parser.add_mutually_exclusive_group(required=False)
