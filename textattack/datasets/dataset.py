@@ -72,6 +72,7 @@ class Dataset:
                 self.label_names[self.label_map[i]] for i in self.label_map
             ]
         self.shuffled = shuffle
+        self.output_scale_factor = output_scale_factor
 
         if shuffle:
             random.shuffle(self._dataset)
