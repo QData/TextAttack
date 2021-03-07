@@ -5,10 +5,7 @@ T5 Tokenizer
 """
 
 
-from textattack.models.tokenizers import AutoTokenizer
-
-
-class T5Tokenizer(AutoTokenizer):
+class T5Tokenizer:
     """Uses the T5 tokenizer to convert an input for processing.
 
     For more information, please see the T5 paper, "Exploring the Limits of
@@ -36,7 +33,7 @@ class T5Tokenizer(AutoTokenizer):
         else:
             raise ValueError(f"Invalid t5 tokenizer mode {mode}.")
 
-        super().__init__(tokenizer_path="t5-base", max_length=max_length)
+        raise NotImplementedError("TBD")
 
     def encode(self, text):
         """Encodes a string into IDs of tokens.

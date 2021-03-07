@@ -109,11 +109,8 @@ class Attack:
         self.search_method.goal_function = self.goal_function
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
-        self.search_method.get_goal_results = (
-            lambda attacked_text_list: self.goal_function.get_results(
-                attacked_text_list
-            )
-        )
+        self.search_method.get_goal_results = self.goal_function.get_results
+
         self.search_method.filter_transformations = self.filter_transformations
         if not search_method.is_black_box:
             self.search_method.get_model = lambda: self.goal_function.model
@@ -335,5 +332,16 @@ class Attack:
         main_str += "\n  " + "\n  ".join(lines) + "\n"
         main_str += ")"
         return main_str
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["transformation_cache"] = None
+        state["constraints_cache"] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.transformation_cache = lru.LRU(self.transformation_cache_size)
+        self.constraints_cache = lru.LRU(self.constraint_cache_size)
 
     __str__ = __repr__

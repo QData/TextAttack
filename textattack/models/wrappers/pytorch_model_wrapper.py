@@ -21,24 +21,26 @@ class PyTorchModelWrapper(ModelWrapper):
             No type requirement, but most have `tokenizer` method that accepts list of strings.
     """
 
-    def __init__(self, model, tokenizer, batch_size=32):
+    def __init__(self, model, tokenizer):
         if not isinstance(model, torch.nn.Module):
             raise TypeError(
                 f"PyTorch model must be torch.nn.Module, got type {type(model)}"
             )
 
-        self.model = model.to(textattack.shared.utils.device)
+        self.model = model
         self.tokenizer = tokenizer
-        self.batch_size = batch_size
 
-    def __call__(self, text_input_list):
+    def to(self, device):
+        self.model.to(device)
+
+    def __call__(self, text_input_list, batch_size=32):
         model_device = next(self.model.parameters()).device
-        ids = self.encode(text_input_list)
+        ids = self.tokenizer(text_input_list)
         ids = torch.tensor(ids).to(model_device)
 
         with torch.no_grad():
             outputs = textattack.shared.utils.batch_model_predict(
-                self.model, ids, batch_size=self.batch_size
+                self.model, ids, batch_size=batch_size
             )
 
         return outputs
@@ -75,7 +77,7 @@ class PyTorchModelWrapper(ModelWrapper):
 
         self.model.zero_grad()
         model_device = next(self.model.parameters()).device
-        ids = self.encode([text_input])
+        ids = self.tokenizer([text_input])
         ids = torch.tensor(ids).to(model_device)
 
         predictions = self.model(ids)
@@ -102,7 +104,4 @@ class PyTorchModelWrapper(ModelWrapper):
         Returns:
             tokens (list[list[str]]): List of list of tokens as strings
         """
-        return [
-            self.tokenizer.convert_ids_to_tokens(self.tokenizer.encode(x))
-            for x in inputs
-        ]
+        return [self.tokenizer.convert_ids_to_tokens(self.tokenizer(x)) for x in inputs]
