@@ -2,8 +2,9 @@ import collections
 import logging
 import multiprocessing as mp
 import os
+import queue
+import random
 
-import dill
 import torch
 import tqdm
 
@@ -27,9 +28,7 @@ class Attacker:
     from a checkpint, logging to files and stdout.
 
     Args:
-        attack_or_attack_build_fn (Union[textattack.Attack, callable]): ``Attack`` object or a zero-argument callable that returns the desired ``Attack`` object.
-            Zero-argument callable is required when attacking in parallel because the attack has to be newly initialized in each worker process (it is slow and difficult to
-            seralize ``Attack`` and share it across proccesses).
+        attack (textattack.Attack): ``Attack`` object for carrying out the attack.
         dataset (textattack.datasets.Dataset): Dataset to attack.
         attack_args (textattack.AttackArgs): Arguments for attacking the dataset. For default settings, look at the `AttackArgs` class.
 
@@ -38,8 +37,8 @@ class Attacker:
         >>> import textattack
         >>> import transformers
 
-        >>> model = transformers.AutoModelForSequenceClassification("textattack/bert-base-uncased-imdb")
-        >>> tokenizer = transformers.AutoTokenizer("textattack/bert-base-uncased-imdb")
+        >>> model = transformers.AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
+        >>> tokenizer = transformers.AutoTokenizer.from_pretrained("textattack/bert-base-uncased-imdb")
         >>> model_wrapper = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
 
         >>> attack = textattack.attack_recipes.TextFoolerJin2019.build(model_wrapper)
@@ -52,10 +51,10 @@ class Attacker:
         >>> attacker.attack_dataset()
     """
 
-    def __init__(self, attack_or_attack_build_fn, dataset, attack_args=AttackArgs()):
-        assert isinstance(attack_or_attack_build_fn, Attack) or callable(
-            attack_or_attack_build_fn
-        ), f"`attack` argument must be of type `textattack.Attack` or a callable, but got type of `{type(attack_or_attack_build_fn)}`."
+    def __init__(self, attack, dataset, attack_args=AttackArgs()):
+        assert isinstance(
+            attack, Attack
+        ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
         assert isinstance(
             dataset, textattack.datasets.Dataset
         ), f"`dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(dataset)}`."
@@ -63,21 +62,10 @@ class Attacker:
             attack_args, textattack.AttackArgs
         ), f"`attack_args` must be of type `textattack.AttackArgs`, but got type `{type(attack_args)}`."
 
-        if isinstance(attack_or_attack_build_fn, Attack):
-            if attack_args.parallel:
-                raise ValueError(
-                    "To performing parallel attacks, `attack_or_attack_build_fn` must "
-                    "be a zero-argument callable that returns the desired `Attack` object."
-                )
-            else:
-                self.attack = attack_or_attack_build_fn
-        else:
-            self.attack = None
-            self._attack_build_fn = attack_or_attack_build_fn
-
+        self.attack = attack
         self.dataset = dataset
         self.attack_args = attack_args
-        self.attack_log_manager = AttackArgs.create_loggers_from_args(attack_args)
+        self.attack_log_manager = None
 
         # This is to be set if loading from a checkpoint
         self._checkpoint = None
@@ -100,6 +88,17 @@ class Attacker:
 
     def attack_dataset(self):
         """Start the attack."""
+        if self.attack_args.silent:
+            logger.setLevel(logging.ERROR)
+
+        if self.attack_args.query_budget:
+            self.attack.goal_function.query_budget = self.attack_args.query_budget
+
+        if not self.attack_log_manager:
+            self.attack_log_manager = AttackArgs.create_loggers_from_args(
+                self.attack_args
+            )
+
         textattack.shared.utils.set_seed(self.attack_args.random_seed)
         if self.dataset.shuffled and self.attack_args.checkpoint_interval:
             # Not allowed b/c we cannot recover order of shuffled data
@@ -117,12 +116,12 @@ class Attacker:
                 )
             self._attack_parallel()
         else:
-            if self.attack is None:
-                self.attack = self._attack_build_fn()
-                assert isinstance(
-                    self.attack, Attack
-                ), f"`attack_or_attack_build_fn` must return an instance of `Attack` class, but return type `{type(self.attack)}`."
             self._attack()
+
+        # Turn logger back on since other modules can be using Attacker (e.g. Trainer)
+        if self.attack_args.silent:
+            logger.setLevel(logging.INFO)
+        return self.attack_log_manager.results
 
     def _attack(self):
         """Internal method that carries out attack.
@@ -140,10 +139,15 @@ class Attacker:
             num_remaining_attacks = self.attack_args.num_examples
             start = self.attack_args.num_examples_offset
             end = start + self.attack_args.num_examples
-            worklist = collections.deque(range(start, end))
+            worklist = list(range(start, end))
+            if self.attack_args.shuffle:
+                random.shuffle(worklist)
+            # We make `worklist` deque (linked-list) for easy pop and append.
+            worklist = collections.deque(worklist)
             worklist_tail = worklist[-1]
 
-        print(self.attack, "\n")
+        if not self.attack_args.silent:
+            print(self.attack, "\n")
 
         pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
         if self._checkpoint:
@@ -155,11 +159,17 @@ class Attacker:
             num_failures = 0
             num_successes = 0
 
+        if hasattr(self.attack.goal_function.model, "to"):
+            self.attack.goal_function.model.to(textattack.shared.utils.device)
+
         i = 0
         while worklist:
             idx = worklist.popleft()
             i += 1
-            example, ground_truth_output = self.dataset[idx]
+            try:
+                example, ground_truth_output = self.dataset[idx]
+            except IndexError:
+                continue
             example = textattack.shared.AttackedText(example)
             if self.dataset.label_names is not None:
                 example.attack_attrs["label_names"] = self.dataset.label_names
@@ -223,7 +233,11 @@ class Attacker:
             num_remaining_attacks = self.attack_args.num_examples
             start = self.attack_args.num_examples_offset
             end = start + self.attack_args.num_examples
-            worklist = collections.deque(range(start, end))
+            worklist = list(range(start, end))
+            if self.attack_args.shuffle:
+                random.shuffle(worklist)
+            # We make `worklist` deque (linked-list) for easy pop and append.
+            worklist = collections.deque(worklist)
             worklist_tail = worklist[-1]
 
         in_queue = torch.multiprocessing.Queue()
@@ -245,21 +259,19 @@ class Attacker:
         num_workers = self.attack_args.num_workers_per_device * num_gpus
         logger.info(f"Running {num_workers} worker(s) on {num_gpus} GPU(s).")
 
-        # Barrier for synchronizing worker processes.
-        # We want them to all wait until last process has loaded its attack
-        barrier = mp.Barrier(num_workers)
+        # Lock for synchronization
+        lock = mp.Lock()
 
         # Start workers.
-        # Use dill to serialize the function/callable.
-        attack_build_fn_str = dill.dumps(self._attack_build_fn)
-        torch.multiprocessing.Pool(
+        worker_pool = torch.multiprocessing.Pool(
             num_workers,
             attack_from_queue,
             (
                 self.attack_args,
-                attack_build_fn_str,
+                self.attack,
                 num_gpus,
-                barrier,
+                mp.Value("i", 1, lock=False),
+                lock,
                 in_queue,
                 out_queue,
             ),
@@ -277,6 +289,8 @@ class Attacker:
         while worklist:
             result = out_queue.get(block=True)
             if isinstance(result, Exception):
+                worker_pool.terminate()
+                worker_pool.join()
                 raise result
             idx, result = result
             self.attack_log_manager.log_result(result)
@@ -321,25 +335,26 @@ class Attacker:
                 new_checkpoint.save()
                 self.attack_log_manager.flush()
 
+        worker_pool.terminate()
+        worker_pool.join()
+
         pbar.close()
         print()
         # Enable summary stdout.
-        if self.attack_args.disable_stdout:
+        if not self.attack_args.silent and self.attack_args.disable_stdout:
             self.attack_log_manager.enable_stdout()
         self.attack_log_manager.log_summary()
         self.attack_log_manager.flush()
         print()
 
     @classmethod
-    def from_checkpoint(cls, attack_or_attack_build_fn, dataset, checkpoint):
+    def from_checkpoint(cls, attack, dataset, checkpoint):
         """Resume attacking from a saved checkpoint. Attacker and dataset must
         be recovered by the user again, while attack args are loaded from the
         saved checkpoint.
 
         Args:
-            attack_or_attack_build_fn (Union[textattack.Attack, callable]): ``Attack`` object or a zero-argument callable that returns the desired ``Attack`` object.
-                Zero-argument callable is required when attacking in parallel because the attack has to be newly initialized in each worker process (it is slow and difficult to
-                seralize ``Attack`` and share it across proccesses).
+            attack (textattack.Attack): ``Attack`` object for carrying out the attack.
             dataset (textattack.datasets.Dataset): Dataset to attack.
             checkpoint (Union[str, textattack.shared.AttackChecpoint]): Saved checkpoint or path of the saved checkpoint.
         """
@@ -349,7 +364,7 @@ class Attacker:
 
         if isinstance(checkpoint, str):
             checkpoint = textattack.shared.AttackCheckpoint.load(checkpoint)
-        attacker = cls(attack_or_attack_build_fn, dataset, checkpoint.attack_args)
+        attacker = cls(attack, dataset, checkpoint.attack_args)
         attacker.attack_log_manager = checkpoint.attack_log_manager
         attacker._checkpoint = checkpoint
         return attacker
@@ -424,30 +439,37 @@ def set_env_variables(gpu_id):
 
 
 def attack_from_queue(
-    attack_args, attack_build_fn_str, num_gpus, barrier, in_queue, out_queue
+    attack_args, attack, num_gpus, first_to_start, lock, in_queue, out_queue
 ):
     gpu_id = (torch.multiprocessing.current_process()._identity[0] - 1) % num_gpus
     set_env_variables(gpu_id)
     textattack.shared.utils.set_seed(attack_args.random_seed)
     if torch.multiprocessing.current_process()._identity[0] > 1:
         logging.disable()
-
-    attack_build_fn = dill.loads(attack_build_fn_str)
-    attack = attack_build_fn()
+    if hasattr(attack.goal_function.model, "to"):
+        attack.goal_function.model.to(textattack.shared.utils.device)
     assert isinstance(
         attack, Attack
-    ), f"`attack_build_fn` must return an instance of `Attack` class, but return type `{type(attack)}`."
+    ), f"`attack` must be of type `Attack`, but got type `{type(attack)}`."
 
-    proc = barrier.wait()
-    if proc == 0:
-        # Print attack if it's the last process to call `barrier.wait()`
-        print(attack, "\n")
+    # Simple non-synchronized check to see if it's the first process to reach this point.
+    # This let us avoid waiting for lock.
+    if bool(first_to_start.value):
+        # If it's first process to reach this step, we first try to acquire the lock to update the value.
+        with lock:
+            # Because another process could have changed `first_to_start=False` while we wait, we check again.
+            if bool(first_to_start.value):
+                first_to_start.value = 0
+                if not attack_args.silent:
+                    print(attack, "\n")
 
-    while not in_queue.empty():
+    while True:
         try:
-            i, example, ground_truth_output = in_queue.get()
+            i, example, ground_truth_output = in_queue.get(timeout=5)
             result = attack.attack(example, ground_truth_output)
             out_queue.put((i, result))
         except Exception as e:
+            if isinstance(e, queue.Empty):
+                continue
             out_queue.put(e)
             exit()

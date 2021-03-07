@@ -10,6 +10,7 @@ HUGGINGFACE_MODELS = {
     #
     # bert-base-uncased
     #
+    "bert-base-uncased": "bert-base-uncased",
     "bert-base-uncased-ag-news": "textattack/bert-base-uncased-ag-news",
     "bert-base-uncased-cola": "textattack/bert-base-uncased-CoLA",
     "bert-base-uncased-imdb": "textattack/bert-base-uncased-imdb",
@@ -45,6 +46,7 @@ HUGGINGFACE_MODELS = {
     #
     # roberta-base (RoBERTa is cased by default)
     #
+    "roberta-base": "roberta-base",
     "roberta-base-ag-news": "textattack/roberta-base-ag-news",
     "roberta-base-cola": "textattack/roberta-base-CoLA",
     "roberta-base-imdb": "textattack/roberta-base-imdb",
@@ -58,6 +60,7 @@ HUGGINGFACE_MODELS = {
     #
     # albert-base-v2 (ALBERT is cased by default)
     #
+    "albert-base-v2": "albert-base-v2",
     "albert-base-v2-ag-news": "textattack/albert-base-v2-ag-news",
     "albert-base-v2-cola": "textattack/albert-base-v2-CoLA",
     "albert-base-v2-imdb": "textattack/albert-base-v2-imdb",
@@ -72,6 +75,7 @@ HUGGINGFACE_MODELS = {
     #
     # xlnet-base-cased
     #
+    "xlnet-base-cased": "xlnet-base-cased",
     "xlnet-base-cased-cola": "textattack/xlnet-base-cased-CoLA",
     "xlnet-base-cased-imdb": "textattack/xlnet-base-cased-imdb",
     "xlnet-base-cased-mr": "textattack/xlnet-base-cased-rotten-tomatoes",
@@ -89,6 +93,7 @@ TEXTATTACK_MODELS = {
     #
     # LSTMs
     #
+    "lstm": "lstm-base",
     "lstm-ag-news": "models/classification/lstm/ag-news",
     "lstm-imdb": "models/classification/lstm/imdb",
     "lstm-mr": "models/classification/lstm/mr",
@@ -97,6 +102,7 @@ TEXTATTACK_MODELS = {
     #
     # CNNs
     #
+    "cnn": "cnn-base",
     "cnn-ag-news": "models/classification/cnn/ag-news",
     "cnn-imdb": "models/classification/cnn/imdb",
     "cnn-mr": "models/classification/cnn/rotten-tomatoes",
@@ -117,12 +123,11 @@ TEXTATTACK_MODELS = {
 
 @dataclass
 class ModelArgs:
-    """Arguments for loading model from command line input."""
+    """Arguments for loading base/pretrained or trained models."""
 
     model: str = None
     model_from_file: str = None
     model_from_huggingface: str = None
-    model_batch_size: int = 32
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -150,16 +155,11 @@ class ModelArgs:
             required=False,
             help="huggingface.co ID of pre-trained model to load",
         )
-        parser.add_argument(
-            "--model-batch-size",
-            type=int,
-            default=32,
-            help="The batch size for making calls to the model.",
-        )
+
         return parser
 
     @classmethod
-    def create_model_from_args(cls, args):
+    def create_model_from_args(cls, args, load_base=False):
         """Given ``ModelArgs``, return specified
         ``textattack.models.wrappers.ModelWrapper`` object."""
 
@@ -193,7 +193,7 @@ class ModelArgs:
 
             if not isinstance(model, textattack.models.wrappers.ModelWrapper):
                 raise TypeError(
-                    "Model must be of type "
+                    f"Variable `{model_name}` must be of type "
                     f"``textattack.models.ModelWrapper``, got type {type(model)}."
                 )
         elif (args.model in HUGGINGFACE_MODELS) or args.model_from_huggingface:
@@ -221,10 +221,8 @@ class ModelArgs:
                 f"Loading pre-trained model from HuggingFace model repository: {colored_model_name}"
             )
             model = model_class.from_pretrained(model_name)
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(model_name)
-            model = textattack.models.wrappers.HuggingFaceModelWrapper(
-                model, tokenizer, batch_size=args.model_batch_size
-            )
+            tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
+            model = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
         elif args.model in TEXTATTACK_MODELS:
             # Support loading TextAttack pre-trained models via just a keyword.
             model_path = TEXTATTACK_MODELS[args.model]
@@ -235,11 +233,11 @@ class ModelArgs:
             # a HuggingFace model).
             if isinstance(model, textattack.models.helpers.T5ForTextToText):
                 model = textattack.models.wrappers.HuggingFaceModelWrapper(
-                    model, model.tokenizer, batch_size=args.model_batch_size
+                    model, model.tokenizer
                 )
             else:
                 model = textattack.models.wrappers.PyTorchModelWrapper(
-                    model, model.tokenizer, batch_size=args.model_batch_size
+                    model, model.tokenizer
                 )
         elif args.model and os.path.exists(args.model):
             # Support loading TextAttack-trained models via just their folder path.
@@ -265,7 +263,7 @@ class ModelArgs:
                 model_path=args.model,
             )
             model = textattack.models.wrappers.PyTorchModelWrapper(
-                model, model.tokenizer, batch_size=args.model_batch_size
+                model, model.tokenizer
             )
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
@@ -274,3 +272,30 @@ class ModelArgs:
             model, textattack.models.wrappers.ModelWrapper
         ), "`model` must be of type `textattack.models.wrappers.ModelWrapper`."
         return model
+
+
+@dataclass
+class BaseModelArgs(ModelArgs):
+    """Arguments for instantiating base models."""
+
+    model_max_seq_len: int = None
+    model_num_labels: int = None
+
+    @classmethod
+    def add_parser_args(cls, parser):
+        parser = ModelArgs.add_parser_args(parser)
+        # Arguments that are needed if we want to create a model to train.
+        parser.add_argument(
+            "--model-max-seq-len",
+            type=int,
+            default=256,
+            help="The maximum sequence length of the model (ignored for RNNs).",
+        )
+        parser.add_argument(
+            "--model-num-labels",
+            type=int,
+            default=2,
+            help="The number of labels for classification",
+        )
+
+        return parser

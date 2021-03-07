@@ -117,6 +117,9 @@ class AttackArgs:
     Args:
         num_examples (int): The number of examples to attack. -1 for entire dataset.
         num_examples_offset (int): The offset to start at in the dataset.
+        query_budget (int): The maximum number of model queries allowed per example attacked.
+            This is optional and setting this overwrites the query budget set in `GoalFunction` object.
+        shuffle (bool): If `True`, shuffle the order in which we attack the dataset. Default is False.
         attack_n (bool): Whether to run attack until total of `n` examples have been attacked (not skipped).
         checkpoint_dir (str): The directory to save checkpoint files.
         checkpoint_interval (int): If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.
@@ -133,11 +136,14 @@ class AttackArgs:
         log_to_visdom (dict): Set this argument if you want to log attacks to Visdom. The dictionary should have the following
             three keys and their corresponding values: `"env", "port", "hostname"` (e.g. `{"env": "main", "port": 8097, "hostname": "localhost"}`).
         log_to_wandb (str): Name of the wandb project. Set this argument if you want to log attacks to Wandb.
-        disable_stdout (bool): Disable logging to stdout.
+        disable_stdout (bool): Disable logging attack results to stdout.
+        silent (bool): Disable all logging.
     """
 
     num_examples: int = 5
     num_examples_offset: int = 0
+    query_budget: int = None
+    shuffle: bool = False
     attack_n: bool = False
     checkpoint_dir: str = "checkpoints"
     checkpoint_interval: int = None
@@ -149,7 +155,8 @@ class AttackArgs:
     csv_coloring_style: str = "file"
     log_to_visdom: dict = None
     log_to_wandb: str = None
-    disable_stdout: str = False
+    disable_stdout: bool = False
+    silent: bool = False
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -171,12 +178,24 @@ class AttackArgs:
             help="The offset to start at in the dataset.",
         )
         parser.add_argument(
+            "--query-budget",
+            "-q",
+            type=int,
+            default=None,
+            help="The maximum number of model queries allowed per example attacked. Setting this overwrites the query budget set in `GoalFunction` object.",
+        )
+        parser.add_argument(
+            "--shuffle",
+            action="store_true",
+            default=False,
+            help="If `True`, shuffle the order in which we attack the dataset. Default is False.",
+        )
+        parser.add_argument(
             "--attack-n",
             action="store_true",
             default=False,
             help="Whether to run attack until `n` examples have been attacked (not skipped).",
         )
-
         parser.add_argument(
             "--checkpoint-dir",
             required=False,
@@ -258,8 +277,12 @@ class AttackArgs:
         )
 
         parser.add_argument(
-            "--disable-stdout", action="store_true", help="Disable logging to stdout"
+            "--disable-stdout",
+            action="store_true",
+            help="Disable logging attack results to stdout",
         )
+
+        parser.add_argument("--silent", action="store_true", help="Disable all logging")
 
         return parser
 
@@ -333,7 +356,7 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
             If this is set, it overrides any previous selection of transformation, constraints, goal function, and search method
         interactive (bool): If `True`, carry attack in interactive mode. Default is `False`.
         parallel (bool): If `True`, attack in parallel. Default is `False`.
-        query_budget (int): The maximum number of model queries allowed per example attacked.
+        model_batch_size (int): The batch size for making calls to the model.
         model_cache_size (int): The maximum number of items to keep in the model results cache at once.
         constraint-cache-size (int): The maximum number of items to keep in the constraints cache at once.
     """
@@ -346,7 +369,7 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
     attack_from_file: str = None
     interactive: bool = False
     parallel: bool = False
-    query_budget: int = float("inf")
+    model_batch_size: int = 32
     model_cache_size: int = 2 ** 18
     constraint_cache_size: int = 2 ** 18
 
@@ -418,11 +441,10 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
             help="Whether to run attacks interactively.",
         )
         parser.add_argument(
-            "--query-budget",
-            "-q",
+            "--model-batch-size",
             type=int,
-            default=float("inf"),
-            help="The maximum number of model queries allowed per example attacked.",
+            default=32,
+            help="The batch size for making calls to the model.",
         )
         parser.add_argument(
             "--model-cache-size",
@@ -498,8 +520,10 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
             )
         else:
             raise ValueError(f"Error: unsupported goal_function {goal_function}")
-        goal_function.query_budget = args.query_budget
+        if args.query_budget:
+            goal_function.query_budget = args.query_budget
         goal_function.model_cache_size = args.model_cache_size
+        goal_function.batch_size = args.model_batch_size
         return goal_function
 
     @classmethod
@@ -548,7 +572,8 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
                 )
             else:
                 raise ValueError(f"Invalid recipe {args.attack_recipe}")
-            recipe.goal_function.query_budget = args.query_budget
+            if args.query_budget:
+                recipe.goal_function.query_budget = args.query_budget
             recipe.goal_function.model_cache_size = args.model_cache_size
             recipe.constraint_cache_size = args.constraint_cache_size
             return recipe

@@ -19,6 +19,7 @@ def _cb(s):
 @dataclass
 class ModelEvalArgs(ModelArgs, DatasetArgs):
     random_seed: int = 765
+    batch_size: int = 32
     num_examples: int = 5
     num_examples_offset: int = 0
 
@@ -44,7 +45,7 @@ class EvalModelCommand(TextAttackCommand):
         i = 0
         while i < min(args.num_examples, len(dataset)):
             dataset_batch = dataset[
-                i : min(args.num_examples, i + args.model_batch_size)
+                i : min(args.num_examples, i + args.batch_size)
             ]
             batch_inputs = []
             for (text_input, ground_truth_output) in dataset_batch:
@@ -57,7 +58,7 @@ class EvalModelCommand(TextAttackCommand):
                 batch_preds = torch.Tensor(batch_preds)
 
             preds.extend(batch_preds)
-            i += args.model_batch_size
+            i += args.batch_size
 
         preds = torch.stack(preds).squeeze().cpu()
         ground_truth_outputs = torch.tensor(ground_truth_outputs).cpu()
@@ -106,6 +107,12 @@ class EvalModelCommand(TextAttackCommand):
         parser = DatasetArgs.add_parser_args(parser)
 
         parser.add_argument("--random-seed", default=765, type=int)
+        parser.add_argument(
+            "--batch-size",
+            type=int,
+            default=32,
+            help="The batch size for evaluating the model.",
+        )
         parser.add_argument(
             "--num-examples",
             "-n",

@@ -160,5 +160,11 @@ class GloveTokenizer(WordLevelTokenizer):
         )
         return [x.ids for x in encodings]
 
+    def __call__(self, input_texts):
+        if isinstance(input_texts, list):
+            return self.batch_encode(input_texts)
+        else:
+            return self.encode(input_texts)
+
     def convert_ids_to_tokens(self, ids):
         return [self.convert_id_to_word(_id) for _id in ids]

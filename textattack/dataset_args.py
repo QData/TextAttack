@@ -14,7 +14,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "glue",
         "mnli",
         "validation_matched",
-        "en",
         None,
         {0: 1, 1: 2, 2: 0},
     ),
@@ -27,7 +26,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "glue",
         "stsb",
         "validation",
-        "en",
         None,
         None,
         None,
@@ -35,7 +33,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     ),
     "bert-base-uncased-wnli": ("glue", "wnli", "validation"),
     "bert-base-uncased-mr": ("rotten_tomatoes", None, "test"),
-    "bert-base-uncased-snli": ("snli", None, "test", "en", None, {0: 1, 1: 2, 2: 0}),
+    "bert-base-uncased-snli": ("snli", None, "test", None, {0: 1, 1: 2, 2: 0}),
     "bert-base-uncased-yelp": ("yelp_polarity", None, "test"),
     #
     # distilbert-base-cased
@@ -49,7 +47,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "glue",
         "stsb",
         "validation",
-        "en",
         None,
         None,
         None,
@@ -62,7 +59,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "glue",
         "mnli",
         "validation_matched",
-        "en",
         None,
         {0: 1, 1: 2, 2: 0},
     ),
@@ -82,7 +78,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "roberta-base-qnli": ("glue", "qnli", "validation"),
     "roberta-base-rte": ("glue", "rte", "validation"),
     "roberta-base-sst2": ("glue", "sst2", "validation"),
-    "roberta-base-stsb": ("glue", "stsb", "validation", "en", None, None, None, 5.0),
+    "roberta-base-stsb": ("glue", "stsb", "validation", None, None, None, 5.0),
     "roberta-base-wnli": ("glue", "wnli", "validation"),
     #
     # albert-base-v2 (ALBERT is cased by default)
@@ -95,7 +91,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "albert-base-v2-qqp": ("glue", "qqp", "validation"),
     "albert-base-v2-snli": ("snli", None, "test"),
     "albert-base-v2-sst2": ("glue", "sst2", "validation"),
-    "albert-base-v2-stsb": ("glue", "stsb", "validation", "en", None, None, None, 5.0),
+    "albert-base-v2-stsb": ("glue", "stsb", "validation", None, None, None, 5.0),
     "albert-base-v2-wnli": ("glue", "wnli", "validation"),
     "albert-base-v2-yelp": ("yelp_polarity", None, "test"),
     #
@@ -110,7 +106,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         "glue",
         "stsb",
         "validation",
-        "en",
         None,
         None,
         None,
@@ -169,15 +164,22 @@ TEXTATTACK_DATASET_BY_MODEL = {
 class DatasetArgs:
     """Arguments for loading dataset from command line input."""
 
+    dataset_by_model: str = None
     dataset_from_huggingface: str = None
     dataset_from_file: str = None
-    shuffle: bool = None
 
     @classmethod
     def add_parser_args(cls, parser):
         """Adds dataset-related arguments to an argparser."""
 
         dataset_group = parser.add_mutually_exclusive_group()
+        dataset_group.add_argument(
+            "--dataset-by-model",
+            type=str,
+            required=False,
+            default=None,
+            help="Dataset to load depending on the name of the model",
+        )
         dataset_group.add_argument(
             "--dataset-from-huggingface",
             type=str,
@@ -192,14 +194,6 @@ class DatasetArgs:
             default=None,
             help="Dataset to load from a file.",
         )
-        parser.add_argument(
-            "--shuffle",
-            type=eval,
-            required=False,
-            choices=[True, False],
-            default="True",
-            help="Randomly shuffle the data before attacking",
-        )
         return parser
 
     @classmethod
@@ -213,16 +207,18 @@ class DatasetArgs:
 
         # Automatically detect dataset for huggingface & textattack models.
         # This allows us to use the --model shortcut without specifying a dataset.
-        if args.model in HUGGINGFACE_DATASET_BY_MODEL:
-            args.dataset_from_huggingface = HUGGINGFACE_DATASET_BY_MODEL[args.model]
-        elif args.model in TEXTATTACK_DATASET_BY_MODEL:
-            dataset = TEXTATTACK_DATASET_BY_MODEL[args.model]
+        if hasattr(args, "model"):
+            args.dataset_by_model = args.model
+        if args.dataset_by_model in HUGGINGFACE_DATASET_BY_MODEL:
+            args.dataset_from_huggingface = HUGGINGFACE_DATASET_BY_MODEL[
+                args.dataset_by_model
+            ]
+        elif args.dataset_by_model in TEXTATTACK_DATASET_BY_MODEL:
+            dataset = TEXTATTACK_DATASET_BY_MODEL[args.dataset_by_model]
             if dataset[0].startswith("textattack"):
                 # unsavory way to pass custom dataset classes
                 # ex: dataset = ('textattack.datasets.helpers.TedMultiTranslationDataset', 'en', 'de')
                 dataset = eval(f"{dataset[0]}")(*dataset[1:])
-                if args.shuffle:
-                    dataset.shuffle()
                 return dataset
             else:
                 args.dataset_from_huggingface = dataset
@@ -244,8 +240,6 @@ class DatasetArgs:
                 raise ValueError(f"Failed to import file {args.dataset_from_file}")
             try:
                 dataset = getattr(dataset_module, dataset_name)
-                if args.shuffle:
-                    dataset.shuffle()
             except AttributeError:
                 raise AttributeError(
                     f"Variable ``dataset`` not found in module {args.dataset_from_file}"
@@ -258,7 +252,7 @@ class DatasetArgs:
                 else:
                     dataset_args = (dataset_args,)
             dataset = textattack.datasets.HuggingFaceDataset(
-                *dataset_args, shuffle=args.shuffle
+                *dataset_args, shuffle=False
             )
         else:
             raise ValueError("Must supply pretrained model or dataset")

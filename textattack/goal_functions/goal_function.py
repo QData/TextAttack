@@ -6,6 +6,8 @@ goal_function: Goal functions determine if an attack has been successful.
 from abc import ABC, abstractmethod
 
 import lru
+import numpy as np
+import torch
 
 from textattack.goal_function_results.goal_function_result import (
     GoalFunctionResultStatus,
@@ -33,6 +35,7 @@ class GoalFunction(ABC):
         maximizable=False,
         use_cache=True,
         query_budget=float("inf"),
+        model_batch_size=32,
         model_cache_size=2 ** 20,
     ):
         validators.validate_model_goal_function_compatibility(
@@ -42,6 +45,7 @@ class GoalFunction(ABC):
         self.maximizable = maximizable
         self.use_cache = use_cache
         self.query_budget = query_budget
+        self.batch_size = model_batch_size
         if self.use_cache:
             self._call_model_cache = lru.LRU(model_cache_size)
         else:
@@ -150,8 +154,31 @@ class GoalFunction(ABC):
             return []
 
         inputs = [at.tokenizer_input for at in attacked_text_list]
+        outputs = []
+        i = 0
+        while i < len(inputs):
+            batch = inputs[i : i + self.batch_size]
+            batch_preds = self.model(batch)
 
-        outputs = self.model(inputs)
+            # Some seq-to-seq models will return a single string as a prediction
+            # for a single-string list. Wrap these in a list.
+            if isinstance(batch_preds, str):
+                batch_preds = [batch_preds]
+
+            # Get PyTorch tensors off of other devices.
+            if isinstance(batch_preds, torch.Tensor):
+                batch_preds = batch_preds.cpu()
+
+            if isinstance(batch_preds, list):
+                outputs.extends(batch_preds)
+            elif isinstance(batch_preds, np.ndarray):
+                outputs.append(torch.tensor(batch_preds))
+            else:
+                outputs.append(batch_preds)
+            i += self.batch_size
+
+        if isinstance(outputs[0], torch.Tensor):
+            outputs = torch.cat(outputs, dim=0)
 
         assert len(inputs) == len(
             outputs
@@ -195,5 +222,16 @@ class GoalFunction(ABC):
         if self.maximizable:
             attrs.append("maximizable")
         return attrs
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        if self.use_cache:
+            state["_call_model_cache"] = self._call_model_cache.get_size()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        if self.use_cache:
+            self._call_model_cache = lru.LRU(state["_call_model_cache"])
 
     __repr__ = __str__ = default_class_repr

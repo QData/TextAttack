@@ -23,7 +23,7 @@ class TensorFlowModelWrapper(ModelWrapper):
     def __init__(self, model):
         self.model = model
 
-    def __call__(self, text_input_list):
+    def __call__(self, text_input_list, **kwargs):
         text_array = np.array(text_input_list)
         preds = self.model(text_array)
         return preds.numpy()

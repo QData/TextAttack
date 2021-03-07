@@ -101,3 +101,12 @@ class GoogLMHelper:
         for word, prob in zip(uncached_words, probs):
             self.lm_cache[prefix, word] = prob
         return [self.lm_cache[prefix, word] for word in list_words]
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["lm_cache"] = self.lm_cache.get_size()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.lm_cache = lru.LRU(state["lm_cache"])

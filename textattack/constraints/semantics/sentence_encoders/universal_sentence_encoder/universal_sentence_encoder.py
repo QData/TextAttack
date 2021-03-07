@@ -21,7 +21,17 @@ class UniversalSentenceEncoder(SentenceEncoder):
         else:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
 
+        self._tfhub_url = tfhub_url
         self.model = hub.load(tfhub_url)
 
     def encode(self, sentences):
         return self.model(sentences).numpy()
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["model"] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.model = hub.load(self._tfhub_url)

@@ -36,6 +36,9 @@ dist/
 # Weights & Biases outputs
 wandb/
 
+# Tensorboard logs
+runs/
+
 # checkpoints
 checkpoints/
 
