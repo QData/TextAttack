@@ -13,6 +13,9 @@ from textattack.goal_function_results.goal_function_result import (
 from textattack.shared import validators
 from textattack.shared.utils import default_class_repr
 
+from captum.attr import LayerIntegratedGradients
+from copy import deepcopy
+
 
 class GoalFunction(ABC):
     """Evaluates how well a perturbed attacked_text object is achieving a
@@ -57,7 +60,7 @@ class GoalFunction(ABC):
         self.initial_attacked_text = attacked_text
         self.ground_truth_output = ground_truth_output
         self.num_queries = 0
-        result, _ = self.get_result(attacked_text, check_skip=True)
+        result, _ = self.get_result(attacked_text, enable_interpret=True, check_skip=True)
         return result, _
 
     def get_output(self, attacked_text):
@@ -65,14 +68,14 @@ class GoalFunction(ABC):
         model."""
         return self._get_displayed_output(self._call_model([attacked_text])[0])
 
-    def get_result(self, attacked_text, **kwargs):
+    def get_result(self, attacked_text, enable_interpret, **kwargs):
         """A helper method that queries ``self.get_results`` with a single
         ``AttackedText`` object."""
-        results, search_over = self.get_results([attacked_text], **kwargs)
+        results, search_over = self.get_results([attacked_text],enable_interpret, **kwargs)
         result = results[0] if len(results) else None
         return result, search_over
 
-    def get_results(self, attacked_text_list, check_skip=False):
+    def get_results(self, attacked_text_list, enable_interpret, check_skip=False):
         """For each attacked_text object in attacked_text_list, returns a
         result consisting of whether or not the goal has been achieved, the
         output for display purposes, and a score.
@@ -81,28 +84,79 @@ class GoalFunction(ABC):
         budget.
         """
         results = []
+        interpret_list = []
         if self.query_budget < float("inf"):
             queries_left = self.query_budget - self.num_queries
             attacked_text_list = attacked_text_list[:queries_left]
         self.num_queries += len(attacked_text_list)
         model_outputs = self._call_model(attacked_text_list)
+
+        if enable_interpret:
+            def captum_form(encoded):
+                input_dict = {k: [_dict[k] for _dict in encoded] for k in encoded[0]}
+                batch_encoded = { k: torch.tensor(v).to(device) for k, v in input_dict.items()}
+                return batch_encoded
+
+            clone = deepcopy(self.model)
+
+            def calculate(input_ids,attention_mask):
+                return clone.model(input_ids,attention_mask)[0]
+
+
+            lig = LayerIntegratedGradients(calculate, clone.model.distilbert.embeddings)
+
+
+            cnts = range(len(attacked_text_list))
+            for sample,cnt in zip(attacked_text_list,cnts):
+                encoded = self.model.tokenizer.encode([sample.text])
+                batch_encoded = captum_form([encoded])
+                bsl = torch.zeros(batch_encoded['input_ids'].size()).type(torch.LongTensor).to(device)
+                attributions,delta = lig.attribute(inputs=batch_encoded['input_ids'],
+                                              baselines=bsl,
+                                              additional_forward_args=(batch_encoded['attention_mask']),
+                                              n_steps = 10,
+                                              target = torch.argmax(model_outputs[cnt]).item(),
+                                              return_convergence_delta=True
+                                              )
+                atts = attributions.sum(dim=-1).squeeze(0)
+                atts = atts / torch.norm(atts)
+        
+                interpret_list.append(atts)
+
+
         for attacked_text, raw_output in zip(attacked_text_list, model_outputs):
             displayed_output = self._get_displayed_output(raw_output)
             goal_status = self._get_goal_status(
                 raw_output, attacked_text, check_skip=check_skip
             )
             goal_function_score = self._get_score(raw_output, attacked_text)
-            results.append(
-                self._goal_function_result_type()(
-                    attacked_text,
-                    raw_output,
-                    displayed_output,
-                    goal_status,
-                    goal_function_score,
-                    self.num_queries,
-                    self.ground_truth_output,
+
+            if enable_interpret == False:
+                results.append(
+                    self._goal_function_result_type()(
+                        attacked_text,
+                        raw_output,
+                        displayed_output,
+                        goal_status,
+                        goal_function_score,
+                        self.num_queries,
+                        self.ground_truth_output,
+                    )
                 )
-            )
+            else:
+                results.append(
+                    self._goal_function_result_type()(
+                        attacked_text,
+                        raw_output,
+                        displayed_output,
+                        goal_status,
+                        goal_function_score,
+                        self.num_queries,
+                        self.ground_truth_output,
+                        interpret_list[idx]
+                    )
+                )
+
         return results, self.num_queries == self.query_budget
 
     def _get_goal_status(self, model_output, attacked_text, check_skip=False):
