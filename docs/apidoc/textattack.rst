@@ -44,17 +44,22 @@ Complete API Reference
    :undoc-members:
    :show-inheritance:
 
+.. automodule:: textattack.training_args
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. automodule:: textattack.trainer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 .. automodule:: textattack.dataset_args
    :members:
    :undoc-members:
    :show-inheritance:
 
 .. automodule:: textattack.model_args
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: textattack.training_args
    :members:
    :undoc-members:
    :show-inheritance:

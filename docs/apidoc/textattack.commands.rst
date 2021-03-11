@@ -12,7 +12,6 @@ Subpackages
 .. toctree::
    :maxdepth: 6
 
-   textattack.commands.training
 
 .. automodule:: textattack.commands.attack_command
    :members:
