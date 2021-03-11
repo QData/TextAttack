@@ -39,7 +39,7 @@ class BAEGarg2019(AttackRecipe):
     @staticmethod
     def build(model_wrapper):
         # "In this paper, we present a simple yet novel technique: BAE (BERT-based
-        # Adversarial Examples), which uses a language model_wrapper (LM) for token
+        # Adversarial Examples), which uses a language model (LM) for token
         # replacement to best fit the overall context. We perturb an input sentence
         # by either replacing a token or inserting a new token in the sentence, by
         # means of masking a part of the input and using a LM to fill in the mask."

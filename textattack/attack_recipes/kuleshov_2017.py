@@ -52,7 +52,7 @@ class Kuleshov2017(AttackRecipe):
         constraints.append(ThoughtVector(threshold=0.2, metric="max_euclidean"))
         #
         #
-        # Maximum language model_wrapper log-probability difference of λ_2 = 2. (eq. 5)
+        # Maximum language model log-probability difference of λ_2 = 2. (eq. 5)
         #
         constraints.append(GPT2(max_log_prob_diff=2.0))
         #

@@ -28,7 +28,7 @@ class InputReductionFeng2018(AttackRecipe):
     @staticmethod
     def build(model_wrapper):
         # At each step, we remove the word with the lowest importance value until
-        # the model_wrapper changes its prediction.
+        # the model changes its prediction.
         transformation = WordDeletion()
 
         constraints = [RepeatModification(), StopwordModification()]
@@ -43,7 +43,7 @@ class InputReductionFeng2018(AttackRecipe):
         #
         # "Instead of looking at the words with high importance values—what
         # interpretation methods commonly do—we take a complementary approach
-        # and study how the model_wrapper behaves when the supposedly unimportant words are
+        # and study how the model behaves when the supposedly unimportant words are
         # removed."
         #
         search_method = GreedyWordSwapWIR(wir_method="delete")

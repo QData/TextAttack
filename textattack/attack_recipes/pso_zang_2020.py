@@ -29,7 +29,7 @@ class PSOZang2020(AttackRecipe):
 
     Methodology description quoted from the paper:
 
-    "We propose a novel word substitution-based textual attack model_wrapper, which reforms
+    "We propose a novel word substitution-based textual attack model, which reforms
     both the aforementioned two steps. In the first step, we adopt a sememe-based word
     substitution strategy, which can generate more candidate adversarial examples with
     better semantic preservation. In the second step, we utilize particle swarm optimization

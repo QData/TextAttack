@@ -31,14 +31,14 @@ class CLARE2020(AttackRecipe):
 
     @staticmethod
     def build(model_wrapper):
-        # "This paper presents CLARE, a ContextuaLized AdversaRial Example generation model_wrapper
+        # "This paper presents CLARE, a ContextuaLized AdversaRial Example generation model
         # that produces fluent and grammatical outputs through a mask-then-infill procedure.
-        # CLARE builds on a pre-trained masked language model_wrapper and modifies the inputs in a context-aware manner.
+        # CLARE builds on a pre-trained masked language model and modifies the inputs in a context-aware manner.
         # We propose three contex-tualized  perturbations, Replace, Insert and Merge, allowing for generating outputs of
         # varied lengths."
         #
         # "We  experiment  with  a  distilled  version  of RoBERTa (RoBERTa_{distill}; Sanh et al., 2019)
-        # as the masked language model_wrapper for contextualized infilling."
+        # as the masked language model for contextualized infilling."
         # Because BAE and CLARE both use similar replacement papers, we use BAE's replacement method here.
 
         shared_masked_lm = transformers.AutoModelForCausalLM.from_pretrained(

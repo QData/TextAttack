@@ -79,7 +79,7 @@ class BERTAttackLi2020(AttackRecipe):
         #
         # "We first select the words in the sequence which have a high significance
         # influence on the final output logit. Let S = [w0, ··· , wi ··· ] denote
-        # the input sentence, and oy(S) denote the logit output by the target model_wrapper
+        # the input sentence, and oy(S) denote the logit output by the target model
         # for correct label y, the importance score Iwi is defined as
         # Iwi = oy(S) − oy(S\wi), where S\wi = [w0, ··· , wi−1, [MASK], wi+1, ···]
         # is the sentence after replacing wi with [MASK]. Then we rank all the words
