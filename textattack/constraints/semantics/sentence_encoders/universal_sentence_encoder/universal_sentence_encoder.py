@@ -22,9 +22,12 @@ class UniversalSentenceEncoder(SentenceEncoder):
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
 
         self._tfhub_url = tfhub_url
-        self.model = hub.load(tfhub_url)
+        # Lazily load the model
+        self.model = None
 
     def encode(self, sentences):
+        if not self.model:
+            self.model = hub.load(self._tfhub_url)
         return self.model(sentences).numpy()
 
     def __getstate__(self):
@@ -34,4 +37,4 @@ class UniversalSentenceEncoder(SentenceEncoder):
 
     def __setstate__(self, state):
         self.__dict__ = state
-        self.model = hub.load(self._tfhub_url)
+        self.model = None

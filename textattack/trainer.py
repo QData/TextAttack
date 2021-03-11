@@ -12,12 +12,14 @@ import tqdm
 import transformers
 
 import textattack
-from textattack.models.wrappers import HuggingFaceModelWrapper, PyTorchModelWrapper
+from textattack.models.helpers import LSTMForClassification, WordCNNForClassification
+from textattack.models.wrappers import ModelWrapper
 
 from .attack import Attack
 from .attack_args import AttackArgs
 from .attacker import Attacker
-from .training_args import TrainingArgs
+from .model_args import HUGGINGFACE_MODELS
+from .training_args import CommandLineTrainingArgs, TrainingArgs
 
 logger = textattack.shared.logger
 
@@ -51,14 +53,13 @@ class Trainer:
         training_args,
     ):
         assert isinstance(
-            model_wrapper,
-            (PyTorchModelWrapper, HuggingFaceModelWrapper),
-        ), f"`model_wrapper` must be of type `textattack.models.wrappers.PyTorchModelWrapper` or `textattack.models.wrappers.HuggingFaceModelWrapper`, but got type `{type(model_wrapper)}`."
+            model_wrapper, ModelWrapper
+        ), f"`model_wrapper` must be of type `textattack.models.wrappers.ModelWrapper`, but got type `{type(model_wrapper)}`."
+        # TODO: Support seq2seq training
         assert task_type in {
             "classification",
             "regression",
-            "seq2seq",
-        }, '`task_type` must either be "classification", "regression", or "seq2seq".'
+        }, '`task_type` must either be "classification" or "regression"'
         assert isinstance(
             attack, Attack
         ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
@@ -77,12 +78,22 @@ class Trainer:
                 "WARNING: `model_wrapper` and the victim model of `attack` is not the same model."
             )
 
+        if not hasattr(model_wrapper, "model"):
+            raise ValueError("Cannot detect `model` in `model_wrapper`")
+        else:
+            assert isinstance(model_wrapper.model, torch.nn.Module), f"`model` in `model_wrapper` must be of type `torch.nn.Module`, but got type `{type(model_wrapper.model)}`."
+        if not hasattr(model_wrapper, "tokenizer"):
+            raise ValueError("Cannot detect `tokenizer` in `model_wrapper`")
+
+
         self.model_wrapper = model_wrapper
         self.task_type = task_type
         self.attack = attack
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.training_args = training_args
+
+    
 
     def _generate_adversarial_examples(self, dataset, epoch, eval_mode=False):
         """Generate adversarial examples using attacker."""
@@ -113,9 +124,10 @@ class Trainer:
             shuffle=shuffle,
             attack_n=True,
             parallel=self.training_args.parallel,
-            num_workers_per_device=1,
+            num_workers_per_device=self.training_args.attack_num_workers_per_device,
             disable_stdout=True,
             silent=True,
+            ignore_exceptions=True,
             log_to_txt=log_file_name + ".txt",
             log_to_csv=log_file_name + ".csv",
         )
@@ -170,7 +182,7 @@ class Trainer:
         )
         with open(args_save_path, "w", encoding="utf-8") as f:
             json.dump(self.training_args.__dict__, f)
-        logger.info(f"Wrote original training self.training_args to {args_save_path}.")
+        logger.info(f"Wrote original training args to {args_save_path}.")
 
     def _print_training_args(self, total_training_steps):
         logger.info("==================== Running Training ====================")
@@ -195,7 +207,9 @@ class Trainer:
         global wandb
         import wandb
 
-        wandb.init(config=self.training_args.__dict__)
+        wandb.init(
+            project=self.training_args.wand_project, config=self.training_args.__dict__
+        )
 
     def _save_model_checkpoint(
         self, model, tokenizer, step=None, epoch=None, best=False, last=False
@@ -213,20 +227,24 @@ class Trainer:
         output_dir = os.path.join(self.training_args.output_dir, dir_name)
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
+
         if isinstance(model, torch.nn.DataParallel):
             model = model.module
-        if hasattr(model, "save_pretrained"):
+
+        if isinstance(model, (WordCNNForClassification, LSTMForClassification)):
+            model.save_pretrained(output_dir)
+        elif isinstance(model, transformers.PreTrainedModel):
             model.save_pretrained(output_dir)
             tokenizer.save_pretrained(output_dir)
         else:
+            state_dict = {k: v.cpu() for k, v in model.state_dict().items()}
             torch.save(
-                model.state_dict(),
-                os.path.join(output_dir, "model.pt"),
-                map_location=torch.device("cpu"),
+                state_dict,
+                os.path.join(output_dir, "pytorch_model.bin"),
             )
 
     def _get_optimizer_and_scheduler(self, model, total_training_steps):
-        if isinstance(self.model_wrapper, HuggingFaceModelWrapper):
+        if isinstance(model, transformers.PreTrainedModel):
             # Reference https://huggingface.co/transformers/training.html
             param_optimizer = list(model.named_parameters())
             no_decay = ["bias", "LayerNorm.bias", "LayerNorm.weight"]
@@ -270,11 +288,12 @@ class Trainer:
         num_gpus = torch.cuda.device_count()
         tokenizer = self.model_wrapper.tokenizer
         model = self.model_wrapper.model
+
         if self.training_args.parallel and num_gpus > 1:
             # TODO: torch.nn.parallel.DistributedDataParallel
             # Supposedly faster than DataParallel, but requires more work to setup properly.
             model = torch.nn.DataParallel(model)
-            logger.info("Training on {num_gpus} GPUs via `torch.nn.DataParallel`.")
+            logger.info(f"Training on {num_gpus} GPUs via `torch.nn.DataParallel`.")
             train_batch_size = self.training_args.per_device_train_batch_size * num_gpus
         else:
             train_batch_size = self.training_args.per_device_train_batch_size
@@ -310,22 +329,21 @@ class Trainer:
         # `best_score` is used to keep track of the best model across training.
         # Could be loss, accuracy, or other metrics.
         best_eval_score = 0.0
+        best_eval_score_epoch = 0
         best_model_path = None
         epochs_since_best_eval_score = 0
         self._print_training_args(total_training_steps)
         for epoch in range(1, self.training_args.num_epochs + 1):
             logger.info("==========================================================")
             logger.info(f"Epoch {epoch}")
-            adversarial_epoch = False
             # Adversarial attack and DataLoader creation
             if epoch > self.training_args.num_clean_epochs:
                 if (
-                    epoch - self.training_args.num_clean_epochs
+                    epoch - self.training_args.num_clean_epochs - 1
                 ) % self.training_args.attack_epoch_interval == 0:
                     # only generate a new adversarial training set every self.training_args.attack_period epochs
                     # after the clean epochs
                     # adv_example_dataset is instance of `textattack.datasets.Dataset
-                    adversarial_epoch = True
                     model.eval()
                     model.cpu()
                     adv_example_dataset = self._generate_adversarial_examples(
@@ -359,28 +377,14 @@ class Trainer:
             )
             for step, batch in enumerate(prog_bar):
                 input_texts, labels = batch
-                if isinstance(
-                    tokenizer,
-                    (
-                        transformers.PreTrainedTokenizer,
-                        transformers.PreTrainedTokenizerFast,
-                    ),
-                ):
+                labels = labels.to(textattack.shared.utils.device)
+                if isinstance(model, transformers.PreTrainedModel):
                     input_ids = tokenizer(
                         input_texts,
                         padding="max_length",
                         return_tensors="pt",
                         truncation=True,
                     )
-                else:
-                    input_ids = tokenizer(input_texts)
-                labels = labels.to(textattack.shared.utils.device)
-                if isinstance(
-                    input_ids,
-                    (transformers.tokenization_utils_base.BatchEncoding, dict),
-                ):
-                    ## dataloader collates dict backwards. This is a workaround to get
-                    # ids in the right shape for HuggingFace models
                     for key in input_ids:
                         if isinstance(input_ids[key], torch.Tensor):
                             input_ids[key] = input_ids[key].to(
@@ -388,6 +392,9 @@ class Trainer:
                             )
                     logits = model(**input_ids)[0]
                 else:
+                    input_ids = tokenizer(input_texts)
+                    if not isinstance(input_ids, torch.Tensor):
+                        input_ids = torch.tensor(input_ids)
                     input_ids = input_ids.to(textattack.shared.utils.device)
                     logits = model(input_ids)
 
@@ -464,13 +471,13 @@ class Trainer:
 
             if (
                 self.training_args.checkpoint_interval_epochs
-                and epoch > 0
-                and (epoch % self.training_args.checkpoint_interval_epochs) == 0
+                and ((epoch - 1) % self.training_args.checkpoint_interval_epochs) == 0
             ):
                 self._save_model_checkpoint(model, tokenizer, epoch=epoch)
 
             if eval_score > best_eval_score:
                 best_eval_score = eval_score
+                best_eval_score_epoch = epoch
                 epochs_since_best_eval_score = 0
                 self._save_model_checkpoint(model, tokenizer, best=True)
                 logger.info(
@@ -488,7 +495,7 @@ class Trainer:
                     break
 
             if self.training_args.eval_adversarial_robustness and (
-                epoch == self.training_args.num_clean_epochs or adversarial_epoch
+                epoch >= self.training_args.num_clean_epochs
             ):
                 # Evaluate adversarial robustness
                 model.eval()
@@ -561,6 +568,7 @@ class Trainer:
             self._save_model_checkpoint(model, tokenizer, last=True)
 
         self.model_wrapper.model = model
+        self.write_readme(best_eval_score, best_eval_score_epoch, train_batch_size)
 
     def _evaluate(self, model, tokenizer):
         model.eval()
@@ -583,26 +591,14 @@ class Trainer:
 
         with torch.no_grad():
             for input_texts, batch_labels in eval_dataloader:
-                if isinstance(
-                    tokenizer,
-                    (
-                        transformers.PreTrainedTokenizer,
-                        transformers.PreTrainedTokenizerFast,
-                    ),
-                ):
+                batch_labels = batch_labels.to(textattack.shared.utils.device)
+                if isinstance(model, transformers.PreTrainedModel):
                     input_ids = tokenizer(
                         input_texts,
                         padding="max_length",
                         return_tensors="pt",
                         truncation=True,
                     )
-                else:
-                    input_ids = tokenizer(input_texts)
-                batch_labels = batch_labels.to(textattack.shared.utils.device)
-                if isinstance(
-                    input_ids,
-                    (transformers.tokenization_utils_base.BatchEncoding, dict),
-                ):
                     for key in input_ids:
                         if isinstance(input_ids[key], torch.Tensor):
                             input_ids[key] = input_ids[key].to(
@@ -610,6 +606,9 @@ class Trainer:
                             )
                     batch_logits = model(**input_ids)[0]
                 else:
+                    input_ids = tokenizer(input_texts)
+                    if not isinstance(input_ids, torch.Tensor):
+                        input_ids = torch.tensor(input_ids)
                     input_ids = input_ids.to(textattack.shared.utils.device)
                     batch_logits = model(input_ids)
 
@@ -633,3 +632,92 @@ class Trainer:
         model = self.model_wrapper.model
         tokenizer = self.model_wrapper.tokenizer
         return self._evaluate(model, tokenizer)
+
+    def write_readme(self, best_eval_score, best_eval_score_epoch, train_batch_size):
+        if isinstance(self.training_args, CommandLineTrainingArgs):
+            model_name = self.training_args.model_name_or_path
+        elif isinstance(self.model_wrapper.model, transformers.PreTrainedModel):
+            if (
+                hasattr(self.model_wrapper.model.config, "_name_or_path")
+                and self.model_wrapper.model.config._name_or_path in HUGGINGFACE_MODELS
+            ):
+                # TODO Better way than just checking HUGGINGFACE_MODELS ?
+                model_name = self.model_wrapper.model.config._name_or_path
+            elif hasattr(self.model_wrapper.model.config, "model_type"):
+                model_name = self.model_wrapper.model.config.model_type
+            else:
+                model_name = ""
+        else:
+            model_name = ""
+
+        if model_name:
+            model_name = f"`{model_name}`"
+
+        if (
+            isinstance(self.training_args, CommandLineTrainingArgs)
+            and self.training_args.model_max_length
+        ):
+            model_max_length = self.training_args.model_max_length
+        elif isinstance(self.model_wrapper.model, transformers.PreTrainedModel):
+            model_max_length = self.model_wrapper.config.max_position_embeddings
+        elif isinstance(
+            self.model_wrapper.model, (LSTMForClassification, WordCNNForClassification)
+        ):
+            model_max_length = self.model_wrapper.model.max_length
+        else:
+            model_max_length = None
+
+        if model_max_length:
+            model_max_length_str = f" a maximum sequence length of {model_max_length},"
+        else:
+            model_max_length_str = ""
+
+        if isinstance(
+            self.train_dataset, textattack.datasets.HuggingFaceDataset
+        ) and hasattr(self.train_dataset, "_name"):
+            dataset_name = self.train_dataset._name
+            if hasattr(self.train_dataset, "_subset"):
+                dataset_name += f" ({self.train_dataset._subset})"
+        elif isinstance(
+            self.eval_dataset, textattack.datasets.HuggingFaceDataset
+        ) and hasattr(self.eval_dataset, "_name"):
+            dataset_name = self.eval_dataset._name
+            if hasattr(self.eval_dataset, "_subset"):
+                dataset_name += f" ({self.eval_dataset._subset})"
+        else:
+            dataset_name = None
+
+        if dataset_name:
+            dataset_str = (
+                "and the `{dataset_name}` dataset loaded using the `datasets` library"
+            )
+        else:
+            dataset_str = ""
+
+        loss_func = (
+            "mean squared error" if self.task_type == "regression" else "cross-entropy"
+        )
+        metric_name = (
+            "pearson correlation" if self.task_type == "regression" else "accuracy"
+        )
+        epoch_info = f"{best_eval_score_epoch} epoch" + (
+            "s" if best_eval_score_epoch > 1 else ""
+        )
+        readme_text = f"""
+            ## TextAttack Model Card
+
+            This {model_name} model was fine-tuned using TextAttack{dataset_str}. The model was fine-tuned
+            for {self.training_args.num_epochs} epochs with a batch size of {train_batch_size},
+            {model_max_length_str} and an initial learning rate of {self.training_args.learning_rate}.
+            Since this was a {self.task_type} task, the model was trained with a {loss_func} loss function.
+            The best score the model achieved on this task was {best_eval_score}, as measured by the
+            eval set {metric_name}, found after {epoch_info}.
+
+            For more information, check out [TextAttack on Github](https://github.com/QData/TextAttack).
+
+            """
+
+        readme_save_path = os.path.join(self.training_args.output_dir, "README.md")
+        with open(readme_save_path, "w", encoding="utf-8") as f:
+            f.write(readme_text.strip() + "\n")
+        logger.info(f"Wrote README to {readme_save_path}.")

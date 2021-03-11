@@ -26,22 +26,21 @@ class AttackResumeCommand(TextAttackCommand):
         if args.checkpoint_interval:
             checkpoint.attack_args.checkpoint_interval = args.checkpoint_interval
 
-        def attack_build_fn():
-            model_wrapper = ModelArgs.create_model_from_args(attack_args)  # noqa: F821
-
-            attack = CommandLineAttackArgs.create_attack_from_args(
-                attack_args, model_wrapper  # noqa: F821
-            )
-            return attack
-
+        model_wrapper = ModelArgs.create_model_from_args(
+            checkpoint.attack_args.attack_args
+        )
+        attack = CommandLineAttackArgs.create_attack_from_args(
+            checkpoint.attack_args, model_wrapper
+        )
         dataset = DatasetArgs.parse_dataset_from_args(checkpoint.attack_args)
-        attacker = Attacker.from_checkpoint(attack_build_fn, dataset, checkpoint)
+        attacker = Attacker.from_checkpoint(attack, dataset, checkpoint)
         attacker.attack_dataset()
 
     def _parse_checkpoint_from_args(self, args):
         file_name = os.path.basename(args.checkpoint_file)
         if file_name.lower() == "latest":
             dir_path = os.path.dirname(args.checkpoint_file)
+            dir_path = dir_path if dir_path else "."
             chkpt_file_names = [
                 f for f in os.listdir(dir_path) if f.endswith(".ta.chkpt")
             ]

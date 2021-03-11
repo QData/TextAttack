@@ -13,7 +13,7 @@ from .attack_args import AttackArgs, CommandLineAttackArgs
 from .augment_args import AugmenterArgs
 from .dataset_args import DatasetArgs
 from .model_args import ModelArgs
-from .training_args import TrainingArgs
+from .training_args import TrainingArgs, CommandLineTrainingArgs
 from .attack import Attack
 from .attacker import Attacker
 from .trainer import Trainer

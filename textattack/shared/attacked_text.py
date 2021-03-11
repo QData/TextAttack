@@ -439,17 +439,18 @@ class AttackedText:
             model_wrapper (textattack.models.wrappers.ModelWrapper): ModelWrapper of the target model
 
         Returns:
-            word2token_mapping (dict[str. list[int]]): Dictionary that maps word to list of indices.
+            word2token_mapping (dict[int, list[int]]): Dictionary that maps i-th word to list of indices.
         """
         tokens = model_wrapper.tokenize([self.tokenizer_input], strip_prefix=True)[0]
         word2token_mapping = {}
         j = 0
         last_matched = 0
+
         for i, word in enumerate(self.words):
             matched_tokens = []
             while j < len(tokens) and len(word) > 0:
                 token = tokens[j].lower()
-                idx = word.find(token)
+                idx = word.lower().find(token)
                 if idx == 0:
                     word = word[idx + len(token) :]
                     matched_tokens.append(j)
@@ -457,9 +458,10 @@ class AttackedText:
                 j += 1
 
             if not matched_tokens:
+                word2token_mapping[i] = None
                 j = last_matched
             else:
-                word2token_mapping[self.words[i]] = matched_tokens
+                word2token_mapping[i] = matched_tokens
 
         return word2token_mapping
 

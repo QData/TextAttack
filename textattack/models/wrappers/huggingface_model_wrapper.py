@@ -14,7 +14,8 @@ from .pytorch_model_wrapper import PyTorchModelWrapper
 class HuggingFaceModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""
 
-    def __init__(self, model, tokenizer, max_length=256):
+    def __init__(self, model, tokenizer):
+        assert isinstance(model, transformers.PreTrainedModel), f"`model` must be of type `transformers.PreTrainedModel`, but got type {type(model)}."
         assert isinstance(
             tokenizer,
             (transformers.PreTrainedTokenizer, transformers.PreTrainedTokenizerFast),
@@ -22,7 +23,6 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
         self.model = model
         self.tokenizer = tokenizer
-        self.max_length = max_length
 
     def __call__(self, text_input_list):
         """Passes inputs to HuggingFace models as keyword arguments.
@@ -30,11 +30,18 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         (Regular PyTorch ``nn.Module`` models typically take inputs as
         positional arguments.)
         """
+        # Default max length is set to be int(1e30), so we force 512 to enable batching.
+        max_length = (
+            512
+            if self.tokenizer.model_max_length == int(1e30)
+            else self.tokenizer.model_max_length
+        )
         inputs_dict = self.tokenizer(
             text_input_list,
-            max_length=self.max_length,
             add_special_tokens=True,
             padding="max_length",
+            max_length=max_length,
+            truncation=True,
             return_tensors="pt",
         )
         model_device = next(self.model.parameters()).device
@@ -83,7 +90,11 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         self.model.zero_grad()
         model_device = next(self.model.parameters()).device
         input_dict = self.tokenizer(
-            text_input, add_special_tokens=True, return_tensors="pt"
+            text_input,
+            add_special_tokens=True,
+            return_tensors="pt",
+            padding="max_length",
+            truncation=True,
         )
         for key in input_dict:
             if isinstance(input_dict[key], torch.Tensor):
@@ -121,6 +132,8 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             tokens (list[list[str]]): List of list of tokens as strings
         """
         return [
-            self.tokenizer.convert_ids_to_tokens(self.tokenizer(x)["input_ids"])
+            self.tokenizer.convert_ids_to_tokens(
+                self.tokenizer(x, truncation=True)["input_ids"]
+            )
             for x in inputs
         ]

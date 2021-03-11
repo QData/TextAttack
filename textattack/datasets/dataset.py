@@ -14,13 +14,11 @@ import torch
 
 class Dataset(torch.utils.data.Dataset):
     """Basic class for dataset. It operates as a map-style dataset, fetching
-    data via `__getitem__` and `__len__` methods. For datasets that fetch data
-    via `__iter__` protocol should be created using `IterableDataset` class.
+    data via `__getitem__` and `__len__` methods.
 
     Args:
         dataset (list_like): A list-like iterable of ``(input, output)`` pairs. Here, `output` can either be an integer representing labels for classification
-            or a string for seq2seq tasks. If input consists of multiple sequences (e.g. SNLI), iterable
-            should be of the form ``([input_1, input_2, ...], output)`` and ``input_columns`` parameter must be set.
+            or a string for seq2seq tasks. If input consists of multiple sequences (e.g. SNLI), iterable should be of the form ``([input_1, input_2, ...], output)`` and ``input_columns`` parameter must be set.
         input_columns (list[str], optional): List of column names of inputs in order. Default is ``["text"]`` for single text input.
         label_map (dict, optional): Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than
             provided in the ``datasets`` version of the dataset. For example, if dataset's arrangement is 0 for negative and 1 for positive, but model's label
@@ -28,9 +26,7 @@ class Dataset(torch.utils.data.Dataset):
             (e.g. ``{"positive": 1, "negative": 0}``)
         label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
             If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to ``None`` for non-classification datasets.
-        output_scale_factor (float): Factor to divide ground-truth outputs by.
-            Generally, TextAttack goal functions require model outputs between 0 and 1.
-            Some datasets are regression tasks, in which case this is necessary.
+        output_scale_factor (float): Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1. Some datasets are regression tasks, in which case this is necessary.
         shuffle (bool): Whether to shuffle the dataset on load.
 
     Examples::

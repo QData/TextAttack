@@ -85,13 +85,13 @@ class GreedyWordSwapWIR(SearchMethod):
             index_scores = np.array([result.score for result in leave_one_results])
 
         elif self.wir_method == "gradient":
-            victim_model = self.get_model()
+            victim_model = self.get_victim_model()
             index_scores = np.zeros(initial_text.num_words)
             grad_output = victim_model.get_grad(initial_text.tokenizer_input)
             gradient = grad_output["gradient"]
             word2token_mapping = initial_text.align_with_model_tokens(victim_model)
             for i, word in enumerate(initial_text.words):
-                matched_tokens = word2token_mapping[word]
+                matched_tokens = word2token_mapping[i]
                 if not matched_tokens:
                     index_scores[i] = 0.0
                 else:

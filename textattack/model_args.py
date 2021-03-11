@@ -1,4 +1,3 @@
-import argparse
 from dataclasses import dataclass
 import json
 import os
@@ -28,6 +27,7 @@ HUGGINGFACE_MODELS = {
     #
     # distilbert-base-cased
     #
+    "distilbert-base-uncased": "distilbert-base-uncased",
     "distilbert-base-cased-cola": "textattack/distilbert-base-cased-CoLA",
     "distilbert-base-cased-mrpc": "textattack/distilbert-base-cased-MRPC",
     "distilbert-base-cased-qqp": "textattack/distilbert-base-cased-QQP",
@@ -93,7 +93,6 @@ TEXTATTACK_MODELS = {
     #
     # LSTMs
     #
-    "lstm": "lstm-base",
     "lstm-ag-news": "models/classification/lstm/ag-news",
     "lstm-imdb": "models/classification/lstm/imdb",
     "lstm-mr": "models/classification/lstm/mr",
@@ -102,7 +101,6 @@ TEXTATTACK_MODELS = {
     #
     # CNNs
     #
-    "cnn": "cnn-base",
     "cnn-ag-news": "models/classification/cnn/ag-news",
     "cnn-imdb": "models/classification/cnn/imdb",
     "cnn-mr": "models/classification/cnn/rotten-tomatoes",
@@ -140,7 +138,7 @@ class ModelArgs:
             type=str,
             required=False,
             default=None,
-            help='Name of or path to a pre-trained model to attack. Usage: "--model {model}:{arg_1}={value_1},{arg_3}={value_3},...". Choices: '
+            help="Name of or path to a pre-trained TextAttack model to load. Choices: "
             + str(model_names),
         )
         model_group.add_argument(
@@ -153,13 +151,13 @@ class ModelArgs:
             "--model-from-huggingface",
             type=str,
             required=False,
-            help="huggingface.co ID of pre-trained model to load",
+            help="Name of or path of pre-trained HuggingFace model to load.",
         )
 
         return parser
 
     @classmethod
-    def create_model_from_args(cls, args, load_base=False):
+    def create_model_from_args(cls, args):
         """Given ``ModelArgs``, return specified
         ``textattack.models.wrappers.ModelWrapper`` object."""
 
@@ -205,30 +203,47 @@ class ModelArgs:
                 if (args.model in HUGGINGFACE_MODELS)
                 else args.model_from_huggingface
             )
-
-            if ARGS_SPLIT_TOKEN in model_name:
-                model_class, model_name = model_name
-                model_class = eval(f"transformers.{model_class}")
-            else:
-                model_class, model_name = (
-                    transformers.AutoModelForSequenceClassification,
-                    model_name,
-                )
             colored_model_name = textattack.shared.utils.color_text(
                 model_name, color="blue", method="ansi"
             )
             textattack.shared.logger.info(
                 f"Loading pre-trained model from HuggingFace model repository: {colored_model_name}"
             )
-            model = model_class.from_pretrained(model_name)
-            tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
+            model = transformers.AutoModelForSequenceClassification.from_pretrained(
+                model_name
+            )
+            tokenizer = transformers.AutoTokenizer.from_pretrained(
+                model_name, use_fast=True
+            )
             model = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
         elif args.model in TEXTATTACK_MODELS:
             # Support loading TextAttack pre-trained models via just a keyword.
-            model_path = TEXTATTACK_MODELS[args.model]
-            model = textattack.shared.utils.load_textattack_model_from_path(
-                args.model, model_path
+            colored_model_name = textattack.shared.utils.color_text(
+                args.model, color="blue", method="ansi"
             )
+            if args.model.startswith("lstm"):
+                textattack.shared.logger.info(
+                    f"Loading pre-trained TextAttack LSTM: {colored_model_name}"
+                )
+                model = textattack.models.helpers.LSTMForClassification.from_pretrained(
+                    args.model
+                )
+            elif args.model.startswith("cnn"):
+                textattack.shared.logger.info(
+                    f"Loading pre-trained TextAttack CNN: {colored_model_name}"
+                )
+                model = (
+                    textattack.models.helpers.WordCNNForClassification.from_pretrained(
+                        args.model
+                    )
+                )
+            elif args.model.startswith("t5"):
+                model = textattack.models.helpers.T5ForTextToText.from_pretrained(
+                    args.model
+                )
+            else:
+                raise ValueError(f"Unknown textattack model {args.model}")
+
             # Choose the approprate model wrapper (based on whether or not this is
             # a HuggingFace model).
             if isinstance(model, textattack.models.helpers.T5ForTextToText):
@@ -243,28 +258,40 @@ class ModelArgs:
             # Support loading TextAttack-trained models via just their folder path.
             # If `args.model` is a path/directory, let's assume it was a model
             # trained with textattack, and try and load it.
-            model_args_json_path = os.path.join(args.model, "train_args.json")
-            if not os.path.exists(model_args_json_path):
-                raise FileNotFoundError(
-                    f"Tried to load model from path {args.model} - could not find train_args.json."
+            if os.path.exists(os.path.join(args.model, "t5-wrapper-config.json")):
+                model = textattack.models.helpers.T5ForTextToText.from_pretrained(
+                    args.model
                 )
-            model_train_args = json.loads(open(model_args_json_path).read())
-            if model_train_args["model"] not in {"cnn", "lstm"}:
-                # for huggingface models, set args.model to the path of the model
-                model_train_args["model"] = args.model
-            num_labels = model_train_args["num_labels"]
-            from textattack.commands.train_model.train_args_helpers import (
-                model_from_args,
-            )
-
-            model = model_from_args(
-                argparse.Namespace(**model_train_args),
-                num_labels,
-                model_path=args.model,
-            )
-            model = textattack.models.wrappers.PyTorchModelWrapper(
-                model, model.tokenizer
-            )
+                model = textattack.models.wrappers.HuggingFaceModelWrapper(
+                    model, model.tokenizer
+                )
+            elif os.path.exists(os.path.join(args.model, "config.json")):
+                with open(os.path.join(args.model, "config.json")) as f:
+                    config = json.load(f)
+                model_class = config["architectures"]
+                if (
+                    model_class == "LSTMForClassification"
+                    or model_class == "WordCNNForClassification"
+                ):
+                    model = eval(
+                        f"textattack.models.helpers.{model_class}.from_pretrained({args.model})"
+                    )
+                    model = textattack.models.wrappers.PyTorchModelWrapper(
+                        model, model.tokenizer
+                    )
+                else:
+                    # assume the model is from HuggingFace.
+                    model = (
+                        transformers.AutoModelForSequenceClassification.from_pretrained(
+                            args.model
+                        )
+                    )
+                    tokenizer = transformers.AutoTokenizer.from_pretrained(
+                        args.model, use_fast=True
+                    )
+                    model = textattack.models.wrappers.HuggingFaceModelWrapper(
+                        model, tokenizer
+                    )
         else:
             raise ValueError(f"Error: unsupported TextAttack model {args.model}")
 
@@ -272,30 +299,3 @@ class ModelArgs:
             model, textattack.models.wrappers.ModelWrapper
         ), "`model` must be of type `textattack.models.wrappers.ModelWrapper`."
         return model
-
-
-@dataclass
-class BaseModelArgs(ModelArgs):
-    """Arguments for instantiating base models."""
-
-    model_max_seq_len: int = None
-    model_num_labels: int = None
-
-    @classmethod
-    def add_parser_args(cls, parser):
-        parser = ModelArgs.add_parser_args(parser)
-        # Arguments that are needed if we want to create a model to train.
-        parser.add_argument(
-            "--model-max-seq-len",
-            type=int,
-            default=256,
-            help="The maximum sequence length of the model (ignored for RNNs).",
-        )
-        parser.add_argument(
-            "--model-num-labels",
-            type=int,
-            default=2,
-            help="The number of labels for classification",
-        )
-
-        return parser

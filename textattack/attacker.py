@@ -44,8 +44,14 @@ class Attacker:
         >>> attack = textattack.attack_recipes.TextFoolerJin2019.build(model_wrapper)
         >>> dataset = textattack.datasets.HuggingFaceDataset("imdb", split="test")
 
-        >>> # Attack 1000 samples with CSV logging and checkpoint saved every 100 interval
-        >>> attack_args = textattack.AttackArgs(num_examples=1000, log_to_csv="log.csv", checkpoint_interval=100, checkpoint_dir="checkpoints")
+        >>> # Attack 20 samples with CSV logging and checkpoint saved every 5 interval
+        >>> attack_args = textattack.AttackArgs(
+        ...     num_examples=20,
+        ...     log_to_csv="log.csv",
+        ...     checkpoint_interval=5,
+        ...     checkpoint_dir="checkpoints",
+        ...     disable_stdout=True
+        ... )
 
         >>> attacker = textattack.Attacker(attack, dataset, attack_args)
         >>> attacker.attack_dataset()
@@ -59,7 +65,7 @@ class Attacker:
             dataset, textattack.datasets.Dataset
         ), f"`dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(dataset)}`."
         assert isinstance(
-            attack_args, textattack.AttackArgs
+            attack_args, AttackArgs
         ), f"`attack_args` must be of type `textattack.AttackArgs`, but got type `{type(attack_args)}`."
 
         self.attack = attack
@@ -102,7 +108,9 @@ class Attacker:
         textattack.shared.utils.set_seed(self.attack_args.random_seed)
         if self.dataset.shuffled and self.attack_args.checkpoint_interval:
             # Not allowed b/c we cannot recover order of shuffled data
-            raise ValueError("Cannot use `--checkpoint-interval` with `--shuffle=True`")
+            raise ValueError(
+                "Cannot use `--checkpoint-interval` with dataset that has been internally shuffled."
+            )
 
         self.attack_args.num_examples = (
             len(self.dataset)
@@ -123,28 +131,41 @@ class Attacker:
             logger.setLevel(logging.INFO)
         return self.attack_log_manager.results
 
+    def _get_worklist(self, start, end, num_examples, shuffle):
+        if end - start > num_examples:
+            logger.warn(
+                f"Attempting to attack {num_examples} samples when only {end-start} are available."
+            )
+        candidates = list(range(start, end))
+        if shuffle:
+            random.shuffle(candidates)
+        worklist = collections.deque(candidates[:num_examples])
+        candidates = collections.deque(candidates[num_examples:])
+        return worklist, candidates
+
     def _attack(self):
         """Internal method that carries out attack.
 
         No parallel processing is involved.
         """
+        self.attack.cuda()
         if self._checkpoint:
             num_remaining_attacks = self._checkpoint.num_remaining_attacks
             worklist = self._checkpoint.worklist
-            worklist_tail = self._checkpoint.worklist_tail
+            worklist_candidates = self._checkpoint.worklist_candidates
             logger.info(
                 f"Recovered from checkpoint previously saved at {self._checkpoint.datetime}."
             )
         else:
             num_remaining_attacks = self.attack_args.num_examples
-            start = self.attack_args.num_examples_offset
-            end = start + self.attack_args.num_examples
-            worklist = list(range(start, end))
-            if self.attack_args.shuffle:
-                random.shuffle(worklist)
             # We make `worklist` deque (linked-list) for easy pop and append.
-            worklist = collections.deque(worklist)
-            worklist_tail = worklist[-1]
+            # Candidates are other samples we can attack if we need more samples.
+            worklist, worklist_candidates = self._get_worklist(
+                self.attack_args.num_examples_offset,
+                len(self.dataset),
+                self.attack_args.num_examples,
+                self.attack_args.shuffle,
+            )
 
         if not self.attack_args.silent:
             print(self.attack, "\n")
@@ -173,18 +194,24 @@ class Attacker:
             example = textattack.shared.AttackedText(example)
             if self.dataset.label_names is not None:
                 example.attack_attrs["label_names"] = self.dataset.label_names
-            result = self.attack.attack(example, ground_truth_output)
+            try:
+                result = self.attack.attack(example, ground_truth_output)
+            except Exception as e:
+                if self.attack_args.ignore_exceptions:
+                    continue
+                else:
+                    raise e
             self.attack_log_manager.log_result(result)
 
             if not self.attack_args.disable_stdout:
                 print("\n")
 
             if isinstance(result, SkippedAttackResult) and self.attack_args.attack_n:
-                # `worklist_tail` keeps track of highest idx that has been part of worklist.
-                # This is useful for async-logging that can happen when using parallel processing.
-                # Used to get the next dataset element when attacking with `attack_n` = True.
-                worklist_tail += 1
-                worklist.append(worklist_tail)
+                if worklist_candidates:
+                    next_sample = worklist_candidates.popleft()
+                    worklist.append(next_sample)
+                else:
+                    logger.warn("`attack_n=True` but no more samples to attack.")
             else:
                 pbar.update(1)
 
@@ -205,7 +232,10 @@ class Attacker:
                 == 0
             ):
                 new_checkpoint = textattack.shared.AttackCheckpoint(
-                    self.attack_args, self.attack_log_manager, worklist, worklist_tail
+                    self.attack_args,
+                    self.attack_log_manager,
+                    worklist,
+                    worklist_candidates,
                 )
                 new_checkpoint.save()
                 self.attack_log_manager.flush()
@@ -213,7 +243,7 @@ class Attacker:
         pbar.close()
         print()
         # Enable summary stdout
-        if self.attack_args.disable_stdout:
+        if not self.attack_args.silent and self.attack_args.disable_stdout:
             self.attack_log_manager.enable_stdout()
         self.attack_log_manager.log_summary()
         self.attack_log_manager.flush()
@@ -225,20 +255,18 @@ class Attacker:
         if self._checkpoint:
             num_remaining_attacks = self._checkpoint.num_remaining_attacks
             worklist = self._checkpoint.worklist
-            worklist_tail = self._checkpoint.worklist_tail
+            worklist_candidates = self._checkpoint.worklist_candidates
             logger.info(
                 f"Recovered from checkpoint previously saved at {self._checkpoint.datetime}."
             )
         else:
             num_remaining_attacks = self.attack_args.num_examples
-            start = self.attack_args.num_examples_offset
-            end = start + self.attack_args.num_examples
-            worklist = list(range(start, end))
-            if self.attack_args.shuffle:
-                random.shuffle(worklist)
-            # We make `worklist` deque (linked-list) for easy pop and append.
-            worklist = collections.deque(worklist)
-            worklist_tail = worklist[-1]
+            worklist, worklist_candidates = self._get_worklist(
+                self.attack_args.num_examples_offset,
+                len(self.dataset),
+                self.attack_args.num_examples,
+                self.attack_args.shuffle,
+            )
 
         in_queue = torch.multiprocessing.Queue()
         out_queue = torch.multiprocessing.Queue()
@@ -262,13 +290,17 @@ class Attacker:
         # Lock for synchronization
         lock = mp.Lock()
 
+        # We move Attacker (and its components) to CPU b/c we don't want models using wrong GPU in worker processes.
+        self.attack.cpu()
+        torch.cuda.empty_cache()
+
         # Start workers.
         worker_pool = torch.multiprocessing.Pool(
             num_workers,
             attack_from_queue,
             (
-                self.attack_args,
                 self.attack,
+                self.attack_args,
                 num_gpus,
                 mp.Value("i", 1, lock=False),
                 lock,
@@ -276,6 +308,7 @@ class Attacker:
                 out_queue,
             ),
         )
+
         # Log results asynchronously and update progress bar.
         if self._checkpoint:
             num_results = self._checkpoint.results_count
@@ -287,26 +320,27 @@ class Attacker:
             num_successes = 0
         pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
         while worklist:
-            result = out_queue.get(block=True)
-            if isinstance(result, Exception):
-                worker_pool.terminate()
-                worker_pool.join()
-                raise result
-            idx, result = result
-            self.attack_log_manager.log_result(result)
+            idx, result = out_queue.get(block=True)
             worklist.remove(idx)
+            if isinstance(result, Exception):
+                if self.attack_args.ignore_exceptions:
+                    continue
+                else:
+                    worker_pool.terminate()
+                    worker_pool.join()
+                    raise result
+
+            self.attack_log_manager.log_result(result)
             if self.attack_args.attack_n and isinstance(result, SkippedAttackResult):
-                # worklist_tail keeps track of highest idx that has been part of worklist
-                # Used to get the next dataset element when attacking with `attack_n` = True.
-                worklist_tail += 1
-                try:
-                    example, ground_truth_output = self.dataset[worklist_tail]
+                if worklist_candidates:
+                    next_sample = worklist_candidates.popleft()
+                    example, ground_truth_output = self.dataset[next_sample]
                     example = textattack.shared.AttackedText(example)
                     if self.dataset.label_names is not None:
                         example.attack_attrs["label_names"] = self.dataset.label_names
-                    worklist.append(worklist_tail)
-                    in_queue.put((worklist_tail, example, ground_truth_output))
-                except IndexError:
+                    worklist.append(next_sample)
+                    in_queue.put((next_sample, example, ground_truth_output))
+                else:
                     logger.warn(
                         f"Attempted to attack {self.attack_args.num_examples} examples with but ran out of examples. "
                         f"You might see fewer number of results than {self.attack_args.num_examples}."
@@ -330,7 +364,10 @@ class Attacker:
                 == 0
             ):
                 new_checkpoint = textattack.shared.AttackCheckpoint(
-                    self.attack_args, self.attack_log_manager, worklist, worklist_tail
+                    self.attack_args,
+                    self.attack_log_manager,
+                    worklist,
+                    worklist_candidates,
                 )
                 new_checkpoint.save()
                 self.attack_log_manager.flush()
@@ -439,18 +476,19 @@ def set_env_variables(gpu_id):
 
 
 def attack_from_queue(
-    attack_args, attack, num_gpus, first_to_start, lock, in_queue, out_queue
+    attack, attack_args, num_gpus, first_to_start, lock, in_queue, out_queue
 ):
+    assert isinstance(
+        attack, Attack
+    ), f"`attack` must be of type `Attack`, but got type `{type(attack)}`."
+
     gpu_id = (torch.multiprocessing.current_process()._identity[0] - 1) % num_gpus
     set_env_variables(gpu_id)
     textattack.shared.utils.set_seed(attack_args.random_seed)
     if torch.multiprocessing.current_process()._identity[0] > 1:
         logging.disable()
-    if hasattr(attack.goal_function.model, "to"):
-        attack.goal_function.model.to(textattack.shared.utils.device)
-    assert isinstance(
-        attack, Attack
-    ), f"`attack` must be of type `Attack`, but got type `{type(attack)}`."
+
+    attack.cuda()
 
     # Simple non-synchronized check to see if it's the first process to reach this point.
     # This let us avoid waiting for lock.
@@ -471,5 +509,6 @@ def attack_from_queue(
         except Exception as e:
             if isinstance(e, queue.Empty):
                 continue
-            out_queue.put(e)
-            exit()
+            out_queue.put((i, e))
+            if not attack_args.ignore_exceptions:
+                exit(1)

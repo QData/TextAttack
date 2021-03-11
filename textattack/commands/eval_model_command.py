@@ -44,15 +44,13 @@ class EvalModelCommand(TextAttackCommand):
         ground_truth_outputs = []
         i = 0
         while i < min(args.num_examples, len(dataset)):
-            dataset_batch = dataset[
-                i : min(args.num_examples, i + args.batch_size)
-            ]
+            dataset_batch = dataset[i : min(args.num_examples, i + args.batch_size)]
             batch_inputs = []
             for (text_input, ground_truth_output) in dataset_batch:
                 attacked_text = textattack.shared.AttackedText(text_input)
                 batch_inputs.append(attacked_text.tokenizer_input)
                 ground_truth_outputs.append(ground_truth_output)
-            batch_preds = self.get_preds(model, batch_inputs)
+            batch_preds = model(batch_inputs)
 
             if not isinstance(batch_preds, torch.Tensor):
                 batch_preds = torch.Tensor(batch_preds)
