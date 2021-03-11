@@ -31,6 +31,14 @@ jobs:
         python setup.py install_egg_info # Workaround https://github.com/pypa/pip/issues/4537
         pip install -e .[dev]
         pip freeze
+    - name: Free disk space
+      run: |
+        sudo apt-get remove mysql-client libmysqlclient-dev -y >/dev/null 2>&1
+        sudo apt-get remove php* -y >/dev/null 2>&1
+        sudo apt-get autoremove -y >/dev/null 2>&1
+        sudo apt-get autoclean -y >/dev/null 2>&1
+        sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
+        docker rmi $(docker image ls -aq) >/dev/null 2>&1
     - name: Test with pytest
       run: |
         pytest tests -v
