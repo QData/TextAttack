@@ -15,7 +15,9 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""
 
     def __init__(self, model, tokenizer):
-        assert isinstance(model, transformers.PreTrainedModel), f"`model` must be of type `transformers.PreTrainedModel`, but got type {type(model)}."
+        assert isinstance(
+            model, transformers.PreTrainedModel
+        ), f"`model` must be of type `transformers.PreTrainedModel`, but got type {type(model)}."
         assert isinstance(
             tokenizer,
             (transformers.PreTrainedTokenizer, transformers.PreTrainedTokenizerFast),

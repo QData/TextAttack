@@ -1,11 +1,6 @@
 textattack.models.tokenizers package
 ====================================
 
-.. automodule:: textattack.models.tokenizers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 
 .. automodule:: textattack.models.tokenizers.glove_tokenizer
    :members:

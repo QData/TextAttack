@@ -81,10 +81,11 @@ class Trainer:
         if not hasattr(model_wrapper, "model"):
             raise ValueError("Cannot detect `model` in `model_wrapper`")
         else:
-            assert isinstance(model_wrapper.model, torch.nn.Module), f"`model` in `model_wrapper` must be of type `torch.nn.Module`, but got type `{type(model_wrapper.model)}`."
+            assert isinstance(
+                model_wrapper.model, torch.nn.Module
+            ), f"`model` in `model_wrapper` must be of type `torch.nn.Module`, but got type `{type(model_wrapper.model)}`."
         if not hasattr(model_wrapper, "tokenizer"):
             raise ValueError("Cannot detect `tokenizer` in `model_wrapper`")
-
 
         self.model_wrapper = model_wrapper
         self.task_type = task_type
@@ -92,8 +93,6 @@ class Trainer:
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
         self.training_args = training_args
-
-    
 
     def _generate_adversarial_examples(self, dataset, epoch, eval_mode=False):
         """Generate adversarial examples using attacker."""

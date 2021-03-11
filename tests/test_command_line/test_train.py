@@ -1,6 +1,5 @@
 import os
 import re
-import math
 
 from helpers import run_command_and_get_result
 

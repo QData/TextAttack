@@ -94,16 +94,29 @@ class TrainingArgs:
         if self.lr:
             self.learning_rate = self.lr
         assert self.num_epochs > 0, "`num_epochs` must be greater than 0."
-        assert self.num_clean_epochs >= 0, "`num_clean_epochs` must be greater than or equal to 0."
+        assert (
+            self.num_clean_epochs >= 0
+        ), "`num_clean_epochs` must be greater than or equal to 0."
         if self.early_stopping_epochs is not None:
-            assert self.early_stopping_epochs > 0, "`early_stopping_epochs` must be greater than 0."
-        assert self.attack_epoch_interval > 0, "`attack_epoch_interval` must be greater than 0."
+            assert (
+                self.early_stopping_epochs > 0
+            ), "`early_stopping_epochs` must be greater than 0."
+        assert (
+            self.attack_epoch_interval > 0
+        ), "`attack_epoch_interval` must be greater than 0."
         assert self.num_warmup_steps > 0, "`num_warmup_steps` must be greater than 0."
-        assert self.num_train_adv_examples > 0 or self.num_train_adv_examples == -1, "`num_train_adv_examples` must be greater than 0 or equal to -1."
-        assert self.num_eval_adv_examples > 0 or self.num_eval_adv_examples == -1, "`num_eval_adv_examples` must be greater than 0 or equal to -1."
-        assert self.gradient_accumulation_steps > 0, "`gradient_accumulation_steps` must be greater than 0."
-        assert self.num_clean_epochs <= self.num_epochs, f"`num_clean_epochs` cannot be greater than `num_epochs` ({self.num_clean_epochs} > {self.num_epochs})."
-
+        assert (
+            self.num_train_adv_examples > 0 or self.num_train_adv_examples == -1
+        ), "`num_train_adv_examples` must be greater than 0 or equal to -1."
+        assert (
+            self.num_eval_adv_examples > 0 or self.num_eval_adv_examples == -1
+        ), "`num_eval_adv_examples` must be greater than 0 or equal to -1."
+        assert (
+            self.gradient_accumulation_steps > 0
+        ), "`gradient_accumulation_steps` must be greater than 0."
+        assert (
+            self.num_clean_epochs <= self.num_epochs
+        ), f"`num_clean_epochs` cannot be greater than `num_epochs` ({self.num_clean_epochs} > {self.num_epochs})."
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -469,7 +482,7 @@ class _CommandLineTrainingArgs:
 
     @classmethod
     def create_attack_from_args(cls, args, model_wrapper):
-        import textattack
+        import textattack  # noqa: F401
 
         assert (
             args.attack in ATTACK_RECIPE_NAMES
