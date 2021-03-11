@@ -63,12 +63,10 @@ class HuggingFaceDataset(Dataset):
     TextAttack dataset.
 
     Args:
-        name_or_dataset (Union[datasets.Dataset, str]): the dataset name or actual ``datasets.Dataset`` object. If it's your custom ``datasets.Dataset`` object,
-            please pass the input and output columns via ``dataset_columns`` argument.
+        name_or_dataset (Union[datasets.Dataset, str]): the dataset name or actual ``datasets.Dataset`` object. If it's your custom ``datasets.Dataset`` object, please pass the input and output columns via ``dataset_columns`` argument.
         subset (str, optional): the subset of the main dataset. Dataset will be loaded as ``datasets.load_dataset(name, subset)``. Default is ``None``.
         split (str, optioanl): the split of the dataset. Default is "train".
-        dataset_columns (tuple(list[str], str)), optional): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and
-            ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs.
+        dataset_columns (tuple(list[str], str)), optional): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs.
         label_map (dict, optional): Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than
             provided in the ``datasets`` version of the dataset. For example, if dataset's arrangement is 0 for negative and 1 for positive, but model's label
             arrangement is 1 for negative and 0 for positive, pass ``{0: 1, 1: 0}``. Could also be used to remap literal labels to numerical labels,
@@ -96,6 +94,7 @@ class HuggingFaceDataset(Dataset):
             self._dataset = name_or_dataset
         else:
             self._name = name_or_dataset
+            self._subset = subset
             self._dataset = datasets.load_dataset(self._name, subset)[split]
             subset_print_str = f", subset {_cb(subset)}" if subset else ""
             textattack.shared.logger.info(
@@ -106,6 +105,12 @@ class HuggingFaceDataset(Dataset):
             self.input_columns,
             self.output_column,
         ) = dataset_columns or get_datasets_dataset_columns(self._dataset)
+
+        if not isinstance(self.input_columns, (list, tuple)):
+            raise ValueError(
+                "First element of `dataset_columns` must be a list or a tuple."
+            )
+
         self.label_map = label_map
         self.output_scale_factor = output_scale_factor
         if label_names:

@@ -19,6 +19,8 @@ from textattack.attack_results import (
 )
 from textattack.shared import logger, utils
 
+# TODO: Consider still keeping the old `Checkpoint` class and allow older checkpoints to be loaded to new TextAttack
+
 
 class AttackCheckpoint:
     """An object that stores necessary information for saving and loading
@@ -28,13 +30,17 @@ class AttackCheckpoint:
         attack_args (textattack.AttackArgs): Arguments of the original attack
         attack_log_manager (textattack.loggers.AttackLogManager): Object for storing attack results
         worklist (deque[int]): List of examples that will be attacked. Examples are represented by their indicies within the dataset.
-        worklist_tail (int): Highest index that had been in the worklist at any given time. Used to get the next dataset element
-            when attacking with `attack_n` = True.
+        worklist_candidates (int): List of other available examples we can attack. Used to get the next dataset element when `attack_n=True`.
         chkpt_time (float): epoch time representing when checkpoint was made
     """
 
     def __init__(
-        self, attack_args, attack_log_manager, worklist, worklist_tail, chkpt_time=None
+        self,
+        attack_args,
+        attack_log_manager,
+        worklist,
+        worklist_candidates,
+        chkpt_time=None,
     ):
         assert isinstance(
             attack_args, textattack.AttackArgs
@@ -46,7 +52,7 @@ class AttackCheckpoint:
         self.attack_args = copy.deepcopy(attack_args)
         self.attack_log_manager = attack_log_manager
         self.worklist = worklist
-        self.worklist_tail = worklist_tail
+        self.worklist_candidates = worklist_candidates
         if chkpt_time:
             self.time = chkpt_time
         else:

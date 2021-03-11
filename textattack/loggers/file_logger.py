@@ -23,6 +23,7 @@ class FileLogger(Logger):
             self.fout = sys.stdout
         elif isinstance(filename, str):
             directory = os.path.dirname(filename)
+            directory = directory if directory else "."
             if not os.path.exists(directory):
                 os.makedirs(directory)
             self.fout = open(filename, "w")

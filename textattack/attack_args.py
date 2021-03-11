@@ -119,13 +119,13 @@ class AttackArgs:
         num_examples_offset (int): The offset to start at in the dataset.
         query_budget (int): The maximum number of model queries allowed per example attacked.
             This is optional and setting this overwrites the query budget set in `GoalFunction` object.
-        shuffle (bool): If `True`, shuffle the order in which we attack the dataset. Default is False.
+        shuffle (bool): If `True`, shuffle the samples before we attack the dataset. Note this does not involve shuffling the dataset internally. Default is False.
         attack_n (bool): Whether to run attack until total of `n` examples have been attacked (not skipped).
         checkpoint_dir (str): The directory to save checkpoint files.
         checkpoint_interval (int): If set, checkpoint will be saved after attacking every N examples. If not set, no checkpoints will be saved.
         random_seed (int): Random seed for reproducibility. Default is 765.
         parallel (bool): Run attack using multiple CPUs/GPUs.
-        num_workers_per_device (int): Number of worker threads to run per device. For example, if you are using GPUs and ``num_workers_per_device=2``,
+        num_workers_per_device (int): Number of worker processes to run per device. For example, if you are using GPUs and ``num_workers_per_device=2``,
             then 2 processes will be running in each GPU. If you are only using CPU, then this is equivalent to running 2 processes concurrently.
         log_to_txt (str): Path to which to save attack logs as a text file. Set this argument if you want to save text logs.
             If the last part of the path ends with `.txt` extension, the path is assumed to path for output file.
@@ -138,6 +138,7 @@ class AttackArgs:
         log_to_wandb (str): Name of the wandb project. Set this argument if you want to log attacks to Wandb.
         disable_stdout (bool): Disable logging attack results to stdout.
         silent (bool): Disable all logging.
+        ignore_exceptions (bool): Skip examples that raise an error instead of exiting.
     """
 
     num_examples: int = 5
@@ -157,6 +158,7 @@ class AttackArgs:
     log_to_wandb: str = None
     disable_stdout: bool = False
     silent: bool = False
+    ignore_exceptions: bool = False
 
     @classmethod
     def add_parser_args(cls, parser):
@@ -188,7 +190,7 @@ class AttackArgs:
             "--shuffle",
             action="store_true",
             default=False,
-            help="If `True`, shuffle the order in which we attack the dataset. Default is False.",
+            help="If `True`, shuffle the samples before we attack the dataset. Default is False.",
         )
         parser.add_argument(
             "--attack-n",
@@ -225,7 +227,7 @@ class AttackArgs:
             "--num-workers-per-device",
             default=1,
             type=int,
-            help="Number of worker threads to run per device.",
+            help="Number of worker processes to run per device.",
         )
 
         parser.add_argument(
@@ -282,7 +284,15 @@ class AttackArgs:
             help="Disable logging attack results to stdout",
         )
 
-        parser.add_argument("--silent", action="store_true", help="Disable all logging")
+        parser.add_argument(
+            "--silent", action="store_true", default=False, help="Disable all logging"
+        )
+        parser.add_argument(
+            "--ignore-exceptions",
+            action="store_true",
+            default=False,
+            help="Skip examples that raise an error instead of exiting.",
+        )
 
         return parser
 
@@ -305,7 +315,9 @@ class AttackArgs:
             else:
                 txt_file_path = os.path.join(args.log_to_txt, f"{timestamp}-log.txt")
 
-            if not os.path.exists(os.path.dirname(txt_file_path)):
+            dir_path = os.path.dirname(txt_file_path)
+            dir_path = dir_path if dir_path else "."
+            if not os.path.exists(dir_path):
                 os.makedirs(os.path.dirname(txt_file_path))
 
             attack_log_manager.add_output_file(txt_file_path)
@@ -317,8 +329,10 @@ class AttackArgs:
             else:
                 csv_file_path = os.path.join(args.log_to_csv, f"{timestamp}-log.csv")
 
-            if not os.path.exists(os.path.dirname(csv_file_path)):
-                os.makedirs(os.path.dirname(csv_file_path))
+            dir_path = os.path.dirname(csv_file_path)
+            dir_path = dir_path if dir_path else "."
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
 
             color_method = (
                 None if args.csv_coloring_style == "plain" else args.csv_coloring_style
@@ -341,7 +355,7 @@ class AttackArgs:
 
 
 @dataclass
-class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
+class _CommandLineAttackArgs:
     """Command line interface attack args. This requires more arguments to
     create ``Attack`` object as specified.
 
@@ -376,9 +390,6 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
     @classmethod
     def add_parser_args(cls, parser):
         """Add listed args to command line parser."""
-        parser = ModelArgs.add_parser_args(parser)
-        parser = DatasetArgs.add_parser_args(parser)
-
         transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(
             WHITE_BOX_TRANSFORMATION_CLASS_NAMES.keys()
         )
@@ -458,8 +469,6 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
             default=2 ** 18,
             help="The maximum number of items to keep in the constraints cache at once.",
         )
-
-        parser = AttackArgs.add_parser_args(parser)
 
         return parser
 
@@ -614,3 +623,17 @@ class CommandLineAttackArgs(DatasetArgs, ModelArgs, AttackArgs):
             search_method,
             constraint_cache_size=args.constraint_cache_size,
         )
+
+
+# This neat trick allows use to reorder the arguments to avoid TypeErrors commonly found when inheriting dataclass.
+# https://stackoverflow.com/questions/51575931/class-inheritance-in-python-3-7-dataclasses
+@dataclass
+class CommandLineAttackArgs(AttackArgs, _CommandLineAttackArgs, DatasetArgs, ModelArgs):
+    @classmethod
+    def add_parser_args(cls, parser):
+        """Add listed args to command line parser."""
+        parser = ModelArgs.add_parser_args(parser)
+        parser = DatasetArgs.add_parser_args(parser)
+        parser = _CommandLineAttackArgs.add_parser_args(parser)
+        parser = AttackArgs.add_parser_args(parser)
+        return parser

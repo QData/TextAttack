@@ -11,6 +11,7 @@ The ``Attack`` class represents an adversarial attack composed of a goal functio
 """
 
 import lru
+import torch
 
 import textattack
 from textattack.attack_results import (
@@ -19,9 +20,13 @@ from textattack.attack_results import (
     SkippedAttackResult,
     SuccessfulAttackResult,
 )
+from textattack.constraints import Constraint, PreTransformationConstraint
 from textattack.goal_function_results import GoalFunctionResultStatus
+from textattack.goal_functions import GoalFunction
+from textattack.models.wrappers import ModelWrapper
+from textattack.search_methods import SearchMethod
 from textattack.shared import AttackedText, utils
-from textattack.transformations import CompositeTransformation
+from textattack.transformations import CompositeTransformation, Transformation
 
 
 class Attack:
@@ -112,8 +117,6 @@ class Attack:
         self.search_method.get_goal_results = self.goal_function.get_results
 
         self.search_method.filter_transformations = self.filter_transformations
-        if not search_method.is_black_box:
-            self.search_method.get_model = lambda: self.goal_function.model
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
@@ -124,6 +127,72 @@ class Attack:
             for constraint in self.constraints:
                 if hasattr(constraint, "clear_cache"):
                     constraint.clear_cache()
+
+    def cpu(self):
+        """Move any models that are part of Attack to CPU."""
+        visited = set()
+
+        def to_cpu(obj):
+            visited.add(id(obj))
+            if isinstance(obj, torch.nn.Module):
+                obj.cpu()
+            elif isinstance(
+                obj,
+                (
+                    Attack,
+                    GoalFunction,
+                    Transformation,
+                    SearchMethod,
+                    Constraint,
+                    PreTransformationConstraint,
+                    ModelWrapper,
+                ),
+            ):
+                for key in obj.__dict__:
+                    s_obj = obj.__dict__[key]
+                    if id(s_obj) not in visited:
+                        to_cpu(s_obj)
+            elif isinstance(obj, (list, tuple)):
+                for item in obj:
+                    if id(item) not in visited and isinstance(
+                        item, (Transformation, Constraint, PreTransformationConstraint)
+                    ):
+                        to_cpu(item)
+
+        to_cpu(self)
+
+    def cuda(self):
+        """Move any models that are part of Attack to GPU."""
+        visited = set()
+
+        def to_cuda(obj):
+            visited.add(id(obj))
+            if isinstance(obj, torch.nn.Module):
+                obj.to(textattack.shared.utils.device)
+            elif isinstance(
+                obj,
+                (
+                    Attack,
+                    GoalFunction,
+                    Transformation,
+                    SearchMethod,
+                    Constraint,
+                    PreTransformationConstraint,
+                    ModelWrapper,
+                ),
+            ):
+                for key in obj.__dict__:
+                    s_obj = obj.__dict__[key]
+                    if id(s_obj) not in visited:
+                        to_cuda(s_obj)
+            elif isinstance(obj, (list, tuple)):
+                for item in obj:
+                    if id(item) not in visited and isinstance(
+                        item, (Transformation, Constraint, PreTransformationConstraint)
+                    ):
+                        to_cuda(item)
+
+        to_cuda(self)
 
     def _get_transformations_uncached(self, current_text, original_text=None, **kwargs):
         """Applies ``self.transformation`` to ``text``, then filters the list

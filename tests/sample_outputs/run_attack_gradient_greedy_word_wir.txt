@@ -30,22 +30,24 @@ goldmember is funny enough to [91mreasoned[0m the embarrassment of bringing a 
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (100%)[0m --> [91m[FAILED][0m
+[92mPositive (100%)[0m --> [91mNegative (60%)[0m
 
-it may not be particularly innovative , but the film's crisp , unaffected style and air of gentle longing make it unexpectedly rewarding .
+it [92mmay[0m not be particularly [92minnovative[0m , but the film's [92mcrisp[0m , [92munaffected[0m [92mstyle[0m and [92mair[0m of [92mgentle[0m [92mlonging[0m [92mmake[0m it [92munexpectedly[0m [92mrewarding[0m .
+
+it [91mprobable[0m not be particularly [91mcreative[0m , but the film's [91mbrusque[0m , [91mundamaged[0m [91mshape[0m and [91mmidair[0m of [91mmild[0m [91mdesiring[0m [91mdoing[0m it [91msurprisingly[0m [91mbeneficial[0m .
 
 
 
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 2      |
-| Number of failed attacks:     | 1      |
+| Number of successful attacks: | 3      |
+| Number of failed attacks:     | 0      |
 | Number of skipped attacks:    | 0      |
 | Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 33.33% |
-| Attack success rate:          | 66.67% |
-| Average perturbed word %:     | 9.38%  |
+| Accuracy under attack:        | 0.0%   |
+| Attack success rate:          | 100.0% |
+| Average perturbed word %:     | 23.71% |
 | Average num. words per input: | 15.0   |
 | Avg num queries:              | 71.0   |
 +-------------------------------+--------+
