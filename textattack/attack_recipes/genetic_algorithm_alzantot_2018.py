@@ -5,7 +5,7 @@ Alzantot Genetic Algorithm
 (Generating Natural Language Adversarial Examples)
 
 .. warning::
-    This attack uses a very slow language model_wrapper. Consider using the ``fast-alzantot``
+    This attack uses a very slow language model. Consider using the ``fast-alzantot``
     recipe instead.
 
 """
@@ -70,7 +70,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
             WordEmbeddingDistance(max_mse_dist=0.5, compare_against_original=False)
         )
         #
-        # Language model_wrapper
+        # Language model
         #
         constraints.append(
             Google1BillionWordsLanguageModel(
