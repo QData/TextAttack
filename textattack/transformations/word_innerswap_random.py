@@ -1,5 +1,5 @@
 """
-Word Swap by swaping the order of words
+Word Swap by swapping the order of words
 ==========================================================
 """
 
