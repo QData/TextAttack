@@ -200,12 +200,6 @@ class AttackCommand(TextAttackCommand):
             default=2 ** 18,
             help="The maximum number of items to keep in the constraints cache at once.",
         )
-        parser.add_argument(
-            "--nocolor",
-            required=False,
-            action="store_true",
-            help="Redirect/print result with or without color",
-        )
 
         attack_group = parser.add_mutually_exclusive_group(required=False)
         search_choices = ", ".join(SEARCH_METHOD_CLASS_NAMES.keys())
