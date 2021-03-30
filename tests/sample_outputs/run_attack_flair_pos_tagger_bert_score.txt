@@ -1,5 +1,4 @@
-/.*/2021-03-30 04:21:29,004 loading file /Users/ccy/.flair/models/en-upos-ontonotes-fast-v0.4.pt
-Attack(
+/.*/Attack(
   (search_method): GreedyWordSwapWIR(
     (wir_method):  unk
   )
