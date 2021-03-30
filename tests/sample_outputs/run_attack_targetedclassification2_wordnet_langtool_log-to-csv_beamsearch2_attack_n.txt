@@ -15,32 +15,32 @@
     (2): StopwordModification
   (is_black_box):  True
 ) 
-/.*/
---------------------------------------------- Result 1 ---------------------------------------------
-[92mEntailment (99%)[0m --> [37m[SKIPPED][0m
 
-[1m[4mPremise[0m[0m: The new rights are nice enough
-[1m[4mHypothesis[0m[0m: Everyone really likes the newest benefits 
+--------------------------------------------- Result 1 ---------------------------------------------
+[[Entailment (99%)]] --> [[[SKIPPED]]]
+
+[[[[Premise]]]]: The new rights are nice enough
+[[[[Hypothesis]]]]: Everyone really likes the newest benefits 
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[37mNeutral (100%)[0m --> [92mEntailment (56%)[0m
+[[Neutral (100%)]] --> [[Entailment (56%)]]
 
-[1m[4mPremise[0m[0m: This site includes a list of all award winners and a searchable database of Government Executive articles.
-[1m[4mHypothesis[0m[0m: The Government Executive articles housed on the website are not [37mable[0m to be searched.
+[[[[Premise]]]]: This site includes a list of all award winners and a searchable database of Government Executive articles.
+[[[[Hypothesis]]]]: The Government Executive articles housed on the website are not [[able]] to be searched.
 
-[1m[4mPremise[0m[0m: This site includes a list of all award winners and a searchable database of Government Executive articles.
-[1m[4mHypothesis[0m[0m: The Government Executive articles housed on the website are not [92mable-bodied[0m to be searched.
+[[[[Premise]]]]: This site includes a list of all award winners and a searchable database of Government Executive articles.
+[[[[Hypothesis]]]]: The Government Executive articles housed on the website are not [[able-bodied]] to be searched.
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[91mContradiction (99%)[0m --> [92mEntailment (100%)[0m
+[[Contradiction (99%)]] --> [[Entailment (100%)]]
 
-[1m[4mPremise[0m[0m: uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
-[1m[4mHypothesis[0m[0m: I like him for the most [91mpart[0m, but would still enjoy seeing someone beat him.
+[[[[Premise]]]]: uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+[[[[Hypothesis]]]]: I like him for the most [[part]], but would still enjoy seeing someone beat him.
 
-[1m[4mPremise[0m[0m: uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
-[1m[4mHypothesis[0m[0m: I like him for the most [92moffice[0m, but would still enjoy seeing someone beat him.
+[[[[Premise]]]]: uh i don't know i i have mixed emotions about him uh sometimes i like him but at the same times i love to see somebody beat him
+[[[[Hypothesis]]]]: I like him for the most [[office]], but would still enjoy seeing someone beat him.
 
 
 

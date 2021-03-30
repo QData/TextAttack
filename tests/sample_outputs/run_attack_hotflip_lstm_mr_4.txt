@@ -28,29 +28,29 @@
     (4): StopwordModification
   (is_black_box):  False
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (96%)[0m --> [91mNegative (77%)[0m
+[[Positive (96%)]] --> [[Negative (77%)]]
 
-the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [92msupplies[0m with tremendous skill .
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [[supplies]] with tremendous skill .
 
-the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [91mstagnated[0m with tremendous skill .
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [[stagnated]] with tremendous skill .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[91mNegative (57%)[0m --> [37m[SKIPPED][0m
+[[Negative (57%)]] --> [[[SKIPPED]]]
 
 red dragon " never cuts corners .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (51%)[0m --> [91m[FAILED][0m
+[[Positive (51%)]] --> [[[FAILED]]]
 
 fresnadillo has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
-[92mPositive (89%)[0m --> [91m[FAILED][0m
+[[Positive (89%)]] --> [[[FAILED]]]
 
 throws in enough clever and unexpected twists to make the formula feel fresh .
 
