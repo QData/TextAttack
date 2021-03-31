@@ -116,8 +116,15 @@ class HardLabelAttack(PopulationBasedSearch):
         perturbed_text = cur_adv_text.replace_word_at_index(
             index_to_perturb, initial_text.words[index_to_perturb]
         )
-        results, _ = self.get_goal_results([perturbed_text])
-
+        results, search_over = self.get_goal_results([perturbed_text])
+        if not search_over:
+            return PopulationMember(
+                cur_adv_text,
+                attributes={
+                    "similarity_score": -1,
+                    "valid_adversarial_example": False,
+                },
+            )
         if results[0].goal_status == GoalFunctionResultStatus.SUCCEEDED:
             similarity_score = self._get_similarity_score(
                 [perturbed_text.text], initial_text.text
@@ -275,8 +282,8 @@ class HardLabelAttack(PopulationBasedSearch):
 
             for i in range(len(results)):
                 if results[i].goal_status == GoalFunctionResultStatus.SUCCEEDED:
-                    return results[i].attacked_text
-        return initial_text
+                    return results[i].attacked_text, results[i]
+        return initial_text, initial_result
 
     def _search_space_reduction(self, initial_result, initial_adv_text):
         """Reduces the count of perturbed words in the `initial_adv_text`.
@@ -298,8 +305,9 @@ class HardLabelAttack(PopulationBasedSearch):
                 idx, initial_result.attacked_text.words[idx]
             )
             # Filter out replacements that are not adversarial.
-            results, _ = self.get_goal_results([new_text])
-
+            results, search_over = self.get_goal_results([new_text])
+            if not search_over:
+                return initial_adv_text
             if results[0].goal_status == GoalFunctionResultStatus.SUCCEEDED:
                 txts.append(new_text.text)
                 replacements.append((idx, initial_result.attacked_text.words[idx]))
@@ -411,14 +419,16 @@ class HardLabelAttack(PopulationBasedSearch):
             best_result as `GoalFunctionResult`
         """
         # Random Initialization
-        initial_adv_text = self._generate_initial_adversarial_example(initial_result)
+        initial_adv_text, init_adv_result = self._generate_initial_adversarial_example(initial_result)
 
         if initial_result.attacked_text.words == initial_adv_text.words:
             return initial_result
         # Search space reduction
         new_text = self._search_space_reduction(initial_result, initial_adv_text)
-        results, _ = self.get_goal_results([new_text])
-
+        results, search_over = self.get_goal_results([new_text])
+        if not search_over:
+            return init_adv_result
+    
         if results[0].goal_status != GoalFunctionResultStatus.SUCCEEDED:
             return results[0]
 
@@ -554,3 +564,4 @@ class HardLabelAttack(PopulationBasedSearch):
 
     def extra_repr_keys(self):
         return ["pop_size", "max_iters", "max_replacements_per_index"]
+
