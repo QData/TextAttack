@@ -117,7 +117,7 @@ class HardLabelAttack(PopulationBasedSearch):
             index_to_perturb, initial_text.words[index_to_perturb]
         )
         results, search_over = self.get_goal_results([perturbed_text])
-        if not search_over:
+        if search_over:
             return PopulationMember(
                 cur_adv_text,
                 attributes={
@@ -306,7 +306,7 @@ class HardLabelAttack(PopulationBasedSearch):
             )
             # Filter out replacements that are not adversarial.
             results, search_over = self.get_goal_results([new_text])
-            if not search_over:
+            if search_over:
                 return initial_adv_text
             if results[0].goal_status == GoalFunctionResultStatus.SUCCEEDED:
                 txts.append(new_text.text)
@@ -426,7 +426,7 @@ class HardLabelAttack(PopulationBasedSearch):
         # Search space reduction
         new_text = self._search_space_reduction(initial_result, initial_adv_text)
         results, search_over = self.get_goal_results([new_text])
-        if not search_over:
+        if search_over:
             return init_adv_result
     
         if results[0].goal_status != GoalFunctionResultStatus.SUCCEEDED:
