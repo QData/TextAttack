@@ -80,7 +80,7 @@ class HuggingFaceDataset(TextAttackDataset):
         self,
         name,
         subset=None,
-        split="test",
+        split="train",
         label_map=None,
         output_scale_factor=None,
         dataset_columns=None,
