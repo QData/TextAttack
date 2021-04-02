@@ -44,7 +44,8 @@ attack_test_params = [
             "textattack attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
             "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
-            "--shuffle=False"
+            "--shuffle=False "
+            "--split='train'"
         ),
         "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
@@ -96,6 +97,7 @@ attack_test_params = [
             "/tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation "
             "word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search^beam_width=2 "
             "--shuffle=False "
+            "--split='validation_matched'"
         ),
         "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt",
     ),
@@ -131,7 +133,8 @@ attack_test_params = [
         "run_attack_kuleshov_nn",
         (
             "textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst2 "
-            "--attack-n --query-budget 200 --shuffle=False"
+            "--attack-n --query-budget 200 --shuffle=False "
+            "--split='validation'"
         ),
         "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
     ),
@@ -142,7 +145,8 @@ attack_test_params = [
         "run_attack_stanza_pos_tagger",
         (
             "textattack attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding "
-            "--constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' --shuffle=False"
+            "--constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' --shuffle=False "
+            "--split='test'"
         ),
         "tests/sample_outputs/run_attack_stanza_pos_tagger.txt",
     ),
@@ -199,6 +203,7 @@ def test_command_line_attack(name, command, sample_output_file):
 
     if DEBUG and not re.match(desired_re, stdout, flags=re.S):
         pdb.set_trace()
+
     assert re.match(desired_re, stdout, flags=re.S)
 
     assert result.returncode == 0

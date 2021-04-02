@@ -110,6 +110,14 @@ def add_dataset_args(parser):
         help="The offset to start at in the dataset.",
     )
 
+    parser.add_argument(
+        "--split",
+        type=str,
+        required=False,
+        default="test",
+        help="Choose train, test or dev dataset.",
+    )
+
 
 def load_module_from_file(file_path):
     """Uses ``importlib`` to dynamically open a file and load an object from
@@ -413,9 +421,22 @@ def parse_dataset_from_args(args):
                 dataset_args = dataset_args.split(ARGS_SPLIT_TOKEN)
             else:
                 dataset_args = (dataset_args,)
-        dataset = textattack.datasets.HuggingFaceDataset(
-            *dataset_args, shuffle=args.shuffle
-        )
+        if args.split:
+            dataset_list = list(dataset_args)
+            if len(dataset_list) > 2:
+                dataset_list[2] = args.split
+                dataset = textattack.datasets.HuggingFaceDataset(
+                    *dataset_list, shuffle=args.shuffle
+                )
+            else:
+                dataset = textattack.datasets.HuggingFaceDataset(
+                    *dataset_list, shuffle=args.shuffle, split=args.split
+                )
+
+        else:
+            dataset = textattack.datasets.HuggingFaceDataset(
+                *dataset_args, shuffle=args.shuffle
+            )
         dataset.examples = dataset.examples[args.num_examples_offset :]
     else:
         raise ValueError("Must supply pretrained model or dataset")
