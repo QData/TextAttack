@@ -20,7 +20,7 @@ docs-check: FORCE ## Builds docs using Sphinx. If there is an error, exit with a
 	sphinx-build -b html docs docs/_build/html -W
 
 docs-auto: FORCE ## Build docs using Sphinx and run hotreload server using Sphinx autobuild.
-	sphinx-autobuild docs docs/_build/html -H 0.0.0.0 -p 8765
+	sphinx-autobuild docs docs/_build/html --port 8765
 
 all: format lint docs-check test ## Format, lint, and test. 
 
