@@ -8,7 +8,13 @@ with open("README.md", "r", encoding="utf8") as fh:
 
 extras = {}
 # Packages required for installing docs.
-extras["docs"] = ["recommonmark", "nbsphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
+extras["docs"] = [
+    "recommonmark",
+    "nbsphinx",
+    "sphinx-autobuild",
+    "sphinx-rtd-theme",
+    "sphinx-markdown-tables",
+]
 # Packages required for formatting code & running tests.
 extras["test"] = [
     "black==20.8b1",
