@@ -18,3 +18,4 @@ word2number
 num2words
 more-itertools
 PySocks!=1.5.7,>=1.5.6
+sphinx-markdown-tables
