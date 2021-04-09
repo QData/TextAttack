@@ -26,7 +26,7 @@ lovingly photographed in the manner of a golden book sprung to [[subsistence]] ,
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[[Positive (99%)]] --> [[Negative (/.*/)]]
+[[Positive (99%)]] --> [[Negative (/.*/%)]]
 
 [[consistently]] [[clever]] and suspenseful .
 
