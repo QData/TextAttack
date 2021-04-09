@@ -480,7 +480,10 @@ def parse_logger_from_args(args):
 
     # if "--log-to-txt" specified in terminal command (with or without arg), save to a txt file
     if args.log_to_txt == "" or args.log_to_txt:
-        attack_log_manager.add_output_file(os.path.join(out_dir_txt, filename_txt))
+        color_method = "file"
+        attack_log_manager.add_output_file(
+            os.path.join(out_dir_txt, filename_txt), color_method
+        )
 
     # if "--log-to-csv" specified in terminal command(with	or without arg), save to a csv file
     if args.log_to_csv == "" or args.log_to_csv:
