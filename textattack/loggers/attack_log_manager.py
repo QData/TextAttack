@@ -19,7 +19,6 @@ class AttackLogManager:
 
     def enable_stdout(self):
         self.loggers.append(FileLogger(stdout=True))
-        return None
 
     def enable_visdom(self):
         self.loggers.append(VisdomLogger())
