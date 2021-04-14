@@ -34,7 +34,7 @@ class PeekDatasetCommand(TextAttackCommand):
     def run(self, args):
         UPPERCASE_LETTERS_REGEX = re.compile("[A-Z]")
 
-        args.model = None  # set model to None for parse_dataset_from_args to work
+        args.model, args.model_from_file = None, None  # set model and model_from_file to None for parse_dataset_from_args to work
         dataset = parse_dataset_from_args(args)
 
         num_words = []
