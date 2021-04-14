@@ -13,7 +13,9 @@ TextAttack Documentation
    1start/benchmark-search.md
    1start/quality-SOTA-recipes.md
    3recipes/models.md
+   1start/talks-visualization.md
    1start/FAQ.md
+
 
 .. toctree::
    :maxdepth: 6
