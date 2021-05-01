@@ -10,7 +10,6 @@ Alzantot Genetic Algorithm
 
 """
 
-from textattack import Attack
 from textattack.constraints.grammaticality.language_models import (
     Google1BillionWordsLanguageModel,
 )
@@ -23,6 +22,7 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import AlzantotGeneticAlgorithm
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 from .attack_recipe import AttackRecipe
@@ -38,7 +38,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model_wrapper):
+    def build(model):
         #
         # Swap words with their embedding nearest-neighbors.
         #
@@ -70,7 +70,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
             WordEmbeddingDistance(max_mse_dist=0.5, compare_against_original=False)
         )
         #
-        # Language model
+        # Language Model
         #
         constraints.append(
             Google1BillionWordsLanguageModel(
@@ -80,7 +80,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model_wrapper)
+        goal_function = UntargetedClassification(model)
         #
         # Perform word substitution with a genetic algorithm.
         #

@@ -6,7 +6,7 @@ Attack Recipe Class
 
 from abc import ABC, abstractmethod
 
-from textattack import Attack
+from textattack.shared import Attack
 
 
 class AttackRecipe(Attack, ABC):
@@ -14,7 +14,7 @@ class AttackRecipe(Attack, ABC):
 
     @staticmethod
     @abstractmethod
-    def build(model_wrapper):
+    def build(model):
         """Creates an attack recipe from recipe-specific arguments.
 
         Allows for support of different configurations of a single

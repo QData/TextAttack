@@ -5,7 +5,6 @@ HotFlip
 (HotFlip: White-Box Adversarial Examples for Text Classification)
 
 """
-from textattack import Attack
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
@@ -15,6 +14,7 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import BeamSearch
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapGradientBased
 
 from .attack_recipe import AttackRecipe
@@ -32,12 +32,12 @@ class HotFlipEbrahimi2017(AttackRecipe):
     """
 
     @staticmethod
-    def build(model_wrapper):
+    def build(model):
         #
         # "HotFlip ... uses the gradient with respect to a one-hot input
         # representation to efficiently estimate which individual change has the
         # highest estimated loss."
-        transformation = WordSwapGradientBased(model_wrapper, top_n=1)
+        transformation = WordSwapGradientBased(model, top_n=1)
         #
         # Don't modify the same word twice or stopwords
         #
@@ -59,7 +59,7 @@ class HotFlipEbrahimi2017(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model_wrapper)
+        goal_function = UntargetedClassification(model)
         #
         # "HotFlip ... uses a beam search to find a set of manipulations that work
         # well together to confuse a classifier ... The adversary uses a beam size

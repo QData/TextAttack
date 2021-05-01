@@ -6,7 +6,6 @@ A Strong Baseline for Natural Language Attack on Text Classification and Entailm
 
 """
 
-from textattack import Attack
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     InputColumnModification,
@@ -17,6 +16,7 @@ from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 from .attack_recipe import AttackRecipe
@@ -31,7 +31,7 @@ class TextFoolerJin2019(AttackRecipe):
     """
 
     @staticmethod
-    def build(model_wrapper):
+    def build(model):
         #
         # Swap words with their 50 closest embedding nearest-neighbors.
         # Embedding: Counter-fitted PARAGRAM-SL999 vectors.
@@ -82,7 +82,7 @@ class TextFoolerJin2019(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model_wrapper)
+        goal_function = UntargetedClassification(model)
         #
         # Greedily swap words with "Word Importance Ranking".
         #
