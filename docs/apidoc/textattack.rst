@@ -28,6 +28,7 @@ Complete API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: CommandLineAttackArgs
 
 .. automodule:: textattack.attack
    :members:
@@ -48,18 +49,9 @@ Complete API Reference
    :members:
    :undoc-members:
    :show-inheritance:
+   :exclude-members: CommandLineTrainingArgs
 
 .. automodule:: textattack.trainer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: textattack.dataset_args
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-.. automodule:: textattack.model_args
    :members:
    :undoc-members:
    :show-inheritance:

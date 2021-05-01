@@ -92,7 +92,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         self.model.zero_grad()
         model_device = next(self.model.parameters()).device
         input_dict = self.tokenizer(
-            text_input,
+            [text_input],
             add_special_tokens=True,
             return_tensors="pt",
             padding="max_length",
@@ -135,7 +135,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         """
         return [
             self.tokenizer.convert_ids_to_tokens(
-                self.tokenizer(x, truncation=True)["input_ids"]
+                self.tokenizer([x], truncation=True)["input_ids"][0]
             )
             for x in inputs
         ]

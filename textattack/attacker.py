@@ -4,6 +4,7 @@ import multiprocessing as mp
 import os
 import queue
 import random
+import traceback
 
 import torch
 import tqdm
@@ -126,13 +127,13 @@ class Attacker:
         else:
             self._attack()
 
-        # Turn logger back on since other modules can be using Attacker (e.g. Trainer)
         if self.attack_args.silent:
             logger.setLevel(logging.INFO)
+
         return self.attack_log_manager.results
 
     def _get_worklist(self, start, end, num_examples, shuffle):
-        if end - start > num_examples:
+        if end - start < num_examples:
             logger.warn(
                 f"Attempting to attack {num_examples} samples when only {end-start} are available."
             )
@@ -141,6 +142,7 @@ class Attacker:
             random.shuffle(candidates)
         worklist = collections.deque(candidates[:num_examples])
         candidates = collections.deque(candidates[num_examples:])
+        assert (len(worklist) + len(candidates)) == (end - start)
         return worklist, candidates
 
     def _attack(self):
@@ -157,15 +159,26 @@ class Attacker:
                 f"Recovered from checkpoint previously saved at {self._checkpoint.datetime}."
             )
         else:
-            num_remaining_attacks = self.attack_args.num_examples
-            # We make `worklist` deque (linked-list) for easy pop and append.
-            # Candidates are other samples we can attack if we need more samples.
-            worklist, worklist_candidates = self._get_worklist(
-                self.attack_args.num_examples_offset,
-                len(self.dataset),
-                self.attack_args.num_examples,
-                self.attack_args.shuffle,
-            )
+            if self.attack_args.num_successful_examples:
+                num_remaining_attacks = self.attack_args.num_successful_examples
+                # We make `worklist` deque (linked-list) for easy pop and append.
+                # Candidates are other samples we can attack if we need more samples.
+                worklist, worklist_candidates = self._get_worklist(
+                    self.attack_args.num_examples_offset,
+                    len(self.dataset),
+                    self.attack_args.num_successful_examples,
+                    self.attack_args.shuffle,
+                )
+            else:
+                num_remaining_attacks = self.attack_args.num_examples
+                # We make `worklist` deque (linked-list) for easy pop and append.
+                # Candidates are other samples we can attack if we need more samples.
+                worklist, worklist_candidates = self._get_worklist(
+                    self.attack_args.num_examples_offset,
+                    len(self.dataset),
+                    self.attack_args.num_examples,
+                    self.attack_args.shuffle,
+                )
 
         if not self.attack_args.silent:
             print(self.attack, "\n")
@@ -174,19 +187,20 @@ class Attacker:
         if self._checkpoint:
             num_results = self._checkpoint.results_count
             num_failures = self._checkpoint.num_failed_attacks
+            num_skipped = self._checkpoint.num_skipped_attacks
             num_successes = self._checkpoint.num_successful_attacks
         else:
             num_results = 0
             num_failures = 0
+            num_skipped = 0
             num_successes = 0
 
         if hasattr(self.attack.goal_function.model, "to"):
             self.attack.goal_function.model.to(textattack.shared.utils.device)
 
-        i = 0
+        sample_exhaustion_warned = False
         while worklist:
             idx = worklist.popleft()
-            i += 1
             try:
                 example, ground_truth_output = self.dataset[idx]
             except IndexError:
@@ -197,32 +211,36 @@ class Attacker:
             try:
                 result = self.attack.attack(example, ground_truth_output)
             except Exception as e:
-                if self.attack_args.ignore_exceptions:
-                    continue
-                else:
-                    raise e
-            self.attack_log_manager.log_result(result)
-
-            if not self.attack_args.disable_stdout:
-                print("\n")
-
-            if isinstance(result, SkippedAttackResult) and self.attack_args.attack_n:
+                raise e
+            if (
+                isinstance(result, SkippedAttackResult) and self.attack_args.attack_n
+            ) or (
+                not isinstance(result, SuccessfulAttackResult)
+                and self.attack_args.num_successful_examples
+            ):
                 if worklist_candidates:
                     next_sample = worklist_candidates.popleft()
                     worklist.append(next_sample)
                 else:
-                    logger.warn("`attack_n=True` but no more samples to attack.")
+                    if not sample_exhaustion_warned:
+                        logger.warn("Ran out of samples to attack!")
+                        sample_exhaustion_warned = True
             else:
                 pbar.update(1)
 
+            self.attack_log_manager.log_result(result)
+            if not self.attack_args.disable_stdout and not self.attack_args.silent:
+                print("\n")
             num_results += 1
 
+            if isinstance(result, SkippedAttackResult):
+                num_skipped += 1
             if isinstance(result, (SuccessfulAttackResult, MaximizedAttackResult)):
                 num_successes += 1
             if isinstance(result, FailedAttackResult):
                 num_failures += 1
             pbar.set_description(
-                f"[Succeeded / Failed / Total] {num_successes} / {num_failures} / {num_results}"
+                f"[Succeeded / Failed / Skipped / Total] {num_successes} / {num_failures} / {num_skipped} / {num_results}"
             )
 
             if (
@@ -260,13 +278,26 @@ class Attacker:
                 f"Recovered from checkpoint previously saved at {self._checkpoint.datetime}."
             )
         else:
-            num_remaining_attacks = self.attack_args.num_examples
-            worklist, worklist_candidates = self._get_worklist(
-                self.attack_args.num_examples_offset,
-                len(self.dataset),
-                self.attack_args.num_examples,
-                self.attack_args.shuffle,
-            )
+            if self.attack_args.num_successful_examples:
+                num_remaining_attacks = self.attack_args.num_successful_examples
+                # We make `worklist` deque (linked-list) for easy pop and append.
+                # Candidates are other samples we can attack if we need more samples.
+                worklist, worklist_candidates = self._get_worklist(
+                    self.attack_args.num_examples_offset,
+                    len(self.dataset),
+                    self.attack_args.num_successful_examples,
+                    self.attack_args.shuffle,
+                )
+            else:
+                num_remaining_attacks = self.attack_args.num_examples
+                # We make `worklist` deque (linked-list) for easy pop and append.
+                # Candidates are other samples we can attack if we need more samples.
+                worklist, worklist_candidates = self._get_worklist(
+                    self.attack_args.num_examples_offset,
+                    len(self.dataset),
+                    self.attack_args.num_examples,
+                    self.attack_args.shuffle,
+                )
 
         in_queue = torch.multiprocessing.Queue()
         out_queue = torch.multiprocessing.Queue()
@@ -313,25 +344,38 @@ class Attacker:
         if self._checkpoint:
             num_results = self._checkpoint.results_count
             num_failures = self._checkpoint.num_failed_attacks
+            num_skipped = self._checkpoint.num_skipped_attacks
             num_successes = self._checkpoint.num_successful_attacks
         else:
             num_results = 0
             num_failures = 0
+            num_skipped = 0
             num_successes = 0
+
+        logger.info(f"Worklist size: {len(worklist)}")
+        logger.info(f"Worklist candidate size: {len(worklist_candidates)}")
+
+        sample_exhaustion_warned = False
         pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
         while worklist:
             idx, result = out_queue.get(block=True)
             worklist.remove(idx)
-            if isinstance(result, Exception):
-                if self.attack_args.ignore_exceptions:
-                    continue
-                else:
-                    worker_pool.terminate()
-                    worker_pool.join()
-                    raise result
 
-            self.attack_log_manager.log_result(result)
-            if self.attack_args.attack_n and isinstance(result, SkippedAttackResult):
+            if isinstance(result, tuple) and isinstance(result[0], Exception):
+                logger.error(
+                    f'Exception encountered for input "{self.dataset[idx][0]}".'
+                )
+                error_trace = result[1]
+                logger.error(error_trace)
+                worker_pool.terminate()
+                worker_pool.join()
+                exit(1)
+            elif (
+                isinstance(result, SkippedAttackResult) and self.attack_args.attack_n
+            ) or (
+                not isinstance(result, SuccessfulAttackResult)
+                and self.attack_args.num_successful_examples
+            ):
                 if worklist_candidates:
                     next_sample = worklist_candidates.popleft()
                     example, ground_truth_output = self.dataset[next_sample]
@@ -341,21 +385,24 @@ class Attacker:
                     worklist.append(next_sample)
                     in_queue.put((next_sample, example, ground_truth_output))
                 else:
-                    logger.warn(
-                        f"Attempted to attack {self.attack_args.num_examples} examples with but ran out of examples. "
-                        f"You might see fewer number of results than {self.attack_args.num_examples}."
-                    )
+                    if not sample_exhaustion_warned:
+                        logger.warn("Ran out of samples to attack!")
+                        sample_exhaustion_warned = True
             else:
                 pbar.update()
-                num_results += 1
 
-                if isinstance(result, (SuccessfulAttackResult, MaximizedAttackResult)):
-                    num_successes += 1
-                if isinstance(result, FailedAttackResult):
-                    num_failures += 1
-                pbar.set_description(
-                    f"[Succeeded / Failed / Total] {num_successes} / {num_failures} / {num_results}"
-                )
+            self.attack_log_manager.log_result(result)
+            num_results += 1
+
+            if isinstance(result, SkippedAttackResult):
+                num_skipped += 1
+            if isinstance(result, (SuccessfulAttackResult, MaximizedAttackResult)):
+                num_successes += 1
+            if isinstance(result, FailedAttackResult):
+                num_failures += 1
+            pbar.set_description(
+                f"[Succeeded / Failed / Skipped / Total] {num_successes} / {num_failures} / {num_skipped} / {num_results}"
+            )
 
             if (
                 self.attack_args.checkpoint_interval
@@ -372,7 +419,10 @@ class Attacker:
                 new_checkpoint.save()
                 self.attack_log_manager.flush()
 
-        worker_pool.terminate()
+        # Send sentinel values to worker processes
+        for _ in range(num_workers):
+            in_queue.put(("END", "END", "END"))
+        worker_pool.close()
         worker_pool.join()
 
         pbar.close()
@@ -504,11 +554,14 @@ def attack_from_queue(
     while True:
         try:
             i, example, ground_truth_output = in_queue.get(timeout=5)
-            result = attack.attack(example, ground_truth_output)
-            out_queue.put((i, result))
+            if i == "END" and example == "END" and ground_truth_output == "END":
+                # End process when sentinel value is received
+                break
+            else:
+                result = attack.attack(example, ground_truth_output)
+                out_queue.put((i, result))
         except Exception as e:
             if isinstance(e, queue.Empty):
                 continue
-            out_queue.put((i, e))
-            if not attack_args.ignore_exceptions:
-                exit(1)
+            else:
+                out_queue.put((i, (e, traceback.format_exc(e))))

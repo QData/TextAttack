@@ -103,11 +103,13 @@ class AttackedText:
         """
         if "previous_attacked_text" in self.attack_attrs:
             self.attack_attrs["previous_attacked_text"].free_memory()
-        if "last_transformation" in self.attack_attrs:
-            del self.attack_attrs["last_transformation"]
+            self.attack_attrs.pop("previous_attacked_text", None)
+
+        self.attack_attrs.pop("last_transformation", None)
+
         for key in self.attack_attrs:
             if isinstance(self.attack_attrs[key], torch.Tensor):
-                del self.attack_attrs[key]
+                self.attack_attrs.pop(key, None)
 
     def text_window_around_index(self, index, window_size):
         """The text window of ``window_size`` words centered around

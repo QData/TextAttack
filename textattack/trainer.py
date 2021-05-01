@@ -1,40 +1,26 @@
 import collections
-import functools
 import json
 import logging
 import math
 import os
 
-import numpy as np
 import scipy
 import torch
 import tqdm
 import transformers
 
 import textattack
-from textattack.models.helpers import LSTMForClassification, WordCNNForClassification
-from textattack.models.wrappers import ModelWrapper
 
 from .attack import Attack
 from .attack_args import AttackArgs
+from .attack_results import MaximizedAttackResult, SuccessfulAttackResult
 from .attacker import Attacker
 from .model_args import HUGGINGFACE_MODELS
+from .models.helpers import LSTMForClassification, WordCNNForClassification
+from .models.wrappers import ModelWrapper
 from .training_args import CommandLineTrainingArgs, TrainingArgs
 
 logger = textattack.shared.logger
-
-
-# Helper functions for collating data
-def collate_fn(input_columns, data):
-    input_texts = []
-    labels = []
-    for _input, label in data:
-        _input = tuple(_input[c] for c in input_columns)
-        if len(_input) == 1:
-            _input = _input[0]
-        input_texts.append(_input)
-        labels.append(label)
-    return input_texts, torch.tensor(labels)
 
 
 class Trainer:
@@ -47,10 +33,10 @@ class Trainer:
         self,
         model_wrapper,
         task_type,
-        attack,
-        train_dataset,
-        eval_dataset,
-        training_args,
+        attack=None,
+        train_dataset=None,
+        eval_dataset=None,
+        training_args=TrainingArgs(),
     ):
         assert isinstance(
             model_wrapper, ModelWrapper
@@ -60,15 +46,18 @@ class Trainer:
             "classification",
             "regression",
         }, '`task_type` must either be "classification" or "regression"'
-        assert isinstance(
-            attack, Attack
-        ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
-        assert isinstance(
-            train_dataset, textattack.datasets.Dataset
-        ), f"`train_dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(train_dataset)}`."
-        assert isinstance(
-            eval_dataset, textattack.datasets.Dataset
-        ), f"`eval_dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(eval_dataset)}`."
+        if attack:
+            assert isinstance(
+                attack, Attack
+            ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
+        if train_dataset:
+            assert isinstance(
+                train_dataset, textattack.datasets.Dataset
+            ), f"`train_dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(train_dataset)}`."
+        if eval_dataset:
+            assert isinstance(
+                eval_dataset, textattack.datasets.Dataset
+            ), f"`eval_dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(eval_dataset)}`."
         assert isinstance(
             training_args, TrainingArgs
         ), f"`training_args` must be of type `textattack.TrainingArgs`, but got type `{type(training_args)}`."
@@ -94,121 +83,88 @@ class Trainer:
         self.eval_dataset = eval_dataset
         self.training_args = training_args
 
-    def _generate_adversarial_examples(self, dataset, epoch, eval_mode=False):
-        """Generate adversarial examples using attacker."""
-        if eval_mode:
-            logger.info("Attacking model to evaluate adversarial robustness...")
+        self._metric_name = (
+            "pearson_correlation" if self.task_type == "regression" else "accuracy"
+        )
+        if self.task_type == "regression":
+            self.loss_fct = torch.nn.MSELoss(reduction="none")
         else:
-            logger.info("Attacking model to generate new adversarial training set...")
+            self.loss_fct = torch.nn.CrossEntropyLoss(reduction="none")
 
-        num_examples = (
-            self.training_args.num_eval_adv_examples
-            if eval_mode
-            else self.training_args.num_train_adv_examples
-        )
-        query_budget = (
-            self.training_args.query_budget_eval
-            if eval_mode
-            else self.training_args.query_budget_train
-        )
-        shuffle = False if eval_mode else True
-        base_file_name = (
-            f"attack-eval-{epoch}" if eval_mode else f"attack-train-{epoch}"
-        )
+        self._global_step = 0
+
+    def _generate_adversarial_examples(self, epoch):
+        """Generate adversarial examples using attacker."""
+        base_file_name = f"attack-train-{epoch}"
         log_file_name = os.path.join(self.training_args.output_dir, base_file_name)
+        logger.info("Attacking model to generate new adversarial training set...")
+
+        if isinstance(self.training_args.num_train_adv_examples, float):
+            num_train_adv_examples = math.ceil(
+                len(self.train_dataset) * self.training_args.num_train_adv_examples
+            )
+        else:
+            num_train_adv_examples = self.training_args.num_train_adv_examples
+
         attack_args = AttackArgs(
-            num_examples=num_examples,
+            num_successful_examples=num_train_adv_examples,
             num_examples_offset=0,
-            query_budget=query_budget,
-            shuffle=shuffle,
-            attack_n=True,
+            query_budget=self.training_args.query_budget_train,
+            shuffle=True,
             parallel=self.training_args.parallel,
             num_workers_per_device=self.training_args.attack_num_workers_per_device,
             disable_stdout=True,
             silent=True,
-            ignore_exceptions=True,
             log_to_txt=log_file_name + ".txt",
             log_to_csv=log_file_name + ".csv",
         )
-        attacker = Attacker(self.attack, dataset, attack_args)
+
+        attacker = Attacker(self.attack, self.train_dataset, attack_args=attack_args)
         results = attacker.attack_dataset()
 
-        if eval_mode:
-            return results
-        else:
-            attack_types = collections.Counter(r.__class__.__name__ for r in results)
-            total_attacks = (
-                attack_types["SuccessfulAttackResult"]
-                + attack_types["FailedAttackResult"]
-            )
-            success_rate = attack_types["SuccessfulAttackResult"] / total_attacks * 100
-            logger.info(
-                f"Attack Success Rate: {success_rate:.2f}% [{attack_types['SuccessfulAttackResult']} / {total_attacks}]"
-            )
-            adversarial_examples = [
-                (
-                    tuple(r.perturbed_result.attacked_text._text_input.values()),
-                    r.perturbed_result.ground_truth_output,
-                )
-                for r in results
-            ]
-            adversarial_dataset = textattack.datasets.Dataset(
-                adversarial_examples,
-                input_columns=dataset.input_columns,
-                label_map=dataset.label_map,
-                label_names=dataset.label_names,
-                output_scale_factor=dataset.output_scale_factor,
-                shuffle=False,
-            )
-            return adversarial_dataset
-
-    def _training_setup(self):
-        """Handle all the training set ups including logging."""
-        textattack.shared.utils.set_seed(self.training_args.random_seed)
-        if not os.path.exists(self.training_args.output_dir):
-            os.makedirs(self.training_args.output_dir)
-
-        # Save logger writes to file
-        log_txt_path = os.path.join(self.training_args.output_dir, "train_log.txt")
-        fh = logging.FileHandler(log_txt_path)
-        fh.setLevel(logging.DEBUG)
-        logger.addHandler(fh)
-        logger.info(f"Writing logs to {log_txt_path}.")
-
-        # Save original self.training_args to file
-        args_save_path = os.path.join(
-            self.training_args.output_dir, "training_args.json"
+        attack_types = collections.Counter(r.__class__.__name__ for r in results)
+        total_attacks = (
+            attack_types["SuccessfulAttackResult"] + attack_types["FailedAttackResult"]
         )
-        with open(args_save_path, "w", encoding="utf-8") as f:
-            json.dump(self.training_args.__dict__, f)
-        logger.info(f"Wrote original training args to {args_save_path}.")
-
-    def _print_training_args(self, total_training_steps):
-        logger.info("==================== Running Training ====================")
-        logger.info(f"Num epochs = {self.training_args.num_epochs}")
-        logger.info(f"Num clean epochs = {self.training_args.num_clean_epochs}")
-        logger.info(f"Num total steps = {total_training_steps}")
-        logger.info(f"Num training examples = {len(self.train_dataset)}")
-        logger.info(f"Num evaluation examples = {len(self.eval_dataset)}")
-        logger.info(f"Starting learning rate = {self.training_args.learning_rate}")
-        logger.info(f"Num warmup steps = {self.training_args.num_warmup_steps}")
-        logger.info(f"Weight decay = {self.training_args.weight_decay}")
-
-    def _get_tensorboard_writer(self):
-        from torch.utils.tensorboard import SummaryWriter
-
-        tb_writer = SummaryWriter(self.training_args.tb_log_dir)
-        tb_writer.add_hparams(self.training_args.__dict__, {})
-        tb_writer.flush()
-        return tb_writer
-
-    def _init_wandb(self):
-        global wandb
-        import wandb
-
-        wandb.init(
-            project=self.training_args.wand_project, config=self.training_args.__dict__
+        success_rate = attack_types["SuccessfulAttackResult"] / total_attacks * 100
+        logger.info(f"Total number of attack results: {len(results)}")
+        logger.info(
+            f"Attack success rate: {success_rate:.2f}% [{attack_types['SuccessfulAttackResult']} / {total_attacks}]"
         )
+        adversarial_examples = [
+            (
+                tuple(r.perturbed_result.attacked_text._text_input.values()),
+                r.perturbed_result.ground_truth_output,
+                "adversarial_example",
+            )
+            for r in results
+            if isinstance(r, (SuccessfulAttackResult, MaximizedAttackResult))
+        ]
+        adversarial_dataset = textattack.datasets.Dataset(
+            adversarial_examples,
+            input_columns=self.train_dataset.input_columns,
+            label_map=self.train_dataset.label_map,
+            label_names=self.train_dataset.label_names,
+            output_scale_factor=self.train_dataset.output_scale_factor,
+            shuffle=False,
+        )
+        return adversarial_dataset
+
+    def _print_training_args(self, total_training_steps, train_batch_size):
+        logger.info("***** Running training *****")
+        logger.info(f"  Num examples = {len(self.train_dataset)}")
+        logger.info(f"  Num epochs = {self.training_args.num_epochs}")
+        logger.info(f"  Num clean epochs = {self.training_args.num_clean_epochs}")
+        logger.info(
+            f"  Instantaneous batch size per device = {self.training_args.per_device_train_batch_size}"
+        )
+        logger.info(
+            f"  Total train batch size (w. parallel, distributed & accumulation) = {train_batch_size * self.training_args.gradient_accumulation_steps}"
+        )
+        logger.info(
+            f"  Gradient accumulation steps = {self.training_args.gradient_accumulation_steps}"
+        )
+        logger.info(f"  Total optimization steps = {total_training_steps}")
 
     def _save_model_checkpoint(
         self, model, tokenizer, step=None, epoch=None, best=False, last=False
@@ -242,7 +198,36 @@ class Trainer:
                 os.path.join(output_dir, "pytorch_model.bin"),
             )
 
-    def _get_optimizer_and_scheduler(self, model, total_training_steps):
+    def _tb_log(self, log, step):
+        if not hasattr(self, "_tb_writer"):
+            from torch.utils.tensorboard import SummaryWriter
+
+            self._tb_writer = SummaryWriter(self.training_args.tb_log_dir)
+            self._tb_writer.add_hparams(self.training_args.__dict__, {})
+            self._tb_writer.flush()
+
+        for key in log:
+            self._tb_writer.add_scalar(key, log[key], step)
+
+        self.tb_writer.flush()
+
+    def _wandb_log(self, log, step):
+        if not hasattr(self, "_wandb_init"):
+            global wandb
+            import wandb
+
+            self._wandb_init = True
+            wandb.init(
+                project=self.training_args.wandb_project,
+                config=self.training_args.__dict__,
+            )
+
+        wandb.log(log, step=step)
+
+    def get_optimizer_and_scheduler(self, model, total_training_steps):
+        if isinstance(model, torch.nn.DataParallel):
+            model = model.module
+
         if isinstance(model, transformers.PreTrainedModel):
             # Reference https://huggingface.co/transformers/training.html
             param_optimizer = list(model.named_parameters())
@@ -267,10 +252,16 @@ class Trainer:
             optimizer = transformers.optimization.AdamW(
                 optimizer_grouped_parameters, lr=self.training_args.learning_rate
             )
+            if isinstance(self.training_args.num_warmup_steps, float):
+                num_warmup_steps = math.ceil(
+                    self.training_args.num_warmup_steps * total_training_steps
+                )
+            else:
+                num_warmup_steps = self.training_args.num_warmup_steps
 
             scheduler = transformers.optimization.get_linear_schedule_with_warmup(
                 optimizer,
-                num_warmup_steps=self.training_args.num_warmup_steps,
+                num_warmup_steps=num_warmup_steps,
                 num_training_steps=total_training_steps,
             )
         else:
@@ -282,8 +273,162 @@ class Trainer:
 
         return optimizer, scheduler
 
+    def get_train_dataloader(self, dataset, train_batch_size):
+        # Helper functions for collating data
+        def collate_fn(data):
+            input_texts = []
+            targets = []
+            is_adv_sample = []
+            for item in data:
+                if len(item) == 3:
+                    # `len(item)` is 3 for adversarial training dataset
+                    _input, label, adv = item
+                    if adv != "adversarial_example":
+                        raise ValueError(
+                            "`item` has length of 3 but last element is not for marking if the item is an `adversarial example`."
+                        )
+                    else:
+                        is_adv_sample.append(True)
+                else:
+                    # else `len(item)` is 2.
+                    _input, label = item
+                    is_adv_sample.append(False)
+
+                _input = tuple(_input[c] for c in dataset.input_columns)
+                if len(_input) == 1:
+                    _input = _input[0]
+                input_texts.append(_input)
+                targets.append(label)
+
+            return input_texts, torch.tensor(targets), torch.tensor(is_adv_sample)
+
+        train_dataloader = torch.utils.data.DataLoader(
+            dataset,
+            batch_size=train_batch_size,
+            shuffle=True,
+            collate_fn=collate_fn,
+            pin_memory=True,
+        )
+        return train_dataloader
+
+    def get_eval_dataloader(self, dataset, eval_batch_size):
+        # Helper functions for collating data
+        def collate_fn(data):
+            input_texts = []
+            targets = []
+            for _input, label in data:
+                _input = tuple(_input[c] for c in dataset.input_columns)
+                if len(_input) == 1:
+                    _input = _input[0]
+                input_texts.append(_input)
+                targets.append(label)
+            return input_texts, torch.tensor(targets)
+
+        eval_dataloader = torch.utils.data.DataLoader(
+            dataset,
+            batch_size=eval_batch_size,
+            shuffle=True,
+            collate_fn=collate_fn,
+            pin_memory=True,
+        )
+        return eval_dataloader
+
+    def training_step(self, model, tokenizer, batch):
+        """
+        Args:
+            model (:obj:`torch.nn.Module`):
+                Model to train.
+            tokenizer:
+                Tokenizer used to tokenize input text.
+            batch (:obj:`tuple[list[str], torch.Tensor, torch.Tensor]`):
+                Tuple of input texts, targets, and boolean tensor indicating if the sample is an adversarial example.
+        """
+
+        input_texts, targets, is_adv_sample = batch
+        _targets = targets
+        targets = targets.to(textattack.shared.utils.device)
+
+        if isinstance(model, transformers.PreTrainedModel) or (isinstance(model, torch.nn.DataParallel) and isinstance(model.module, transformers.PreTrainedModel)):
+            input_ids = tokenizer(
+                input_texts,
+                padding="max_length",
+                return_tensors="pt",
+                truncation=True,
+            )
+            input_ids.to(textattack.shared.utils.device)
+            logits = model(**input_ids)[0]
+        else:
+            input_ids = tokenizer(input_texts)
+            if not isinstance(input_ids, torch.Tensor):
+                input_ids = torch.tensor(input_ids)
+            input_ids = input_ids.to(textattack.shared.utils.device)
+            logits = model(input_ids)
+
+        if self.task_type == "regression":
+            loss = self.loss_fct(logits.squeeze(), targets.squeeze())
+            preds = logits
+        else:
+            loss = self.loss_fct(logits, targets)
+            preds = logits.argmax(dim=-1)
+
+        sample_weights = torch.ones(
+            is_adv_sample.size(), device=textattack.shared.utils.device
+        )
+        sample_weights[is_adv_sample] *= self.training_args.alpha
+        loss = loss * sample_weights
+        loss = torch.mean(loss)
+        preds = preds.cpu()
+
+        return loss, preds, _targets
+
+    def evaluate_step(self, model, tokenizer, batch):
+        input_texts, targets = batch
+        _targets = targets
+        targets = targets.to(textattack.shared.utils.device)
+
+        if isinstance(model, transformers.PreTrainedModel):
+            input_ids = tokenizer(
+                input_texts,
+                padding="max_length",
+                return_tensors="pt",
+                truncation=True,
+            )
+            input_ids.to(textattack.shared.utils.device)
+            logits = model(**input_ids)[0]
+        else:
+            input_ids = tokenizer(input_texts)
+            if not isinstance(input_ids, torch.Tensor):
+                input_ids = torch.tensor(input_ids)
+            input_ids = input_ids.to(textattack.shared.utils.device)
+            logits = model(input_ids)
+
+        if self.task_type == "regression":
+            preds = logits
+        else:
+            preds = logits.argmax(dim=-1)
+
+        return preds.cpu(), _targets
+
     def train(self):
-        self._training_setup()
+        textattack.shared.utils.set_seed(self.training_args.random_seed)
+        if not os.path.exists(self.training_args.output_dir):
+            os.makedirs(self.training_args.output_dir)
+
+        # Save logger writes to file
+        log_txt_path = os.path.join(self.training_args.output_dir, "train_log.txt")
+        fh = logging.FileHandler(log_txt_path)
+        fh.setLevel(logging.DEBUG)
+        logger.addHandler(fh)
+        logger.info(f"Writing logs to {log_txt_path}.")
+
+        # Save original self.training_args to file
+        args_save_path = os.path.join(
+            self.training_args.output_dir, "training_args.json"
+        )
+        with open(args_save_path, "w", encoding="utf-8") as f:
+            json.dump(self.training_args.__dict__, f)
+        logger.info(f"Wrote original training args to {args_save_path}.")
+
         num_gpus = torch.cuda.device_count()
         tokenizer = self.model_wrapper.tokenizer
         model = self.model_wrapper.model
@@ -297,41 +442,39 @@ class Trainer:
         else:
             train_batch_size = self.training_args.per_device_train_batch_size
 
-        model.to(textattack.shared.utils.device)
-        total_training_steps = (
+        total_clean_training_steps = (
             math.ceil(
                 len(self.train_dataset)
                 / (train_batch_size * self.training_args.gradient_accumulation_steps)
             )
-            * self.training_args.num_epochs
+            * self.training_args.num_clean_epochs
         )
+        total_adv_training_steps = math.ceil(
+            (len(self.train_dataset) + self.training_args.num_train_adv_examples)
+            / (train_batch_size * self.training_args.gradient_accumulation_steps)
+        ) * (self.training_args.num_epochs - self.training_args.num_clean_epochs)
 
-        if self.training_args.log_to_tb:
-            tb_writer = self._get_tensorboard_writer()
-        if self.training_args.log_to_wandb:
-            self._init_wandb()
+        total_training_steps = total_clean_training_steps + total_adv_training_steps
+        self._print_training_args(total_training_steps, train_batch_size)
 
-        optimizer, scheduler = self._get_optimizer_and_scheduler(
+        optimizer, scheduler = self.get_optimizer_and_scheduler(
             model, total_training_steps
         )
 
-        collate_func = functools.partial(collate_fn, self.train_dataset.input_columns)
-
-        if self.task_type == "regression":
-            loss_fct = torch.nn.MSELoss()
-        else:
-            loss_fct = torch.nn.CrossEntropyLoss()
+        model.to(textattack.shared.utils.device)
 
         # Variables across epochs
-        global_step = 0
-        total_loss = 0.0
+        self._total_loss = 0.0
+        self._current_loss = 0.0
+        self._last_log_step = 0
+
         # `best_score` is used to keep track of the best model across training.
         # Could be loss, accuracy, or other metrics.
         best_eval_score = 0.0
         best_eval_score_epoch = 0
         best_model_path = None
         epochs_since_best_eval_score = 0
-        self._print_training_args(total_training_steps)
+
         for epoch in range(1, self.training_args.num_epochs + 1):
             logger.info("==========================================================")
             logger.info(f"Epoch {epoch}")
@@ -344,14 +487,10 @@ class Trainer:
                     # after the clean epochs
                     # adv_example_dataset is instance of `textattack.datasets.Dataset
                     model.eval()
-                    model.cpu()
-                    adv_example_dataset = self._generate_adversarial_examples(
-                        self.train_dataset, epoch
-                    )
+                    adv_example_dataset = self._generate_adversarial_examples(epoch)
                     train_dataset = torch.utils.data.ConcatDataset(
                         [self.train_dataset, adv_example_dataset]
                     )
-                    model.to(textattack.shared.utils.device)
                     model.train()
                 else:
                     train_dataset = self.train_dataset
@@ -361,116 +500,123 @@ class Trainer:
                 )
                 train_dataset = self.train_dataset
 
-            train_dataloader = torch.utils.data.DataLoader(
-                train_dataset,
-                batch_size=train_batch_size,
-                shuffle=True,
-                collate_fn=collate_func,
+            train_dataloader = self.get_train_dataloader(
+                train_dataset, train_batch_size
             )
             model.train()
-            # Epoch-specific variables
-            correct_predictions = 0
-            total_predictions = 0
+            # Epoch variables
+            all_preds = []
+            all_targets = []
             prog_bar = tqdm.tqdm(
                 train_dataloader, desc="Iteration", position=0, leave=True
             )
             for step, batch in enumerate(prog_bar):
-                input_texts, labels = batch
-                labels = labels.to(textattack.shared.utils.device)
-                if isinstance(model, transformers.PreTrainedModel):
-                    input_ids = tokenizer(
-                        input_texts,
-                        padding="max_length",
-                        return_tensors="pt",
-                        truncation=True,
-                    )
-                    for key in input_ids:
-                        if isinstance(input_ids[key], torch.Tensor):
-                            input_ids[key] = input_ids[key].to(
-                                textattack.shared.utils.device
-                            )
-                    logits = model(**input_ids)[0]
-                else:
-                    input_ids = tokenizer(input_texts)
-                    if not isinstance(input_ids, torch.Tensor):
-                        input_ids = torch.tensor(input_ids)
-                    input_ids = input_ids.to(textattack.shared.utils.device)
-                    logits = model(input_ids)
-
-                if self.task_type == "regression":
-                    # TODO integrate with textattack `metrics` package
-                    loss = loss_fct(logits.squeeze(), labels.squeeze())
-                else:
-                    loss = loss_fct(logits, labels)
-                    pred_labels = logits.argmax(dim=-1)
-                    correct_predictions += (pred_labels == labels).sum().item()
-                    total_predictions += len(pred_labels)
+                loss, preds, targets = self.training_step(model, tokenizer, batch)
 
                 if isinstance(model, torch.nn.DataParallel):
                     loss = loss.mean()
-                if self.training_args.gradient_accumulation_steps > 1:
-                    loss = loss / self.training_args.gradient_accumulation_steps
-                loss.backward()
 
-                total_loss += loss.item()
+                loss = loss / self.training_args.gradient_accumulation_steps
+                loss.backward()
+                loss = loss.item()
+                self._total_loss += loss
+                self._current_loss += loss
+
+                all_preds.append(preds)
+                all_targets.append(targets)
 
                 if (step + 1) % self.training_args.gradient_accumulation_steps == 0:
                     optimizer.step()
                     if scheduler:
                         scheduler.step()
                     optimizer.zero_grad()
-                    global_step += 1
+                    self._global_step += 1
+
+                if self._global_step > 0:
+                    prog_bar.set_description(
+                        f"Loss {self._total_loss/self._global_step:.5f}"
+                    )
 
                 # TODO: Better way to handle TB and Wandb logging
-                if global_step % self.training_args.logging_interval_step == 0:
+                if (self._global_step > 0) and (
+                    self._global_step % self.training_args.logging_interval_step == 0
+                ):
                     lr_to_log = (
                         scheduler.get_last_lr()[0]
                         if scheduler
                         else self.training_args.learning_rate
                     )
+                    if self._global_step - self._last_log_step >= 1:
+                        loss_to_log = round(
+                            self._current_loss
+                            / (self._global_step - self._last_log_step),
+                            4,
+                        )
+                    else:
+                        loss_to_log = round(self._current_loss, 4)
+
+                    log = {"train/loss": loss_to_log, "train/learning_rate": lr_to_log}
                     if self.training_args.log_to_tb:
-                        tb_writer.add_scalar("loss", loss.item(), global_step)
-                        tb_writer.add_scalar("lr", lr_to_log, global_step)
+                        self._tb_log(log, self._global_step)
 
                     if self.training_args.log_to_wandb:
-                        wandb.log({"loss": loss.item()}, step=global_step)
-                        wandb.log({"lr": lr_to_log}, step=global_step)
+                        self._wandb_log(log, self._global_step)
 
-                if global_step > 0:
-                    prog_bar.set_description(f"Loss {total_loss/global_step:.5f}")
+                    self._current_loss = 0.0
+                    self._last_log_step = self._global_step
 
                 # Save model checkpoint to file.
                 if self.training_args.checkpoint_interval_steps:
                     if (
-                        global_step > 0
-                        and self.training_args.checkpoint_interval_steps > 0
-                        and (global_step % self.training_args.checkpoint_interval_steps)
+                        self._global_step > 0
+                        and (
+                            self._global_step
+                            % self.training_args.checkpoint_interval_steps
+                        )
                         == 0
                     ):
-                        self._save_model_checkpoint(model, tokenizer, step=global_step)
+                        self._save_model_checkpoint(
+                            model, tokenizer, step=self._global_step
+                        )
 
-            # Print training accuracy, if we're tracking it.
-            if total_predictions > 0:
-                train_acc = correct_predictions / total_predictions
-                logger.info(f"Train accuracy: {train_acc*100:.2f}%")
+            preds = torch.cat(all_preds)
+            targets = torch.cat(all_targets)
+            if self._metric_name == "accuracy":
+                correct_predictions = (preds == targets).sum().item()
+                accuracy = correct_predictions / len(targets)
+                metric_log = {"train/train_accuracy": accuracy}
+                logger.info(f"Train accuracy: {accuracy*100:.2f}%")
+            else:
+                pearson_correlation, pearson_pvalue = scipy.stats.pearsonr(
+                    preds, targets
+                )
+                metric_log = {
+                    "train/pearson_correlation": pearson_correlation,
+                    "train/pearson_pvalue": pearson_pvalue,
+                }
+                logger.info(f"Train Pearson correlation: {pearson_correlation:.4f}%")
+
+            if len(targets) > 0:
                 if self.training_args.log_to_tb:
-                    tb_writer.add_scalar("epoch_train_acc", train_acc, global_step)
+                    self._tb_log(metric_log, epoch)
                 if self.training_args.log_to_wandb:
-                    wandb.log({"epoch_train_acc": train_acc}, step=global_step)
+                    metric_log["epoch"] = epoch
+                    self._wandb_log(metric_log, self._global_step)
 
-            # Check eval accuracy after each epoch.
-            eval_score = self._evaluate(model, tokenizer)
-            logger.info(
-                f"Eval {'pearson correlation' if self.task_type == 'regression' else 'accuracy'}: {eval_score*100:.2f}%"
-            )
+            # Evaluate after each epoch.
+            eval_score = self.evaluate()
+
             if self.training_args.log_to_tb:
-                tb_writer.add_scalar("epoch_eval_score", eval_score, global_step)
+                self._tb_log({f"eval/{self._metric_name}": eval_score}, epoch)
             if self.training_args.log_to_wandb:
-                wandb.log({"epoch_eval_score": eval_score}, step=global_step)
+                self._wandb_log(
+                    {f"eval/{self._metric_name}": eval_score, "epoch": epoch},
+                    self._global_step,
+                )
 
             if (
                 self.training_args.checkpoint_interval_epochs
-                and ((epoch - 1) % self.training_args.checkpoint_interval_epochs) == 0
+                and (epoch % self.training_args.checkpoint_interval_epochs) == 0
             ):
                 self._save_model_checkpoint(model, tokenizer, epoch=epoch)
 
@@ -480,7 +626,7 @@ class Trainer:
                 epochs_since_best_eval_score = 0
                 self._save_model_checkpoint(model, tokenizer, best=True)
                 logger.info(
-                    f"Best acc found. Saved model to {self.training_args.output_dir}/best_model/"
+                    f"Best score found. Saved model to {self.training_args.output_dir}/best_model/"
                 )
             else:
                 epochs_since_best_eval_score += 1
@@ -493,64 +639,7 @@ class Trainer:
                     )
                     break
 
-            if self.training_args.eval_adversarial_robustness and (
-                epoch >= self.training_args.num_clean_epochs
-            ):
-                # Evaluate adversarial robustness
-                model.eval()
-                model.cpu()
-                adv_attack_results = self._generate_adversarial_examples(
-                    self.eval_dataset, epoch, eval_mode=True
-                )
-                model.to(textattack.shared.utils.device)
-                model.train()
-                attack_types = [r.__class__.__name__ for r in adv_attack_results]
-                attack_types = collections.Counter(attack_types)
-                total_attacks = (
-                    attack_types["SuccessfulAttackResult"]
-                    + attack_types["FailedAttackResult"]
-                )
-                adv_succ_rate = attack_types["SuccessfulAttackResult"] / total_attacks
-                num_queries = np.array(
-                    [
-                        r.num_queries
-                        for r in adv_attack_results
-                        if not isinstance(
-                            r, textattack.attack_results.SkippedAttackResult
-                        )
-                    ]
-                )
-                avg_num_queries = round(num_queries.mean(), 2)
-
-                if self.training_args.log_to_tb:
-                    tb_writer.add_scalar(
-                        "robustness_total_attacks", total_attacks, global_step
-                    )
-                    tb_writer.add_scalar(
-                        "robustness_attack_succ_rate", adv_succ_rate, global_step
-                    )
-                    tb_writer.add_scalar(
-                        "robustness_avg_num_queries", avg_num_queries, global_step
-                    )
-                if self.training_args.log_to_wandb:
-                    wandb.log(
-                        {"robustness_total_attacks": total_attacks}, step=global_step
-                    )
-                    wandb.log(
-                        {"robustness_attack_succ_rate": adv_succ_rate}, step=global_step
-                    )
-                    wandb.log(
-                        {"robustness_avg_num_queries": avg_num_queries},
-                        step=global_step,
-                    )
-
-                logger.info(f"Eval total attack: {total_attacks}")
-                logger.info(f"Eval attack success rate: {100*adv_succ_rate:.2f}%")
-                logger.info(f"Eval avg num queries: {avg_num_queries}")
-
-            if self.training_args.log_to_tb:
-                tb_writer.flush()
-
+        # Finish training
         if isinstance(model, torch.nn.DataParallel):
             model = model.module
 
@@ -560,20 +649,23 @@ class Trainer:
                 model = model.__class__.from_pretrained(best_model_path)
             else:
                 model = model.load_state_dict(
-                    torch.load(os.path.join(best_model_path, "model.pt"))
+                    torch.load(os.path.join(best_model_path, "pytorch_model.bin"))
                 )
 
         if self.training_args.save_last:
             self._save_model_checkpoint(model, tokenizer, last=True)
 
         self.model_wrapper.model = model
-        self.write_readme(best_eval_score, best_eval_score_epoch, train_batch_size)
+        self._write_readme(best_eval_score, best_eval_score_epoch, train_batch_size)
 
-    def _evaluate(self, model, tokenizer):
+    def evaluate(self):
+        logging.info("Evaluating model on evaluation dataset.")
+        model = self.model_wrapper.model
+        tokenizer = self.model_wrapper.tokenizer
+
         model.eval()
-        correct = 0
-        logits = []
-        labels = []
+        all_preds = []
+        all_targets = []
 
         if isinstance(model, torch.nn.DataParallel):
             num_gpus = torch.cuda.device_count()
@@ -581,58 +673,33 @@ class Trainer:
         else:
             eval_batch_size = self.training_args.per_device_eval_batch_size
 
-        collate_func = functools.partial(collate_fn, self.eval_dataset.input_columns)
-        eval_dataloader = torch.utils.data.DataLoader(
-            self.eval_dataset,
-            batch_size=eval_batch_size,
-            collate_fn=collate_func,
-        )
+        eval_dataloader = self.get_eval_dataloader(self.eval_dataset, eval_batch_size)
 
         with torch.no_grad():
-            for input_texts, batch_labels in eval_dataloader:
-                batch_labels = batch_labels.to(textattack.shared.utils.device)
-                if isinstance(model, transformers.PreTrainedModel):
-                    input_ids = tokenizer(
-                        input_texts,
-                        padding="max_length",
-                        return_tensors="pt",
-                        truncation=True,
-                    )
-                    for key in input_ids:
-                        if isinstance(input_ids[key], torch.Tensor):
-                            input_ids[key] = input_ids[key].to(
-                                textattack.shared.utils.device
-                            )
-                    batch_logits = model(**input_ids)[0]
-                else:
-                    input_ids = tokenizer(input_texts)
-                    if not isinstance(input_ids, torch.Tensor):
-                        input_ids = torch.tensor(input_ids)
-                    input_ids = input_ids.to(textattack.shared.utils.device)
-                    batch_logits = model(input_ids)
+            for step, batch in enumerate(eval_dataloader):
+                preds, targets = self.evaluate_step(model, tokenizer, batch)
+                all_preds.append(preds)
+                all_targets.append(targets)
 
-                logits.extend(batch_logits.cpu().squeeze().tolist())
-                labels.extend(batch_labels)
-
-        model.train()
-        logits = torch.tensor(logits)
-        labels = torch.tensor(labels)
+        preds = torch.cat(all_preds)
+        targets = torch.cat(all_targets)
 
         if self.task_type == "regression":
-            pearson_correlation, pearson_p_value = scipy.stats.pearsonr(logits, labels)
-            return pearson_correlation
+            pearson_correlation, pearson_p_value = scipy.stats.pearsonr(preds, targets)
+            eval_score = pearson_correlation
         else:
-            preds = logits.argmax(dim=1)
-            correct = (preds == labels).sum()
-            return float(correct) / len(labels)
+            correct_predictions = (preds == targets).sum().item()
+            accuracy = correct_predictions / len(targets)
+            eval_score = accuracy
 
-    def evaluate(self):
-        logging.info("Evaluating model on evaluation dataset.")
-        model = self.model_wrapper.model
-        tokenizer = self.model_wrapper.tokenizer
-        return self._evaluate(model, tokenizer)
+        if self._metric_name == "accuracy":
+            logger.info(f"Eval {self._metric_name}: {eval_score*100:.2f}%")
+        else:
+            logger.info(f"Eval {self._metric_name}: {eval_score:.4f}%")
 
-    def write_readme(self, best_eval_score, best_eval_score_epoch, train_batch_size):
+        return eval_score
+
+    def _write_readme(self, best_eval_score, best_eval_score_epoch, train_batch_size):
         if isinstance(self.training_args, CommandLineTrainingArgs):
             model_name = self.training_args.model_name_or_path
         elif isinstance(self.model_wrapper.model, transformers.PreTrainedModel):
@@ -658,7 +725,7 @@ class Trainer:
         ):
             model_max_length = self.training_args.model_max_length
         elif isinstance(self.model_wrapper.model, transformers.PreTrainedModel):
-            model_max_length = self.model_wrapper.config.max_position_embeddings
+            model_max_length = self.model_wrapper.model.config.max_position_embeddings
         elif isinstance(
             self.model_wrapper.model, (LSTMForClassification, WordCNNForClassification)
         ):

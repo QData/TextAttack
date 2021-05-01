@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 import datetime
 import os
+from typing import Union
 
 from textattack.datasets import HuggingFaceDataset
 from textattack.models.helpers import LSTMForClassification, WordCNNForClassification
@@ -15,8 +16,6 @@ from textattack.shared.utils import ARGS_SPLIT_TOKEN
 from .attack import Attack
 from .attack_args import ATTACK_RECIPE_NAMES
 
-# TODO Add `metric_for_best_model` argument. Currently we just use accuracy for classification and MSE for regression by default.
-
 
 def default_output_dir():
     return os.path.join(
@@ -26,47 +25,72 @@ def default_output_dir():
 
 @dataclass
 class TrainingArgs:
-    """Args for TextAttack ``Trainer`` class that is used for running
-    adversarial training.
+    """Arguments for ``Trainer`` class that is used for adversarial training.
 
     Args:
-        num_epochs (int): Total number of epochs for training. Default is 5.
-        num_clean_epochs (int): Number of epochs to train on just the original training dataset before adversarial training. Default is 0.
-        attack_epoch_interval (int): Generate a new adversarial training set every N epochs. Default is 1.
-        early_stopping_epochs (int): Number of epochs validation must increase before stopping early (-1 for no early stopping). Default is `None`.
-        learning_rate (float): Learning rate for Adam Optimization. Default is 2e-5.
-        num_warmup_steps (int): The number of steps for the warmup phase of linear scheduler. Default is 500.
-        weight_decay (float): Weight decay (L2 penalty). Default is 0.01.
-        per_device_train_batch_size (int): The batch size per GPU/CPU for training. Default is 8.
-        per_device_eval_batch_size (int): The batch size per GPU/CPU for evaluation. Default is 32.
-        gradient_accumulation_steps (int): Number of updates steps to accumulate the gradients for, before performing a backward/update pass. Default is 1.
-        random_seed (int): Random seed. Default is 786.
-        parallel (bool): If `True`, train using multiple GPUs. Default is `False`.
-        load_best_model_at_end (bool): If `True`, keep track of the best model across training and load it at the end.
-        eval_adversarial_robustness (bool): If set, evaluate adversarial robustness on evaluation dataset after every epoch.
-        num_eval_adv_examples (int): The number of samples attack if `eval_adversarial_robustness=True`. Default is 1000.
-        num_train_adv_examples (int): The number of samples to attack when generating adversarial training set. Default is -1 (which is all possible samples).
-        query_budget_train (:obj:`int`, optional): The max query budget to use when generating adversarial training set.
-        query_budget_eval (:obj:`int`, optional): The max query budget to use when evaluating adversarial robustness.
-        attack_num_workers_per_device (int): Number of worker processes to run per device for attack. Same as `num_workers_per_device` argument for `AttackArgs`.
-        output_dir (str): Directory to output training logs and checkpoints.
-        checkpoint_interval_steps (int): Save model checkpoint after every N updates to the model.
-        checkpoint_interval_epochs (int): Save model checkpoint after every N epochs
-        save_last (bool): If `True`, save the model at end of training. Can be used with `load_best_model_at_end` to save the best model at the end. Default is `True`.
-        log_to_tb (bool): If `True`, log to Tensorboard. Default is `False`
-        tb_log_dir (str): Path of Tensorboard log directory.
-        log_to_wandb (bool): If `True`, log to Wandb. Default is `False`.
-        wandb_project (str): Name of Wandb project for logging. Default is `textattack`.
-        logging_interval_step (int): Log to Tensorboard/Wandb every N steps.
+        num_epochs (:obj:`int`, 'optional`, defaults to :obj:`3`):
+            Total number of epochs for training.
+        num_clean_epochs (:obj:`int`, 'optional`, defaults to :obj:`1`):
+            Number of epochs to train on just the original training dataset before adversarial training.
+        attack_epoch_interval (:obj:`int`, 'optional`, defaults to :obj:`1`):
+            Generate a new adversarial training set every N epochs.
+        early_stopping_epochs (:obj:`int`, 'optional`, defaults to :obj:`None`):
+            Number of epochs validation must increase before stopping early (`None` for no early stopping).
+        learning_rate (:obj:`float`, 'optional`, defaults to :obj:`5e-5`):
+            Learning rate for optimizer.
+        num_warmup_steps (:obj:`int` or :obj:`float`, `optional`, defaults to :obj:`500`):
+            The number of steps for the warmup phase of linear scheduler.
+            If `num_warmup_steps` is a `float` between 0 and 1, the number of warmup steps will be `math.ceil(num_training_steps * num_warmup_steps)`.
+        weight_decay (:obj:`float`, `optional`, defaults to :obj:`0.01`):
+            Weight decay (L2 penalty).
+        per_device_train_batch_size (:obj:`int`, `optional`, defaults to :obj:`8`):
+            The batch size per GPU/CPU for training.
+        per_device_eval_batch_size (:obj:`int`, `optional`, defaults to :obj:`32`):
+            The batch size per GPU/CPU for evaluation.
+        gradient_accumulation_steps (:obj:`int`, `optional`, defaults to :obj:`1`):
+            Number of updates steps to accumulate the gradients before performing a backward/update pass.
+        random_seed (:obj:`int`, `optional`, defaults to :obj:`786`):
+            Random seed for reproducibility.
+        parallel (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            If `True`, train using multiple GPUs using `torch.DataParallel`.
+        load_best_model_at_end (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            If `True`, keep track of the best model across training and load it at the end.
+        alpha (:obj:`float`, `optional`, defaults to :obj:`1.0`):
+            The weight for adversarial loss.
+        num_train_adv_examples (:obj:`int` or :obj:`float`, `optional`, defaults to :obj:`-1`):
+            The number of samples to successfully attack when generating adversarial training set before start of every epoch.
+            If `num_train_adv_examples` is a `float` between 0 and 1, the number of adversarial examples generated is
+            fraction of the original training set.
+        query_budget_train (:obj:`int`, `optional`, defaults to :obj:`None`):
+            The max query budget to use when generating adversarial training set. `None` means infinite query budget.
+        attack_num_workers_per_device (:obj:`int`, defaults to `optional`, :obj:`1`):
+            Number of worker processes to run per device for attack. Same as `num_workers_per_device` argument for `AttackArgs`.
+        output_dir (:obj:`str`, `optional`):
+            Directory to output training logs and checkpoints. Defaults to `./outputs/%Y-%m-%d-%H-%M-%S-%f` format.
+        checkpoint_interval_steps (:obj:`int`, `optional`, defaults to :obj:`None`):
+            If set, save model checkpoint after every N updates to the model.
+        checkpoint_interval_epochs (:obj:`int`, `optional`, defaults to :obj:`None`):
+            If set, save model checkpoint after every N epochs
+        save_last (:obj:`bool`, `optional`, defaults to :obj:`True`):
+            If `True`, save the model at end of training. Can be used with `load_best_model_at_end` to save the best model at the end.
+        log_to_tb (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            If `True`, log to Tensorboard.
+        tb_log_dir (:obj:`str`, `optional`, defaults to :obj:`"./runs"`):
+            Path of Tensorboard log directory.
+        log_to_wandb (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            If `True`, log to Wandb.
+        wandb_project (:obj:`str`, `optional`, defaults to :obj:`"textattack"`):
+            Name of Wandb project for logging.
+        logging_interval_step (:obj: `int`, `optional`, defaults to :obj:`1`):
+            Log to Tensorboard/Wandb every N training steps.
     """
 
-    num_epochs: int = 5
-    num_clean_epochs: int = 0
+    num_epochs: int = 3
+    num_clean_epochs: int = 1
     attack_epoch_interval: int = 1
     early_stopping_epochs: int = None
     learning_rate: float = 5e-5
-    lr: float = None  # alternative keyword arg for learning_rate
-    num_warmup_steps: int = 500
+    num_warmup_steps: Union[int, float] = 500
     weight_decay: float = 0.01
     per_device_train_batch_size: int = 8
     per_device_eval_batch_size: int = 32
@@ -74,11 +98,9 @@ class TrainingArgs:
     random_seed: int = 786
     parallel: bool = False
     load_best_model_at_end: bool = False
-    eval_adversarial_robustness: bool = False
-    num_eval_adv_examples: int = 1000
-    num_train_adv_examples: int = -1
+    alpha: float = 1.0
+    num_train_adv_examples: Union[int, float] = -1
     query_budget_train: int = None
-    query_budget_eval: int = None
     attack_num_workers_per_device: int = 1
     output_dir: str = field(default_factory=default_output_dir)
     checkpoint_interval_steps: int = None
@@ -91,8 +113,6 @@ class TrainingArgs:
     logging_interval_step: int = 1
 
     def __post_init__(self):
-        if self.lr:
-            self.learning_rate = self.lr
         assert self.num_epochs > 0, "`num_epochs` must be greater than 0."
         assert (
             self.num_clean_epochs >= 0
@@ -101,16 +121,13 @@ class TrainingArgs:
             assert (
                 self.early_stopping_epochs > 0
             ), "`early_stopping_epochs` must be greater than 0."
+        if self.attack_epoch_interval is not None:
+            assert (
+                self.attack_epoch_interval > 0
+            ), "`attack_epoch_interval` must be greater than 0."
         assert (
-            self.attack_epoch_interval > 0
-        ), "`attack_epoch_interval` must be greater than 0."
-        assert self.num_warmup_steps > 0, "`num_warmup_steps` must be greater than 0."
-        assert (
-            self.num_train_adv_examples > 0 or self.num_train_adv_examples == -1
-        ), "`num_train_adv_examples` must be greater than 0 or equal to -1."
-        assert (
-            self.num_eval_adv_examples > 0 or self.num_eval_adv_examples == -1
-        ), "`num_eval_adv_examples` must be greater than 0 or equal to -1."
+            self.num_warmup_steps >= 0
+        ), "`num_warmup_steps` must be greater than or equal to 0."
         assert (
             self.gradient_accumulation_steps > 0
         ), "`gradient_accumulation_steps` must be greater than 0."
@@ -118,117 +135,130 @@ class TrainingArgs:
             self.num_clean_epochs <= self.num_epochs
         ), f"`num_clean_epochs` cannot be greater than `num_epochs` ({self.num_clean_epochs} > {self.num_epochs})."
 
+        if isinstance(self.num_train_adv_examples, float):
+            assert (
+                self.num_train_adv_examples >= 0.0
+                and self.num_train_adv_examples <= 1.0
+            ), "If `num_train_adv_examples` is float, it must be between 0 and 1."
+        elif isinstance(self.num_train_adv_examples, int):
+            assert (
+                self.num_train_adv_examples > 0 or self.num_train_adv_examples == -1
+            ), "If `num_train_adv_examples` is int, it must be greater than 0 or equal to -1."
+        else:
+            raise TypeError("`num_train_adv_examples` must be of either type `int` or `float`.")
+
     @classmethod
     def add_parser_args(cls, parser):
         """Add listed args to command line parser."""
+        default_obj = cls()
+
+        def int_or_float(v):
+            try:
+                return int(v)
+            except ValueError:
+                return float(v)
+
         parser.add_argument(
             "--num-epochs",
             type=int,
-            default=4,
+            default=default_obj.num_epochs,
             help="Total number of epochs for training.",
         )
         parser.add_argument(
             "--num-clean-epochs",
             type=int,
-            default=0,
+            default=default_obj.num_clean_epochs,
             help="Number of epochs to train on the clean dataset before adversarial training (N/A if --attack unspecified)",
         )
         parser.add_argument(
             "--attack-epoch-interval",
             type=int,
-            default=1,
+            default=default_obj.attack_epoch_interval,
             help="Generate a new adversarial training set every N epochs.",
         )
         parser.add_argument(
             "--early-stopping-epochs",
             type=int,
-            default=None,
+            default=default_obj.early_stopping_epochs,
             help="Number of epochs validation must increase before stopping early (-1 for no early stopping)",
         )
         parser.add_argument(
             "--learning-rate",
             "--lr",
             type=float,
-            default=5e-5,
+            default=default_obj.learning_rate,
             help="Learning rate for Adam Optimization.",
         )
         parser.add_argument(
             "--num-warmup-steps",
-            type=float,
-            default=500,
+            type=int_or_float,
+            default=default_obj.num_warmup_steps,
             help="The number of steps for the warmup phase of linear scheduler.",
         )
         parser.add_argument(
             "--weight-decay",
             type=float,
-            default=0.01,
+            default=default_obj.weight_decay,
             help="Weight decay (L2 penalty).",
         )
         parser.add_argument(
             "--per-device-train-batch-size",
             type=int,
-            default=8,
+            default=default_obj.per_device_train_batch_size,
             help="The batch size per GPU/CPU for training.",
         )
         parser.add_argument(
             "--per-device-eval-batch-size",
             type=int,
-            default=32,
+            default=default_obj.per_device_eval_batch_size,
             help="The batch size per GPU/CPU for evaluation.",
         )
         parser.add_argument(
             "--gradient-accumulation-steps",
             type=int,
-            default=1,
+            default=default_obj.gradient_accumulation_steps,
             help="Number of updates steps to accumulate the gradients for, before performing a backward/update pass.",
         )
-        parser.add_argument("--random-seed", type=int, default=786, help="Random seed.")
+        parser.add_argument(
+            "--random-seed",
+            type=int,
+            default=default_obj.random_seed,
+            help="Random seed.",
+        )
         parser.add_argument(
             "--parallel",
             action="store_true",
-            default=False,
+            default=default_obj.parallel,
             help="If set, run training on multiple GPUs.",
         )
         parser.add_argument(
             "--load-best-model-at-end",
             action="store_true",
-            default=False,
+            default=default_obj.load_best_model_at_end,
             help="If set, keep track of the best model across training and load it at the end.",
         )
         parser.add_argument(
-            "--eval-adversarial-robustness",
-            action="store_true",
-            default=False,
-            help="If set, evaluate adversarial robustness on evaluation dataset after every epoch.",
-        )
-        parser.add_argument(
-            "--num-eval-adv-examples",
-            type=int,
-            default=1000,
-            help="The number of samples attack if `eval_adversarial_robustness=True`. Default is 1000.",
+            "--alpha",
+            type=float,
+            default=1.0,
+            help="The weight of adversarial loss.",
         )
         parser.add_argument(
             "--num-train-adv-examples",
-            type=int,
-            default=-1,
+            type=int_or_float,
+            default=default_obj.num_train_adv_examples,
             help="The number of samples to attack when generating adversarial training set. Default is -1 (which is all possible samples).",
         )
         parser.add_argument(
             "--query-budget-train",
             type=int,
-            default=None,
+            default=default_obj.query_budget_train,
             help="The max query budget to use when generating adversarial training set.",
-        )
-        parser.add_argument(
-            "--query-budget-eval",
-            type=int,
-            default=None,
-            help="The max query budget to use when evaluating adversarial robustness.",
         )
         parser.add_argument(
             "--attack-num-workers-per-device",
             type=int,
-            default=1,
+            default=default_obj.attack_num_workers_per_device,
             help="Number of worker processes to run per device for attack. Same as `num_workers_per_device` argument for `AttackArgs`.",
         )
         parser.add_argument(
@@ -240,49 +270,49 @@ class TrainingArgs:
         parser.add_argument(
             "--checkpoint-interval-steps",
             type=int,
-            default=None,
+            default=default_obj.checkpoint_interval_steps,
             help="Save model checkpoint after every N updates to the model.",
         )
         parser.add_argument(
             "--checkpoint-interval-epochs",
             type=int,
-            default=None,
+            default=default_obj.checkpoint_interval_epochs,
             help="Save model checkpoint after every N epochs.",
         )
         parser.add_argument(
             "--save-last",
             action="store_true",
-            default=True,
+            default=default_obj.save_last,
             help="If set, save the model at end of training. Can be used with `--load-best-model-at-end` to save the best model at the end.",
         )
         parser.add_argument(
             "--log-to-tb",
             action="store_true",
-            default=False,
+            default=default_obj.log_to_tb,
             help="If set, log to Tensorboard",
         )
         parser.add_argument(
             "--tb-log-dir",
             type=str,
-            default=None,
+            default=default_obj.tb_log_dir,
             help="Path of Tensorboard log directory.",
         )
         parser.add_argument(
             "--log-to-wandb",
             action="store_true",
-            default=False,
+            default=default_obj.log_to_wandb,
             help="If set, log to Wandb.",
         )
         parser.add_argument(
             "--wandb-project",
             type=str,
-            default="textattack",
+            default=default_obj.wandb_project,
             help="Name of Wandb project for logging.",
         )
         parser.add_argument(
             "--logging-interval-step",
             type=int,
-            default=1,
+            default=default_obj.logging_interval_step,
             help="Log to Tensorboard/Wandb every N steps.",
         )
 
