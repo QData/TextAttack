@@ -5,10 +5,10 @@ CheckList:
 (Beyond Accuracy: Behavioral Testing of NLP models with CheckList)
 
 """
+from textattack import Attack
 from textattack.constraints.pre_transformation import RepeatModification
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
-from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
     WordSwapChangeLocation,

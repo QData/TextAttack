@@ -6,6 +6,7 @@ Particle Swarm Optimization
 (Word-level Textual Adversarial Attacking as Combinatorial Optimization)
 
 """
+from textattack import Attack
 from textattack.constraints.pre_transformation import (
     InputColumnModification,
     RepeatModification,
@@ -13,7 +14,6 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import ParticleSwarmOptimization
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapHowNet
 
 from .attack_recipe import AttackRecipe

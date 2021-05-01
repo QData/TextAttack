@@ -5,13 +5,13 @@ MORPHEUS2020
 
 
 """
+from textattack import Attack
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
 from textattack.goal_functions import MinimizeBleu
 from textattack.search_methods import GreedySearch
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapInflections
 
 from .attack_recipe import AttackRecipe

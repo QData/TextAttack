@@ -4,6 +4,7 @@ Kuleshov2017
 (Adversarial Examples for Natural Language Classification Problems)
 
 """
+from textattack import Attack
 from textattack.constraints.grammaticality.language_models import GPT2
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
@@ -13,7 +14,6 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics.sentence_encoders import ThoughtVector
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 from .attack_recipe import AttackRecipe

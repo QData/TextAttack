@@ -6,6 +6,7 @@ DeepWordBug
 
 """
 
+from textattack import Attack
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.constraints.pre_transformation import (
     RepeatModification,
@@ -13,7 +14,6 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
     WordSwapNeighboringCharacterSwap,

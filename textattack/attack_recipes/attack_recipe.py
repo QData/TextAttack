@@ -6,7 +6,7 @@ Attack Recipe Class
 
 from abc import ABC, abstractmethod
 
-from textattack.shared import Attack
+from textattack import Attack
 
 
 class AttackRecipe(Attack, ABC):

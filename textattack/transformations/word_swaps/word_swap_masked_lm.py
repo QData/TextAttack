@@ -100,7 +100,7 @@ class WordSwapMaskedLM(WordSwap):
             padding="max_length",
             return_tensors="pt",
         )
-        return {k: v.to(utils.device) for k, v in encoding.items()}
+        return encoding.to(utils.device)
 
     def _bae_replacement_words(self, current_text, indices_to_modify):
         """Get replacement words for the word we want to replace using BAE

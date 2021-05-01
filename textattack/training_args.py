@@ -145,7 +145,9 @@ class TrainingArgs:
                 self.num_train_adv_examples > 0 or self.num_train_adv_examples == -1
             ), "If `num_train_adv_examples` is int, it must be greater than 0 or equal to -1."
         else:
-            raise TypeError("`num_train_adv_examples` must be of either type `int` or `float`.")
+            raise TypeError(
+                "`num_train_adv_examples` must be of either type `int` or `float`."
+            )
 
     @classmethod
     def add_parser_args(cls, parser):
