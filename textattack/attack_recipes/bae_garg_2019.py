@@ -3,7 +3,6 @@ BAE (BAE: BERT-Based Adversarial Examples)
 ============================================
 
 """
-from textattack import Attack
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (
     RepeatModification,
@@ -37,7 +36,7 @@ class BAEGarg2019(AttackRecipe):
     """
 
     @staticmethod
-    def build(model_wrapper):
+    def build(model):
         # "In this paper, we present a simple yet novel technique: BAE (BERT-based
         # Adversarial Examples), which uses a language model (LM) for token
         # replacement to best fit the overall context. We perturb an input sentence
@@ -106,7 +105,7 @@ class BAEGarg2019(AttackRecipe):
         #
         # Goal is untargeted classification.
         #
-        goal_function = UntargetedClassification(model_wrapper)
+        goal_function = UntargetedClassification(model)
         #
         # "We estimate the token importance Ii of each token
         # t_i ∈ S = [t1, . . . , tn], by deleting ti from S and computing the
@@ -121,4 +120,4 @@ class BAEGarg2019(AttackRecipe):
         #
         search_method = GreedyWordSwapWIR(wir_method="delete")
 
-        return Attack(goal_function, constraints, transformation, search_method)
+        return BAEGarg2019(goal_function, constraints, transformation, search_method)

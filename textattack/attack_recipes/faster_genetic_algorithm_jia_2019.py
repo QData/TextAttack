@@ -7,7 +7,6 @@ Faster Alzantot Genetic Algorithm
 
 """
 
-from textattack import Attack
 from textattack.constraints.grammaticality.language_models import (
     LearningToWriteLanguageModel,
 )
@@ -19,6 +18,7 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import AlzantotGeneticAlgorithm
+from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 from .attack_recipe import AttackRecipe
@@ -33,7 +33,7 @@ class FasterGeneticAlgorithmJia2019(AttackRecipe):
     """
 
     @staticmethod
-    def build(model_wrapper):
+    def build(model):
         #
         # Section 5: Experiments
         #
@@ -116,7 +116,7 @@ class FasterGeneticAlgorithmJia2019(AttackRecipe):
         #
         constraints.append(WordEmbeddingDistance(max_mse_dist=0.5))
         #
-        # Language model
+        # Language Model
         #
         #
         #
@@ -129,7 +129,7 @@ class FasterGeneticAlgorithmJia2019(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model_wrapper)
+        goal_function = UntargetedClassification(model)
         #
         # Perform word substitution with a genetic algorithm.
         #
