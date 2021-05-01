@@ -72,6 +72,9 @@ class GreedyWordSwapWIR(SearchMethod):
                     continue
                 swap_results, _ = self.get_goal_results(transformed_text_candidates)
                 score_change = [result.score for result in swap_results]
+                if not score_change:
+                    delta_ps.append(0.0)
+                    continue
                 max_score_change = np.max(score_change)
                 delta_ps.append(max_score_change)
 

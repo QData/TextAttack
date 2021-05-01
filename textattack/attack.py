@@ -9,6 +9,7 @@ Attack: TextAttack builds attacks from four components:
 
 The ``Attack`` class represents an adversarial attack composed of a goal function, search method, transformation, and constraints.
 """
+from collections import OrderedDict
 
 import lru
 import torch
@@ -358,8 +359,11 @@ class Attack:
             AttackResult
         """
         assert isinstance(
-            example, AttackedText
-        ), "`example` must be of type `AttackedText`."
+            example, (str, OrderedDict, AttackedText)
+        ), "`example` must either be `str`, `collections.OrderedDict`, `textattack.shared.AttackedText`."
+        if isinstance(example, (str, OrderedDict)):
+            example = AttackedText(example)
+
         assert isinstance(
             ground_truth_output, (int, str)
         ), "`ground_truth_output` must either be `str` or `int`."
