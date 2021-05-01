@@ -3,6 +3,7 @@ Combating Adversarial Misspellings with Robust Word Recognition
 =================================================================
 
 """
+from textattack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
     MinWordLength,
@@ -11,7 +12,6 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
-from textattack.shared.attack import Attack
 from textattack.transformations import (
     CompositeTransformation,
     WordSwapNeighboringCharacterSwap,

@@ -5,13 +5,13 @@ Input Reduction
 (Pathologies of Neural Models Make Interpretations Difficult)
 
 """
+from textattack import Attack
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
 from textattack.goal_functions import InputReduction
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import WordDeletion
 
 from .attack_recipe import AttackRecipe

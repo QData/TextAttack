@@ -6,12 +6,12 @@ Improved Genetic Algorithm
 (Natural Language Adversarial Attacks and Defenses in Word Level)
 
 """
+from textattack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import StopwordModification
 from textattack.constraints.semantics import WordEmbeddingDistance
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import ImprovedGeneticAlgorithm
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 from .attack_recipe import AttackRecipe

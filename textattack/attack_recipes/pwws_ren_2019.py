@@ -6,13 +6,13 @@ PWWS
 (Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency)
 
 """
+from textattack import Attack
 from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapWordNet
 
 from .attack_recipe import AttackRecipe

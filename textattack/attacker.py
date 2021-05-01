@@ -564,4 +564,4 @@ def attack_from_queue(
             if isinstance(e, queue.Empty):
                 continue
             else:
-                out_queue.put((i, (e, traceback.format_exc(e))))
+                out_queue.put((i, (e, traceback.format_exc())))

@@ -47,9 +47,8 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             return_tensors="pt",
         )
         model_device = next(self.model.parameters()).device
-        for key in inputs_dict:
-            if isinstance(inputs_dict[key], torch.Tensor):
-                inputs_dict[key] = inputs_dict[key].to(model_device)
+        inputs_dict.to(model_device)
+
         with torch.no_grad():
             outputs = self.model(**inputs_dict)
 
@@ -98,9 +97,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             padding="max_length",
             truncation=True,
         )
-        for key in input_dict:
-            if isinstance(input_dict[key], torch.Tensor):
-                input_dict[key] = input_dict[key].to(model_device)
+        input_dict.to(model_device)
         predictions = self.model(**input_dict).logits
 
         try:

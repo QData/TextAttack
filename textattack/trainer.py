@@ -348,7 +348,10 @@ class Trainer:
         _targets = targets
         targets = targets.to(textattack.shared.utils.device)
 
-        if isinstance(model, transformers.PreTrainedModel) or (isinstance(model, torch.nn.DataParallel) and isinstance(model.module, transformers.PreTrainedModel)):
+        if isinstance(model, transformers.PreTrainedModel) or (
+            isinstance(model, torch.nn.DataParallel)
+            and isinstance(model.module, transformers.PreTrainedModel)
+        ):
             input_ids = tokenizer(
                 input_texts,
                 padding="max_length",
