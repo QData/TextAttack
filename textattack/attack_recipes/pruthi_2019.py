@@ -40,7 +40,7 @@ class Pruthi2019(AttackRecipe):
     """
 
     @staticmethod
-    def build(model, max_num_word_swaps=1):
+    def build(model_wrapper, max_num_word_swaps=1):
         # a combination of 4 different character-based transforms
         # ignore the first and last letter of each word, as in the paper
         transformation = CompositeTransformation(
@@ -70,6 +70,6 @@ class Pruthi2019(AttackRecipe):
             RepeatModification(),
         ]
         # untargeted attack
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         search_method = GreedySearch()
         return Attack(goal_function, constraints, transformation, search_method)

@@ -1,15 +1,5 @@
-"""
-Attack: TextAttack builds attacks from four components:
-========================================================
-
-- `Goal Functions <../attacks/goal_function.html>`__ stipulate the goal of the attack, like to change the prediction score of a classification model, or to change all of the words in a translation output.
-- `Constraints <../attacks/constraint.html>`__ determine if a potential perturbation is valid with respect to the original input.
-- `Transformations <../attacks/transformation.html>`__ take a text input and transform it by inserting and deleting characters, words, and/or phrases.
-- `Search Methods <../attacks/search_method.html>`__ explore the space of possible **transformations** within the defined **constraints** and attempt to find a successful perturbation which satisfies the **goal function**.
-
-The ``Attack`` class represents an adversarial attack composed of a goal function, search method, transformation, and constraints.
-"""
 from collections import OrderedDict
+from typing import List, Union
 
 import lru
 import torch
@@ -33,25 +23,59 @@ from textattack.transformations import CompositeTransformation, Transformation
 class Attack:
     """An attack generates adversarial examples on text.
 
-    An attack is comprised of a search method, goal function,
-    a transformation, and a set of one or more linguistic constraints that
-    successful examples must meet.
+    An attack is comprised of a goal function, constraints, transformation, and a search method. Use :meth:`attack` method to attack one sample at a time.
 
     Args:
-        goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
-        constraints: A list of constraints to add to the attack, defining which perturbations are valid.
-        transformation: The transformation applied at each step of the attack.
-        search_method: A strategy for exploring the search space of possible perturbations
-        transformation_cache_size (int): the number of items to keep in the transformations cache
-        constraint_cache_size (int): the number of items to keep in the constraints cache
+        goal_function (:class:`~textattack.goal_functions.GoalFunction`):
+            A function for determining how well a perturbation is doing at achieving the attack's goal.
+        constraints (list of :class:`~textattack.constraints.Constraint` or :class:`~textattack.constraints.PreTransformationConstraint`):
+            A list of constraints to add to the attack, defining which perturbations are valid.
+        transformation (:class:`~textattack.transformations.Transformation`):
+            The transformation applied at each step of the attack.
+        search_method (:class:`~textattack.search_methods.SearchMethod`):
+            The method for exploring the search space of possible perturbations
+        transformation_cache_size (:obj:`int`, `optional`, defaults to :obj:`2**15`):
+            The number of items to keep in the transformations cache
+        constraint_cache_size (:obj:`int`, `optional`, defaults to :obj:`2**15`):
+            The number of items to keep in the constraints cache
+
+    Example::
+
+        >>> import textattack
+        >>> import transformers
+
+        >>> # Load model, tokenizer, and model_wrapper
+        >>> model = transformers.AutoModelForSequenceClassification.from_pretrained("textattack/bert-base-uncased-imdb")
+        >>> tokenizer = transformers.AutoTokenizer.from_pretrained("textattack/bert-base-uncased-imdb")
+        >>> model_wrapper = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
+
+        >>> # Construct our four components for `Attack`
+        >>> from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
+        >>> from textattack.constraints.semantics import WordEmbeddingDistance
+
+        >>> goal_function = textattack.goal_functions.UntargetedClassification(model_wrapper)
+        >>> constraints = [
+        ...     RepeatModification(),
+        ...     StopwordModification()
+        ...     WordEmbeddingDistance(min_cos_sim=0.9)
+        ... ]
+        >>> transformation = WordSwapEmbedding(max_candidates=50)
+        >>> search_method = GreedyWordSwapWIR(wir_method="delete")
+
+        >>> # Construct the actual attack
+        >>> attack = Attack(goal_function, constraints, transformation, search_method)
+
+        >>> input_text = "I really enjoyed the new movie that came out last month."
+        >>> label = 1 #Positive
+        >>> attack_result = attack.attack(input_text, label)
     """
 
     def __init__(
         self,
-        goal_function=None,
-        constraints=[],
-        transformation=None,
-        search_method=None,
+        goal_function: GoalFunction,
+        constraints: List[Union[Constraint, PreTransformationConstraint]],
+        transformation: Transformation,
+        search_method: SearchMethod,
         transformation_cache_size=2 ** 15,
         constraint_cache_size=2 ** 15,
     ):
@@ -59,17 +83,26 @@ class Attack:
 
         Attacks can be run multiple times.
         """
+        assert isinstance(
+            goal_function, GoalFunction
+        ), f"`goal_function` must be of type `textattack.goal_functions.GoalFunction`, but got type `{type(goal_function)}`."
+        assert isinstance(
+            constraints, list
+        ), "`constraints` must be a list of `textattack.constraints.Constraint` or `textattack.constraints.PreTransformationConstraint`."
+        for c in constraints:
+            assert isinstance(
+                c, (Constraint, PreTransformationConstraint)
+            ), "`constraints` must be a list of `textattack.constraints.Constraint` or `textattack.constraints.PreTransformationConstraint`."
+        assert isinstance(
+            transformation, Transformation
+        ), f"`transformation` must be of type `textattack.transformations.Transformation`, but got type `{type(transformation)}`."
+        assert isinstance(
+            search_method, SearchMethod
+        ), f"`search_method` must be of type `textattack.search_methods.SearchMethod`, but got type `{type(search_method)}`."
+
         self.goal_function = goal_function
-        if not self.goal_function:
-            raise NameError(
-                "Cannot instantiate attack without self.goal_function for predictions"
-            )
         self.search_method = search_method
-        if not self.search_method:
-            raise NameError("Cannot instantiate attack without search method")
         self.transformation = transformation
-        if not self.transformation:
-            raise NameError("Cannot instantiate attack without transformation")
         self.is_black_box = (
             getattr(transformation, "is_black_box", True) and search_method.is_black_box
         )
@@ -110,14 +143,14 @@ class Attack:
         self.constraints_cache = lru.LRU(constraint_cache_size)
 
         # Give search method access to functions for getting transformations and evaluating them
-        self.search_method.get_transformations = self.get_transformations
+        self.search_method.get_transformations = self._get_transformations
         # Give search method access to self.goal_function for model query count, etc.
         self.search_method.goal_function = self.goal_function
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
         self.search_method.get_goal_results = self.goal_function.get_results
 
-        self.search_method.filter_transformations = self.filter_transformations
+        self.search_method.filter_transformations = self._filter_transformations
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
@@ -130,7 +163,7 @@ class Attack:
                     constraint.clear_cache()
 
     def cpu(self):
-        """Move any models that are part of Attack to CPU."""
+        """Move any `torch.nn.Module` models that are part of Attack to CPU."""
         visited = set()
 
         def to_cpu(obj):
@@ -163,7 +196,7 @@ class Attack:
         to_cpu(self)
 
     def cuda(self):
-        """Move any models that are part of Attack to GPU."""
+        """Move any `torch.nn.Module` models that are part of Attack to GPU."""
         visited = set()
 
         def to_cuda(obj):
@@ -351,12 +384,20 @@ class Attack:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
 
     def attack(self, example, ground_truth_output):
-        """Attack a single example represented as ``AttackedText``
+        """Attack a single example.
+
         Args:
-            example (Union[AttackedText]): example to attack.
-            ground_truth_output: ground truth output of ``example``.
+            example (:obj:`str`, :obj:`OrderedDict[str, str]` or :class:`~textattack.shared.AttackedText`):
+                Example to attack. It can be a single string or an `OrderedDict` where
+                keys represent the input fields (e.g. "premise", "hypothesis") and the values are the actual input textx.
+                Also accepts :class:`~textattack.shared.AttackedText` that wraps around the input.
+            ground_truth_output(:obj:`int`, :obj:`float` or :obj:`str`):
+                Ground truth output of `example`.
+                For classification tasks, it should be an integer representing the ground truth label.
+                For regression tasks (e.g. STS), it should be the target value.
+                For seq2seq tasks (e.g. translation), it should be the target string.
         Returns:
-            AttackResult
+            :class:`~textattack.attack_results.AttackResult` that represents the result of the attack.
         """
         assert isinstance(
             example, (str, OrderedDict, AttackedText)

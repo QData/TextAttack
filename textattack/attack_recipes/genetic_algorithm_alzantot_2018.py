@@ -38,7 +38,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # Swap words with their embedding nearest-neighbors.
         #
@@ -80,7 +80,7 @@ class GeneticAlgorithmAlzantot2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Perform word substitution with a genetic algorithm.
         #

@@ -30,12 +30,12 @@ class Seq2SickCheng2018BlackBox(AttackRecipe):
     """
 
     @staticmethod
-    def build(model, goal_function="non_overlapping"):
+    def build(model_wrapper, goal_function="non_overlapping"):
 
         #
         # Goal is non-overlapping output.
         #
-        goal_function = NonOverlappingOutput(model)
+        goal_function = NonOverlappingOutput(model_wrapper)
         transformation = WordSwapEmbedding(max_candidates=50)
         #
         # Don't modify the same word twice or stopwords

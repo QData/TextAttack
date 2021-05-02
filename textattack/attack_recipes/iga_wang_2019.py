@@ -26,7 +26,7 @@ class IGAWang2019(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # Swap words with their embedding nearest-neighbors.
         # Embedding: Counter-fitted Paragram Embeddings.
@@ -50,7 +50,7 @@ class IGAWang2019(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Perform word substitution with an improved genetic algorithm.
         # Fix the hyperparameter values to S = 60, M = 20, λ = 5."

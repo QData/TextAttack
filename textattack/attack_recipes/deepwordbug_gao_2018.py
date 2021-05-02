@@ -35,7 +35,7 @@ class DeepWordBugGao2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model, use_all_transformations=True):
+    def build(model_wrapper, use_all_transformations=True):
         #
         # Swap characters out from words. Choose the best of four potential transformations.
         #
@@ -70,7 +70,7 @@ class DeepWordBugGao2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Greedily swap words with "Word Importance Ranking".
         #

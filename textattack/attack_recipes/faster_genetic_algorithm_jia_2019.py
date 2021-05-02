@@ -33,7 +33,7 @@ class FasterGeneticAlgorithmJia2019(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # Section 5: Experiments
         #
@@ -129,7 +129,7 @@ class FasterGeneticAlgorithmJia2019(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Perform word substitution with a genetic algorithm.
         #

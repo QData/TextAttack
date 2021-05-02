@@ -12,17 +12,17 @@ class AttackCommand(TextAttackCommand):
 
     def run(self, args):
         attack_args = CommandLineAttackArgs(**vars(args))
-        dataset = DatasetArgs.create_dataset_from_args(attack_args)
+        dataset = DatasetArgs._create_dataset_from_args(attack_args)
 
         if attack_args.interactive:
-            model_wrapper = ModelArgs.create_model_from_args(attack_args)
-            attack = CommandLineAttackArgs.create_attack_from_args(
+            model_wrapper = ModelArgs._create_model_from_args(attack_args)
+            attack = CommandLineAttackArgs._create_attack_from_args(
                 attack_args, model_wrapper
             )
             Attacker.attack_interactive(attack)
         else:
-            model_wrapper = ModelArgs.create_model_from_args(attack_args)
-            attack = CommandLineAttackArgs.create_attack_from_args(
+            model_wrapper = ModelArgs._create_model_from_args(attack_args)
+            attack = CommandLineAttackArgs._create_attack_from_args(
                 attack_args, model_wrapper
             )
             attacker = Attacker(attack, dataset, attack_args)
@@ -35,5 +35,5 @@ class AttackCommand(TextAttackCommand):
             help="run an attack on an NLP model",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
-        parser = CommandLineAttackArgs.add_parser_args(parser)
+        parser = CommandLineAttackArgs._add_parser_args(parser)
         parser.set_defaults(func=AttackCommand())

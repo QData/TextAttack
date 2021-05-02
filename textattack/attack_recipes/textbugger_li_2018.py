@@ -36,7 +36,7 @@ class TextBuggerLi2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         #  we propose five bug generation methods for TEXTBUGGER:
         #
@@ -89,7 +89,7 @@ class TextBuggerLi2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Greedily swap words with "Word Importance Ranking".
         #

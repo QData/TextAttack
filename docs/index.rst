@@ -4,7 +4,15 @@ TextAttack Documentation
 
 .. toctree::
    :maxdepth: 6
-   :caption: About
+   :caption: Get Started
+
+   Quick Tour <1_get_started/quick_tour.rst>
+   Installation <1_get_started/installation.md>
+
+
+.. toctree::
+   :maxdepth: 6
+   :caption: Using TextAttack
 
    1start/basic-Intro.rst
    1start/what_is_an_adversarial_attack.md
@@ -43,13 +51,13 @@ TextAttack Documentation
 
 .. toctree::
    :maxdepth: 6
-   :glob:
-   :caption: Developer Guide
-   
-   1start/support.md
-   1start/api-design-tips.md
-   3recipes/attack_recipes
-   3recipes/augmenter_recipes
-   apidoc/textattack
+   :caption: API Reference
+
+   Attack <api/attack.rst>
+   AttackResult <api/attack_results.rst>
+   Augmentation <api/augmentations.rst>
+   Trainer <api/trainer.rst>
+   Models <api/models/models.rst>
+   Datasets <api/datasets.rst>
 
 

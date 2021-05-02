@@ -36,35 +36,43 @@ class Trainer:
         attack=None,
         train_dataset=None,
         eval_dataset=None,
-        training_args=TrainingArgs(),
+        training_args=None,
     ):
         assert isinstance(
             model_wrapper, ModelWrapper
         ), f"`model_wrapper` must be of type `textattack.models.wrappers.ModelWrapper`, but got type `{type(model_wrapper)}`."
+
         # TODO: Support seq2seq training
         assert task_type in {
             "classification",
             "regression",
         }, '`task_type` must either be "classification" or "regression"'
+
         if attack:
             assert isinstance(
                 attack, Attack
             ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
+
         if train_dataset:
             assert isinstance(
                 train_dataset, textattack.datasets.Dataset
             ), f"`train_dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(train_dataset)}`."
+
         if eval_dataset:
             assert isinstance(
                 eval_dataset, textattack.datasets.Dataset
             ), f"`eval_dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(eval_dataset)}`."
-        assert isinstance(
-            training_args, TrainingArgs
-        ), f"`training_args` must be of type `textattack.TrainingArgs`, but got type `{type(training_args)}`."
+
+        if training_args:
+            assert isinstance(
+                training_args, TrainingArgs
+            ), f"`training_args` must be of type `textattack.TrainingArgs`, but got type `{type(training_args)}`."
+        else:
+            training_args = TrainingArgs()
 
         if id(model_wrapper) != id(attack.goal_function.model):
             logger.warn(
-                "WARNING: `model_wrapper` and the victim model of `attack` is not the same model."
+                "`model_wrapper` and the victim model of `attack` are not the same model."
             )
 
         if not hasattr(model_wrapper, "model"):
@@ -73,6 +81,7 @@ class Trainer:
             assert isinstance(
                 model_wrapper.model, torch.nn.Module
             ), f"`model` in `model_wrapper` must be of type `torch.nn.Module`, but got type `{type(model_wrapper.model)}`."
+
         if not hasattr(model_wrapper, "tokenizer"):
             raise ValueError("Cannot detect `tokenizer` in `model_wrapper`")
 
@@ -224,7 +233,19 @@ class Trainer:
 
         wandb.log(log, step=step)
 
-    def get_optimizer_and_scheduler(self, model, total_training_steps):
+    def get_optimizer_and_scheduler(self, model, num_training_steps):
+        """Returns optimizer and scheduler to use for training. If you are
+        overriding this method and do not want to use a scheduler, simply
+        return :obj:`None` for scheduler.
+
+        Args:
+            model (:obj:`torch.nn.Module`):
+                Model to be trained. Pass its parameters to optimizer for training.
+            num_training_steps (:obj:`int`):
+                Number of total training steps.
+        Returns:
+            Tuple of optimizer and scheduler :obj:`tuple[torch.optim.Optimizer, torch.optim.lr_scheduler._LRScheduler]`
+        """
         if isinstance(model, torch.nn.DataParallel):
             model = model.module
 
@@ -254,7 +275,7 @@ class Trainer:
             )
             if isinstance(self.training_args.num_warmup_steps, float):
                 num_warmup_steps = math.ceil(
-                    self.training_args.num_warmup_steps * total_training_steps
+                    self.training_args.num_warmup_steps * num_training_steps
                 )
             else:
                 num_warmup_steps = self.training_args.num_warmup_steps
@@ -262,7 +283,7 @@ class Trainer:
             scheduler = transformers.optimization.get_linear_schedule_with_warmup(
                 optimizer,
                 num_warmup_steps=num_warmup_steps,
-                num_training_steps=total_training_steps,
+                num_training_steps=num_training_steps,
             )
         else:
             optimizer = torch.optim.Adam(
@@ -273,7 +294,17 @@ class Trainer:
 
         return optimizer, scheduler
 
-    def get_train_dataloader(self, dataset, train_batch_size):
+    def get_train_dataloader(self, dataset, batch_size):
+        """Returns the :obj:`torch.utils.data.DataLoader` for training.
+
+        Args:
+            dataset (:class:`~textattack.datasets.Dataset`):
+                Dataset to use for training.
+            batch_size (:obj:`int`):
+                Batch size for training.
+        Returns:
+            :obj:`torch.utils.data.DataLoader`
+        """
         # Helper functions for collating data
         def collate_fn(data):
             input_texts = []
@@ -304,14 +335,24 @@ class Trainer:
 
         train_dataloader = torch.utils.data.DataLoader(
             dataset,
-            batch_size=train_batch_size,
+            batch_size=batch_size,
             shuffle=True,
             collate_fn=collate_fn,
             pin_memory=True,
         )
         return train_dataloader
 
-    def get_eval_dataloader(self, dataset, eval_batch_size):
+    def get_eval_dataloader(self, dataset, batch_size):
+        """Returns the :obj:`torch.utils.data.DataLoader` for evaluation.
+
+        Args:
+            dataset (:class:`~textattack.datasets.Dataset`):
+                Dataset to use for evaluation.
+            batch_size (:obj:`int`):
+                Batch size for evaluation.
+        Returns:
+            :obj:`torch.utils.data.DataLoader`
+        """
         # Helper functions for collating data
         def collate_fn(data):
             input_texts = []
@@ -326,7 +367,7 @@ class Trainer:
 
         eval_dataloader = torch.utils.data.DataLoader(
             dataset,
-            batch_size=eval_batch_size,
+            batch_size=batch_size,
             shuffle=True,
             collate_fn=collate_fn,
             pin_memory=True,
@@ -334,14 +375,25 @@ class Trainer:
         return eval_dataloader
 
     def training_step(self, model, tokenizer, batch):
-        """
+        """Perform a single training step on a batch of inputs.
+
         Args:
             model (:obj:`torch.nn.Module`):
                 Model to train.
             tokenizer:
                 Tokenizer used to tokenize input text.
             batch (:obj:`tuple[list[str], torch.Tensor, torch.Tensor]`):
-                Tuple of input texts, targets, and boolean tensor indicating if the sample is an adversarial example.
+                By default, this will be a tuple of input texts, targets, and boolean tensor indicating if the sample is an adversarial example.
+
+                .. note::
+                    If you override the :meth:`get_train_dataloader` method, then shape/type of :obj:`batch` will depend on how you created your batch.
+
+        Returns:
+            :obj:`tuple[torch.Tensor, torch.Tensor, torch.Tensor]` where
+
+            - **loss**: :obj:`torch.FloatTensor` of shape 1 containing the loss.
+            - **preds**: :obj:`torch.FloatTensor` of model's prediction for the batch.
+            - **targets**: :obj:`torch.Tensor` of model's targets (e.g. labels, target values).
         """
 
         input_texts, targets, is_adv_sample = batch
@@ -385,6 +437,25 @@ class Trainer:
         return loss, preds, _targets
 
     def evaluate_step(self, model, tokenizer, batch):
+        """Perform a single evaluation step on a batch of inputs.
+
+        Args:
+            model (:obj:`torch.nn.Module`):
+                Model to train.
+            tokenizer:
+                Tokenizer used to tokenize input text.
+            batch (:obj:`tuple[list[str], torch.Tensor]`):
+                By default, this will be a tuple of input texts and target tensors.
+
+                .. note::
+                    If you override the :meth:`get_eval_dataloader` method, then shape/type of :obj:`batch` will depend on how you created your batch.
+
+        Returns:
+            :obj:`tuple[torch.Tensor, torch.Tensor]` where
+
+            - **preds**: :obj:`torch.FloatTensor` of model's prediction for the batch.
+            - **targets**: :obj:`torch.Tensor` of model's targets (e.g. labels, target values).
+        """
         input_texts, targets = batch
         _targets = targets
         targets = targets.to(textattack.shared.utils.device)
@@ -413,6 +484,9 @@ class Trainer:
         return preds.cpu(), _targets
 
     def train(self):
+        if not self.train_dataset:
+            raise ValueError("No `train_dataset` available for training.")
+
         textattack.shared.utils.set_seed(self.training_args.random_seed)
         if not os.path.exists(self.training_args.output_dir):
             os.makedirs(self.training_args.output_dir)
@@ -662,6 +736,9 @@ class Trainer:
         self._write_readme(best_eval_score, best_eval_score_epoch, train_batch_size)
 
     def evaluate(self):
+        if not self.eval_dataset:
+            raise ValueError("No `eval_dataset` available for training.")
+
         logging.info("Evaluating model on evaluation dataset.")
         model = self.model_wrapper.model
         tokenizer = self.model_wrapper.tokenizer

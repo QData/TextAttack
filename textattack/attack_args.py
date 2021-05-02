@@ -111,15 +111,14 @@ GOAL_FUNCTION_CLASS_NAMES = {
 
 @dataclass
 class AttackArgs:
-    """Attack arguments for running attacks via API. This assumes that
-    ``Attack`` has already been created by the user.
+    """Attack arguments to be passed to :class:`~textattack.Attacker`.
 
     Args:
         num_examples (:obj:`int`, 'optional`, defaults to :obj:`10`):
-            The number of examples to attack. -1 for entire dataset.
+            The number of examples to attack. :obj:`-1` for entire dataset.
         num_successful_examples (:obj:`int`, `optional`, defaults to :obj:`None`):
-            The number of successful adversarial examples we want. This is different from `num_examples`
-            as `num_examples` only cares about attacking `N` samples while `num_successful_examples` aims to keep attacking
+            The number of successful adversarial examples we want. This is different from :obj:`num_examples`
+            as :obj:`num_examples` only cares about attacking `N` samples while :obj:`num_successful_examples` aims to keep attacking
             until we have `N` successful cases.
 
             .. note::
@@ -131,15 +130,15 @@ class AttackArgs:
         shuffle (:obj:`bool`, `optional`, defaults to :obj:`False`):
             If :obj:`True`, we randomly shuffle the dataset before attacking. However, this avoids actually shuffling
             the dataset internally and opts for shuffling the list of indices of examples we want to attack. This means
-            `shuffle` can now be used with checkpoint saving.
+            :obj:`shuffle` can now be used with checkpoint saving.
         query_budget (:obj:`int`, `optional`, defaults to :obj:`None`):
             The maximum number of model queries allowed per example attacked.
-            If not set, we use the query budget set in the `GoalFunction` object (which by default is `float("inf")`).
+            If not set, we use the query budget set in the :class:`~textattack.goal_functions.GoalFunction` object (which by default is :obj:`float("inf")`).
 
             .. note::
-                Setting this overwrites the query budget set in `GoalFunction` object.
+                Setting this overwrites the query budget set in :class:`~textattack.goal_functions.GoalFunction` object.
         checkpoint_interval (:obj:`int`, `optional`, defaults to :obj:`None`):
-            If set, checkpoint will be saved after attacking every `N` examples. If `None` is passed, no checkpoints will be saved.
+            If set, checkpoint will be saved after attacking every `N` examples. If :obj:`None` is passed, no checkpoints will be saved.
         checkpoint_dir (:obj:`str`, `optional`, defaults to :obj:`"checkpoints"`):
             The directory to save checkpoint files.
         random_seed (:obj:`int`, `optional`, defaults to :obj:`765`):
@@ -147,7 +146,7 @@ class AttackArgs:
         parallel (:obj:`False`, `optional`, defaults to :obj:`False`):
             If :obj:`True`, run attack using multiple CPUs/GPUs.
         num_workers_per_device (:obj:`int`, `optional`, defaults to :obj:`1`):
-            Number of worker processes to run per device in parallel mode (i.e. `parallel=True`). For example, if you are using GPUs and `num_workers_per_device=2`,
+            Number of worker processes to run per device in parallel mode (i.e. :obj:`parallel=True`). For example, if you are using GPUs and :obj:`num_workers_per_device=2`,
             then 2 processes will be running in each GPU.
         log_to_txt (:obj:`str`, `optional`, defaults to :obj:`None`):
             If set, save attack logs as a `.txt` file to the directory specified by this argument.
@@ -156,18 +155,18 @@ class AttackArgs:
             If set, save attack logs as a CSV file to the directory specified by this argument.
             If the last part of the provided path ends with `.csv` extension, it is assumed to the desired path of the log file.
         csv_coloring_style (:obj:`str`, `optional`, defaults to :obj:`"file"`):
-            Method for choosing how to mark perturbed parts of the text. Options are `"file"` and `"plain"`.
-            `"file"` wraps perturbed parts with double brackets `[[ <text> ]]` while `"plain"` does not mark the text in any way.
+            Method for choosing how to mark perturbed parts of the text. Options are :obj:`"file"` and :obj:`"plain"`.
+            :obj:`"file"` wraps perturbed parts with double brackets :obj:`[[ <text> ]]` while :obj:`"plain"` does not mark the text in any way.
         log_to_visdom (:obj:`dict`, `optional`, defaults to :obj:`None`):
-            If set, Visdom logger is used with the provided dictionary passed as a keyword arguments to `textattack.loggers.VisdomLogger`.
+            If set, Visdom logger is used with the provided dictionary passed as a keyword arguments to :class:`~textattack.loggers.VisdomLogger`.
             Pass in empty dictionary to use default arguments. For custom logger, the dictionary should have the following
-            three keys and their corresponding values: `"env"`, `"port"`, `"hostname"`.
+            three keys and their corresponding values: :obj:`"env", "port", "hostname"`.
         log_to_wandb (:obj:`str`, `optional`, defaults to :obj:`None`):
             If set, log the attack results and summary to Wandb project specified by this argument.
         disable_stdout (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Disable displaying individual attack results to stdout.
         silent (:obj:`bool`, `optional`, defaults to :obj:`False`):
-            Disable all logging (except for errors). This is stronger than `disable_stdout`.
+            Disable all logging (except for errors). This is stronger than :obj:`disable_stdout`.
     """
 
     num_examples: int = 10
@@ -219,7 +218,7 @@ class AttackArgs:
         }, '`csv_coloring_style` must either be "file" or "plain".'
 
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         """Add listed args to command line parser."""
         default_obj = cls()
         num_ex_group = parser.add_mutually_exclusive_group(required=False)
@@ -458,7 +457,7 @@ class _CommandLineAttackArgs:
     constraint_cache_size: int = 2 ** 18
 
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         """Add listed args to command line parser."""
         default_obj = cls()
         transformation_names = set(BLACK_BOX_TRANSFORMATION_CLASS_NAMES.keys()) | set(
@@ -630,7 +629,7 @@ class _CommandLineAttackArgs:
         return _constraints
 
     @classmethod
-    def create_attack_from_args(cls, args, model_wrapper):
+    def _create_attack_from_args(cls, args, model_wrapper):
         """Given ``CommandLineArgs`` and ``ModelWrapper``, return specified
         ``Attack`` object."""
 
@@ -701,10 +700,10 @@ class _CommandLineAttackArgs:
 @dataclass
 class CommandLineAttackArgs(AttackArgs, _CommandLineAttackArgs, DatasetArgs, ModelArgs):
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         """Add listed args to command line parser."""
-        parser = ModelArgs.add_parser_args(parser)
-        parser = DatasetArgs.add_parser_args(parser)
-        parser = _CommandLineAttackArgs.add_parser_args(parser)
-        parser = AttackArgs.add_parser_args(parser)
+        parser = ModelArgs._add_parser_args(parser)
+        parser = DatasetArgs._add_parser_args(parser)
+        parser = _CommandLineAttackArgs._add_parser_args(parser)
+        parser = AttackArgs._add_parser_args(parser)
         return parser

@@ -30,7 +30,7 @@ class CLARE2020(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         # "This paper presents CLARE, a ContextuaLized AdversaRial Example generation model
         # that produces fluent and grammatical outputs through a mask-then-infill procedure.
         # CLARE builds on a pre-trained masked language model and modifies the inputs in a context-aware manner.
@@ -90,7 +90,7 @@ class CLARE2020(AttackRecipe):
 
         # Goal is untargeted classification.
         # "The score is then the negative probability of predicting the gold label from f, using [x_{adv}] as the input"
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
 
         # "To achieve this,  we iteratively apply the actions,
         #  and first select those minimizing the probability of outputting the gold label y from f."

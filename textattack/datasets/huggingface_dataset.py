@@ -1,8 +1,3 @@
-"""
-HuggingFaceDataset:
-====================
-"""
-
 import collections
 
 import datasets
@@ -59,12 +54,11 @@ def get_datasets_dataset_columns(dataset):
 
 
 class HuggingFaceDataset(Dataset):
-    """Loads a dataset from HuggingFace ``datasets`` and prepares it as a
-    TextAttack dataset.
+    """Loads a dataset from 🤗 Datasets and prepares it as a TextAttack dataset.
 
     Args:
         name_or_dataset (Union[datasets.Dataset, str]): the dataset name or actual ``datasets.Dataset`` object. If it's your custom ``datasets.Dataset`` object, please pass the input and output columns via ``dataset_columns`` argument.
-        subset (str, optional): the subset of the main dataset. Dataset will be loaded as ``datasets.load_dataset(name, subset)``. Default is ``None``.
+        subset (:obj:`str`, optional, defaults to :obj:`None`): the subset of the main dataset. Dataset will be loaded as ``datasets.load_dataset(name, subset)``. Default is ``None``.
         split (str, optioanl): the split of the dataset. Default is "train".
         dataset_columns (tuple(list[str], str)), optional): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs.
         label_map (dict, optional): Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than

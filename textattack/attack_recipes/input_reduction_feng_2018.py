@@ -26,7 +26,7 @@ class InputReductionFeng2018(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         # At each step, we remove the word with the lowest importance value until
         # the model changes its prediction.
         transformation = WordDeletion()
@@ -35,7 +35,7 @@ class InputReductionFeng2018(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = InputReduction(model, maximizable=True)
+        goal_function = InputReduction(model_wrapper, maximizable=True)
         #
         # "For each word in an input sentence, we measure its importance by the
         # change in the confidence of the original prediction when we remove

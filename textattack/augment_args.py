@@ -31,7 +31,7 @@ class AugmenterArgs:
     interactive: bool = False
 
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         parser.add_argument(
             "--input-csv",
             required=True,

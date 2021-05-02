@@ -12,11 +12,11 @@ class TrainModelCommand(TextAttackCommand):
 
     def run(self, args):
         training_args = CommandLineTrainingArgs(**vars(args))
-        model_wrapper = CommandLineTrainingArgs.create_model_from_args(training_args)
-        train_dataset, eval_dataset = CommandLineTrainingArgs.create_dataset_from_args(
+        model_wrapper = CommandLineTrainingArgs._create_model_from_args(training_args)
+        train_dataset, eval_dataset = CommandLineTrainingArgs._create_dataset_from_args(
             training_args
         )
-        attack = CommandLineTrainingArgs.create_attack_from_args(
+        attack = CommandLineTrainingArgs._create_attack_from_args(
             training_args, model_wrapper
         )
         trainer = Trainer(
@@ -36,5 +36,5 @@ class TrainModelCommand(TextAttackCommand):
             help="train a model for sequence classification",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
-        parser = CommandLineTrainingArgs.add_parser_args(parser)
+        parser = CommandLineTrainingArgs._add_parser_args(parser)
         parser.set_defaults(func=TrainModelCommand())

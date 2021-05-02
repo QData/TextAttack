@@ -26,13 +26,13 @@ class MorpheusTan2020(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
 
         #
         # Goal is to minimize BLEU score between the model output given for the
         # perturbed input sequence and the reference translation
         #
-        goal_function = MinimizeBleu(model)
+        goal_function = MinimizeBleu(model_wrapper)
 
         # Swap words with their inflections
         transformation = WordSwapInflections()

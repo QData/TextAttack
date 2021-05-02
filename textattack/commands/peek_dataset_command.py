@@ -25,7 +25,7 @@ class PeekDatasetCommand(TextAttackCommand):
         UPPERCASE_LETTERS_REGEX = re.compile("[A-Z]")
 
         dataset_args = textattack.DatasetArgs(**vars(args))
-        dataset = textattack.DatasetArgs.create_dataset_from_args(dataset_args)
+        dataset = textattack.DatasetArgs._create_dataset_from_args(dataset_args)
 
         num_words = []
         attacked_texts = []
@@ -73,5 +73,5 @@ class PeekDatasetCommand(TextAttackCommand):
             help="show main statistics about a dataset",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
-        parser = textattack.DatasetArgs.add_parser_args(parser)
+        parser = textattack.DatasetArgs._add_parser_args(parser)
         parser.set_defaults(func=PeekDatasetCommand())

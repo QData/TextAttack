@@ -37,8 +37,8 @@ class EvalModelCommand(TextAttackCommand):
         return preds
 
     def test_model_on_dataset(self, args):
-        model = ModelArgs.create_model_from_args(args)
-        dataset = DatasetArgs.create_dataset_from_args(args)
+        model = ModelArgs._create_model_from_args(args)
+        dataset = DatasetArgs._create_dataset_from_args(args)
 
         preds = []
         ground_truth_outputs = []
@@ -101,8 +101,8 @@ class EvalModelCommand(TextAttackCommand):
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
 
-        parser = ModelArgs.add_parser_args(parser)
-        parser = DatasetArgs.add_parser_args(parser)
+        parser = ModelArgs._add_parser_args(parser)
+        parser = DatasetArgs._add_parser_args(parser)
 
         parser.add_argument("--random-seed", default=765, type=int)
         parser.add_argument(

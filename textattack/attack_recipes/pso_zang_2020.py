@@ -39,7 +39,7 @@ class PSOZang2020(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # Swap words with their synonyms extracted based on the HowNet.
         #
@@ -60,7 +60,7 @@ class PSOZang2020(AttackRecipe):
         #
         # Use untargeted classification for demo, can be switched to targeted one
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Perform word substitution with a Particle Swarm Optimization (PSO) algorithm.
         #

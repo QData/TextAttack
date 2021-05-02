@@ -81,6 +81,10 @@ html_css_files = [
     "css/custom.css",
 ]
 
+html_sidebars = {
+    "**": ["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
+}
+
 # Path to favicon.
 html_favicon = "favicon.png"
 

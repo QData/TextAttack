@@ -1,11 +1,3 @@
-"""
-dataset: TextAttack dataset
-=============================
-Dataset classes define the dataset object used to for carrying out attacks, augmentation, and training.
-``Dataset`` class is the most basic class that could be used to wrap a list of input and output pairs.
-To load datasets from text, CSV, or JSON files, we recommend using Huggingface's `datasets` library to first
-load it as a `datasets.Dataset` object and then pass it to TextAttack's `HuggingFaceDataset` class.
-"""
 from collections import OrderedDict
 import random
 
@@ -14,13 +6,15 @@ import torch
 
 class Dataset(torch.utils.data.Dataset):
     """Basic class for dataset. It operates as a map-style dataset, fetching
-    data via `__getitem__` and `__len__` methods.
+    data via :meth:`__getitem__` and :meth:`__len__` methods.
 
     Args:
         dataset (list_like): A list-like iterable of ``(input, output)`` pairs. Here, `output` can either be an integer representing labels for classification
             or a string for seq2seq tasks. If input consists of multiple sequences (e.g. SNLI), iterable should be of the form ``([input_1, input_2, ...], output)`` and ``input_columns`` parameter must be set.
-        input_columns (list[str], optional): List of column names of inputs in order. Default is ``["text"]`` for single text input.
-        label_map (dict, optional): Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than
+        input_columns (:obj:`list[str]`, `optional`, defaults to :obj:`["text"]`): 
+            List of column names of inputs in order.
+        label_map (:obj:`dict[int, int]`, `optional`, defaults to :obj:`None`):
+            Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than
             provided in the ``datasets`` version of the dataset. For example, if dataset's arrangement is 0 for negative and 1 for positive, but model's label
             arrangement is 1 for negative and 0 for positive, pass ``{0: 1, 1: 0}``. Could also be used to remap literal labels to numerical labels,
             (e.g. ``{"positive": 1, "negative": 0}``)

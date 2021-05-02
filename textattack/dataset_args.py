@@ -169,7 +169,7 @@ class DatasetArgs:
     dataset_from_file: str = None
 
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         """Adds dataset-related arguments to an argparser."""
 
         dataset_group = parser.add_mutually_exclusive_group()
@@ -197,7 +197,7 @@ class DatasetArgs:
         return parser
 
     @classmethod
-    def create_dataset_from_args(cls, args):
+    def _create_dataset_from_args(cls, args):
         """Given ``DatasetArgs``, return specified
         ``textattack.dataset.Dataset`` object."""
 

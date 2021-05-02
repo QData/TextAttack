@@ -32,7 +32,7 @@ class CheckList2020(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         transformation = CompositeTransformation(
             [
                 WordSwapExtend(),
@@ -47,7 +47,7 @@ class CheckList2020(AttackRecipe):
         constraints = [RepeatModification()]
 
         # Untargeted attack & GreedySearch
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         search_method = GreedySearch()
 
         return Attack(goal_function, constraints, transformation, search_method)

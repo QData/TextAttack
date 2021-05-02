@@ -115,7 +115,7 @@ class GreedyWordSwapWIR(SearchMethod):
 
         return index_order, search_over
 
-    def _perform_search(self, initial_result):
+    def perform_search(self, initial_result):
         attacked_text = initial_result.attacked_text
 
         # Sort words by order of importance

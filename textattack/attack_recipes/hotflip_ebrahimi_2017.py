@@ -32,12 +32,12 @@ class HotFlipEbrahimi2017(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # "HotFlip ... uses the gradient with respect to a one-hot input
         # representation to efficiently estimate which individual change has the
         # highest estimated loss."
-        transformation = WordSwapGradientBased(model, top_n=1)
+        transformation = WordSwapGradientBased(model_wrapper, top_n=1)
         #
         # Don't modify the same word twice or stopwords
         #
@@ -59,7 +59,7 @@ class HotFlipEbrahimi2017(AttackRecipe):
         #
         # Goal is untargeted classification
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # "HotFlip ... uses a beam search to find a set of manipulations that work
         # well together to confuse a classifier ... The adversary uses a beam size

@@ -24,16 +24,19 @@ from .attack_args import AttackArgs
 
 class Attacker:
     """Class for running attacks on a dataset with specified parameters. This
-    class uses the ``textattack.Attack`` to actually run the attacks, while
-    also providing useful features such as parallel processing, saving/resuming
-    from a checkpint, logging to files and stdout.
+    class uses the :class:`~textattack.Attack` to actually run the attacks,
+    while also providing useful features such as parallel processing,
+    saving/resuming from a checkpint, logging to files and stdout.
 
     Args:
-        attack (textattack.Attack): ``Attack`` object for carrying out the attack.
-        dataset (textattack.datasets.Dataset): Dataset to attack.
-        attack_args (textattack.AttackArgs): Arguments for attacking the dataset. For default settings, look at the `AttackArgs` class.
+        attack (:class:`~textattack.Attack`):
+            :class:`~textattack.Attack` used to actually carry out the attack.
+        dataset (:class:`~textattack.datasets.Dataset`):
+            Dataset to attack.
+        attack_args (:class:`~textattack.AttackArgs`):
+            Arguments for attacking the dataset. For default settings, look at the `AttackArgs` class.
 
-    Examples::
+    Example::
 
         >>> import textattack
         >>> import transformers
@@ -58,16 +61,20 @@ class Attacker:
         >>> attacker.attack_dataset()
     """
 
-    def __init__(self, attack, dataset, attack_args=AttackArgs()):
+    def __init__(self, attack, dataset, attack_args=None):
         assert isinstance(
             attack, Attack
         ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
         assert isinstance(
             dataset, textattack.datasets.Dataset
         ), f"`dataset` must be of type `textattack.datasets.Dataset`, but got type `{type(dataset)}`."
-        assert isinstance(
-            attack_args, AttackArgs
-        ), f"`attack_args` must be of type `textattack.AttackArgs`, but got type `{type(attack_args)}`."
+
+        if attack_args:
+            assert isinstance(
+                attack_args, AttackArgs
+            ), f"`attack_args` must be of type `textattack.AttackArgs`, but got type `{type(attack_args)}`."
+        else:
+            attack_args = AttackArgs()
 
         self.attack = attack
         self.dataset = dataset
@@ -76,61 +83,6 @@ class Attacker:
 
         # This is to be set if loading from a checkpoint
         self._checkpoint = None
-
-    def update_attack_args(self, **kwargs):
-        """To update any attack args, pass the new argument as keyword argument
-        to this function.
-
-        Examples::
-
-        >>> attacker = #some instance of Attacker
-        >>> # To switch to parallel mode and increase checkpoint interval from 100 to 500
-        >>> attacker.update_attack_args(parallel=True, checkpoint_interval=500)
-        """
-        for k in kwargs:
-            if hasattr(self.attack_args, k):
-                self.attack_args.k = kwargs[k]
-            else:
-                raise ValueError(f"`AttackArgs` does not have field {k}.")
-
-    def attack_dataset(self):
-        """Start the attack."""
-        if self.attack_args.silent:
-            logger.setLevel(logging.ERROR)
-
-        if self.attack_args.query_budget:
-            self.attack.goal_function.query_budget = self.attack_args.query_budget
-
-        if not self.attack_log_manager:
-            self.attack_log_manager = AttackArgs.create_loggers_from_args(
-                self.attack_args
-            )
-
-        textattack.shared.utils.set_seed(self.attack_args.random_seed)
-        if self.dataset.shuffled and self.attack_args.checkpoint_interval:
-            # Not allowed b/c we cannot recover order of shuffled data
-            raise ValueError(
-                "Cannot use `--checkpoint-interval` with dataset that has been internally shuffled."
-            )
-
-        self.attack_args.num_examples = (
-            len(self.dataset)
-            if self.attack_args.num_examples == -1
-            else self.attack_args.num_examples
-        )
-        if self.attack_args.parallel:
-            if torch.cuda.device_count() == 0:
-                raise Exception(
-                    "Found no GPU on your system. To run attacks in parallel, GPU is required."
-                )
-            self._attack_parallel()
-        else:
-            self._attack()
-
-        if self.attack_args.silent:
-            logger.setLevel(logging.INFO)
-
-        return self.attack_log_manager.results
 
     def _get_worklist(self, start, end, num_examples, shuffle):
         if end - start < num_examples:
@@ -434,6 +386,61 @@ class Attacker:
         self.attack_log_manager.flush()
         print()
 
+    def attack_dataset(self):
+        """Attack the dataset."""
+        if self.attack_args.silent:
+            logger.setLevel(logging.ERROR)
+
+        if self.attack_args.query_budget:
+            self.attack.goal_function.query_budget = self.attack_args.query_budget
+
+        if not self.attack_log_manager:
+            self.attack_log_manager = AttackArgs.create_loggers_from_args(
+                self.attack_args
+            )
+
+        textattack.shared.utils.set_seed(self.attack_args.random_seed)
+        if self.dataset.shuffled and self.attack_args.checkpoint_interval:
+            # Not allowed b/c we cannot recover order of shuffled data
+            raise ValueError(
+                "Cannot use `--checkpoint-interval` with dataset that has been internally shuffled."
+            )
+
+        self.attack_args.num_examples = (
+            len(self.dataset)
+            if self.attack_args.num_examples == -1
+            else self.attack_args.num_examples
+        )
+        if self.attack_args.parallel:
+            if torch.cuda.device_count() == 0:
+                raise Exception(
+                    "Found no GPU on your system. To run attacks in parallel, GPU is required."
+                )
+            self._attack_parallel()
+        else:
+            self._attack()
+
+        if self.attack_args.silent:
+            logger.setLevel(logging.INFO)
+
+        return self.attack_log_manager.results
+
+    def update_attack_args(self, **kwargs):
+        """To update any attack args, pass the new argument as keyword argument
+        to this function.
+
+        Examples::
+
+        >>> attacker = #some instance of Attacker
+        >>> # To switch to parallel mode and increase checkpoint interval from 100 to 500
+        >>> attacker.update_attack_args(parallel=True, checkpoint_interval=500)
+        """
+        for k in kwargs:
+            if hasattr(self.attack_args, k):
+                self.attack_args.k = kwargs[k]
+            else:
+                raise ValueError(f"`textattack.AttackArgs` does not have field {k}.")
+
     @classmethod
     def from_checkpoint(cls, attack, dataset, checkpoint):
         """Resume attacking from a saved checkpoint. Attacker and dataset must
@@ -441,9 +448,12 @@ class Attacker:
         saved checkpoint.
 
         Args:
-            attack (textattack.Attack): ``Attack`` object for carrying out the attack.
-            dataset (textattack.datasets.Dataset): Dataset to attack.
-            checkpoint (Union[str, textattack.shared.AttackChecpoint]): Saved checkpoint or path of the saved checkpoint.
+            attack (:class:`~textattack.Attack`):
+                Attack object for carrying out the attack.
+            dataset (:class:`~textattack.datasets.Dataset`):
+                Dataset to attack.
+            checkpoint (:obj:`Union[str, :class:`~textattack.shared.AttackChecpoint`]`):
+                Path of saved checkpoint or the actual saved checkpoint.
         """
         assert isinstance(
             checkpoint, (str, textattack.shared.AttackCheckpoint)

@@ -128,7 +128,7 @@ class ModelArgs:
     model_from_huggingface: str = None
 
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         """Adds model-related arguments to an argparser."""
         model_group = parser.add_mutually_exclusive_group()
 
@@ -157,7 +157,7 @@ class ModelArgs:
         return parser
 
     @classmethod
-    def create_model_from_args(cls, args):
+    def _create_model_from_args(cls, args):
         """Given ``ModelArgs``, return specified
         ``textattack.models.wrappers.ModelWrapper`` object."""
 

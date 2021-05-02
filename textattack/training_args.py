@@ -33,14 +33,14 @@ class TrainingArgs:
         num_clean_epochs (:obj:`int`, 'optional`, defaults to :obj:`1`):
             Number of epochs to train on just the original training dataset before adversarial training.
         attack_epoch_interval (:obj:`int`, 'optional`, defaults to :obj:`1`):
-            Generate a new adversarial training set every N epochs.
+            Generate a new adversarial training set every `N` epochs.
         early_stopping_epochs (:obj:`int`, 'optional`, defaults to :obj:`None`):
-            Number of epochs validation must increase before stopping early (`None` for no early stopping).
+            Number of epochs validation must increase before stopping early (:obj:`None` for no early stopping).
         learning_rate (:obj:`float`, 'optional`, defaults to :obj:`5e-5`):
             Learning rate for optimizer.
         num_warmup_steps (:obj:`int` or :obj:`float`, `optional`, defaults to :obj:`500`):
             The number of steps for the warmup phase of linear scheduler.
-            If `num_warmup_steps` is a `float` between 0 and 1, the number of warmup steps will be `math.ceil(num_training_steps * num_warmup_steps)`.
+            If :obj:`num_warmup_steps` is a :obj:`float` between 0 and 1, the number of warmup steps will be :obj:`math.ceil(num_training_steps * num_warmup_steps)`.
         weight_decay (:obj:`float`, `optional`, defaults to :obj:`0.01`):
             Weight decay (L2 penalty).
         per_device_train_batch_size (:obj:`int`, `optional`, defaults to :obj:`8`):
@@ -52,37 +52,37 @@ class TrainingArgs:
         random_seed (:obj:`int`, `optional`, defaults to :obj:`786`):
             Random seed for reproducibility.
         parallel (:obj:`bool`, `optional`, defaults to :obj:`False`):
-            If `True`, train using multiple GPUs using `torch.DataParallel`.
+            If :obj:`True`, train using multiple GPUs using :obj:`torch.DataParallel`.
         load_best_model_at_end (:obj:`bool`, `optional`, defaults to :obj:`False`):
-            If `True`, keep track of the best model across training and load it at the end.
+            If :obj:`True`, keep track of the best model across training and load it at the end.
         alpha (:obj:`float`, `optional`, defaults to :obj:`1.0`):
             The weight for adversarial loss.
         num_train_adv_examples (:obj:`int` or :obj:`float`, `optional`, defaults to :obj:`-1`):
             The number of samples to successfully attack when generating adversarial training set before start of every epoch.
-            If `num_train_adv_examples` is a `float` between 0 and 1, the number of adversarial examples generated is
+            If :obj:`num_train_adv_examples` is a :obj:`float` between 0 and 1, the number of adversarial examples generated is
             fraction of the original training set.
         query_budget_train (:obj:`int`, `optional`, defaults to :obj:`None`):
-            The max query budget to use when generating adversarial training set. `None` means infinite query budget.
+            The max query budget to use when generating adversarial training set. :obj:`None` means infinite query budget.
         attack_num_workers_per_device (:obj:`int`, defaults to `optional`, :obj:`1`):
-            Number of worker processes to run per device for attack. Same as `num_workers_per_device` argument for `AttackArgs`.
+            Number of worker processes to run per device for attack. Same as :obj:`num_workers_per_device` argument for :class:`~textattack.AttackArgs`.
         output_dir (:obj:`str`, `optional`):
-            Directory to output training logs and checkpoints. Defaults to `./outputs/%Y-%m-%d-%H-%M-%S-%f` format.
+            Directory to output training logs and checkpoints. Defaults to :obj:`./outputs/%Y-%m-%d-%H-%M-%S-%f` format.
         checkpoint_interval_steps (:obj:`int`, `optional`, defaults to :obj:`None`):
-            If set, save model checkpoint after every N updates to the model.
+            If set, save model checkpoint after every `N` updates to the model.
         checkpoint_interval_epochs (:obj:`int`, `optional`, defaults to :obj:`None`):
-            If set, save model checkpoint after every N epochs
+            If set, save model checkpoint after every `N` epochs.
         save_last (:obj:`bool`, `optional`, defaults to :obj:`True`):
-            If `True`, save the model at end of training. Can be used with `load_best_model_at_end` to save the best model at the end.
+            If :obj:`True`, save the model at end of training. Can be used with :obj:`load_best_model_at_end` to save the best model at the end.
         log_to_tb (:obj:`bool`, `optional`, defaults to :obj:`False`):
-            If `True`, log to Tensorboard.
+            If :obj:`True`, log to Tensorboard.
         tb_log_dir (:obj:`str`, `optional`, defaults to :obj:`"./runs"`):
             Path of Tensorboard log directory.
         log_to_wandb (:obj:`bool`, `optional`, defaults to :obj:`False`):
-            If `True`, log to Wandb.
+            If :obj:`True`, log to Wandb.
         wandb_project (:obj:`str`, `optional`, defaults to :obj:`"textattack"`):
             Name of Wandb project for logging.
-        logging_interval_step (:obj: `int`, `optional`, defaults to :obj:`1`):
-            Log to Tensorboard/Wandb every N training steps.
+        logging_interval_step (:obj:`int`, `optional`, defaults to :obj:`1`):
+            Log to Tensorboard/Wandb every `N` training steps.
     """
 
     num_epochs: int = 3
@@ -150,7 +150,7 @@ class TrainingArgs:
             )
 
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         """Add listed args to command line parser."""
         default_obj = cls()
 
@@ -348,7 +348,7 @@ class _CommandLineTrainingArgs:
     dataset_eval_split: str = None
 
     @classmethod
-    def add_parser_args(cls, parser):
+    def _add_parser_args(cls, parser):
         # Arguments that are needed if we want to create a model to train.
         parser.add_argument(
             "--model-name-or-path",
@@ -407,7 +407,7 @@ class _CommandLineTrainingArgs:
         return parser
 
     @classmethod
-    def create_model_from_args(cls, args):
+    def _create_model_from_args(cls, args):
         """Given ``CommandLineTrainingArgs``, return specified
         ``textattack.models.wrappers.ModelWrapper`` object."""
 
@@ -464,7 +464,7 @@ class _CommandLineTrainingArgs:
         return model
 
     @classmethod
-    def create_dataset_from_args(cls, args):
+    def _create_dataset_from_args(cls, args):
         dataset_args = args.dataset.split(ARGS_SPLIT_TOKEN)
         # TODO `HuggingFaceDataset` -> `HuggingFaceDataset`
         if args.dataset_train_split:
@@ -513,7 +513,7 @@ class _CommandLineTrainingArgs:
         return train_dataset, eval_dataset
 
     @classmethod
-    def create_attack_from_args(cls, args, model_wrapper):
+    def _create_attack_from_args(cls, args, model_wrapper):
         import textattack  # noqa: F401
 
         assert (
@@ -531,7 +531,7 @@ class _CommandLineTrainingArgs:
 @dataclass
 class CommandLineTrainingArgs(TrainingArgs, _CommandLineTrainingArgs):
     @classmethod
-    def add_parser_args(cls, parser):
-        parser = _CommandLineTrainingArgs.add_parser_args(parser)
-        parser = TrainingArgs.add_parser_args(parser)
+    def _add_parser_args(cls, parser):
+        parser = _CommandLineTrainingArgs._add_parser_args(parser)
+        parser = TrainingArgs._add_parser_args(parser)
         return parser

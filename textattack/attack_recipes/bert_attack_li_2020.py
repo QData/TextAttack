@@ -30,7 +30,7 @@ class BERTAttackLi2020(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         # [from correspondence with the author]
         # Candidate size K is set to 48 for all data-sets.
         transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=48)
@@ -75,7 +75,7 @@ class BERTAttackLi2020(AttackRecipe):
         #
         # Goal is untargeted classification.
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # "We first select the words in the sequence which have a high significance
         # influence on the final output logit. Let S = [w0, ··· , wi ··· ] denote

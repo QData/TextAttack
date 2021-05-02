@@ -164,5 +164,5 @@ class AugmentCommand(TextAttackCommand):
             help="augment text data",
             formatter_class=ArgumentDefaultsHelpFormatter,
         )
-        parser = textattack.AugmenterArgs.add_parser_args(parser)
+        parser = textattack.AugmenterArgs._add_parser_args(parser)
         parser.set_defaults(func=AugmentCommand())
