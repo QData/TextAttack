@@ -275,6 +275,7 @@ class Attacker:
 
         # We move Attacker (and its components) to CPU b/c we don't want models using wrong GPU in worker processes.
         self.attack.cpu()
+        self.attack.share_memory()
         torch.cuda.empty_cache()
 
         # Start workers.
@@ -319,9 +320,13 @@ class Attacker:
                 )
                 error_trace = result[1]
                 logger.error(error_trace)
+                in_queue.close()
+                in_queue.join_thread()
+                out_queue.close()
+                out_queue.join_thread()
                 worker_pool.terminate()
                 worker_pool.join()
-                exit(1)
+                return
             elif (
                 isinstance(result, SkippedAttackResult) and self.attack_args.attack_n
             ) or (

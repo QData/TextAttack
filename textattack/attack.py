@@ -228,6 +228,39 @@ class Attack:
 
         to_cuda(self)
 
+    def share_memory(self):
+        """Move any models that are part of Attack to CPU."""
+        visited = set()
+
+        def _share_memory(obj):
+            visited.add(id(obj))
+            if isinstance(obj, torch.nn.Module):
+                obj.share_memory()
+            elif isinstance(
+                obj,
+                (
+                    Attack,
+                    GoalFunction,
+                    Transformation,
+                    SearchMethod,
+                    Constraint,
+                    PreTransformationConstraint,
+                    ModelWrapper,
+                ),
+            ):
+                for key in obj.__dict__:
+                    s_obj = obj.__dict__[key]
+                    if id(s_obj) not in visited:
+                        _share_memory(s_obj)
+            elif isinstance(obj, (list, tuple)):
+                for item in obj:
+                    if id(item) not in visited and isinstance(
+                        item, (Transformation, Constraint, PreTransformationConstraint)
+                    ):
+                        _share_memory(item)
+
+        _share_memory(self)
+
     def _get_transformations_uncached(self, current_text, original_text=None, **kwargs):
         """Applies ``self.transformation`` to ``text``, then filters the list
         of possible transformations through the applicable constraints.
