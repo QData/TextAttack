@@ -294,7 +294,11 @@ class Trainer:
                     _input, label = item
                     is_adv_sample.append(False)
 
-                _input = tuple(_input[c] for c in dataset.input_columns)
+                if isinstance(_input, collections.OrderedDict):
+                    _input = tuple(_input.values())
+                else:
+                    _input = tuple(_input)
+
                 if len(_input) == 1:
                     _input = _input[0]
                 input_texts.append(_input)
@@ -317,7 +321,11 @@ class Trainer:
             input_texts = []
             targets = []
             for _input, label in data:
-                _input = tuple(_input[c] for c in dataset.input_columns)
+                if isinstance(_input, collections.OrderedDict):
+                    _input = tuple(_input.values())
+                else:
+                    _input = tuple(_input)
+
                 if len(_input) == 1:
                     _input = _input[0]
                 input_texts.append(_input)
@@ -495,6 +503,7 @@ class Trainer:
                         [self.train_dataset, adv_example_dataset]
                     )
                     model.train()
+                    model.to(textattack.shared.utils.device)
                 else:
                     train_dataset = self.train_dataset
             else:

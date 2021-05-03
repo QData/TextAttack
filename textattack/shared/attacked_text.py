@@ -40,7 +40,7 @@ class AttackedText:
            during the course of an attack.
     """
 
-    SPLIT_TOKEN = ">>>>"
+    SPLIT_TOKEN = "<SPLIT>"
 
     def __init__(self, text_input, attack_attrs=None):
         # Read in ``text_input`` as a string or OrderedDict.
