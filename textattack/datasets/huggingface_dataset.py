@@ -57,27 +57,38 @@ class HuggingFaceDataset(Dataset):
     """Loads a dataset from 🤗 Datasets and prepares it as a TextAttack dataset.
 
     Args:
-        name_or_dataset (Union[datasets.Dataset, str]): the dataset name or actual ``datasets.Dataset`` object. If it's your custom ``datasets.Dataset`` object, please pass the input and output columns via ``dataset_columns`` argument.
-        subset (:obj:`str`, optional, defaults to :obj:`None`): the subset of the main dataset. Dataset will be loaded as ``datasets.load_dataset(name, subset)``. Default is ``None``.
-        split (str, optioanl): the split of the dataset. Default is "train".
-        dataset_columns (tuple(list[str], str)), optional): Pair of ``list[str]`` representing list of input column names (e.g. ["premise", "hypothesis"]) and ``str`` representing the output column name (e.g. ``label``). If not set, we will try to automatically determine column names from known designs.
-        label_map (dict, optional): Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than
-            provided in the ``datasets`` version of the dataset. For example, if dataset's arrangement is 0 for negative and 1 for positive, but model's label
-            arrangement is 1 for negative and 0 for positive, pass ``{0: 1, 1: 0}``. Could also be used to remap literal labels to numerical labels,
-            (e.g. ``{"positive": 1, "negative": 0}``)
-        label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
-            If ``datasets.Dataset`` object already has label names, then this is not required. Also, this should be set to ``None`` for non-classification datasets.
-        output_scale_factor (float): Factor to divide ground-truth outputs by.
-            Generally, TextAttack goal functions require model outputs between 0 and 1.
+        name_or_dataset (:obj:`Union[str, datasets.Dataset]`):
+            The dataset name as :obj:`str` or actual :obj:`datasets.Dataset` object.
+            If it's your custom :obj:`datasets.Dataset` object, please pass the input and output columns via :obj:`dataset_columns` argument.
+        subset (:obj:`str`, `optional`, defaults to :obj:`None`):
+            The subset of the main dataset. Dataset will be loaded as :obj:`datasets.load_dataset(name, subset)`.
+        split (:obj:`str`, `optional`, defaults to :obj:`"train"`):
+            The split of the dataset.
+        dataset_columns (:obj:`tuple(list[str], str))`, `optional`, defaults to :obj:`None`):
+            Pair of :obj:`list[str]` representing list of input column names (e.g. :obj:`["premise", "hypothesis"]`) 
+            and :obj:`str` representing the output column name (e.g. :obj:`label`). If not set, we will try to automatically determine column names from known designs.
+        label_map (:obj:`dict[int, int]`, `optional`, defaults to :obj:`None`):
+            Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement.
+            For example, if dataset's arrangement is 0 for `Negative` and 1 for `Positive`, but model's label
+            arrangement is 1 for `Negative` and 0 for `Positive`, passing :obj:`{0: 1, 1: 0}` will remap the dataset's label to match with model's arrangements.
+            Could also be used to remap literal labels to numerical labels (e.g. :obj:`{"positive": 1, "negative": 0}`).
+        label_names (:obj:`list[str]`, `optional`, defaults to :obj:`None`): 
+            List of label names in corresponding order (e.g. :obj:`["World", "Sports", "Business", "Sci/Tech"]` for AG-News dataset).
+            If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to :obj:`None` for non-classification datasets.
+        output_scale_factor (:obj:`float`, `optional`, defaults to :obj:`None`):
+            Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1. 
             Some datasets are regression tasks, in which case this is necessary.
-        shuffle (bool): Whether to shuffle the dataset on load.
+        shuffle (:obj:`bool`, `optional`, defaults to :obj:`False`): Whether to shuffle the underlying dataset.
+          
+            .. note::
+                Generally not recommended to shuffle the underlying dataset. Shuffling can be performed using DataLoader or by shuffling the order of indices we attack.
     """
 
     def __init__(
         self,
         name_or_dataset,
         subset=None,
-        split="train",
+        split="test",
         dataset_columns=None,
         label_map=None,
         label_names=None,
@@ -139,14 +150,21 @@ class HuggingFaceDataset(Dataset):
 
         return (input_dict, output)
 
-    def __getitem__(self, i):
-        if isinstance(i, int):
-            return self._format_as_dict(self._dataset[i])
+    def __getitem__(self, idx):
+        """Retrieves the specified item from dataset.
+
+        Args:
+            idx (:obj:`int` or :obj:`slice`): Index or slice.
+        Returns:
+            :obj:`tuple[OrderedDict, Union[int, str]]` - Tuple of input as :obj:`collections.OrderedDict` and output as :obj:`int` or :obj:`str`.
+        """
+        if isinstance(idx, int):
+            return self._format_as_dict(self._dataset[idx])
         else:
-            # `i` could be a slice or an integer. if it's a slice,
+            # `idx` could be a slice or an integer. if it's a slice,
             # return the formatted version of the proper slice of the list
             return [
-                self._format_as_dict(self._dataset[j]) for j in range(i.start, i.stop)
+                self._format_as_dict(self._dataset[j]) for j in range(idx.start, idx.stop)
             ]
 
     def shuffle(self):

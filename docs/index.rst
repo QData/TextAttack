@@ -59,5 +59,7 @@ TextAttack Documentation
    Trainer <api/trainer.rst>
    Models <api/models/models.rst>
    Datasets <api/datasets.rst>
+   GoalFunction <api/goal_functions.rst>
+   SearchMethod <api/search_methods.rst>
 
 

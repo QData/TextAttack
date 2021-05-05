@@ -9,19 +9,28 @@ class Dataset(torch.utils.data.Dataset):
     data via :meth:`__getitem__` and :meth:`__len__` methods.
 
     Args:
-        dataset (list_like): A list-like iterable of ``(input, output)`` pairs. Here, `output` can either be an integer representing labels for classification
-            or a string for seq2seq tasks. If input consists of multiple sequences (e.g. SNLI), iterable should be of the form ``([input_1, input_2, ...], output)`` and ``input_columns`` parameter must be set.
-        input_columns (:obj:`list[str]`, `optional`, defaults to :obj:`["text"]`): 
+        dataset (:obj:`list[tuple]`):
+            A list of :obj:`(input, output)` pairs.
+            If :obj:`input` consists of multiple fields (e.g. "premise" and "hypothesis" for SNLI),
+            :obj:`input` must be of the form :obj:`(input_1, input_2, ...)` and :obj:`input_columns` parameter must be set.
+            :obj:`output` can either be an integer representing labels for classification or a string for seq2seq tasks.
+        input_columns (:obj:`list[str]`, `optional`, defaults to :obj:`["text"]`):
             List of column names of inputs in order.
         label_map (:obj:`dict[int, int]`, `optional`, defaults to :obj:`None`):
-            Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement than
-            provided in the ``datasets`` version of the dataset. For example, if dataset's arrangement is 0 for negative and 1 for positive, but model's label
-            arrangement is 1 for negative and 0 for positive, pass ``{0: 1, 1: 0}``. Could also be used to remap literal labels to numerical labels,
-            (e.g. ``{"positive": 1, "negative": 0}``)
-        label_names (list[str], optional): List of label names in corresponding order (e.g. ``["World", "Sports", "Business", "Sci/Tech"] for AG-News dataset).
-            If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to ``None`` for non-classification datasets.
-        output_scale_factor (float): Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1. Some datasets are regression tasks, in which case this is necessary.
-        shuffle (bool): Whether to shuffle the dataset on load.
+            Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement.
+            For example, if dataset's arrangement is 0 for `Negative` and 1 for `Positive`, but model's label
+            arrangement is 1 for `Negative` and 0 for `Positive`, passing :obj:`{0: 1, 1: 0}` will remap the dataset's label to match with model's arrangements.
+            Could also be used to remap literal labels to numerical labels (e.g. :obj:`{"positive": 1, "negative": 0}`).
+        label_names (:obj:`list[str]`, `optional`, defaults to :obj:`None`): 
+            List of label names in corresponding order (e.g. :obj:`["World", "Sports", "Business", "Sci/Tech"]` for AG-News dataset).
+            If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to :obj:`None` for non-classification datasets.
+        output_scale_factor (:obj:`float`, `optional`, defaults to :obj:`None`):
+            Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1. 
+            Some datasets are regression tasks, in which case this is necessary.
+        shuffle (:obj:`bool`, `optional`, defaults to :obj:`False`): Whether to shuffle the underlying dataset.
+          
+            .. note::
+                Generally not recommended to shuffle the underlying dataset. Shuffling can be performed using DataLoader or by shuffling the order of indices we attack.
 
     Examples::
 
@@ -93,13 +102,21 @@ class Dataset(torch.utils.data.Dataset):
         random.shuffle(self._dataset)
         self.shuffled = True
 
-    def __getitem__(self, i):
-        if isinstance(i, int):
-            return self._format_as_dict(self._dataset[i])
+    def __getitem__(self, idx):
+        """Retrieves the specified item from dataset.
+ 
+        Args:
+            idx (:obj:`int` or :obj:`slice`): Index or slice.
+        Returns:
+            :obj:`tuple[OrderedDict, Union[int, str]]` - Tuple of input as :obj:`collections.OrderedDict` and output as :obj:`int` or :obj:`str`.
+        """
+        if isinstance(idx, int):
+            return self._format_as_dict(self._dataset[idx])
         else:
-            # `i` could be a slice or an integer. if it's a slice,
+            # `idx` could be a slice or an integer. if it's a slice,
             # return the formatted version of the proper slice of the list
-            return [self._format_as_dict(ex) for ex in self._dataset[i]]
+            return [self._format_as_dict(ex) for ex in self._dataset[idx]]
 
     def __len__(self):
+        """Returns the size of dataset."""
         return len(self._dataset)

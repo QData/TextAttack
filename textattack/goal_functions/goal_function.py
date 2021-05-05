@@ -1,8 +1,3 @@
-"""
-goal_function: Goal functions determine if an attack has been successful.
-==============================================================================
-"""
-
 from abc import ABC, abstractmethod
 
 import lru
@@ -21,12 +16,14 @@ class GoalFunction(ABC):
     specified goal.
 
     Args:
-        model_wrapper: The model used for evaluation.
-        maximizable: Whether the goal function is maximizable, as opposed to a boolean result
-            of success or failure.
-        query_budget (float): The maximum number of model queries allowed.
-        model_cache_size (int): The maximum number of items to keep in the model
-            results cache at once
+        model_wrapper (:class:`~textattack.models.wrappers.ModelWrapper`): 
+            The victim model to attack.
+        maximizable(:obj:`bool`, `optional`, defaults to :obj:`False`):
+            Whether the goal function is maximizable, as opposed to a boolean result of success or failure.
+        query_budget (:obj:`float`, `optional`, defaults to :obj:`float("in")`):
+            The maximum number of model queries allowed.
+        model_cache_size (:obj:`int`, `optional`, defaults to :obj:`2**20`):
+            The maximum number of items to keep in the model results cache at once.
     """
 
     def __init__(
