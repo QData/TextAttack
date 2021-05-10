@@ -273,7 +273,7 @@ class WordEmbedding(AbstractWordEmbedding):
         # Download embeddings if they're not cached.
         word_embeddings_folder = os.path.join(
             WordEmbedding.PATH, word_embeddings_folder
-        )
+        ).replace("\\", "/")
         word_embeddings_folder = utils.download_if_needed(word_embeddings_folder)
         # Concatenate folder names to create full path to files.
         word_embeddings_file = os.path.join(
