@@ -136,21 +136,21 @@ class WordSwapMaskedLM(WordSwap):
                 top_words = []
                 for _id in ranked_indices:
                     _id = _id.item()
-                    token = self._lm_tokenizer.convert_ids_to_tokens(_id)
+                    word = self._lm_tokenizer.convert_ids_to_tokens(_id)
                     if utils.check_if_subword(
-                        token,
+                        word,
                         self._language_model.config.model_type,
                         (masked_index == 1),
                     ):
                         word = utils.strip_BPE_artifacts(
-                            token, self._language_model.config.model_type
+                            word, self._language_model.config.model_type
                         )
-                        if (
-                            mask_token_probs[_id] >= self.min_confidence
-                            and utils.is_one_word(word)
-                            and not utils.check_if_punctuations(word)
-                        ):
-                            top_words.append(word)
+                    if (
+                        mask_token_probs[_id] >= self.min_confidence
+                        and utils.is_one_word(word)
+                        and not utils.check_if_punctuations(word)
+                    ):
+                        top_words.append(word)
 
                     if (
                         len(top_words) >= self.max_candidates

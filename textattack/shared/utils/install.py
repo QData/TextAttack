@@ -139,7 +139,7 @@ def set_cache_dir(cache_dir):
 def _post_install_if_needed():
     """Runs _post_install if hasn't been run since install."""
     # Check for post-install file.
-    post_install_file_path = path_in_cache("post_install_check_2")
+    post_install_file_path = path_in_cache("post_install_check_3")
     post_install_file_lock_path = post_install_file_path + ".lock"
     post_install_file_lock = filelock.FileLock(post_install_file_lock_path)
     post_install_file_lock.acquire()

@@ -25,7 +25,7 @@ Benchmarking Search Algorithms for Generating NLP Adversarial Examples
 
 ### Our search benchmarking result Github 
 
-`TextAttack-Search-Benchmark Github <https://github.com/QData/TextAttack-Search-Benchmark>`__ 
+TextAttack-Search-Benchmark Github [https://github.com/QData/TextAttack-Search-Benchmark](https://github.com/QData/TextAttack-Search-Benchmark)
 
 ### Our benchmarking results on comparing search methods used in the past attacks. 
 

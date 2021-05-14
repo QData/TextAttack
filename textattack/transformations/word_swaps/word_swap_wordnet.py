@@ -1,5 +1,5 @@
 """
-Word Swap by swaping synonyms in WordNet
+Word Swap by swapping synonyms in WordNet
 ==========================================================
 """
 

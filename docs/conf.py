@@ -21,7 +21,7 @@ copyright = "2020, UVA QData Lab"
 author = "UVA QData Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.14"
+release = "0.2.15"
 
 # Set master doc to `index.rst`.
 master_doc = "index"
@@ -43,6 +43,7 @@ extensions = [
     "nbsphinx",
     # Enable .md doc files
     "recommonmark",
+    "sphinx_markdown_tables",
 ]
 autosummary_generate = True
 

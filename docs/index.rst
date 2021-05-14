@@ -13,7 +13,9 @@ TextAttack Documentation
    1start/benchmark-search.md
    1start/quality-SOTA-recipes.md
    3recipes/models.md
+   1start/talks-visualization.md
    1start/FAQ.md
+
 
 .. toctree::
    :maxdepth: 6
@@ -36,7 +38,8 @@ TextAttack Documentation
    Tutorial 6: Attacking AllenNLP models <2notebook/Example_2_allennlp.ipynb>
    Tutorial 7: Attacking multilingual models <2notebook/Example_4_CamemBERT.ipynb>
    Tutorial 8: Explaining Attacking BERT model using Captum <2notebook/Example_5_Explain_BERT.ipynb>
-
+   Tutorial 9: Attacking Keras models <2notebook/Example_3_Keras.ipynb>
+   Tutorial 10: Using your own dataset or word embedding <2notebook/4_Custom_Datasets_Word_Embedding.ipynb>
 
 .. toctree::
    :maxdepth: 6
