@@ -9,7 +9,7 @@ ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
     "bae": "textattack.attack_recipes.BAEGarg2019",
     "bert-attack": "textattack.attack_recipes.BERTAttackLi2020",
-    "faster-alzantot": "textattack.attack_recipes.FasterGeneticAlgorithmJia2019",
+    "fast-alzantot": "textattack.attack_recipes.FasterGeneticAlgorithmJia2019",
     "deepwordbug": "textattack.attack_recipes.DeepWordBugGao2018",
     "hotflip": "textattack.attack_recipes.HotFlipEbrahimi2017",
     "input-reduction": "textattack.attack_recipes.InputReductionFeng2018",
