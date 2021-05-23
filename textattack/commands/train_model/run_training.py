@@ -552,7 +552,7 @@ def train_model(args):
             tb_writer.add_scalar("epoch_eval_score", eval_score, epoch)
 
             if args.checkpoint_every_epoch:
-                _save_model_checkpoint(model, args.output_dir, args.global_step)
+                _save_model_checkpoint(model, args.output_dir, global_step)
 
             logger.info(
                 f"Eval {'pearson correlation' if args.do_regression else 'accuracy'}: {eval_score*100}%"
