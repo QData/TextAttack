@@ -28,9 +28,7 @@ class UntargetedClassification(ClassificationGoalFunction):
         elif (model_output.numel() == 1) and isinstance(
             self.ground_truth_output, float
         ):
-            return abs(self.ground_truth_output - model_output.item()) >= (
-                self.target_max_score or 0.5
-            )
+            return abs(self.ground_truth_output - model_output.item()) >= 0.5
         else:
             return model_output.argmax() != self.ground_truth_output
 
