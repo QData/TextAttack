@@ -387,9 +387,10 @@ def parse_dataset_from_args(args):
 
     # Get dataset from args.
     if args.dataset_from_file:
-        textattack.shared.logger.info(
-            f"Loading model and tokenizer from file: {args.model_from_file}"
-        )
+        if args.model_from_file:
+            textattack.shared.logger.info(
+                f"Loading model and tokenizer from file: {args.model_from_file}"
+            )
         if ARGS_SPLIT_TOKEN in args.dataset_from_file:
             dataset_file, dataset_name = args.dataset_from_file.split(ARGS_SPLIT_TOKEN)
         else:
