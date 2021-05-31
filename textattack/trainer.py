@@ -140,6 +140,7 @@ class Trainer:
         logger.info(
             f"Attack success rate: {success_rate:.2f}% [{attack_types['SuccessfulAttackResult']} / {total_attacks}]"
         )
+        # TODO: This will produce a bug if we need to manipulate ground truth output.
         adversarial_examples = [
             (
                 tuple(r.perturbed_result.attacked_text._text_input.values()),
@@ -594,7 +595,7 @@ class Trainer:
             all_preds = []
             all_targets = []
             prog_bar = tqdm.tqdm(
-                train_dataloader, desc="Iteration", position=0, leave=True
+                train_dataloader, desc="Iteration", position=0, leave=True, dynamic_ncols=True
             )
             for step, batch in enumerate(prog_bar):
                 loss, preds, targets = self.training_step(model, tokenizer, batch)

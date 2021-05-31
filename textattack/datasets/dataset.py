@@ -82,20 +82,13 @@ class Dataset(torch.utils.data.Dataset):
         if self.output_scale_factor:
             output = output / self.output_scale_factor
 
-        if isinstance(example[0], str):
-            if len(self.input_columns) != 1:
-                raise ValueError(
-                    "Mismatch between the number of columns in `input_columns` and number of columns of actual input."
-                )
-            input_dict = OrderedDict([(self.input_columns[0], example[0])])
-        else:
-            if len(self.input_columns) != len(example[0]):
-                raise ValueError(
-                    "Mismatch between the number of columns in `input_columns` and number of columns of actual input."
-                )
-            input_dict = OrderedDict(
-                [(c, example[0][i]) for i, c in enumerate(self.input_columns)]
+        if len(self.input_columns) != len(example[0]):
+            raise ValueError(
+                "Mismatch between the number of columns in `input_columns` and number of columns of actual input."
             )
+        input_dict = OrderedDict(
+            [(c, example[0][i]) for i, c in enumerate(self.input_columns)]
+        )
         return input_dict, output
 
     def shuffle(self):

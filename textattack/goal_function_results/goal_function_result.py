@@ -49,7 +49,7 @@ class GoalFunctionResult(ABC):
         self.ground_truth_output = ground_truth_output
 
         if isinstance(self.raw_output, torch.Tensor):
-            self.raw_output = self.raw_output.cpu()
+            self.raw_output = self.raw_output.numpy()
 
         if isinstance(self.score, torch.Tensor):
             self.score = self.score.item()

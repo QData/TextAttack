@@ -135,7 +135,7 @@ class Attacker:
         if not self.attack_args.silent:
             print(self.attack, "\n")
 
-        pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
+        pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0, dynamic_ncols=True)
         if self._checkpoint:
             num_results = self._checkpoint.results_count
             num_failures = self._checkpoint.num_failed_attacks
@@ -309,7 +309,7 @@ class Attacker:
         logger.info(f"Worklist candidate size: {len(worklist_candidates)}")
 
         sample_exhaustion_warned = False
-        pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0)
+        pbar = tqdm.tqdm(total=num_remaining_attacks, smoothing=0, dynamic_ncols=True)
         while worklist:
             idx, result = out_queue.get(block=True)
             worklist.remove(idx)
