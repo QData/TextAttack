@@ -295,17 +295,20 @@ class Trainer:
 
         return optimizer, scheduler
 
-    def get_train_dataloader(self, dataset, batch_size):
+    def get_train_dataloader(self, dataset, adv_dataset, batch_size):
         """Returns the :obj:`torch.utils.data.DataLoader` for training.
 
         Args:
             dataset (:class:`~textattack.datasets.Dataset`):
-                Dataset to use for training.
+                Original training dataset.
+            adv_dataset (:clas:`~textattack.datasets.Dataset`):
+                Adversarial examples generated from the original training dataset. :obj:`None` if no adversarial attack takes place.
             batch_size (:obj:`int`):
                 Batch size for training.
         Returns:
             :obj:`torch.utils.data.DataLoader`
         """
+        # TODO: Add pairing option where we can pair original examples with adversarial examples.
         # Helper functions for collating data
         def collate_fn(data):
             input_texts = []
@@ -337,6 +340,11 @@ class Trainer:
                 targets.append(label)
 
             return input_texts, torch.tensor(targets), torch.tensor(is_adv_sample)
+
+        if not adv_dataset:
+            dataset = torch.utils.data.ConcatDataset(
+                    [train_dataset, adv_dataset]
+                )
 
         train_dataloader = torch.utils.data.DataLoader(
             dataset,
@@ -573,22 +581,19 @@ class Trainer:
                     # after the clean epochs
                     # adv_example_dataset is instance of `textattack.datasets.Dataset
                     model.eval()
-                    adv_example_dataset = self._generate_adversarial_examples(epoch)
-                    train_dataset = torch.utils.data.ConcatDataset(
-                        [self.train_dataset, adv_example_dataset]
-                    )
+                    adv_dataset = self._generate_adversarial_examples(epoch)
                     model.train()
                     model.to(textattack.shared.utils.device)
                 else:
-                    train_dataset = self.train_dataset
+                    adv_dataset = None
             else:
                 logger.info(
                     f"Running clean epoch {epoch}/{self.training_args.num_clean_epochs}"
                 )
-                train_dataset = self.train_dataset
+                adv_dataset = None
 
             train_dataloader = self.get_train_dataloader(
-                train_dataset, train_batch_size
+                self.train_dataset, adv_dataset, train_batch_size
             )
             model.train()
             # Epoch variables
