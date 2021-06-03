@@ -51,7 +51,7 @@ TextAttack Documentation
 
 .. toctree::
    :maxdepth: 6
-   :caption: Developer Guide
+   :caption: API User Guide
 
    Attack <api/attack.rst>
    AttackResult <api/attack_results.rst>
@@ -66,5 +66,5 @@ TextAttack Documentation
 .. toctree::
    :maxdepth: 6
    :glob:
-   :caption: Full API Reference
+   :caption: Full Reference
    apidoc/textattack
