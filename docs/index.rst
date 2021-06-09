@@ -6,15 +6,15 @@ TextAttack Documentation
    :maxdepth: 6
    :caption: Get Started
 
-   Quick Tour <1_get_started/quick_tour.rst>
-   Installation <1_get_started/installation.md>
-
+   Basic-Introduction <0_get_started/basic-Intro.rst>
+   Installation <0_get_started/installation.rst>
+   Command-Line Usage <0_get_started/command_line_usage.md>
+   Quick API Usage  <0_get_started/quick_api_tour.rst>
 
 .. toctree::
    :maxdepth: 6
    :caption: Using TextAttack
 
-   1start/basic-Intro.rst
    1start/what_is_an_adversarial_attack.md
    1start/references.md
    1start/attacks4Components.md
@@ -23,14 +23,6 @@ TextAttack Documentation
    3recipes/models.md
    1start/talks-visualization.md
    1start/FAQ.md
-
-
-.. toctree::
-   :maxdepth: 6
-   :caption: Get Started
-
-   Installation <1start/installation>
-   Command-Line Usage <1start/command_line_usage.md>
 
  
 .. toctree::
@@ -61,7 +53,6 @@ TextAttack Documentation
    Datasets <api/datasets.rst>
    GoalFunction <api/goal_functions.rst>
    SearchMethod <api/search_methods.rst>
-
 
 .. toctree::
    :maxdepth: 6

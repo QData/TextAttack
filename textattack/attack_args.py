@@ -155,7 +155,7 @@ class AttackArgs:
             If set, save attack logs as a CSV file to the directory specified by this argument.
             If the last part of the provided path ends with `.csv` extension, it is assumed to the desired path of the log file.
         csv_coloring_style (:obj:`str`, `optional`, defaults to :obj:`"file"`):
-            Method for choosing how to mark perturbed parts of the text. Options are :obj:`"file"` and :obj:`"plain"`.
+            Method for choosing how to mark perturbed parts of the text. Options are :obj:`"file"`, :obj:`"plain"`, and :obj:`"html"`.
             :obj:`"file"` wraps perturbed parts with double brackets :obj:`[[ <text> ]]` while :obj:`"plain"` does not mark the text in any way.
         log_to_visdom (:obj:`dict`, `optional`, defaults to :obj:`None`):
             If set, Visdom logger is used with the provided dictionary passed as a keyword arguments to :class:`~textattack.loggers.VisdomLogger`.

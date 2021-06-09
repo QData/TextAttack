@@ -88,7 +88,7 @@ class HuggingFaceDataset(Dataset):
         self,
         name_or_dataset,
         subset=None,
-        split="test",
+        split="train",
         dataset_columns=None,
         label_map=None,
         label_names=None,

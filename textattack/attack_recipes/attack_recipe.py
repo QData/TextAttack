@@ -25,6 +25,6 @@ class AttackRecipe(Attack, ABC):
             kwargs:
                 Additional keyword arguments.
         Returns:
-            :class:`~textatatck.Attack`
+            :class:`~textattack.Attack`
         """
         raise NotImplementedError()
