@@ -167,6 +167,8 @@ class DatasetArgs:
     dataset_by_model: str = None
     dataset_from_huggingface: str = None
     dataset_from_file: str = None
+    dataset_split: str = None
+    filter_by_labels: list = None
 
     @classmethod
     def _add_parser_args(cls, parser):
@@ -193,6 +195,21 @@ class DatasetArgs:
             required=False,
             default=None,
             help="Dataset to load from a file.",
+        )
+        parser.add_argument(
+            "--dataset-split",
+            type=str,
+            required=False,
+            default=None,
+            help="Split of dataset to use when specifying --dataset-by-model or --dataset-from-huggingface.",
+        )
+        parser.add_argument(
+            "--filter-by-labels",
+            nargs="+",
+            type=int,
+            required=False,
+            default=None,
+            help="List of labels to keep in the dataset and discard all others.",
         )
         return parser
 
@@ -251,13 +268,28 @@ class DatasetArgs:
                     dataset_args = dataset_args.split(ARGS_SPLIT_TOKEN)
                 else:
                     dataset_args = (dataset_args,)
-            dataset = textattack.datasets.HuggingFaceDataset(
-                *dataset_args, shuffle=False
-            )
+            if args.dataset_split:
+                if len(dataset_args) > 1:
+                    dataset_args[2] = args.dataset_split
+                    dataset = textattack.datasets.HuggingFaceDataset(
+                        *dataset_args, shuffle=False
+                    )
+                else:
+                    dataset = textattack.datasets.HuggingFaceDataset(
+                        *dataset_args, split=args.dataset_split, shuffle=False
+                    )
+            else:
+                dataset = textattack.datasets.HuggingFaceDataset(
+                    *dataset_args, shuffle=False
+                )
         else:
             raise ValueError("Must supply pretrained model or dataset")
 
         assert isinstance(
             dataset, textattack.datasets.Dataset
         ), "Loaded `dataset` must be of type `textattack.datasets.Dataset`."
+
+        if args.filter_by_labels:
+            dataset.filter_by_labels_(args.filter_by_labels)
+
         return dataset

@@ -28,7 +28,7 @@ class Attack:
     Args:
         goal_function (:class:`~textattack.goal_functions.GoalFunction`):
             A function for determining how well a perturbation is doing at achieving the attack's goal.
-        constraints (list of :class:`~textattack.constraints.Constraint` or :class:`~textattack.constraints.PreTransformationConstraint`):
+        constraints (:obj:`list[Union[Constraint, PreTransformationConstraint]]`):
             A list of constraints to add to the attack, defining which perturbations are valid.
         transformation (:class:`~textattack.transformations.Transformation`):
             The transformation applied at each step of the attack.
@@ -143,14 +143,14 @@ class Attack:
         self.constraints_cache = lru.LRU(constraint_cache_size)
 
         # Give search method access to functions for getting transformations and evaluating them
-        self.search_method.get_transformations = self._get_transformations
+        self.search_method.get_transformations = self.get_transformations
         # Give search method access to self.goal_function for model query count, etc.
         self.search_method.goal_function = self.goal_function
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
         self.search_method.get_goal_results = self.goal_function.get_results
 
-        self.search_method.filter_transformations = self._filter_transformations
+        self.search_method.filter_transformations = self.filter_transformations
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
@@ -162,8 +162,9 @@ class Attack:
                 if hasattr(constraint, "clear_cache"):
                     constraint.clear_cache()
 
-    def cpu(self):
-        """Move any `torch.nn.Module` models that are part of Attack to CPU."""
+    def cpu_(self):
+        """Move any :obj:`torch.nn.Module` models that are part of Attack to
+        CPU."""
         visited = set()
 
         def to_cpu(obj):
@@ -195,8 +196,9 @@ class Attack:
 
         to_cpu(self)
 
-    def cuda(self):
-        """Move any `torch.nn.Module` models that are part of Attack to GPU."""
+    def cuda_(self):
+        """Move any :obj:`torch.nn.Module` models that are part of Attack to
+        GPU."""
         visited = set()
 
         def to_cuda(obj):
@@ -280,14 +282,16 @@ class Attack:
         return transformed_texts
 
     def get_transformations(self, current_text, original_text=None, **kwargs):
-        """Applies ``self.transformation`` to ``text``, then filters the list
-        of possible transformations through the applicable constraints.
+        """Applies obj:`self.transformation` to given text, then filters the
+        list of possible transformations through the applicable constraints.
 
         Args:
-            current_text: The current ``AttackedText`` on which to perform the transformations.
-            original_text: The original ``AttackedText`` from which the attack started.
+            current_text (:class:`~textattack.shared.AttackedText`):
+                The current :class:`~textattack.shared.AttackedText` on which to perform the transformations.
+            original_text (:class:`~textattack.shared.AttackedText`):
+                The original :class:`~textattack.shared.AttackedText` from which the attack started.
         Returns:
-            A filtered list of transformations where each transformation matches the constraints
+            :obj:`list[AttackedText` - A filtered list of transformed :class:`~textattack.shared.AttackedText` that satisfy the constraints.
         """
         if not self.transformation:
             raise RuntimeError(
@@ -353,13 +357,18 @@ class Attack:
         self, transformed_texts, current_text, original_text=None
     ):
         """Filters a list of potential transformed texts based on
-        ``self.constraints`` Utilizes an LRU cache to attempt to avoid
+        :obj:`self.constraints` Utilizes an LRU cache to attempt to avoid
         recomputing common transformations.
 
         Args:
-            transformed_texts: A list of candidate transformed ``AttackedText`` to filter.
-            current_text: The current ``AttackedText`` on which the transformation was applied.
-            original_text: The original ``AttackedText`` from which the attack started.
+            transformed_texts (:obj:`list[AttackedText`):
+                A list of candidate transformed :class:`~textattack.shared.AttackedText` to filter.
+            current_text (:class:`~textattack.shared.AttackedText`):
+                The current :class:`~textattack.shared.AttackedText` on which the transformation was applied.
+            original_text (:class:`~textattack.shared.AttackedText`):
+                The original :class:`~textattack.shared.AttackedText` from which the attack started.
+        Returns:
+            :obj:`list[AttackedText` - A filtered list of transformed :class:`~textattack.shared.AttackedText` that satisfy the constraints.
         """
         # Remove any occurences of current_text in transformed_texts
         transformed_texts = [
@@ -424,7 +433,7 @@ class Attack:
                 Example to attack. It can be a single string or an `OrderedDict` where
                 keys represent the input fields (e.g. "premise", "hypothesis") and the values are the actual input textx.
                 Also accepts :class:`~textattack.shared.AttackedText` that wraps around the input.
-            ground_truth_output(:obj:`int`, :obj:`float` or :obj:`str`):
+            ground_truth_output(:obj:`int`, :obj:`float`, or :obj:`str`):
                 Ground truth output of `example`.
                 For classification tasks, it should be an integer representing the ground truth label.
                 For regression tasks (e.g. STS), it should be the target value.

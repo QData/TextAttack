@@ -102,7 +102,7 @@ class Attacker:
 
         No parallel processing is involved.
         """
-        self.attack.cuda()
+        self.attack.cuda_()
         if self._checkpoint:
             num_remaining_attacks = self._checkpoint.num_remaining_attacks
             worklist = self._checkpoint.worklist
@@ -274,8 +274,7 @@ class Attacker:
         lock = mp.Lock()
 
         # We move Attacker (and its components) to CPU b/c we don't want models using wrong GPU in worker processes.
-        self.attack.cpu()
-        self.attack.share_memory()
+        self.attack.cpu_()
         torch.cuda.empty_cache()
 
         # Start workers.
@@ -392,7 +391,10 @@ class Attacker:
         print()
 
     def attack_dataset(self):
-        """Attack the dataset."""
+        """Attack the dataset.
+        Returns:
+            :obj:`list[AttackResult]` - List of :class:`~textattack.attack_results.AttackResult` obtained after attacking the given dataset..
+        """
         if self.attack_args.silent:
             logger.setLevel(logging.ERROR)
 
@@ -553,7 +555,7 @@ def attack_from_queue(
     if torch.multiprocessing.current_process()._identity[0] > 1:
         logging.disable()
 
-    attack.cuda()
+    attack.cuda_()
 
     # Simple non-synchronized check to see if it's the first process to reach this point.
     # This let us avoid waiting for lock.

@@ -28,15 +28,15 @@ class TrainingArgs:
     """Arguments for ``Trainer`` class that is used for adversarial training.
 
     Args:
-        num_epochs (:obj:`int`, 'optional`, defaults to :obj:`3`):
+        num_epochs (:obj:`int`, `optional`, defaults to :obj:`3`):
             Total number of epochs for training.
-        num_clean_epochs (:obj:`int`, 'optional`, defaults to :obj:`1`):
+        num_clean_epochs (:obj:`int`, `optional`, defaults to :obj:`1`):
             Number of epochs to train on just the original training dataset before adversarial training.
-        attack_epoch_interval (:obj:`int`, 'optional`, defaults to :obj:`1`):
+        attack_epoch_interval (:obj:`int`, `optional`, defaults to :obj:`1`):
             Generate a new adversarial training set every `N` epochs.
-        early_stopping_epochs (:obj:`int`, 'optional`, defaults to :obj:`None`):
+        early_stopping_epochs (:obj:`int`, `optional`, defaults to :obj:`None`):
             Number of epochs validation must increase before stopping early (:obj:`None` for no early stopping).
-        learning_rate (:obj:`float`, 'optional`, defaults to :obj:`5e-5`):
+        learning_rate (:obj:`float`, `optional`, defaults to :obj:`5e-5`):
             Learning rate for optimizer.
         num_warmup_steps (:obj:`int` or :obj:`float`, `optional`, defaults to :obj:`500`):
             The number of steps for the warmup phase of linear scheduler.
@@ -162,6 +162,7 @@ class TrainingArgs:
 
         parser.add_argument(
             "--num-epochs",
+            "--epochs",
             type=int,
             default=default_obj.num_epochs,
             help="Total number of epochs for training.",
@@ -346,6 +347,8 @@ class _CommandLineTrainingArgs:
     model_num_labels: int = None
     dataset_train_split: str = None
     dataset_eval_split: str = None
+    filter_train_by_labels: list = None
+    filter_eval_by_labels: list = None
 
     @classmethod
     def _add_parser_args(cls, parser):
@@ -372,7 +375,8 @@ class _CommandLineTrainingArgs:
         parser.add_argument(
             "--attack",
             type=str,
-            required=True,
+            required=False,
+            default=None,
             help="Attack recipe to use (enables adversarial training)",
         )
         parser.add_argument(
@@ -403,6 +407,22 @@ class _CommandLineTrainingArgs:
             default="",
             help="val dataset split, if non-standard "
             "(can automatically detect 'dev', 'validation', 'eval')",
+        )
+        parser.add_argument(
+            "--filter-train-by-labels",
+            nargs="+",
+            type=int,
+            required=False,
+            default=None,
+            help="List of labels to keep in the train dataset and discard all others.",
+        )
+        parser.add_argument(
+            "--filter-eval-by-labels",
+            nargs="+",
+            type=int,
+            required=False,
+            default=None,
+            help="List of labels to keep in the eval dataset and discard all others.",
         )
         return parser
 
@@ -446,7 +466,6 @@ class _CommandLineTrainingArgs:
             config = transformers.AutoConfig.from_pretrained(
                 args.model_name_or_path,
                 num_labels=num_labels,
-                max_position_embeddings=max_seq_len,
             )
             model = transformers.AutoModelForSequenceClassification.from_pretrained(
                 args.model_name_or_path,
@@ -510,12 +529,19 @@ class _CommandLineTrainingArgs:
                                 f"Could not find `dev`, `eval`, `validation`, or `test` split in dataset {args.dataset}."
                             )
 
+        if args.filter_train_by_labels:
+            train_dataset.filter_by_labels_(args.filter_train_by_labels)
+        if args.filter_eval_by_labels:
+            eval_dataset.filter_by_labels_(args.filter_eval_by_labels)
+
         return train_dataset, eval_dataset
 
     @classmethod
     def _create_attack_from_args(cls, args, model_wrapper):
         import textattack  # noqa: F401
 
+        if args.attack is None:
+            return None
         assert (
             args.attack in ATTACK_RECIPE_NAMES
         ), f"Unavailable attack recipe {args.attack}"

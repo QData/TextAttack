@@ -16,7 +16,7 @@ class GoalFunction(ABC):
     specified goal.
 
     Args:
-        model_wrapper (:class:`~textattack.models.wrappers.ModelWrapper`): 
+        model_wrapper (:class:`~textattack.models.wrappers.ModelWrapper`):
             The victim model to attack.
         maximizable(:obj:`bool`, `optional`, defaults to :obj:`False`):
             Whether the goal function is maximizable, as opposed to a boolean result of success or failure.
@@ -167,7 +167,7 @@ class GoalFunction(ABC):
                 batch_preds = batch_preds.cpu()
 
             if isinstance(batch_preds, list):
-                outputs.extends(batch_preds)
+                outputs.extend(batch_preds)
             elif isinstance(batch_preds, np.ndarray):
                 outputs.append(torch.tensor(batch_preds))
             else:

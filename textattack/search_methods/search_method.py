@@ -11,7 +11,9 @@ from textattack.shared.utils import default_class_repr
 
 class SearchMethod(ABC):
     """This is an abstract class that contains main helper functionality for
-    search methods. A search method is a strategy for applying transformations until the
+    search methods.
+
+    A search method is a strategy for applying transformations until the
     goal is met or the search is exhausted.
     """
 

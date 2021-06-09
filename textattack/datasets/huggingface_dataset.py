@@ -65,21 +65,21 @@ class HuggingFaceDataset(Dataset):
         split (:obj:`str`, `optional`, defaults to :obj:`"train"`):
             The split of the dataset.
         dataset_columns (:obj:`tuple(list[str], str))`, `optional`, defaults to :obj:`None`):
-            Pair of :obj:`list[str]` representing list of input column names (e.g. :obj:`["premise", "hypothesis"]`) 
+            Pair of :obj:`list[str]` representing list of input column names (e.g. :obj:`["premise", "hypothesis"]`)
             and :obj:`str` representing the output column name (e.g. :obj:`label`). If not set, we will try to automatically determine column names from known designs.
         label_map (:obj:`dict[int, int]`, `optional`, defaults to :obj:`None`):
             Mapping if output labels of the dataset should be re-mapped. Useful if model was trained with a different label arrangement.
             For example, if dataset's arrangement is 0 for `Negative` and 1 for `Positive`, but model's label
             arrangement is 1 for `Negative` and 0 for `Positive`, passing :obj:`{0: 1, 1: 0}` will remap the dataset's label to match with model's arrangements.
             Could also be used to remap literal labels to numerical labels (e.g. :obj:`{"positive": 1, "negative": 0}`).
-        label_names (:obj:`list[str]`, `optional`, defaults to :obj:`None`): 
+        label_names (:obj:`list[str]`, `optional`, defaults to :obj:`None`):
             List of label names in corresponding order (e.g. :obj:`["World", "Sports", "Business", "Sci/Tech"]` for AG-News dataset).
             If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to :obj:`None` for non-classification datasets.
         output_scale_factor (:obj:`float`, `optional`, defaults to :obj:`None`):
-            Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1. 
+            Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1.
             Some datasets are regression tasks, in which case this is necessary.
         shuffle (:obj:`bool`, `optional`, defaults to :obj:`False`): Whether to shuffle the underlying dataset.
-          
+
             .. note::
                 Generally not recommended to shuffle the underlying dataset. Shuffling can be performed using DataLoader or by shuffling the order of indices we attack.
     """
@@ -150,21 +150,28 @@ class HuggingFaceDataset(Dataset):
 
         return (input_dict, output)
 
-    def __getitem__(self, idx):
-        """Retrieves the specified item from dataset.
+    def filter_by_labels_(self, labels_to_keep):
+        """Filter items by their labels for classification datasets. Performs
+        in-place filtering.
 
         Args:
-            idx (:obj:`int` or :obj:`slice`): Index or slice.
-        Returns:
-            :obj:`tuple[OrderedDict, Union[int, str]]` - Tuple of input as :obj:`collections.OrderedDict` and output as :obj:`int` or :obj:`str`.
+            labels_to_keep (:obj:`Union[Set, Tuple, List, Iterable]`):
+                Set, tuple, list, or iterable of integers representing labels.
         """
-        if isinstance(idx, int):
-            return self._format_as_dict(self._dataset[idx])
+        if not isinstance(labels_to_keep, set):
+            labels_to_keep = set(labels_to_keep)
+        self._dataset = self._dataset.filter(
+            lambda x: x[self.output_column] in labels_to_keep
+        )
+
+    def __getitem__(self, i):
+        if isinstance(i, int):
+            return self._format_as_dict(self._dataset[i])
         else:
             # `idx` could be a slice or an integer. if it's a slice,
             # return the formatted version of the proper slice of the list
             return [
-                self._format_as_dict(self._dataset[j]) for j in range(idx.start, idx.stop)
+                self._format_as_dict(self._dataset[j]) for j in range(i.start, i.stop)
             ]
 
     def shuffle(self):

@@ -2,6 +2,8 @@ from dataclasses import dataclass
 import json
 import os
 
+import transformers
+
 import textattack
 from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file
 
@@ -196,7 +198,6 @@ class ModelArgs:
                 )
         elif (args.model in HUGGINGFACE_MODELS) or args.model_from_huggingface:
             # Support loading models automatically from the HuggingFace model hub.
-            import transformers
 
             model_name = (
                 HUGGINGFACE_MODELS[args.model]

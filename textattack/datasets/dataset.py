@@ -8,6 +8,9 @@ class Dataset(torch.utils.data.Dataset):
     """Basic class for dataset. It operates as a map-style dataset, fetching
     data via :meth:`__getitem__` and :meth:`__len__` methods.
 
+    .. note::
+        This class subclasses :obj:`torch.utils.data.Dataset` and therefore can be treated as a regular PyTorch Dataset.
+
     Args:
         dataset (:obj:`list[tuple]`):
             A list of :obj:`(input, output)` pairs.
@@ -21,14 +24,14 @@ class Dataset(torch.utils.data.Dataset):
             For example, if dataset's arrangement is 0 for `Negative` and 1 for `Positive`, but model's label
             arrangement is 1 for `Negative` and 0 for `Positive`, passing :obj:`{0: 1, 1: 0}` will remap the dataset's label to match with model's arrangements.
             Could also be used to remap literal labels to numerical labels (e.g. :obj:`{"positive": 1, "negative": 0}`).
-        label_names (:obj:`list[str]`, `optional`, defaults to :obj:`None`): 
+        label_names (:obj:`list[str]`, `optional`, defaults to :obj:`None`):
             List of label names in corresponding order (e.g. :obj:`["World", "Sports", "Business", "Sci/Tech"]` for AG-News dataset).
             If not set, labels will printed as is (e.g. "0", "1", ...). This should be set to :obj:`None` for non-classification datasets.
         output_scale_factor (:obj:`float`, `optional`, defaults to :obj:`None`):
-            Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1. 
+            Factor to divide ground-truth outputs by. Generally, TextAttack goal functions require model outputs between 0 and 1.
             Some datasets are regression tasks, in which case this is necessary.
         shuffle (:obj:`bool`, `optional`, defaults to :obj:`False`): Whether to shuffle the underlying dataset.
-          
+
             .. note::
                 Generally not recommended to shuffle the underlying dataset. Shuffling can be performed using DataLoader or by shuffling the order of indices we attack.
 
@@ -82,33 +85,45 @@ class Dataset(torch.utils.data.Dataset):
         if self.output_scale_factor:
             output = output / self.output_scale_factor
 
-        if len(self.input_columns) != len(example[0]):
-            raise ValueError(
-                "Mismatch between the number of columns in `input_columns` and number of columns of actual input."
+        if isinstance(example[0], str):
+            if len(self.input_columns) != 1:
+                raise ValueError(
+                    "Mismatch between the number of columns in `input_columns` and number of columns of actual input."
+                )
+            input_dict = OrderedDict([(self.input_columns[0], example[0])])
+        else:
+            if len(self.input_columns) != len(example[0]):
+                raise ValueError(
+                    "Mismatch between the number of columns in `input_columns` and number of columns of actual input."
+                )
+            input_dict = OrderedDict(
+                [(c, example[0][i]) for i, c in enumerate(self.input_columns)]
             )
-        input_dict = OrderedDict(
-            [(c, example[0][i]) for i, c in enumerate(self.input_columns)]
-        )
         return input_dict, output
 
     def shuffle(self):
         random.shuffle(self._dataset)
         self.shuffled = True
 
-    def __getitem__(self, idx):
-        """Retrieves the specified item from dataset.
- 
+    def filter_by_labels_(self, labels_to_keep):
+        """Filter items by their labels for classification datasets. Performs
+        in-place filtering.
+
         Args:
-            idx (:obj:`int` or :obj:`slice`): Index or slice.
-        Returns:
-            :obj:`tuple[OrderedDict, Union[int, str]]` - Tuple of input as :obj:`collections.OrderedDict` and output as :obj:`int` or :obj:`str`.
+            labels_to_keep (:obj:`Union[Set, Tuple, List, Iterable]`):
+                Set, tuple, list, or iterable of integers representing labels.
         """
-        if isinstance(idx, int):
-            return self._format_as_dict(self._dataset[idx])
+        if not isinstance(labels_to_keep, set):
+            labels_to_keep = set(labels_to_keep)
+        self._dataset = filter(lambda x: x[1] in labels_to_keep, self._dataset)
+
+    def __getitem__(self, i):
+        if isinstance(i, int):
+            return self._format_as_dict(self._dataset[i])
         else:
             # `idx` could be a slice or an integer. if it's a slice,
             # return the formatted version of the proper slice of the list
-            return [self._format_as_dict(ex) for ex in self._dataset[idx]]
+            return [self._format_as_dict(ex) for ex in self._dataset[i]]
 
     def __len__(self):
         """Returns the size of dataset."""

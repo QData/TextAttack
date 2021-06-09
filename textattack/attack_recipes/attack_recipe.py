@@ -24,5 +24,7 @@ class AttackRecipe(Attack, ABC):
                 This is passed to :class:`~textattack.goal_functions.GoalFunction` when constructing the attack.
             kwargs:
                 Additional keyword arguments.
+        Returns:
+            :class:`~textatatck.Attack`
         """
         raise NotImplementedError()

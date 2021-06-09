@@ -53,6 +53,11 @@ class Trainer:
                 attack, Attack
             ), f"`attack` argument must be of type `textattack.Attack`, but got type of `{type(attack)}`."
 
+            if id(model_wrapper) != id(attack.goal_function.model):
+                logger.warn(
+                    "`model_wrapper` and the victim model of `attack` are not the same model."
+                )
+
         if train_dataset:
             assert isinstance(
                 train_dataset, textattack.datasets.Dataset
@@ -69,11 +74,6 @@ class Trainer:
             ), f"`training_args` must be of type `textattack.TrainingArgs`, but got type `{type(training_args)}`."
         else:
             training_args = TrainingArgs()
-
-        if id(model_wrapper) != id(attack.goal_function.model):
-            logger.warn(
-                "`model_wrapper` and the victim model of `attack` are not the same model."
-            )
 
         if not hasattr(model_wrapper, "model"):
             raise ValueError("Cannot detect `model` in `model_wrapper`")
@@ -104,6 +104,9 @@ class Trainer:
 
     def _generate_adversarial_examples(self, epoch):
         """Generate adversarial examples using attacker."""
+        assert (
+            self.attack is not None
+        ), "`attack` is `None` but attempting to generate adversarial examples."
         base_file_name = f"attack-train-{epoch}"
         log_file_name = os.path.join(self.training_args.output_dir, base_file_name)
         logger.info("Attacking model to generate new adversarial training set...")
@@ -160,11 +163,13 @@ class Trainer:
         )
         return adversarial_dataset
 
-    def _print_training_args(self, total_training_steps, train_batch_size):
+    def _print_training_args(
+        self, total_training_steps, train_batch_size, num_clean_epochs
+    ):
         logger.info("***** Running training *****")
         logger.info(f"  Num examples = {len(self.train_dataset)}")
         logger.info(f"  Num epochs = {self.training_args.num_epochs}")
-        logger.info(f"  Num clean epochs = {self.training_args.num_clean_epochs}")
+        logger.info(f"  Num clean epochs = {num_clean_epochs}")
         logger.info(
             f"  Instantaneous batch size per device = {self.training_args.per_device_train_batch_size}"
         )
@@ -301,7 +306,7 @@ class Trainer:
         Args:
             dataset (:class:`~textattack.datasets.Dataset`):
                 Original training dataset.
-            adv_dataset (:clas:`~textattack.datasets.Dataset`):
+            adv_dataset (:class:`~textattack.datasets.Dataset`):
                 Adversarial examples generated from the original training dataset. :obj:`None` if no adversarial attack takes place.
             batch_size (:obj:`int`):
                 Batch size for training.
@@ -341,10 +346,8 @@ class Trainer:
 
             return input_texts, torch.tensor(targets), torch.tensor(is_adv_sample)
 
-        if not adv_dataset:
-            dataset = torch.utils.data.ConcatDataset(
-                    [train_dataset, adv_dataset]
-                )
+        if adv_dataset:
+            dataset = torch.utils.data.ConcatDataset([dataset, adv_dataset])
 
         train_dataloader = torch.utils.data.DataLoader(
             dataset,
@@ -549,10 +552,16 @@ class Trainer:
         ) * (self.training_args.num_epochs - self.training_args.num_clean_epochs)
 
         total_training_steps = total_clean_training_steps + total_adv_training_steps
-        self._print_training_args(total_training_steps, train_batch_size)
 
         optimizer, scheduler = self.get_optimizer_and_scheduler(
             model, total_training_steps
+        )
+
+        if self.training_args.attack is None:
+            num_clean_epochs = self.training_args.num_epochs
+
+        self._print_training_args(
+            total_training_steps, train_batch_size, num_clean_epochs
         )
 
         model.to(textattack.shared.utils.device)
@@ -572,14 +581,13 @@ class Trainer:
         for epoch in range(1, self.training_args.num_epochs + 1):
             logger.info("==========================================================")
             logger.info(f"Epoch {epoch}")
-            # Adversarial attack and DataLoader creation
-            if epoch > self.training_args.num_clean_epochs:
+
+            if self.attack and epoch > self.training_args.num_clean_epochs:
                 if (
                     epoch - self.training_args.num_clean_epochs - 1
                 ) % self.training_args.attack_epoch_interval == 0:
-                    # only generate a new adversarial training set every self.training_args.attack_period epochs
-                    # after the clean epochs
-                    # adv_example_dataset is instance of `textattack.datasets.Dataset
+                    # only generate a new adversarial training set every self.training_args.attack_period epochs after the clean epochs
+                    # adv_dataset is instance of `textattack.datasets.Dataset`
                     model.eval()
                     adv_dataset = self._generate_adversarial_examples(epoch)
                     model.train()
@@ -587,9 +595,7 @@ class Trainer:
                 else:
                     adv_dataset = None
             else:
-                logger.info(
-                    f"Running clean epoch {epoch}/{self.training_args.num_clean_epochs}"
-                )
+                logger.info(f"Running clean epoch {epoch}/{num_clean_epochs}")
                 adv_dataset = None
 
             train_dataloader = self.get_train_dataloader(
@@ -600,7 +606,11 @@ class Trainer:
             all_preds = []
             all_targets = []
             prog_bar = tqdm.tqdm(
-                train_dataloader, desc="Iteration", position=0, leave=True, dynamic_ncols=True
+                train_dataloader,
+                desc="Iteration",
+                position=0,
+                leave=True,
+                dynamic_ncols=True,
             )
             for step, batch in enumerate(prog_bar):
                 loss, preds, targets = self.training_step(model, tokenizer, batch)

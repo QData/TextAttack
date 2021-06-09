@@ -193,29 +193,24 @@ class AttackArgs:
             self.num_examples = None
         if self.num_examples:
             assert (
-                self.num_examples > 0 or self.num_examples == -1
-            ), "`num_examples` must be greater than 0 or equal to -1."
+                self.num_examples >= 0 or self.num_examples == -1
+            ), "`num_examples` must be greater than or equal to 0 or equal to -1."
         if self.num_successful_examples:
             assert (
-                self.num_successful_examples > 0
-            ), "`num_examples` must be greater than 0."
+                self.num_successful_examples >= 0
+            ), "`num_examples` must be greater than or equal to 0."
 
         if self.query_budget:
-            assert self.query_budget > 0, "`query_budget` must be greater than 0"
+            assert self.query_budget > 0, "`query_budget` must be greater than 0."
 
         if self.checkpoint_interval:
             assert (
                 self.checkpoint_interval > 0
-            ), "`checkpoint_interval` must be greater than 0"
+            ), "`checkpoint_interval` must be greater than 0."
 
         assert (
             self.num_workers_per_device > 0
-        ), "`num_workers_per_device` must be greater than 0"
-
-        assert self.csv_coloring_style in {
-            "file",
-            "plain",
-        }, '`csv_coloring_style` must either be "file" or "plain".'
+        ), "`num_workers_per_device` must be greater than 0."
 
     @classmethod
     def _add_parser_args(cls, parser):

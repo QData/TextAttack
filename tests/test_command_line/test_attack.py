@@ -116,13 +116,8 @@ attack_test_params = [
     (
         "run_attack_faster_alzantot_recipe",
         (
-<<<<<<< HEAD
-            "textattack attack --model lstm-mr --recipe fast-alzantot --num-examples 3 "
-            "--num-examples-offset 32 --shuffle=False"
-=======
             "textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 "
             "--num-examples-offset 32 "
->>>>>>> WIP: Trainer class feature complete
         ),
         "tests/sample_outputs/run_attack_faster_alzantot_recipe.txt",
     ),
