@@ -539,26 +539,28 @@ class Trainer:
         else:
             train_batch_size = self.training_args.per_device_train_batch_size
 
+        if self.training_args.attack is None:
+            num_clean_epochs = self.training_args.num_epochs
+        else:
+            num_clean_epochs = self.training_args.num_clean_epochs
+
         total_clean_training_steps = (
             math.ceil(
                 len(self.train_dataset)
                 / (train_batch_size * self.training_args.gradient_accumulation_steps)
             )
-            * self.training_args.num_clean_epochs
+            * num_clean_epochs
         )
         total_adv_training_steps = math.ceil(
             (len(self.train_dataset) + self.training_args.num_train_adv_examples)
             / (train_batch_size * self.training_args.gradient_accumulation_steps)
-        ) * (self.training_args.num_epochs - self.training_args.num_clean_epochs)
+        ) * (self.training_args.num_epochs - num_clean_epochs)
 
         total_training_steps = total_clean_training_steps + total_adv_training_steps
 
         optimizer, scheduler = self.get_optimizer_and_scheduler(
             model, total_training_steps
         )
-
-        if self.training_args.attack is None:
-            num_clean_epochs = self.training_args.num_epochs
 
         self._print_training_args(
             total_training_steps, train_batch_size, num_clean_epochs
@@ -582,9 +584,9 @@ class Trainer:
             logger.info("==========================================================")
             logger.info(f"Epoch {epoch}")
 
-            if self.attack and epoch > self.training_args.num_clean_epochs:
+            if self.attack and epoch > num_clean_epochs:
                 if (
-                    epoch - self.training_args.num_clean_epochs - 1
+                    epoch - num_clean_epochs - 1
                 ) % self.training_args.attack_epoch_interval == 0:
                     # only generate a new adversarial training set every self.training_args.attack_period epochs after the clean epochs
                     # adv_dataset is instance of `textattack.datasets.Dataset`

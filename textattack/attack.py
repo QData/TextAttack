@@ -143,14 +143,14 @@ class Attack:
         self.constraints_cache = lru.LRU(constraint_cache_size)
 
         # Give search method access to functions for getting transformations and evaluating them
-        self.search_method.get_transformations = self._get_transformations
+        self.search_method.get_transformations = self.get_transformations
         # Give search method access to self.goal_function for model query count, etc.
         self.search_method.goal_function = self.goal_function
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
         self.search_method.get_goal_results = self.goal_function.get_results
 
-        self.search_method.filter_transformations = self._filter_transformations
+        self.search_method.filter_transformations = self.filter_transformations
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
@@ -162,7 +162,7 @@ class Attack:
                 if hasattr(constraint, "clear_cache"):
                     constraint.clear_cache()
 
-    def cpu(self):
+    def cpu_(self):
         """Move any `torch.nn.Module` models that are part of Attack to CPU."""
         visited = set()
 
@@ -195,7 +195,7 @@ class Attack:
 
         to_cpu(self)
 
-    def cuda(self):
+    def cuda_(self):
         """Move any `torch.nn.Module` models that are part of Attack to GPU."""
         visited = set()
 
@@ -227,39 +227,6 @@ class Attack:
                         to_cuda(item)
 
         to_cuda(self)
-
-    def share_memory(self):
-        """Move any models that are part of Attack to CPU."""
-        visited = set()
-
-        def _share_memory(obj):
-            visited.add(id(obj))
-            if isinstance(obj, torch.nn.Module):
-                obj.share_memory()
-            elif isinstance(
-                obj,
-                (
-                    Attack,
-                    GoalFunction,
-                    Transformation,
-                    SearchMethod,
-                    Constraint,
-                    PreTransformationConstraint,
-                    ModelWrapper,
-                ),
-            ):
-                for key in obj.__dict__:
-                    s_obj = obj.__dict__[key]
-                    if id(s_obj) not in visited:
-                        _share_memory(s_obj)
-            elif isinstance(obj, (list, tuple)):
-                for item in obj:
-                    if id(item) not in visited and isinstance(
-                        item, (Transformation, Constraint, PreTransformationConstraint)
-                    ):
-                        _share_memory(item)
-
-        _share_memory(self)
 
     def _get_transformations_uncached(self, current_text, original_text=None, **kwargs):
         """Applies ``self.transformation`` to ``text``, then filters the list

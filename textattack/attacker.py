@@ -102,7 +102,9 @@ class Attacker:
 
         No parallel processing is involved.
         """
-        self.attack.cuda_()
+        if torch.cuda.is_available():
+            self.attack.cuda_()
+
         if self._checkpoint:
             num_remaining_attacks = self._checkpoint.num_remaining_attacks
             worklist = self._checkpoint.worklist
@@ -146,9 +148,6 @@ class Attacker:
             num_failures = 0
             num_skipped = 0
             num_successes = 0
-
-        if hasattr(self.attack.goal_function.model, "to"):
-            self.attack.goal_function.model.to(textattack.shared.utils.device)
 
         sample_exhaustion_warned = False
         while worklist:
