@@ -59,5 +59,5 @@ the story gives ample opportunity for large-scale action and suspense , which di
 | Attack success rate:          | 100.0% |
 | Average perturbed word %:     | 22.04% |
 | Average num. words per input: | 15.5   |
-| Avg num queries:              | 174.67 |
+| Avg num queries:              | /.*/ |
 +-------------------------------+--------+
