@@ -11,6 +11,7 @@ import importlib
 import json
 import os
 import time
+import sys
 
 import textattack
 
@@ -504,6 +505,11 @@ def parse_logger_from_args(args):
     # Stdout
     if not args.disable_stdout:
         attack_log_manager.enable_stdout()
+
+    # Changes color method to file if stout is redirected
+    if not sys.stdout.isatty():
+        attack_log_manager.disable_color()
+
     return attack_log_manager
 
 

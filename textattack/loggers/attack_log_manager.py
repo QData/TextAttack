@@ -19,13 +19,15 @@ class AttackLogManager:
 
     def enable_stdout(self):
         self.loggers.append(FileLogger(stdout=True))
-        return None
 
     def enable_visdom(self):
         self.loggers.append(VisdomLogger())
 
     def enable_wandb(self):
         self.loggers.append(WeightsAndBiasesLogger())
+
+    def disable_color(self):
+        self.loggers.append(FileLogger(stdout=True, color_method="file"))
 
     def add_output_file(self, filename, color_method):
         self.loggers.append(FileLogger(filename=filename, color_method=color_method))
