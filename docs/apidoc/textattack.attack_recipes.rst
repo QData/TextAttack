@@ -6,6 +6,9 @@ textattack.attack\_recipes package
    :undoc-members:
    :show-inheritance:
 
+Submodules
+----------
+
 
 .. automodule:: textattack.attack_recipes.attack_recipe
    :members:
@@ -26,6 +29,12 @@ textattack.attack\_recipes package
 
 
 .. automodule:: textattack.attack_recipes.checklist_ribeiro_2020
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.attack_recipes.clare_li_2020
    :members:
    :undoc-members:
    :show-inheritance:

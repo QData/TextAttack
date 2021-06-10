@@ -17,10 +17,13 @@ class WordMergeMaskedLM(Transformation):
         tokenizer (obj): The tokenizer of the corresponding model. If you passed in name of a pretrained model for `masked_language_model`,
             you can skip this argument as the correct tokenizer can be infered from the name. However, if you're passing the actual model, you must
             provide a tokenizer.
-        max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
-        max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are
+        max_length (int): The max sequence length the masked language model is designed to work with. Default is 512.
+        window_size (int): The number of surrounding words to include when making top word prediction.
+            For each position to merge, we take `window_size // 2` words to the left and `window_size // 2` words to the right and pass the text within the window
+            to the masked language model. Default is `float("inf")`, which is equivalent to using the whole text.
+        max_candidates (int): Maximum number of candidates to consider as replacements for each word. Replacements are
             ranked by model's confidence.
-        min_confidence (float): minimum confidence threshold each replacement word must pass.
+        min_confidence (float): Minimum confidence threshold each replacement word must pass.
     """
 
     def __init__(
@@ -28,12 +31,14 @@ class WordMergeMaskedLM(Transformation):
         masked_language_model="bert-base-uncased",
         tokenizer=None,
         max_length=512,
+        window_size=float("inf"),
         max_candidates=50,
         min_confidence=5e-4,
         batch_size=16,
     ):
         super().__init__()
         self.max_length = max_length
+        self.window_size = window_size
         self.max_candidates = max_candidates
         self.min_confidence = min_confidence
         self.batch_size = batch_size
@@ -85,7 +90,10 @@ class WordMergeMaskedLM(Transformation):
             temp_text = current_text.replace_word_at_index(
                 index, self._lm_tokenizer.mask_token
             )
-            masked_texts.append(temp_text.delete_word_at_index(index + 1).text)
+            temp_text = temp_text.delete_word_at_index(index + 1)
+            # Obtain window
+            temp_text = temp_text.text_window_around_index(index, self.window_size)
+            masked_texts.append(temp_text)
 
         i = 0
         # 2-D list where for each index to modify we have a list of replacement words

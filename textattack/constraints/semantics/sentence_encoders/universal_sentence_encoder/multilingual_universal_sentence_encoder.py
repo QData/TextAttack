@@ -19,6 +19,7 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
 
     def __init__(self, threshold=0.8, large=False, metric="angular", **kwargs):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
+        tensorflow_text._load()
         if large:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3"
         else:
@@ -27,8 +28,17 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
             )
 
         # TODO add QA SET. Details at: https://tfhub.dev/google/universal-sentence-encoder-multilingual-qa/3
-
+        self._tfhub_url = tfhub_url
         self.model = hub.load(tfhub_url)
 
     def encode(self, sentences):
         return self.model(sentences).numpy()
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["model"] = None
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self.model = hub.load(self._tfhub_url)

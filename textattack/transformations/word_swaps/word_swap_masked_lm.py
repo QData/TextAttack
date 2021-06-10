@@ -40,6 +40,9 @@ class WordSwapMaskedLM(WordSwap):
             you can skip this argument as the correct tokenizer can be infered from the name. However, if you're passing the actual model, you must
             provide a tokenizer.
         max_length (int): the max sequence length the masked language model is designed to work with. Default is 512.
+        window_size (int): The number of surrounding words to include when making top word prediction.
+            For each word to swap, we take `window_size // 2` words to the left and `window_size // 2` words to the right and pass the text within the window
+            to the masked language model. Default is `float("inf")`, which is equivalent to using the whole text.
         max_candidates (int): maximum number of candidates to consider as replacements for each word. Replacements are ranked by model's confidence.
         min_confidence (float): minimum confidence threshold each replacement word must pass.
         batch_size (int): Size of batch for "bae" replacement method.
@@ -51,6 +54,7 @@ class WordSwapMaskedLM(WordSwap):
         masked_language_model="bert-base-uncased",
         tokenizer=None,
         max_length=512,
+        window_size=float("inf"),
         max_candidates=50,
         min_confidence=5e-4,
         batch_size=16,
@@ -59,6 +63,7 @@ class WordSwapMaskedLM(WordSwap):
         super().__init__(**kwargs)
         self.method = method
         self.max_length = max_length
+        self.window_size = window_size
         self.max_candidates = max_candidates
         self.min_confidence = min_confidence
         self.batch_size = batch_size
@@ -95,7 +100,7 @@ class WordSwapMaskedLM(WordSwap):
             padding="max_length",
             return_tensors="pt",
         )
-        return {k: v.to(utils.device) for k, v in encoding.items()}
+        return encoding.to(utils.device)
 
     def _bae_replacement_words(self, current_text, indices_to_modify):
         """Get replacement words for the word we want to replace using BAE
@@ -107,11 +112,12 @@ class WordSwapMaskedLM(WordSwap):
         """
         masked_texts = []
         for index in indices_to_modify:
-            masked_texts.append(
-                current_text.replace_word_at_index(
-                    index, self._lm_tokenizer.mask_token
-                ).text
+            masked_text = current_text.replace_word_at_index(
+                index, self._lm_tokenizer.mask_token
             )
+            # Obtain window
+            masked_text = masked_text.text_window_around_index(index, self.window_size)
+            masked_texts.append(masked_text)
 
         i = 0
         # 2-D list where for each index to modify we have a list of replacement words

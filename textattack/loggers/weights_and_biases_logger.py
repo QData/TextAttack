@@ -12,11 +12,12 @@ from .logger import Logger
 class WeightsAndBiasesLogger(Logger):
     """Logs attack results to Weights & Biases."""
 
-    def __init__(self, filename="", stdout=False):
+    def __init__(self, project_name):
         global wandb
         wandb = LazyLoader("wandb", globals(), "wandb")
 
-        wandb.init(project="textattack", resume=True)
+        wandb.init(project=project_name)
+        self.project_name = project_name
         self._result_table_rows = []
 
     def __setstate__(self, state):
@@ -24,7 +25,7 @@ class WeightsAndBiasesLogger(Logger):
         wandb = LazyLoader("wandb", globals(), "wandb")
 
         self.__dict__ = state
-        wandb.init(project="textattack", resume=True)
+        wandb.init(project=self.project_name, resume=True)
 
     def log_summary_rows(self, rows, title, window_id):
         table = wandb.Table(columns=["Attack Results", ""])
