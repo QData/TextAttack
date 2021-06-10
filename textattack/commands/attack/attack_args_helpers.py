@@ -503,12 +503,10 @@ def parse_logger_from_args(args):
         attack_log_manager.enable_wandb()
 
     # Stdout
-    if not args.disable_stdout:
-        attack_log_manager.enable_stdout()
-
-    # Changes color method to file if stout is redirected
-    if not sys.stdout.isatty():
+    if not args.disable_stdout and not sys.stdout.isatty():
         attack_log_manager.disable_color()
+    elif not args.disable_stdout:
+        attack_log_manager.enable_stdout()
 
     return attack_log_manager
 
