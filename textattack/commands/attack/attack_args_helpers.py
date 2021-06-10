@@ -10,8 +10,8 @@ import copy
 import importlib
 import json
 import os
-import time
 import sys
+import time
 
 import textattack
 
