@@ -27,9 +27,9 @@ def test_train_tiny():
     train_acc = re.findall(r"Train accuracy: (\S+)", stderr)
     assert train_acc
     train_acc = float(train_acc[0][:-1])  # [:-1] removes percent sign
-    assert train_acc > 60 and train_acc < 80
+    assert train_acc > 60
 
     eval_acc = re.findall(r"Eval accuracy: (\S+)", stderr)
     assert eval_acc
     eval_acc = float(eval_acc[0][:-1])  # [:-1] removes percent sign
-    assert train_acc > 60 and train_acc < 80
+    assert train_acc > 60

@@ -55,5 +55,5 @@
 | Attack success rate:          | 100.0% |
 | Average perturbed word %:     | 2.78%  |
 | Average num. words per input: | 28.67  |
-| Avg num queries:              | 178.5  |
+| Avg num queries:              | 178.0  |
 +-------------------------------+--------+
