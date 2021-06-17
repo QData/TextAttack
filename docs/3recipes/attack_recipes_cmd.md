@@ -16,7 +16,10 @@ or a specific command using, for example,
 textattack attack --help
 ```
 
-The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+The [`examples/`](https://github.com/QData/TextAttack/tree/master/examples) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. 
+
+
+The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
 ## Running Attacks: `textattack attack --help`
 

@@ -9,6 +9,13 @@ just about anything TextAttack offers in a single bash command.
 > can access all the same functionality by prepending `python -m` to the command
 > (`python -m textattack ...`).
 
+
+> The [`examples/`](https://github.com/QData/TextAttack/tree/master/examples) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. 
+
+
+> The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+
+
 To see all available commands, type `textattack --help`. This page explains
 some of the most important functionalities of textattack: NLP data augmentation,
 adversarial attacks, and training and evaluating models.
