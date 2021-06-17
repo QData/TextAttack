@@ -12,25 +12,25 @@
     (1): StopwordModification
   (is_black_box):  False
 ) 
-/.*/
+
 --------------------------------------------- Result 1 ---------------------------------------------
-[92mPositive (99%)[0m --> [91mNegative (98%)[0m
+[[Positive (99%)]] --> [[Negative (98%)]]
 
-goldmember is funny enough to [92mjustify[0m the embarrassment of bringing a barf bag to the moviehouse .
+goldmember is funny enough to [[justify]] the embarrassment of bringing a barf bag to the moviehouse .
 
-goldmember is funny enough to [91mreasoned[0m the embarrassment of bringing a barf bag to the moviehouse .
+goldmember is funny enough to [[reasoned]] the embarrassment of bringing a barf bag to the moviehouse .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
-[92mPositive (100%)[0m --> [91mNegative (100%)[0m
+[[Positive (100%)]] --> [[Negative (100%)]]
 
-. . . a fairly disposable yet still [92mentertaining[0m b picture .
+. . . a fairly disposable yet still [[entertaining]] b picture .
 
-. . . a fairly disposable yet still [91mdistracting[0m b picture .
+. . . a fairly disposable yet still [[distracting]] b picture .
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[92mPositive (100%)[0m --> [91m[FAILED][0m
+[[Positive (100%)]] --> [[[FAILED]]]
 
 it may not be particularly innovative , but the film's crisp , unaffected style and air of gentle longing make it unexpectedly rewarding .
 
