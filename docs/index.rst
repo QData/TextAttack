@@ -13,6 +13,16 @@ TextAttack Documentation
 
 .. toctree::
    :maxdepth: 6
+   :caption: Recipes
+   
+   3recipes/attack_recipes_cmd.md
+   3recipes/attack_recipes.rst
+   3recipes/augmenter_recipes_cmd.md
+   3recipes/augmenter_recipes.rst
+   3recipes/models.md
+
+.. toctree::
+   :maxdepth: 6
    :caption: Using TextAttack
 
    1start/what_is_an_adversarial_attack.md
@@ -20,18 +30,11 @@ TextAttack Documentation
    1start/attacks4Components.md
    1start/benchmark-search.md
    1start/quality-SOTA-recipes.md
-   3recipes/models.md
-   1start/talks-visualization.md
    1start/api-design-tips.md
+   1start/talks-visualization.md
    1start/support.md
    1start/FAQ.md
    
-.. toctree::
-   :maxdepth: 6
-   :caption: Attack Recipes
-   
-   3recipes/attack_recipes.rst
-   3recipes/augmenter_recipes.rst
  
 .. toctree::
    :maxdepth: 6
