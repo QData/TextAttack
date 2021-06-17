@@ -15,12 +15,13 @@ for data augmentation:
 - `textattack.CLAREAugmenter` augments text by replacing, inserting, and merging with a pre-trained masked language model.
 
 ### Augmentation Command-Line Interface
-The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
-takes an input CSV file and text column to augment, along with the number of words to change per augmentation
-and the number of augmentations per input example. It outputs a CSV in the same format with all the augmentation
-examples corresponding to the proper columns.
+The easiest way to use our data augmentation tools is with `textattack augment <args>`. 
 
-For example, given the following as `examples.csv`:
+`textattack augment`
+takes an input CSV file, the "text" column to augment, along with the number of words to change per augmentation
+and the number of augmentations per input example. It outputs a CSV in the same format with all the augmented examples in the proper columns.
+
+> For instance, when given the following as `examples.csv`:
 
 ```csv
 "text",label
