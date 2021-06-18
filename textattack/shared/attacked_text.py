@@ -250,7 +250,7 @@ class AttackedText:
         if len(w1) - 1 < i or len(w2) - 1 < i:
             return True
         return w1[i] != w2[i]
-    
+
     def words_diff_num(self, other_attacked_text):
         # using edit distance to calculate words diff num
         def generate_tokens(words):
@@ -261,13 +261,17 @@ class AttackedText:
                     result[w] = idx
                     idx += 1
             return result
+
         def words_to_tokens(words, tokens):
             result = []
             for w in words:
                 result.append(tokens[w])
             return result
+
         def edit_distance(w1_t, w2_t):
-            matrix = [[i + j for j in range(len(w2_t) + 1)] for i in range(len(w1_t) + 1)]
+            matrix = [
+                [i + j for j in range(len(w2_t) + 1)] for i in range(len(w1_t) + 1)
+            ]
 
             for i in range(1, len(w1_t) + 1):
                 for j in range(1, len(w2_t) + 1):
@@ -275,18 +279,23 @@ class AttackedText:
                         d = 0
                     else:
                         d = 1
-                    matrix[i][j] = min(matrix[i - 1][j] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j - 1] + d)
+                    matrix[i][j] = min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + d,
+                    )
 
             return matrix[len(w1_t)][len(w2_t)]
+
         def cal_dif(w1, w2):
             tokens = generate_tokens(w1 + w2)
             w1_t = words_to_tokens(w1, tokens)
             w2_t = words_to_tokens(w2, tokens)
             return edit_distance(w1_t, w2_t)
+
         w1 = self.words
         w2 = other_attacked_text.words
         return cal_dif(w1, w2)
-
 
     def convert_from_original_idxs(self, idxs):
         """Takes indices of words from original string and converts them to
