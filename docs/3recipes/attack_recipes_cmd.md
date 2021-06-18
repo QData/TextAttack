@@ -49,7 +49,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 > **Tip:** Instead of specifying a dataset and number of examples, you can pass `--interactive` to attack samples inputted by the user.
 
-### Attacks and Papers Implemented ("Attack Recipes"): `textattack attack --recipe [recipe_name]`
+## Attacks and Papers Implemented ("Attack Recipes"): `textattack attack --recipe [recipe_name]`
 
 We include attack recipes which implement attacks from the literature. You can list attack recipes using `textattack list attack-recipes`.
 
@@ -227,7 +227,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 
 
-### Recipe Usage Examples
+## Recipe Usage Examples
 
 Here are some examples of testing attacks from the literature from the command-line:
 
