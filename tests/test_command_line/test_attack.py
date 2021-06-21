@@ -97,21 +97,6 @@ attack_test_params = [
         "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt",
     ),
     #
-    # fmt: off
-    # test: run_attack untargeted classification on BERT MR using word embedding transformation and greedy-word-WIR search
-    #   using Flair's part-of-speech tagger as constraint.
-    #
-    (
-        "run_attack_flair_pos_tagger_bert_score",
-        (
-            "textattack attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding "
-            "--constraints repeat stopword bert-score^min_bert_score=0.8 part-of-speech^tagger_type=\\'flair\\' "
-            "--num-examples 4 --num-examples-offset 10 "
-        ),
-        "tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt",
-    ),
-    # fmt: on
-    #
     # test: run_attack on LSTM MR using word embedding transformation and genetic algorithm. Simulate alzantot recipe without using expensive LM
     (
         "run_attack_faster_alzantot_recipe",
@@ -120,17 +105,6 @@ attack_test_params = [
             "--num-examples-offset 32 "
         ),
         "tests/sample_outputs/run_attack_faster_alzantot_recipe.txt",
-    ),
-    #
-    # test: run_attack with kuleshov recipe and sst-2 cnn
-    #
-    (
-        "run_attack_kuleshov_nn",
-        (
-            "textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst2 "
-            "--attack-n --query-budget 200 "
-        ),
-        "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
     ),
     #
     # test: run_attack on LSTM MR using word embedding transformation and greedy search with Stanza part-of-speech tagger as a constraint
@@ -155,16 +129,6 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_cnn_cola.txt",
     ),
-    # test: run_attack on BERT MR using gradient-ranking greedy-word-wir.
-    #
-    (
-        "run_attack_gradient_greedy_word_wir",
-        (
-            "textattack attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' "
-            "--transformation word-swap-embedding --constraints repeat stopword "
-        ),
-        "tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt",
-    ),
 ]
 
 
@@ -188,7 +152,6 @@ def test_command_line_attack(name, command, sample_output_file):
     # get output and check match
     assert result.stdout is not None
     stdout = result.stdout.decode().strip()
-    print("stdout.encoded =>", result.stdout)
     print("stdout =>", stdout)
     assert result.stderr is not None
     stderr = result.stderr.decode().strip()
