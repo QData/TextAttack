@@ -15,6 +15,7 @@ class Augmenter:
 
     Returns all possible transformations for a given string. Currently only
         supports transformations which are word swaps.
+
     Args:
         transformation (textattack.Transformation): the transformation
             that suggests new texts from an input.
