@@ -372,7 +372,6 @@ class AttackArgs:
             if not os.path.exists(dir_path):
                 os.makedirs(os.path.dirname(txt_file_path))
 
-            # attack_log_manager.add_output_file(txt_file_path)
             color_method = "file"
             attack_log_manager.add_output_file(txt_file_path, color_method)
 
