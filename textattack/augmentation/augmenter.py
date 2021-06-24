@@ -1,7 +1,6 @@
 """
 Augmenter Class
 ===================
-
 """
 import random
 
@@ -16,7 +15,6 @@ class Augmenter:
 
     Returns all possible transformations for a given string. Currently only
         supports transformations which are word swaps.
-
     Args:
         transformation (textattack.Transformation): the transformation
             that suggests new texts from an input.
@@ -79,7 +77,7 @@ class Augmenter:
         )
         for _ in range(self.transformations_per_example):
             current_text = attacked_text
-            words_swapped = max(len(current_text.attack_attrs["modified_indices"]), words_swapped+1)
+            words_swapped = len(current_text.attack_attrs["modified_indices"])
 
             while words_swapped < num_words_to_swap:
                 transformed_texts = self.transformation(
@@ -99,17 +97,14 @@ class Augmenter:
                 # if there's no more transformed texts after filter, terminate
                 if not len(transformed_texts):
                     break
-                # if transformed texts only contain duplicated words, terminate
-                elif len(set(transformed_texts)) == 1:
-                    break
-                # if there is no synonym to insert, terminate
-                elif transformed_texts == [current_text]:
-                    break
 
                 current_text = random.choice(transformed_texts)
 
                 # update words_swapped based on modified indices
-                words_swapped = len(current_text.attack_attrs["modified_indices"])
+                words_swapped = max(
+                    len(current_text.attack_attrs["modified_indices"]),
+                    words_swapped + 1,
+                )
             all_transformed_texts.add(current_text)
         return sorted([at.printable_text() for at in all_transformed_texts])
 
@@ -119,7 +114,6 @@ class Augmenter:
 
         Args:
             text_list (list(string)): a list of strings for data augmentation
-
         Returns a list(string) of augmented texts.
         """
         if show_progress:
