@@ -32,4 +32,4 @@ def test_train_tiny():
     eval_acc = re.findall(r"Eval accuracy: (\S+)", stderr)
     assert eval_acc
     eval_acc = float(eval_acc[0][:-1])  # [:-1] removes percent sign
-    assert eval_acc > 60
+    assert train_acc > 60
