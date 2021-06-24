@@ -79,7 +79,7 @@ class Augmenter:
         )
         for _ in range(self.transformations_per_example):
             current_text = attacked_text
-            words_swapped = len(current_text.attack_attrs["modified_indices"])
+            words_swapped = max(len(current_text.attack_attrs["modified_indices"]), words_swapped+1)
 
             while words_swapped < num_words_to_swap:
                 transformed_texts = self.transformation(
@@ -98,6 +98,12 @@ class Augmenter:
 
                 # if there's no more transformed texts after filter, terminate
                 if not len(transformed_texts):
+                    break
+                # if transformed texts only contain duplicated words, terminate
+                elif len(set(transformed_texts)) == 1:
+                    break
+                # if there is no synonym to insert, terminate
+                elif transformed_texts == [current_text]:
                     break
 
                 current_text = random.choice(transformed_texts)
