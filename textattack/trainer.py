@@ -539,7 +539,7 @@ class Trainer:
         else:
             train_batch_size = self.training_args.per_device_train_batch_size
 
-        if self.training_args.attack is None:
+        if self.attack is None:
             num_clean_epochs = self.training_args.num_epochs
         else:
             num_clean_epochs = self.training_args.num_clean_epochs
@@ -831,12 +831,15 @@ class Trainer:
             and self.training_args.model_max_length
         ):
             model_max_length = self.training_args.model_max_length
-        elif isinstance(self.model_wrapper.model, transformers.PreTrainedModel):
-            model_max_length = self.model_wrapper.model.config.max_position_embeddings
         elif isinstance(
-            self.model_wrapper.model, (LSTMForClassification, WordCNNForClassification)
+            self.model_wrapper.model,
+            (
+                transformers.PreTrainedModel,
+                LSTMForClassification,
+                WordCNNForClassification,
+            ),
         ):
-            model_max_length = self.model_wrapper.model.max_length
+            model_max_length = self.model_wrapper.tokenizer.model_max_length
         else:
             model_max_length = None
 
