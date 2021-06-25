@@ -5,7 +5,7 @@ from helpers import run_command_and_get_result
 
 
 def test_train_tiny():
-    command = "textattack train --model-name-or-path lstm --attack deepwordbug --dataset glue^cola --model-max-length 32 --num-epochs 1 --num-train-adv-examples 200"
+    command = "textattack train --model-name-or-path lstm --attack deepwordbug --dataset glue^cola --model-max-length 32 --num-epochs 2 --num-clean-epochs 1 --num-train-adv-examples 200"
 
     # Run command and validate outputs.
     result = run_command_and_get_result(command)
