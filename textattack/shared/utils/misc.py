@@ -125,3 +125,4 @@ def sigmoid(n):
 
 
 GLOBAL_OBJECTS = {}
+ARGS_SPLIT_TOKEN = "^"

@@ -2,6 +2,7 @@ import logging.config
 import os
 import pathlib
 import shutil
+import sys
 import tempfile
 import zipfile
 
@@ -134,7 +135,10 @@ def http_get(url, out_file, proxies=None):
     progress.close()
 
 
-LOG_STRING = "\033[34;1mtextattack\033[0m"
+if sys.stdout.isatty():
+    LOG_STRING = "\033[34;1mtextattack\033[0m"
+else:
+    LOG_STRING = "textattack"
 logger = logging.getLogger(__name__)
 logging.config.dictConfig(
     {"version": 1, "loggers": {__name__: {"level": logging.INFO}}}

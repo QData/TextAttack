@@ -23,7 +23,7 @@ class BeamSearch(SearchMethod):
     def __init__(self, beam_width=8):
         self.beam_width = beam_width
 
-    def _perform_search(self, initial_result):
+    def perform_search(self, initial_result):
         beam = [initial_result.attacked_text]
         best_result = initial_result
         while not best_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:

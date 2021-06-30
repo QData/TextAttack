@@ -72,6 +72,9 @@ class GreedyWordSwapWIR(SearchMethod):
                     continue
                 swap_results, _ = self.get_goal_results(transformed_text_candidates)
                 score_change = [result.score for result in swap_results]
+                if not score_change:
+                    delta_ps.append(0.0)
+                    continue
                 max_score_change = np.max(score_change)
                 delta_ps.append(max_score_change)
 
@@ -85,13 +88,13 @@ class GreedyWordSwapWIR(SearchMethod):
             index_scores = np.array([result.score for result in leave_one_results])
 
         elif self.wir_method == "gradient":
-            victim_model = self.get_model()
+            victim_model = self.get_victim_model()
             index_scores = np.zeros(initial_text.num_words)
             grad_output = victim_model.get_grad(initial_text.tokenizer_input)
             gradient = grad_output["gradient"]
             word2token_mapping = initial_text.align_with_model_tokens(victim_model)
             for i, word in enumerate(initial_text.words):
-                matched_tokens = word2token_mapping[word]
+                matched_tokens = word2token_mapping[i]
                 if not matched_tokens:
                     index_scores[i] = 0.0
                 else:
@@ -112,7 +115,7 @@ class GreedyWordSwapWIR(SearchMethod):
 
         return index_order, search_over
 
-    def _perform_search(self, initial_result):
+    def perform_search(self, initial_result):
         attacked_text = initial_result.attacked_text
 
         # Sort words by order of importance

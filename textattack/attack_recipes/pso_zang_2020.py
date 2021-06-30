@@ -6,6 +6,7 @@ Particle Swarm Optimization
 (Word-level Textual Adversarial Attacking as Combinatorial Optimization)
 
 """
+from textattack import Attack
 from textattack.constraints.pre_transformation import (
     InputColumnModification,
     RepeatModification,
@@ -13,7 +14,6 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import ParticleSwarmOptimization
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapHowNet
 
 from .attack_recipe import AttackRecipe
@@ -39,7 +39,7 @@ class PSOZang2020(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # Swap words with their synonyms extracted based on the HowNet.
         #
@@ -60,7 +60,7 @@ class PSOZang2020(AttackRecipe):
         #
         # Use untargeted classification for demo, can be switched to targeted one
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # Perform word substitution with a Particle Swarm Optimization (PSO) algorithm.
         #

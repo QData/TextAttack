@@ -231,7 +231,7 @@ class GeneticAlgorithm(PopulationBasedSearch, ABC):
         """
         raise NotImplementedError()
 
-    def _perform_search(self, initial_result):
+    def perform_search(self, initial_result):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
         pop_size = len(population)

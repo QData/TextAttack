@@ -14,24 +14,43 @@ from .pytorch_model_wrapper import PyTorchModelWrapper
 class HuggingFaceModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""
 
-    def __init__(self, model, tokenizer, batch_size=32):
-        self.model = model.to(textattack.shared.utils.device)
-        if isinstance(tokenizer, transformers.PreTrainedTokenizer):
-            tokenizer = textattack.models.tokenizers.AutoTokenizer(tokenizer=tokenizer)
+    def __init__(self, model, tokenizer):
+        assert isinstance(
+            model, transformers.PreTrainedModel
+        ), f"`model` must be of type `transformers.PreTrainedModel`, but got type {type(model)}."
+        assert isinstance(
+            tokenizer,
+            (transformers.PreTrainedTokenizer, transformers.PreTrainedTokenizerFast),
+        ), f"`tokenizer` must of type `transformers.PreTrainedTokenizer` or `transformers.PreTrainedTokenizerFast`, but got type {type(tokenizer)}."
+
+        self.model = model
         self.tokenizer = tokenizer
-        self.batch_size = batch_size
 
-    def _model_predict(self, inputs):
-        """Turn a list of dicts into a dict of lists.
+    def __call__(self, text_input_list):
+        """Passes inputs to HuggingFace models as keyword arguments.
 
-        Then make lists (values of dict) into tensors.
+        (Regular PyTorch ``nn.Module`` models typically take inputs as
+        positional arguments.)
         """
+        # Default max length is set to be int(1e30), so we force 512 to enable batching.
+        max_length = (
+            512
+            if self.tokenizer.model_max_length == int(1e30)
+            else self.tokenizer.model_max_length
+        )
+        inputs_dict = self.tokenizer(
+            text_input_list,
+            add_special_tokens=True,
+            padding="max_length",
+            max_length=max_length,
+            truncation=True,
+            return_tensors="pt",
+        )
         model_device = next(self.model.parameters()).device
-        input_dict = {k: [_dict[k] for _dict in inputs] for k in inputs[0]}
-        input_dict = {
-            k: torch.tensor(v).to(model_device) for k, v in input_dict.items()
-        }
-        outputs = self.model(**input_dict)
+        inputs_dict.to(model_device)
+
+        with torch.no_grad():
+            outputs = self.model(**inputs_dict)
 
         if isinstance(outputs[0], str):
             # HuggingFace sequence-to-sequence models return a list of
@@ -42,22 +61,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             # HuggingFace classification models return a tuple as output
             # where the first item in the tuple corresponds to the list of
             # scores for each input.
-            return outputs[0]
-
-    def __call__(self, text_input_list):
-        """Passes inputs to HuggingFace models as keyword arguments.
-
-        (Regular PyTorch ``nn.Module`` models typically take inputs as
-        positional arguments.)
-        """
-        ids = self.encode(text_input_list)
-
-        with torch.no_grad():
-            outputs = textattack.shared.utils.batch_model_predict(
-                self._model_predict, ids, batch_size=self.batch_size
-            )
-
-        return outputs
+            return outputs.logits
 
     def get_grad(self, text_input):
         """Get gradient of loss with respect to input tokens.
@@ -86,14 +90,16 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
         self.model.zero_grad()
         model_device = next(self.model.parameters()).device
-        ids = self.encode([text_input])
-        predictions = self._model_predict(ids)
+        input_dict = self.tokenizer(
+            [text_input],
+            add_special_tokens=True,
+            return_tensors="pt",
+            padding="max_length",
+            truncation=True,
+        )
+        input_dict.to(model_device)
+        predictions = self.model(**input_dict).logits
 
-        model_device = next(self.model.parameters()).device
-        input_dict = {k: [_dict[k] for _dict in ids] for k in ids[0]}
-        input_dict = {
-            k: torch.tensor(v).to(model_device) for k, v in input_dict.items()
-        }
         try:
             labels = predictions.argmax(dim=1)
             loss = self.model(**input_dict, labels=labels)[0]
@@ -113,7 +119,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         emb_hook.remove()
         self.model.eval()
 
-        output = {"ids": ids[0]["input_ids"], "gradient": grad}
+        output = {"ids": input_dict["input_ids"], "gradient": grad}
 
         return output
 
@@ -125,6 +131,8 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             tokens (list[list[str]]): List of list of tokens as strings
         """
         return [
-            self.tokenizer.convert_ids_to_tokens(self.tokenizer.encode(x)["input_ids"])
+            self.tokenizer.convert_ids_to_tokens(
+                self.tokenizer([x], truncation=True)["input_ids"][0]
+            )
             for x in inputs
         ]

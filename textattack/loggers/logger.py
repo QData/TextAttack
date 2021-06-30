@@ -27,3 +27,6 @@ class Logger(ABC):
 
     def flush(self):
         pass
+
+    def close(self):
+        pass

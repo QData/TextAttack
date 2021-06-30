@@ -10,11 +10,8 @@ import os
 
 import torch
 
-from textattack.shared import utils
-
 
 def load_cached_state_dict(model_folder_path):
-    model_folder_path = utils.download_from_s3(model_folder_path)
     # Take the first model matching the pattern *model.bin.
     model_path_list = glob.glob(os.path.join(model_folder_path, "*model.bin"))
     if not model_path_list:
@@ -22,5 +19,5 @@ def load_cached_state_dict(model_folder_path):
             f"model.bin not found in model folder {model_folder_path}."
         )
     model_path = model_path_list[0]
-    state_dict = torch.load(model_path, map_location=utils.device)
+    state_dict = torch.load(model_path, map_location=torch.device("cpu"))
     return state_dict

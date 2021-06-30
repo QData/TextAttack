@@ -1,8 +1,3 @@
-"""
-Attack Result Class
-====================
-"""
-
 from abc import ABC
 
 from textattack.goal_function_results import GoalFunctionResult
@@ -13,10 +8,10 @@ class AttackResult(ABC):
     """Result of an Attack run on a single (output, text_input) pair.
 
     Args:
-        original_result (GoalFunctionResult): Result of the goal function
-            applied to the original text
-        perturbed_result (GoalFunctionResult): Result of the goal function applied to the
-            perturbed text. May or may not have been successful.
+        original_result (:class:`~textattack.goal_function_results.GoalFunctionResult`):
+            Result of the goal function applied to the original text
+        perturbed_result (:class:`~textattack.goal_function_results.GoalFunctionResult`):
+            Result of the goal function applied to the perturbed text. May or may not have been successful.
     """
 
     def __init__(self, original_result, perturbed_result):

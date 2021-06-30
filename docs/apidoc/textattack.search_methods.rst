@@ -6,6 +6,8 @@ textattack.search\_methods package
    :undoc-members:
    :show-inheritance:
 
+Submodules
+----------
 
 
 .. automodule:: textattack.search_methods.alzantot_genetic_algorithm

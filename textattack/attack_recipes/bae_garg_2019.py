@@ -36,7 +36,7 @@ class BAEGarg2019(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         # "In this paper, we present a simple yet novel technique: BAE (BERT-based
         # Adversarial Examples), which uses a language model (LM) for token
         # replacement to best fit the overall context. We perturb an input sentence
@@ -105,7 +105,7 @@ class BAEGarg2019(AttackRecipe):
         #
         # Goal is untargeted classification.
         #
-        goal_function = UntargetedClassification(model)
+        goal_function = UntargetedClassification(model_wrapper)
         #
         # "We estimate the token importance Ii of each token
         # t_i ∈ S = [t1, . . . , tn], by deleting ti from S and computing the
