@@ -1,6 +1,7 @@
 from dataclasses import dataclass, field
 import json
 import os
+import sys
 import time
 
 import textattack
@@ -371,7 +372,8 @@ class AttackArgs:
             if not os.path.exists(dir_path):
                 os.makedirs(os.path.dirname(txt_file_path))
 
-            attack_log_manager.add_output_file(txt_file_path)
+            color_method = "file"
+            attack_log_manager.add_output_file(txt_file_path, color_method)
 
         # if '--log-to-csv' specified with arguments
         if args.log_to_csv is not None:
@@ -399,7 +401,9 @@ class AttackArgs:
             attack_log_manager.enable_wandb(args.log_to_wandb)
 
         # Stdout
-        if not args.disable_stdout:
+        if not args.disable_stdout and not sys.stdout.isatty():
+            attack_log_manager.disable_color()
+        elif not args.disable_stdout:
             attack_log_manager.enable_stdout()
 
         return attack_log_manager

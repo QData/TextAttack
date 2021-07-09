@@ -118,6 +118,7 @@ class Dataset(torch.utils.data.Dataset):
         self._dataset = filter(lambda x: x[1] in labels_to_keep, self._dataset)
 
     def __getitem__(self, i):
+        """Return i-th sample."""
         if isinstance(i, int):
             return self._format_as_dict(self._dataset[i])
         else:

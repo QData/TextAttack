@@ -165,6 +165,7 @@ class HuggingFaceDataset(Dataset):
         )
 
     def __getitem__(self, i):
+        """Return i-th sample."""
         if isinstance(i, int):
             return self._format_as_dict(self._dataset[i])
         else:

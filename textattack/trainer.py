@@ -27,12 +27,67 @@ class Trainer:
     """Trainer is training and eval loop for adversarial training.
 
     It is designed to work with PyTorch and Transformers models.
+
+    Args:
+        model_wrapper (:class:`~textattack.models.wrappers.ModelWrapper`):
+            Model wrapper containing both the model and the tokenizer.
+        task_type (:obj:`str`, `optional`, defaults to :obj:`"classification"`):
+            The task that the model is trained to perform.
+            Currently, :class:`~textattack.Trainer` supports two tasks: (1) :obj:`"classification"`, (2) :obj:`"regression"`.
+        attack (:class:`~textattack.Attack`):
+            :class:`~textattack.Attack` used to generate adversarial examples for training.
+        train_dataset (:class:`~textattack.datasets.Dataset`):
+            Dataset for training.
+        eval_dataset (:class:`~textattack.datasets.Dataset`):
+            Dataset for evaluation
+        training_args (:class:`~textattack.TrainingArgs`):
+            Arguments for training.
+
+    Example::
+
+        >>> import textattack
+        >>> import transformers
+
+        >>> model = transformers.AutoModelForSequenceClassification.from_pretrained("bert-base-uncased")
+        >>> tokenizer = transformers.AutoTokenizer.from_pretrained("bert-base-uncased")
+        >>> model_wrapper = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
+
+        >>> # We only use DeepWordBugGao2018 to demonstration purposes.
+        >>> attack = textattack.attack_recipes.DeepWordBugGao2018.build(model_wrapper)
+        >>> train_dataset = textattack.datasets.HuggingFaceDataset("imdb", split="train")
+        >>> eval_dataset = textattack.datasets.HuggingFaceDataset("imdb", split="test")
+
+        >>> # Train for 3 epochs with 1 initial clean epochs, 1000 adversarial examples per epoch, learning rate of 5e-5, and effective batch size of 32 (8x4).
+        >>> training_args = textattack.TrainingArgs(
+        ...     num_epochs=3,
+        ...     num_clean_epochs=1,
+        ...     num_train_adv_examples=1000,
+        ...     learning_rate=5e-5,
+        ...     per_device_train_batch_size=8,
+        ...     gradient_accumulation_steps=4,
+        ...     log_to_tb=True,
+        ... )
+
+        >>> trainer = textattack.Trainer(
+        ...     model_wrapper,
+        ...     "classification",
+        ...     attack,
+        ...     train_dataset,
+        ...     eval_dataset,
+        ...     training_args
+        ... )
+        >>> trainer.train()
+
+    .. note::
+        When using :class:`~textattack.Trainer` with `parallel=True` in :class:`~textattack.TrainingArgs`,
+        make sure to protect the “entry point” of the program by using :obj:`if __name__ == '__main__':`.
+        If not, each worker process used for generating adversarial examples will execute the training code again.
     """
 
     def __init__(
         self,
         model_wrapper,
-        task_type,
+        task_type="classification",
         attack=None,
         train_dataset=None,
         eval_dataset=None,
@@ -223,8 +278,6 @@ class Trainer:
 
         for key in log:
             self._tb_writer.add_scalar(key, log[key], step)
-
-        self.tb_writer.flush()
 
     def _wandb_log(self, log, step):
         if not hasattr(self, "_wandb_init"):
@@ -504,6 +557,7 @@ class Trainer:
         return preds.cpu(), _targets
 
     def train(self):
+        """Train the model on given training dataset."""
         if not self.train_dataset:
             raise ValueError("No `train_dataset` available for training.")
 
@@ -743,6 +797,9 @@ class Trainer:
                     )
                     break
 
+        if self.training_args.log_to_tb:
+            self._tb_writer.flush()
+
         # Finish training
         if isinstance(model, torch.nn.DataParallel):
             model = model.module
@@ -763,6 +820,8 @@ class Trainer:
         self._write_readme(best_eval_score, best_eval_score_epoch, train_batch_size)
 
     def evaluate(self):
+        """Evaluate the model on given evaluation dataset."""
+
         if not self.eval_dataset:
             raise ValueError("No `eval_dataset` available for training.")
 
