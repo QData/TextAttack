@@ -14,12 +14,12 @@ class AttackMetric(AttackResult, ABC):
 
     @staticmethod
     @abstractmethod
-    def __init__(self,results,**kwargs):
+    def __init__(self, results, **kwargs):
         """Creates pre-built :class:`~textattack.AttackMetric` that correspond to
         evaluation metrics for adversarial examples.
         """
         raise NotImplementedError()
-        
+
     @staticmethod
     @abstractmethod
     def calculate():

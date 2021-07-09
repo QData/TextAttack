@@ -78,21 +78,41 @@ class AttackLogManager:
         words_perturbed_stats = WordsPerturbed(self.results)
         attack_query_stats = AttackQueries(self.results)
 
-        # @TODO generate this table based on user input - each column in specific class 
-        # Example to demonstrate: 
+        # @TODO generate this table based on user input - each column in specific class
+        # Example to demonstrate:
         # summary_table_rows = attack_success_stats.display_row() + words_perturbed_stats.display_row() + ...
         summary_table_rows = [
-            ["Number of successful attacks:", attack_success_stats.successful_attacks_num()],
+            [
+                "Number of successful attacks:",
+                attack_success_stats.successful_attacks_num(),
+            ],
             ["Number of failed attacks:", attack_success_stats.failed_attacks_num()],
             ["Number of skipped attacks:", attack_success_stats.skipped_attacks_num()],
-            ["Original accuracy:", str(attack_success_stats.original_accuracy_perc())+"%"],
-            ["Accuracy under attack:", str(attack_success_stats.attack_accuracy_perc())+"%"],
-            ["Attack success rate:", str(attack_success_stats.attack_success_rate_perc())+"%"],
-            ["Average perturbed word %:", str(words_perturbed_stats.avg_number_word_perturbed_num())+"%"],
-            ["Average num. words per input:", words_perturbed_stats.avg_perturbation_perc()],
+            [
+                "Original accuracy:",
+                str(attack_success_stats.original_accuracy_perc()) + "%",
+            ],
+            [
+                "Accuracy under attack:",
+                str(attack_success_stats.attack_accuracy_perc()) + "%",
+            ],
+            [
+                "Attack success rate:",
+                str(attack_success_stats.attack_success_rate_perc()) + "%",
+            ],
+            [
+                "Average perturbed word %:",
+                str(words_perturbed_stats.avg_number_word_perturbed_num()) + "%",
+            ],
+            [
+                "Average num. words per input:",
+                words_perturbed_stats.avg_perturbation_perc(),
+            ],
         ]
 
-        summary_table_rows.append(["Avg num queries:", attack_query_stats.avg_num_queries_num()])
+        summary_table_rows.append(
+            ["Avg num queries:", attack_query_stats.avg_num_queries_num()]
+        )
         self.log_summary_rows(
             summary_table_rows, "Attack Results", "attack_results_summary"
         )
