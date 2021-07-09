@@ -3,8 +3,6 @@ Managing Attack Logs.
 ========================
 """
 
-import numpy as np
-
 from textattack.attack_metrics import AttackQueries, AttackSuccessRate, WordsPerturbed
 
 from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
