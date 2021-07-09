@@ -57,6 +57,7 @@ TextAttack Documentation
    :caption: API User Guide
 
    Attack <api/attack.rst>
+   Attacker <api/attacker.rst>
    AttackResult <api/attack_results.rst>
    Trainer <api/trainer.rst>
    Datasets <api/datasets.rst>

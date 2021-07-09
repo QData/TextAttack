@@ -24,20 +24,3 @@ returns a pre-built :class:`~textattack.Attack` that correspond to attacks from 
 
 .. autoclass:: textattack.attack_recipes.AttackRecipe
    :members:
-
-Attacker
--------------
-:class:`~textattack.Attack` class is only useful for attacking one example at a time. 
-However, when attacking a dataset, we typically want other useful features such as parallel processing, saving/resuming from a checkpint, logging to files.
-:class:`~textattack.Attacker` provides these features in an easy-to-use API. 
-
-.. autoclass:: textattack.Attacker
-   :members:
-
-
-AttackArgs
--------------
-Attack arguments to be passed to :class:`~textattack.Attacker`.
-
-.. autoclass:: textattack.AttackArgs
-   :members:

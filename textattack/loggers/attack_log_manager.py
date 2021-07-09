@@ -20,14 +20,17 @@ class AttackLogManager:
     def enable_stdout(self):
         self.loggers.append(FileLogger(stdout=True))
 
-    def enable_visdom(self, **kwargs):
-        self.loggers.append(VisdomLogger(**kwargs))
+    def enable_visdom(self):
+        self.loggers.append(VisdomLogger())
 
-    def enable_wandb(self, *args):
-        self.loggers.append(WeightsAndBiasesLogger(*args))
+    def enable_wandb(self):
+        self.loggers.append(WeightsAndBiasesLogger())
 
-    def add_output_file(self, filename):
-        self.loggers.append(FileLogger(filename=filename))
+    def disable_color(self):
+        self.loggers.append(FileLogger(stdout=True, color_method="file"))
+
+    def add_output_file(self, filename, color_method):
+        self.loggers.append(FileLogger(filename=filename, color_method=color_method))
 
     def add_output_csv(self, filename, color_method):
         self.loggers.append(CSVLogger(filename=filename, color_method=color_method))
@@ -56,10 +59,6 @@ class AttackLogManager:
     def flush(self):
         for logger in self.loggers:
             logger.flush()
-
-    def close(self):
-        for logger in self.loggers:
-            logger.close()
 
     def log_attack_details(self, attack_name, model_name):
         # @TODO log a more complete set of attack details
