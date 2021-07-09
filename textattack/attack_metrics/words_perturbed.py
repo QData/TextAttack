@@ -1,6 +1,6 @@
-from .attack_metric import AttackMetric
-
 import numpy as np
+
+from .attack_metric import AttackMetric
 
 
 class WordsPerturbed(AttackMetric):

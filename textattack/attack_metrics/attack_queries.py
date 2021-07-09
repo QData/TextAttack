@@ -1,8 +1,8 @@
-from .attack_metric import AttackMetric
+import numpy as np
 
 from textattack.attack_results import SkippedAttackResult
 
-import numpy as np
+from .attack_metric import AttackMetric
 
 
 class AttackQueries(AttackMetric):

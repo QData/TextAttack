@@ -1,6 +1,6 @@
-from .attack_metric import AttackMetric
-
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
+
+from .attack_metric import AttackMetric
 
 
 class AttackSuccessRate(AttackMetric):

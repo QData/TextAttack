@@ -9,7 +9,6 @@ TextAttack allows users to use their own metrics on adversarial examples or sele
 """
 
 from .attack_metric import AttackMetric
-
+from .attack_queries import AttackQueries
 from .attack_success_rate import AttackSuccessRate
 from .words_perturbed import WordsPerturbed
-from .attack_queries import AttackQueries
