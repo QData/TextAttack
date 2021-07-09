@@ -26,11 +26,14 @@ def s3_url(uri):
     return "https://textattack.s3.amazonaws.com/" + uri
 
 
-def download_from_s3(folder_name):
-    """Folder name will be saved as `.cache/textattack/[folder name]`. If it
+def download_from_s3(folder_name, skip_if_cached=True):
+    """Folder name will be saved as `<cache_dir>/textattack/<folder_name>`. If it
     doesn't exist on disk, the zip file will be downloaded and extracted.
+
     Args:
         folder_name (str): path to folder or file in cache
+        skip_if_cached (bool): If `True`, skip downloading if content is already cached.
+
     Returns:
         str: path to the downloaded folder or file on disk
     """
@@ -41,14 +44,15 @@ def download_from_s3(folder_name):
     cache_file_lock = filelock.FileLock(cache_dest_lock_path)
     cache_file_lock.acquire()
     # Check if already downloaded.
-    if os.path.exists(cache_dest_path):
+    if skip_if_cached and os.path.exists(cache_dest_path):
         cache_file_lock.release()
         return cache_dest_path
     # If the file isn't found yet, download the zip file to the cache.
     downloaded_file = tempfile.NamedTemporaryFile(
         dir=TEXTATTACK_CACHE_DIR, suffix=".zip", delete=False
     )
-    http_get(folder_name, downloaded_file)
+    folder_s3_url = s3_url(folder_name)
+    http_get(folder_s3_url, downloaded_file)
     # Move or unzip the file.
     downloaded_file.close()
     if zipfile.is_zipfile(downloaded_file.name):
