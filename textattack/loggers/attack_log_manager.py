@@ -100,11 +100,11 @@ class AttackLogManager:
             ],
             [
                 "Average perturbed word %:",
-                str(words_perturbed_stats.avg_number_word_perturbed_num()) + "%",
+                str(words_perturbed_stats.avg_perturbation_perc()) + "%",
             ],
             [
                 "Average num. words per input:",
-                words_perturbed_stats.avg_perturbation_perc(),
+                words_perturbed_stats.avg_number_word_perturbed_num(),
             ],
         ]
 
