@@ -1,18 +1,31 @@
-from .attack_metrics import AttackMetric
+from .attack_metric import AttackMetric
+
+from textattack.attack_results import SkippedAttackResult
+
+import numpy as np
 
 class AttackQueries(AttackMetric):
-	def __init__(results):
+	"""Calculates all metrics related to number of queries in an attack
+
+	Args:
+	results (:obj::`list`:class:`~textattack.goal_function_results.GoalFunctionResult`):
+			Attack results for each instance in dataset
+	"""
+	def __init__(self,results):
 		self.results = results
 
-	def calculate():
-		for i, self.result in enumerate(self.results):
-            if isinstance(result, FailedAttackResult):
-                failed_attacks += 1
-                continue
-            elif isinstance(result, SkippedAttackResult):
-                skipped_attacks += 1
-                continue
-            else:
-                successful_attacks += 1
+		self.calculate()
 
-		return self.successful_attacks, self.failed_attacks, self.skipped_attacks
+	def calculate(self):
+		self.num_queries = np.array(
+			[
+				r.num_queries
+				for r in self.results
+				if not isinstance(r, SkippedAttackResult)
+			]
+		)
+
+	def avg_num_queries_num(self):
+		avg_num_queries = self.num_queries.mean()
+		avg_num_queries = round(avg_num_queries, 2)
+		return avg_num_queries
