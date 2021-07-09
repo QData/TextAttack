@@ -1,5 +1,7 @@
 import numpy as np
 
+from textattack.attack_results import FailedAttackResult, SkippedAttackResult
+
 from .attack_metric import AttackMetric
 
 
@@ -17,6 +19,12 @@ class WordsPerturbed(AttackMetric):
         self.max_words_changed = 0
         for i, result in enumerate(self.results):
             self.all_num_words[i] = len(result.original_result.attacked_text.words)
+
+            if isinstance(result, FailedAttackResult) or isinstance(
+                result, SkippedAttackResult
+            ):
+                continue
+
             num_words_changed = len(
                 result.original_result.attacked_text.all_words_diff(
                     result.perturbed_result.attacked_text
