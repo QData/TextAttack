@@ -13,10 +13,7 @@ from textattack.goal_functions import GoalFunction
 
 class ClassificationGoalFunction(GoalFunction):
     """A goal function defined on a model that outputs a probability for some
-    number of classes.
-
-    model: The PyTorch or TensorFlow model used for evaluation.
-    """
+    number of classes."""
 
     def _process_model_outputs(self, inputs, scores):
         """Processes and validates a list of model outputs.

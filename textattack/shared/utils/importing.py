@@ -1,7 +1,12 @@
 # Code copied from https://github.com/tensorflow/tensorflow/blob/master/tensorflow/python/util/lazy_loader.py
 
 import importlib
+import time
 import types
+
+import textattack
+
+from .install import logger
 
 
 class LazyLoader(types.ModuleType):
@@ -43,3 +48,17 @@ class LazyLoader(types.ModuleType):
     def __dir__(self):
         module = self._load()
         return dir(module)
+
+
+def load_module_from_file(file_path):
+    """Uses ``importlib`` to dynamically open a file and load an object from
+    it."""
+    temp_module_name = f"temp_{time.time()}"
+    colored_file_path = textattack.shared.utils.color_text(
+        file_path, color="blue", method="ansi"
+    )
+    logger.info(f"Loading module from `{colored_file_path}`.")
+    spec = importlib.util.spec_from_file_location(temp_module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module

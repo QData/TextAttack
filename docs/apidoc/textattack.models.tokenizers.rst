@@ -6,12 +6,8 @@ textattack.models.tokenizers package
    :undoc-members:
    :show-inheritance:
 
-
-
-.. automodule:: textattack.models.tokenizers.auto_tokenizer
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Submodules
+----------
 
 
 .. automodule:: textattack.models.tokenizers.glove_tokenizer

@@ -3,13 +3,15 @@ Word CNN for Classification
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 """
-
+import json
+import os
 
 import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
 import textattack
+from textattack.model_args import TEXTATTACK_MODELS
 from textattack.models.helpers import GloveEmbeddingLayer
 from textattack.models.helpers.utils import load_cached_state_dict
 from textattack.shared import utils
@@ -32,6 +34,15 @@ class WordCNNForClassification(nn.Module):
         emb_layer_trainable=True,
     ):
         super().__init__()
+        self._config = {
+            "architectures": "WordCNNForClassification",
+            "hidden_size": hidden_size,
+            "dropout": dropout,
+            "num_labels": num_labels,
+            "max_seq_length": max_seq_length,
+            "model_path": model_path,
+            "emb_layer_trainable": emb_layer_trainable,
+        }
         self.drop = nn.Dropout(dropout)
         self.emb_layer = GloveEmbeddingLayer(emb_layer_trainable=emb_layer_trainable)
         self.word2id = self.emb_layer.word2id
@@ -49,11 +60,60 @@ class WordCNNForClassification(nn.Module):
 
         if model_path is not None:
             self.load_from_disk(model_path)
+        self.eval()
 
     def load_from_disk(self, model_path):
+        # TODO: Consider removing this in the future as well as loading via `model_path` in `__init__`.
+        import warnings
+
+        warnings.warn(
+            "`load_from_disk` method is deprecated. Please save and load using `save_pretrained` and `from_pretrained` methods.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         self.load_state_dict(load_cached_state_dict(model_path))
-        self.to(utils.device)
         self.eval()
+
+    def save_pretrained(self, output_path):
+        if not os.path.exists(output_path):
+            os.makedirs(output_path)
+        state_dict = {k: v.cpu() for k, v in self.state_dict().items()}
+        torch.save(state_dict, os.path.join(output_path, "pytorch_model.bin"))
+        with open(os.path.join(output_path, "config.json"), "w") as f:
+            json.dump(self._config, f)
+
+    @classmethod
+    def from_pretrained(cls, name_or_path):
+        """Load trained LSTM model by name or from path.
+
+        Args:
+            name_or_path (str): Name of the model (e.g. "cnn-imdb") or model saved via `save_pretrained`.
+        """
+        if name_or_path != "cnn" and name_or_path in TEXTATTACK_MODELS:
+            path = utils.download_if_needed(TEXTATTACK_MODELS[name_or_path])
+        else:
+            path = name_or_path
+
+        config_path = os.path.join(path, "config.json")
+        if os.path.exists(config_path):
+            with open(config_path, "r") as f:
+                config = json.load(f)
+        else:
+            # Default config
+            config = {
+                "architectures": "WordCNNForClassification",
+                "hidden_size": 150,
+                "dropout": 0.3,
+                "num_labels": 2,
+                "max_seq_length": 128,
+                "model_path": None,
+                "emb_layer_trainable": True,
+            }
+        del config["architectures"]
+        model = cls(**config)
+        state_dict = load_cached_state_dict(path)
+        model.load_state_dict(state_dict)
+        return model
 
     def forward(self, _input):
         emb = self.emb_layer(_input)

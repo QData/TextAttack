@@ -128,6 +128,7 @@ class GloveTokenizer(WordLevelTokenizer):
         self.pad_token_id = pad_token_id
         self.oov_token_id = unk_token_id
         self.convert_id_to_word = self.id_to_token
+        self.model_max_length = max_length
         # Set defaults.
         self.enable_padding(length=max_length, pad_id=pad_token_id)
         self.enable_truncation(max_length=max_length)
@@ -159,6 +160,12 @@ class GloveTokenizer(WordLevelTokenizer):
             add_special_tokens=False,
         )
         return [x.ids for x in encodings]
+
+    def __call__(self, input_texts):
+        if isinstance(input_texts, list):
+            return self.batch_encode(input_texts)
+        else:
+            return self.encode(input_texts)
 
     def convert_ids_to_tokens(self, ids):
         return [self.convert_id_to_word(_id) for _id in ids]

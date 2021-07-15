@@ -21,7 +21,7 @@ class SklearnModelWrapper(ModelWrapper):
         self.model = model
         self.tokenizer = tokenizer
 
-    def __call__(self, text_input_list):
+    def __call__(self, text_input_list, batch_size=None):
         encoded_text_matrix = self.tokenizer.transform(text_input_list).toarray()
         tokenized_text_df = pd.DataFrame(
             encoded_text_matrix, columns=self.tokenizer.get_feature_names()

@@ -212,7 +212,7 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
             )
         return population
 
-    def _perform_search(self, initial_result):
+    def perform_search(self, initial_result):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
         # Initialize  up velocities of each word for each population

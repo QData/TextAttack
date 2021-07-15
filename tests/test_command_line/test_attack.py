@@ -20,7 +20,6 @@ attack_test_params = [
             "textattack attack --model cnn-imdb "
             "--attack-from-file tests/sample_inputs/attack_from_file.py^Attack "
             "--num-examples 2  --num-examples-offset 18 --attack-n "
-            "--shuffle=False"
         ),
         "tests/sample_outputs/run_attack_from_file.txt",
     ),
@@ -44,7 +43,7 @@ attack_test_params = [
             "textattack attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
             "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
-            "--shuffle=False"
+            ""
         ),
         "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
@@ -57,7 +56,7 @@ attack_test_params = [
             "textattack attack "
             "--model-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--dataset-from-file tests/sample_inputs/sst_model_and_dataset.py "
-            "--recipe deepwordbug --num-examples 3 --shuffle=False"
+            "--recipe deepwordbug --num-examples 3 "
         ),
         "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
@@ -68,7 +67,7 @@ attack_test_params = [
         "run_attack_hotflip_lstm_mr_4",
         (
             "textattack attack --model lstm-mr --recipe hotflip "
-            "--num-examples 4 --num-examples-offset 3 --shuffle=False"
+            "--num-examples 4 --num-examples-offset 3 "
         ),
         "tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt",
     ),
@@ -79,7 +78,6 @@ attack_test_params = [
         "run_attack_deepwordbug_lstm_mr_2",
         (
             "textattack attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n "
-            "--shuffle=False"
         ),
         "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt",
     ),
@@ -95,7 +93,6 @@ attack_test_params = [
             "textattack attack --attack-n --goal-function targeted-classification^target_class=2 --log-to-csv "
             "/tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation "
             "word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search^beam_width=2 "
-            "--shuffle=False "
         ),
         "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt",
     ),
@@ -109,7 +106,7 @@ attack_test_params = [
         (
             "textattack attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding "
             "--constraints repeat stopword bert-score^min_bert_score=0.8 part-of-speech^tagger_type=\\'flair\\' "
-            "--num-examples 4 --num-examples-offset 10 --shuffle=False"
+            "--num-examples 4 --num-examples-offset 10 "
         ),
         "tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt",
     ),
@@ -119,8 +116,8 @@ attack_test_params = [
     (
         "run_attack_faster_alzantot_recipe",
         (
-            "textattack attack --model lstm-mr --recipe fast-alzantot --num-examples 3 "
-            "--num-examples-offset 32 --shuffle=False"
+            "textattack attack --model lstm-mr --recipe faster-alzantot --num-examples 3 "
+            "--num-examples-offset 32 "
         ),
         "tests/sample_outputs/run_attack_faster_alzantot_recipe.txt",
     ),
@@ -131,7 +128,7 @@ attack_test_params = [
         "run_attack_kuleshov_nn",
         (
             "textattack attack --recipe kuleshov --num-examples 2 --model cnn-sst2 "
-            "--attack-n --query-budget 200 --shuffle=False"
+            "--attack-n --query-budget 200 "
         ),
         "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
     ),
@@ -142,7 +139,7 @@ attack_test_params = [
         "run_attack_stanza_pos_tagger",
         (
             "textattack attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding "
-            "--constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' --shuffle=False"
+            "--constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' "
         ),
         "tests/sample_outputs/run_attack_stanza_pos_tagger.txt",
     ),
@@ -154,7 +151,7 @@ attack_test_params = [
         "run_attack_cnn_cola",
         (
             "textattack attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir "
-            "--transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 --shuffle=False"
+            "--transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 "
         ),
         "tests/sample_outputs/run_attack_cnn_cola.txt",
     ),
@@ -164,7 +161,7 @@ attack_test_params = [
         "run_attack_gradient_greedy_word_wir",
         (
             "textattack attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' "
-            "--transformation word-swap-embedding --constraints repeat stopword --shuffle=False"
+            "--transformation word-swap-embedding --constraints repeat stopword "
         ),
         "tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt",
     ),

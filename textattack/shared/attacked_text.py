@@ -40,7 +40,7 @@ class AttackedText:
            during the course of an attack.
     """
 
-    SPLIT_TOKEN = ">>>>"
+    SPLIT_TOKEN = "<SPLIT>"
 
     def __init__(self, text_input, attack_attrs=None):
         # Read in ``text_input`` as a string or OrderedDict.
@@ -103,11 +103,13 @@ class AttackedText:
         """
         if "previous_attacked_text" in self.attack_attrs:
             self.attack_attrs["previous_attacked_text"].free_memory()
-        if "last_transformation" in self.attack_attrs:
-            del self.attack_attrs["last_transformation"]
+            self.attack_attrs.pop("previous_attacked_text", None)
+
+        self.attack_attrs.pop("last_transformation", None)
+
         for key in self.attack_attrs:
             if isinstance(self.attack_attrs[key], torch.Tensor):
-                del self.attack_attrs[key]
+                self.attack_attrs.pop(key, None)
 
     def text_window_around_index(self, index, window_size):
         """The text window of ``window_size`` words centered around
@@ -439,17 +441,18 @@ class AttackedText:
             model_wrapper (textattack.models.wrappers.ModelWrapper): ModelWrapper of the target model
 
         Returns:
-            word2token_mapping (dict[str. list[int]]): Dictionary that maps word to list of indices.
+            word2token_mapping (dict[int, list[int]]): Dictionary that maps i-th word to list of indices.
         """
         tokens = model_wrapper.tokenize([self.tokenizer_input], strip_prefix=True)[0]
         word2token_mapping = {}
         j = 0
         last_matched = 0
+
         for i, word in enumerate(self.words):
             matched_tokens = []
             while j < len(tokens) and len(word) > 0:
                 token = tokens[j].lower()
-                idx = word.find(token)
+                idx = word.lower().find(token)
                 if idx == 0:
                     word = word[idx + len(token) :]
                     matched_tokens.append(j)
@@ -457,9 +460,10 @@ class AttackedText:
                 j += 1
 
             if not matched_tokens:
+                word2token_mapping[i] = None
                 j = last_matched
             else:
-                word2token_mapping[self.words[i]] = matched_tokens
+                word2token_mapping[i] = matched_tokens
 
         return word2token_mapping
 

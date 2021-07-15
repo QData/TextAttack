@@ -1,33 +1,17 @@
-"""
-
-TextAttack Command Arg Parsing Main Function
-=============================================
-"""
-
-# !/usr/bin/env python
+#!/usr/bin/env python
 import argparse
 
-from textattack.commands.attack import AttackCommand, AttackResumeCommand
-from textattack.commands.augment import AugmentCommand
-from textattack.commands.benchmark_recipe import BenchmarkRecipeCommand
-from textattack.commands.eval_model import EvalModelCommand
-from textattack.commands.list_things import ListThingsCommand
-from textattack.commands.peek_dataset import PeekDatasetCommand
-from textattack.commands.train_model import TrainModelCommand
+from textattack.commands.attack_command import AttackCommand
+from textattack.commands.attack_resume_command import AttackResumeCommand
+from textattack.commands.augment_command import AugmentCommand
+from textattack.commands.benchmark_recipe_command import BenchmarkRecipeCommand
+from textattack.commands.eval_model_command import EvalModelCommand
+from textattack.commands.list_things_command import ListThingsCommand
+from textattack.commands.peek_dataset_command import PeekDatasetCommand
+from textattack.commands.train_model_command import TrainModelCommand
 
 
 def main():
-
-    """This is the main command line parer and entry function to use TextAttack
-    via command lines.
-
-    texattack <command> [<args>]
-
-    Args:
-        command (string): augment, attack, train, eval-model, attack-resume, list, peek-dataset
-        [<args>] (string): depending on the command string
-    """
-
     parser = argparse.ArgumentParser(
         "TextAttack CLI",
         usage="[python -m] texattack <command> [<args>]",
@@ -53,7 +37,9 @@ def main():
         exit(1)
 
     # Run
-    args.func.run(args)
+    func = args.func
+    del args.func
+    func.run(args)
 
 
 if __name__ == "__main__":

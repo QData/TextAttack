@@ -21,7 +21,7 @@ copyright = "2020, UVA QData Lab"
 author = "UVA QData Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.2.16"
+release = "0.3.0"
 
 # Set master doc to `index.rst`.
 master_doc = "index"
@@ -80,6 +80,10 @@ html_static_path = ["_static"]
 html_css_files = [
     "css/custom.css",
 ]
+
+html_sidebars = {
+    "**": ["globaltoc.html", "relations.html", "sourcelink.html", "searchbox.html"]
+}
 
 # Path to favicon.
 html_favicon = "favicon.png"

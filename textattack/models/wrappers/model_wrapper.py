@@ -12,27 +12,12 @@ class ModelWrapper(ABC):
     """
 
     @abstractmethod
-    def __call__(self, text_list):
+    def __call__(self, text_input_list, **kwargs):
         raise NotImplementedError()
 
     def get_grad(self, text_input):
         """Get gradient of loss with respect to input tokens."""
         raise NotImplementedError()
-
-    def encode(self, inputs):
-        """Helper method that calls ``tokenizer.batch_encode`` if possible, and
-        if not, falls back to calling ``tokenizer.encode`` for each input.
-
-        Args:
-            inputs (list[str]): list of input strings
-
-        Returns:
-            tokens (list[list[int]]): List of list of ids
-        """
-        if hasattr(self.tokenizer, "batch_encode"):
-            return self.tokenizer.batch_encode(inputs)
-        else:
-            return [self.tokenizer.encode(x) for x in inputs]
 
     def _tokenize(self, inputs):
         """Helper method for `tokenize`"""

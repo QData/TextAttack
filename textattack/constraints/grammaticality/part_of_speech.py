@@ -130,3 +130,12 @@ class PartOfSpeech(Constraint):
             "tagset",
             "allow_verb_noun_swap",
         ] + super().extra_repr_keys()
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["_pos_tag_cache"] = self._pos_tag_cache.get_size()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self._pos_tag_cache = lru.LRU(state["_pos_tag_cache"])

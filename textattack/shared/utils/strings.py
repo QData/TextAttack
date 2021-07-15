@@ -29,53 +29,55 @@ def add_indent(s_, numSpaces):
 
 
 def words_from_text(s, words_to_ignore=[]):
-    homos = {
-        "-": "˗",
-        "9": "৭",
-        "8": "Ȣ",
-        "7": "𝟕",
-        "6": "б",
-        "5": "Ƽ",
-        "4": "Ꮞ",
-        "3": "Ʒ",
-        "2": "ᒿ",
-        "1": "l",
-        "0": "O",
-        "'": "`",
-        "a": "ɑ",
-        "b": "Ь",
-        "c": "ϲ",
-        "d": "ԁ",
-        "e": "е",
-        "f": "𝚏",
-        "g": "ɡ",
-        "h": "հ",
-        "i": "і",
-        "j": "ϳ",
-        "k": "𝒌",
-        "l": "ⅼ",
-        "m": "ｍ",
-        "n": "ո",
-        "o": "о",
-        "p": "р",
-        "q": "ԛ",
-        "r": "ⲅ",
-        "s": "ѕ",
-        "t": "𝚝",
-        "u": "ս",
-        "v": "ѵ",
-        "w": "ԝ",
-        "x": "×",
-        "y": "у",
-        "z": "ᴢ",
-    }
+    homos = set(
+        [
+            "˗",
+            "৭",
+            "Ȣ",
+            "𝟕",
+            "б",
+            "Ƽ",
+            "Ꮞ",
+            "Ʒ",
+            "ᒿ",
+            "l",
+            "O",
+            "`",
+            "ɑ",
+            "Ь",
+            "ϲ",
+            "ԁ",
+            "е",
+            "𝚏",
+            "ɡ",
+            "հ",
+            "і",
+            "ϳ",
+            "𝒌",
+            "ⅼ",
+            "ｍ",
+            "ո",
+            "о",
+            "р",
+            "ԛ",
+            "ⲅ",
+            "ѕ",
+            "𝚝",
+            "ս",
+            "ѵ",
+            "ԝ",
+            "×",
+            "у",
+            "ᴢ",
+        ]
+    )
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
     # TODO implement w regex
     words = []
     word = ""
     for c in " ".join(s.split()):
-        if c.isalnum() or c in homos.values():
+        if c.isalnum() or c in homos:
             word += c
         elif c in "'-_*@" and len(word) > 0:
             # Allow apostrophes, hyphens, underscores, asterisks and at signs as long as they don't begin the

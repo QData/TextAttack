@@ -21,6 +21,8 @@ import numpy as np
 import torch
 from torch import nn as nn
 
+import textattack
+
 
 class InferSentModel(nn.Module):
     def __init__(self, config):
@@ -67,7 +69,7 @@ class InferSentModel(nn.Module):
         idx_unsort = np.argsort(idx_sort)
 
         idx_sort = (
-            torch.from_numpy(idx_sort).cuda()
+            torch.from_numpy(idx_sort).to(textattack.shared.utils.device)
             if self.is_cuda()
             else torch.from_numpy(idx_sort)
         )
@@ -80,7 +82,7 @@ class InferSentModel(nn.Module):
 
         # Un-sort by length
         idx_unsort = (
-            torch.from_numpy(idx_unsort).cuda()
+            torch.from_numpy(idx_unsort).to(textattack.shared.utils.device)
             if self.is_cuda()
             else torch.from_numpy(idx_unsort)
         )
@@ -88,7 +90,11 @@ class InferSentModel(nn.Module):
 
         # Pooling
         if self.pool_type == "mean":
-            sent_len = torch.FloatTensor(sent_len.copy()).unsqueeze(1).cuda()
+            sent_len = (
+                torch.FloatTensor(sent_len.copy())
+                .unsqueeze(1)
+                .to(textattack.shared.utils.device)
+            )
             emb = torch.sum(sent_output, 0).squeeze(0)
             emb = emb / sent_len.expand_as(emb)
         elif self.pool_type == "max":
@@ -247,7 +253,7 @@ class InferSentModel(nn.Module):
         for stidx in range(0, len(sentences), bsize):
             batch = self.get_batch(sentences[stidx : stidx + bsize])
             if self.is_cuda():
-                batch = batch.cuda()
+                batch = batch.to(textattack.shared.utils.device)
             with torch.no_grad():
                 batch = (
                     self.forward((batch, lengths[stidx : stidx + bsize]))

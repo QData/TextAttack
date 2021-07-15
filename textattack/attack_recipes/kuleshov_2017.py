@@ -4,6 +4,7 @@ Kuleshov2017
 (Adversarial Examples for Natural Language Classification Problems)
 
 """
+from textattack import Attack
 from textattack.constraints.grammaticality.language_models import GPT2
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (
@@ -13,7 +14,6 @@ from textattack.constraints.pre_transformation import (
 from textattack.constraints.semantics.sentence_encoders import ThoughtVector
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedySearch
-from textattack.shared.attack import Attack
 from textattack.transformations import WordSwapEmbedding
 
 from .attack_recipe import AttackRecipe
@@ -28,7 +28,7 @@ class Kuleshov2017(AttackRecipe):
     """
 
     @staticmethod
-    def build(model):
+    def build(model_wrapper):
         #
         # "Specifically, in all experiments, we used a target of τ = 0.7,
         # a neighborhood size of N = 15, and parameters λ_1 = 0.2 and δ = 0.5; we set
@@ -59,7 +59,7 @@ class Kuleshov2017(AttackRecipe):
         # Goal is untargeted classification: reduce original probability score
         # to below τ = 0.7 (Algorithm 1).
         #
-        goal_function = UntargetedClassification(model, target_max_score=0.7)
+        goal_function = UntargetedClassification(model_wrapper, target_max_score=0.7)
         #
         # Perform word substitution with a genetic algorithm.
         #

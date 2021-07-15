@@ -8,22 +8,27 @@ import sys
 
 import terminaltables
 
+from textattack.shared import logger
+
 from .logger import Logger
 
 
 class FileLogger(Logger):
     """Logs the results of an attack to a file, or `stdout`."""
 
-    def __init__(self, filename="", stdout=False):
+    def __init__(self, filename="", stdout=False, color_method="ansi"):
         self.stdout = stdout
         self.filename = filename
+        self.color_method = color_method
         if stdout:
             self.fout = sys.stdout
         elif isinstance(filename, str):
             directory = os.path.dirname(filename)
+            directory = directory if directory else "."
             if not os.path.exists(directory):
                 os.makedirs(directory)
             self.fout = open(filename, "w")
+            logger.info(f"Logging to text file at path {filename}")
         else:
             self.fout = filename
         self.num_results = 0
@@ -42,11 +47,11 @@ class FileLogger(Logger):
 
     def log_attack_result(self, result):
         self.num_results += 1
-        color_method = "ansi" if self.stdout else "file"
+        # if self.stdout and sys.stdout.isatty():
         self.fout.write(
             "-" * 45 + " Result " + str(self.num_results) + " " + "-" * 45 + "\n"
         )
-        self.fout.write(result.__str__(color_method=color_method))
+        self.fout.write(result.__str__(color_method=self.color_method))
         self.fout.write("\n")
 
     def log_summary_rows(self, rows, title, window_id):
@@ -63,3 +68,6 @@ class FileLogger(Logger):
 
     def flush(self):
         self.fout.flush()
+
+    def close(self):
+        self.fout.close()

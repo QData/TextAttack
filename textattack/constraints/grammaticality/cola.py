@@ -5,10 +5,9 @@ CoLA for Grammaticality
 """
 import lru
 import nltk
-from transformers import AutoModelForSequenceClassification
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
 from textattack.constraints import Constraint
-from textattack.models.tokenizers import AutoTokenizer
 from textattack.models.wrappers import HuggingFaceModelWrapper
 
 
@@ -46,7 +45,7 @@ class COLA(Constraint):
         self.model_name = model_name
         self._reference_score_cache = lru.LRU(2 ** 10)
         model = AutoModelForSequenceClassification.from_pretrained(model_name)
-        tokenizer = AutoTokenizer(model_name)
+        tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = HuggingFaceModelWrapper(model, tokenizer)
 
     def clear_cache(self):
@@ -79,3 +78,12 @@ class COLA(Constraint):
             "max_diff",
             "model_name",
         ] + super().extra_repr_keys()
+
+    def __getstate__(self):
+        state = self.__dict__.copy()
+        state["_reference_score_cache"] = self._reference_score_cache.get_size()
+        return state
+
+    def __setstate__(self, state):
+        self.__dict__ = state
+        self._reference_score_cache = lru.LRU(state["_reference_score_cache"])
