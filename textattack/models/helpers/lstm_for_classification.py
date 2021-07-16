@@ -104,7 +104,8 @@ class LSTMForClassification(nn.Module):
             name_or_path (str): Name of the model (e.g. "lstm-imdb") or model saved via `save_pretrained`.
         """
         if name_or_path in TEXTATTACK_MODELS:
-            path = utils.download_if_needed(TEXTATTACK_MODELS[name_or_path])
+            # path = utils.download_if_needed(TEXTATTACK_MODELS[name_or_path])
+            path = utils.download_from_s3(TEXTATTACK_MODELS[name_or_path])
         else:
             path = name_or_path
 
