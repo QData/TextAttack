@@ -363,11 +363,15 @@ class AttackedText:
         for i, (input_word, adv_word_seq) in enumerate(zip(self.words, new_words)):
             word_start = original_text.index(input_word)
             word_end = word_start + len(input_word)
-            perturbed_text += original_text[:word_start]
+            if adv_word_seq:  # adv_word_seq can be "" in case of deletion
+                perturbed_text += original_text[:word_start]
             original_text = original_text[word_end:]
             adv_words = words_from_text(adv_word_seq)
             adv_num_words = len(adv_words)
-            num_words_diff = adv_num_words - len(words_from_text(input_word))
+            if adv_word_seq: # adv_word_seq can be "" in case of deletion
+                num_words_diff = adv_num_words - len(words_from_text(input_word))
+            else:
+                num_words_diff = -1
             # Track indices on insertions and deletions.
             if num_words_diff != 0:
                 # Re-calculated modified indices. If words are inserted or deleted,
@@ -417,7 +421,8 @@ class AttackedText:
             perturbed_text += adv_word_seq
         perturbed_text += original_text  # Add all of the ending punctuation.
         # Reform perturbed_text into an OrderedDict.
-        perturbed_input_texts = perturbed_text.split(AttackedText.SPLIT_TOKEN)
+        # strip() to remove trailing space in case of deletion at the edge
+        perturbed_input_texts = perturbed_text.strip().split(AttackedText.SPLIT_TOKEN)
         perturbed_input = OrderedDict(
             zip(self._text_input.keys(), perturbed_input_texts)
         )

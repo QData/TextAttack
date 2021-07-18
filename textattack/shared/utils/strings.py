@@ -74,6 +74,8 @@ def words_from_text(s, words_to_ignore=[]):
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
     # TODO implement w regex
+    if not s:
+        return [""]  # for deletion
     words = []
     word = ""
     for c in " ".join(s.split()):
