@@ -368,7 +368,7 @@ class AttackedText:
             original_text = original_text[word_end:]
             adv_words = words_from_text(adv_word_seq)
             adv_num_words = len(adv_words)
-            if adv_word_seq: # adv_word_seq can be "" in case of deletion
+            if adv_word_seq:  # adv_word_seq can be "" in case of deletion
                 num_words_diff = adv_num_words - len(words_from_text(input_word))
             else:
                 num_words_diff = -1
