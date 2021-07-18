@@ -422,7 +422,7 @@ class AttackedText:
         perturbed_text += original_text  # Add all of the ending punctuation.
         # Reform perturbed_text into an OrderedDict.
         # strip() to remove trailing space in case of deletion at the edge
-        perturbed_input_texts = perturbed_text.split(AttackedText.SPLIT_TOKEN)
+        perturbed_input_texts = perturbed_text.strip().split(AttackedText.SPLIT_TOKEN)
         perturbed_input = OrderedDict(
             zip(self._text_input.keys(), perturbed_input_texts)
         )
