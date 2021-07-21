@@ -1,7 +1,6 @@
 """
 Augmenter Class
 ===================
-
 """
 import random
 
@@ -103,7 +102,10 @@ class Augmenter:
                 current_text = random.choice(transformed_texts)
 
                 # update words_swapped based on modified indices
-                words_swapped = len(current_text.attack_attrs["modified_indices"])
+                words_swapped = max(
+                    len(current_text.attack_attrs["modified_indices"]),
+                    words_swapped + 1,
+                )
             all_transformed_texts.add(current_text)
         return sorted([at.printable_text() for at in all_transformed_texts])
 
@@ -113,7 +115,6 @@ class Augmenter:
 
         Args:
             text_list (list(string)): a list of strings for data augmentation
-
         Returns a list(string) of augmented texts.
         """
         if show_progress:
