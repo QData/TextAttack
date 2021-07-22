@@ -28,6 +28,20 @@ For help and realtime updates related to TextAttack, please [join the TextAttack
 ## More Concrete Questions: 
 
 
+### 0. For many of the dependent library issues, the following command is the first you could try: 
+```bash
+pip install --force-reinstall textattack
+```
+
+Besides, we highly recommend you to use virtual environment for textattack use, 
+see [information here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment). Here is one conda example: 
+
+```bash
+conda create -n textattackenv python=3.7
+conda activate textattackenv
+conda env list
+```
+
 ### 1. How to Train
 
 For example, you can *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*

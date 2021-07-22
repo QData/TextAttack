@@ -92,11 +92,14 @@ class AttackLogManager:
                 continue
             else:
                 successful_attacks += 1
-            num_words_changed = len(
-                result.original_result.attacked_text.all_words_diff(
-                    result.perturbed_result.attacked_text
-                )
+            num_words_changed = result.original_result.attacked_text.words_diff_num(
+                result.perturbed_result.attacked_text
             )
+            # num_words_changed = len(
+            #    result.original_result.attacked_text.all_words_diff(
+            #        result.perturbed_result.attacked_text
+            #    )
+            # )
             num_words_changed_until_success[num_words_changed - 1] += 1
             max_words_changed = max(
                 max_words_changed or num_words_changed, num_words_changed
