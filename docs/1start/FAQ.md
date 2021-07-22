@@ -28,6 +28,11 @@ For help and realtime updates related to TextAttack, please [join the TextAttack
 ## More Concrete Questions: 
 
 
+### 0. For many of the dependent library issues, the following command is the first you should try: 
+```bash
+pip install --force-reinstall textattack
+```
+
 ### 1. How to Train
 
 For example, you can *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
