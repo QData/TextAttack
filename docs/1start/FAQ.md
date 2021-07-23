@@ -30,7 +30,7 @@ For help and realtime updates related to TextAttack, please [join the TextAttack
 
 ### 0. For many of the dependent library issues, the following command is the first you could try: 
 ```bash
-pip install --force-reinstall textattack
+pip install --upgrade --force-reinstall textattack
 ```
 
 Besides, we highly recommend you to use virtual environment for textattack use, 
