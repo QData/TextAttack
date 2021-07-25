@@ -397,7 +397,11 @@ textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 -
 
 ### To check datasets: `textattack peek-dataset`
 
-To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
+To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, 
+```bash
+textattack peek-dataset --dataset-from-huggingface snli
+```
+will show information about the SNLI dataset from the NLP package.
 
 
 ### To list functional components: `textattack list`

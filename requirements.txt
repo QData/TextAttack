@@ -9,7 +9,7 @@ datasets
 nltk
 numpy<1.19.0 #TF 2.0 requires this
 pandas>=1.0.1
-scipy==1.4.1
+scipy>=1.4.1
 torch>=1.7.0,!=1.8
 transformers>=3.3.0
 terminaltables

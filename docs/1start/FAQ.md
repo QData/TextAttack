@@ -42,6 +42,14 @@ conda activate textattackenv
 conda env list
 ```
 
+If you want to use the most-up-to-date version of textattack (normally with newer bug fixes), you can run the following: 
+```bash
+git clone https://github.com/QData/TextAttack.git
+cd TextAttack
+pip install .[dev]
+```
+
+
 ### 1. How to Train
 
 For example, you can *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
