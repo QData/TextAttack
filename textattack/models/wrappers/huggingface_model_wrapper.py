@@ -4,6 +4,8 @@ HuggingFace Model Wrapper
 """
 
 import torch
+torch.cuda.empty_cache()
+
 import transformers
 
 import textattack
