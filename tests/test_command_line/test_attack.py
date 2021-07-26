@@ -198,4 +198,4 @@ def test_command_line_attack(name, command, sample_output_file):
         pdb.set_trace()
     assert re.match(desired_re, stdout, flags=re.S)
 
-    assert result.returncode == 0
+    assert result.returncode == 0, "return code not 0"

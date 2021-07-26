@@ -33,6 +33,10 @@ class PartOfSpeech(Constraint):
         allow_verb_noun_swap (bool): If `True`, allow verbs to be swapped with nouns and vice versa.
         compare_against_original (bool): If `True`, compare against the original text.
             Otherwise, compare against the most recent text.
+        language_nltk: Language to be used for nltk POS-Tagger
+            (available choices: "eng", "rus")
+        language_stanza: Language to be used for stanza POS-Tagger
+            (available choices: https://stanfordnlp.github.io/stanza/available_models.html)
     """
 
     def __init__(
@@ -41,11 +45,15 @@ class PartOfSpeech(Constraint):
         tagset="universal",
         allow_verb_noun_swap=True,
         compare_against_original=True,
+        language_nltk="eng",
+        language_stanza="en",
     ):
         super().__init__(compare_against_original)
         self.tagger_type = tagger_type
         self.tagset = tagset
         self.allow_verb_noun_swap = allow_verb_noun_swap
+        self.language_nltk = language_nltk
+        self.language_stanza = language_stanza
 
         self._pos_tag_cache = lru.LRU(2 ** 14)
         if tagger_type == "flair":
@@ -56,7 +64,9 @@ class PartOfSpeech(Constraint):
 
         if tagger_type == "stanza":
             self._stanza_pos_tagger = stanza.Pipeline(
-                lang="en", processors="tokenize, pos", tokenize_pretokenized=True
+                lang=self.language_stanza,
+                processors="tokenize, pos",
+                tokenize_pretokenized=True,
             )
 
     def clear_cache(self):
@@ -75,7 +85,9 @@ class PartOfSpeech(Constraint):
         else:
             if self.tagger_type == "nltk":
                 word_list, pos_list = zip(
-                    *nltk.pos_tag(context_words, tagset=self.tagset)
+                    *nltk.pos_tag(
+                        context_words, tagset=self.tagset, lang=self.language_nltk
+                    )
                 )
 
             if self.tagger_type == "flair":

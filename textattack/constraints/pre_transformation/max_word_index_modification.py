@@ -11,7 +11,7 @@ from textattack.constraints import PreTransformationConstraint
 
 class MaxWordIndexModification(PreTransformationConstraint):
     """A constraint disallowing the modification of words which are past some
-    maximum length limit."""
+    maximum sentence word-length limit."""
 
     def __init__(self, max_length):
         self.max_length = max_length
