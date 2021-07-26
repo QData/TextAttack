@@ -5,13 +5,13 @@ HuggingFace Model Wrapper
 
 import torch
 
-torch.cuda.empty_cache()
-
 import transformers
 
 import textattack
 
 from .pytorch_model_wrapper import PyTorchModelWrapper
+
+torch.cuda.empty_cache()
 
 
 class HuggingFaceModelWrapper(PyTorchModelWrapper):

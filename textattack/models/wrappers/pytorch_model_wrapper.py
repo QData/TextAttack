@@ -6,13 +6,13 @@ PyTorch Model Wrapper
 
 import torch
 
-torch.cuda.empty_cache()
-
 from torch.nn import CrossEntropyLoss
 
 import textattack
 
 from .model_wrapper import ModelWrapper
+
+torch.cuda.empty_cache()
 
 
 class PyTorchModelWrapper(ModelWrapper):
