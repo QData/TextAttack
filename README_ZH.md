@@ -362,18 +362,13 @@ it's a enigma how the filmmaking wo be publicized in this condition .,0
 #### 运行训练的例子
 *在 Yelp 分类数据集上对 TextAttack 中默认的 LSTM 模型训练 50 个 epoch：*
 ```bash
-textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
+textattack train --model-name-or-path lstm --dataset yelp_polarity  --epochs 50 --learning-rate 1e-5
 ```
 
-训练接口中同样内置了数据增强功能：
-```bash
-textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
-```
-上面这个例子在训练之前使用 `EasyDataAugmenter` 策略对 `rotten_tomatoes` 数据集进行数据增强。
 
 *在 `CoLA` 数据集上对 `bert-base` 模型精调 5 个 epoch：*
 ```bash
-textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 --epochs 5
+textattack train --model-name-or-path bert-base-uncased --dataset glue^cola --per-device-train-batch-size 8 --epochs 5
 ```
 
 
