@@ -5,5 +5,7 @@ sphinx-autobuild
 sphinx-rtd-theme
 ipywidgets
 ipython
-tensorflow
-textattack
+tensorflow==2.0.0
+textattack==0.3.0
+pillow==6.2.0
+transformers==3.0.2
