@@ -4,3 +4,5 @@ nbsphinx
 sphinx-autobuild
 sphinx-rtd-theme
 ipywidgets
+ipython
+textattack
