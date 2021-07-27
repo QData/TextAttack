@@ -62,7 +62,7 @@ TextAttack Documentation
    Trainer <api/trainer.rst>
    Datasets <api/datasets.rst>
    GoalFunction <api/goal_functions.rst>
-   Constraints <api/constraints/constraints.rst>
+   Constraints <api/constraints.rst>
    SearchMethod <api/search_methods.rst>
    
 

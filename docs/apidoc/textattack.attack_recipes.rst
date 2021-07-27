@@ -6,8 +6,6 @@ textattack.attack\_recipes package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.attack_recipes.attack_recipe

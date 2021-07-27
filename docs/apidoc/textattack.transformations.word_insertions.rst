@@ -6,8 +6,6 @@ textattack.transformations.word\_insertions package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.transformations.word_insertions.word_insertion
