@@ -6,8 +6,6 @@ textattack.loggers package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.loggers.attack_log_manager

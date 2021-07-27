@@ -6,8 +6,6 @@ textattack.transformations.word\_swaps package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.transformations.word_swaps.word_swap

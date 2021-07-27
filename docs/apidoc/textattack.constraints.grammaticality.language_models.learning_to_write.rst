@@ -6,8 +6,6 @@ textattack.constraints.grammaticality.language\_models.learning\_to\_write packa
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.constraints.grammaticality.language_models.learning_to_write.adaptive_softmax

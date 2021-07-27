@@ -6,8 +6,6 @@ textattack.models.wrappers package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.models.wrappers.huggingface_model_wrapper

@@ -7,17 +7,18 @@ The [`examples/`](https://github.com/QData/TextAttack/tree/master/examples) fold
 The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
 
-## Augmenting Text: `textattack augment`
+### Augmenting Text: `textattack augment`
 
 Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
-uses a transformation and a list of constraints to augment data. We also offer five built-in recipes
+uses a transformation and a list of constraints to augment data. We also offer  built-in recipes
 for data augmentation:
-- `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
-- `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
-- `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
-- `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
-- `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
-- `textattack.CLAREAugmenter` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+- `wordnet` augments text by replacing words with WordNet synonyms
+- `embedding` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
+- `charswap` augments text by substituting, deleting, inserting, and swapping adjacent characters
+- `eda` augments text with a combination of word insertions, substitutions and deletions.
+- `checklist` augments text by contraction/extension and by substituting names, locations, numbers.
+- `clare` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+
 
 ### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. 
