@@ -5,4 +5,5 @@ sphinx-autobuild
 sphinx-rtd-theme
 ipywidgets
 ipython
+tensorflow
 textattack
