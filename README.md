@@ -380,18 +380,13 @@ automatically loaded using the `datasets` package.
 #### Training Examples
 *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
 ```bash
-textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
+textattack train --model-name-or-path lstm --dataset yelp_polarity  --epochs 50 --learning-rate 1e-5
 ```
 
-The training process has data augmentation built-in:
-```bash
-textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
-```
-This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` dataset before training.
 
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
 ```bash
-textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 --epochs 5
+textattack train --model-name-or-path bert-base-uncased --dataset glue^cola --per-device-train-batch-size 8 --epochs 5
 ```
 
 
