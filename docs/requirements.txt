@@ -29,3 +29,4 @@ tensorflow-text==2.3.0
 textattack==0.3.0
 transformers==4.9.1
 virtualenv==20.0.18
+pillow>=8.2.0
