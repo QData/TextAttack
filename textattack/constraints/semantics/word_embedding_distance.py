@@ -64,6 +64,10 @@ class WordEmbeddingDistance(Constraint):
                 "Cannot apply part-of-speech constraint without `newly_modified_indices`"
             )
 
+        # FIXME The index i is sometimes larger than the number of tokens - 1
+        if any(i >= len(reference_text.words) or i >= len(transformed_text.words) for i in index):
+            return false
+
         for i in indices:
             ref_word = reference_text.words[i]
             transformed_word = transformed_text.words[i]

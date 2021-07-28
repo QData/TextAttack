@@ -52,6 +52,51 @@ class Transformation(ABC):
             text.attack_attrs["last_transformation"] = self
         return transformed_texts
 
+
+    def transform_many(
+        self,
+        list_of_texts,
+        pre_transformation_constraints=[],
+        list_of_indices_to_modify=None,
+        shifted_idxs=False,
+    ):
+        """Returns a list of all possible transformations for ``current_text``.
+        Applies the ``pre_transformation_constraints`` then calls
+        ``_get_transformations``.
+
+        Args:
+            list_of_texts: The list of  ``AttackedText`` to transform.
+            pre_transformation_constraints: The ``PreTransformationConstraint`` to apply before beginning the
+                                            transformation.
+            list_of_indices_to_modify: List of which word indices should be modified as dictated by the ``SearchMethod``
+            shifted_idxs (bool): Whether indices could have been shifted from their original position in the text.
+        """
+        if list_of_indices_to_modify is None:
+            list_of_indices_to_modify = [set(range(len(text.words))) for text in list_of_texts]
+            # If we are modifying all indices, we don't care if some of the indices might have been shifted.
+            shifted_idxs = False
+        for index in range(len(list_of_texts)):
+            if list_of_indices_to_modify[index] is None:
+                list_of_indices_to_modify[index] = set(range(len(list_of_texts[index].words)))
+                # If we are modifying all indices, we don't care if some of the indices might have been shifted.
+                shifted_idxs = False
+            else:
+                list_of_indices_to_modify[index] = set(list_of_indices_to_modify[index])
+
+            if shifted_idxs:
+                list_of_indices_to_modify[index] = set(
+                    list_of_texts[index].convert_from_original_idxs(list_of_indices_to_modify[index])
+                )
+
+            for constraint in pre_transformation_constraints:
+                list_of_indices_to_modify[index] = list_of_indices_to_modify[index] & constraint(list_of_texts[index],
+                                                                                                 self)
+        list_of_transformed_texts = self._get_transformations_many(list_of_texts, list_of_indices_to_modify)
+        for transformed_texts in list_of_transformed_texts:
+            for text in transformed_texts:
+                text.attack_attrs["last_transformation"] = self
+        return list_of_transformed_texts
+
     @abstractmethod
     def _get_transformations(self, current_text, indices_to_modify):
         """Returns a list of all possible transformations for ``current_text``,
@@ -63,6 +108,22 @@ class Transformation(ABC):
             indicies_to_modify: Which word indices can be modified.
         """
         raise NotImplementedError()
+
+
+    # FIXME unsure if this NotImplementedError implementation is necessary 
+    def _get_transformations_many(self, list_of_texts, list_of_indices_to_modify):
+        """Returns a list of list of all possible transformations for ``list_of_texts``,
+        only modifying ``indices_to_modify``. Must be overridden by specific
+        transformations.
+
+        Args:
+            list_of_texts: The list of  ``AttackedText`` to transform.
+            list_of_indices_to_modify: List of which word indices can be modified in the attacked texts in list_of_texts.
+        """
+        raise NotImplementedError()
+
+
+
 
     @property
     def deterministic(self):
