@@ -1,5 +1,5 @@
 """
-TrainingArgs Class 
+TrainingArgs Class
 ==================
 """
 

@@ -1,5 +1,5 @@
 """
-Trainer Class 
+Trainer Class
 =============
 """
 

@@ -1,5 +1,5 @@
 """
-AugmenterArgs Class 
+AugmenterArgs Class
 ===================
 """
 

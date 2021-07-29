@@ -1,5 +1,5 @@
 """
-AttackArgs Class 
+AttackArgs Class
 ================
 """
 
