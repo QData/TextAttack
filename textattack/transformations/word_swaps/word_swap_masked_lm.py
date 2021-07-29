@@ -13,6 +13,7 @@ from textattack.shared import utils
 
 from .word_swap import WordSwap
 
+from typing import List
 
 class WordSwapMaskedLM(WordSwap):
     """Generate potential replacements for a word using a masked language
