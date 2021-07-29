@@ -1,3 +1,8 @@
+"""
+Trainer Class
+=============
+"""
+
 import collections
 import json
 import logging
