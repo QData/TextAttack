@@ -1,3 +1,8 @@
+"""
+Attacker Class 
+==============
+"""
+
 import collections
 import logging
 import multiprocessing as mp
