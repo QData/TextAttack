@@ -1,5 +1,5 @@
 """
-ModelArgs Class 
+ModelArgs Class
 ===============
 """
 
