@@ -31,7 +31,7 @@ TextAttack Documentation
    1start/benchmark-search.md
    1start/quality-SOTA-recipes.md
    1start/api-design-tips.md
-   1start/talks-visualization.md
+   1start/multilingual-visualization.md
    1start/support.md
    1start/FAQ.md
    
