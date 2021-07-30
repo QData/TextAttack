@@ -77,8 +77,46 @@ class Augmenter:
     def augment(self, text):
         """Returns all possible augmentations of ``text`` according to
         ``self.transformation``."""
-        return self.augment_many([text])[0]
+        attacked_text = AttackedText(text)
+        original_text = attacked_text
+        all_transformed_texts = set()
+        num_words_to_swap = max(
+            int(self.pct_words_to_swap * len(attacked_text.words)), 1
+        )
+        for _ in range(self.transformations_per_example):
+            current_text = attacked_text
+            words_swapped = len(current_text.attack_attrs["modified_indices"])
 
+            while words_swapped < num_words_to_swap:
+                transformed_texts = self.transformation(
+                    current_text, self.pre_transformation_constraints
+                )
+
+                # Get rid of transformations we already have
+                transformed_texts = [
+                    t for t in transformed_texts if t not in all_transformed_texts
+                ]
+
+                # Filter out transformations that don't match the constraints.
+                transformed_texts = self._filter_transformations(
+                    transformed_texts, current_text, original_text
+                )
+
+                # if there's no more transformed texts after filter, terminate
+                if not len(transformed_texts):
+                    break
+
+                current_text = random.choice(transformed_texts)
+
+                # update words_swapped based on modified indices
+                words_swapped = max(
+                    len(current_text.attack_attrs["modified_indices"]),
+                    words_swapped + 1,
+                )
+            all_transformed_texts.add(current_text)
+        return sorted([at.printable_text() for at in all_transformed_texts])
+
+        
     def augment_many(self, text_list: List[str]) -> List[List[str]]:
         """Returns all possible augmentations of a list of strings according to
         ``self.transformation``.

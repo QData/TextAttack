@@ -110,20 +110,6 @@ class Transformation(ABC):
         raise NotImplementedError()
 
 
-    # FIXME unsure if this NotImplementedError implementation is necessary 
-    def _get_transformations_many(self, list_of_texts, list_of_indices_to_modify):
-        """Returns a list of list of all possible transformations for ``list_of_texts``,
-        only modifying ``indices_to_modify``. Must be overridden by specific
-        transformations.
-
-        Args:
-            list_of_texts: The list of  ``AttackedText`` to transform.
-            list_of_indices_to_modify: List of which word indices can be modified in the attacked texts in list_of_texts.
-        """
-        raise NotImplementedError()
-
-
-
 
     @property
     def deterministic(self):
