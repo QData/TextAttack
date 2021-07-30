@@ -65,7 +65,7 @@ class WordEmbeddingDistance(Constraint):
             )
 
         # FIXME The index i is sometimes larger than the number of tokens - 1
-        if any(i >= len(reference_text.words) or i >= len(transformed_text.words) for i in index):
+        if any(i >= len(reference_text.words) or i >= len(transformed_text.words) for i in indices):
             return false
 
         for i in indices:

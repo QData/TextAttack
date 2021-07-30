@@ -97,6 +97,7 @@ class Transformation(ABC):
                 text.attack_attrs["last_transformation"] = self
         return list_of_transformed_texts
 
+
     @abstractmethod
     def _get_transformations(self, current_text, indices_to_modify):
         """Returns a list of all possible transformations for ``current_text``,
