@@ -87,14 +87,17 @@ class WordCNNForClassification(nn.Module):
         """Load trained LSTM model by name or from path.
 
         Args:
-            name_or_path (str): Name of the model (e.g. "cnn-imdb") or model saved via `save_pretrained`.
+            name_or_path (:obj:`str`): Name of the model (e.g. "cnn-imdb") or model saved via :meth:`save_pretrained`.
+        Returns:
+            :class:`~textattack.models.helpers.WordCNNForClassification` model
         """
-        if name_or_path != "cnn" and name_or_path in TEXTATTACK_MODELS:
+        if name_or_path in TEXTATTACK_MODELS:
             path = utils.download_if_needed(TEXTATTACK_MODELS[name_or_path])
         else:
             path = name_or_path
 
         config_path = os.path.join(path, "config.json")
+
         if os.path.exists(config_path):
             with open(config_path, "r") as f:
                 config = json.load(f)
