@@ -296,14 +296,15 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
 ### Augmenting Text: `textattack augment`
 
 Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
-uses a transformation and a list of constraints to augment data. We also offer five built-in recipes
+uses a transformation and a list of constraints to augment data. We also offer  built-in recipes
 for data augmentation:
-- `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
-- `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
-- `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
-- `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
-- `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
-- `textattack.CLAREAugmenter` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+- `wordnet` augments text by replacing words with WordNet synonyms
+- `embedding` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
+- `charswap` augments text by substituting, deleting, inserting, and swapping adjacent characters
+- `eda` augments text with a combination of word insertions, substitutions and deletions.
+- `checklist` augments text by contraction/extension and by substituting names, locations, numbers.
+- `clare` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -380,24 +381,23 @@ automatically loaded using the `datasets` package.
 #### Training Examples
 *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
 ```bash
-textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
+textattack train --model-name-or-path lstm --dataset yelp_polarity  --epochs 50 --learning-rate 1e-5
 ```
 
-The training process has data augmentation built-in:
-```bash
-textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
-```
-This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` dataset before training.
 
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
 ```bash
-textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 --epochs 5
+textattack train --model-name-or-path bert-base-uncased --dataset glue^cola --per-device-train-batch-size 8 --epochs 5
 ```
 
 
 ### To check datasets: `textattack peek-dataset`
 
-To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
+To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, 
+```bash
+textattack peek-dataset --dataset-from-huggingface snli
+```
+will show information about the SNLI dataset from the NLP package.
 
 
 ### To list functional components: `textattack list`
@@ -546,6 +546,11 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 
 ## Multi-lingual Support
+
+
+- see example code: [https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py](https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py) for using our framework to attack French-BERT. 
+
+- see tutorial notebook: [https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html) for using our framework to attack French-BERT. 
 
 - See [README_ZH.md](https://github.com/QData/TextAttack/blob/master/README_ZH.md) for our README in Chinese 
 

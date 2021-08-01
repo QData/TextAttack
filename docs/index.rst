@@ -31,7 +31,7 @@ TextAttack Documentation
    1start/benchmark-search.md
    1start/quality-SOTA-recipes.md
    1start/api-design-tips.md
-   1start/talks-visualization.md
+   1start/multilingual-visualization.md
    1start/support.md
    1start/FAQ.md
    
@@ -62,7 +62,7 @@ TextAttack Documentation
    Trainer <api/trainer.rst>
    Datasets <api/datasets.rst>
    GoalFunction <api/goal_functions.rst>
-   Constraints <api/constraints/constraints.rst>
+   Constraints <api/constraints.rst>
    SearchMethod <api/search_methods.rst>
    
 

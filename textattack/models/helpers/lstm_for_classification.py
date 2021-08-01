@@ -106,7 +106,8 @@ class LSTMForClassification(nn.Module):
             :class:`~textattack.models.helpers.LSTMForClassification` model
         """
         if name_or_path in TEXTATTACK_MODELS:
-            path = utils.download_if_needed(TEXTATTACK_MODELS[name_or_path])
+            # path = utils.download_if_needed(TEXTATTACK_MODELS[name_or_path])
+            path = utils.download_from_s3(TEXTATTACK_MODELS[name_or_path])
         else:
             path = name_or_path
 

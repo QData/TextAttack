@@ -6,8 +6,6 @@ textattack.goal\_functions.classification package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
 
 
 .. automodule:: textattack.goal_functions.classification.classification_goal_function

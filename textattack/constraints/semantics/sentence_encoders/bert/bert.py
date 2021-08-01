@@ -14,13 +14,18 @@ sentence_transformers = utils.LazyLoader(
 class BERT(SentenceEncoder):
     """Constraint using similarity between sentence encodings of x and x_adv
     where the text embeddings are created using BERT, trained on NLI data, and
-    fine- tuned on the STS benchmark dataset."""
+    fine- tuned on the STS benchmark dataset.
+    Available models can be found here: https://huggingface.co/sentence-transformers"""
 
     def __init__(
-        self, pretrained_name="stsb-bert-base", threshold=0.7, metric="cosine", **kwargs
+        self,
+        threshold=0.7,
+        metric="cosine",
+        model_name="bert-base-nli-stsb-mean-tokens",
+        **kwargs
     ):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
-        self.model = sentence_transformers.SentenceTransformer(pretrained_name)
+        self.model = sentence_transformers.SentenceTransformer(model_name)
         self.model.to(utils.device)
 
     def encode(self, sentences):

@@ -6,8 +6,6 @@ textattack.goal\_functions package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
 
 .. toctree::
    :maxdepth: 6
@@ -15,8 +13,6 @@ Subpackages
    textattack.goal_functions.classification
    textattack.goal_functions.text
 
-Submodules
-----------
 
 
 .. automodule:: textattack.goal_functions.goal_function

@@ -3,11 +3,11 @@ Constraints API Reference
 
 Constraint
 ------------
-.. automodule:: textattack.constraints.Constraint
+.. autoclass:: textattack.constraints.Constraint
    :members:
 
 PreTransformationConstraint
 -----------------------------
-.. automodule:: textattack.constraints.PreTransformationConstraint
+.. autoclass:: textattack.constraints.PreTransformationConstraint
     :members:
 

@@ -6,8 +6,6 @@ textattack.constraints package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
 
 .. toctree::
    :maxdepth: 6
@@ -17,8 +15,6 @@ Subpackages
    textattack.constraints.pre_transformation
    textattack.constraints.semantics
 
-Submodules
-----------
 
 
 .. automodule:: textattack.constraints.constraint

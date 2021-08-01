@@ -22,7 +22,7 @@ class WordSwapHowNet(WordSwap):
         self.max_candidates = max_candidates
 
         # Download synonym candidates bank if they're not cached.
-        cache_path = utils.download_if_needed(
+        cache_path = utils.download_from_s3(
             "{}/{}".format(WordSwapHowNet.PATH, "word_candidates_sense.pkl")
         )
 
