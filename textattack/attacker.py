@@ -397,7 +397,6 @@ class Attacker:
     def attack_dataset(self):
         """Attack the dataset.
 
-
         Returns:
             :obj:`list[AttackResult]` - List of :class:`~textattack.attack_results.AttackResult` obtained after attacking the given dataset..
         """
