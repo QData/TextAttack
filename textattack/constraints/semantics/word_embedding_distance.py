@@ -69,7 +69,7 @@ class WordEmbeddingDistance(Constraint):
             i >= len(reference_text.words) or i >= len(transformed_text.words)
             for i in indices
         ):
-            return false
+            return False
 
         for i in indices:
             ref_word = reference_text.words[i]
