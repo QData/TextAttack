@@ -7,6 +7,7 @@ from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pi
 from textattack.attack_recipes import PWWSRen2019
 from textattack.datasets import HuggingFaceDataset
 from textattack.models.wrappers import ModelWrapper
+from textattack import Attacker
 
 if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -20,11 +21,11 @@ class HuggingFaceSentimentAnalysisPipelineWrapper(ModelWrapper):
         [[0.218262017, 0.7817379832267761]
     """
 
-    def __init__(self, pipeline):
-        self.pipeline = pipeline
+    def __init__(self, model):
+        self.model = model
 
     def __call__(self, text_inputs):
-        raw_outputs = self.pipeline(text_inputs)
+        raw_outputs = self.model(text_inputs)
         outputs = []
         for output in raw_outputs:
             score = output["score"]
@@ -55,7 +56,6 @@ recipe = PWWSRen2019.build(model_wrapper)
 recipe.transformation.language = "fra"
 
 dataset = HuggingFaceDataset("allocine", split="test")
-for idx, result in enumerate(recipe.attack_dataset(dataset)):
-    print(("-" * 20), f"Result {idx+1}", ("-" * 20))
-    print(result.__str__(color_method="ansi"))
-    print()
+
+attacker = Attacker(recipe, dataset)
+results = attacker.attack_dataset()

@@ -315,7 +315,7 @@ TextAttack 的组件中，有很多易用的数据增强工具。`textattack.Aug
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-使用命令 `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
+使用命令 `textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
 会增强 `text` 列，约束对样本中 10% 的词进行修改，生成输入数据两倍的样本，同时结果文件中不保存 csv 文件的原始输入。(默认所有结果将会保存在 `augment.csv` 文件中)
 
 数据增强后，下面是 `augment.csv` 文件的内容:
@@ -453,8 +453,6 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 
 
 ### 何为攻击 & 如何设计新的攻击 
-
-`Attack` 中的 `attack_one` 方法以 `AttackedText` 对象作为输入，若攻击成功，返回 `SuccessfulAttackResult`，若攻击失败，返回 `FailedAttackResult`。
 
 
 我们将攻击划分并定义为四个组成部分：**目标函数** 定义怎样的攻击是一次成功的攻击，**约束条件** 定义怎样的扰动是可行的，**变换规则** 对输入文本生成一系列可行的扰动结果，**搜索方法** 在搜索空间中遍历所有可行的扰动结果。每一次攻击都尝试对输入的文本添加扰动，使其通过目标函数（即判断攻击是否成功），并且扰动要符合约束（如语法约束，语义相似性约束）。最后用搜索方法在所有可行的变换结果中，挑选出优质的对抗样本。
