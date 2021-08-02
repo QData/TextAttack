@@ -5,6 +5,7 @@ Word Swap by BERT-Masked LM.
 
 
 import itertools
+from typing import List
 
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
@@ -12,8 +13,6 @@ from transformers import AutoModelForMaskedLM, AutoTokenizer
 from textattack.shared import utils
 
 from .word_swap import WordSwap
-
-from typing import List
 
 
 class WordSwapMaskedLM(WordSwap):

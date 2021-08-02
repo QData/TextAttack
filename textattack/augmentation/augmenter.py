@@ -3,11 +3,12 @@ Augmenter Class
 ===================
 
 """
+from copy import deepcopy
 import random
 import sys
-import tqdm
-from copy import deepcopy
 from typing import List
+
+import tqdm
 
 from textattack.constraints import PreTransformationConstraint
 from textattack.shared import AttackedText, utils
