@@ -82,7 +82,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 *对 Quora 问句对数据集上训练的 DistilBERT 模型进行 DeepWordBug 攻击*: 
 
 ```bash
-textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
+textattack attack --model distilbert-base-uncased-cola --recipe deepwordbug --num-examples 100
 ```
 
 *对 MR 数据集上训练的 LSTM 模型：设置束搜索宽度为 4，使用词嵌入转换进行无目标攻击*:

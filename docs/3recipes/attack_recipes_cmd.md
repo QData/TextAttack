@@ -36,7 +36,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 
 *DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*: 
 ```bash
-textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
+textattack attack --model distilbert-base-uncased-cola --recipe deepwordbug --num-examples 100
 ```
 
 *Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
