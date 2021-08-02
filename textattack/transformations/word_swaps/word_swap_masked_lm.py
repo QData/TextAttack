@@ -15,6 +15,7 @@ from .word_swap import WordSwap
 
 from typing import List
 
+
 class WordSwapMaskedLM(WordSwap):
     """Generate potential replacements for a word using a masked language
     model.
@@ -171,8 +172,9 @@ class WordSwapMaskedLM(WordSwap):
 
         return replacement_words
 
-
-    def _bae_replacement_words_many(self, list_of_texts: List[str], list_of_indices_to_modify: List):
+    def _bae_replacement_words_many(
+        self, list_of_texts: List[str], list_of_indices_to_modify: List
+    ):
         """Get replacement words for the word we want to replace using BAE
         method.
 
@@ -181,7 +183,9 @@ class WordSwapMaskedLM(WordSwap):
             index (int): index of word we want to replace
         """
         masked_texts = []
-        for current_text, indices_to_modify in zip(list_of_texts, list_of_indices_to_modify):
+        for current_text, indices_to_modify in zip(
+            list_of_texts, list_of_indices_to_modify
+        ):
             for index in indices_to_modify:
                 masked_texts.append(
                     current_text.replace_word_at_index(
@@ -193,7 +197,7 @@ class WordSwapMaskedLM(WordSwap):
         ids = []
         preds = []
         while i < len(masked_texts):
-            inputs = self._encode_text(masked_texts[i: i + self.batch_size])
+            inputs = self._encode_text(masked_texts[i : i + self.batch_size])
             ids.extend(inputs["input_ids"].tolist())
             with torch.no_grad():
                 preds.extend(self._language_model(**inputs)[0])
@@ -206,7 +210,9 @@ class WordSwapMaskedLM(WordSwap):
         for index in range(len(list_of_indices_to_modify)):
             list_of_preds.append(preds)
             number_of_indices_to_modify = len(list_of_indices_to_modify[index])
-            list_of_ids.append(ids[start_index:start_index+number_of_indices_to_modify])
+            list_of_ids.append(
+                ids[start_index : start_index + number_of_indices_to_modify]
+            )
             start_index += number_of_indices_to_modify
 
         # get top words as replacement words
@@ -229,29 +235,28 @@ class WordSwapMaskedLM(WordSwap):
                     _id = _id.item()
                     word = self._lm_tokenizer.convert_ids_to_tokens(_id)
                     if utils.check_if_subword(
-                            word,
-                            self._language_model.config.model_type,
-                            (masked_index == 1),
+                        word,
+                        self._language_model.config.model_type,
+                        (masked_index == 1),
                     ):
                         word = utils.strip_BPE_artifacts(
                             word, self._language_model.config.model_type
                         )
                     if (
-                            mask_token_probs[_id] >= self.min_confidence
-                            and utils.is_one_word(word)
-                            and not utils.check_if_punctuations(word)
+                        mask_token_probs[_id] >= self.min_confidence
+                        and utils.is_one_word(word)
+                        and not utils.check_if_punctuations(word)
                     ):
                         top_words.append(word)
 
                     if (
-                            len(top_words) >= self.max_candidates
-                            or mask_token_probs[_id] < self.min_confidence
+                        len(top_words) >= self.max_candidates
+                        or mask_token_probs[_id] < self.min_confidence
                     ):
                         break
                 replacement_words.append(top_words)
             list_of_replacement_words.append(replacement_words)
         return list_of_replacement_words
-
 
     def _bert_attack_replacement_words(
         self,
@@ -379,28 +384,40 @@ class WordSwapMaskedLM(WordSwap):
         else:
             raise ValueError(f"Unrecognized value {self.method} for `self.method`.")
 
-
-    def _get_transformations_many(self, list_of_texts: List[str], list_of_indices_to_modify: List):
-        list_of_indices_to_modify = [list(indices_to_modify) for indices_to_modify in list_of_indices_to_modify]
+    def _get_transformations_many(
+        self, list_of_texts: List[str], list_of_indices_to_modify: List
+    ):
+        list_of_indices_to_modify = [
+            list(indices_to_modify) for indices_to_modify in list_of_indices_to_modify
+        ]
         if self.method == "bae":
             list_of_replacement_words = self._bae_replacement_words_many(
                 list_of_texts, list_of_indices_to_modify
             )
             list_of_transformed_texts = list()
-            for current_text, replacement_words, indices_to_modify in zip(list_of_texts, list_of_replacement_words, list_of_indices_to_modify):
+            for current_text, replacement_words, indices_to_modify in zip(
+                list_of_texts, list_of_replacement_words, list_of_indices_to_modify
+            ):
                 transformed_texts = []
                 for i in range(len(replacement_words)):
                     index_to_modify = indices_to_modify[i]
                     word_at_index = current_text.words[index_to_modify]
                     for word in replacement_words[i]:
-                        if word != word_at_index and len(utils.words_from_text(word)) == 1:
+                        if (
+                            word != word_at_index
+                            and len(utils.words_from_text(word)) == 1
+                        ):
                             transformed_texts.append(
-                                current_text.replace_word_at_index(index_to_modify, word)
+                                current_text.replace_word_at_index(
+                                    index_to_modify, word
+                                )
                             )
                 list_of_transformed_texts.append(transformed_texts)
             return list_of_transformed_texts
         else:
-            raise ValueError(f"Unrecognized value {self.method} for `self.method` for get_transformations_many.")
+            raise ValueError(
+                f"Unrecognized value {self.method} for `self.method` for get_transformations_many."
+            )
 
     def extra_repr_keys(self):
         return [
@@ -410,7 +427,6 @@ class WordSwapMaskedLM(WordSwap):
             "max_candidates",
             "min_confidence",
         ]
-
 
     def extra_repr_keys(self):
         return [
