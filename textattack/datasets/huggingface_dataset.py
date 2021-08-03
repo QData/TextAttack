@@ -106,7 +106,9 @@ class HuggingFaceDataset(Dataset):
                 dc = DownloadConfig(**download_config)
             else:
                 dc = download_config
-            self._dataset = datasets.load_dataset(self._name, subset, download_config=dc)[split]
+            self._dataset = datasets.load_dataset(
+                self._name, subset, download_config=dc
+            )[split]
             subset_print_str = f", subset {_cb(subset)}" if subset else ""
             textattack.shared.logger.info(
                 f"Loading {_cb('datasets')} dataset {_cb(self._name)}{subset_print_str}, split {_cb(split)}."
