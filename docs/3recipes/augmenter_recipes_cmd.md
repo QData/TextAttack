@@ -39,7 +39,8 @@ and the number of augmentations per input example. It outputs a CSV in the same 
 ```
 
 The command
-```textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original
+```
+textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original
 ```
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
