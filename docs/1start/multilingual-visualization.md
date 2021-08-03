@@ -3,18 +3,20 @@ TextAttack Extended Functions (Multilingual)
 
 
 
+## Textattack Supports Multiple Model Types besides huggingface models and our textattack models: 
+
+- Example attacking TensorFlow models @ [https://textattack.readthedocs.io/en/latest/2notebook/Example_0_tensorflow.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_0_tensorflow.html)
+- Example attacking scikit-learn models @ [https://textattack.readthedocs.io/en/latest/2notebook/Example_1_sklearn.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_1_sklearn.html)
+- Example attacking AllenNLP models @ [https://textattack.readthedocs.io/en/latest/2notebook/Example_2_allennlp.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_2_allennlp.html)
+- Example attacking Kera models @ [https://textattack.readthedocs.io/en/latest/2notebook/Example_3_Keras.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_3_Keras.html)
+
+
 ## Multilingual Supports
 
-- see example code: [https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py](https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py) for using our framework to attack French-BERT. 
 
-- see tutorial notebook: [https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html) for using our framework to attack French-BERT. 
+- see tutorial notebook for using our framework to attack French-BERT.: [https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html)  
 
-
-
-
-## We have built a new WebDemo For Visulizing TextAttack generated Examples; 
-
-- [TextAttack-WebDemo Github](https://github.com/QData/TextAttack-WebDemo)
+- see example code for using our framework to attack French-BERT: [https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py](https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py) . 
 
 
 
@@ -46,6 +48,21 @@ Then, run an attack with the argument `--model-from-file my_model.py`. The model
 
 
 
-### Custom attack components 
+## User defined Custom attack components 
 
 The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+
+- custom transformation example @ [https://textattack.readthedocs.io/en/latest/2notebook/1_Introduction_and_Transformations.html](https://textattack.readthedocs.io/en/latest/2notebook/1_Introduction_and_Transformations.html)
+
+- custome constraint example @[https://textattack.readthedocs.io/en/latest/2notebook/2_Constraints.html#A-custom-constraint](https://textattack.readthedocs.io/en/latest/2notebook/2_Constraints.html#A-custom-constraint)
+
+
+
+
+## Visulizing TextAttack generated Examples; 
+
+
+- You can visualize the generated adversarial examples vs. see examples, following visualization ways we provided here: [https://textattack.readthedocs.io/en/latest/2notebook/2_Constraints.html](https://textattack.readthedocs.io/en/latest/2notebook/2_Constraints.html)
+
+- If you have webapp, we have also built a new WebDemo [TextAttack-WebDemo Github](https://github.com/QData/TextAttack-WebDemo) for visualizing generated adversarial examples from textattack.. 
+
