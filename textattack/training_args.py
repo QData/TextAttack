@@ -360,6 +360,7 @@ class _CommandLineTrainingArgs:
         # Arguments that are needed if we want to create a model to train.
         parser.add_argument(
             "--model-name-or-path",
+            "--model",
             type=str,
             required=True,
             help='Name or path of the model we want to create. "lstm" and "cnn" will create TextAttack\'s LSTM and CNN models while'

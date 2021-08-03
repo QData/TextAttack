@@ -71,7 +71,11 @@ or a specific command using, for example,
 textattack attack --help
 ```
 
-The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. 
+
+
+The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+
 
 ### Running Attacks: `textattack attack --help`
 
@@ -88,7 +92,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 
 *DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*: 
 ```bash
-textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
+textattack attack --model distilbert-base-uncased-cola --recipe deepwordbug --num-examples 100
 ```
 
 *Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
@@ -323,7 +327,9 @@ For example, given the following as `examples.csv`:
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
+The command 
+```textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original
+```
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
@@ -453,7 +459,7 @@ create a short file that loads them as variables `model` and `tokenizer`.  The `
 be able to transform string inputs to lists or tensors of IDs using a method called `encode()`. The
 model must take inputs via the `__call__` method.
 
-##### Model from a file
+##### Custom Model from a file
 To experiment with a model you've trained, you could create the following file
 and name it `my_model.py`:
 
@@ -488,13 +494,11 @@ which maintains both a list of tokens and the original text, with punctuation. W
 
 
 
-#### Dataset via Data Frames (*coming soon*)
+#### Dataset loading via other mechanism, see: [here](https://textattack.readthedocs.io/en/latest/api/datasets.html)
 
 
 
 ### Attacks and how to design a new attack 
-
-The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. 
 
 
 We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. The attack attempts to perturb an input text such that the model output fulfills the goal function (i.e., indicating whether the attack is successful) and the perturbation adheres to the set of constraints (e.g., grammar constraint, semantic similarity constraint). A search method is used to find a sequence of transformations that produce a successful adversarial example.
