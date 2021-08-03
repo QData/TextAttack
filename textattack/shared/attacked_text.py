@@ -80,6 +80,8 @@ class AttackedText:
         """
         if not (self.text == other.text):
             return False
+        if len(self.attack_attrs) != len(other.attack_attrs):
+            return False
         for key in self.attack_attrs:
             if key not in other.attack_attrs:
                 return False
