@@ -219,7 +219,7 @@ class AttackedText:
         w2 = other_attacked_text.words
         for i in range(min(len(w1), len(w2))):
             if w1[i] != w2[i]:
-                return w1
+                return w1[i]
         return None
 
     def first_word_diff_index(self, other_attacked_text):
