@@ -10,9 +10,6 @@ NOTE: This script is not designed to run in a Jupyter notebook due to conflictin
 We recommend running it as a script only
 """
 
-import pickle
-import tempfile
-
 import keras
 from nltk.tokenize import RegexpTokenizer, word_tokenize
 import numpy as np
