@@ -1,7 +1,6 @@
 import numpy as np
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
-
 from textattack.metrics import Metric
 
 
@@ -44,10 +43,12 @@ class WordsPerturbed(Metric):
 
             self.perturbed_word_percentages[i] = perturbed_word_percentage
 
-        self.all_metrics['avg_word_perturbed'] = self.avg_number_word_perturbed_num()
-        self.all_metrics['avg_word_perturbed_perc'] = self.avg_perturbation_perc()
-        self.all_metrics['max_words_changed'] = self.max_words_changed
-        self.all_metrics['num_words_changed_until_success'] = self.num_words_changed_until_success
+        self.all_metrics["avg_word_perturbed"] = self.avg_number_word_perturbed_num()
+        self.all_metrics["avg_word_perturbed_perc"] = self.avg_perturbation_perc()
+        self.all_metrics["max_words_changed"] = self.max_words_changed
+        self.all_metrics[
+            "num_words_changed_until_success"
+        ] = self.num_words_changed_until_success
 
         return self.all_metrics
 

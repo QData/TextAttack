@@ -1,5 +1,4 @@
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
-
 from textattack.metrics import Metric
 
 
@@ -32,17 +31,16 @@ class AttackSuccessRate(Metric):
                 self.successful_attacks += 1
 
         # Calculated numbers
-        self.all_metrics['successful_attacks'] = self.successful_attacks
-        self.all_metrics['failed_attacks'] = self.failed_attacks
-        self.all_metrics['skipped_attacks'] = self.skipped_attacks
+        self.all_metrics["successful_attacks"] = self.successful_attacks
+        self.all_metrics["failed_attacks"] = self.failed_attacks
+        self.all_metrics["skipped_attacks"] = self.skipped_attacks
 
         # Percentages wrt the calculations
-        self.all_metrics['original_accuracy'] = self.original_accuracy_perc()
-        self.all_metrics['attack_accuracy_perc'] = self.attack_accuracy_perc()
-        self.all_metrics['attack_success_rate'] = self.attack_success_rate_perc()
+        self.all_metrics["original_accuracy"] = self.original_accuracy_perc()
+        self.all_metrics["attack_accuracy_perc"] = self.attack_accuracy_perc()
+        self.all_metrics["attack_success_rate"] = self.attack_success_rate_perc()
 
         return self.all_metrics
-
 
     def original_accuracy_perc(self):
         original_accuracy = (

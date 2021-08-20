@@ -1,7 +1,6 @@
 import numpy as np
 
 from textattack.attack_results import SkippedAttackResult
-
 from textattack.metrics import Metric
 
 
@@ -26,7 +25,7 @@ class AttackQueries(Metric):
                 if not isinstance(r, SkippedAttackResult)
             ]
         )
-        self.all_metrics['avg_num_queries'] = self.avg_num_queries()
+        self.all_metrics["avg_num_queries"] = self.avg_num_queries()
 
         return self.all_metrics
 

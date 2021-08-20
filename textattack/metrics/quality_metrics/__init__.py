@@ -9,4 +9,3 @@ TextAttack allows users to use their own metrics on adversarial examples or sele
 """
 
 from .perplexity import Perplexity
-
