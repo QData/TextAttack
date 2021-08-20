@@ -2,10 +2,10 @@ import numpy as np
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 
-from .attack_metric import AttackMetric
+from textattack.metrics import Metric
 
 
-class WordsPerturbed(AttackMetric):
+class WordsPerturbed(Metric):
     def __init__(self, results):
         self.results = results
         self.total_attacks = len(self.results)

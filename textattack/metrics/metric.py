@@ -1,15 +1,13 @@
 """
-Attack Metrics Class
+Metric Class
 ========================
 
 """
 
 from abc import ABC, abstractmethod
 
-from textattack.attack_results import AttackResult
 
-
-class AttackMetric:
+class Metric(ABC):
     """A metric for evaluating Adversarial Attack candidates."""
 
     @abstractmethod

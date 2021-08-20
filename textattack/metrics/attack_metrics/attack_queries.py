@@ -2,10 +2,10 @@ import numpy as np
 
 from textattack.attack_results import SkippedAttackResult
 
-from .attack_metric import AttackMetric
+from textattack.metrics import Metric
 
 
-class AttackQueries(AttackMetric):
+class AttackQueries(Metric):
     """Calculates all metrics related to number of queries in an attack
 
     Args:

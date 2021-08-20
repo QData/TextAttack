@@ -1,9 +1,9 @@
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 
-from .attack_metric import AttackMetric
+from textattack.metrics import Metric
 
 
-class AttackSuccessRate(AttackMetric):
+class AttackSuccessRate(Metric):
     """Calculates all metrics related to number of succesful, failed and skipped results in an attack
 
     Args:
