@@ -1,6 +1,6 @@
 """
 
-attack_metrics:
+perplexity:
 ======================
 
 TextAttack allows users to use their own metrics on adversarial examples or select common metrics to display.
@@ -8,5 +8,5 @@ TextAttack allows users to use their own metrics on adversarial examples or sele
 
 """
 
-from .quality_metric import QualityMetric
+from .perplexity import Perplexity
 
