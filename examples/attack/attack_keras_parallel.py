@@ -10,13 +10,10 @@ NOTE: This script is not designed to run in a Jupyter notebook due to conflictin
 We recommend running it as a script only
 """
 
-import keras
-from nltk.tokenize import RegexpTokenizer, word_tokenize
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras import layers, models
-from tensorflow.keras.layers import Dense, Dropout, Flatten
-from tensorflow.keras.models import Model, Sequential, load_model, save_model
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.models import Model, Sequential
 from tensorflow.keras.utils import to_categorical
 from tensorflow.python.keras.layers import deserialize, serialize
 from tensorflow.python.keras.saving import saving_utils
@@ -24,7 +21,7 @@ import torch
 
 from textattack import AttackArgs, Attacker
 from textattack.attack_recipes import PWWSRen2019
-from textattack.datasets import Dataset, HuggingFaceDataset
+from textattack.datasets import HuggingFaceDataset
 from textattack.models.wrappers import ModelWrapper
 
 NUM_WORDS = 1000
