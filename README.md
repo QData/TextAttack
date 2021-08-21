@@ -81,7 +81,7 @@ The [documentation website](https://textattack.readthedocs.io/en/latest) contain
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
 
-> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance. (If you want to attack Keras models in parallel, please check out `examples/attack/attack_keras_parallel.py` instead)
 
 Here are some concrete examples:
 
