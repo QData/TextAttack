@@ -6,6 +6,7 @@ from transformers import AutoTokenizer, GPT2LMHeadModel, GPT2Tokenizer
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.metrics import Metric
+import textattack.shared.utils
 
 
 class Perplexity(Metric):
@@ -22,10 +23,11 @@ class Perplexity(Metric):
         self.original_candidates = []
         self.successful_candidates = []
         self.ppl_model = GPT2LMHeadModel.from_pretrained("gpt2")
-        if torch.cuda.is_available():
-            self.ppl_model.cuda()
+        self.ppl_model.to(textattack.shared.utils.device)
         self.ppl_tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.ppl_model.eval()
+        self.max_length = self.ppl_model.config.n_positions
+        self.stride = 128
 
         self.original_candidates_ppl = []
         self.successful_candidates_ppl = []
@@ -45,57 +47,49 @@ class Perplexity(Metric):
                     result.perturbed_result.attacked_text.text.lower()
                 )
 
+        ppl_orig = self.calc_ppl(self.original_candidates)
+        ppl_attack = self.calc_ppl(self.successful_candidates)
+
         self.all_metrics["avg_original_perplexity"] = round(
-            self.calc_ppl(self.original_candidates)[0], 2
+            ppl_orig[0], 2
         )
+        self.all_metrics["original_perplexity_list"] = ppl_orig[1]
+
         self.all_metrics["avg_attack_perplexity"] = round(
-            self.calc_ppl(self.successful_candidates)[0], 2
+            ppl_attack[0], 2
         )
+        self.all_metrics["attack_perplexity_list"] = ppl_attack[1]
 
         return self.all_metrics
 
     def calc_ppl(self, texts):
-        eval_loss = 0
-        ppl_losses = []
-        nb_eval_steps = 0
+        
+        ppl_vals = []
 
         with torch.no_grad():
             for text in texts:
-                text = self.process_string(text)
+                eval_loss = []
                 input_ids = torch.tensor(
                     self.ppl_tokenizer.encode(
-                        text, add_special_tokens=True, truncation=True
+                        text, add_special_tokens=True
                     )
-                )
-                if len(input_ids) < 2:
-                    continue
-                if torch.cuda.is_available():
-                    self.input_ids.cuda()
-                outputs = self.ppl_model(input_ids, labels=input_ids)
-                lm_loss = outputs[0]
-                eval_loss += lm_loss.mean().item()
-                ppl_losses.append(torch.exp(torch.tensor(lm_loss.mean().item())))
-                nb_eval_steps += 1
+                ).unsqueeze(0)
 
-        eval_loss = eval_loss / nb_eval_steps
-        perplexity = torch.exp(torch.tensor(eval_loss))
+                for i in range(0, input_ids.size(1), self.stride):
+                    begin_loc = max(i + self.stride - self.max_length, 0)
+                    end_loc = min(i + self.stride, input_ids.size(1))
+                    trg_len = end_loc - i    # may be different from stride on last loop
+                    input_ids_t = input_ids[:,begin_loc:end_loc].to(textattack.shared.utils.device)
+                    target_ids = input_ids_t.clone()
+                    target_ids[:,:-trg_len] = -100
 
-        return perplexity.item(), ppl_losses
+                    outputs = self.ppl_model(input_ids_t, labels=target_ids)
+                    log_likelihood = outputs[0] * trg_len
 
-    def process_string(self, string):
-        string = re.sub("( )('[(m)(d)(t)(ll)(re)(ve)(s)])", r"\2", string)
-        string = re.sub("(\d+)( )([,\.])( )(\d+)", r"\1\3\5", string)
-        # U . S . -> U.S.
-        string = re.sub("(\w)( )(\.)( )(\w)( )(\.)", r"\1\3\5\7", string)
-        # reduce left space
-        string = re.sub("( )([,\.!?:;)])", r"\2", string)
-        # reduce right space
-        string = re.sub("([(])( )", r"\1", string)
-        string = re.sub("s '", "s'", string)
-        # reduce both space
-        string = re.sub("(')( )(\S+)( )(')", r"\1\3\5", string)
-        string = re.sub('(")( )(\S+)( )(")', r"\1\3\5", string)
-        string = re.sub("(\w+) (-+) (\w+)", r"\1\2\3", string)
-        string = re.sub("(\w+) (/+) (\w+)", r"\1\2\3", string)
-        # string = re.sub(" ' ", "'", string)
-        return string
+                    eval_loss.append(log_likelihood)
+
+                ppl_vals.append(torch.exp(torch.stack(eval_loss).sum() / end_loc).item())
+
+
+        return sum(ppl_vals)/len(ppl_vals), ppl_vals
+
