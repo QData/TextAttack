@@ -1,9 +1,7 @@
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.metrics import Metric
-from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
-from textattack.shared.utils import LazyLoader
+from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 
-hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
 
 
 class USEMetric(Metric):
@@ -13,18 +11,12 @@ class USEMetric(Metric):
 
     def __init__(self, results, **kwargs):
         self.results = results
-        self.use_obj = SentenceEncoder()
+        self.use_obj = UniversalSentenceEncoder()
+        self.use_obj.model = UniversalSentenceEncoder()
         self.original_candidates = []
         self.successful_candidates = []
+        self.all_metrics = {}
 
-        if kwargs["large"]:
-            tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
-        else:
-            tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
-
-        self._tfhub_url = tfhub_url
-        # Lazily load the model
-        self.model = hub.load(self._tfhub_url)
 
     def calculate(self):
         for i, result in enumerate(self.results):
@@ -40,15 +32,13 @@ class USEMetric(Metric):
                     result.perturbed_result.attacked_text
                 )
 
-        self.use_obj.model = self.model
-        self.use_obj.encode = self.encode
-        print(self.original_candidates)
-        print(self.successful_candidates)
+        
         use_scores = []
         for c in range(len(self.original_candidates)):
-            use_scores.append(self.use_obj._sim_score(self.original_candidates[c],self.successful_candidates[c]))
+            use_scores.append(self.use_obj._sim_score(self.original_candidates[c],self.successful_candidates[c]).item())
 
         print(use_scores)
 
-    def encode(self, sentences):
-        return self.model(sentences).numpy()
+        self.all_metrics['avg_attack_use_score'] = sum(use_scores)/len(use_scores)
+
+        return self.all_metrics
