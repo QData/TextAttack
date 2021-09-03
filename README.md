@@ -77,6 +77,10 @@ The [`examples/`](examples/) folder includes scripts showing common TextAttack u
 The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
 
+
+<img src="docs/_static/imgs/overview.png" alt="TextAttack Overview" style="display: block; margin: 0 auto;" />
+
+
 ### Running Attacks: `textattack attack --help`
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
