@@ -81,7 +81,7 @@ The [documentation website](https://textattack.readthedocs.io/en/latest) contain
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
 
-> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance. (If you want to attack Keras models in parallel, please check out `examples/attack/attack_keras_parallel.py` instead)
 
 Here are some concrete examples:
 
@@ -328,7 +328,8 @@ For example, given the following as `examples.csv`:
 ```
 
 The command 
-```textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original
+```bash
+textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original
 ```
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
