@@ -78,9 +78,6 @@ The [documentation website](https://textattack.readthedocs.io/en/latest) contain
 
 
 
-<img src="docs/_static/imgs/overview.png" alt="TextAttack Overview" style="display: block; margin: 0 auto;" />
-
-
 ### Running Attacks: `textattack attack --help`
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
@@ -115,6 +112,7 @@ We include attack recipes which implement attacks from the literature. You can l
 
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
+<img src="docs/_static/imgs/overview.png" alt="TextAttack Overview" style="display: block; margin: 0 auto;" />
 
 <table  style="width:100%" border="1">
 <thead>
