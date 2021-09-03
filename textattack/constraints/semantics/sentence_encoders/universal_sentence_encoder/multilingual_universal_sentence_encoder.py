@@ -7,7 +7,7 @@ from textattack.constraints.semantics.sentence_encoders import SentenceEncoder
 from textattack.shared.utils import LazyLoader
 
 hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
-tensorflow_text = LazyLoader(
+tensorflow_textt = LazyLoader(
     "tensorflow_text", globals(), "tensorflow_text"
 )  # noqa: F401
 
@@ -19,7 +19,7 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
 
     def __init__(self, threshold=0.8, large=False, metric="angular", **kwargs):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
-        tensorflow_text._load()
+        tensorflow_textt._load()
         if large:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3"
         else:
