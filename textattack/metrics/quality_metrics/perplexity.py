@@ -17,8 +17,7 @@ class Perplexity(Metric):
                     Attack results for each instance in dataset
     """
 
-    def __init__(self, results):
-        self.results = results
+    def __init__(self):
         self.all_metrics = {}
         self.original_candidates = []
         self.successful_candidates = []
@@ -29,10 +28,10 @@ class Perplexity(Metric):
         self.max_length = self.ppl_model.config.n_positions
         self.stride = 128
 
+    def calculate(self, results):
+        self.results = results
         self.original_candidates_ppl = []
         self.successful_candidates_ppl = []
-
-    def calculate(self):
 
         for i, result in enumerate(self.results):
             if isinstance(result, FailedAttackResult):
@@ -74,11 +73,11 @@ class Perplexity(Metric):
                         text, add_special_tokens=True
                     )
                 ).unsqueeze(0)
-
+                # Strided perplexity calculation from huggingface.co/transformers/perplexity.html
                 for i in range(0, input_ids.size(1), self.stride):
                     begin_loc = max(i + self.stride - self.max_length, 0)
                     end_loc = min(i + self.stride, input_ids.size(1))
-                    trg_len = end_loc - i    # may be different from stride on last loop
+                    trg_len = end_loc - i
                     input_ids_t = input_ids[:,begin_loc:end_loc].to(textattack.shared.utils.device)
                     target_ids = input_ids_t.clone()
                     target_ids[:,:-trg_len] = -100

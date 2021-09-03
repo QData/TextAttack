@@ -8,7 +8,10 @@ from textattack.metrics.attack_metrics import (
     AttackSuccessRate,
     WordsPerturbed,
 )
-from textattack.metrics.quality_metrics import Perplexity
+from textattack.metrics.quality_metrics import (
+    Perplexity,
+    USEMetric
+)
 
 from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
 
@@ -78,9 +81,9 @@ class AttackLogManager:
             return
 
         # Default metrics - calculated on every attack
-        attack_success_stats = AttackSuccessRate(self.results).calculate()
-        words_perturbed_stats = WordsPerturbed(self.results).calculate()
-        attack_query_stats = AttackQueries(self.results).calculate()
+        attack_success_stats = AttackSuccessRate().calculate(self.results)
+        words_perturbed_stats = WordsPerturbed().calculate(self.results)
+        attack_query_stats = AttackQueries().calculate(self.results)
 
         # @TODO generate this table based on user input - each column in specific class
         # Example to demonstrate:
@@ -119,7 +122,9 @@ class AttackLogManager:
         )
 
         if self.enable_advance_metrics:
-            perplexity_stats = Perplexity(self.results).calculate()
+            perplexity_stats = Perplexity().calculate(self.results)
+            use_stats = USEMetric(**{"large":False}).calculate(self.results)
+            print(use_stats)
 
             summary_table_rows.append(
                 [
@@ -128,7 +133,7 @@ class AttackLogManager:
                 ]
             )
             summary_table_rows.append(
-                ["Avg Attack Perplexity:", perplexity_stats["avg_attack_perplexity"]]
+                ["Avg Attack USE Score:", use_stats["avg_attack_use_score"]]
             )
 
         self.log_summary_rows(

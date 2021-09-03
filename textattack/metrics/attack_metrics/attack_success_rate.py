@@ -10,16 +10,17 @@ class AttackSuccessRate(Metric):
                     Attack results for each instance in dataset
     """
 
-    def __init__(self, results):
-        self.results = results
+    def __init__(self):
         self.failed_attacks = 0
         self.skipped_attacks = 0
         self.successful_attacks = 0
-        self.total_attacks = len(self.results)
 
         self.all_metrics = {}
 
-    def calculate(self):
+    def calculate(self, results):
+        self.results = results
+        self.total_attacks = len(self.results)
+        
         for i, result in enumerate(self.results):
             if isinstance(result, FailedAttackResult):
                 self.failed_attacks += 1

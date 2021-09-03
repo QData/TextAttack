@@ -12,12 +12,11 @@ class AttackQueries(Metric):
                     Attack results for each instance in dataset
     """
 
-    def __init__(self, results):
-        self.results = results
-
+    def __init__(self):
         self.all_metrics = {}
 
-    def calculate(self):
+    def calculate(self, results):
+        self.results = results
         self.num_queries = np.array(
             [
                 r.num_queries

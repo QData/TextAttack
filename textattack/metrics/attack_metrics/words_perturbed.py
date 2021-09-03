@@ -5,16 +5,21 @@ from textattack.metrics import Metric
 
 
 class WordsPerturbed(Metric):
-    def __init__(self, results):
+    def __init__(self):
+        self.total_attacks = 0
+        self.all_num_words = None
+        self.perturbed_word_percentages = None
+        self.num_words_changed_until_success = 0
+        self.all_metrics = {}
+
+    def calculate(self, results):
         self.results = results
         self.total_attacks = len(self.results)
         self.all_num_words = np.zeros(len(self.results))
         self.perturbed_word_percentages = np.zeros(len(self.results))
         self.num_words_changed_until_success = np.zeros(2 ** 16)
-        self.all_metrics = {}
-
-    def calculate(self):
         self.max_words_changed = 0
+
         for i, result in enumerate(self.results):
             self.all_num_words[i] = len(result.original_result.attacked_text.words)
 

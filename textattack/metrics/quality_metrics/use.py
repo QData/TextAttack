@@ -9,8 +9,7 @@ class USEMetric(Metric):
     where the text embeddings are created using the Universal Sentence
     Encoder."""
 
-    def __init__(self, results, **kwargs):
-        self.results = results
+    def __init__(self, **kwargs):
         self.use_obj = UniversalSentenceEncoder()
         self.use_obj.model = UniversalSentenceEncoder()
         self.original_candidates = []
@@ -18,7 +17,9 @@ class USEMetric(Metric):
         self.all_metrics = {}
 
 
-    def calculate(self):
+    def calculate(self, results):
+        self.results = results
+
         for i, result in enumerate(self.results):
             if isinstance(result, FailedAttackResult):
                 continue
@@ -39,6 +40,6 @@ class USEMetric(Metric):
 
         print(use_scores)
 
-        self.all_metrics['avg_attack_use_score'] = sum(use_scores)/len(use_scores)
+        self.all_metrics['avg_attack_use_score'] = round(sum(use_scores)/len(use_scores),2)
 
         return self.all_metrics
