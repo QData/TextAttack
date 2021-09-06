@@ -113,12 +113,17 @@ class AugmentCommand(TextAttackCommand):
             csv_file = open(args.input_csv, "r")
             dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
             csv_file.seek(0)
-            rows = [
-                row
-                for row in csv.DictReader(
-                    csv_file, dialect=dialect, skipinitialspace=True
-                )
-            ]
+            rows = []
+            for row in csv.DictReader(csv_file, dialect=dialect, skipinitialspace=True):
+                # CSV reader has trouble reading double quotes inside a given sentence
+                # 'None' will be assigned to a left-over column whenever this problem arises
+                if None in set(row.keys()):
+                    raise Warning(
+                        f"Double quotes inside the sentence in row {row.values()}, double quotes within the "
+                        f"sentence must be removed or results may become corrupted"
+                    )
+                rows.append(row)
+
             # Validate input column.
             row_keys = set(rows[0].keys())
             if args.input_column not in row_keys:
