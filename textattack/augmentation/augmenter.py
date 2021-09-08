@@ -141,6 +141,7 @@ class Augmenter:
                 for current_text in current_texts
             ]
             dict_transformed_texts = dict()
+            print(list_of_words_swapped)
             while list_of_words_swapped:
                 list_of_transformed_texts = self.transformation.transform_many(
                     current_texts, self.pre_transformation_constraints
@@ -175,9 +176,9 @@ class Augmenter:
                         list_of_transformed_texts[index]
                     )
                     # update words_swapped based on modified indices
-                    list_of_words_swapped[index] = len(
+                    list_of_words_swapped[index] = max(len(
                         current_texts[index].attack_attrs["modified_indices"]
-                    )
+                    ), 1)
 
                 # get all indices that still needs words swapped
                 indices_to_swap = [
