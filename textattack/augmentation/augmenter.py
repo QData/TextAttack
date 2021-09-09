@@ -127,21 +127,19 @@ class Augmenter:
         Returns a list(string) of augmented texts.
         """
         attacked_texts = [AttackedText(text) for text in text_list]
-        original_texts = deepcopy(attacked_texts)
-        current_attacked_texts = original_texts
         dict_of_all_transformed_texts = {text: set() for text in text_list}
         list_of_num_words_to_swap = [
             max(int(self.pct_words_to_swap * len(attacked_text.words)), 1)
             for attacked_text in attacked_texts
         ]
         for _ in range(self.transformations_per_example):
-            current_texts = attacked_texts
+            current_texts = deepcopy(attacked_texts)
+            current_attacked_texts = deepcopy(attacked_texts)
             list_of_words_swapped = [
                 len(current_text.attack_attrs["modified_indices"])
                 for current_text in current_texts
             ]
             dict_transformed_texts = dict()
-            print(list_of_words_swapped)
             while list_of_words_swapped:
                 list_of_transformed_texts = self.transformation.transform_many(
                     current_texts, self.pre_transformation_constraints
@@ -176,9 +174,9 @@ class Augmenter:
                         list_of_transformed_texts[index]
                     )
                     # update words_swapped based on modified indices
-                    list_of_words_swapped[index] = max(len(
-                        current_texts[index].attack_attrs["modified_indices"]
-                    ), 1)
+                    list_of_words_swapped[index] = max(
+                        len(current_texts[index].attack_attrs["modified_indices"]), 1
+                    )
 
                 # get all indices that still needs words swapped
                 indices_to_swap = [
