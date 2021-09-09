@@ -3,7 +3,6 @@ Word Swap by BERT-Masked LM.
 ============================================
 """
 
-
 import itertools
 from typing import List
 
@@ -417,15 +416,6 @@ class WordSwapMaskedLM(WordSwap):
             raise ValueError(
                 f"Unrecognized value {self.method} for `self.method` for get_transformations_many."
             )
-
-    def extra_repr_keys(self):
-        return [
-            "method",
-            "masked_lm_name",
-            "max_length",
-            "max_candidates",
-            "min_confidence",
-        ]
 
     def extra_repr_keys(self):
         return [
