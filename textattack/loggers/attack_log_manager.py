@@ -8,10 +8,7 @@ from textattack.metrics.attack_metrics import (
     AttackSuccessRate,
     WordsPerturbed,
 )
-from textattack.metrics.quality_metrics import (
-    Perplexity,
-    USEMetric
-)
+from textattack.metrics.quality_metrics import Perplexity, USEMetric
 
 from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
 
@@ -123,17 +120,23 @@ class AttackLogManager:
 
         if self.enable_advance_metrics:
             perplexity_stats = Perplexity().calculate(self.results)
-            use_stats = USEMetric(**{"large":False}).calculate(self.results)
-            print(use_stats)
+            use_stats = USEMetric().calculate(self.results)
 
             summary_table_rows.append(
                 [
-                    "Avg Original Perplexity:",
+                    "Average Original Perplexity:",
                     perplexity_stats["avg_original_perplexity"],
                 ]
             )
+
             summary_table_rows.append(
-                ["Avg Attack USE Score:", use_stats["avg_attack_use_score"]]
+                [
+                    "Average Attack Perplexity:",
+                    perplexity_stats["avg_attack_perplexity"],
+                ]
+            )
+            summary_table_rows.append(
+                ["Average Attack USE Score:", use_stats["avg_attack_use_score"]]
             )
 
         self.log_summary_rows(

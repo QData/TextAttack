@@ -20,7 +20,7 @@ class AttackSuccessRate(Metric):
     def calculate(self, results):
         self.results = results
         self.total_attacks = len(self.results)
-        
+
         for i, result in enumerate(self.results):
             if isinstance(result, FailedAttackResult):
                 self.failed_attacks += 1

@@ -49,46 +49,42 @@ class Perplexity(Metric):
         ppl_orig = self.calc_ppl(self.original_candidates)
         ppl_attack = self.calc_ppl(self.successful_candidates)
 
-        self.all_metrics["avg_original_perplexity"] = round(
-            ppl_orig[0], 2
-        )
+        self.all_metrics["avg_original_perplexity"] = round(ppl_orig[0], 2)
         self.all_metrics["original_perplexity_list"] = ppl_orig[1]
 
-        self.all_metrics["avg_attack_perplexity"] = round(
-            ppl_attack[0], 2
-        )
+        self.all_metrics["avg_attack_perplexity"] = round(ppl_attack[0], 2)
         self.all_metrics["attack_perplexity_list"] = ppl_attack[1]
 
         return self.all_metrics
 
     def calc_ppl(self, texts):
-        
+
         ppl_vals = []
 
         with torch.no_grad():
             for text in texts:
                 eval_loss = []
                 input_ids = torch.tensor(
-                    self.ppl_tokenizer.encode(
-                        text, add_special_tokens=True
-                    )
+                    self.ppl_tokenizer.encode(text, add_special_tokens=True)
                 ).unsqueeze(0)
                 # Strided perplexity calculation from huggingface.co/transformers/perplexity.html
                 for i in range(0, input_ids.size(1), self.stride):
                     begin_loc = max(i + self.stride - self.max_length, 0)
                     end_loc = min(i + self.stride, input_ids.size(1))
                     trg_len = end_loc - i
-                    input_ids_t = input_ids[:,begin_loc:end_loc].to(textattack.shared.utils.device)
+                    input_ids_t = input_ids[:, begin_loc:end_loc].to(
+                        textattack.shared.utils.device
+                    )
                     target_ids = input_ids_t.clone()
-                    target_ids[:,:-trg_len] = -100
+                    target_ids[:, :-trg_len] = -100
 
                     outputs = self.ppl_model(input_ids_t, labels=target_ids)
                     log_likelihood = outputs[0] * trg_len
 
                     eval_loss.append(log_likelihood)
 
-                ppl_vals.append(torch.exp(torch.stack(eval_loss).sum() / end_loc).item())
+                ppl_vals.append(
+                    torch.exp(torch.stack(eval_loss).sum() / end_loc).item()
+                )
 
-
-        return sum(ppl_vals)/len(ppl_vals), ppl_vals
-
+        return sum(ppl_vals) / len(ppl_vals), ppl_vals

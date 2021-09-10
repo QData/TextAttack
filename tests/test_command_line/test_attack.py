@@ -48,6 +48,20 @@ attack_test_params = [
         "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
     #
+    # test loading an attack from the transformers model hub and calculate perplexity and use
+    #
+    (
+        "attack_from_transformers",
+        (
+            "textattack attack --model-from-huggingface "
+            "distilbert-base-uncased-finetuned-sst-2-english "
+            "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
+            "--enable-advance-metrics"
+            ""
+        ),
+        "tests/sample_outputs/run_attack_transformers_datasets_adv_metrics.txt",
+    ),
+    #
     # test running an attack by loading a model and dataset from file
     #
     (
@@ -70,6 +84,17 @@ attack_test_params = [
             "--num-examples 4 --num-examples-offset 3 "
         ),
         "tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt",
+    ),
+    #
+    # test hotflip on 10 samples from LSTM MR and calculate perplexity and use
+    #
+    (
+        "run_attack_hotflip_lstm_mr_4",
+        (
+            "textattack attack --model lstm-mr --recipe hotflip "
+            "--num-examples 4 --num-examples-offset 3 --enable-advance-metrics "
+        ),
+        "tests/sample_outputs/run_attack_hotflip_lstm_mr_4_adv_metrics.txt",
     ),
     #
     # test: run_attack deepwordbug attack on 10 samples from LSTM MR

@@ -3,11 +3,13 @@ from textattack.metrics import Metric
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 
 
-
 class USEMetric(Metric):
-    """Constraint using similarity between sentence encodings of x and x_adv
-    where the text embeddings are created using the Universal Sentence
-    Encoder."""
+    """Calculates average USE similarity on all successfull attacks
+
+    Args:
+    results (:obj::`list`:class:`~textattack.goal_function_results.GoalFunctionResult`):
+                    Attack results for each instance in dataset
+    """
 
     def __init__(self, **kwargs):
         self.use_obj = UniversalSentenceEncoder()
@@ -15,7 +17,6 @@ class USEMetric(Metric):
         self.original_candidates = []
         self.successful_candidates = []
         self.all_metrics = {}
-
 
     def calculate(self, results):
         self.results = results
@@ -26,20 +27,19 @@ class USEMetric(Metric):
             elif isinstance(result, SkippedAttackResult):
                 continue
             else:
-                self.original_candidates.append(
-                    result.original_result.attacked_text
-                )
-                self.successful_candidates.append(
-                    result.perturbed_result.attacked_text
-                )
+                self.original_candidates.append(result.original_result.attacked_text)
+                self.successful_candidates.append(result.perturbed_result.attacked_text)
 
-        
         use_scores = []
         for c in range(len(self.original_candidates)):
-            use_scores.append(self.use_obj._sim_score(self.original_candidates[c],self.successful_candidates[c]).item())
+            use_scores.append(
+                self.use_obj._sim_score(
+                    self.original_candidates[c], self.successful_candidates[c]
+                ).item()
+            )
 
-        print(use_scores)
-
-        self.all_metrics['avg_attack_use_score'] = round(sum(use_scores)/len(use_scores),2)
+        self.all_metrics["avg_attack_use_score"] = round(
+            sum(use_scores) / len(use_scores), 2
+        )
 
         return self.all_metrics
