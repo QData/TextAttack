@@ -33,6 +33,12 @@ For help and realtime updates related to TextAttack, please [join the TextAttack
 pip install --force-reinstall textattack
 ```
 
+OR 
+```bash
+pip install textattack[tensorflow,optional]
+```
+
+
 Besides, we highly recommend you to use virtual environment for textattack use, 
 see [information here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment). Here is one conda example: 
 
