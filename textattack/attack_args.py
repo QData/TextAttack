@@ -357,7 +357,7 @@ class AttackArgs:
             "--enable-advance-metrics",
             action="store_true",
             default=default_obj.enable_advance_metrics,
-            help="Enable advance metric calculations",
+            help="Enable calculation and display of optional advance post-hoc metrics like perplexity, use distance, etc.",
         )
 
         return parser
