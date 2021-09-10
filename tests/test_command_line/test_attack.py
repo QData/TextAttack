@@ -51,7 +51,7 @@ attack_test_params = [
     # test loading an attack from the transformers model hub and calculate perplexity and use
     #
     (
-        "attack_from_transformers",
+        "attack_from_transformers_adv_metrics",
         (
             "textattack attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
@@ -89,7 +89,7 @@ attack_test_params = [
     # test hotflip on 10 samples from LSTM MR and calculate perplexity and use
     #
     (
-        "run_attack_hotflip_lstm_mr_4",
+        "run_attack_hotflip_lstm_mr_4_adv_metrics",
         (
             "textattack attack --model lstm-mr --recipe hotflip "
             "--num-examples 4 --num-examples-offset 3 --enable-advance-metrics "
@@ -192,7 +192,6 @@ attack_test_params = [
     ),
 ]
 
-
 @pytest.mark.parametrize("name, command, sample_output_file", attack_test_params)
 @pytest.mark.slow
 def test_command_line_attack(name, command, sample_output_file):
@@ -221,6 +220,7 @@ def test_command_line_attack(name, command, sample_output_file):
 
     if DEBUG and not re.match(desired_re, stdout, flags=re.S):
         pdb.set_trace()
+    print(re.match(desired_re, stdout, flags=re.S))
     assert re.match(desired_re, stdout, flags=re.S)
 
     assert result.returncode == 0, "return code not 0"

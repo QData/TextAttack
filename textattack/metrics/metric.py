@@ -12,7 +12,7 @@ class Metric(ABC):
 
     @abstractmethod
     def __init__(self, **kwargs):
-        """Creates pre-built :class:`~textattack.AttackMetric` that correspond to
+        """Creates pre-built :class:`~textattack.Metric` that correspond to
         evaluation metrics for adversarial examples.
         """
         raise NotImplementedError()
