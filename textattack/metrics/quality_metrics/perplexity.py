@@ -1,8 +1,5 @@
-import re
-
 import torch
-import tqdm
-from transformers import AutoTokenizer, GPT2LMHeadModel, GPT2Tokenizer
+from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.metrics import Metric
