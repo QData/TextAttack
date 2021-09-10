@@ -192,6 +192,7 @@ attack_test_params = [
     ),
 ]
 
+
 @pytest.mark.parametrize("name, command, sample_output_file", attack_test_params)
 @pytest.mark.slow
 def test_command_line_attack(name, command, sample_output_file):
