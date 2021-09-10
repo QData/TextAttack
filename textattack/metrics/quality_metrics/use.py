@@ -1,6 +1,6 @@
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
-from textattack.metrics import Metric
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
+from textattack.metrics import Metric
 
 
 class USEMetric(Metric):
