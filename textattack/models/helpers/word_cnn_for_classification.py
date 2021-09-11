@@ -84,7 +84,7 @@ class WordCNNForClassification(nn.Module):
 
     @classmethod
     def from_pretrained(cls, name_or_path):
-        """Load trained LSTM model by name or from path.
+        """Load trained Word CNN model by name or from path.
 
         Args:
             name_or_path (:obj:`str`): Name of the model (e.g. "cnn-imdb") or model saved via :meth:`save_pretrained`.
