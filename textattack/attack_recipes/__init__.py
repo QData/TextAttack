@@ -20,6 +20,7 @@ TextAttack supports the following attack recipes (each recipe's documentation co
 
 from .attack_recipe import AttackRecipe
 
+from .a2t_yoo_2021 import A2TYoo2021
 from .bae_garg_2019 import BAEGarg2019
 from .bert_attack_li_2020 import BERTAttackLi2020
 from .genetic_algorithm_alzantot_2018 import GeneticAlgorithmAlzantot2018
