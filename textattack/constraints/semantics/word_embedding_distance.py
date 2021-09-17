@@ -24,7 +24,7 @@ class WordEmbeddingDistance(Constraint):
 
     def __init__(
         self,
-        embedding=WordEmbedding.counterfitted_GLOVE_embedding(),
+        embedding=None,
         include_unknown_words=True,
         min_cos_sim=None,
         max_mse_dist=None,
@@ -40,11 +40,17 @@ class WordEmbeddingDistance(Constraint):
         self.min_cos_sim = min_cos_sim
         self.max_mse_dist = max_mse_dist
 
-        if not isinstance(embedding, AbstractWordEmbedding):
+        if embedding is not None and not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(
                 "`embedding` object must be of type `textattack.shared.AbstractWordEmbedding`."
             )
-        self.embedding = embedding
+        self._embedding = embedding
+
+    @property
+    def embedding(self):
+        if self._embedding is None:
+            self._embedding = WordEmbedding.counterfitted_GLOVE_embedding()
+        return self._embedding
 
     def get_cos_sim(self, a, b):
         """Returns the cosine similarity of words with IDs a and b."""
