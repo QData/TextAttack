@@ -4,7 +4,7 @@ from .word_swap import WordSwap
 
 class ChineseHomophoneCharacterSwap(WordSwap):
     """Transforms an input by replacing its words with synonyms provided by
-    WordNet."""
+    a homophone dictionary."""
 
     def __init__(self):
         homophone_dict = pd.read_csv('chinese_homophone_char.txt', header=None, sep='\n')
@@ -15,7 +15,7 @@ class ChineseHomophoneCharacterSwap(WordSwap):
 
     def _get_replacement_words(self, word):
         """Returns a list containing all possible words with 1 character
-        replaced by a homoglyph."""
+        replaced by a homophne."""
         homophones = []
 
         word = pinyin.get(word, format="strip", delimiter=" ")

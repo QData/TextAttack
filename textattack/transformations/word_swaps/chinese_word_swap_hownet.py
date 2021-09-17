@@ -12,7 +12,7 @@ class ChineseWordSwapHowNet(WordSwap):
         self.topk = 10
 
     def _get_replacement_words(self, word):
-        """Returns a list containing all possible words with 1 character
+        """Returns a list containing all possible words with N characters
         replaced by a homoglyph."""
         if self.hownet_dict.get(word):
             results = self.hownet_dict.get_nearest_words_via_sememes(word, self.topk)
