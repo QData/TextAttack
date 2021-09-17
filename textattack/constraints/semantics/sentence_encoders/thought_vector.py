@@ -20,7 +20,7 @@ class ThoughtVector(SentenceEncoder):
     """
 
     def __init__(self, embedding=None, **kwargs):
-        if not isinstance(embedding, AbstractWordEmbedding):
+        if embedding is not None and not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(
                 "`embedding` object must be of type `textattack.shared.AbstractWordEmbedding`."
             )
