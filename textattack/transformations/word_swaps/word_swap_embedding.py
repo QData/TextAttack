@@ -21,19 +21,20 @@ class WordSwapEmbedding(WordSwap):
         embedding (textattack.shared.AbstractWordEmbedding): Wrapper for word embedding
     """
 
-    def __init__(
-        self,
-        max_candidates=15,
-        embedding=WordEmbedding.counterfitted_GLOVE_embedding(),
-        **kwargs
-    ):
+    def __init__(self, max_candidates=15, embedding=None, **kwargs):
         super().__init__(**kwargs)
         self.max_candidates = max_candidates
-        if not isinstance(embedding, AbstractWordEmbedding):
+        if embedding is not None and not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(
                 "`embedding` object must be of type `textattack.shared.AbstractWordEmbedding`."
             )
-        self.embedding = embedding
+        self._embedding = embedding
+
+    @property
+    def embedding(self):
+        if self._embedding is None:
+            self._embedding = WordEmbedding.counterfitted_GLOVE_embedding()
+        return self._embedding
 
     def _get_replacement_words(self, word):
         """Returns a list of possible 'candidate words' to replace a word in a
