@@ -103,6 +103,8 @@ textattack attack --model lstm-mr --num-examples 20 \
 运行攻击策略：`textattack attack --recipe [recipe_name]`
 
 
+<img src="docs/_static/imgs/overview.png" alt="TextAttack Overview" style="display: block; margin: 0 auto;" />
+
 <table>
 <thead>
 <tr class="header">

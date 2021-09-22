@@ -77,6 +77,7 @@ The [`examples/`](examples/) folder includes scripts showing common TextAttack u
 The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
 
+
 ### Running Attacks: `textattack attack --help`
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
@@ -111,6 +112,7 @@ We include attack recipes which implement attacks from the literature. You can l
 
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
+<img src="docs/_static/imgs/overview.png" alt="TextAttack Overview" style="display: block; margin: 0 auto;" />
 
 <table  style="width:100%" border="1">
 <thead>
@@ -126,6 +128,15 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <tbody>
   <tr><td style="text-align: center;" colspan="6"><strong><br>Attacks on classification tasks, like sentiment classification and entailment:<br></strong></td></tr>
 
+<tr>
+<td><code>a2t</code> 
+<span class="citation" data-cites="yoo2021a2t"></span></td>
+<td><sub>Untargeted {Classification, Entailment}</sub></td>
+<td><sub>Percentage of words perturbed, Word embedding distance, DistilBERT sentence encoding cosine similarity, part-of-speech consistency</sub></td>
+<td><sub>Counter-fitted word embedding swap (or) BERT Masked Token Prediction</sub></td>
+<td><sub>Greedy-WIR (gradient)</sub></td>
+<td ><sub>from (["Towards Improving Adversarial Training of NLP Models" (Yoo et al., 2021)](https://arxiv.org/abs/2109.00544))</sub></td>
+</tr>
 <tr>
 <td><code>alzantot</code>  <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>Untargeted {Classification, Entailment}</sub></td>
