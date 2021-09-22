@@ -195,7 +195,8 @@ class AttackedText:
         # Find all words until `i` in string.
         look_after_index = 0
         for word in pre_words:
-            look_after_index = lower_text.find(word.lower(), look_after_index)
+            look_after_index = lower_text.find(word.lower(), look_after_index) + len(word)
+        look_after_index -= len(self.words[word_idx])
         return look_after_index
 
     def text_until_word_index(self, i):
