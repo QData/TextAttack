@@ -1,7 +1,6 @@
 import collections
 
 import datasets
-from datasets.utils.file_utils import DownloadConfig
 
 import textattack
 
@@ -95,18 +94,13 @@ class HuggingFaceDataset(Dataset):
         label_names=None,
         output_scale_factor=None,
         shuffle=False,
-        download_config=None,
     ):
         if isinstance(name_or_dataset, datasets.Dataset):
             self._dataset = name_or_dataset
         else:
             self._name = name_or_dataset
             self._subset = subset
-            if isinstance(download_config, dict):
-                dc = DownloadConfig(**download_config)
-            else:
-                dc = download_config
-            self._dataset = datasets.load_dataset(self._name, subset, download_config=dc)[split]
+            self._dataset = datasets.load_dataset(self._name, subset)[split]
             subset_print_str = f", subset {_cb(subset)}" if subset else ""
             textattack.shared.logger.info(
                 f"Loading {_cb('datasets')} dataset {_cb(self._name)}{subset_print_str}, split {_cb(split)}."

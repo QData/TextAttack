@@ -33,6 +33,12 @@ For help and realtime updates related to TextAttack, please [join the TextAttack
 pip install --force-reinstall textattack
 ```
 
+OR 
+```bash
+pip install textattack[tensorflow,optional]
+```
+
+
 Besides, we highly recommend you to use virtual environment for textattack use, 
 see [information here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment). Here is one conda example: 
 
@@ -58,12 +64,10 @@ textattack train --model-name-or-path lstm --dataset yelp_polarity  --epochs 50 
 ```
 
 
-*Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
+*Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs*:
 ```bash
 textattack train --model-name-or-path bert-base-uncased --dataset glue^cola --per-device-train-batch-size 8 --epochs 5
 ```
-
-
 
 
 ### 2. Use Custom  Models  
@@ -138,3 +142,9 @@ This modular design unifies adversarial attack methods into one system, enables 
 
 
 
+### 6. The attacking is too slow 
+
+
+- **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+
+- If you want to attack Keras models in parallel, please check out `examples/attack/attack_keras_parallel.py` instead. (This is a hotfix for issues caused by a recent update of Keras in TF)

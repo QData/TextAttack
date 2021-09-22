@@ -46,4 +46,4 @@ You can also install other miscallenous optional dependencies by running
 
 To install both groups of packages, run
 
-    pip install textattack[tensorflow, optional]
+    pip install textattack[tensorflow,optional]
