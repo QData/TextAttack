@@ -35,6 +35,8 @@ class AugmenterArgs:
     exclude_original: bool = False
     overwrite: bool = False
     interactive: bool = False
+    fast_augment: bool = False
+    high_yield: bool = False
 
     @classmethod
     def _add_parser_args(cls, parser):
@@ -99,6 +101,18 @@ class AugmenterArgs:
             default=False,
             action="store_true",
             help="Whether to run attacks interactively.",
+        )
+        parser.add_argument(
+            "--high_yield",
+            default=False,
+            action="store_true",
+            help="Whether to run attacks with high yield.",
+        )
+        parser.add_argument(
+            "--fast_augment",
+            default=False,
+            action="store_true",
+            help="faster augmentation but may use only a few transformations.",
         )
 
         return parser
