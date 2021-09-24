@@ -134,6 +134,8 @@ class AugmentCommand(TextAttackCommand):
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
                 pct_words_to_swap=args.pct_words_to_swap,
                 transformations_per_example=args.transformations_per_example,
+                high_yield=args.high_yield,
+                fast_augment=args.fast_augment,
             )
 
             output_rows = []
