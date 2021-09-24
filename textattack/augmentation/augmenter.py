@@ -24,6 +24,8 @@ class Augmenter:
         pct_words_to_swap: (float): [0., 1.], percentage of words to swap per augmented example
         transformations_per_example: (int): Maximum number of augmentations
             per input
+        high_yield: Whether to return a set of augmented texts that will be relatively similar, or to return only a
+            single one.
     """
 
     def __init__(
@@ -32,6 +34,8 @@ class Augmenter:
         constraints=[],
         pct_words_to_swap=0.1,
         transformations_per_example=1,
+        high_yield=False,
+        fast_augment=False,
     ):
         assert (
             transformations_per_example > 0
@@ -43,6 +47,8 @@ class Augmenter:
 
         self.constraints = []
         self.pre_transformation_constraints = []
+        self.high_yield = high_yield
+        self.fast_augment = fast_augment
         for constraint in constraints:
             if isinstance(constraint, PreTransformationConstraint):
                 self.pre_transformation_constraints.append(constraint)
@@ -99,14 +105,45 @@ class Augmenter:
                 if not len(transformed_texts):
                     break
 
-                current_text = random.choice(transformed_texts)
+                if self.high_yield or self.fast_augment:
+                    ready_texts = [
+                        text
+                        for text in transformed_texts
+                        if len(text.attack_attrs["modified_indices"])
+                        >= num_words_to_swap
+                    ]
+                    for text in ready_texts:
+                        all_transformed_texts.add(text)
+                    unfinished_texts = [
+                        text for text in transformed_texts if text not in ready_texts
+                    ]
+
+                    if len(unfinished_texts):
+                        current_text = random.choice(unfinished_texts)
+                    else:
+                        # no need for further augmentation if all transformed texts meet `num_words_to_swap`
+                        break
+                else:
+                    current_text = random.choice(transformed_texts)
 
                 # update words_swapped based on modified indices
                 words_swapped = max(
                     len(current_text.attack_attrs["modified_indices"]),
                     words_swapped + 1,
                 )
+
             all_transformed_texts.add(current_text)
+
+            if (
+                self.fast_augment
+                and len(all_transformed_texts) >= self.transformations_per_example
+            ):
+                if not self.high_yield:
+                    all_transformed_texts = random.sample(
+                        all_transformed_texts, self.transformations_per_example
+                    )
+                break
+
         return sorted([at.printable_text() for at in all_transformed_texts])
 
     def augment_many(self, text_list, show_progress=False):
