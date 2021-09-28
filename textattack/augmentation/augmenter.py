@@ -26,6 +26,8 @@ class Augmenter:
             per input
         high_yield: Whether to return a set of augmented texts that will be relatively similar, or to return only a
             single one.
+        fast_augment: Stops additional transformation runs when number of successful augmentations reaches
+            transformations_per_example
     """
 
     def __init__(
@@ -105,6 +107,7 @@ class Augmenter:
                 if not len(transformed_texts):
                     break
 
+                # look for all transformed_texts that has enough words swapped
                 if self.high_yield or self.fast_augment:
                     ready_texts = [
                         text
@@ -121,7 +124,7 @@ class Augmenter:
                     if len(unfinished_texts):
                         current_text = random.choice(unfinished_texts)
                     else:
-                        # no need for further augmentation if all transformed texts meet `num_words_to_swap`
+                        # no need for further augmentations if all of transformed_texts meet `num_words_to_swap`
                         break
                 else:
                     current_text = random.choice(transformed_texts)
@@ -134,6 +137,7 @@ class Augmenter:
 
             all_transformed_texts.add(current_text)
 
+            # when with fast_augment, terminate early if there're enough successful augmentations
             if (
                 self.fast_augment
                 and len(all_transformed_texts) >= self.transformations_per_example
@@ -153,6 +157,7 @@ class Augmenter:
         Args:
             text_list (list(string)): a list of strings for data augmentation
         Returns a list(string) of augmented texts.
+        :param show_progress: show process during augmentation
         """
         if show_progress:
             text_list = tqdm.tqdm(text_list, desc="Augmenting data...")
