@@ -174,6 +174,8 @@ class AttackArgs:
             Disable displaying individual attack results to stdout.
         silent (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Disable all logging (except for errors). This is stronger than :obj:`disable_stdout`.
+        enable_advance_metrics (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            Enable calculation and display of optional advance post-hoc metrics like perplexity, grammar errors, etc.
     """
 
     num_examples: int = 10
@@ -194,6 +196,7 @@ class AttackArgs:
     log_to_wandb: str = None
     disable_stdout: bool = False
     silent: bool = False
+    enable_advance_metrics: bool = False
 
     def __post_init__(self):
         if self.num_successful_examples:
@@ -350,6 +353,12 @@ class AttackArgs:
             action="store_true",
             default=default_obj.silent,
             help="Disable all logging",
+        )
+        parser.add_argument(
+            "--enable-advance-metrics",
+            action="store_true",
+            default=default_obj.enable_advance_metrics,
+            help="Enable calculation and display of optional advance post-hoc metrics like perplexity, USE distance, etc.",
         )
 
         return parser

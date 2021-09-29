@@ -19,6 +19,7 @@ textattack package
    textattack.goal_function_results
    textattack.goal_functions
    textattack.loggers
+   textattack.metrics
    textattack.models
    textattack.search_methods
    textattack.shared
