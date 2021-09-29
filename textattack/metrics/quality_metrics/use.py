@@ -4,13 +4,6 @@ from textattack.metrics import Metric
 
 
 class USEMetric(Metric):
-    """Calculates average USE similarity on all successfull attacks
-
-    Args:
-    results (:obj::`list`:class:`~textattack.goal_function_results.GoalFunctionResult`):
-                    Attack results for each instance in dataset
-    """
-
     def __init__(self, **kwargs):
         self.use_obj = UniversalSentenceEncoder()
         self.use_obj.model = UniversalSentenceEncoder()
@@ -19,6 +12,12 @@ class USEMetric(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
+        """Calculates average USE similarity on all successfull attacks
+
+        Args:
+            results (``AttackResult`` objects):
+                Attack results for each instance in dataset
+        """
         self.results = results
 
         for i, result in enumerate(self.results):

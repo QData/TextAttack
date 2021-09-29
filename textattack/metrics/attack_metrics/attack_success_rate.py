@@ -1,15 +1,15 @@
+"""
+
+Metrics on AttackSuccessRate
+=============================
+
+"""
+
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.metrics import Metric
 
 
 class AttackSuccessRate(Metric):
-    """Calculates all metrics related to number of succesful, failed and skipped results in an attack
-
-    Args:
-    results (:obj::`list`:class:`~textattack.goal_function_results.GoalFunctionResult`):
-                    Attack results for each instance in dataset
-    """
-
     def __init__(self):
         self.failed_attacks = 0
         self.skipped_attacks = 0
@@ -18,6 +18,12 @@ class AttackSuccessRate(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
+        """Calculates all metrics related to number of succesful, failed and skipped results in an attack
+
+        Args:
+            results (``AttackResult`` objects):
+                Attack results for each instance in dataset
+        """
         self.results = results
         self.total_attacks = len(self.results)
 

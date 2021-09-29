@@ -1,9 +1,9 @@
 """
 
-perplexity:
+Metrics on Quality
 ======================
 
-TextAttack allows users to use their own metrics on adversarial examples or select common metrics to display.
+TextAttack provide users common metrics on text examples' quality.
 
 
 """
