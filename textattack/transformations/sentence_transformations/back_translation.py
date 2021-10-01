@@ -1,11 +1,14 @@
-from .sentence_transformation import SentenceTransformation
 from transformers import MarianMTModel, MarianTokenizer
+
 from textattack.shared import AttackedText
 
-class BackTranslation(SentenceTransformation):
-    """A type of sentence level transformation that takes in a text input, translates it into target language and
-    translates it back to source language.
+from .sentence_transformation import SentenceTransformation
 
+
+class BackTranslation(SentenceTransformation):
+    """A type of sentence level transformation that takes in a text input,
+    translates it into target language and translates it back to source
+    language.
 
     letters_to_insert (string): letters allowed for insertion into words
     (used by some char-based transformations)
@@ -15,8 +18,14 @@ class BackTranslation(SentenceTransformation):
     src_model: translation model from huggingface that translates from source language to target language
     target_model: translation model from huggingface that translates from target language to source language
     """
-    def __init__(self, src_lang = "en", target_lang = "es", src_model = 'Helsinki-NLP/opus-mt-ROMANCE-en',
-                 target_model = 'Helsinki-NLP/opus-mt-en-ROMANCE'):
+
+    def __init__(
+        self,
+        src_lang="en",
+        target_lang="es",
+        src_model="Helsinki-NLP/opus-mt-ROMANCE-en",
+        target_model="Helsinki-NLP/opus-mt-en-ROMANCE",
+    ):
         self.src_lang = src_lang
         self.target_lang = target_lang
         self.target_model = MarianMTModel.from_pretrained(target_model)
@@ -30,7 +39,7 @@ class BackTranslation(SentenceTransformation):
         if lang == "en":
             src_texts.append(input[0])
         else:
-            src_texts.append(">>"+lang+"<< "+input[0])
+            src_texts.append(">>" + lang + "<< " + input[0])
 
         # tokenize the input
         encoded_input = tokenizer.prepare_seq2seq_batch(src_texts, return_tensors="pt")
@@ -44,11 +53,16 @@ class BackTranslation(SentenceTransformation):
         transformed_texts = []
         current_text = current_text.text
 
-        #translates source to target language and back to source language
-        target_language_text = self.translate([current_text], self.target_model, self.target_tokenizer, self.target_lang)
-        src_language_text = self.translate(target_language_text, self.src_model, self.src_tokenizer, self.src_lang)
+        # translates source to target language and back to source language
+        target_language_text = self.translate(
+            [current_text], self.target_model, self.target_tokenizer, self.target_lang
+        )
+        src_language_text = self.translate(
+            target_language_text, self.src_model, self.src_tokenizer, self.src_lang
+        )
         transformed_texts.append(AttackedText(src_language_text[0]))
         return transformed_texts
+
 
 """
 List of supported languages

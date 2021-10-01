@@ -27,8 +27,8 @@ def s3_url(uri):
 
 
 def download_from_s3(folder_name, skip_if_cached=True):
-    """Folder name will be saved as `<cache_dir>/textattack/<folder_name>`. If it
-    doesn't exist on disk, the zip file will be downloaded and extracted.
+    """Folder name will be saved as `<cache_dir>/textattack/<folder_name>`. If
+    it doesn't exist on disk, the zip file will be downloaded and extracted.
 
     Args:
         folder_name (str): path to folder or file in cache
@@ -68,8 +68,9 @@ def download_from_s3(folder_name, skip_if_cached=True):
 
 
 def download_from_url(url, save_path, skip_if_cached=True):
-    """Downloaded file will be saved under `<cache_dir>/textattack/<save_path>`. If it
-    doesn't exist on disk, the zip file will be downloaded and extracted.
+    """Downloaded file will be saved under
+    `<cache_dir>/textattack/<save_path>`. If it doesn't exist on disk, the zip
+    file will be downloaded and extracted.
 
     Args:
         url (str): URL path from which to download.
