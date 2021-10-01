@@ -47,3 +47,34 @@ You can also install other miscallenous optional dependencies by running
 To install both groups of packages, run
 
     pip install textattack[tensorflow,optional]
+
+
+
+## FAQ on installation
+
+For many of the dependent library issues, the following command is the first you could try: 
+```bash
+pip install --force-reinstall textattack
+```
+
+OR 
+```bash
+pip install textattack[tensorflow,optional]
+```
+
+
+Besides, we highly recommend you to use virtual environment for textattack use, 
+see [information here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment). Here is one conda example: 
+
+```bash
+conda create -n textattackenv python=3.7
+conda activate textattackenv
+conda env list
+```
+
+If you want to use the most-up-to-date version of textattack (normally with newer bug fixes), you can run the following: 
+```bash
+git clone https://github.com/QData/TextAttack.git
+cd TextAttack
+pip install .[dev]
+```
