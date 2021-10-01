@@ -275,7 +275,7 @@ class DatasetArgs:
                     dataset_args = (dataset_args,)
             if args.dataset_split:
                 if len(dataset_args) > 1:
-                    dataset_args[2] = args.dataset_split
+                    dataset_args = dataset_args[:1] + (args.dataset_split,) + dataset_args[2:]
                     dataset = textattack.datasets.HuggingFaceDataset(
                         *dataset_args, shuffle=False
                     )
