@@ -1,3 +1,5 @@
+import random
+
 from transformers import MarianMTModel, MarianTokenizer
 
 from textattack.shared import AttackedText
@@ -17,6 +19,7 @@ class BackTranslation(SentenceTransformation):
     target_lang (string): target language, for the list of supported language check bottom of this page
     src_model: translation model from huggingface that translates from source language to target language
     target_model: translation model from huggingface that translates from target language to source language
+    chained_back_translation: run back translation in a chain for more perturbation (for example, en-es-en-fr-en)
     """
 
     def __init__(
@@ -25,6 +28,7 @@ class BackTranslation(SentenceTransformation):
         target_lang="es",
         src_model="Helsinki-NLP/opus-mt-ROMANCE-en",
         target_model="Helsinki-NLP/opus-mt-en-ROMANCE",
+        chained_back_translation=0,
     ):
         self.src_lang = src_lang
         self.target_lang = target_lang
@@ -32,6 +36,7 @@ class BackTranslation(SentenceTransformation):
         self.target_tokenizer = MarianTokenizer.from_pretrained(target_model)
         self.src_model = MarianMTModel.from_pretrained(src_model)
         self.src_tokenizer = MarianTokenizer.from_pretrained(src_model)
+        self.chained_back_translation = chained_back_translation
 
     def translate(self, input, model, tokenizer, lang="es"):
         # change the text to model's format
@@ -39,7 +44,9 @@ class BackTranslation(SentenceTransformation):
         if lang == "en":
             src_texts.append(input[0])
         else:
-            src_texts.append(">>" + lang + "<< " + input[0])
+            if ">>" and "<<" not in lang:
+                lang = ">>" + lang + "<<"
+            src_texts.append(lang + input[0])
 
         # tokenize the input
         encoded_input = tokenizer.prepare_seq2seq_batch(src_texts, return_tensors="pt")
@@ -53,7 +60,29 @@ class BackTranslation(SentenceTransformation):
         transformed_texts = []
         current_text = current_text.text
 
-        # translates source to target language and back to source language
+        # to perform chained back translation, a random list of target languages are selected from the provided model
+        if self.chained_back_translation:
+            list_of_target_lang = random.sample(
+                self.target_tokenizer.supported_language_codes,
+                self.chained_back_translation,
+            )
+            for target_lang in list_of_target_lang:
+                target_language_text = self.translate(
+                    [current_text],
+                    self.target_model,
+                    self.target_tokenizer,
+                    target_lang,
+                )
+                src_language_text = self.translate(
+                    target_language_text,
+                    self.src_model,
+                    self.src_tokenizer,
+                    self.src_lang,
+                )
+                current_text = src_language_text[0]
+            return [AttackedText(current_text)]
+
+        # translates source to target language and back to source language (single back translation)
         target_language_text = self.translate(
             [current_text], self.target_model, self.target_tokenizer, self.target_lang
         )
