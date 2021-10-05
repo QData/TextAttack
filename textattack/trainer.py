@@ -23,10 +23,9 @@ from .attacker import Attacker
 from .model_args import HUGGINGFACE_MODELS
 from .models.helpers import LSTMForClassification, WordCNNForClassification
 from .models.wrappers import ModelWrapper
-from .shared.utils.install import logger
 from .training_args import CommandLineTrainingArgs, TrainingArgs
 
-logger = logger
+logger = textattack.shared.utils.logger
 
 
 class Trainer:
