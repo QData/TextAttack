@@ -24,8 +24,9 @@ from .model_args import HUGGINGFACE_MODELS
 from .models.helpers import LSTMForClassification, WordCNNForClassification
 from .models.wrappers import ModelWrapper
 from .training_args import CommandLineTrainingArgs, TrainingArgs
+import textattack.shared as util_shared
 
-logger = textattack.shared.logger
+logger = util_shared.logger
 
 
 class Trainer:
