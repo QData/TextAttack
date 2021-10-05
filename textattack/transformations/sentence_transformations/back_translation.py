@@ -45,7 +45,7 @@ class BackTranslation(SentenceTransformation):
             src_texts.append(input[0])
         else:
             if ">>" and "<<" not in lang:
-                lang = ">>" + lang + "<<"
+                lang = ">>" + lang + "<< "
             src_texts.append(lang + input[0])
 
         # tokenize the input
