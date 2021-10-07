@@ -19,5 +19,10 @@ class Metric(ABC):
 
     @abstractmethod
     def calculate(self, results):
-        """ Abstract function for computing any values which are to be calculated as a whole during initialization"""
+        """Abstract function for computing any values which are to be calculated as a whole during initialization
+        Args:
+            results (``AttackResult`` objects):
+                    Attack results for each instance in dataset
+        """
+
         raise NotImplementedError

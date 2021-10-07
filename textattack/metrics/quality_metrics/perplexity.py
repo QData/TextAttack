@@ -1,3 +1,10 @@
+"""
+
+Perplexity Metric:
+======================
+
+"""
+
 import torch
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
@@ -7,13 +14,6 @@ import textattack.shared.utils
 
 
 class Perplexity(Metric):
-    """Calculates average Perplexity on all successfull attacks using a pre-trained small GPT-2 model
-
-    Args:
-    results (:obj::`list`:class:`~textattack.goal_function_results.GoalFunctionResult`):
-                    Attack results for each instance in dataset
-    """
-
     def __init__(self):
         self.all_metrics = {}
         self.original_candidates = []
@@ -23,9 +23,15 @@ class Perplexity(Metric):
         self.ppl_tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
         self.ppl_model.eval()
         self.max_length = self.ppl_model.config.n_positions
-        self.stride = 128
+        self.stride = 512
 
     def calculate(self, results):
+        """Calculates average Perplexity on all successfull attacks using a pre-trained small GPT-2 model
+
+        Args:
+            results (``AttackResult`` objects):
+                Attack results for each instance in dataset
+        """
         self.results = results
         self.original_candidates_ppl = []
         self.successful_candidates_ppl = []

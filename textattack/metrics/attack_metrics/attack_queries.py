@@ -1,3 +1,10 @@
+"""
+
+Metrics on AttackQueries
+=========================
+
+"""
+
 import numpy as np
 
 from textattack.attack_results import SkippedAttackResult
@@ -5,17 +12,17 @@ from textattack.metrics import Metric
 
 
 class AttackQueries(Metric):
-    """Calculates all metrics related to number of queries in an attack
-
-    Args:
-    results (:obj::`list`:class:`~textattack.goal_function_results.GoalFunctionResult`):
-                    Attack results for each instance in dataset
-    """
-
     def __init__(self):
         self.all_metrics = {}
 
     def calculate(self, results):
+        """Calculates all metrics related to number of queries in an attack
+
+        Args:
+            results (``AttackResult`` objects):
+                Attack results for each instance in dataset
+        """
+
         self.results = results
         self.num_queries = np.array(
             [

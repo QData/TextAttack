@@ -1,3 +1,10 @@
+"""
+
+Metrics on perturbed words
+=============================
+
+"""
+
 import numpy as np
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
@@ -13,6 +20,13 @@ class WordsPerturbed(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
+        """Calculates all metrics related to perturbed words in an attack
+
+        Args:
+            results (``AttackResult`` objects):
+                Attack results for each instance in dataset
+        """
+
         self.results = results
         self.total_attacks = len(self.results)
         self.all_num_words = np.zeros(len(self.results))
