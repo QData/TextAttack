@@ -499,15 +499,21 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 You can then run attacks on samples from this dataset by adding the argument `--dataset-from-file my_dataset.py`.
 
 
+
+#### Dataset loading via other mechanism, see: [more details at here](https://textattack.readthedocs.io/en/latest/api/datasets.html)
+
+```python
+import textattack
+my_dataset = [("text",label),....]
+new_dataset = textattack.datasets.Dataset(my_dataset)
+```
+
+
+
 #### Dataset via AttackedText class
 
 To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
 which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
-
-
-
-#### Dataset loading via other mechanism, see: [here](https://textattack.readthedocs.io/en/latest/api/datasets.html)
-
 
 
 ### Attacks and how to design a new attack 
