@@ -13,6 +13,7 @@ AUGMENTATION_RECIPE_NAMES = {
     "eda": "textattack.augmentation.EasyDataAugmenter",
     "checklist": "textattack.augmentation.CheckListAugmenter",
     "clare": "textattack.augmentation.CLAREAugmenter",
+    "back_trans": "textattack.augmentation.BackTranslationAugmenter",
 }
 
 
