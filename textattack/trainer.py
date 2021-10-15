@@ -16,6 +16,7 @@ import transformers
 
 import textattack
 
+from . import shared
 from .attack import Attack
 from .attack_args import AttackArgs
 from .attack_results import MaximizedAttackResult, SuccessfulAttackResult
@@ -25,7 +26,7 @@ from .models.helpers import LSTMForClassification, WordCNNForClassification
 from .models.wrappers import ModelWrapper
 from .training_args import CommandLineTrainingArgs, TrainingArgs
 
-logger = textattack.shared.logger
+logger = shared.logger
 
 
 class Trainer:

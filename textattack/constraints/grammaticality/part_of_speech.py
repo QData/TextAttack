@@ -9,13 +9,14 @@ import lru
 import nltk
 
 import textattack
+from textattack import shared
 from textattack.constraints import Constraint
 from textattack.shared.validators import transformation_consists_of_word_swaps
 
 # Set global flair device to be TextAttack's current device
-flair.device = textattack.shared.utils.device
+flair.device = shared.utils.device
 
-stanza = textattack.shared.utils.LazyLoader("stanza", globals(), "stanza")
+stanza = shared.utils.LazyLoader("stanza", globals(), "stanza")
 
 
 class PartOfSpeech(Constraint):
