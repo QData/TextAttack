@@ -1,7 +1,3 @@
-def test_imports():
-    from textattack.metrics.quality_metrics import Perplexity, USEMetric
-
-
 def test_perplexity():
     import transformers
 
