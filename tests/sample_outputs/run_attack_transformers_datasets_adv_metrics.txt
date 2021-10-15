@@ -63,6 +63,6 @@ that [[lodes]] its characters and communicates [[somethNng]] [[rathrer]] [[beaut
 | Average num. words per input: | 8.33    |
 | Avg num queries:              | 22.67   |
 | Average Original Perplexity:  | 734./*/ |
-| Average Attack Perplexity:    | 1744/.*/|
+| Average Attack Perplexity:    | 1744./*/|
 | Average Attack USE Score:     | 0.76    |
 +-------------------------------+---------+
