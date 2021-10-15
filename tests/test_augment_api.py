@@ -91,16 +91,3 @@ def test_deletion_augmenter():
     augmented_text_list = augmenter.augment(s)
     augmented_s = "United States"
     assert augmented_s in augmented_text_list
-
-
-def test_back_translation_augmenter():
-    from textattack.augmentation import Augmenter
-    from textattack.transformations.sentence_transformations import back_translation
-
-    augmenter = Augmenter(
-        transformation=back_translation.BackTranslation(), transformations_per_example=1
-    )
-    s = "What on earth are you doing?"
-    augmented_text_list = augmenter.augment(s)
-    augmented_s = "What the hell are you doing?"
-    assert augmented_s in augmented_text_list
