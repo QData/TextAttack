@@ -1,11 +1,11 @@
 def test_imports():
-    from textattack.metrics.quality_metrics import Perplexity
-    from textattack.metrics.quality_metrics import USEMetric
+    from textattack.metrics.quality_metrics import Perplexity, USEMetric
 
 
 def test_perplexity():
-    import textattack
     import transformers
+
+    import textattack
 
     model = transformers.AutoModelForSequenceClassification.from_pretrained(
         "distilbert-base-uncased-finetuned-sst-2-english"
