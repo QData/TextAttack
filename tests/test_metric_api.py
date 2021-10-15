@@ -23,4 +23,4 @@ def test_perplexity():
     results = attacker.attack_dataset()
     ppl = textattack.metrics.quality_metrics.Perplexity().calculate(results)
 
-    assert ppl["avg_original_perplexity"] == 1854.74
+    assert int(ppl["avg_original_perplexity"]) == int(1854.74)
