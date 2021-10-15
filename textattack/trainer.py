@@ -25,7 +25,7 @@ from .models.helpers import LSTMForClassification, WordCNNForClassification
 from .models.wrappers import ModelWrapper
 from .training_args import CommandLineTrainingArgs, TrainingArgs
 
-logger = textattack.shared.utils.logger
+logger = textattack.shared.logger
 
 
 class Trainer:

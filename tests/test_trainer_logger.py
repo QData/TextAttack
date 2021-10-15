@@ -7,6 +7,8 @@ from textattack.shared import GensimWordEmbedding, WordEmbedding
 
 
 def test_logger():
+    pass
 
 
 def test_trainer():
+    pass
