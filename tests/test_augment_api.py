@@ -91,3 +91,34 @@ def test_deletion_augmenter():
     augmented_text_list = augmenter.augment(s)
     augmented_s = "United States"
     assert augmented_s in augmented_text_list
+
+
+def test_high_yield_fast_augment():
+    from textattack.augmentation import DeletionAugmenter
+
+    augmenter_hy = DeletionAugmenter(
+        pct_words_to_swap=0.1, transformations_per_example=2, high_yield=True
+    )
+    augmenter_fa = DeletionAugmenter(
+        pct_words_to_swap=0.1,
+        transformations_per_example=3,
+        high_yield=True,
+        fast_augment=True,
+    )
+    augmenter = DeletionAugmenter(pct_words_to_swap=0.1, transformations_per_example=2)
+    s = "The dragon warrior is a panda"
+    augmented_text_list_hy = augmenter_hy.augment(s)
+    augmented_text_list_fa = augmenter_fa.augment(s)
+    augmented_text_list = augmenter.augment(s)
+
+    check1 = (
+        len(augmented_text_list_hy)
+        > len(augmented_text_list)
+        == len(augmented_text_list_fa)
+    )
+    check2 = True
+    for augmented_text in augmented_text_list:
+        if augmented_text not in augmented_text_list_hy:
+            check2 = False
+            break
+    assert check1 and check2
