@@ -1,6 +1,8 @@
 def test_perplexity():
     from collections import OrderedDict
+
     import transformers
+
     import textattack
 
     model = transformers.AutoModelForSequenceClassification.from_pretrained(
