@@ -173,8 +173,6 @@ class AttackArgs:
             Disable displaying individual attack results to stdout.
         silent (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Disable all logging (except for errors). This is stronger than :obj:`disable_stdout`.
-        enable_advance_metrics (:obj:`bool`, `optional`, defaults to :obj:`False`):
-            Enable calculation and display of optional advance post-hoc metrics like perplexity, grammar errors, etc.
     """
 
     num_examples: int = 10
@@ -195,7 +193,6 @@ class AttackArgs:
     log_to_wandb: str = None
     disable_stdout: bool = False
     silent: bool = False
-    enable_advance_metrics: bool = False
 
     def __post_init__(self):
         if self.num_successful_examples:
@@ -353,12 +350,6 @@ class AttackArgs:
             default=default_obj.silent,
             help="Disable all logging",
         )
-        parser.add_argument(
-            "--enable-advance-metrics",
-            action="store_true",
-            default=default_obj.enable_advance_metrics,
-            help="Enable calculation and display of optional advance post-hoc metrics like perplexity, USE distance, etc.",
-        )
 
         return parser
 
@@ -455,6 +446,8 @@ class _CommandLineAttackArgs:
             The maximum number of items to keep in the model results cache at once.
         constraint-cache-size (:obj:`int`, `optional`, defaults to :obj:`2**18`):
             The maximum number of items to keep in the constraints cache at once.
+        enable_advance_metrics (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            Enable calculation and display of optional advance post-hoc metrics like perplexity, grammar errors, etc.
     """
 
     transformation: str = "word-swap-embedding"
@@ -468,6 +461,7 @@ class _CommandLineAttackArgs:
     model_batch_size: int = 32
     model_cache_size: int = 2 ** 18
     constraint_cache_size: int = 2 ** 18
+    enable_advance_metrics: bool = False
 
     @classmethod
     def _add_parser_args(cls, parser):
@@ -551,6 +545,12 @@ class _CommandLineAttackArgs:
             type=int,
             default=default_obj.constraint_cache_size,
             help="The maximum number of items to keep in the constraints cache at once.",
+        )
+        parser.add_argument(
+            "--enable-advance-metrics",
+            action="store_true",
+            default=default_obj.enable_advance_metrics,
+            help="Enable calculation and display of optional advance post-hoc metrics like perplexity, USE distance, etc.",
         )
 
         return parser
