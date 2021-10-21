@@ -14,4 +14,5 @@ from .recipes import (
     CheckListAugmenter,
     DeletionAugmenter,
     CLAREAugmenter,
+    BackTranslationAugmenter,
 )

@@ -57,7 +57,8 @@ class AugmentCommand(TextAttackCommand):
                             "\tAugmentation recipe name ('r' to see available recipes):  "
                         )
                         if recipe == "r":
-                            print("\n\twordnet, embedding, charswap, eda, checklist\n")
+                            recipe_display = " ".join(AUGMENTATION_RECIPE_NAMES.keys())
+                            print(f"\n\t{recipe_display}\n")
                             args.recipe = input("\tAugmentation recipe name:  ")
                         else:
                             args.recipe = recipe

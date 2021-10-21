@@ -35,6 +35,7 @@ ATTACK_RECIPE_NAMES = {
     "pso": "textattack.attack_recipes.PSOZang2020",
     "checklist": "textattack.attack_recipes.CheckList2020",
     "clare": "textattack.attack_recipes.CLARE2020",
+    "a2t": "textattack.attack_recipes.A2TYoo2021",
 }
 
 

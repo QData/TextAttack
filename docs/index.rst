@@ -10,6 +10,7 @@ TextAttack Documentation
    Installation <0_get_started/installation.md>
    Command-Line Usage <0_get_started/command_line_usage.md>
    Quick API Usage  <0_get_started/quick_api_tour.rst>
+   FAQ <1start/FAQ.md>
 
 .. toctree::
    :maxdepth: 6
@@ -33,7 +34,6 @@ TextAttack Documentation
    1start/api-design-tips.md
    1start/multilingual-visualization.md
    1start/support.md
-   1start/FAQ.md
    
  
 .. toctree::

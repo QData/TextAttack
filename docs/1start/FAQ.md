@@ -33,6 +33,12 @@ For help and realtime updates related to TextAttack, please [join the TextAttack
 pip install --force-reinstall textattack
 ```
 
+OR 
+```bash
+pip install textattack[tensorflow,optional]
+```
+
+
 Besides, we highly recommend you to use virtual environment for textattack use, 
 see [information here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment). Here is one conda example: 
 
@@ -58,12 +64,10 @@ textattack train --model-name-or-path lstm --dataset yelp_polarity  --epochs 50 
 ```
 
 
-*Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
+*Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs*:
 ```bash
 textattack train --model-name-or-path bert-base-uncased --dataset glue^cola --per-device-train-batch-size 8 --epochs 5
 ```
-
-
 
 
 ### 2. Use Custom  Models  
@@ -106,13 +110,20 @@ You can then run attacks on samples from this dataset by adding the argument `--
 
 
 
+#### Dataset loading via other mechanism, see: [more details at here](https://textattack.readthedocs.io/en/latest/api/datasets.html)
+
+```python
+import textattack
+my_dataset = [("text",label),....]
+new_dataset = textattack.datasets.Dataset(my_dataset)
+```
+
+
 #### Custom Dataset via AttackedText class
 
 To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
 which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
 
-
-#### Custome Dataset via Data Frames or other python data objects (*coming soon*)
 
 
 ### 4. Benchmarking Attacks
@@ -138,3 +149,9 @@ This modular design unifies adversarial attack methods into one system, enables 
 
 
 
+### 6. The attacking is too slow 
+
+
+- **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+
+- If you want to attack Keras models in parallel, please check out `examples/attack/attack_keras_parallel.py` instead. (This is a hotfix for issues caused by a recent update of Keras in TF)
