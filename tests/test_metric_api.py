@@ -17,7 +17,8 @@ def test_perplexity():
         log_to_csv="log.csv",
         checkpoint_interval=5,
         checkpoint_dir="checkpoints",
-        disable_stdout=True,
+        disable_stdout=False,
+        enable_advance_metrics=True,
     )
     attacker = textattack.Attacker(attack, dataset, attack_args)
     results = attacker.attack_dataset()
