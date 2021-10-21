@@ -1,6 +1,4 @@
 def test_perplexity():
-    from collections import OrderedDict
-
     import transformers
 
     import textattack
@@ -13,8 +11,10 @@ def test_perplexity():
     )
     model_wrapper = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
     attack = textattack.attack_recipes.DeepWordBugGao2018.build(model_wrapper)
-    sample_text = "hide new secretions from the parental units"
-    dataset = [(OrderedDict("text", sample_text), 0)]
+    sample_text = "hide new secretions from the parental units "
+    dataset = textattack.datasets.Dataset(
+        [(sample_text, 0)], label_names=["Positive", "Negative"]
+    )
     attack_args = textattack.AttackArgs(
         num_examples=1,
         log_to_csv="log.csv",
