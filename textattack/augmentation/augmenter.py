@@ -7,6 +7,7 @@ import random
 import tqdm
 
 from textattack.constraints import PreTransformationConstraint
+from textattack.metrics.quality_metrics import Perplexity, USEMetric
 from textattack.shared import AttackedText, utils
 
 
@@ -28,6 +29,7 @@ class Augmenter:
             single one.
         fast_augment: Stops additional transformation runs when number of successful augmentations reaches
             transformations_per_example
+        advanced_metrics: return perplexity and USE Score of augmentation
     """
 
     def __init__(
@@ -38,6 +40,7 @@ class Augmenter:
         transformations_per_example=1,
         high_yield=False,
         fast_augment=False,
+        advanced_metrics=False,
     ):
         assert (
             transformations_per_example > 0
@@ -51,6 +54,7 @@ class Augmenter:
         self.pre_transformation_constraints = []
         self.high_yield = high_yield
         self.fast_augment = fast_augment
+        self.advanced_metrics = advanced_metrics
         for constraint in constraints:
             if isinstance(constraint, PreTransformationConstraint):
                 self.pre_transformation_constraints.append(constraint)
@@ -84,6 +88,7 @@ class Augmenter:
         num_words_to_swap = max(
             int(self.pct_words_to_swap * len(attacked_text.words)), 1
         )
+        augmentation_results = []
         for _ in range(self.transformations_per_example):
             current_text = attacked_text
             words_swapped = len(current_text.attack_attrs["modified_indices"])
@@ -148,7 +153,18 @@ class Augmenter:
                     )
                 break
 
-        return sorted([at.printable_text() for at in all_transformed_texts])
+        perturbed_texts = sorted([at.printable_text() for at in all_transformed_texts])
+
+        if self.advanced_metrics:
+            for transformed_texts in all_transformed_texts:
+                augmentation_results.append(
+                    AugmentationResult(original_text, transformed_texts)
+                )
+            perplexity_stats = Perplexity().calculate(augmentation_results)
+            use_stats = USEMetric().calculate(augmentation_results)
+            return perturbed_texts, perplexity_stats, use_stats
+
+        return perturbed_texts
 
     def augment_many(self, text_list, show_progress=False):
         """Returns all possible augmentations of a list of strings according to
@@ -204,3 +220,13 @@ class Augmenter:
         main_str += "\n  " + "\n  ".join(lines) + "\n"
         main_str += ")"
         return main_str
+
+
+class AugmentationResult:
+    def __init__(self, text1, text2):
+        self.original_result = self.tempResult(text1)
+        self.perturbed_result = self.tempResult(text2)
+
+    class tempResult:
+        def __init__(self, text):
+            self.attacked_text = text
