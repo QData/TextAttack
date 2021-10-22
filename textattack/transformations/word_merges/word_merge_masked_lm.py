@@ -162,6 +162,7 @@ class WordMergeMaskedLM(Transformation):
             index_to_modify = merge_indices[i]
             word_at_index = current_text.words[index_to_modify]
             for word in merged_words[i]:
+                word = word.strip("Ġ")
                 if word != word_at_index:
                     temp_text = current_text.delete_word_at_index(index_to_modify + 1)
                     transformed_texts.append(
