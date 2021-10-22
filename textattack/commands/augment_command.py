@@ -31,6 +31,7 @@ class AugmentCommand(TextAttackCommand):
                 transformations_per_example=args.transformations_per_example,
                 high_yield=args.high_yield,
                 fast_augment=args.fast_augment,
+                advanced_metrics=args.advanced_metrics
             )
             print("--------------------------------------------------------")
 
@@ -88,8 +89,18 @@ class AugmentCommand(TextAttackCommand):
                 print("\nAugmenting...\n")
                 print("--------------------------------------------------------")
 
-                for augmentation in augmenter.augment(text):
-                    print(augmentation, "\n")
+                if args.advanced_metrics:
+                    results = augmenter.augment(text)
+                    print("Augmentations:\n")
+                    for augmentation in results[0]:
+                        print(augmentation, "\n")
+                    print()
+                    print(f"Perplexity scores: {results[1]}\n")
+                    print(f"USE score: {results[2]}\n")
+
+                else:
+                    for augmentation in augmenter.augment(text):
+                        print(augmentation, "\n")
                 print("--------------------------------------------------------")
         else:
             textattack.shared.utils.set_seed(args.random_seed)
@@ -136,6 +147,7 @@ class AugmentCommand(TextAttackCommand):
                 transformations_per_example=args.transformations_per_example,
                 high_yield=args.high_yield,
                 fast_augment=args.fast_augment,
+                advanced_metrics=args.advanced_metrics
             )
 
             output_rows = []

@@ -37,6 +37,7 @@ class AugmenterArgs:
     interactive: bool = False
     fast_augment: bool = False
     high_yield: bool = False
+    advanced_metrics: bool = False
 
     @classmethod
     def _add_parser_args(cls, parser):
@@ -106,13 +107,19 @@ class AugmenterArgs:
             "--high_yield",
             default=False,
             action="store_true",
-            help="Whether to run attacks with high yield.",
+            help="run attacks with high yield.",
         )
         parser.add_argument(
             "--fast_augment",
             default=False,
             action="store_true",
             help="faster augmentation but may use only a few transformations.",
+        )
+        parser.add_argument(
+            "--advanced_metrics",
+            default=False,
+            action="store_true",
+            help="return perplexity and USE score",
         )
 
         return parser
