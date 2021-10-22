@@ -1,6 +1,4 @@
 def test_perplexity():
-    import transformers
-
     import textattack
     from textattack.attack_results import SuccessfulAttackResult
     from textattack.goal_function_results.classification_goal_function_result import (
