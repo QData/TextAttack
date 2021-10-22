@@ -17,7 +17,7 @@ class WordSwapChangeName(WordSwap):
         first_only=False,
         last_only=False,
         confidence_score=0.7,
-        language = "en",
+        language="en",
         **kwargs
     ):
         """Transforms an input by replacing names of recognized name entity.
@@ -71,17 +71,25 @@ class WordSwapChangeName(WordSwap):
     def _get_lastname(self, word):
         """Return a list of random last names."""
         if self.language == "esp" or "spanish":
-            return np.random.choice(PERSON_NAMES["last-spanish"], self.num_name_replacements)
+            return np.random.choice(
+                PERSON_NAMES["last-spanish"], self.num_name_replacements
+            )
         elif self.language == "fra" or "french":
-            return np.random.choice(PERSON_NAMES["last-french"], self.num_name_replacements)
+            return np.random.choice(
+                PERSON_NAMES["last-french"], self.num_name_replacements
+            )
         else:
             return np.random.choice(PERSON_NAMES["last"], self.num_name_replacements)
 
     def _get_firstname(self, word):
         """Return a list of random first names."""
         if self.language == "esp" or "spanish":
-            return np.random.choice(PERSON_NAMES["first-spanish"], self.num_name_replacements)
+            return np.random.choice(
+                PERSON_NAMES["first-spanish"], self.num_name_replacements
+            )
         elif self.language == "fra" or "french":
-            return np.random.choice(PERSON_NAMES["first-french"], self.num_name_replacements)
+            return np.random.choice(
+                PERSON_NAMES["first-french"], self.num_name_replacements
+            )
         else:
             return np.random.choice(PERSON_NAMES["first"], self.num_name_replacements)

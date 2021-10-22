@@ -25,7 +25,7 @@ def idx_to_words(ls, words):
 
 
 class WordSwapChangeLocation(WordSwap):
-    def __init__(self, n=3, confidence_score=0.7, language = "en", **kwargs):
+    def __init__(self, n=3, confidence_score=0.7, language="en", **kwargs):
         """Transformation that changes recognized locations of a sentence to
         another location that is given in the location map.
 
@@ -81,10 +81,10 @@ class WordSwapChangeLocation(WordSwap):
             language = "-spanish"
         elif self.language == "fra" or "french":
             language = "-french"
-        if word in NAMED_ENTITIES["country"+language]:
-            return np.random.choice(NAMED_ENTITIES["country"+language], self.n)
-        elif word in NAMED_ENTITIES["nationality"+language]:
-            return np.random.choice(NAMED_ENTITIES["nationality"+language], self.n)
+        if word in NAMED_ENTITIES["country" + language]:
+            return np.random.choice(NAMED_ENTITIES["country" + language], self.n)
+        elif word in NAMED_ENTITIES["nationality" + language]:
+            return np.random.choice(NAMED_ENTITIES["nationality" + language], self.n)
         elif word in NAMED_ENTITIES["city"]:
             return np.random.choice(NAMED_ENTITIES["city"], self.n)
         return []
