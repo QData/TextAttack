@@ -31,7 +31,7 @@ class AugmentCommand(TextAttackCommand):
                 transformations_per_example=args.transformations_per_example,
                 high_yield=args.high_yield,
                 fast_augment=args.fast_augment,
-                advanced_metrics=args.advanced_metrics
+                advanced_metrics=args.advanced_metrics,
             )
             print("--------------------------------------------------------")
 
@@ -147,7 +147,7 @@ class AugmentCommand(TextAttackCommand):
                 transformations_per_example=args.transformations_per_example,
                 high_yield=args.high_yield,
                 fast_augment=args.fast_augment,
-                advanced_metrics=args.advanced_metrics
+                advanced_metrics=args.advanced_metrics,
             )
 
             output_rows = []
