@@ -15,7 +15,7 @@ from textattack.transformations import (
 from .attack_recipe import AttackRecipe
 
 
-class FrenchRecipe(AttackRecipe):
+class SpanishRecipe(AttackRecipe):
     @staticmethod
     def build(model_wrapper):
         transformation = CompositeTransformation(
