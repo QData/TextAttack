@@ -94,18 +94,18 @@ def test_deletion_augmenter():
 
 
 def test_high_yield_fast_augment():
-    from textattack.augmentation import DeletionAugmenter
+    from textattack.augmentation import WordNetAugmenter
 
-    augmenter_hy = DeletionAugmenter(
+    augmenter_hy = WordNetAugmenter(
         pct_words_to_swap=0.1, transformations_per_example=2, high_yield=True
     )
-    augmenter_fa = DeletionAugmenter(
+    augmenter_fa = WordNetAugmenter(
         pct_words_to_swap=0.1,
-        transformations_per_example=3,
+        transformations_per_example=2,
         high_yield=True,
         fast_augment=True,
     )
-    augmenter = DeletionAugmenter(pct_words_to_swap=0.1, transformations_per_example=2)
+    augmenter = WordNetAugmenter(pct_words_to_swap=0.1, transformations_per_example=2)
     s = "The dragon warrior is a panda"
     augmented_text_list_hy = augmenter_hy.augment(s)
     augmented_text_list_fa = augmenter_fa.augment(s)
@@ -113,12 +113,13 @@ def test_high_yield_fast_augment():
 
     check1 = (
         len(augmented_text_list_hy)
-        > len(augmented_text_list)
-        == len(augmented_text_list_fa)
+        >= len(augmented_text_list_fa)
+        >= len(augmented_text_list)
     )
     check2 = True
     for augmented_text in augmented_text_list:
         if augmented_text not in augmented_text_list_hy:
             check2 = False
             break
+
     assert check1 and check2
