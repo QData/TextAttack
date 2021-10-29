@@ -20,12 +20,12 @@ class FrenchRecipe(AttackRecipe):
     def build(model_wrapper):
         transformation = CompositeTransformation(
             [
-                WordSwapWordNet(language="fra"),
-                WordSwapChangeLocation(language="fra"),
-                WordSwapChangeName(language="fra"),
+                WordSwapWordNet(language="esp"),
+                WordSwapChangeLocation(language="esp"),
+                WordSwapChangeName(language="esp"),
             ]
         )
-        constraints = [RepeatModification(), StopwordModification("french")]
+        constraints = [RepeatModification(), StopwordModification("spanish")]
         goal_function = UntargetedClassification(model_wrapper)
         search_method = GreedyWordSwapWIR()
         return Attack(goal_function, constraints, transformation, search_method)
