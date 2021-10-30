@@ -7,7 +7,12 @@ Class for calculating perplexity from AttackResults
 """
 
 import torch
-from transformers import GPT2LMHeadModel, GPT2Tokenizer
+from transformers import (
+    AutoModelForMaskedLM,
+    AutoTokenizer,
+    GPT2LMHeadModel,
+    GPT2Tokenizer,
+)
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.metrics import Metric
@@ -27,7 +32,6 @@ class Perplexity(Metric):
             self.ppl_model.eval()
             self.max_length = self.ppl_model.config.n_positions
         else:
-            from transformers import AutoModelForMaskedLM, AutoTokenizer
 
             self.ppl_model = AutoModelForMaskedLM.from_pretrained(model_name)
             self.ppl_tokenizer = AutoTokenizer.from_pretrained(model_name)

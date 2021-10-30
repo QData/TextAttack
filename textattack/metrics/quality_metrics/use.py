@@ -37,7 +37,7 @@ class USEMetric(Metric):
             )
             >> attacker = textattack.Attacker(attack, dataset, attack_args)
             >> results = attacker.attack_dataset()
-            >> ppl = textattack.metrics.quality_metrics.USEMetric().calculate(results)
+            >> usem = textattack.metrics.quality_metrics.USEMetric().calculate(results)
         """
 
         self.results = results
