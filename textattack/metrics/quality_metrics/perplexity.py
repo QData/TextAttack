@@ -15,15 +15,26 @@ import textattack.shared.utils
 
 
 class Perplexity(Metric):
-    def __init__(self):
+    def __init__(self, model_name="gpt2"):
         self.all_metrics = {}
         self.original_candidates = []
         self.successful_candidates = []
-        self.ppl_model = GPT2LMHeadModel.from_pretrained("gpt2")
-        self.ppl_model.to(textattack.shared.utils.device)
-        self.ppl_tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-        self.ppl_model.eval()
-        self.max_length = self.ppl_model.config.n_positions
+
+        if model_name == "gpt2":
+            self.ppl_model = GPT2LMHeadModel.from_pretrained("gpt2")
+            self.ppl_model.to(textattack.shared.utils.device)
+            self.ppl_tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+            self.ppl_model.eval()
+            self.max_length = self.ppl_model.config.n_positions
+        else:
+            from transformers import AutoModelForMaskedLM, AutoTokenizer
+
+            self.ppl_model = AutoModelForMaskedLM.from_pretrained(model_name)
+            self.ppl_tokenizer = AutoTokenizer.from_pretrained(model_name)
+            self.ppl_model.to(textattack.shared.utils.device)
+            self.ppl_model.eval()
+            self.max_length = self.ppl_model.config.max_position_embeddings
+
         self.stride = 512
 
     def calculate(self, results):
