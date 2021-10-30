@@ -27,8 +27,11 @@ def test_perplexity():
 def test_use():
     import transformers
 
-    import textattack
+    from textattack import AttackArgs, Attacker
+    from textattack.attack_recipes import DeepWordBugGao2018
+    from textattack.datasets import HuggingFaceDataset
     from textattack.metrics.quality_metrics import USEMetric
+    from textattack.models.wrappers import HuggingFaceModelWrapper
 
     model = transformers.AutoModelForSequenceClassification.from_pretrained(
         "distilbert-base-uncased-finetuned-sst-2-english"
@@ -36,17 +39,17 @@ def test_use():
     tokenizer = transformers.AutoTokenizer.from_pretrained(
         "distilbert-base-uncased-finetuned-sst-2-english"
     )
-    model_wrapper = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
-    attack = textattack.attack_recipes.DeepWordBugGao2018.build(model_wrapper)
-    dataset = textattack.datasets.HuggingFaceDataset("glue", "sst2", split="train")
-    attack_args = textattack.AttackArgs(
+    model_wrapper = HuggingFaceModelWrapper(model, tokenizer)
+    attack = DeepWordBugGao2018.build(model_wrapper)
+    dataset = HuggingFaceDataset("glue", "sst2", split="train")
+    attack_args = AttackArgs(
         num_examples=1,
         log_to_csv="log.csv",
         checkpoint_interval=5,
         checkpoint_dir="checkpoints",
         disable_stdout=True,
     )
-    attacker = textattack.Attacker(attack, dataset, attack_args)
+    attacker = Attacker(attack, dataset, attack_args)
     results = attacker.attack_dataset()
 
     usem = USEMetric().calculate(results)
