@@ -272,6 +272,7 @@ class WordSwapMaskedLM(WordSwap):
                 )
 
                 for r in replacement_words:
+                    r = r.strip("Ġ")
                     if r != word_at_index:
                         transformed_texts.append(
                             current_text.replace_word_at_index(i, r)
@@ -288,6 +289,7 @@ class WordSwapMaskedLM(WordSwap):
                 index_to_modify = indices_to_modify[i]
                 word_at_index = current_text.words[index_to_modify]
                 for word in replacement_words[i]:
+                    word = word.strip("Ġ")
                     if word != word_at_index and len(utils.words_from_text(word)) == 1:
                         transformed_texts.append(
                             current_text.replace_word_at_index(index_to_modify, word)
