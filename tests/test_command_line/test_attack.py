@@ -35,19 +35,6 @@ attack_test_params = [
         "tests/sample_outputs/interactive_mode.txt",
     ),
     #
-    # test loading an attack from the transformers model hub
-    #
-    (
-        "attack_from_transformers",
-        (
-            "textattack attack --model-from-huggingface "
-            "distilbert-base-uncased-finetuned-sst-2-english "
-            "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
-            ""
-        ),
-        "tests/sample_outputs/run_attack_transformers_datasets.txt",
-    ),
-    #
     # test loading an attack from the transformers model hub and calculate perplexity and use
     #
     (
@@ -75,17 +62,6 @@ attack_test_params = [
         "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
     #
-    # test hotflip on 10 samples from LSTM MR
-    #
-    (
-        "run_attack_hotflip_lstm_mr_4",
-        (
-            "textattack attack --model lstm-mr --recipe hotflip "
-            "--num-examples 4 --num-examples-offset 3 "
-        ),
-        "tests/sample_outputs/run_attack_hotflip_lstm_mr_4.txt",
-    ),
-    #
     # test hotflip on 10 samples from LSTM MR and calculate perplexity and use
     #
     (
@@ -106,21 +82,21 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt",
     ),
-    #
-    # test: run_attack targeted classification of class 2 on BERT MNLI with log-to-csv
-    #   and attack_n set, using the WordNet transformation and beam search with
-    #   beam width 2, using language tool constraint, on 10 samples
-    #                   (takes about 72s)
-    #
-    (
-        "run_attack_targeted_mnli_misc",
-        (
-            "textattack attack --attack-n --goal-function targeted-classification^target_class=2 --log-to-csv "
-            "/tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation "
-            "word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search^beam_width=2 "
-        ),
-        "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt",
-    ),
+    # #
+    # # test: run_attack targeted classification of class 2 on BERT MNLI with log-to-csv
+    # #   and attack_n set, using the WordNet transformation and beam search with
+    # #   beam width 2, using language tool constraint, on 10 samples
+    # #                   (takes about 72s)
+    # #
+    # (
+    #     "run_attack_targeted_mnli_misc",
+    #     (
+    #         "textattack attack --attack-n --goal-function targeted-classification^target_class=2 --log-to-csv "
+    #         "/tmp/textattack_test.csv --model bert-base-uncased-mnli --num-examples 2 --attack-n --transformation "
+    #         "word-swap-wordnet --constraints lang-tool repeat stopword --search beam-search^beam_width=2 "
+    #     ),
+    #     "tests/sample_outputs/run_attack_targetedclassification2_wordnet_langtool_log-to-csv_beamsearch2_attack_n.txt",
+    # ),
     #
     # fmt: off
     # test: run_attack untargeted classification on BERT MR using word embedding transformation and greedy-word-WIR search
