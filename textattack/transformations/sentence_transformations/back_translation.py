@@ -20,6 +20,20 @@ class BackTranslation(SentenceTransformation):
     src_model: translation model from huggingface that translates from source language to target language
     target_model: translation model from huggingface that translates from target language to source language
     chained_back_translation: run back translation in a chain for more perturbation (for example, en-es-en-fr-en)
+
+    Example::
+
+        >>> from textattack.transformations.sentence_transformations import BackTranslation
+        >>> from textattack.constraints.pre_transformation import RepeatModification, StopWordModification
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = BackTranslation
+        >>> constraints = [RepeatModification(), StopWordModification()]
+        >>> augmenter = Augmenter(transformation = transformation, constraints = constraints)
+        >>> s = 'What on earth are you doing here.'
+
+        >>> augmenter.augment(s)
+
     """
 
     def __init__(
