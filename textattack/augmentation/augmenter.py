@@ -7,6 +7,7 @@ import random
 import tqdm
 
 from textattack.constraints import PreTransformationConstraint
+from textattack.metrics.quality_metrics import Perplexity, USEMetric
 from textattack.shared import AttackedText, utils
 
 
@@ -24,6 +25,39 @@ class Augmenter:
         pct_words_to_swap: (float): [0., 1.], percentage of words to swap per augmented example
         transformations_per_example: (int): Maximum number of augmentations
             per input
+        high_yield: Whether to return a set of augmented texts that will be relatively similar, or to return only a
+            single one.
+        fast_augment: Stops additional transformation runs when number of successful augmentations reaches
+            transformations_per_example
+        advanced_metrics: return perplexity and USE Score of augmentation
+
+    Example::
+        >>> from textattack.transformations import WordSwapRandomCharacterDeletion, WordSwapQWERTY, CompositeTransformation
+        >>> from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = CompositeTransformation([WordSwapRandomCharacterDeletion(), WordSwapQWERTY()])
+        >>> constraints = [RepeatModification(), StopwordModification()]
+
+        >>> # initiate augmenter
+        >>> augmenter = Augmenter(
+        ...     transformation=transformation,
+        ...     constraints=constraints,
+        ...     pct_words_to_swap=0.5,
+        ...     transformations_per_example=3
+        ... )
+
+        >>> # additional parameters can be modified if not during initiation
+        >>> augmenter.enable_advanced_metrics = True
+        >>> augmenter.fast_augment = True
+        >>> augmenter.high_yield = True
+
+        >>> s = 'What I cannot create, I do not understand.'
+        >>> results = augmenter.augment(s)
+
+        >>> augmentations = results[0]
+        >>> perplexity_score = results[1]
+        >>> use_score = results[2]
     """
 
     def __init__(
@@ -32,6 +66,9 @@ class Augmenter:
         constraints=[],
         pct_words_to_swap=0.1,
         transformations_per_example=1,
+        high_yield=False,
+        fast_augment=False,
+        enable_advanced_metrics=False,
     ):
         assert (
             transformations_per_example > 0
@@ -43,6 +80,9 @@ class Augmenter:
 
         self.constraints = []
         self.pre_transformation_constraints = []
+        self.high_yield = high_yield
+        self.fast_augment = fast_augment
+        self.advanced_metrics = enable_advanced_metrics
         for constraint in constraints:
             if isinstance(constraint, PreTransformationConstraint):
                 self.pre_transformation_constraints.append(constraint)
@@ -76,6 +116,7 @@ class Augmenter:
         num_words_to_swap = max(
             int(self.pct_words_to_swap * len(attacked_text.words)), 1
         )
+        augmentation_results = []
         for _ in range(self.transformations_per_example):
             current_text = attacked_text
             words_swapped = len(current_text.attack_attrs["modified_indices"])
@@ -99,15 +140,59 @@ class Augmenter:
                 if not len(transformed_texts):
                     break
 
-                current_text = random.choice(transformed_texts)
+                # look for all transformed_texts that has enough words swapped
+                if self.high_yield or self.fast_augment:
+                    ready_texts = [
+                        text
+                        for text in transformed_texts
+                        if len(text.attack_attrs["modified_indices"])
+                        >= num_words_to_swap
+                    ]
+                    for text in ready_texts:
+                        all_transformed_texts.add(text)
+                    unfinished_texts = [
+                        text for text in transformed_texts if text not in ready_texts
+                    ]
+
+                    if len(unfinished_texts):
+                        current_text = random.choice(unfinished_texts)
+                    else:
+                        # no need for further augmentations if all of transformed_texts meet `num_words_to_swap`
+                        break
+                else:
+                    current_text = random.choice(transformed_texts)
 
                 # update words_swapped based on modified indices
                 words_swapped = max(
                     len(current_text.attack_attrs["modified_indices"]),
                     words_swapped + 1,
                 )
+
             all_transformed_texts.add(current_text)
-        return sorted([at.printable_text() for at in all_transformed_texts])
+
+            # when with fast_augment, terminate early if there're enough successful augmentations
+            if (
+                self.fast_augment
+                and len(all_transformed_texts) >= self.transformations_per_example
+            ):
+                if not self.high_yield:
+                    all_transformed_texts = random.sample(
+                        all_transformed_texts, self.transformations_per_example
+                    )
+                break
+
+        perturbed_texts = sorted([at.printable_text() for at in all_transformed_texts])
+
+        if self.advanced_metrics:
+            for transformed_texts in all_transformed_texts:
+                augmentation_results.append(
+                    AugmentationResult(original_text, transformed_texts)
+                )
+            perplexity_stats = Perplexity().calculate(augmentation_results)
+            use_stats = USEMetric().calculate(augmentation_results)
+            return perturbed_texts, perplexity_stats, use_stats
+
+        return perturbed_texts
 
     def augment_many(self, text_list, show_progress=False):
         """Returns all possible augmentations of a list of strings according to
@@ -116,6 +201,7 @@ class Augmenter:
         Args:
             text_list (list(string)): a list of strings for data augmentation
         Returns a list(string) of augmented texts.
+        :param show_progress: show process during augmentation
         """
         if show_progress:
             text_list = tqdm.tqdm(text_list, desc="Augmenting data...")
@@ -162,3 +248,13 @@ class Augmenter:
         main_str += "\n  " + "\n  ".join(lines) + "\n"
         main_str += ")"
         return main_str
+
+
+class AugmentationResult:
+    def __init__(self, text1, text2):
+        self.original_result = self.tempResult(text1)
+        self.perturbed_result = self.tempResult(text2)
+
+    class tempResult:
+        def __init__(self, text):
+            self.attacked_text = text
