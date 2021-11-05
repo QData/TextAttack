@@ -1,3 +1,4 @@
+[94mback_trans[0m (textattack.augmentation.BackTranslationAugmenter)
 [94mcharswap[0m (textattack.augmentation.CharSwapAugmenter)
 [94mchecklist[0m (textattack.augmentation.CheckListAugmenter)
 [94mclare[0m (textattack.augmentation.CLAREAugmenter)

@@ -39,6 +39,7 @@ jobs:
         sudo apt-get autoclean -y >/dev/null 2>&1
         sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
         docker rmi $(docker image ls -aq) >/dev/null 2>&1
+        df -h
     - name: Test with pytest
       run: |
         pytest tests -v
