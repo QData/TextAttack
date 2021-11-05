@@ -97,8 +97,7 @@ def test_back_translation():
     from textattack.augmentation import Augmenter
     from textattack.transformations.sentence_transformations import BackTranslation
 
-    transformation = BackTranslation
-    augmenter = Augmenter(transformation=transformation)
+    augmenter = Augmenter(transformation=BackTranslation())
     s = "What on earth are you doing?"
     augmented_text_list = augmenter.augment(s)
     augmented_s = "What the hell are you doing?"
