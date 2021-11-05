@@ -26,11 +26,11 @@ extras["test"] = [
 ]
 
 extras["tensorflow"] = [
-    "tensorflow>=2",
+    "tensorflow==2.5.0",
     "tensorflow_hub",
     "tensorflow_text>=2",
     "tensorboardX",
-    "tensorflow-estimator==2.6.0",
+    "tensorflow-estimator==2.5.0",
 ]
 
 extras["optional"] = [
