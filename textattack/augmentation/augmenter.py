@@ -48,7 +48,7 @@ class Augmenter:
         ... )
 
         >>> # additional parameters can be modified if not during initiation
-        >>> augmenter.advanced_metrics = True
+        >>> augmenter.enable_advanced_metrics = True
         >>> augmenter.fast_augment = True
         >>> augmenter.high_yield = True
 
@@ -68,7 +68,7 @@ class Augmenter:
         transformations_per_example=1,
         high_yield=False,
         fast_augment=False,
-        advanced_metrics=False,
+        enable_advanced_metrics=False,
     ):
         assert (
             transformations_per_example > 0
@@ -82,7 +82,7 @@ class Augmenter:
         self.pre_transformation_constraints = []
         self.high_yield = high_yield
         self.fast_augment = fast_augment
-        self.advanced_metrics = advanced_metrics
+        self.advanced_metrics = enable_advanced_metrics
         for constraint in constraints:
             if isinstance(constraint, PreTransformationConstraint):
                 self.pre_transformation_constraints.append(constraint)

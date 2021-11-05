@@ -32,7 +32,7 @@ class AugmentCommand(TextAttackCommand):
                 transformations_per_example=args.transformations_per_example,
                 high_yield=args.high_yield,
                 fast_augment=args.fast_augment,
-                advanced_metrics=args.advanced_metrics,
+                enable_advanced_metrics=args.enable_advanced_metrics,
             )
             print("--------------------------------------------------------")
 
@@ -90,7 +90,7 @@ class AugmentCommand(TextAttackCommand):
                 print("\nAugmenting...\n")
                 print("--------------------------------------------------------")
 
-                if args.advanced_metrics:
+                if args.enable_advanced_metrics:
                     results = augmenter.augment(text)
                     print("Augmentations:\n")
                     for augmentation in results[0]:
