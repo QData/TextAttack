@@ -30,6 +30,34 @@ class Augmenter:
         fast_augment: Stops additional transformation runs when number of successful augmentations reaches
             transformations_per_example
         advanced_metrics: return perplexity and USE Score of augmentation
+
+    Example::
+        >>> from textattack.transformations import WordSwapRandomCharacterDeletion, WordSwapQWERTY, CompositeTransformation
+        >>> from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = CompositeTransformation([WordSwapRandomCharacterDeletion(), WordSwapQWERTY()])
+        >>> constraints = [RepeatModification(), StopwordModification()]
+
+        >>> # initiate augmenter
+        >>> augmenter = Augmenter(
+        ...     transformation=transformation,
+        ...     constraints=constraints,
+        ...     pct_words_to_swap=0.5,
+        ...     transformations_per_example=3
+        ... )
+
+        >>> # additional parameters can be modified if not during initiation
+        >>> augmenter.advanced_metrics = True
+        >>> augmenter.fast_augment = True
+        >>> augmenter.high_yield = True
+
+        >>> s = 'What I cannot create, I do not understand.'
+        >>> results = augmenter.augment(s)
+
+        >>> augmentations = results[0]
+        >>> perplexity_score = results[1]
+        >>> use_score = results[2]
     """
 
     def __init__(

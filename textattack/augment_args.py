@@ -43,20 +43,17 @@ class AugmenterArgs:
     def _add_parser_args(cls, parser):
         parser.add_argument(
             "--input-csv",
-            required=True,
             type=str,
             help="Path of input CSV file to augment.",
         )
         parser.add_argument(
             "--output-csv",
-            required=True,
             type=str,
             help="Path of CSV file to output augmented data.",
         )
         parser.add_argument(
             "--input-column",
             "--i",
-            required=True,
             type=str,
             help="CSV input column to be augmented",
         )

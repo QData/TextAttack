@@ -22,6 +22,7 @@ class AugmentCommand(TextAttackCommand):
 
         Preserves all columns except for the input (augmneted) column.
         """
+
         args = textattack.AugmenterArgs(**vars(args))
         if args.interactive:
 
@@ -95,8 +96,15 @@ class AugmentCommand(TextAttackCommand):
                     for augmentation in results[0]:
                         print(augmentation, "\n")
                     print()
-                    print(f"Perplexity scores: {results[1]}\n")
-                    print(f"USE score: {results[2]}\n")
+                    print(
+                        f"Average Original Perplexity Score: {results[1]['avg_original_perplexity']}"
+                    )
+                    print(
+                        f"Average Augment Perplexity Score: {results[1]['avg_attack_perplexity']}"
+                    )
+                    print(
+                        f"Average Augment USE Score: {results[2]['avg_attack_use_score']}\n"
+                    )
 
                 else:
                     for augmentation in augmenter.augment(text):
@@ -105,7 +113,7 @@ class AugmentCommand(TextAttackCommand):
         else:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
-            if not (args.input_csv and args.input_column):
+            if not (args.input_csv and args.input_column and args.output_csv):
                 raise ArgumentError(
                     "The following arguments are required: --csv, --input-column/--i"
                 )
@@ -147,7 +155,6 @@ class AugmentCommand(TextAttackCommand):
                 transformations_per_example=args.transformations_per_example,
                 high_yield=args.high_yield,
                 fast_augment=args.fast_augment,
-                advanced_metrics=args.advanced_metrics,
             )
 
             output_rows = []
