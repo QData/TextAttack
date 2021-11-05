@@ -124,6 +124,7 @@ def test_high_yield_fast_augment():
 
     assert check1 and check2
 
+
 def test_back_translation():
     from textattack.augmentation import Augmenter
     from textattack.transformations.sentence_transformations import BackTranslation
