@@ -33,7 +33,6 @@ class BackTranslation(SentenceTransformation):
         >>> s = 'What on earth are you doing here.'
 
         >>> augmenter.augment(s)
-
     """
 
     def __init__(

@@ -92,9 +92,10 @@ def test_deletion_augmenter():
     augmented_s = "United States"
     assert augmented_s in augmented_text_list
 
+
 def test_back_translation():
-    from textattack.transformations.sentence_transformations import BackTranslation
     from textattack.augmentation import Augmenter
+    from textattack.transformations.sentence_transformations import BackTranslation
 
     augmenter = Augmenter(transformation=BackTranslation, transformations_per_example=1)
     s = "What on earth are you doing?"
