@@ -123,3 +123,13 @@ def test_high_yield_fast_augment():
             break
 
     assert check1 and check2
+
+def test_back_translation():
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.sentence_transformations import BackTranslation
+
+    augmenter = Augmenter(transformation=BackTranslation())
+    s = "What on earth are you doing?"
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "What the hell are you doing?"
+    assert augmented_s in augmented_text_list
