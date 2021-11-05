@@ -96,6 +96,7 @@ def test_deletion_augmenter():
 def test_back_translation():
     from textattack.augmentation import Augmenter
     from textattack.transformations.sentence_transformations import BackTranslation
+
     transformation = BackTranslation
     augmenter = Augmenter(transformation=transformation)
     s = "What on earth are you doing?"
