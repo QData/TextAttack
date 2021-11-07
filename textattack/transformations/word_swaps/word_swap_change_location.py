@@ -25,7 +25,7 @@ def idx_to_words(ls, words):
 
 
 class WordSwapChangeLocation(WordSwap):
-    def __init__(self, n=3, confidence_score=0.7, **kwargs):
+    def __init__(self, n=3, confidence_score=0.7, language="en", **kwargs):
         """Transformation that changes recognized locations of a sentence to
         another location that is given in the location map.
 
@@ -35,6 +35,7 @@ class WordSwapChangeLocation(WordSwap):
         super().__init__(**kwargs)
         self.n = n
         self.confidence_score = confidence_score
+        self.language = language
 
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
@@ -75,10 +76,15 @@ class WordSwapChangeLocation(WordSwap):
     def _get_new_location(self, word):
         """Return a list of new locations, with the choice of country,
         nationality, and city."""
-        if word in NAMED_ENTITIES["country"]:
-            return np.random.choice(NAMED_ENTITIES["country"], self.n)
-        elif word in NAMED_ENTITIES["nationality"]:
-            return np.random.choice(NAMED_ENTITIES["nationality"], self.n)
+        language = ""
+        if self.language == "esp" or "spanish":
+            language = "-spanish"
+        elif self.language == "fra" or "french":
+            language = "-french"
+        if word in NAMED_ENTITIES["country" + language]:
+            return np.random.choice(NAMED_ENTITIES["country" + language], self.n)
+        elif word in NAMED_ENTITIES["nationality" + language]:
+            return np.random.choice(NAMED_ENTITIES["nationality" + language], self.n)
         elif word in NAMED_ENTITIES["city"]:
             return np.random.choice(NAMED_ENTITIES["city"], self.n)
         return []
