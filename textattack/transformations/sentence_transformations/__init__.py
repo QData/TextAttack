@@ -1,5 +1,5 @@
 """
-sentence_transformations package 
+sentence_transformations package
 -----------------------------------
 
 """

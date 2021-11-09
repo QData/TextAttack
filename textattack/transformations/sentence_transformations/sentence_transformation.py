@@ -1,5 +1,5 @@
 """
-SentenceTransformation class 
+SentenceTransformation class
 -----------------------------------
 
 https://github.com/makcedward/nlpaug

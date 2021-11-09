@@ -1,5 +1,5 @@
 """
-word_swaps package 
+word_swaps package
 -------------------------------
 
 """

@@ -1,5 +1,5 @@
 """
-word_insertions package 
+word_insertions package
 -------------------------------
 
 """

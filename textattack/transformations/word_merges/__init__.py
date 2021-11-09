@@ -1,5 +1,5 @@
 """
-word_merges package 
+word_merges package
 ------------------------------------------------
 
 """

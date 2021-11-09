@@ -1,5 +1,5 @@
 """
-BackTranslation class 
+BackTranslation class
 -----------------------------------
 
 """
