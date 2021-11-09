@@ -1,3 +1,10 @@
+"""
+word_swaps package 
+-------------------------------
+
+"""
+
+
 from .word_swap import WordSwap
 
 # Black box transformations

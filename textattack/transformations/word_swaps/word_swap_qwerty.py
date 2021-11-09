@@ -1,6 +1,6 @@
 """
 Word Swap by swaps characters with QWERTY adjacent keys
-==========================================================
+----------------------------------------------------------
 """
 
 import random

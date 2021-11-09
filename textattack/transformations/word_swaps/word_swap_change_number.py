@@ -1,6 +1,6 @@
 """
 Word Swap by Changing Number
-============================================
+-------------------------------
 
 """
 import more_itertools as mit

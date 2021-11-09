@@ -1,3 +1,9 @@
+"""
+WordMergeMaskedLM class
+------------------------------------------------
+
+"""
+
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
 

@@ -1,6 +1,6 @@
 """
 Word Swap by Neighboring Character Swap
-============================================
+-----------------------------------------
 """
 
 import numpy as np

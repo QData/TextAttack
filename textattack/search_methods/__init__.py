@@ -1,7 +1,7 @@
 """.. _search_methods:
 
-Search Methods:
-===================
+search_methods package
+========================
 
 Search methods explore the transformation space in an attempt to find a successful attack as determined by a :ref:`Goal Functions <goal_function>` and list of :ref:`Constraints <constraint>`
 """

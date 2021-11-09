@@ -1,4 +1,11 @@
-"""https://github.com/makcedward/nlpaug."""
+"""
+SentenceTransformation class 
+-----------------------------------
+
+https://github.com/makcedward/nlpaug
+
+"""
+
 
 from textattack.transformations import Transformation
 

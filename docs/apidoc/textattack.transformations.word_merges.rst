@@ -8,6 +8,7 @@ textattack.transformations.word\_merges package
 
 
 
+
 .. automodule:: textattack.transformations.word_merges.word_merge
    :members:
    :undoc-members:

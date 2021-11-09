@@ -1,6 +1,6 @@
 """
-Goal Function Result:
-========================
+Goal Function Result package:
+=============================
 
 Goal function results report the result of a goal function evaluation, indicating whether an attack succeeded for a given example.
 

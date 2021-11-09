@@ -1,3 +1,10 @@
+"""
+
+AttackCommand class
+===========================
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 from textattack import Attacker, CommandLineAttackArgs, DatasetArgs, ModelArgs

@@ -1,6 +1,6 @@
 """
 
-goal function result class
+GoalFunctionResult class
 ====================================
 
 """

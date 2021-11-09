@@ -1,7 +1,7 @@
 """
 
-classification_goal_function_result
-====================================
+ClassificationGoalFunctionResult Class
+========================================
 
 """
 

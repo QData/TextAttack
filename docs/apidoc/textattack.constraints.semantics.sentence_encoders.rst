@@ -17,6 +17,7 @@ textattack.constraints.semantics.sentence\_encoders package
 
 
 
+
 .. automodule:: textattack.constraints.semantics.sentence_encoders.sentence_encoder
    :members:
    :undoc-members:

@@ -1,3 +1,9 @@
+"""
+AttackResult Class
+======================
+
+"""
+
 from abc import ABC
 
 from textattack.goal_function_results import GoalFunctionResult

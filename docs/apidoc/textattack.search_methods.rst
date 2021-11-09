@@ -8,6 +8,7 @@ textattack.search\_methods package
 
 
 
+
 .. automodule:: textattack.search_methods.alzantot_genetic_algorithm
    :members:
    :undoc-members:

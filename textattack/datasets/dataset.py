@@ -1,3 +1,13 @@
+"""
+
+Dataset Class
+======================
+
+TextAttack allows users to provide their own dataset or load from HuggingFace.
+
+
+"""
+
 from collections import OrderedDict
 import random
 

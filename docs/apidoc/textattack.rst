@@ -7,6 +7,7 @@ textattack package
    :show-inheritance:
 
 
+
 .. toctree::
    :maxdepth: 6
 
@@ -24,6 +25,7 @@ textattack package
    textattack.search_methods
    textattack.shared
    textattack.transformations
+
 
 
 

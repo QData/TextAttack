@@ -16,6 +16,7 @@ textattack.goal\_functions package
 
 
 
+
 .. automodule:: textattack.goal_functions.goal_function
    :members:
    :undoc-members:

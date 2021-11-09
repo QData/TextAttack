@@ -1,7 +1,7 @@
 """
 
 Perplexity Metric:
-======================
+-------------------------------------------------------
 Class for calculating perplexity from AttackResults
 
 """
