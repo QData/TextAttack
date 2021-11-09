@@ -1,6 +1,6 @@
 """
 Word Swap by Contraction
-============================================
+-------------------------------
 """
 
 from textattack.shared.data import EXTENSION_MAP

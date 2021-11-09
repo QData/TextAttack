@@ -1,6 +1,6 @@
 """
 Word Swap
-============================================
+-------------------------------
 Word swap transformations act by replacing some words in the input. Subclasses can implement the abstract ``WordSwap`` class by overriding ``self._get_replacement_words``
 
 """

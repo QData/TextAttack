@@ -1,3 +1,10 @@
+"""
+
+AttackResumeCommand class
+===========================
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 import os
 

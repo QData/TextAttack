@@ -8,6 +8,7 @@ textattack.goal\_function\_results package
 
 
 
+
 .. automodule:: textattack.goal_function_results.classification_goal_function_result
    :members:
    :undoc-members:

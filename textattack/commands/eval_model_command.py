@@ -1,3 +1,11 @@
+"""
+
+EvalModelCommand class
+==============================
+
+"""
+
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from dataclasses import dataclass
 

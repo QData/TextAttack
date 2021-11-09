@@ -1,3 +1,11 @@
+"""
+
+USEMetric class:
+-------------------------------------------------------
+Class for calculating USE similarity on AttackResults
+
+"""
+
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.metrics import Metric

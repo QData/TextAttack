@@ -1,3 +1,9 @@
+"""
+ModelWrapper class
+--------------------------
+
+"""
+
 from abc import ABC, abstractmethod
 
 

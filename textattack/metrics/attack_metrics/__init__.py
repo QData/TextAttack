@@ -1,7 +1,7 @@
 """
 
-attack_metrics:
-======================
+attack_metrics package:
+---------------------------------------------------------------------
 
 TextAttack provide users common metrics on attacks' quality.
 

@@ -1,7 +1,7 @@
 """.. _attack_recipes:
 
-Attack Recipes:
-======================
+Attack Recipes Package:
+========================
 
 We provide a number of pre-built attack recipes, which correspond to attacks from the literature. To run an attack recipe from the command line, run::
 

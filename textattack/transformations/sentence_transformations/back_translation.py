@@ -1,3 +1,10 @@
+"""
+BackTranslation class
+-----------------------------------
+
+"""
+
+
 import random
 
 from transformers import MarianMTModel, MarianTokenizer

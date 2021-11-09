@@ -1,6 +1,6 @@
 """
 
-TextAttack Command Package
+TextAttack commands Package
 ===========================
 
 """
