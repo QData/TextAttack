@@ -19,7 +19,7 @@ TextAttack supports the following attack recipes (each recipe's documentation co
 Attacks on classification models
 #################################
 
-
+0. A2T (Towards Improving Adversarial Training of NLP Models" (Yoo et al., 2021))
 1. Alzantot Genetic Algorithm (Generating Natural Language Adversarial Examples)
 2. Faster Alzantot Genetic Algorithm (Certified Robustness to Adversarial Word Substitutions)
 3. BAE (BAE: BERT-Based Adversarial Examples)
@@ -34,7 +34,15 @@ Attacks on classification models
 12. PWWS (Generating Natural Language Adversarial Examples through Probability Weighted Word Saliency)
 13. TextFooler (Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment)
 14. TextBugger (TextBugger: Generating Adversarial Text Against Real-world Applications)
+15. Pruthi (Combating Adversarial Misspellings with Robust Word Recognition 2019)
+16. CLARE (Contextualized Perturbation for Textual Adversarial Attack 2020)
 
+
+
+
+.. automodule:: textattack.attack_recipes.a2t_yoo_2021
+   :members:
+   :noindex:
 
 
 .. automodule:: textattack.attack_recipes.genetic_algorithm_alzantot_2018
@@ -115,11 +123,31 @@ Attacks on classification models
    :noindex:
 
 
+
+
+
+.. automodule:: textattack.attack_recipes.clare_li_2020
+   :members:
+   :noindex:
+
+
+
+.. automodule:: textattack.attack_recipes.pruthi_2019
+   :members:
+   :noindex:
+
+
+
+
+
+
+
+
 Attacks on sequence-to-sequence models
 ############################################
 
-15. MORPHEUS (It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations)
-16. Seq2Sick (Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples)
+17. MORPHEUS (It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations)
+18. Seq2Sick (Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples)
 
 
 .. automodule:: textattack.attack_recipes.morpheus_tan_2020
@@ -130,3 +158,7 @@ Attacks on sequence-to-sequence models
 .. automodule:: textattack.attack_recipes.seq2sick_cheng_2018_blackbox
    :members:
    :noindex:
+
+
+
+
