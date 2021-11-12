@@ -40,9 +40,14 @@ class WordSwapChangeLocation(WordSwap):
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
         location_idx = []
-
+        if self.language == "en":
+            model_name = "ner"
+        elif self.language == "fra" or self.language == "french":
+            model_name = "flair/ner-french"
+        else:
+            model_name = "flair/ner-multi-fast"
         for i in indices_to_modify:
-            tag = current_text.ner_of_word_index(i)
+            tag = current_text.ner_of_word_index(i, model_name)
             if "LOC" in tag.value and tag.score > self.confidence_score:
                 location_idx.append(i)
 
@@ -77,9 +82,9 @@ class WordSwapChangeLocation(WordSwap):
         """Return a list of new locations, with the choice of country,
         nationality, and city."""
         language = ""
-        if self.language == "esp" or "spanish":
+        if self.language == "esp" or self.language == "spanish":
             language = "-spanish"
-        elif self.language == "fra" or "french":
+        elif self.language == "fra" or self.language == "french":
             language = "-french"
         if word in NAMED_ENTITIES["country" + language]:
             return np.random.choice(NAMED_ENTITIES["country" + language], self.n)

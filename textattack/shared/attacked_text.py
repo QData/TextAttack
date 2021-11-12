@@ -161,7 +161,7 @@ class AttackedText:
             f"Did not find word from index {desired_word_idx} in flair POS tag"
         )
 
-    def ner_of_word_index(self, desired_word_idx):
+    def ner_of_word_index(self, desired_word_idx, model_name="ner"):
         """Returns the ner tag of the word at index `word_idx`.
 
         Uses FLAIR ner tagger.
@@ -170,7 +170,7 @@ class AttackedText:
             sentence = Sentence(
                 self.text, use_tokenizer=textattack.shared.utils.words_from_text
             )
-            textattack.shared.utils.flair_tag(sentence, "ner")
+            textattack.shared.utils.flair_tag(sentence, model_name)
             self._ner_tags = sentence
         flair_word_list, flair_ner_list = textattack.shared.utils.zip_flair_result(
             self._ner_tags, "ner"
