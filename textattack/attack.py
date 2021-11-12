@@ -292,7 +292,7 @@ class Attack:
     def _filter_transformations_uncached(
         self, transformed_texts, current_text, original_text=None
     ):
-        """Filters a list of potential transformaed texts based on
+        """Filters a list of potential transformed texts based on
         ``self.constraints``
 
         Args:
