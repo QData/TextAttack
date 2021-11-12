@@ -19,9 +19,9 @@ This is a great question, and one we get a lot. First of all, almost everything 
 
 TextAttack does three things very well:
 
-1. Adversarial attacks (Python: ``textattack.shared.Attack``, Bash: ``textattack attack``)
+1. Adversarial attacks (Python: ``textattack.Attack``, Bash: ``textattack attack``)
 2. Data augmentation (Python: ``textattack.augmentation.Augmenter``, Bash: ``textattack augment``)
-3. Model training (Python: ``textattack.commands.train.*``, Bash: ``textattack train``)
+3. Model training (Python: ``textattack.Trainer``, Bash: ``textattack train``)
 
 Adversarial training can be achieved as a combination of [1] and/or [2] with [3] (via ``textattack train --attack``). To see all this in action, see :ref:`the TextAttack End-to-End tutorial </2notebook/0_End_to_End.ipynb>`.
 

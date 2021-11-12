@@ -20,7 +20,7 @@ class USEMetric(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
-        """Calculates average USE similarity on all successfull attacks
+        """Calculates average USE similarity on all successfull attacks.
 
         Args:
             results (``AttackResult`` objects):

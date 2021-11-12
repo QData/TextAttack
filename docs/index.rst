@@ -63,6 +63,7 @@ TextAttack Documentation
    Datasets <api/datasets.rst>
    GoalFunction <api/goal_functions.rst>
    Constraints <api/constraints.rst>
+   Transformations <api/transformations.rst>
    SearchMethod <api/search_methods.rst>
    
 

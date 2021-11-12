@@ -1,6 +1,7 @@
 recommonmark==0.7.1
 Sphinx==4.1.2
 sphinx-autobuild==2021.3.14
+sphinx-copybutton==0.4.0
 sphinx-markdown-tables==0.0.15
 sphinx-rtd-theme==0.5.2
 sphinxcontrib-applehelp==1.0.2

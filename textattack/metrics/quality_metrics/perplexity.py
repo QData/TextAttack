@@ -39,7 +39,8 @@ class Perplexity(Metric):
         self.stride = 512
 
     def calculate(self, results):
-        """Calculates average Perplexity on all successfull attacks using a pre-trained small GPT-2 model
+        """Calculates average Perplexity on all successfull attacks using a
+        pre-trained small GPT-2 model.
 
         Args:
             results (``AttackResult`` objects):
