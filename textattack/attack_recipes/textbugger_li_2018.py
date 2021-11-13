@@ -32,7 +32,7 @@ class TextBuggerLi2018(AttackRecipe):
 
     TextBugger: Generating Adversarial Text Against Real-world Applications.
 
-    ArXiv, abs/1812.05271.
+    https://arxiv.org/abs/1812.05271
     """
 
     @staticmethod

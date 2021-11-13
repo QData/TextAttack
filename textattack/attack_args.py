@@ -108,11 +108,18 @@ SEARCH_METHOD_CLASS_NAMES = {
 
 
 GOAL_FUNCTION_CLASS_NAMES = {
-    "input-reduction": "textattack.goal_functions.InputReduction",
-    "minimize-bleu": "textattack.goal_functions.MinimizeBleu",
-    "non-overlapping-output": "textattack.goal_functions.NonOverlappingOutput",
-    "targeted-classification": "textattack.goal_functions.TargetedClassification",
-    "untargeted-classification": "textattack.goal_functions.UntargetedClassification",
+    #
+    # Classification goal functions
+    #
+    "targeted-classification": "textattack.goal_functions.classification.TargetedClassification",
+    "untargeted-classification": "textattack.goal_functions.classification.UntargetedClassification",
+    "input-reduction": "textattack.goal_functions.classification.InputReduction",
+    #
+    # Text goal functions
+    #
+    "minimize-bleu": "textattack.goal_functions.text.MinimizeBleu",
+    "non-overlapping-output": "textattack.goal_functions.text.NonOverlappingOutput",
+    "text-to-text": "textattack.goal_functions.text.TextToTextGoalFunction",
 }
 
 

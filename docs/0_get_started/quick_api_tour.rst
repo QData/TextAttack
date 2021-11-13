@@ -29,7 +29,6 @@ Next, let's build the attack that we want to use. TextAttack provides prebuilt a
     >>> dataset = textattack.datasets.HuggingFaceDataset("imdb", split="test")
     >>> attack = textattack.attack_recipes.TextFoolerJin2019.build(model_wrapper)
     >>> # Attack 20 samples with CSV logging and checkpoint saved every 5 interval
-    >>> # Attack 20 samples with CSV logging and checkpoint saved every 5 interval
     >>> attack_args = textattack.AttackArgs(num_examples=20, log_to_csv="log.csv", checkpoint_interval=5, checkpoint_dir="checkpoints", disable_stdout=True)
     >>> attacker = textattack.Attacker(attack, dataset, attack_args)
     >>> attacker.attack_dataset()

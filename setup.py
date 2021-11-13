@@ -14,6 +14,7 @@ extras["docs"] = [
     "sphinx-autobuild",
     "sphinx-rtd-theme",
     "sphinx-markdown-tables",
+    "sphinx-copybutton",
 ]
 # Packages required for formatting code & running tests.
 extras["test"] = [
