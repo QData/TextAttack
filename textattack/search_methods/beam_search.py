@@ -16,7 +16,7 @@ class BeamSearch(SearchMethod):
 
     Args:
         goal_function: A function for determining how well a perturbation is doing at achieving the attack's goal.
-        transformation (Transformation): The type of transformation.
+        transformation: The type of transformation.
         beam_width (int): the number of candidates to retain at each step
     """
 
