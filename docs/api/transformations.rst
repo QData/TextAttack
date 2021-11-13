@@ -1,8 +1,8 @@
 Transformations API Reference
-============================
+===============================
 
 Transformation
-------------
+----------------
 .. autoclass:: textattack.transformations.Transformation
    :members:
 
