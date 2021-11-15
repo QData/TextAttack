@@ -155,12 +155,14 @@ def _post_install():
     logger.info("Downloading NLTK required packages.")
     import nltk
 
-    nltk.download("averaged_perceptron_tagger")
-    nltk.download("stopwords")
-    nltk.download("omw")
-    nltk.download("universal_tagset")
-    nltk.download("wordnet")
-    nltk.download("punkt")
+    # nltk.download prints plain text to stderr without a severity indicator,
+    # which gcloud logging identifies as an error, so suppress information output here
+    nltk.download("averaged_perceptron_tagger", quiet=True)
+    nltk.download("stopwords", quiet=True)
+    nltk.download("omw", quiet=True)
+    nltk.download("universal_tagset", quiet=True)
+    nltk.download("wordnet", quiet=True)
+    nltk.download("punkt", quiet=True)
 
     try:
         import stanza
