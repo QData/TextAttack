@@ -27,8 +27,8 @@ class AttackLogManager:
     def enable_visdom(self):
         self.loggers.append(VisdomLogger())
 
-    def enable_wandb(self):
-        self.loggers.append(WeightsAndBiasesLogger())
+    def enable_wandb(self, **kwargs):
+        self.loggers.append(WeightsAndBiasesLogger(**kwargs))
 
     def disable_color(self):
         self.loggers.append(FileLogger(stdout=True, color_method="file"))
