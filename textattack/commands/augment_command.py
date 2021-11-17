@@ -137,9 +137,12 @@ class AugmentCommand(TextAttackCommand):
                     raise OSError(
                         f"Outfile {args.output_csv} exists and --overwrite not set."
                     )
+
+            csv_reader_workaround(args.input_csv)
+
             # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
             # try and automatically infer the correct CSV format.
-            csv_file = open(args.input_csv, "r")
+            csv_file = open("temp.csv", "r")
             dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
             csv_file.seek(0)
             rows = [
@@ -148,6 +151,7 @@ class AugmentCommand(TextAttackCommand):
                     csv_file, dialect=dialect, skipinitialspace=True
                 )
             ]
+            os.remove("temp.csv")
             # Validate input column.
             row_keys = set(rows[0].keys())
             if args.input_column not in row_keys:
@@ -197,3 +201,22 @@ class AugmentCommand(TextAttackCommand):
         )
         parser = textattack.AugmenterArgs._add_parser_args(parser)
         parser.set_defaults(func=AugmentCommand())
+
+
+# double quotation marks need to be replaced if augmenting from csv file
+def csv_reader_workaround(file_path):
+    rows = []
+    counts = []
+    with open(file_path) as csv_file:
+        for count, line in enumerate(csv_file):
+            if '"' in line:
+                line = line.replace('"', "'")
+                counts.append(count)
+            rows.append(line)
+    textattack.shared.logger.info(
+        f"Double quotation marks in row {counts} are replaced with "
+        f"single quotation marks to avoid csv reader complications"
+    )
+    with open("temp.csv", "w", newline="") as csv_file:
+        for line in rows:
+            csv_file.write(line)
