@@ -25,6 +25,13 @@ class WordSwapChangeName(WordSwap):
         :param first_only: Whether to change first name only
         :param last_only: Whether to change last name only
         :param confidence_score: Name will only be changed when it's above confidence score
+        >>> from textattack.transformations import WordSwapChangeName
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapChangeName()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am John Smith.'
+        >>> augmenter.augment(s)
         """
         super().__init__(**kwargs)
         self.num_name_replacements = num_name_replacements

@@ -15,6 +15,13 @@ class WordSwapRandomCharacterSubstitution(WordSwap):
     Args:
         random_one (bool): Whether to return a single word with a random
             character deleted. If not set, returns all possible options.
+    >>> from textattack.transformations import WordSwapRandomCharacterSubstitution
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapRandomCharacterSubstitution()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
     """
 
     def __init__(self, random_one=True, **kwargs):

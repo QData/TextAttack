@@ -19,6 +19,13 @@ class WordSwapNeighboringCharacterSwap(WordSwap):
             character.
         skip_last_char (bool): Whether to disregard perturbing the last
             character.
+    >>> from textattack.transformations import WordSwapNeighboringCharacterSwap
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapNeighboringCharacterSwap()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
     """
 
     def __init__(

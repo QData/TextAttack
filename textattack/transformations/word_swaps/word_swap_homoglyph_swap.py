@@ -10,7 +10,15 @@ from .word_swap import WordSwap
 
 class WordSwapHomoglyphSwap(WordSwap):
     """Transforms an input by replacing its words with visually similar words
-    using homoglyph swaps."""
+    using homoglyph swaps.
+    >>> from textattack.transformations import WordSwapHomoglyphSwap
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapHomoglyphSwap()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
+    """
 
     def __init__(self, random_one=False, **kwargs):
         super().__init__(**kwargs)

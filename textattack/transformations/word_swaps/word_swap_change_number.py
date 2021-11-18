@@ -32,6 +32,13 @@ class WordSwapChangeNumber(WordSwap):
 
         :param max_change: Maximum percent of change (1 being 100%)
         :param n: Numbers of new numbers to generate
+        >>> from textattack.transformations import WordSwapChangeNumber
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapChangeNumber()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am 12 years old.'
+        >>> augmenter.augment(s)
         """
         super().__init__(**kwargs)
         self.max_change = max_change
