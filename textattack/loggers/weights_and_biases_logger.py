@@ -13,14 +13,14 @@ class WeightsAndBiasesLogger(Logger):
     """Logs attack results to Weights & Biases."""
 
     def __init__(self, **kwargs):
-        assert 'project' in kwargs
+        assert "project" in kwargs
 
         global wandb
         wandb = LazyLoader("wandb", globals(), "wandb")
 
         wandb.init(**kwargs)
         self.kwargs = kwargs
-        self.project_name = kwargs['project']
+        self.project_name = kwargs["project"]
         self._result_table_rows = []
 
     def __setstate__(self, state):
