@@ -31,6 +31,14 @@ class WordSwapChangeLocation(WordSwap):
 
         :param n: Number of new locations to generate
         :param confidence_score: Location will only be changed if it's above the confidence score
+
+        >>> from textattack.transformations import WordSwapChangeLocation
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapChangeLocation()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am in Dallas.'
+        >>> augmenter.augment(s)
         """
         super().__init__(**kwargs)
         self.n = n

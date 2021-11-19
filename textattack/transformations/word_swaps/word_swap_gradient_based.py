@@ -23,6 +23,13 @@ class WordSwapGradientBased(WordSwap):
         model (nn.Module): The model to attack. Model must have a
             `word_embeddings` matrix and `convert_id_to_word` function.
         top_n (int): the number of top words to return at each index
+    >>> from textattack.transformations import WordSwapGradientBased
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapGradientBased()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
     """
 
     def __init__(self, model_wrapper, top_n=1):

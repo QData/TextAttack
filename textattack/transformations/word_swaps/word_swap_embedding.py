@@ -19,6 +19,13 @@ class WordSwapEmbedding(WordSwap):
     Args:
         max_candidates (int): maximum number of synonyms to pick
         embedding (textattack.shared.AbstractWordEmbedding): Wrapper for word embedding
+    >>> from textattack.transformations import WordSwapEmbedding
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapEmbedding()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
     """
 
     def __init__(

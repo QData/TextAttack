@@ -19,6 +19,13 @@ class WordSwapQWERTY(WordSwap):
         :param random_one: Whether to return a single (random) swap, or all possible swaps.
         :param skip_first_char: When True, do not modify the first character of each word.
         :param skip_last_char: When True, do not modify the last character of each word.
+        >>> from textattack.transformations import WordSwapQWERTY
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapQWERT()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am fabulous.'
+        >>> augmenter.augment(s)
         """
         super().__init__(**kwargs)
         self.random_one = random_one
