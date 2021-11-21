@@ -175,8 +175,10 @@ class AttackArgs:
             If set, Visdom logger is used with the provided dictionary passed as a keyword arguments to :class:`~textattack.loggers.VisdomLogger`.
             Pass in empty dictionary to use default arguments. For custom logger, the dictionary should have the following
             three keys and their corresponding values: :obj:`"env", "port", "hostname"`.
-        log_to_wandb (:obj:`str`, `optional`, defaults to :obj:`None`):
-            If set, log the attack results and summary to Wandb project specified by this argument.
+        log_to_wandb(:obj:`dict`, `optional`, defaults to :obj:`None`):
+            If set, WandB logger is used with the provided dictionary passed as a keyword arguments to :class:`~textattack.loggers.WeightsAndBiasesLogger`.
+            Pass in empty dictionary to use default arguments. For custom logger, the dictionary should have the following
+            key and its corresponding value: :obj:`"project"`.
         disable_stdout (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Disable displaying individual attack results to stdout.
         silent (:obj:`bool`, `optional`, defaults to :obj:`False`):
@@ -200,7 +202,7 @@ class AttackArgs:
     log_to_csv: str = None
     csv_coloring_style: str = "file"
     log_to_visdom: dict = None
-    log_to_wandb: str = None
+    log_to_wandb: dict = None
     disable_stdout: bool = False
     silent: bool = False
     enable_advance_metrics: bool = False
@@ -344,10 +346,12 @@ class AttackArgs:
         parser.add_argument(
             "--log-to-wandb",
             nargs="?",
-            default=default_obj.log_to_wandb,
-            const="textattack",
-            type=str,
-            help="Name of the wandb project. Set this argument if you want to log attacks to Wandb.",
+            default=None,
+            const='{"project": "textattack"}',
+            type=json.loads,
+            help="Set this argument if you want to log attacks to WandB. The dictionary should have the following "
+            'key and its corresponding value: `"project"`. '
+            'Example for command line use: `--log-to-wandb {"project": "textattack"}`.',
         )
         parser.add_argument(
             "--disable-stdout",
@@ -420,7 +424,7 @@ class AttackArgs:
 
         # Weights & Biases
         if args.log_to_wandb is not None:
-            attack_log_manager.enable_wandb(args.log_to_wandb)
+            attack_log_manager.enable_wandb(**args.log_to_wandb)
 
         # Stdout
         if not args.disable_stdout and not sys.stdout.isatty():
