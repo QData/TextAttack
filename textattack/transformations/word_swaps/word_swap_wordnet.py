@@ -14,6 +14,7 @@ from .word_swap import WordSwap
 class WordSwapWordNet(WordSwap):
     """Transforms an input by replacing its words with synonyms provided by
     WordNet.
+
     >>> from textattack.transformations import WordSwapWordNet
     >>> from textattack.augmentation import Augmenter
 

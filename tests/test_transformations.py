@@ -1,15 +1,16 @@
 def test_imports():
+    import flair
     import torch
 
     import textattack
 
-    import flair
-
     del textattack, torch, flair
+
 
 def test_word_swap_change_location():
     from flair.data import Sentence
     from flair.models import SequenceTagger
+
     from textattack.augmentation import Augmenter
     from textattack.transformations.word_swaps import WordSwapChangeLocation
 
@@ -24,15 +25,17 @@ def test_word_swap_change_location():
     entity_original = []
     entity_augmented = []
 
-    for entity in original_text.get_spans('ner'):
+    for entity in original_text.get_spans("ner"):
         entity_original.append(entity.tag)
-    for entity in augmented_text.get_spans('ner'):
+    for entity in augmented_text.get_spans("ner"):
         entity_augmented.append(entity.tag)
-    assert (entity_original == entity_augmented)
+    assert entity_original == entity_augmented
+
 
 def test_word_swap_change_name():
     from flair.data import Sentence
     from flair.models import SequenceTagger
+
     from textattack.augmentation import Augmenter
     from textattack.transformations.word_swaps import WordSwapChangeName
 
@@ -47,8 +50,8 @@ def test_word_swap_change_name():
     entity_original = []
     entity_augmented = []
 
-    for entity in original_text.get_spans('ner'):
+    for entity in original_text.get_spans("ner"):
         entity_original.append(entity.tag)
-    for entity in augmented_text.get_spans('ner'):
+    for entity in augmented_text.get_spans("ner"):
         entity_augmented.append(entity.tag)
-    assert (entity_original == entity_augmented)
+    assert entity_original == entity_augmented

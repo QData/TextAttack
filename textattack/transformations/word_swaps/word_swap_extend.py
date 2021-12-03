@@ -13,8 +13,8 @@ class WordSwapExtend(WordSwap):
     combinations."""
 
     def _get_transformations(self, current_text, indices_to_modify):
-        """Return all possible transformed sentences, each with one
-        extension.
+        """Return all possible transformed sentences, each with one extension.
+
         >>> from textattack.transformations import WordSwapExtend
         >>> from textattack.augmentation import Augmenter
 
