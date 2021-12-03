@@ -2,7 +2,7 @@
 WordInsertionMaskedLM Class
 -------------------------------
 """
-
+import re
 
 import torch
 from transformers import AutoModelForMaskedLM, AutoTokenizer
@@ -162,7 +162,7 @@ class WordInsertionMaskedLM(WordInsertion):
             word_at_index = current_text.words[index_to_modify]
             for word in new_words[i]:
                 word = word.strip("Ġ")
-                if word != word_at_index:
+                if word != word_at_index and re.search("[a-zA-Z]", word):
                     transformed_texts.append(
                         current_text.insert_text_before_word_index(
                             index_to_modify, word
