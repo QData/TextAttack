@@ -17,11 +17,11 @@ def test_word_swap_change_location():
     augmenter = Augmenter(transformation=WordSwapChangeLocation())
     s = "I am in Dallas."
     s_augmented = augmenter.augment(s)
-    augmented_text = s_augmented[0]
+    augmented_text = Sentence(s_augmented[0])
     tagger = SequenceTagger.load("flair/ner-english")
     original_text = Sentence(s)
     tagger.predict(original_text)
-    tagger.predict(Sentence(augmented_text))
+    tagger.predict(augmented_text)
 
     entity_original = []
     entity_augmented = []
@@ -43,11 +43,11 @@ def test_word_swap_change_name():
     augmenter = Augmenter(transformation=WordSwapChangeName())
     s = "My name is Anthony Davis."
     s_augmented = augmenter.augment(s)
-    augmented_text = s_augmented[0]
+    augmented_text = Sentence(s_augmented[0])
     tagger = SequenceTagger.load("flair/ner-english")
     original_text = Sentence(s)
     tagger.predict(original_text)
-    tagger.predict(Sentence(augmented_text))
+    tagger.predict(augmented_text)
 
     entity_original = []
     entity_augmented = []
