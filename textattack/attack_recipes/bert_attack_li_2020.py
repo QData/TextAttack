@@ -6,7 +6,7 @@ BERT-Attack:
 
 .. warning::
     This attack is super slow
-    (see https://github.com/QData/TextAttack/issues/586) 
+    (see https://github.com/QData/TextAttack/issues/586)
     Consider using smaller values for "max_candidates".
 
 """
