@@ -10,7 +10,7 @@ There are two ways to install TextAttack. If you want to simply use as it is, in
 ## Install with pip
 Simply run
 
-    pip install textattack 
+    pip install textattack[tensorflow]
 
 ## Install from Source
 To install TextAttack from source, first clone the repo by running
