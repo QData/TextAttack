@@ -1,7 +1,7 @@
 """
 
 Metrics on perturbed words
-=============================
+---------------------------------------------------------------------
 
 """
 
@@ -20,7 +20,7 @@ class WordsPerturbed(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
-        """Calculates all metrics related to perturbed words in an attack
+        """Calculates all metrics related to perturbed words in an attack.
 
         Args:
             results (``AttackResult`` objects):

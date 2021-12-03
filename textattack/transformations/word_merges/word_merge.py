@@ -1,6 +1,6 @@
 """
 Word Merge
-============================================
+------------------------------------------------
 Word Merge transformations act by taking two adjacent words, and "merges" them into one word by deleting one word and replacing another.
 For example, if we can merge the words "the" and "movie" in the text "I like the movie" and get following text: "I like film".
 When we choose to "merge" word at index ``i``, we merge it with the next word at ``i+1``.

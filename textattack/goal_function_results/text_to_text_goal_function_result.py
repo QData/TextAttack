@@ -1,7 +1,9 @@
 """
 
-text2text goal function Result
+TextToTextGoalFunctionResult Class
 ====================================
+
+text2text goal function Result
 
 """
 

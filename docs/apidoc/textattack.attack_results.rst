@@ -8,6 +8,7 @@ textattack.attack\_results package
 
 
 
+
 .. automodule:: textattack.attack_results.attack_result
    :members:
    :undoc-members:

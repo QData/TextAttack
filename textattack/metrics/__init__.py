@@ -1,4 +1,7 @@
-"""
+""".. _metrics:
+
+metrics package: to calculate advanced metrics for evaluting attacks and augmented text
+========================================================================================
 """
 
 from .metric import Metric

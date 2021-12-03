@@ -1,6 +1,6 @@
 """
 Word Swap by OpenHowNet
-============================================
+-------------------------------
 """
 
 
@@ -37,6 +37,13 @@ class WordSwapHowNet(WordSwap):
         sentence or phrase.
 
         Based on nearest neighbors selected word embeddings.
+        >>> from textattack.transformations import WordSwapHowNet
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapHowNet()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am fabulous.'
+        >>> augmenter.augment(s)
         """
         word_pos = self.pos_dict.get(word_pos, None)
         if word_pos is None:

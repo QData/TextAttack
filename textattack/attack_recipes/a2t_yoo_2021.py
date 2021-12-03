@@ -1,3 +1,9 @@
+"""
+A2T (A2T: Attack for Adversarial Training Recipe)
+==================================================
+
+"""
+
 from textattack import Attack
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.pre_transformation import (

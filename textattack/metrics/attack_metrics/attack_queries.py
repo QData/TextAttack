@@ -1,7 +1,7 @@
 """
 
 Metrics on AttackQueries
-=========================
+---------------------------------------------------------------------
 
 """
 
@@ -16,7 +16,7 @@ class AttackQueries(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
-        """Calculates all metrics related to number of queries in an attack
+        """Calculates all metrics related to number of queries in an attack.
 
         Args:
             results (``AttackResult`` objects):

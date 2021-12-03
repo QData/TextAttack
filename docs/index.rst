@@ -31,10 +31,10 @@ TextAttack Documentation
    1start/attacks4Components.md
    1start/benchmark-search.md
    1start/quality-SOTA-recipes.md
+   1start/A2TforVanillaAT.md
    1start/api-design-tips.md
    1start/multilingual-visualization.md
    1start/support.md
-   
  
 .. toctree::
    :maxdepth: 6
@@ -63,6 +63,7 @@ TextAttack Documentation
    Datasets <api/datasets.rst>
    GoalFunction <api/goal_functions.rst>
    Constraints <api/constraints.rst>
+   Transformations <api/transformations.rst>
    SearchMethod <api/search_methods.rst>
    
 

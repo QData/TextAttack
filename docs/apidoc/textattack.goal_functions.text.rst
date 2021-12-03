@@ -8,6 +8,7 @@ textattack.goal\_functions.text package
 
 
 
+
 .. automodule:: textattack.goal_functions.text.minimize_bleu
    :members:
    :undoc-members:

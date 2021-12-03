@@ -1,7 +1,7 @@
 """
 
 Metrics on AttackSuccessRate
-=============================
+---------------------------------------------------------------------
 
 """
 
@@ -18,7 +18,8 @@ class AttackSuccessRate(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
-        """Calculates all metrics related to number of succesful, failed and skipped results in an attack
+        """Calculates all metrics related to number of succesful, failed and
+        skipped results in an attack.
 
         Args:
             results (``AttackResult`` objects):

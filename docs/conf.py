@@ -17,11 +17,11 @@ sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 project = "TextAttack"
-copyright = "2020, UVA QData Lab"
+copyright = "2021, UVA QData Lab"
 author = "UVA QData Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.3.3"
+release = "0.3.4"
 
 # Set master doc to `index.rst`.
 master_doc = "index"
@@ -39,6 +39,7 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx_rtd_theme",
+    "sphinx_copybutton",
     # Enable .ipynb doc files
     "nbsphinx",
     # Enable .md doc files
@@ -94,3 +95,11 @@ add_module_names = True
 
 # Sort members by group
 autodoc_member_order = "groupwise"
+
+# -- Options for Sphinx Copy Button-------------------------------------------------
+
+# Exclude the prompt symbol ">>>" when copying text
+copybutton_prompt_text = ">>> "
+
+# Specify Line Continuation Character so that all the entire Line is copied
+copybutton_line_continuation_character = "\\"

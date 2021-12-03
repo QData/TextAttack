@@ -1,6 +1,6 @@
 """
-Word Insertion
-============================================
+WordInsertion Class
+-------------------------------
 Word Insertion transformations act by inserting a new word at a specific word index.
 For example, if we insert "new" in position 3 in the text "I like the movie", we get "I like the new movie".
 Subclasses can implement the abstract ``WordInsertion`` class by overriding ``self._get_new_words``.

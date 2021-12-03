@@ -1,5 +1,5 @@
 """
-Model Wrappers
+Model Wrappers Package
 --------------------------
 TextAttack can attack any model that takes a list of strings as input and outputs a list of predictions. This is the idea behind *model wrappers*: to help your model conform to this API, we've provided the ``textattack.models.wrappers.ModelWrapper`` abstract class.
 

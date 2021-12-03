@@ -8,6 +8,13 @@ textattack.attack\_recipes package
 
 
 
+
+.. automodule:: textattack.attack_recipes.a2t_yoo_2021
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. automodule:: textattack.attack_recipes.attack_recipe
    :members:
    :undoc-members:

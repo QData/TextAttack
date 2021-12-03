@@ -1,3 +1,11 @@
+"""
+
+USEMetric class:
+-------------------------------------------------------
+Class for calculating USE similarity on AttackResults
+
+"""
+
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.constraints.semantics.sentence_encoders import UniversalSentenceEncoder
 from textattack.metrics import Metric
@@ -12,7 +20,7 @@ class USEMetric(Metric):
         self.all_metrics = {}
 
     def calculate(self, results):
-        """Calculates average USE similarity on all successfull attacks
+        """Calculates average USE similarity on all successfull attacks.
 
         Args:
             results (``AttackResult`` objects):
