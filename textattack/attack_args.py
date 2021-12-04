@@ -111,6 +111,7 @@ GOAL_FUNCTION_CLASS_NAMES = {
     #
     # Classification goal functions
     #
+    "hardlabel-classification": "textattack.goal_functions.classification.HardLabelClassification",
     "targeted-classification": "textattack.goal_functions.classification.TargetedClassification",
     "untargeted-classification": "textattack.goal_functions.classification.UntargetedClassification",
     "input-reduction": "textattack.goal_functions.classification.InputReduction",

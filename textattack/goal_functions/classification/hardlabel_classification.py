@@ -1,6 +1,6 @@
 """
 
-Determine successful in untargeted Classification
+Determine if an attack has been successful in Hard Label Classficiation.
 ----------------------------------------------------
 """
 
@@ -9,8 +9,8 @@ from .classification_goal_function import ClassificationGoalFunction
 
 
 class HardLabelClassification(ClassificationGoalFunction):
-    """An untargeted attack on classification models which attempts to minimize
-    the score of the correct label until it is no longer the predicted label.
+    """An hard label attack on classification models which attempts to maximize
+    the semantic similarity of the label such that the target is outside of the decision boundary.
 
     Args:
         target_max_score (float): If set, goal is to reduce model output to
