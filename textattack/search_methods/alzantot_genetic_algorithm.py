@@ -15,8 +15,8 @@ class AlzantotGeneticAlgorithm(GeneticAlgorithm):
     """Attacks a model with word substiutitions using a genetic algorithm.
 
     Args:
-        pop_size (int): The population size. Defaults to 20.
-        max_iters (int): The maximum number of iterations to use. Defaults to 50.
+        pop_size (int): The population size. Defaults to 60.
+        max_iters (int): The maximum number of iterations to use. Defaults to 20.
         temp (float): Temperature for softmax function used to normalize probability dist when sampling parents.
             Higher temperature increases the sensitivity to lower probability candidates.
         give_up_if_no_improvement (bool): If True, stop the search early if no candidate that improves the score is found.
