@@ -17,6 +17,7 @@ class WordSwapChangeName(WordSwap):
         first_only=False,
         last_only=False,
         confidence_score=0.7,
+        language="en",
         **kwargs
     ):
         """Transforms an input by replacing names of recognized name entity.
@@ -40,13 +41,20 @@ class WordSwapChangeName(WordSwap):
         self.first_only = first_only
         self.last_only = last_only
         self.confidence_score = confidence_score
+        self.language = language
 
     def _get_transformations(self, current_text, indices_to_modify):
         transformed_texts = []
+        if self.language == "en":
+            model_name = "ner"
+        elif self.language == "fra" or self.language == "french":
+            model_name = "flair/ner-french"
+        else:
+            model_name = "flair/ner-multi-fast"
 
         for i in indices_to_modify:
             word_to_replace = current_text.words[i].capitalize()
-            word_to_replace_ner = current_text.ner_of_word_index(i)
+            word_to_replace_ner = current_text.ner_of_word_index(i, model_name)
             replacement_words = self._get_replacement_words(
                 word_to_replace, word_to_replace_ner
             )
@@ -75,8 +83,26 @@ class WordSwapChangeName(WordSwap):
 
     def _get_lastname(self, word):
         """Return a list of random last names."""
-        return np.random.choice(PERSON_NAMES["last"], self.num_name_replacements)
+        if self.language == "esp" or self.language == "spanish":
+            return np.random.choice(
+                PERSON_NAMES["last-spanish"], self.num_name_replacements
+            )
+        elif self.language == "fra" or self.language == "french":
+            return np.random.choice(
+                PERSON_NAMES["last-french"], self.num_name_replacements
+            )
+        else:
+            return np.random.choice(PERSON_NAMES["last"], self.num_name_replacements)
 
     def _get_firstname(self, word):
         """Return a list of random first names."""
-        return np.random.choice(PERSON_NAMES["first"], self.num_name_replacements)
+        if self.language == "esp" or self.language == "spanish":
+            return np.random.choice(
+                PERSON_NAMES["first-spanish"], self.num_name_replacements
+            )
+        elif self.language == "fra" or self.language == "french":
+            return np.random.choice(
+                PERSON_NAMES["first-french"], self.num_name_replacements
+            )
+        else:
+            return np.random.choice(PERSON_NAMES["first"], self.num_name_replacements)

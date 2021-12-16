@@ -17,6 +17,7 @@ class WordSwapContract(WordSwap):
     def _get_transformations(self, current_text, indices_to_modify):
         """Return all possible transformed sentences, each with one
         contraction.
+
         >>> from textattack.transformations import WordSwapContract
         >>> from textattack.augmentation import Augmenter
 
