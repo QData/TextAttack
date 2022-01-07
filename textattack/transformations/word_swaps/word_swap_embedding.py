@@ -31,10 +31,12 @@ class WordSwapEmbedding(WordSwap):
     def __init__(
         self,
         max_candidates=15,
-        embedding=WordEmbedding.counterfitted_GLOVE_embedding(),
+        embedding=None,
         **kwargs
     ):
         super().__init__(**kwargs)
+        if embedding is None:
+            embedding = WordEmbedding.counterfitted_GLOVE_embedding()
         self.max_candidates = max_candidates
         if not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(

@@ -20,8 +20,10 @@ class ThoughtVector(SentenceEncoder):
     """
 
     def __init__(
-        self, embedding=WordEmbedding.counterfitted_GLOVE_embedding(), **kwargs
+        self, embedding=None, **kwargs
     ):
+        if embedding is None:
+            embedding = WordEmbedding.counterfitted_GLOVE_embedding()
         if not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(
                 "`embedding` object must be of type `textattack.shared.AbstractWordEmbedding`."

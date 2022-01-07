@@ -24,7 +24,7 @@ class WordEmbeddingDistance(Constraint):
 
     def __init__(
         self,
-        embedding=WordEmbedding.counterfitted_GLOVE_embedding(),
+        embedding=None,
         include_unknown_words=True,
         min_cos_sim=None,
         max_mse_dist=None,
@@ -32,6 +32,8 @@ class WordEmbeddingDistance(Constraint):
         compare_against_original=True,
     ):
         super().__init__(compare_against_original)
+        if embedding is None:
+            embedding = WordEmbedding.counterfitted_GLOVE_embedding()
         self.include_unknown_words = include_unknown_words
         self.cased = cased
 
