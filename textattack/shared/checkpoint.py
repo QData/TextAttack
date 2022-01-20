@@ -233,10 +233,8 @@ class AttackCheckpoint:
             self.worklist
         ), "Recorded number of remaining attacks and size of worklist are different."
 
-        results_set = set()
-        for result in self.attack_log_manager.results:
-            results_set.add(result.original_text)
-
+        results_set = {result.original_text 
+                       for result in self.attack_log_manager.results}
         assert (
             len(results_set) == self.results_count
         ), "Duplicate `AttackResults` found."
