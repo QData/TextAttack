@@ -9,6 +9,9 @@ import tqdm
 from textattack.constraints import PreTransformationConstraint
 from textattack.metrics.quality_metrics import Perplexity, USEMetric
 from textattack.shared import AttackedText, utils
+from textattack.transformations import CompositeTransformation, Transformation
+import lru
+import torch
 
 
 class Augmenter:
@@ -69,6 +72,9 @@ class Augmenter:
         high_yield=False,
         fast_augment=False,
         enable_advanced_metrics=False,
+        transformation_cache_size=2 ** 15,
+        constraint_cache_size=2 ** 15,
+        use_cache=True
     ):
         assert (
             transformations_per_example > 0
@@ -77,17 +83,161 @@ class Augmenter:
         self.transformation = transformation
         self.pct_words_to_swap = pct_words_to_swap
         self.transformations_per_example = transformations_per_example
-
         self.constraints = []
         self.pre_transformation_constraints = []
         self.high_yield = high_yield
         self.fast_augment = fast_augment
         self.advanced_metrics = enable_advanced_metrics
+        self.use_cache = use_cache
+
         for constraint in constraints:
             if isinstance(constraint, PreTransformationConstraint):
                 self.pre_transformation_constraints.append(constraint)
             else:
                 self.constraints.append(constraint)
+
+        if self.use_cache:
+            if not self.transformation.deterministic:
+                self.use_transformation_cache = False
+            elif isinstance(self.transformation, CompositeTransformation):
+                self.use_transformation_cache = True
+                for t in self.transformation.transformations:
+                    if not t.deterministic:
+                        self.use_transformation_cache = False
+                        break
+            else:
+                self.use_transformation_cache = True
+        else:
+            self.use_transformation_cache = False
+
+        if self.use_transformation_cache:
+            self.transformation_cache_size = transformation_cache_size
+            self.transformation_cache = lru.LRU(transformation_cache_size)
+            self.constraint_cache_size = constraint_cache_size
+            self.constraints_cache = lru.LRU(constraint_cache_size)
+
+    def _get_transformations_uncached(self, current_text, original_text=None, **kwargs):
+        """Applies ``self.transformation`` to ``text``, then filters the list
+        of possible transformations through the applicable constraints.
+
+        Args:
+            current_text: The current ``AttackedText`` on which to perform the transformations.
+            original_text: The original ``AttackedText`` from which the attack started.
+        Returns:
+            A filtered list of transformations where each transformation matches the constraints
+        """
+        transformed_texts = self.transformation(
+            current_text,
+            pre_transformation_constraints=self.pre_transformation_constraints,
+            **kwargs,
+        )
+
+        return transformed_texts
+
+    def get_transformations(self, current_text, original_text=None, **kwargs):
+        """Applies ``self.transformation`` to ``text``, then filters the list
+        of possible transformations through the applicable constraints.
+
+        Args:
+            current_text: The current ``AttackedText`` on which to perform the transformations.
+            original_text: The original ``AttackedText`` from which the attack started.
+        Returns:
+            A filtered list of transformations where each transformation matches the constraints
+        """
+        if not self.transformation:
+            raise RuntimeError(
+                "Cannot call `get_transformations` without a transformation."
+            )
+        if self.use_transformation_cache:
+            cache_key = tuple([current_text] + sorted(kwargs.items()))
+            if utils.hashable(cache_key) and cache_key in self.transformation_cache:
+                # promote transformed_text to the top of the LRU cache
+                self.transformation_cache[cache_key] = self.transformation_cache[
+                    cache_key
+                ]
+                transformed_texts = list(self.transformation_cache[cache_key])
+            else:
+                transformed_texts = self._get_transformations_uncached(
+                    current_text, original_text, **kwargs
+                )
+                if utils.hashable(cache_key):
+                    self.transformation_cache[cache_key] = tuple(transformed_texts)
+        else:
+            transformed_texts = self._get_transformations_uncached(
+                current_text, original_text, **kwargs
+            )
+
+        return self.filter_transformations(
+            transformed_texts, current_text, original_text
+        )
+
+    def _filter_transformations_uncached(
+        self, transformed_texts, current_text, original_text=None
+    ):
+        """Filters a list of potential transformaed texts based on
+        ``self.constraints``
+
+        Args:
+            transformed_texts: A list of candidate transformed ``AttackedText`` to filter.
+            current_text: The current ``AttackedText`` on which the transformation was applied.
+            original_text: The original ``AttackedText`` from which the attack started.
+        """
+        filtered_texts = transformed_texts[:]
+        for C in self.constraints:
+            if len(filtered_texts) == 0:
+                break
+            if C.compare_against_original:
+                if not original_text:
+                    raise ValueError(
+                        f"Missing `original_text` argument when constraint {type(C)} is set to compare against `original_text`"
+                    )
+
+                filtered_texts = C.call_many(filtered_texts, original_text)
+            else:
+                filtered_texts = C.call_many(filtered_texts, current_text)
+        # Default to false for all original transformations.
+        for original_transformed_text in transformed_texts:
+            self.constraints_cache[(current_text, original_transformed_text)] = False
+        # Set unfiltered transformations to True in the cache.
+        for filtered_text in filtered_texts:
+            self.constraints_cache[(current_text, filtered_text)] = True
+        return filtered_texts
+
+    def filter_transformations(
+        self, transformed_texts, current_text, original_text=None
+    ):
+        """Filters a list of potential transformed texts based on
+        ``self.constraints`` Utilizes an LRU cache to attempt to avoid
+        recomputing common transformations.
+
+        Args:
+            transformed_texts: A list of candidate transformed ``AttackedText`` to filter.
+            current_text: The current ``AttackedText`` on which the transformation was applied.
+            original_text: The original ``AttackedText`` from which the attack started.
+        """
+        # Remove any occurences of current_text in transformed_texts
+        transformed_texts = [
+            t for t in transformed_texts if t.text != current_text.text
+        ]
+        # Populate cache with transformed_texts
+        uncached_texts = []
+        filtered_texts = []
+        for transformed_text in transformed_texts:
+            if (current_text, transformed_text) not in self.constraints_cache:
+                uncached_texts.append(transformed_text)
+            else:
+                # promote transformed_text to the top of the LRU cache
+                self.constraints_cache[
+                    (current_text, transformed_text)
+                ] = self.constraints_cache[(current_text, transformed_text)]
+                if self.constraints_cache[(current_text, transformed_text)]:
+                    filtered_texts.append(transformed_text)
+        filtered_texts += self._filter_transformations_uncached(
+            uncached_texts, current_text, original_text=original_text
+        )
+        # Sort transformations to ensure order is preserved between runs
+        filtered_texts.sort(key=lambda t: t.text)
+        return filtered_texts
 
     def _filter_transformations(self, transformed_texts, current_text, original_text):
         """Filters a list of ``AttackedText`` objects to include only the ones
@@ -122,9 +272,12 @@ class Augmenter:
             words_swapped = len(current_text.attack_attrs["modified_indices"])
 
             while words_swapped < num_words_to_swap:
-                transformed_texts = self.transformation(
-                    current_text, self.pre_transformation_constraints
-                )
+                if self.use_transformation_cache:
+                    transformed_texts = self.get_transformations(current_text)
+                else:
+                    transformed_texts = self.transformation(
+                        current_text, self.pre_transformation_constraints
+                    )
 
                 # Get rid of transformations we already have
                 transformed_texts = [
@@ -132,9 +285,14 @@ class Augmenter:
                 ]
 
                 # Filter out transformations that don't match the constraints.
-                transformed_texts = self._filter_transformations(
-                    transformed_texts, current_text, original_text
-                )
+                if self.use_transformation_cache:
+                    transformed_texts = self.filter_transformations(
+                        transformed_texts, current_text, original_text
+                    )
+                else:
+                    transformed_texts = self._filter_transformations(
+                        transformed_texts, current_text, original_text
+                    )
 
                 # if there's no more transformed texts after filter, terminate
                 if not len(transformed_texts):

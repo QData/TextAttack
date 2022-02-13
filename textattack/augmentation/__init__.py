@@ -18,3 +18,4 @@ from .recipes import (
     CLAREAugmenter,
     BackTranslationAugmenter,
 )
+from .augmentor import Augmentor
