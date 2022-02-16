@@ -13,7 +13,7 @@ scipy>=1.4.1
 torch>=1.7.0,!=1.8
 transformers>=3.3.0
 terminaltables
-tqdm>=4.27,<4.50.0
+tqdm
 word2number
 num2words
 more-itertools
