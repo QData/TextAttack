@@ -141,11 +141,12 @@ class AugmentCommand(TextAttackCommand):
             # try and automatically infer the correct CSV format.
             csv_file = open(args.input_csv, "r")
             dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
+            dialect.quoting = csv.QUOTE_NONE
             csv_file.seek(0)
             rows = [
                 row
                 for row in csv.DictReader(
-                    csv_file, dialect=dialect, skipinitialspace=True
+                    csv_file, dialect=dialect, skipinitialspace=True,
                 )
             ]
             # Validate input column.
@@ -177,7 +178,7 @@ class AugmentCommand(TextAttackCommand):
             # Print to file.
             with open(args.output_csv, "w") as outfile:
                 csv_writer = csv.writer(
-                    outfile, delimiter=",", quotechar='"', quoting=csv.QUOTE_MINIMAL
+                    outfile, delimiter=",", quotechar="'", quoting=csv.QUOTE_MINIMAL,
                 )
                 # Write header.
                 csv_writer.writerow(output_rows[0].keys())
