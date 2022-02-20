@@ -1,7 +1,8 @@
 import string
-import jieba
 
-from langdetect import detect, DetectorFactory
+import jieba
+from langdetect import DetectorFactory, detect
+
 from .importing import LazyLoader
 
 

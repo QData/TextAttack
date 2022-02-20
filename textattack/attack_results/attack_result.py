@@ -1,6 +1,6 @@
 from abc import ABC
 
-from langdetect import detect, DetectorFactory
+from langdetect import detect
 
 from textattack.goal_function_results import GoalFunctionResult
 from textattack.shared import utils
