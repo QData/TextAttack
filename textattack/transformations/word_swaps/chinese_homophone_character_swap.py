@@ -1,15 +1,28 @@
 import pinyin
 import pandas as pd
 from .word_swap import WordSwap
+import os
+
 
 class ChineseHomophoneCharacterSwap(WordSwap):
     """Transforms an input by replacing its words with synonyms provided by
     a homophone dictionary."""
 
     def __init__(self):
-        homophone_dict = pd.read_csv('chinese_homophone_char.txt', header=None, sep='\n')
+        #Get the absolute path of the homophone dictionary txt
+        path = os.path.dirname(os.path.abspath(__file__))
+        list = path.split(os.sep)
+        list = list[:-2]
+        list.append('shared/chinese_homophone_char.txt')
+        homophone_dict_path = os.path.join("/", *list)
+
+        homophone_dict = pd.read_csv(homophone_dict_path, header=None, sep='\n')
 
         homophone_dict = homophone_dict[0].str.split('\t', expand=True)
+
+        print("ABSOLUTE PATH", path)
+        print("FINAL PATH", homophone_dict_path)
+
 
         self.homophone_dict = homophone_dict
 
@@ -17,7 +30,6 @@ class ChineseHomophoneCharacterSwap(WordSwap):
         """Returns a list containing all possible words with 1 character
         replaced by a homophone."""
         candidate_words = []
-        print("WORD: " + word)
         for i in range(len(word)):
             character = word[i]
             character = pinyin.get(character, format="strip", delimiter=" ")
@@ -33,6 +45,4 @@ class ChineseHomophoneCharacterSwap(WordSwap):
                                     candidate_words.append(candidate_word)
             else:
                 pass
-        print("candidate words: ")
-        print(candidate_words)
         return candidate_words
