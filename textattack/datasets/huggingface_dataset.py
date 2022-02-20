@@ -1,3 +1,13 @@
+"""
+
+HuggingFaceDataset Class
+=========================
+
+TextAttack allows users to provide their own dataset or load from HuggingFace.
+
+
+"""
+
 import collections
 
 import datasets

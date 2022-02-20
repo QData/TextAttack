@@ -1,3 +1,11 @@
+"""
+CLARE Recipe
+=============
+
+(Contextualized Perturbation for Textual Adversarial Attack)
+
+"""
+
 import transformers
 
 from textattack import Attack

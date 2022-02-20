@@ -11,36 +11,36 @@ GoalFunction
 
 ClassificationGoalFunction
 --------------------------
-.. autoclass:: textattack.goal_functions.ClassificationGoalFunction
+.. autoclass:: textattack.goal_functions.classification.ClassificationGoalFunction
    :members:
 
 TargetedClassification
 ----------------------
-.. autoclass:: textattack.goal_functions.TargetedClassification
+.. autoclass:: textattack.goal_functions.classification.TargetedClassification
    :members:
 
 UntargetedClassification
 ------------------------
-.. autoclass:: textattack.goal_functions.UntargetedClassification
+.. autoclass:: textattack.goal_functions.classification.UntargetedClassification
    :members:
 
 InputReduction
 --------------
-.. autoclass:: textattack.goal_functions.InputReduction
+.. autoclass:: textattack.goal_functions.classification.InputReduction
    :members:
 
 TextToTextGoalFunction
 -----------------------
-.. autoclass:: textattack.goal_functions.TextToTextGoalFunction
+.. autoclass:: textattack.goal_functions.text.TextToTextGoalFunction
    :members:
 
 MinimizeBleu
 -------------
-.. autoclass:: textattack.goal_functions.MinimizeBleu
+.. autoclass:: textattack.goal_functions.text.MinimizeBleu
    :members:
 
 NonOverlappingOutput
 ----------------------
-.. autoclass:: textattack.goal_functions.NonOverlappingOutput
+.. autoclass:: textattack.goal_functions.text.NonOverlappingOutput
    :members:
 

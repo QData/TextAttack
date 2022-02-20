@@ -1,3 +1,10 @@
+"""
+
+BenchmarkRecipeCommand class
+==============================
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 from textattack.commands import TextAttackCommand

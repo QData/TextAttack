@@ -1,7 +1,8 @@
 """
-random synonym insertation Transformation
-============================================
 
+WordInsertionRandomSynonym Class
+------------------------------------
+random synonym insertation Transformation
 """
 
 import random

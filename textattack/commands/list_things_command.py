@@ -1,3 +1,10 @@
+"""
+
+ListThingsCommand class
+==============================
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 
 import textattack

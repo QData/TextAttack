@@ -3,6 +3,7 @@ Sentence Encoder Class
 ------------------------
 """
 
+from abc import ABC
 import math
 
 import numpy as np
@@ -11,7 +12,7 @@ import torch
 from textattack.constraints import Constraint
 
 
-class SentenceEncoder(Constraint):
+class SentenceEncoder(Constraint, ABC):
     """Constraint using cosine similarity between sentence encodings of x and
     x_adv.
 

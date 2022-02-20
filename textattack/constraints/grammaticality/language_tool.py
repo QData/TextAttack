@@ -16,11 +16,14 @@ class LanguageTool(Constraint):
             relative to `x`
         compare_against_original (bool): If `True`, compare against the original text.
             Otherwise, compare against the most recent text.
+        language: language to use for languagetool (available choices: https://dev.languagetool.org/languages)
     """
 
-    def __init__(self, grammar_error_threshold=0, compare_against_original=True):
+    def __init__(
+        self, grammar_error_threshold=0, compare_against_original=True, language="en-US"
+    ):
         super().__init__(compare_against_original)
-        self.lang_tool = language_tool_python.LanguageTool("en-US")
+        self.lang_tool = language_tool_python.LanguageTool(language)
         self.grammar_error_threshold = grammar_error_threshold
         self.grammar_error_cache = {}
 

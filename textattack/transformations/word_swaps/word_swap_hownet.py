@@ -1,6 +1,6 @@
 """
 Word Swap by OpenHowNet
-============================================
+-------------------------------
 """
 
 
@@ -22,7 +22,7 @@ class WordSwapHowNet(WordSwap):
         self.max_candidates = max_candidates
 
         # Download synonym candidates bank if they're not cached.
-        cache_path = utils.download_if_needed(
+        cache_path = utils.download_from_s3(
             "{}/{}".format(WordSwapHowNet.PATH, "word_candidates_sense.pkl")
         )
 
@@ -37,6 +37,13 @@ class WordSwapHowNet(WordSwap):
         sentence or phrase.
 
         Based on nearest neighbors selected word embeddings.
+        >>> from textattack.transformations import WordSwapHowNet
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapHowNet()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am fabulous.'
+        >>> augmenter.augment(s)
         """
         word_pos = self.pos_dict.get(word_pos, None)
         if word_pos is None:

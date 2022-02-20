@@ -1,3 +1,9 @@
+"""
+ModelArgs Class
+===============
+"""
+
+
 from dataclasses import dataclass
 import json
 import os
@@ -90,24 +96,27 @@ HUGGINGFACE_MODELS = {
 
 #
 # Models hosted by textattack.
+# `models` vs `models_v2`: `models_v2` is simply a new dir in S3 that contains models' `config.json`.
+# Fixes issue https://github.com/QData/TextAttack/issues/485
+# Model parameters has not changed.
 #
 TEXTATTACK_MODELS = {
     #
     # LSTMs
     #
-    "lstm-ag-news": "models/classification/lstm/ag-news",
-    "lstm-imdb": "models/classification/lstm/imdb",
-    "lstm-mr": "models/classification/lstm/mr",
-    "lstm-sst2": "models/classification/lstm/sst2",
-    "lstm-yelp": "models/classification/lstm/yelp",
+    "lstm-ag-news": "models_v2/classification/lstm/ag-news",
+    "lstm-imdb": "models_v2/classification/lstm/imdb",
+    "lstm-mr": "models_v2/classification/lstm/mr",
+    "lstm-sst2": "models_v2/classification/lstm/sst2",
+    "lstm-yelp": "models_v2/classification/lstm/yelp",
     #
     # CNNs
     #
-    "cnn-ag-news": "models/classification/cnn/ag-news",
-    "cnn-imdb": "models/classification/cnn/imdb",
-    "cnn-mr": "models/classification/cnn/rotten-tomatoes",
-    "cnn-sst2": "models/classification/cnn/sst",
-    "cnn-yelp": "models/classification/cnn/yelp",
+    "cnn-ag-news": "models_v2/classification/cnn/ag-news",
+    "cnn-imdb": "models_v2/classification/cnn/imdb",
+    "cnn-mr": "models_v2/classification/cnn/rotten-tomatoes",
+    "cnn-sst2": "models_v2/classification/cnn/sst",
+    "cnn-yelp": "models_v2/classification/cnn/yelp",
     #
     # T5 for translation
     #

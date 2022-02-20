@@ -1,6 +1,6 @@
 """
 Word Swap by swapping synonyms in WordNet
-==========================================================
+------------------------------------------------
 """
 
 
@@ -13,7 +13,16 @@ from .word_swap import WordSwap
 
 class WordSwapWordNet(WordSwap):
     """Transforms an input by replacing its words with synonyms provided by
-    WordNet."""
+    WordNet.
+
+    >>> from textattack.transformations import WordSwapWordNet
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapWordNet()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
+    """
 
     def __init__(self, language="eng"):
         if language not in wordnet.langs():

@@ -71,13 +71,18 @@ or a specific command using, for example,
 textattack attack --help
 ```
 
-The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+The [`examples/`](examples/) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. 
+
+
+The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
+
+
 
 ### Running Attacks: `textattack attack --help`
 
 The easiest way to try out an attack is via the command-line interface, `textattack attack`. 
 
-> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance.
+> **Tip:** If your machine has multiple GPUs, you can distribute the attack across them using the `--parallel` option. For some attacks, this can really help performance. (If you want to attack Keras models in parallel, please check out `examples/attack/attack_keras_parallel.py` instead)
 
 Here are some concrete examples:
 
@@ -88,7 +93,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 
 *DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*: 
 ```bash
-textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
+textattack attack --model distilbert-base-uncased-cola --recipe deepwordbug --num-examples 100
 ```
 
 *Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
@@ -107,6 +112,7 @@ We include attack recipes which implement attacks from the literature. You can l
 
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
+<img src="docs/_static/imgs/overview.png" alt="TextAttack Overview" style="display: block; margin: 0 auto;" />
 
 <table  style="width:100%" border="1">
 <thead>
@@ -122,6 +128,15 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <tbody>
   <tr><td style="text-align: center;" colspan="6"><strong><br>Attacks on classification tasks, like sentiment classification and entailment:<br></strong></td></tr>
 
+<tr>
+<td><code>a2t</code> 
+<span class="citation" data-cites="yoo2021a2t"></span></td>
+<td><sub>Untargeted {Classification, Entailment}</sub></td>
+<td><sub>Percentage of words perturbed, Word embedding distance, DistilBERT sentence encoding cosine similarity, part-of-speech consistency</sub></td>
+<td><sub>Counter-fitted word embedding swap (or) BERT Masked Token Prediction</sub></td>
+<td><sub>Greedy-WIR (gradient)</sub></td>
+<td ><sub>from (["Towards Improving Adversarial Training of NLP Models" (Yoo et al., 2021)](https://arxiv.org/abs/2109.00544))</sub></td>
+</tr>
 <tr>
 <td><code>alzantot</code>  <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>Untargeted {Classification, Entailment}</sub></td>
@@ -296,14 +311,15 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
 ### Augmenting Text: `textattack augment`
 
 Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
-uses a transformation and a list of constraints to augment data. We also offer five built-in recipes
+uses a transformation and a list of constraints to augment data. We also offer  built-in recipes
 for data augmentation:
-- `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
-- `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
-- `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
-- `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
-- `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
-- `textattack.CLAREAugmenter` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+- `wordnet` augments text by replacing words with WordNet synonyms
+- `embedding` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
+- `charswap` augments text by substituting, deleting, inserting, and swapping adjacent characters
+- `eda` augments text with a combination of word insertions, substitutions and deletions.
+- `checklist` augments text by contraction/extension and by substituting names, locations, numbers.
+- `clare` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+
 
 #### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. `textattack augment`
@@ -322,7 +338,10 @@ For example, given the following as `examples.csv`:
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
+The command 
+```bash
+textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original
+```
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
@@ -380,24 +399,23 @@ automatically loaded using the `datasets` package.
 #### Training Examples
 *Train our default LSTM for 50 epochs on the Yelp Polarity dataset:*
 ```bash
-textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
+textattack train --model-name-or-path lstm --dataset yelp_polarity  --epochs 50 --learning-rate 1e-5
 ```
 
-The training process has data augmentation built-in:
-```bash
-textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
-```
-This uses the `EasyDataAugmenter` recipe to augment the `rotten_tomatoes` dataset before training.
 
 *Fine-Tune `bert-base` on the `CoLA` dataset for 5 epochs**:
 ```bash
-textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 --epochs 5
+textattack train --model-name-or-path bert-base-uncased --dataset glue^cola --per-device-train-batch-size 8 --epochs 5
 ```
 
 
 ### To check datasets: `textattack peek-dataset`
 
-To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, `textattack peek-dataset --dataset-from-huggingface snli` will show information about the SNLI dataset from the NLP package.
+To take a closer look at a dataset, use `textattack peek-dataset`. TextAttack will print some cursory statistics about the inputs and outputs from the dataset. For example, 
+```bash
+textattack peek-dataset --dataset-from-huggingface snli
+```
+will show information about the SNLI dataset from the NLP package.
 
 
 ### To list functional components: `textattack list`
@@ -453,7 +471,7 @@ create a short file that loads them as variables `model` and `tokenizer`.  The `
 be able to transform string inputs to lists or tensors of IDs using a method called `encode()`. The
 model must take inputs via the `__call__` method.
 
-##### Model from a file
+##### Custom Model from a file
 To experiment with a model you've trained, you could create the following file
 and name it `my_model.py`:
 
@@ -481,20 +499,24 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 You can then run attacks on samples from this dataset by adding the argument `--dataset-from-file my_dataset.py`.
 
 
+
+#### Dataset loading via other mechanism, see: [more details at here](https://textattack.readthedocs.io/en/latest/api/datasets.html)
+
+```python
+import textattack
+my_dataset = [("text",label),....]
+new_dataset = textattack.datasets.Dataset(my_dataset)
+```
+
+
+
 #### Dataset via AttackedText class
 
 To allow for word replacement after a sequence has been tokenized, we include an `AttackedText` object
 which maintains both a list of tokens and the original text, with punctuation. We use this object in favor of a list of words or just raw text.
 
 
-
-#### Dataset via Data Frames (*coming soon*)
-
-
-
 ### Attacks and how to design a new attack 
-
-The `attack_one` method in an `Attack` takes as input an `AttackedText`, and outputs either a `SuccessfulAttackResult` if it succeeds or a `FailedAttackResult` if it fails. 
 
 
 We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. The attack attempts to perturb an input text such that the model output fulfills the goal function (i.e., indicating whether the attack is successful) and the perturbation adheres to the set of constraints (e.g., grammar constraint, semantic similarity constraint). A search method is used to find a sequence of transformations that produce a successful adversarial example.
@@ -546,6 +568,11 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 
 ## Multi-lingual Support
+
+
+- see example code: [https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py](https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py) for using our framework to attack French-BERT. 
+
+- see tutorial notebook: [https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_4_CamemBERT.html) for using our framework to attack French-BERT. 
 
 - See [README_ZH.md](https://github.com/QData/TextAttack/blob/master/README_ZH.md) for our README in Chinese 
 

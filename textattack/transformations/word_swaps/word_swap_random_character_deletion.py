@@ -1,6 +1,6 @@
 """
 Word Swap by Random Character Deletion
-==========================================================
+---------------------------------------
 """
 
 import numpy as np
@@ -19,6 +19,13 @@ class WordSwapRandomCharacterDeletion(WordSwap):
             character.
         skip_last_char (bool): Whether to disregard deleting the last
             character.
+    >>> from textattack.transformations import WordSwapRandomCharacterDeletion
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapRandomCharacterDeletion()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
     """
 
     def __init__(

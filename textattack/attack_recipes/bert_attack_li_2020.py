@@ -4,6 +4,11 @@ BERT-Attack:
 
 (BERT-Attack: Adversarial Attack Against BERT Using BERT)
 
+.. warning::
+    This attack is super slow
+    (see https://github.com/QData/TextAttack/issues/586)
+    Consider using smaller values for "max_candidates".
+
 """
 from textattack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed

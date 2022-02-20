@@ -11,6 +11,8 @@ import textattack
 
 from .model_wrapper import ModelWrapper
 
+torch.cuda.empty_cache()
+
 
 class PyTorchModelWrapper(ModelWrapper):
     """Loads a PyTorch model (`nn.Module`) and tokenizer.

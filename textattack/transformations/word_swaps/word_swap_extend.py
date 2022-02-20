@@ -1,6 +1,6 @@
 """
 Word Swap by Extension
-============================================
+-------------------------------
 """
 
 from textattack.shared.data import EXTENSION_MAP
@@ -13,8 +13,16 @@ class WordSwapExtend(WordSwap):
     combinations."""
 
     def _get_transformations(self, current_text, indices_to_modify):
-        """Return all possible transformed sentences, each with one
-        extension."""
+        """Return all possible transformed sentences, each with one extension.
+
+        >>> from textattack.transformations import WordSwapExtend
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapExtend()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = '''I'm fabulous'''
+        >>> augmenter.augment(s)
+        """
         transformed_texts = []
         words = current_text.words
         for idx in indices_to_modify:

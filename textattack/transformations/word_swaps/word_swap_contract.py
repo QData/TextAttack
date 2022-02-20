@@ -1,6 +1,6 @@
 """
 Word Swap by Contraction
-============================================
+-------------------------------
 """
 
 from textattack.shared.data import EXTENSION_MAP
@@ -16,7 +16,16 @@ class WordSwapContract(WordSwap):
 
     def _get_transformations(self, current_text, indices_to_modify):
         """Return all possible transformed sentences, each with one
-        contraction."""
+        contraction.
+
+        >>> from textattack.transformations import WordSwapContract
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapContract()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am 12 years old.'
+        >>> augmenter.augment(s)
+        """
         transformed_texts = []
 
         words = current_text.words

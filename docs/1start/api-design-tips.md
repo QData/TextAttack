@@ -7,6 +7,24 @@ Lessons learned in designing TextAttack
 
 TextAttack is an open-source Python toolkit for adversarial attacks, adversarial training, and data augmentation in NLP. TextAttack unites 15+ papers from the NLP adversarial attack literature into a single shared framework, with many components reused across attacks. This framework allows both researchers and developers to test and study the weaknesses of their NLP models. 
 
+
+## Presentations on TextAttack 
+
+### 2020: Jack Morris' summary tutorial talk on TextAttack 
+
+- On Jul 31, 2020, Jack Morries gave an invited talk at Weights & Biases research salon on " TextAttack: A Framework for Adversarial Attacks, Data Augmentation, and Adversarial Training in NLP"
+
+- [Youtube Talk link](https://www.youtube.com/watch?v=22Q3f7Fb110)
+
+
+### 2021: Dr. Qi's summary tutorial talk on TextAttack 
+
+- On April 14 2021, Prof. Qi gave an invited talk at the UVA Human and Machine Intelligence Seminar on "Generalizing Adversarial Examples to Natural Language Processing"
+
+- [TalkSlide](https://qdata.github.io/qdata-page/pic/20210414-HMI-textAttack.pdf)
+
+
+
 ## Challenges in Design
 
 

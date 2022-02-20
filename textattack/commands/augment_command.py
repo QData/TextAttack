@@ -1,3 +1,10 @@
+"""
+
+AugmentCommand class
+===========================
+
+"""
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
 import csv
 import os
@@ -22,6 +29,7 @@ class AugmentCommand(TextAttackCommand):
 
         Preserves all columns except for the input (augmneted) column.
         """
+
         args = textattack.AugmenterArgs(**vars(args))
         if args.interactive:
 
@@ -29,6 +37,9 @@ class AugmentCommand(TextAttackCommand):
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
                 pct_words_to_swap=args.pct_words_to_swap,
                 transformations_per_example=args.transformations_per_example,
+                high_yield=args.high_yield,
+                fast_augment=args.fast_augment,
+                enable_advanced_metrics=args.enable_advanced_metrics,
             )
             print("--------------------------------------------------------")
 
@@ -57,7 +68,8 @@ class AugmentCommand(TextAttackCommand):
                             "\tAugmentation recipe name ('r' to see available recipes):  "
                         )
                         if recipe == "r":
-                            print("\n\twordnet, embedding, charswap, eda, checklist\n")
+                            recipe_display = " ".join(AUGMENTATION_RECIPE_NAMES.keys())
+                            print(f"\n\t{recipe_display}\n")
                             args.recipe = input("\tAugmentation recipe name:  ")
                         else:
                             args.recipe = recipe
@@ -86,13 +98,30 @@ class AugmentCommand(TextAttackCommand):
                 print("\nAugmenting...\n")
                 print("--------------------------------------------------------")
 
-                for augmentation in augmenter.augment(text):
-                    print(augmentation, "\n")
+                if args.enable_advanced_metrics:
+                    results = augmenter.augment(text)
+                    print("Augmentations:\n")
+                    for augmentation in results[0]:
+                        print(augmentation, "\n")
+                    print()
+                    print(
+                        f"Average Original Perplexity Score: {results[1]['avg_original_perplexity']}"
+                    )
+                    print(
+                        f"Average Augment Perplexity Score: {results[1]['avg_attack_perplexity']}"
+                    )
+                    print(
+                        f"Average Augment USE Score: {results[2]['avg_attack_use_score']}\n"
+                    )
+
+                else:
+                    for augmentation in augmenter.augment(text):
+                        print(augmentation, "\n")
                 print("--------------------------------------------------------")
         else:
             textattack.shared.utils.set_seed(args.random_seed)
             start_time = time.time()
-            if not (args.input_csv and args.input_column):
+            if not (args.input_csv and args.input_column and args.output_csv):
                 raise ArgumentError(
                     "The following arguments are required: --csv, --input-column/--i"
                 )
@@ -132,6 +161,8 @@ class AugmentCommand(TextAttackCommand):
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
                 pct_words_to_swap=args.pct_words_to_swap,
                 transformations_per_example=args.transformations_per_example,
+                high_yield=args.high_yield,
+                fast_augment=args.fast_augment,
             )
 
             output_rows = []

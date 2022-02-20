@@ -6,8 +6,7 @@ textattack package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
+
 
 .. toctree::
    :maxdepth: 6
@@ -21,13 +20,13 @@ Subpackages
    textattack.goal_function_results
    textattack.goal_functions
    textattack.loggers
+   textattack.metrics
    textattack.models
    textattack.search_methods
    textattack.shared
    textattack.transformations
 
-Submodules
-----------
+
 
 
 .. automodule:: textattack.attack

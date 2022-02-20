@@ -1,3 +1,8 @@
+"""
+AttackArgs Class
+================
+"""
+
 from dataclasses import dataclass, field
 import json
 import os
@@ -30,6 +35,7 @@ ATTACK_RECIPE_NAMES = {
     "pso": "textattack.attack_recipes.PSOZang2020",
     "checklist": "textattack.attack_recipes.CheckList2020",
     "clare": "textattack.attack_recipes.CLARE2020",
+    "a2t": "textattack.attack_recipes.A2TYoo2021",
 }
 
 
@@ -102,11 +108,18 @@ SEARCH_METHOD_CLASS_NAMES = {
 
 
 GOAL_FUNCTION_CLASS_NAMES = {
-    "input-reduction": "textattack.goal_functions.InputReduction",
-    "minimize-bleu": "textattack.goal_functions.MinimizeBleu",
-    "non-overlapping-output": "textattack.goal_functions.NonOverlappingOutput",
-    "targeted-classification": "textattack.goal_functions.TargetedClassification",
-    "untargeted-classification": "textattack.goal_functions.UntargetedClassification",
+    #
+    # Classification goal functions
+    #
+    "targeted-classification": "textattack.goal_functions.classification.TargetedClassification",
+    "untargeted-classification": "textattack.goal_functions.classification.UntargetedClassification",
+    "input-reduction": "textattack.goal_functions.classification.InputReduction",
+    #
+    # Text goal functions
+    #
+    "minimize-bleu": "textattack.goal_functions.text.MinimizeBleu",
+    "non-overlapping-output": "textattack.goal_functions.text.NonOverlappingOutput",
+    "text-to-text": "textattack.goal_functions.text.TextToTextGoalFunction",
 }
 
 
@@ -162,12 +175,16 @@ class AttackArgs:
             If set, Visdom logger is used with the provided dictionary passed as a keyword arguments to :class:`~textattack.loggers.VisdomLogger`.
             Pass in empty dictionary to use default arguments. For custom logger, the dictionary should have the following
             three keys and their corresponding values: :obj:`"env", "port", "hostname"`.
-        log_to_wandb (:obj:`str`, `optional`, defaults to :obj:`None`):
-            If set, log the attack results and summary to Wandb project specified by this argument.
+        log_to_wandb(:obj:`dict`, `optional`, defaults to :obj:`None`):
+            If set, WandB logger is used with the provided dictionary passed as a keyword arguments to :class:`~textattack.loggers.WeightsAndBiasesLogger`.
+            Pass in empty dictionary to use default arguments. For custom logger, the dictionary should have the following
+            key and its corresponding value: :obj:`"project"`.
         disable_stdout (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Disable displaying individual attack results to stdout.
         silent (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Disable all logging (except for errors). This is stronger than :obj:`disable_stdout`.
+        enable_advance_metrics (:obj:`bool`, `optional`, defaults to :obj:`False`):
+            Enable calculation and display of optional advance post-hoc metrics like perplexity, grammar errors, etc.
     """
 
     num_examples: int = 10
@@ -185,9 +202,10 @@ class AttackArgs:
     log_to_csv: str = None
     csv_coloring_style: str = "file"
     log_to_visdom: dict = None
-    log_to_wandb: str = None
+    log_to_wandb: dict = None
     disable_stdout: bool = False
     silent: bool = False
+    enable_advance_metrics: bool = False
 
     def __post_init__(self):
         if self.num_successful_examples:
@@ -328,10 +346,12 @@ class AttackArgs:
         parser.add_argument(
             "--log-to-wandb",
             nargs="?",
-            default=default_obj.log_to_wandb,
-            const="textattack",
-            type=str,
-            help="Name of the wandb project. Set this argument if you want to log attacks to Wandb.",
+            default=None,
+            const='{"project": "textattack"}',
+            type=json.loads,
+            help="Set this argument if you want to log attacks to WandB. The dictionary should have the following "
+            'key and its corresponding value: `"project"`. '
+            'Example for command line use: `--log-to-wandb {"project": "textattack"}`.',
         )
         parser.add_argument(
             "--disable-stdout",
@@ -344,6 +364,12 @@ class AttackArgs:
             action="store_true",
             default=default_obj.silent,
             help="Disable all logging",
+        )
+        parser.add_argument(
+            "--enable-advance-metrics",
+            action="store_true",
+            default=default_obj.enable_advance_metrics,
+            help="Enable calculation and display of optional advance post-hoc metrics like perplexity, USE distance, etc.",
         )
 
         return parser
@@ -398,7 +424,7 @@ class AttackArgs:
 
         # Weights & Biases
         if args.log_to_wandb is not None:
-            attack_log_manager.enable_wandb(args.log_to_wandb)
+            attack_log_manager.enable_wandb(**args.log_to_wandb)
 
         # Stdout
         if not args.disable_stdout and not sys.stdout.isatty():

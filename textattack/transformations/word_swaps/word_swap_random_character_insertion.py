@@ -1,6 +1,6 @@
 """
 Word Swap by Random Character Insertion
-==========================================================
+------------------------------------------------
 
 """
 import numpy as np
@@ -17,6 +17,13 @@ class WordSwapRandomCharacterInsertion(WordSwap):
     skip_first_char (bool): Whether to disregard inserting as the first
     character. skip_last_char (bool): Whether to disregard inserting as
     the last character.
+    >>> from textattack.transformations import WordSwapRandomCharacterInsertion
+    >>> from textattack.augmentation import Augmenter
+
+    >>> transformation = WordSwapRandomCharacterInsertion()
+    >>> augmenter = Augmenter(transformation=transformation)
+    >>> s = 'I am fabulous.'
+    >>> augmenter.augment(s)
     """
 
     def __init__(

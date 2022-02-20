@@ -1,3 +1,8 @@
+"""
+Trainer Class
+=============
+"""
+
 import collections
 import json
 import logging
@@ -10,6 +15,7 @@ import tqdm
 import transformers
 
 import textattack
+from textattack.shared.utils import logger
 
 from .attack import Attack
 from .attack_args import AttackArgs
@@ -19,8 +25,6 @@ from .model_args import HUGGINGFACE_MODELS
 from .models.helpers import LSTMForClassification, WordCNNForClassification
 from .models.wrappers import ModelWrapper
 from .training_args import CommandLineTrainingArgs, TrainingArgs
-
-logger = textattack.shared.logger
 
 
 class Trainer:

@@ -6,16 +6,14 @@ textattack.constraints.semantics package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
+
 
 .. toctree::
    :maxdepth: 6
 
    textattack.constraints.semantics.sentence_encoders
 
-Submodules
-----------
+
 
 
 .. automodule:: textattack.constraints.semantics.bert_score

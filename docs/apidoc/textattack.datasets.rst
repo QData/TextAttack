@@ -6,16 +6,14 @@ textattack.datasets package
    :undoc-members:
    :show-inheritance:
 
-Subpackages
------------
+
 
 .. toctree::
    :maxdepth: 6
 
    textattack.datasets.helpers
 
-Submodules
-----------
+
 
 
 .. automodule:: textattack.datasets.dataset

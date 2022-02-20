@@ -1,6 +1,6 @@
 """.. _constraint:
 
-Constraint Package
+Constraints
 ===================
 
 Constraints determine whether a given transformation is valid. Since transformations do not perfectly preserve semantics semantics or grammaticality, constraints can increase the likelihood that the resulting transformation preserves these qualities. All constraints are subclasses of the ``Constraint`` abstract class, and must implement at least one of ``__call__`` or ``call_many``.

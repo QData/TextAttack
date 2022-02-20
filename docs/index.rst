@@ -10,6 +10,7 @@ TextAttack Documentation
    Installation <0_get_started/installation.md>
    Command-Line Usage <0_get_started/command_line_usage.md>
    Quick API Usage  <0_get_started/quick_api_tour.rst>
+   FAQ <1start/FAQ.md>
 
 .. toctree::
    :maxdepth: 6
@@ -30,11 +31,10 @@ TextAttack Documentation
    1start/attacks4Components.md
    1start/benchmark-search.md
    1start/quality-SOTA-recipes.md
+   1start/A2TforVanillaAT.md
    1start/api-design-tips.md
-   1start/talks-visualization.md
+   1start/multilingual-visualization.md
    1start/support.md
-   1start/FAQ.md
-   
  
 .. toctree::
    :maxdepth: 6
@@ -62,7 +62,8 @@ TextAttack Documentation
    Trainer <api/trainer.rst>
    Datasets <api/datasets.rst>
    GoalFunction <api/goal_functions.rst>
-   Constraints <api/constraints/constraints.rst>
+   Constraints <api/constraints.rst>
+   Transformations <api/transformations.rst>
    SearchMethod <api/search_methods.rst>
    
 

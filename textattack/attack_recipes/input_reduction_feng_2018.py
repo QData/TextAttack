@@ -22,7 +22,7 @@ class InputReductionFeng2018(AttackRecipe):
 
     Pathologies of Neural Models Make Interpretations Difficult.
 
-    ArXiv, abs/1804.07781.
+    https://arxiv.org/abs/1804.07781
     """
 
     @staticmethod

@@ -40,7 +40,7 @@ For example, given the following as `examples.csv`:
 
 The command: 
 ```
-textattack augment --csv examples.csv --input-column text --recipe eda --pct-words-to-swap .1 \
+textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe eda --pct-words-to-swap .1 \
 --transformations-per-example 2 --exclude-original
 ``` 
 will augment the `text` column with 10% of words edited per augmentation, twice as many augmentations as original inputs, and exclude the original inputs from the

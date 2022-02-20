@@ -7,6 +7,7 @@ A transformation is a method which perturbs a text input through the insertion, 
 """
 from .transformation import Transformation
 
+from .sentence_transformations import *
 from .word_swaps import *
 from .word_insertions import *
 from .word_merges import *
