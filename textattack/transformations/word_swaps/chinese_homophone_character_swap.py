@@ -20,10 +20,6 @@ class ChineseHomophoneCharacterSwap(WordSwap):
 
         homophone_dict = homophone_dict[0].str.split('\t', expand=True)
 
-        print("ABSOLUTE PATH", path)
-        print("FINAL PATH", homophone_dict_path)
-
-
         self.homophone_dict = homophone_dict
 
     def _get_replacement_words(self, word):
