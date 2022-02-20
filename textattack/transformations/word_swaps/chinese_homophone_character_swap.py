@@ -11,10 +11,10 @@ class ChineseHomophoneCharacterSwap(WordSwap):
     def __init__(self):
         #Get the absolute path of the homophone dictionary txt
         path = os.path.dirname(os.path.abspath(__file__))
-        list = path.split(os.sep)
-        list = list[:-2]
-        list.append('shared/chinese_homophone_char.txt')
-        homophone_dict_path = os.path.join("/", *list)
+        path_list = path.split(os.sep)
+        path_list = path_list[:-2]
+        path_list.append('shared/chinese_homophone_char.txt')
+        homophone_dict_path = os.path.join("/", *path_list)
 
         homophone_dict = pd.read_csv(homophone_dict_path, header=None, sep='\n')
 
