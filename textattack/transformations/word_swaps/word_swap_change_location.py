@@ -1,6 +1,6 @@
 """
 Word Swap by Changing Location
-============================================
+-------------------------------
 """
 import more_itertools as mit
 import numpy as np
@@ -25,23 +25,37 @@ def idx_to_words(ls, words):
 
 
 class WordSwapChangeLocation(WordSwap):
-    def __init__(self, n=3, confidence_score=0.7, **kwargs):
+    def __init__(self, n=3, confidence_score=0.7, language="en", **kwargs):
         """Transformation that changes recognized locations of a sentence to
         another location that is given in the location map.
 
         :param n: Number of new locations to generate
         :param confidence_score: Location will only be changed if it's above the confidence score
+
+        >>> from textattack.transformations import WordSwapChangeLocation
+        >>> from textattack.augmentation import Augmenter
+
+        >>> transformation = WordSwapChangeLocation()
+        >>> augmenter = Augmenter(transformation=transformation)
+        >>> s = 'I am in Dallas.'
+        >>> augmenter.augment(s)
         """
         super().__init__(**kwargs)
         self.n = n
         self.confidence_score = confidence_score
+        self.language = language
 
     def _get_transformations(self, current_text, indices_to_modify):
         words = current_text.words
         location_idx = []
-
+        if self.language == "en":
+            model_name = "ner"
+        elif self.language == "fra" or self.language == "french":
+            model_name = "flair/ner-french"
+        else:
+            model_name = "flair/ner-multi-fast"
         for i in indices_to_modify:
-            tag = current_text.ner_of_word_index(i)
+            tag = current_text.ner_of_word_index(i, model_name)
             if "LOC" in tag.value and tag.score > self.confidence_score:
                 location_idx.append(i)
 
@@ -75,10 +89,15 @@ class WordSwapChangeLocation(WordSwap):
     def _get_new_location(self, word):
         """Return a list of new locations, with the choice of country,
         nationality, and city."""
-        if word in NAMED_ENTITIES["country"]:
-            return np.random.choice(NAMED_ENTITIES["country"], self.n)
-        elif word in NAMED_ENTITIES["nationality"]:
-            return np.random.choice(NAMED_ENTITIES["nationality"], self.n)
+        language = ""
+        if self.language == "esp" or self.language == "spanish":
+            language = "-spanish"
+        elif self.language == "fra" or self.language == "french":
+            language = "-french"
+        if word in NAMED_ENTITIES["country" + language]:
+            return np.random.choice(NAMED_ENTITIES["country" + language], self.n)
+        elif word in NAMED_ENTITIES["nationality" + language]:
+            return np.random.choice(NAMED_ENTITIES["nationality" + language], self.n)
         elif word in NAMED_ENTITIES["city"]:
             return np.random.choice(NAMED_ENTITIES["city"], self.n)
         return []

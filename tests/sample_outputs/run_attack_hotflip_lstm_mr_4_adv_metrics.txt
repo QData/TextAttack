@@ -1,0 +1,74 @@
+/.*/Attack(
+  (search_method): BeamSearch(
+    (beam_width):  10
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  WordSwapGradientBased(
+    (top_n):  1
+  )
+  (constraints): 
+    (0): MaxWordsPerturbed(
+        (max_num_words):  2
+        (compare_against_original):  True
+      )
+    (1): WordEmbeddingDistance(
+        (embedding):  WordEmbedding
+        (min_cos_sim):  0.8
+        (cased):  False
+        (include_unknown_words):  True
+        (compare_against_original):  True
+      )
+    (2): PartOfSpeech(
+        (tagger_type):  nltk
+        (tagset):  universal
+        (allow_verb_noun_swap):  True
+        (compare_against_original):  True
+      )
+    (3): RepeatModification
+    (4): StopwordModification
+  (is_black_box):  False
+) 
+
+--------------------------------------------- Result 1 ---------------------------------------------
+[[Positive (96%)]] --> [[Negative (77%)]]
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [[supplies]] with tremendous skill .
+
+the story gives ample opportunity for large-scale action and suspense , which director shekhar kapur [[stagnated]] with tremendous skill .
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[[Negative (57%)]] --> [[[SKIPPED]]]
+
+red dragon " never cuts corners .
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[[Positive (51%)]] --> [[[FAILED]]]
+
+fresnadillo has something serious to say about the ways in which extravagant chance can distort our perspective and throw us off the path of good sense .
+
+
+--------------------------------------------- Result 4 ---------------------------------------------
+[[Positive (89%)]] --> [[[FAILED]]]
+
+throws in enough clever and unexpected twists to make the formula feel fresh .
+
+
+
++-------------------------------+--------+
+| Attack Results                |        |
++-------------------------------+--------+
+| Number of successful attacks: | 1      |
+| Number of failed attacks:     | 2      |
+| Number of skipped attacks:    | 1      |
+| Original accuracy:            | 75.0%  |
+| Accuracy under attack:        | 50.0%  |
+| Attack success rate:          | 33.33% |
+| Average perturbed word %:     | 5.56%  |
+| Average num. words per input: | 15.5   |
+| Avg num queries:              | 1.33   |
+| Average Original Perplexity:  | 291/.*/|
+| Average Attack Perplexity:    | 320/.*/|
+| Average Attack USE Score:     | 0.91   |
++-------------------------------+--------+

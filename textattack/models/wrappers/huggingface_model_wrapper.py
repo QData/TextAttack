@@ -10,6 +10,8 @@ import textattack
 
 from .pytorch_model_wrapper import PyTorchModelWrapper
 
+torch.cuda.empty_cache()
+
 
 class HuggingFaceModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""

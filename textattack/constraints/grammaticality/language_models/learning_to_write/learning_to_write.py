@@ -36,7 +36,7 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
 
     def __init__(self, window_size=5, **kwargs):
         self.window_size = window_size
-        lm_folder_path = textattack.shared.utils.download_if_needed(
+        lm_folder_path = textattack.shared.utils.download_from_s3(
             LearningToWriteLanguageModel.CACHE_PATH
         )
         self.query_handler = QueryHandler.load_model(

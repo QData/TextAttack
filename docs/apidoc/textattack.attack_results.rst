@@ -6,8 +6,7 @@ textattack.attack\_results package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+
 
 
 .. automodule:: textattack.attack_results.attack_result

@@ -14,6 +14,7 @@ extras["docs"] = [
     "sphinx-autobuild",
     "sphinx-rtd-theme",
     "sphinx-markdown-tables",
+    "sphinx-copybutton",
 ]
 # Packages required for formatting code & running tests.
 extras["test"] = [
@@ -26,10 +27,11 @@ extras["test"] = [
 ]
 
 extras["tensorflow"] = [
-    "tensorflow>=2",
+    "tensorflow==2.5.0",
     "tensorflow_hub",
     "tensorflow_text>=2",
     "tensorboardX",
+    "tensorflow-estimator==2.5.0",
 ]
 
 extras["optional"] = [

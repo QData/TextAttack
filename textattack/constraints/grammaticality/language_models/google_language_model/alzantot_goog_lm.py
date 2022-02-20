@@ -31,7 +31,7 @@ class GoogLMHelper:
 
     def __init__(self):
         tf.get_logger().setLevel("INFO")
-        lm_folder = utils.download_if_needed(GoogLMHelper.CACHE_PATH)
+        lm_folder = utils.download_from_s3(GoogLMHelper.CACHE_PATH)
         self.PBTXT_PATH = os.path.join(lm_folder, "graph-2016-09-10-gpu.pbtxt")
         self.CKPT_PATH = os.path.join(lm_folder, "ckpt-*")
         self.VOCAB_PATH = os.path.join(lm_folder, "vocab-2016-09-10.txt")

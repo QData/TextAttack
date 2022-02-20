@@ -6,8 +6,7 @@ textattack.augmentation package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+
 
 
 .. automodule:: textattack.augmentation.augmenter

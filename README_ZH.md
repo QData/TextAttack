@@ -82,7 +82,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 *对 Quora 问句对数据集上训练的 DistilBERT 模型进行 DeepWordBug 攻击*: 
 
 ```bash
-textattack attack --model distilbert-base-uncased-qqp --recipe deepwordbug --num-examples 100
+textattack attack --model distilbert-base-uncased-cola --recipe deepwordbug --num-examples 100
 ```
 
 *对 MR 数据集上训练的 LSTM 模型：设置束搜索宽度为 4，使用词嵌入转换进行无目标攻击*:
@@ -102,6 +102,8 @@ textattack attack --model lstm-mr --num-examples 20 \
 
 运行攻击策略：`textattack attack --recipe [recipe_name]`
 
+
+<img src="docs/_static/imgs/overview.png" alt="TextAttack Overview" style="display: block; margin: 0 auto;" />
 
 <table>
 <thead>
@@ -292,11 +294,14 @@ textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examp
 ### 增强文本数据：`textattack augment`
 
 TextAttack 的组件中，有很多易用的数据增强工具。`textattack.Augmenter` 类使用 *变换* 与一系列的 *约束* 进行数据增强。我们提供了 5 中内置的数据增强策略：
-- `textattack.WordNetAugmenter` 通过基于 WordNet 同义词替换的方式增强文本
-- `textattack.EmbeddingAugmenter` 通过邻近词替换的方式增强文本，使用 counter-fitted 词嵌入空间中的邻近词进行替换，约束二者的 cosine 相似度不低于 0.8
-- `textattack.CharSwapAugmenter` 通过字符的增删改，以及临近字符交换的方式增强文本
-- `textattack.EasyDataAugmenter` 通过对词的增删改来增强文本
-- `textattack.CheckListAugmenter` 通过简写，扩写以及对实体、地点、数字的替换来增强文本
+- `wordnet` 通过基于 WordNet 同义词替换的方式增强文本
+- `embedding` 通过邻近词替换的方式增强文本，使用 counter-fitted 词嵌入空间中的邻近词进行替换，约束二者的 cosine 相似度不低于 0.8
+- `charswap` 通过字符的增删改，以及临近字符交换的方式增强文本
+- `eda` 通过对词的增删改来增强文本
+- `checklist` 通过简写，扩写以及对实体、地点、数字的替换来增强文本
+- `clare` 使用 pre-trained masked language model, 通过对词的增删改来增强文本
+
+
 
 #### 数据增强的命令行接口
 使用 textattack 来进行数据增强，最快捷的方法是通过 `textattack augment <args>` 命令行接口。 `textattack augment` 使用 CSV 文件作为输入，在参数中设置需要增强的文本列，每个样本允许改变的比例，以及对于每个输入样本生成多少个增强样本。输出的结果保存为与输入文件格式一致的 CSV 文件，结果文件中为对指定的文本列生成的增强样本。
@@ -312,7 +317,7 @@ TextAttack 的组件中，有很多易用的数据增强工具。`textattack.Aug
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-使用命令 `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
+使用命令 `textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
 会增强 `text` 列，约束对样本中 10% 的词进行修改，生成输入数据两倍的样本，同时结果文件中不保存 csv 文件的原始输入。(默认所有结果将会保存在 `augment.csv` 文件中)
 
 数据增强后，下面是 `augment.csv` 文件的内容:
@@ -362,18 +367,13 @@ it's a enigma how the filmmaking wo be publicized in this condition .,0
 #### 运行训练的例子
 *在 Yelp 分类数据集上对 TextAttack 中默认的 LSTM 模型训练 50 个 epoch：*
 ```bash
-textattack train --model lstm --dataset yelp_polarity --batch-size 64 --epochs 50 --learning-rate 1e-5
+textattack train --model-name-or-path lstm --dataset yelp_polarity  --epochs 50 --learning-rate 1e-5
 ```
 
-训练接口中同样内置了数据增强功能：
-```bash
-textattack train --model lstm --dataset rotten_tomatoes --augment eda --pct-words-to-swap .1 --transformations-per-example 4
-```
-上面这个例子在训练之前使用 `EasyDataAugmenter` 策略对 `rotten_tomatoes` 数据集进行数据增强。
 
 *在 `CoLA` 数据集上对 `bert-base` 模型精调 5 个 epoch：*
 ```bash
-textattack train --model bert-base-uncased --dataset glue^cola --batch-size 32 --epochs 5
+textattack train --model-name-or-path bert-base-uncased --dataset glue^cola --per-device-train-batch-size 8 --epochs 5
 ```
 
 
@@ -455,8 +455,6 @@ dataset = [('Today was....', 1), ('This movie is...', 0), ...]
 
 
 ### 何为攻击 & 如何设计新的攻击 
-
-`Attack` 中的 `attack_one` 方法以 `AttackedText` 对象作为输入，若攻击成功，返回 `SuccessfulAttackResult`，若攻击失败，返回 `FailedAttackResult`。
 
 
 我们将攻击划分并定义为四个组成部分：**目标函数** 定义怎样的攻击是一次成功的攻击，**约束条件** 定义怎样的扰动是可行的，**变换规则** 对输入文本生成一系列可行的扰动结果，**搜索方法** 在搜索空间中遍历所有可行的扰动结果。每一次攻击都尝试对输入的文本添加扰动，使其通过目标函数（即判断攻击是否成功），并且扰动要符合约束（如语法约束，语义相似性约束）。最后用搜索方法在所有可行的变换结果中，挑选出优质的对抗样本。

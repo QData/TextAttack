@@ -1,3 +1,9 @@
+"""
+AttackResult Class
+======================
+
+"""
+
 from abc import ABC
 
 from langdetect import detect

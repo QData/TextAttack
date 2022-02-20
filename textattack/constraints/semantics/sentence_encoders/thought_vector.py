@@ -1,5 +1,5 @@
 """
-Thought Vector
+Thought Vector Class
 ---------------------
 """
 

@@ -7,17 +7,18 @@ The [`examples/`](https://github.com/QData/TextAttack/tree/master/examples) fold
 The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
 
-## Augmenting Text: `textattack augment`
+### Augmenting Text: `textattack augment`
 
 Many of the components of TextAttack are useful for data augmentation. The `textattack.Augmenter` class
-uses a transformation and a list of constraints to augment data. We also offer five built-in recipes
+uses a transformation and a list of constraints to augment data. We also offer  built-in recipes
 for data augmentation:
-- `textattack.WordNetAugmenter` augments text by replacing words with WordNet synonyms
-- `textattack.EmbeddingAugmenter` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
-- `textattack.CharSwapAugmenter` augments text by substituting, deleting, inserting, and swapping adjacent characters
-- `textattack.EasyDataAugmenter` augments text with a combination of word insertions, substitutions and deletions.
-- `textattack.CheckListAugmenter` augments text by contraction/extension and by substituting names, locations, numbers.
-- `textattack.CLAREAugmenter` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+- `wordnet` augments text by replacing words with WordNet synonyms
+- `embedding` augments text by replacing words with neighbors in the counter-fitted embedding space, with a constraint to ensure their cosine similarity is at least 0.8
+- `charswap` augments text by substituting, deleting, inserting, and swapping adjacent characters
+- `eda` augments text with a combination of word insertions, substitutions and deletions.
+- `checklist` augments text by contraction/extension and by substituting names, locations, numbers.
+- `clare` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+
 
 ### Augmentation Command-Line Interface
 The easiest way to use our data augmentation tools is with `textattack augment <args>`. 
@@ -37,7 +38,10 @@ and the number of augmentations per input example. It outputs a CSV in the same 
 "it's a mystery how the movie could be released in this condition .", 0
 ```
 
-The command `textattack augment --csv examples.csv --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original`
+The command
+```
+textattack augment --input-csv examples.csv --output-csv output.csv  --input-column text --recipe embedding --pct-words-to-swap .1 --transformations-per-example 2 --exclude-original
+```
 will augment the `text` column by altering 10% of each example's words, generating twice as many augmentations as original inputs, and exclude the original inputs from the
 output CSV. (All of this will be saved to `augment.csv` by default.)
 
@@ -61,27 +65,3 @@ it's a enigma how the filmmaking wo be publicized in this condition .,0
 
 The 'embedding' augmentation recipe uses counterfitted embedding nearest-neighbors to augment data.
 
-### Augmentation Python API Interface
-In addition to the command-line interface, you can augment text dynamically by importing the
-`Augmenter` in your own code. All `Augmenter` objects implement `augment` and `augment_many` to generate augmentations
-of a string or a list of strings. Here's an example of how to use the `EmbeddingAugmenter` in a python script:
-
-```python
->>> from textattack.augmentation import EmbeddingAugmenter
->>> augmenter = EmbeddingAugmenter()
->>> s = 'What I cannot create, I do not understand.'
->>> augmenter.augment(s)
-['What I notable create, I do not understand.', 'What I significant create, I do not understand.', 'What I cannot engender, I do not understand.', 'What I cannot creating, I do not understand.', 'What I cannot creations, I do not understand.', 'What I cannot create, I do not comprehend.', 'What I cannot create, I do not fathom.', 'What I cannot create, I do not understanding.', 'What I cannot create, I do not understands.', 'What I cannot create, I do not understood.', 'What I cannot create, I do not realise.']
-```
-You can also create your own augmenter from scratch by importing transformations/constraints from `textattack.transformations` and `textattack.constraints`. Here's an example that generates augmentations of a string using `WordSwapRandomCharacterDeletion`:
-
-```python
->>> from textattack.transformations import WordSwapRandomCharacterDeletion
->>> from textattack.transformations import CompositeTransformation
->>> from textattack.augmentation import Augmenter
->>> transformation = CompositeTransformation([WordSwapRandomCharacterDeletion()])
->>> augmenter = Augmenter(transformation=transformation, transformations_per_example=5)
->>> s = 'What I cannot create, I do not understand.'
->>> augmenter.augment(s)
-['What I cannot creae, I do not understand.', 'What I cannot creat, I do not understand.', 'What I cannot create, I do not nderstand.', 'What I cannot create, I do nt understand.', 'Wht I cannot create, I do not understand.']
-```

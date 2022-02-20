@@ -1,3 +1,8 @@
+"""
+Attacker Class
+==============
+"""
+
 import collections
 import logging
 import multiprocessing as mp
@@ -214,6 +219,10 @@ class Attacker:
         # Enable summary stdout
         if not self.attack_args.silent and self.attack_args.disable_stdout:
             self.attack_log_manager.enable_stdout()
+
+        if self.attack_args.enable_advance_metrics:
+            self.attack_log_manager.enable_advance_metrics = True
+
         self.attack_log_manager.log_summary()
         self.attack_log_manager.flush()
         print()
@@ -385,6 +394,10 @@ class Attacker:
         # Enable summary stdout.
         if not self.attack_args.silent and self.attack_args.disable_stdout:
             self.attack_log_manager.enable_stdout()
+
+        if self.attack_args.enable_advance_metrics:
+            self.attack_log_manager.enable_advance_metrics = True
+
         self.attack_log_manager.log_summary()
         self.attack_log_manager.flush()
         print()

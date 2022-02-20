@@ -1,3 +1,9 @@
+"""
+MaximizedAttackResult Class
+============================
+
+"""
+
 from .attack_result import AttackResult
 
 

@@ -46,7 +46,8 @@ class CSVLogger(Logger):
         self._flushed = True
 
     def close(self):
-        self.fout.close()
+        # self.fout.close()
+        super().close()
 
     def __del__(self):
         if not self._flushed:

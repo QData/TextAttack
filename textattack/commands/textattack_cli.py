@@ -1,4 +1,12 @@
-#!/usr/bin/env python
+"""
+
+TextAttack CLI main class
+==============================
+
+"""
+
+
+# !/usr/bin/env python
 import argparse
 
 from textattack.commands.attack_command import AttackCommand

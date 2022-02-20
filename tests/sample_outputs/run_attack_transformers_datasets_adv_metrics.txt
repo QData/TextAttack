@@ -1,0 +1,68 @@
+/.*/Attack(
+  (search_method): GreedyWordSwapWIR(
+    (wir_method):  unk
+  )
+  (goal_function):  UntargetedClassification
+  (transformation):  CompositeTransformation(
+    (0): WordSwapNeighboringCharacterSwap(
+        (random_one):  True
+      )
+    (1): WordSwapRandomCharacterSubstitution(
+        (random_one):  True
+      )
+    (2): WordSwapRandomCharacterDeletion(
+        (random_one):  True
+      )
+    (3): WordSwapRandomCharacterInsertion(
+        (random_one):  True
+      )
+    )
+  (constraints): 
+    (0): LevenshteinEditDistance(
+        (max_edit_distance):  30
+        (compare_against_original):  True
+      )
+    (1): RepeatModification
+    (2): StopwordModification
+  (is_black_box):  True
+) 
+
+--------------------------------------------- Result 1 ---------------------------------------------
+[[Negative (100%)]] --> [[Positive (71%)]]
+
+[[hide]] [[new]] secretions from the parental units 
+
+[[Ehide]] [[enw]] secretions from the parental units 
+
+
+--------------------------------------------- Result 2 ---------------------------------------------
+[[Negative (100%)]] --> [[[FAILED]]]
+
+contains no wit , only labored gags 
+
+
+--------------------------------------------- Result 3 ---------------------------------------------
+[[Positive (100%)]] --> [[Negative (96%)]]
+
+that [[loves]] its characters and communicates [[something]] [[rather]] [[beautiful]] about human nature 
+
+that [[lodes]] its characters and communicates [[somethNng]] [[rathrer]] [[beautifdul]] about human nature 
+
+
+
++-------------------------------+---------+
+| Attack Results                |         |
++-------------------------------+---------+
+| Number of successful attacks: | 2       |
+| Number of failed attacks:     | 1       |
+| Number of skipped attacks:    | 0       |
+| Original accuracy:            | 100.0%  |
+| Accuracy under attack:        | 33.33%  |
+| Attack success rate:          | 66.67%  |
+| Average perturbed word %:     | 30.95%  |
+| Average num. words per input: | 8.33    |
+| Avg num queries:              | 22.67   |
+| Average Original Perplexity:  | 734/.*/ |
+| Average Attack Perplexity:    | 1744/.*/|
+| Average Attack USE Score:     | 0.76    |
++-------------------------------+---------+

@@ -6,8 +6,7 @@ textattack.datasets.helpers package
    :undoc-members:
    :show-inheritance:
 
-Submodules
-----------
+
 
 
 .. automodule:: textattack.datasets.helpers.ted_multi

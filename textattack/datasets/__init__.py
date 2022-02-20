@@ -1,6 +1,6 @@
 """
 
-datasets:
+datasets package:
 ======================
 
 TextAttack allows users to provide their own dataset or load from HuggingFace.

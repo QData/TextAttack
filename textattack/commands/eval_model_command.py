@@ -1,3 +1,11 @@
+"""
+
+EvalModelCommand class
+==============================
+
+"""
+
+
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentParser
 from dataclasses import dataclass
 
@@ -39,6 +47,8 @@ class EvalModelCommand(TextAttackCommand):
     def test_model_on_dataset(self, args):
         model = ModelArgs._create_model_from_args(args)
         dataset = DatasetArgs._create_dataset_from_args(args)
+        if args.num_examples == -1:
+            args.num_examples = len(dataset)
 
         preds = []
         ground_truth_outputs = []

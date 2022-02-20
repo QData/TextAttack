@@ -1,3 +1,10 @@
+""".. _goal_function:
+
+GoalFunction Class
+===========================================================
+"""
+
+
 from abc import ABC, abstractmethod
 
 import lru

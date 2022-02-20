@@ -10,9 +10,9 @@ from textattack.constraints import PreTransformationConstraint
 
 class MinWordLength(PreTransformationConstraint):
     """A constraint that prevents modifications to words less than a certain
-    length.
+    word character-length.
 
-    :param min_length: Minimum length needed for changes to be made to a word.
+    :param min_length: Minimum word character-length needed for changes to be made to a word.
     """
 
     def __init__(self, min_length):

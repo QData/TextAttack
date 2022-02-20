@@ -1,7 +1,7 @@
 """.. _attack_recipes:
 
-Attack Recipes:
-======================
+Attack Recipes Package:
+========================
 
 We provide a number of pre-built attack recipes, which correspond to attacks from the literature. To run an attack recipe from the command line, run::
 
@@ -20,6 +20,7 @@ TextAttack supports the following attack recipes (each recipe's documentation co
 
 from .attack_recipe import AttackRecipe
 
+from .a2t_yoo_2021 import A2TYoo2021
 from .bae_garg_2019 import BAEGarg2019
 from .bert_attack_li_2020 import BERTAttackLi2020
 from .genetic_algorithm_alzantot_2018 import GeneticAlgorithmAlzantot2018
@@ -38,3 +39,5 @@ from .pruthi_2019 import Pruthi2019
 from .pso_zang_2020 import PSOZang2020
 from .checklist_ribeiro_2020 import CheckList2020
 from .clare_li_2020 import CLARE2020
+from .french_recipe import FrenchRecipe
+from .spanish_recipe import SpanishRecipe

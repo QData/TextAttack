@@ -1,3 +1,9 @@
+"""
+AugmenterArgs Class
+===================
+"""
+
+
 from dataclasses import dataclass
 
 AUGMENTATION_RECIPE_NAMES = {
@@ -7,6 +13,7 @@ AUGMENTATION_RECIPE_NAMES = {
     "eda": "textattack.augmentation.EasyDataAugmenter",
     "checklist": "textattack.augmentation.CheckListAugmenter",
     "clare": "textattack.augmentation.CLAREAugmenter",
+    "back_trans": "textattack.augmentation.BackTranslationAugmenter",
 }
 
 
@@ -29,25 +36,25 @@ class AugmenterArgs:
     exclude_original: bool = False
     overwrite: bool = False
     interactive: bool = False
+    fast_augment: bool = False
+    high_yield: bool = False
+    enable_advanced_metrics: bool = False
 
     @classmethod
     def _add_parser_args(cls, parser):
         parser.add_argument(
             "--input-csv",
-            required=True,
             type=str,
             help="Path of input CSV file to augment.",
         )
         parser.add_argument(
             "--output-csv",
-            required=True,
             type=str,
             help="Path of CSV file to output augmented data.",
         )
         parser.add_argument(
             "--input-column",
             "--i",
-            required=True,
             type=str,
             help="CSV input column to be augmented",
         )
@@ -93,6 +100,24 @@ class AugmenterArgs:
             default=False,
             action="store_true",
             help="Whether to run attacks interactively.",
+        )
+        parser.add_argument(
+            "--high_yield",
+            default=False,
+            action="store_true",
+            help="run attacks with high yield.",
+        )
+        parser.add_argument(
+            "--fast_augment",
+            default=False,
+            action="store_true",
+            help="faster augmentation but may use only a few transformations.",
+        )
+        parser.add_argument(
+            "--enable_advanced_metrics",
+            default=False,
+            action="store_true",
+            help="return perplexity and USE score",
         )
 
         return parser
