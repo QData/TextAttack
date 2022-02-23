@@ -4,6 +4,7 @@ Word Swap by swapping synonyms in WordNet
 """
 
 
+import nltk
 from nltk.corpus import wordnet
 
 import textattack
@@ -25,6 +26,7 @@ class WordSwapWordNet(WordSwap):
     """
 
     def __init__(self, language="eng"):
+        nltk.download("omw-1.4")
         if language not in wordnet.langs():
             raise ValueError(f"Language {language} not one of {wordnet.langs()}")
         self.language = language
