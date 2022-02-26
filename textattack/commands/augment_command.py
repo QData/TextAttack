@@ -140,17 +140,23 @@ class AugmentCommand(TextAttackCommand):
             # Read in CSV file as a list of dictionaries. Use the CSV sniffer to
             # try and automatically infer the correct CSV format.
             csv_file = open(args.input_csv, "r")
+
+            def fixlines(lines):
+                for row in lines:
+                    row = row.replace('"', "'")
+                    yield row
+
             dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
-            dialect.quoting = csv.QUOTE_NONE
             csv_file.seek(0)
             rows = [
                 row
                 for row in csv.DictReader(
-                    csv_file,
+                    fixlines(csv_file),
                     dialect=dialect,
                     skipinitialspace=True,
                 )
             ]
+            print(rows)
             # Validate input column.
             row_keys = set(rows[0].keys())
             if args.input_column not in row_keys:
@@ -178,12 +184,12 @@ class AugmentCommand(TextAttackCommand):
                     augmented_row[args.input_column] = augmentation
                     output_rows.append(augmented_row)
             # Print to file.
-            dialect.quotechar = "\\"
             with open(args.output_csv, "w") as outfile:
                 csv_writer = csv.writer(
                     outfile,
-                    dialect=dialect,
-                    escapechar="\\"
+                    delimiter=",",
+                    quotechar='"',
+                    quoting=csv.QUOTE_MINIMAL
                 )
                 # Write header.
                 csv_writer.writerow(output_rows[0].keys())
