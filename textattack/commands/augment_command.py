@@ -155,7 +155,6 @@ class AugmentCommand(TextAttackCommand):
                             )
                         else:
                             end = row.rfind('"')
-                            print(row, end)
                             row = row[:end].replace(",", "$") + row[end:]
                     row = row.replace('"', '/"')
                     yield row
@@ -170,7 +169,6 @@ class AugmentCommand(TextAttackCommand):
                     skipinitialspace=True,
                 )
             ]
-            print(rows)
             # replace markings with quotations and commas
             for row in rows:
                 for item in row:
@@ -187,7 +185,6 @@ class AugmentCommand(TextAttackCommand):
                                 row[item] = row[item][:i] + '"' + row[item][i + 1 :]
                         i += 1
                     i = 0
-            print(rows)
             # Validate input column.
             row_keys = set(rows[0].keys())
             if args.input_column not in row_keys:
