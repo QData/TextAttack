@@ -178,12 +178,12 @@ class AugmentCommand(TextAttackCommand):
                     augmented_row[args.input_column] = augmentation
                     output_rows.append(augmented_row)
             # Print to file.
+            dialect.quotechar = "\\"
             with open(args.output_csv, "w") as outfile:
                 csv_writer = csv.writer(
                     outfile,
-                    delimiter=",",
-                    quotechar="'",
-                    quoting=csv.QUOTE_MINIMAL,
+                    dialect=dialect,
+                    escapechar="\\"
                 )
                 # Write header.
                 csv_writer.writerow(output_rows[0].keys())
