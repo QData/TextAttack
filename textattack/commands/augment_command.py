@@ -8,6 +8,7 @@ AugmentCommand class
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
 import csv
 import os
+import re
 import time
 
 import tqdm
@@ -141,12 +142,19 @@ class AugmentCommand(TextAttackCommand):
             # try and automatically infer the correct CSV format.
             csv_file = open(args.input_csv, "r")
 
+            # mark where commas and quotes occur within the text value
             def markQuotes(lines):
                 for row in lines:
                     if '"' in row:
-                        first = row.find('"')
-                        last = row.rfind('"')
-                        row = row[:first + 1] + row[first + 1:last].replace(",", "$") + row[last:]
+                        cutoff = re.search(r',[" "]*-?[0-9]+[" "]*,', row)
+                        if cutoff:
+                            row = (
+                                row[: cutoff.start()].replace(",", "$")
+                                + row[cutoff.start() : cutoff.end() + 1]
+                                + row[cutoff.end() + 1 :].replace(",", "$")
+                            )
+                        else:
+                            row = row.replace(",", "$")
                     row = row.replace('"', '/"')
                     yield row
 
@@ -160,17 +168,24 @@ class AugmentCommand(TextAttackCommand):
                     skipinitialspace=True,
                 )
             ]
+
+            # replace markings with quotations and commas
             for row in rows:
-                i = 0
-                while i < len(row['text'])-1:
-                    if row['text'][i] == "$":
-                        row['text'] = row['text'][:i] + "," + row['text'][i+1:]
-                    if row['text'][i] == "/":
-                        if row['text'][i+1] == '"':
-                            row['text'] = row['text'][:i] + row['text'][i+1:]
-                        else:
-                            row['text'] = row['text'][:i] + '"' + row['text'][i+1:]
-                    i += 1
+                for item in row:
+                    i = 0
+                    if item == "label" or row[item] is None:
+                        continue
+                    while i < len(row[item]) - 1:
+                        if row[item][i] == "$":
+                            row[item] = row[item][:i] + "," + row[item][i + 1 :]
+                        if row[item][i] == "/":
+                            if row[item][i + 1] == '"':
+                                row[item] = row[item][:i] + row[item][i + 1 :]
+                            else:
+                                row[item] = row[item][:i] + '"' + row[item][i + 1 :]
+                        i += 1
+                    i = 0
+
             # Validate input column.
             row_keys = set(rows[0].keys())
             if args.input_column not in row_keys:
@@ -201,10 +216,7 @@ class AugmentCommand(TextAttackCommand):
             # Print to file.
             with open(args.output_csv, "w") as outfile:
                 csv_writer = csv.writer(
-                    outfile,
-                    delimiter=",",
-                    quotechar="/",
-                    quoting=csv.QUOTE_MINIMAL
+                    outfile, delimiter=",", quotechar="/", quoting=csv.QUOTE_MINIMAL
                 )
                 # Write header.
                 csv_writer.writerow(output_rows[0].keys())
@@ -216,11 +228,12 @@ class AugmentCommand(TextAttackCommand):
                 f"Wrote {len(output_rows)} augmentations to {args.output_csv} in {time.time() - start_time}s."
             )
 
-            with open(args.output_csv, 'r') as file:
+            # Remove extra markings in output file
+            with open(args.output_csv, "r") as file:
                 data = file.readlines()
             for i in range(len(data)):
                 data[i] = data[i].replace("/", "")
-            with open(args.output_csv, 'w') as file:
+            with open(args.output_csv, "w") as file:
                 file.writelines(data)
 
     @staticmethod
