@@ -1,5 +1,5 @@
 recommonmark
-Sphinx
+Sphinx==4.4.0
 sphinx-autobuild
 sphinx-copybutton
 sphinx-markdown-tables
