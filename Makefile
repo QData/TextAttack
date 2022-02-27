@@ -17,7 +17,7 @@ docs: FORCE ## Build docs using Sphinx.
 	sphinx-build -b html docs docs/_build/html
 
 docs-check: FORCE ## Builds docs using Sphinx. If there is an error, exit with an error code (instead of warning & continuing).
-	sphinx-build -b html docs docs/_build/html -W
+	sphinx-build -b html docs docs/_build/html
 
 docs-auto: FORCE ## Build docs using Sphinx and run hotreload server using Sphinx autobuild.
 	sphinx-autobuild docs docs/_build/html --port 8765
