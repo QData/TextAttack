@@ -28,12 +28,7 @@ class WordSwapEmbedding(WordSwap):
     >>> augmenter.augment(s)
     """
 
-    def __init__(
-        self,
-        max_candidates=15,
-        embedding=None,
-        **kwargs
-    ):
+    def __init__(self, max_candidates=15, embedding=None, **kwargs):
         super().__init__(**kwargs)
         if embedding is None:
             embedding = WordEmbedding.counterfitted_GLOVE_embedding()
