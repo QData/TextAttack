@@ -8,7 +8,6 @@ AugmentCommand class
 from argparse import ArgumentDefaultsHelpFormatter, ArgumentError, ArgumentParser
 import csv
 import os
-import re
 import time
 
 import tqdm
@@ -145,18 +144,7 @@ class AugmentCommand(TextAttackCommand):
             # mark where commas and quotes occur within the text value
             def markQuotes(lines):
                 for row in lines:
-                    if '"' in row:
-                        cutoff = re.search(r',[" "]*-?[0-9]+[" "]*,', row)
-                        if cutoff:
-                            row = (
-                                row[: cutoff.start()].replace(",", "$")
-                                + row[cutoff.start() : cutoff.end() + 1]
-                                + row[cutoff.end() + 1 :].replace(",", "$")
-                            )
-                        else:
-                            end = row.rfind('"')
-                            row = row[:end].replace(",", "$") + row[end:]
-                    row = row.replace('"', '/"')
+                    row = row.replace('"', '"/')
                     yield row
 
             dialect = csv.Sniffer().sniff(csv_file.readline(), delimiters=";,")
@@ -174,18 +162,13 @@ class AugmentCommand(TextAttackCommand):
             for row in rows:
                 for item in row:
                     i = 0
-                    if item == "label" or row[item] is None:
-                        continue
-                    while i < len(row[item]) - 1:
-                        if row[item][i] == "$":
-                            row[item] = row[item][:i] + "," + row[item][i + 1 :]
+                    while i < len(row[item]):
                         if row[item][i] == "/":
-                            if row[item][i + 1] == '"':
+                            if row[item][i - 1] == '"':
                                 row[item] = row[item][:i] + row[item][i + 1 :]
                             else:
                                 row[item] = row[item][:i] + '"' + row[item][i + 1 :]
                         i += 1
-                    i = 0
 
             # Validate input column.
             row_keys = set(rows[0].keys())
