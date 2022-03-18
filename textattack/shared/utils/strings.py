@@ -109,7 +109,7 @@ def default_class_repr(self):
 
 
 class ReprMixin(object):
-    """ Mixin for enhanced __repr__ and __str__. """
+    """Mixin for enhanced __repr__ and __str__."""
 
     def __repr__(self):
         return default_class_repr(self)
@@ -117,8 +117,7 @@ class ReprMixin(object):
     __str__ = __repr__
 
     def extra_repr_keys(self):
-        """
-        """
+        """extra fields to be included in the representation of a class"""
         return []
 
 
