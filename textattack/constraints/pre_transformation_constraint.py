@@ -5,10 +5,10 @@ Pre-Transformation Constraint Class
 
 from abc import ABC, abstractmethod
 
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import ReprMixin
 
 
-class PreTransformationConstraint(ABC):
+class PreTransformationConstraint(ReprMixin, ABC):
     """An abstract class that represents constraints which are applied before
     the transformation.
 
@@ -62,5 +62,3 @@ class PreTransformationConstraint(ABC):
         line strings are acceptable.
         """
         return []
-
-    __str__ = __repr__ = default_class_repr

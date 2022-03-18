@@ -6,10 +6,10 @@ Search Method Abstract Class
 
 from abc import ABC, abstractmethod
 
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import ReprMixin
 
 
-class SearchMethod(ABC):
+class SearchMethod(ReprMixin, ABC):
     """This is an abstract class that contains main helper functionality for
     search methods.
 
@@ -65,8 +65,3 @@ class SearchMethod(ABC):
             )
         else:
             return self.goal_function.model
-
-    def extra_repr_keys(self):
-        return []
-
-    __repr__ = __str__ = default_class_repr
