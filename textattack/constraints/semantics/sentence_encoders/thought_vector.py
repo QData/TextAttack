@@ -19,9 +19,9 @@ class ThoughtVector(SentenceEncoder):
         word_embedding (textattack.shared.AbstractWordEmbedding): The word embedding to use
     """
 
-    def __init__(
-        self, embedding=WordEmbedding.counterfitted_GLOVE_embedding(), **kwargs
-    ):
+    def __init__(self, embedding=None, **kwargs):
+        if embedding is None:
+            embedding = WordEmbedding.counterfitted_GLOVE_embedding()
         if not isinstance(embedding, AbstractWordEmbedding):
             raise ValueError(
                 "`embedding` object must be of type `textattack.shared.AbstractWordEmbedding`."
