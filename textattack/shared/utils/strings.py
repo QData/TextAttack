@@ -81,11 +81,14 @@ def words_from_text(s, words_to_ignore=[]):
     words = []
     word = ""
 
-    isReliable, textBytesFound, details = cld2.detect(s)
-    if details[0][0] == "Chinese" or details[0][0] == "ChineseT":
-        seg_list = jieba.cut(s, cut_all=False)
-        s = " ".join(seg_list)
-    else:
+    try:
+        isReliable, textBytesFound, details = cld2.detect(s)
+        if details[0][0] == "Chinese" or details[0][0] == "ChineseT":
+            seg_list = jieba.cut(s, cut_all=False)
+            s = " ".join(seg_list)
+        else:
+            s = " ".join(s.split())
+    except Exception:
         s = " ".join(s.split())
 
     for c in s:
