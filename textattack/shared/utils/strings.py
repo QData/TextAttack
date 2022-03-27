@@ -2,6 +2,7 @@ import string
 
 import jieba
 from langdetect import DetectorFactory, detect
+import pycld2 as cld2
 
 from .importing import LazyLoader
 
@@ -79,18 +80,26 @@ def words_from_text(s, words_to_ignore=[]):
     # TODO implement w regex
     words = []
     word = ""
-
-    DetectorFactory.seed = 0
-    try:
-        if s:
-            if detect(s) == "zh-cn" or detect(s) == "ko":
-                seg_list = jieba.cut(s, cut_all=False)
-                s = " ".join(seg_list)
-            else:
-                s = " ".join(s.split())
-
-    except Exception:
+    isReliable, textBytesFound, details = cld2.detect(
+        s
+    )
+    if details == "Chinese":
+        seg_list = jieba.cut(s, cut_all=False)
+        s = " ".join(seg_list)
+    else:
         s = " ".join(s.split())
+    DetectorFactory.seed = 0
+
+    # try:
+    #     if s:
+    #         if detect(s) == "zh-cn" or detect(s) == "ko":
+    #             seg_list = jieba.cut(s, cut_all=False)
+    #             s = " ".join(seg_list)
+    #         else:
+    #             s = " ".join(s.split())
+    #
+    # except Exception:
+    #     s = " ".join(s.split())
 
     for c in s:
         if c.isalnum() or c in homos:

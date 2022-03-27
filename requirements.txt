@@ -21,3 +21,4 @@ PySocks!=1.5.7,>=1.5.6
 pinyin==0.4.0
 jieba
 OpenHowNet
+pycld2
