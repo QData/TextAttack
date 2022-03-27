@@ -82,20 +82,15 @@ def words_from_text(s, words_to_ignore=[]):
 
     DetectorFactory.seed = 0
     try:
-        detect(s)
-        s = " ".join(s.split())
+        if s:
+            if detect(s) == "zh-cn" or detect(s) == "ko":
+                seg_list = jieba.cut(s, cut_all=False)
+                s = " ".join(seg_list)
+            else:
+                s = " ".join(s.split())
+
     except Exception:
         s = " ".join(s.split())
-    # try:
-    #     if s:
-    #         if detect(s) == "zh-cn" or detect(s) == "ko":
-    #             seg_list = jieba.cut(s, cut_all=False)
-    #             s = " ".join(seg_list)
-    #         else:
-    #             s = " ".join(s.split())
-    #
-    # except Exception:
-    #     s = " ".join(s.split())
 
     for c in s:
         if c.isalnum() or c in homos:
