@@ -80,26 +80,15 @@ def words_from_text(s, words_to_ignore=[]):
     # TODO implement w regex
     words = []
     word = ""
+
     isReliable, textBytesFound, details = cld2.detect(
         s
     )
-    if details == "Chinese":
+    if details[0][0] == "Chinese" or details[0][0] == "ChineseT":
         seg_list = jieba.cut(s, cut_all=False)
         s = " ".join(seg_list)
     else:
         s = " ".join(s.split())
-    DetectorFactory.seed = 0
-
-    # try:
-    #     if s:
-    #         if detect(s) == "zh-cn" or detect(s) == "ko":
-    #             seg_list = jieba.cut(s, cut_all=False)
-    #             s = " ".join(seg_list)
-    #         else:
-    #             s = " ".join(s.split())
-    #
-    # except Exception:
-    #     s = " ".join(s.split())
 
     for c in s:
         if c.isalnum() or c in homos:
