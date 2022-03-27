@@ -80,7 +80,12 @@ def words_from_text(s, words_to_ignore=[]):
     words = []
     word = ""
 
-    # DetectorFactory.seed = 0
+    DetectorFactory.seed = 0
+    try:
+        detect(s)
+        s = " ".join(s.split())
+    except Exception:
+        s = " ".join(s.split())
     # try:
     #     if s:
     #         if detect(s) == "zh-cn" or detect(s) == "ko":
@@ -88,8 +93,10 @@ def words_from_text(s, words_to_ignore=[]):
     #             s = " ".join(seg_list)
     #         else:
     #             s = " ".join(s.split())
+    #
     # except Exception:
-    s = " ".join(s.split())
+    #     s = " ".join(s.split())
+
     for c in s:
         if c.isalnum() or c in homos:
             word += c
