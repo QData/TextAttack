@@ -1,7 +1,6 @@
 import string
 
 import jieba
-from langdetect import DetectorFactory, detect
 import pycld2 as cld2
 
 from .importing import LazyLoader
