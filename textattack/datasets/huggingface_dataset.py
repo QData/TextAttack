@@ -55,6 +55,9 @@ def get_datasets_dataset_columns(dataset):
     elif {"label", "review"} <= schema:
         input_columns = ("review",)
         output_column = "label"
+    elif {'answers', 'question', 'title', 'id', 'context'} <= schema:
+        input_columns = ("context", "question")
+        output_column = "answers"
     else:
         raise ValueError(
             f"Unsupported dataset schema {schema}. Try passing your own `dataset_columns` argument."

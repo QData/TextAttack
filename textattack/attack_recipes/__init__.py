@@ -41,3 +41,4 @@ from .checklist_ribeiro_2020 import CheckList2020
 from .clare_li_2020 import CLARE2020
 from .french_recipe import FrenchRecipe
 from .spanish_recipe import SpanishRecipe
+from .qa_squad_attack_guan_2020 import QASquadAttackGuan2020
