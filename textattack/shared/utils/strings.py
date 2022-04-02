@@ -1,5 +1,8 @@
 import string
 
+import jieba
+import pycld2 as cld2
+
 from .importing import LazyLoader
 
 
@@ -76,7 +79,18 @@ def words_from_text(s, words_to_ignore=[]):
     # TODO implement w regex
     words = []
     word = ""
-    for c in " ".join(s.split()):
+
+    try:
+        isReliable, textBytesFound, details = cld2.detect(s)
+        if details[0][0] == "Chinese" or details[0][0] == "ChineseT":
+            seg_list = jieba.cut(s, cut_all=False)
+            s = " ".join(seg_list)
+        else:
+            s = " ".join(s.split())
+    except Exception:
+        s = " ".join(s.split())
+
+    for c in s:
         if c.isalnum() or c in homos:
             word += c
         elif c in "'-_*@" and len(word) > 0:
