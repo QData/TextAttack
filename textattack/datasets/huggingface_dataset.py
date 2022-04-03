@@ -107,6 +107,7 @@ class HuggingFaceDataset(Dataset):
     ):
         if isinstance(name_or_dataset, datasets.Dataset):
             self._dataset = name_or_dataset
+            print("bingo")
         else:
             self._name = name_or_dataset
             self._subset = subset
@@ -185,6 +186,13 @@ class HuggingFaceDataset(Dataset):
                 self._format_as_dict(self._dataset[j]) for j in range(i.start, i.stop)
             ]
 
+    def shard(self, num=2, index=0):
+        self._dataset = self._dataset.shard(num_shards=num, index=index)
+
     def shuffle(self):
         self._dataset.shuffle()
         self.shuffled = True
+
+    @property
+    def dataset(self):
+        return self._dataset

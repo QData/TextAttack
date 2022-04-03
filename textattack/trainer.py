@@ -560,6 +560,9 @@ class Trainer:
 
         return preds.cpu(), _targets
 
+    def train_score(self):
+        pass
+
     def train(self):
         """Train the model on given training dataset."""
         if not self.train_dataset:
@@ -767,6 +770,7 @@ class Trainer:
 
             # Evaluate after each epoch.
             eval_score = self.evaluate()
+            print("EVAL SCORE:", eval_score)
 
             if self.training_args.log_to_tb:
                 self._tb_log({f"eval/{self._metric_name}": eval_score}, epoch)
@@ -822,6 +826,8 @@ class Trainer:
 
         self.model_wrapper.model = model
         self._write_readme(best_eval_score, best_eval_score_epoch, train_batch_size)
+
+        return best_eval_score
 
     def evaluate(self):
         """Evaluate the model on given evaluation dataset."""
