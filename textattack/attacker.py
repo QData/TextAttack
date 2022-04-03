@@ -159,6 +159,8 @@ class Attacker:
             idx = worklist.popleft()
             try:
                 example, ground_truth_output = self.dataset[idx]
+                if isinstance(ground_truth_output, dict):
+                    ground_truth_output = ground_truth_output['text'].pop()
             except IndexError:
                 continue
             example = textattack.shared.AttackedText(example)

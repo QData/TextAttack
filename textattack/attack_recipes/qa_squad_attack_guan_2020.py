@@ -33,24 +33,11 @@ class QASquadAttackGuan2020(AttackRecipe):
     @staticmethod
     def build(model_wrapper):
         
-
         goal_function = MinimizeBleu(model_wrapper)
-
         transformation = WordSwapEmbedding(max_candidates=50)
-
-        use_constraint = UniversalSentenceEncoder(
-            threshold=0.840845057,
-            metric="angular",
-            compare_against_original=False,
-            window_size=15,
-            skip_text_shorter_than_window=True,
-        )
-
+        use_constraint = UniversalSentenceEncoder(threshold=0.840845057, metric="angular",
+            compare_against_original=False, window_size=15, skip_text_shorter_than_window=True)
         constraints = [RepeatModification(), StopwordModification(), PartOfSpeech(), use_constraint]
-
-        #
-        # Greedily swap words (see pseudocode, Algorithm 1 of the paper).
-        #
         search_method = GreedySearch()
 
         '''
@@ -63,5 +50,4 @@ class QASquadAttackGuan2020(AttackRecipe):
         goal_function = UntargetedClassification(model_wrapper)
         search_method = GreedyWordSwapWIR(wir_method="delete")
         '''
-
         return Attack(goal_function, constraints, transformation, search_method)
