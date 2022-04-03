@@ -6,7 +6,6 @@ format: FORCE  ## Run black and isort (rewriting files)
 	docformatter --in-place --recursive textattack tests
 
 lint: FORCE  ## Run black, isort, flake8 (in check mode)
-    pip install black>=22.3.0
 	black . --check
 	isort --check-only tests textattack
 	flake8 . --count --ignore=$(PEP_IGNORE_ERRORS) --show-source --statistics --exclude=./.*,build,dist
