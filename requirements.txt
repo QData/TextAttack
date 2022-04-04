@@ -22,3 +22,4 @@ pinyin==0.4.0
 jieba
 OpenHowNet
 pycld2
+click<8.1.0
