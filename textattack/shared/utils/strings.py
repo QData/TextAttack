@@ -43,10 +43,10 @@ def words_from_text(s, words_to_ignore=[]):
 
     homos = """˗৭Ȣ𝟕бƼᏎƷᒿlO`ɑЬϲԁе𝚏ɡհіϳ𝒌ⅼｍոорԛⲅѕ𝚝սѵԝ×уᴢ"""
     exceptions = """'-_*@"""
-    filter_pattern = homos + """'\-_\*@"""
+    filter_pattern = homos + """'\\-_\\*@"""
     # TODO: consider whether one should add "." to `exceptions` (and "\." to `filter_pattern`)
     # example "My email address is xxx@yyy.com"
-    filter_pattern = f"[\w{filter_pattern}]+"
+    filter_pattern = f"[\\w{filter_pattern}]+"
     words = []
     for word in s.split():
         # Allow apostrophes, hyphens, underscores, asterisks and at signs as long as they don't begin the word.

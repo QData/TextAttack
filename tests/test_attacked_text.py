@@ -4,7 +4,7 @@ import pytest
 
 try:
     import textattack
-except:
+except ModuleNotFoundError:
     # one can do test locally without installing textattack
     import pathlib
     import sys
