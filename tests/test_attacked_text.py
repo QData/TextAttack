@@ -2,7 +2,15 @@ import collections
 
 import pytest
 
-import textattack
+try:
+    import textattack
+except:
+    # one can do test locally without installing textattack
+    import sys, pathlib
+
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
+    import textattack
+
 
 raw_text = "A person walks up stairs into a room and sees beer poured from a keg and people talking."
 
