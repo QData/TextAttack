@@ -6,7 +6,8 @@ try:
     import textattack
 except:
     # one can do test locally without installing textattack
-    import sys, pathlib
+    import pathlib
+    import sys
 
     sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
     import textattack

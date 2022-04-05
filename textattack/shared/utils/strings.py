@@ -1,4 +1,5 @@
-import string, re
+import re
+import string
 
 import jieba
 import pycld2 as cld2
