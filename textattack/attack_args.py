@@ -111,6 +111,7 @@ GOAL_FUNCTION_CLASS_NAMES = {
     #
     # Classification goal functions
     #
+    "hardlabel-classification": "textattack.goal_functions.classification.HardLabelClassification",
     "targeted-classification": "textattack.goal_functions.classification.TargetedClassification",
     "untargeted-classification": "textattack.goal_functions.classification.UntargetedClassification",
     "input-reduction": "textattack.goal_functions.classification.InputReduction",
@@ -126,7 +127,6 @@ GOAL_FUNCTION_CLASS_NAMES = {
 @dataclass
 class AttackArgs:
     """Attack arguments to be passed to :class:`~textattack.Attacker`.
-
     Args:
         num_examples (:obj:`int`, 'optional`, defaults to :obj:`10`):
             The number of examples to attack. :obj:`-1` for entire dataset.
@@ -134,7 +134,6 @@ class AttackArgs:
             The number of successful adversarial examples we want. This is different from :obj:`num_examples`
             as :obj:`num_examples` only cares about attacking `N` samples while :obj:`num_successful_examples` aims to keep attacking
             until we have `N` successful cases.
-
             .. note::
                 If set, this argument overrides `num_examples` argument.
         num_examples_offset (:obj: `int`, `optional`, defaults to :obj:`0`):
@@ -148,7 +147,6 @@ class AttackArgs:
         query_budget (:obj:`int`, `optional`, defaults to :obj:`None`):
             The maximum number of model queries allowed per example attacked.
             If not set, we use the query budget set in the :class:`~textattack.goal_functions.GoalFunction` object (which by default is :obj:`float("inf")`).
-
             .. note::
                 Setting this overwrites the query budget set in :class:`~textattack.goal_functions.GoalFunction` object.
         checkpoint_interval (:obj:`int`, `optional`, defaults to :obj:`None`):
@@ -439,7 +437,6 @@ class AttackArgs:
 class _CommandLineAttackArgs:
     """Attack args for command line execution. This requires more arguments to
     create ``Attack`` object as specified.
-
     Args:
         transformation (:obj:`str`, `optional`, defaults to :obj:`"word-swap-embedding"`):
             Name of transformation to use.
