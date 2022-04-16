@@ -46,6 +46,11 @@ class PeekDatasetCommand(TextAttackCommand):
                     data_all_lowercased = False
             attacked_texts.append(at)
             num_words.append(len(at.words))
+            if isinstance(output, dict):
+                if output["text"]:
+                    output = output["text"][0]
+                else:
+                    output = ""
             outputs.append(output)
 
         logger.info(f"Number of samples: {_cb(len(attacked_texts))}")
