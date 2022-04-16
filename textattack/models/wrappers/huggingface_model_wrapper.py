@@ -5,6 +5,7 @@ HuggingFace Model Wrapper
 
 import torch
 import transformers
+from transformers import AutoTokenizer
 
 import textattack
 
@@ -26,7 +27,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         ), f"`tokenizer` must of type `transformers.PreTrainedTokenizer` or `transformers.PreTrainedTokenizerFast`, but got type {type(tokenizer)}."
 
         self.model = model
-        self.tokenizer = tokenizer
+        self.tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
 
     def __call__(self, text_input_list):
         """Passes inputs to HuggingFace models as keyword arguments.
@@ -34,6 +35,8 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         (Regular PyTorch ``nn.Module`` models typically take inputs as
         positional arguments.)
         """
+        print(text_input_list[0][1])
+
         # Default max length is set to be int(1e30), so we force 512 to enable batching.
         max_length = (
             512
@@ -41,11 +44,9 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             else self.tokenizer.model_max_length
         )
         inputs_dict = self.tokenizer(
-            text_input_list,
+            text_input_list[0][1],
+            text_input_list[0][0],
             add_special_tokens=True,
-            padding="max_length",
-            max_length=max_length,
-            truncation=True,
             return_tensors="pt",
         )
         model_device = next(self.model.parameters()).device
