@@ -5,7 +5,7 @@ HuggingFace Model Wrapper
 
 import torch
 import transformers
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering
 
 import textattack
 
@@ -26,7 +26,7 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             (transformers.PreTrainedTokenizer, transformers.PreTrainedTokenizerFast),
         ), f"`tokenizer` must of type `transformers.PreTrainedTokenizer` or `transformers.PreTrainedTokenizerFast`, but got type {type(tokenizer)}."
 
-        self.model = model
+        self.model = AutoModelForQuestionAnswering.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
         self.tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
 
     def __call__(self, text_input_list):
@@ -35,7 +35,6 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         (Regular PyTorch ``nn.Module`` models typically take inputs as
         positional arguments.)
         """
-        print(text_input_list[0][1])
 
         # Default max length is set to be int(1e30), so we force 512 to enable batching.
         max_length = (
@@ -43,15 +42,16 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             if self.tokenizer.model_max_length == int(1e30)
             else self.tokenizer.model_max_length
         )
+
         inputs_dict = self.tokenizer(
-            text_input_list[0][1],
-            text_input_list[0][0],
+            text_input_list[0][1], # question
+            text_input_list[0][0], # context
             add_special_tokens=True,
             return_tensors="pt",
         )
+        input_ids = inputs_dict["input_ids"].tolist()[0]
         model_device = next(self.model.parameters()).device
         inputs_dict.to(model_device)
-
         with torch.no_grad():
             outputs = self.model(**inputs_dict)
 
@@ -64,7 +64,16 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             # HuggingFace classification models return a tuple as output
             # where the first item in the tuple corresponds to the list of
             # scores for each input.
-            return outputs.logits
+            try:
+                answer_start_scores = outputs.start_logits
+                answer_end_scores = outputs.end_logits
+                answer_start = torch.argmax(answer_start_scores)
+                answer_end = torch.argmax(answer_end_scores) + 1
+                return self.tokenizer.convert_tokens_to_string(
+                    self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end])
+                    )
+            except:
+                return outputs.logits
 
     def get_grad(self, text_input):
         """Get gradient of loss with respect to input tokens.
