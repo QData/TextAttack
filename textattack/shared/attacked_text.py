@@ -48,8 +48,6 @@ class AttackedText:
             self._text_input = OrderedDict([("text", text_input)])
         elif isinstance(text_input, OrderedDict):
             self._text_input = text_input
-        elif isinstance(text_input, torch.Tensor):
-            self._text_input = OrderedDict([("text", "")])
         else:
             raise TypeError(
                 f"Invalid text_input type {type(text_input)} (required str or OrderedDict)"

@@ -32,6 +32,7 @@ class AttackCommand(TextAttackCommand):
             attack = CommandLineAttackArgs._create_attack_from_args(
                 attack_args, model_wrapper
             )
+            print(dataset)
             attacker = Attacker(attack, dataset, attack_args)
             attacker.attack_dataset()
 
