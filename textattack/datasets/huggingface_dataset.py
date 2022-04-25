@@ -191,3 +191,9 @@ class HuggingFaceDataset(Dataset):
     def shuffle(self):
         self._dataset.shuffle()
         self.shuffled = True
+
+    def get_info(self):
+        return self._dataset.info
+
+    def get_column_names(self):
+        return self._dataset.column_names

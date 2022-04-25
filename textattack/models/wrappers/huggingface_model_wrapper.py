@@ -26,8 +26,8 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             (transformers.PreTrainedTokenizer, transformers.PreTrainedTokenizerFast),
         ), f"`tokenizer` must of type `transformers.PreTrainedTokenizer` or `transformers.PreTrainedTokenizerFast`, but got type {type(tokenizer)}."
 
-        self.model = AutoModelForQuestionAnswering.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
-        self.tokenizer = AutoTokenizer.from_pretrained("bert-large-uncased-whole-word-masking-finetuned-squad")
+        self.model = AutoModelForQuestionAnswering.from_pretrained("bert-large-cased-whole-word-masking-finetuned-squad")
+        self.tokenizer = AutoTokenizer.from_pretrained("bert-large-cased-whole-word-masking-finetuned-squad")
 
     def __call__(self, text_input_list):
         """Passes inputs to HuggingFace models as keyword arguments.

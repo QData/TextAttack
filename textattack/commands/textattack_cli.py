@@ -38,7 +38,7 @@ def main():
     PeekDatasetCommand.register_subcommand(subparsers)
 
     # Let's go
-    args = parser.parse_args()
+    args = parser.parse_args(["attack" , "--recipe", "squad-attack" ,"--model-from-huggingface" ,"bert-large-uncased-whole-word-masking-finetuned-squad" ,"--dataset-from-huggingface" ,"squad", "--num-examples" ,"5"])
 
     if not hasattr(args, "func"):
         parser.print_help()
