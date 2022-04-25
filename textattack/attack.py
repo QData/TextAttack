@@ -407,12 +407,9 @@ class Attack:
         assert isinstance(
             example, (str, OrderedDict, AttackedText)
         ), "`example` must either be `str`, `collections.OrderedDict`, `textattack.shared.AttackedText`."
-        if isinstance(example, (str, OrderedDict)):
-            if "context" in example:
-                altered_context = AttackedText(example["context"])
-                example["context"] = altered_context
-            else:   
-                example = AttackedText(example)
+
+        if isinstance(example, (str, OrderedDict)):  
+            example = AttackedText(example)
 
         assert isinstance(
             ground_truth_output, (int, str)

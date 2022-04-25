@@ -32,7 +32,10 @@ class AttackCommand(TextAttackCommand):
             attack = CommandLineAttackArgs._create_attack_from_args(
                 attack_args, model_wrapper
             )
-            print(dataset)
+            # print("DATASET INFO:")
+            # print(f'Length: {len(dataset)}')
+            # print(f'Features {dataset.get_column_names()}')
+            # print(f'First Data Point: {dataset[0]}')
             attacker = Attacker(attack, dataset, attack_args)
             attacker.attack_dataset()
 
