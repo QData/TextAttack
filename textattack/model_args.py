@@ -218,9 +218,9 @@ class ModelArgs:
             textattack.shared.logger.info(
                 f"Loading pre-trained model from HuggingFace model repository: {colored_model_name}"
             )
-            try:
+            if isinstance(args.dataset_from_huggingface, str):
                 qa_cols = datasets.load_dataset(args.dataset_from_huggingface)['train'].column_names
-            except:
+            else:
                 qa_cols = []
             if qa_cols == ['id', 'title', 'context', 'question', 'answers']:
                 model = transformers.AutoModelForQuestionAnswering.from_pretrained(
