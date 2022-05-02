@@ -430,7 +430,6 @@ class Attacker:
             self.attack_log_manager = AttackArgs.create_loggers_from_args(
                 self.attack_args
             )
-
         textattack.shared.utils.set_seed(self.attack_args.random_seed)
         if self.dataset.shuffled and self.attack_args.checkpoint_interval:
             # Not allowed b/c we cannot recover order of shuffled data

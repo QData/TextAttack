@@ -11,6 +11,7 @@ We've also provided implementations of model wrappers for common patterns in som
 from .model_wrapper import ModelWrapper
 
 from .huggingface_model_wrapper import HuggingFaceModelWrapper
+from .huggingface_QA_model_wrapper import HuggingFaceQAModelWrapper
 from .pytorch_model_wrapper import PyTorchModelWrapper
 from .sklearn_model_wrapper import SklearnModelWrapper
 from .tensorflow_model_wrapper import TensorFlowModelWrapper
