@@ -8,7 +8,6 @@ Goal Function for Attempts to minimize the BLEU score
 import functools
 
 import nltk
-from nltk.translate.bleu_score import SmoothingFunction
 
 import textattack
 
@@ -45,7 +44,6 @@ class MinimizeBleu(TextToTextGoalFunction):
 
     def _is_goal_complete(self, model_output, _):
         bleu_score = 1.0 - self._get_score(model_output, _)
-        print(bleu_score, "<=", (self.target_bleu + MinimizeBleu.EPS))
         return bleu_score <= (self.target_bleu + MinimizeBleu.EPS)
 
     def _get_score(self, model_output, _):
@@ -66,5 +64,4 @@ def get_bleu(a, b):
     ref = a.words
     hyp = b.words
     bleu_score = nltk.translate.bleu_score.sentence_bleu([ref], hyp)
-    print(ref, hyp, "bleu score: " + str(bleu_score))
     return bleu_score
