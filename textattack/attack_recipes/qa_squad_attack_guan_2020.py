@@ -9,7 +9,7 @@ from textattack.constraints.pre_transformation import (
     RepeatModification,
     StopwordModification,
 )
-from textattack.goal_functions import MinimizeBleu
+from textattack.goal_functions import HalfOverlappingOutput
 from textattack.search_methods import GreedySearch
 from textattack.transformations import WordSwapInflections
 from textattack import Attack
@@ -33,22 +33,11 @@ class QASquadAttackGuan2020(AttackRecipe):
     @staticmethod
     def build(model_wrapper):
         
-        goal_function = MinimizeBleu(model_wrapper)
+        goal_function = HalfOverlappingOutput(model_wrapper)
         transformation = WordSwapEmbedding(max_candidates=50)
         use_constraint = UniversalSentenceEncoder(threshold=0.840845057, metric="angular",
             compare_against_original=False, window_size=15, skip_text_shorter_than_window=True)
         constraints = [RepeatModification(), StopwordModification(), PartOfSpeech(), use_constraint]
         search_method = GreedySearch()
 
-        '''
-        transformation = WordSwapEmbedding(max_candidates=50)
-        input_column_modification = InputColumnModification(["premise", "hypothesis"], {"premise"})
-        use_constraint = UniversalSentenceEncoder(threshold=0.840845057, metric="angular", 
-            compare_against_original=False, window_size=15, skip_text_shorter_than_window=True,)
-        constraints = [RepeatModification(), StopwordModification(), input_column_modification,
-        WordEmbeddingDistance(min_cos_sim=0.5), use_constraint]
-        goal_function = UntargetedClassification(model_wrapper)
-        search_method = GreedyWordSwapWIR(wir_method="delete")
-        '''
-        
         return Attack(goal_function, constraints, transformation, search_method)

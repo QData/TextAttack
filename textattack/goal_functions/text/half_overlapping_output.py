@@ -14,7 +14,7 @@ from textattack.shared.utils import words_from_text
 from .text_to_text_goal_function import TextToTextGoalFunction
 
 
-class NonOverlappingOutput(TextToTextGoalFunction):
+class HalfOverlappingOutput(TextToTextGoalFunction):
     """Ensures that none of the words at a position are equal.
 
     Defined in seq2sick (https://arxiv.org/pdf/1803.01128.pdf), equation
@@ -28,15 +28,12 @@ class NonOverlappingOutput(TextToTextGoalFunction):
         word_difference_score.cache_clear()
 
     def _is_goal_complete(self, model_output, _):
-        return self._get_score(model_output, self.ground_truth_output) == 1.0
+        return self._get_score(model_output, self.ground_truth_output) > 0
 
     def _get_score(self, model_output, _):
         num_words_diff = word_difference_score(model_output, self.ground_truth_output)
         print(model_output, self.ground_truth_output, "words diff:", num_words_diff)
-        if num_words_diff == 0:
-            return 0.0
-        else:
-            return num_words_diff / len(get_words_cached(self.ground_truth_output))
+        return num_words_diff
 
 
 @functools.lru_cache(maxsize=2 ** 12)

@@ -13,7 +13,7 @@ from .pytorch_model_wrapper import PyTorchModelWrapper
 torch.cuda.empty_cache()
 
 
-class HuggingFaceModelWrapper(PyTorchModelWrapper):
+class HuggingFaceQAModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""
 
     def __init__(self, model, tokenizer):
@@ -42,20 +42,31 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             else self.tokenizer.model_max_length
         )
 
-        inputs_dict = self.tokenizer(
-            text_input_list,
-            add_special_tokens=True,
-            padding="max_length",
-            max_length=max_length,
-            truncation=True,
-            return_tensors="pt",
-        )
-        model_device = next(self.model.parameters()).device
-        inputs_dict.to(model_device)
+        outputs = []
+        
+        for item in text_input_list:
 
-        with torch.no_grad():
-            outputs = self.model(**inputs_dict)
+            inputs_dict = self.tokenizer(
+                item[1], # question
+                item[0], # context
+                add_special_tokens=True,
+                return_tensors="pt",
+            )
+            input_ids = inputs_dict["input_ids"].tolist()[0]
+            model_device = next(self.model.parameters()).device
+            inputs_dict.to(model_device)
 
+            with torch.no_grad():
+                sub_output = self.model(**inputs_dict)
+
+            answer_start_scores = sub_output.start_logits
+            answer_end_scores = sub_output.end_logits
+            answer_start = torch.argmax(answer_start_scores)
+            answer_end = torch.argmax(answer_end_scores) + 1
+            outputs.append(self.tokenizer.convert_tokens_to_string(
+                self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
+            )
+            
         if isinstance(outputs[0], str):
             # HuggingFace sequence-to-sequence models return a list of
             # string predictions as output. In this case, return the full
