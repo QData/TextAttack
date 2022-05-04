@@ -22,10 +22,10 @@ class TextToTextGoalFunction(GoalFunction):
 
     def _process_model_outputs(self, _, outputs):
         """Processes and validates a list of model outputs."""
-        try:
-            return outputs.flatten()
-        except:
+        if isinstance(outputs, list):
             return outputs
+        else:
+            return outputs.flatten()
 
     def _get_displayed_output(self, raw_output):
         return raw_output

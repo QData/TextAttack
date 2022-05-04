@@ -408,7 +408,7 @@ class Attack:
             example, (str, OrderedDict, AttackedText)
         ), "`example` must either be `str`, `collections.OrderedDict`, `textattack.shared.AttackedText`."
 
-        if isinstance(example, (str, OrderedDict)):  
+        if isinstance(example, (str, OrderedDict)):
             example = AttackedText(example)
 
         assert isinstance(

@@ -173,7 +173,10 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             context_end = idx - 1
 
             # If the answer is not fully inside the context, label it (0, 0)
-            if offset[context_start][0] > end_char or offset[context_end][1] < start_char:
+            if (
+                offset[context_start][0] > end_char
+                or offset[context_end][1] < start_char
+            ):
                 start_positions.append(0)
                 end_positions.append(0)
             else:
