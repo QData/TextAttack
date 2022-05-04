@@ -8,7 +8,6 @@ from dataclasses import dataclass
 import json
 import os
 
-import datasets
 import transformers
 
 import textattack
@@ -112,9 +111,6 @@ TEXTATTACK_MODELS = {
     "lstm-yelp": "models_v2/classification/lstm/yelp",
     #
     # CNNs
-    #
-    "cnn-ag-news": "models_v2/classification/cnn/ag-news",
-    "cnn-imdb": "models_v2/classification/cnn/imdb",
     "cnn-mr": "models_v2/classification/cnn/rotten-tomatoes",
     "cnn-sst2": "models_v2/classification/cnn/sst",
     "cnn-yelp": "models_v2/classification/cnn/yelp",
