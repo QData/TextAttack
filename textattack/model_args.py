@@ -218,28 +218,24 @@ class ModelArgs:
             textattack.shared.logger.info(
                 f"Loading pre-trained model from HuggingFace model repository: {colored_model_name}"
             )
-            if isinstance(args.dataset_from_huggingface, str):
-                qa_cols = datasets.load_dataset(args.dataset_from_huggingface)[
-                    "train"
-                ].column_names
-            else:
-                qa_cols = []
-            if qa_cols == ["id", "title", "context", "question", "answers"]:
+            tokenizer = transformers.AutoTokenizer.from_pretrained(
+                model_name, use_fast=True
+            )
+            if (
+                isinstance(args.dataset_from_huggingface, str)
+                and "squad" in args.dataset_from_huggingface
+            ):
                 model = transformers.AutoModelForQuestionAnswering.from_pretrained(
                     model_name
                 )
+                model = textattack.models.wrappers.HuggingFaceQAModelWrapper(
+                    model, tokenizer
+                )
+
             else:
                 model = transformers.AutoModelForSequenceClassification.from_pretrained(
                     model_name
                 )
-            tokenizer = transformers.AutoTokenizer.from_pretrained(
-                model_name, use_fast=True
-            )
-            if qa_cols == ["id", "title", "context", "question", "answers"]:
-                model = textattack.models.wrappers.HuggingFaceQAModelWrapper(
-                    model, tokenizer
-                )
-            else:
                 model = textattack.models.wrappers.HuggingFaceModelWrapper(
                     model, tokenizer
                 )

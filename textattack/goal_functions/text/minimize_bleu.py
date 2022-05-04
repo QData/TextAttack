@@ -8,6 +8,7 @@ Goal Function for Attempts to minimize the BLEU score
 import functools
 
 import nltk
+from nltk.translate.bleu_score import SmoothingFunction
 
 import textattack
 
