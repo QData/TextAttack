@@ -158,14 +158,7 @@ class Attacker:
         while worklist:
             idx = worklist.popleft()
             try:
-                print("INPUT DETAILS")
-                print(f'Type of Dataset[{idx}] {type(self.dataset[idx])}')
-                print(f'Contents of Dataset[{idx}] {self.dataset[idx]}')
                 example, ground_truth_output = self.dataset[idx]
-                print(f'Type of Example {type(example)}')
-                print(f'Contents of Example {example}')
-                print(f'Type of Ground Truth Output {type(ground_truth_output)}')
-                print(f'Contents of Ground Truth Output {ground_truth_output}')
                 if isinstance(ground_truth_output, dict):
                     if ground_truth_output["text"]:
                         ground_truth_output = ground_truth_output["text"][0]

@@ -8,8 +8,8 @@ from dataclasses import dataclass
 import json
 import os
 
-import transformers
 import datasets
+import transformers
 
 import textattack
 from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file
@@ -219,10 +219,12 @@ class ModelArgs:
                 f"Loading pre-trained model from HuggingFace model repository: {colored_model_name}"
             )
             if isinstance(args.dataset_from_huggingface, str):
-                qa_cols = datasets.load_dataset(args.dataset_from_huggingface)['train'].column_names
+                qa_cols = datasets.load_dataset(args.dataset_from_huggingface)[
+                    "train"
+                ].column_names
             else:
                 qa_cols = []
-            if qa_cols == ['id', 'title', 'context', 'question', 'answers']:
+            if qa_cols == ["id", "title", "context", "question", "answers"]:
                 model = transformers.AutoModelForQuestionAnswering.from_pretrained(
                     model_name
                 )
@@ -233,10 +235,14 @@ class ModelArgs:
             tokenizer = transformers.AutoTokenizer.from_pretrained(
                 model_name, use_fast=True
             )
-            if qa_cols == ['id', 'title', 'context', 'question', 'answers']:
-                model = textattack.models.wrappers.HuggingFaceQAModelWrapper(model, tokenizer)
+            if qa_cols == ["id", "title", "context", "question", "answers"]:
+                model = textattack.models.wrappers.HuggingFaceQAModelWrapper(
+                    model, tokenizer
+                )
             else:
-                model = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
+                model = textattack.models.wrappers.HuggingFaceModelWrapper(
+                    model, tokenizer
+                )
         elif args.model in TEXTATTACK_MODELS:
             # Support loading TextAttack pre-trained models via just a keyword.
             colored_model_name = textattack.shared.utils.color_text(

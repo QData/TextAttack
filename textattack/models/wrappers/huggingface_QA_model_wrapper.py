@@ -35,20 +35,13 @@ class HuggingFaceQAModelWrapper(PyTorchModelWrapper):
         positional arguments.)
         """
 
-        # Default max length is set to be int(1e30), so we force 512 to enable batching.
-        max_length = (
-            512
-            if self.tokenizer.model_max_length == int(1e30)
-            else self.tokenizer.model_max_length
-        )
-
         outputs = []
-        
+
         for item in text_input_list:
 
             inputs_dict = self.tokenizer(
-                item[1], # question
-                item[0], # context
+                item[1],  # question
+                item[0],  # context
                 add_special_tokens=True,
                 return_tensors="pt",
             )
@@ -63,10 +56,14 @@ class HuggingFaceQAModelWrapper(PyTorchModelWrapper):
             answer_end_scores = sub_output.end_logits
             answer_start = torch.argmax(answer_start_scores)
             answer_end = torch.argmax(answer_end_scores) + 1
-            outputs.append(self.tokenizer.convert_tokens_to_string(
-                self.tokenizer.convert_ids_to_tokens(input_ids[answer_start:answer_end]))
+            outputs.append(
+                self.tokenizer.convert_tokens_to_string(
+                    self.tokenizer.convert_ids_to_tokens(
+                        input_ids[answer_start:answer_end]
+                    )
+                )
             )
-            
+
         if isinstance(outputs[0], str):
             # HuggingFace sequence-to-sequence models return a list of
             # string predictions as output. In this case, return the full
@@ -184,7 +181,10 @@ class HuggingFaceQAModelWrapper(PyTorchModelWrapper):
             context_end = idx - 1
 
             # If the answer is not fully inside the context, label it (0, 0)
-            if offset[context_start][0] > end_char or offset[context_end][1] < start_char:
+            if (
+                offset[context_start][0] > end_char
+                or offset[context_end][1] < start_char
+            ):
                 start_positions.append(0)
                 end_positions.append(0)
             else:
