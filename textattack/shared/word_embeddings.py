@@ -14,7 +14,7 @@ import torch
 from textattack.shared import utils
 
 
-class AbstractWordEmbedding(ABC):
+class AbstractWordEmbedding(utils.ReprMixin, ABC):
     """Abstract class representing word embedding used by TextAttack.
 
     This class specifies all the methods that is required to be defined
@@ -96,8 +96,6 @@ class AbstractWordEmbedding(ABC):
             neighbours (list[int]): List of indices of the nearest neighbours
         """
         raise NotImplementedError()
-
-    __repr__ = __str__ = utils.default_class_repr
 
 
 class WordEmbedding(AbstractWordEmbedding):

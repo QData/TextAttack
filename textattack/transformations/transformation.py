@@ -6,10 +6,10 @@ Transformation Abstract Class
 
 from abc import ABC, abstractmethod
 
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import ReprMixin
 
 
-class Transformation(ABC):
+class Transformation(ReprMixin, ABC):
     """An abstract class for transforming a sequence of text to produce a
     potential adversarial example."""
 
@@ -67,8 +67,3 @@ class Transformation(ABC):
     @property
     def deterministic(self):
         return True
-
-    def extra_repr_keys(self):
-        return []
-
-    __repr__ = __str__ = default_class_repr

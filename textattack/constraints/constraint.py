@@ -7,10 +7,10 @@ TextAttack Constraint Class
 from abc import ABC, abstractmethod
 
 import textattack
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import ReprMixin
 
 
-class Constraint(ABC):
+class Constraint(ReprMixin, ABC):
     """An abstract class that represents constraints on adversial text
     examples. Constraints evaluate whether transformations from a
     ``AttackedText`` to another ``AttackedText`` meet certain conditions.
@@ -123,5 +123,3 @@ class Constraint(ABC):
         line strings are acceptable.
         """
         return ["compare_against_original"]
-
-    __str__ = __repr__ = default_class_repr
