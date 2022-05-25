@@ -1,6 +1,7 @@
 import re
 import string
 
+import flair
 import jieba
 import pycld2 as cld2
 
@@ -57,6 +58,11 @@ def words_from_text(s, words_to_ignore=[]):
     return words
 
 
+class TextAttackFlairTokenizer(flair.data.Tokenizer):
+    def tokenize(self, text: str):
+        return words_from_text(text)
+
+
 def default_class_repr(self):
     if hasattr(self, "extra_repr_keys"):
         extra_params = []
@@ -82,7 +88,7 @@ class ReprMixin(object):
     __str__ = __repr__
 
     def extra_repr_keys(self):
-        """extra fields to be included in the representation of a class"""
+        """extra fields to be included in the representation of a class."""
         return []
 
 
@@ -203,7 +209,7 @@ def flair_tag(sentence, tag_type="upos-fast"):
         from flair.models import SequenceTagger
 
         _flair_pos_tagger = SequenceTagger.load(tag_type)
-    _flair_pos_tagger.predict(sentence)
+    _flair_pos_tagger.predict(sentence, force_token_predictions=True)
 
 
 def zip_flair_result(pred, tag_type="upos-fast"):
@@ -222,7 +228,7 @@ def zip_flair_result(pred, tag_type="upos-fast"):
         if "pos" in tag_type:
             pos_list.append(token.annotation_layers["pos"][0]._value)
         elif tag_type == "ner":
-            pos_list.append(token.get_tag("ner"))
+            pos_list.append(token.get_label("ner"))
 
     return word_list, pos_list
 

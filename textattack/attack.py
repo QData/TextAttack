@@ -81,8 +81,8 @@ class Attack:
         constraints: List[Union[Constraint, PreTransformationConstraint]],
         transformation: Transformation,
         search_method: SearchMethod,
-        transformation_cache_size=2 ** 15,
-        constraint_cache_size=2 ** 15,
+        transformation_cache_size=2**15,
+        constraint_cache_size=2**15,
     ):
         """Initialize an attack object.
 
@@ -371,22 +371,23 @@ class Attack:
         final_result = self.search_method(initial_result)
         self.clear_cache()
         if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
-            return SuccessfulAttackResult(
+            result = SuccessfulAttackResult(
                 initial_result,
                 final_result,
             )
         elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
-            return FailedAttackResult(
+            result = FailedAttackResult(
                 initial_result,
                 final_result,
             )
         elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
-            return MaximizedAttackResult(
+            result = MaximizedAttackResult(
                 initial_result,
                 final_result,
             )
         else:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
+        return result
 
     def attack(self, example, ground_truth_output):
         """Attack a single example.

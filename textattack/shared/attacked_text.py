@@ -138,7 +138,8 @@ class AttackedText:
         """
         if not self._pos_tags:
             sentence = Sentence(
-                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+                self.text,
+                use_tokenizer=textattack.shared.utils.TextAttackFlairTokenizer(),
             )
             textattack.shared.utils.flair_tag(sentence)
             self._pos_tags = sentence
@@ -168,7 +169,8 @@ class AttackedText:
         """
         if not self._ner_tags:
             sentence = Sentence(
-                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+                self.text,
+                use_tokenizer=textattack.shared.utils.TextAttackFlairTokenizer(),
             )
             textattack.shared.utils.flair_tag(sentence, model_name)
             self._ner_tags = sentence
@@ -467,6 +469,10 @@ class AttackedText:
             # Add substitute word(s) to new sentence.
             perturbed_text += adv_word_seq
         perturbed_text += original_text  # Add all of the ending punctuation.
+
+        # Add pointer to self so chain of replacements can be reconstructed.
+        new_attack_attrs["prev_attacked_text"] = self
+
         # Reform perturbed_text into an OrderedDict.
         perturbed_input_texts = perturbed_text.split(AttackedText.SPLIT_TOKEN)
         perturbed_input = OrderedDict(
