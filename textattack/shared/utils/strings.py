@@ -1,3 +1,4 @@
+import re
 import string
 
 import jieba
@@ -8,11 +9,7 @@ from .importing import LazyLoader
 
 def has_letter(word):
     """Returns true if `word` contains at least one character in [A-Za-z]."""
-    # TODO implement w regex
-    for c in word:
-        if c.isalpha():
-            return True
-    return False
+    return re.search("[A-Za-z]+", word) is not None
 
 
 def is_one_word(word):
@@ -32,54 +29,8 @@ def add_indent(s_, numSpaces):
 
 
 def words_from_text(s, words_to_ignore=[]):
-    homos = set(
-        [
-            "˗",
-            "৭",
-            "Ȣ",
-            "𝟕",
-            "б",
-            "Ƽ",
-            "Ꮞ",
-            "Ʒ",
-            "ᒿ",
-            "l",
-            "O",
-            "`",
-            "ɑ",
-            "Ь",
-            "ϲ",
-            "ԁ",
-            "е",
-            "𝚏",
-            "ɡ",
-            "հ",
-            "і",
-            "ϳ",
-            "𝒌",
-            "ⅼ",
-            "ｍ",
-            "ո",
-            "о",
-            "р",
-            "ԛ",
-            "ⲅ",
-            "ѕ",
-            "𝚝",
-            "ս",
-            "ѵ",
-            "ԝ",
-            "×",
-            "у",
-            "ᴢ",
-        ]
-    )
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
-    # TODO implement w regex
-    words = []
-    word = ""
-
     try:
         isReliable, textBytesFound, details = cld2.detect(s)
         if details[0][0] == "Chinese" or details[0][0] == "ChineseT":
@@ -90,19 +41,19 @@ def words_from_text(s, words_to_ignore=[]):
     except Exception:
         s = " ".join(s.split())
 
-    for c in s:
-        if c.isalnum() or c in homos:
-            word += c
-        elif c in "'-_*@" and len(word) > 0:
-            # Allow apostrophes, hyphens, underscores, asterisks and at signs as long as they don't begin the
-            # word.
-            word += c
-        elif word:
-            if word not in words_to_ignore:
-                words.append(word)
-            word = ""
-    if len(word) and (word not in words_to_ignore):
-        words.append(word)
+    homos = """˗৭Ȣ𝟕бƼᏎƷᒿlO`ɑЬϲԁе𝚏ɡհіϳ𝒌ⅼｍոорԛⲅѕ𝚝սѵԝ×уᴢ"""
+    exceptions = """'-_*@"""
+    filter_pattern = homos + """'\\-_\\*@"""
+    # TODO: consider whether one should add "." to `exceptions` (and "\." to `filter_pattern`)
+    # example "My email address is xxx@yyy.com"
+    filter_pattern = f"[\\w{filter_pattern}]+"
+    words = []
+    for word in s.split():
+        # Allow apostrophes, hyphens, underscores, asterisks and at signs as long as they don't begin the word.
+        word = word.lstrip(exceptions)
+        filt = [w.lstrip(exceptions) for w in re.findall(filter_pattern, word)]
+        words.extend(filt)
+    words = list(filter(lambda w: w not in words_to_ignore + [""], words))
     return words
 
 
