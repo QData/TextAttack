@@ -11,6 +11,10 @@ import math
 
 import flair
 from flair.data import Sentence
+
+# To wrap function textattack.shared.utils.words_from_text as a
+# Tokenizer while calling Sentence from flair
+from flair.tokenization import TokenizerWrapper
 import numpy as np
 import torch
 
@@ -138,7 +142,8 @@ class AttackedText:
         """
         if not self._pos_tags:
             sentence = Sentence(
-                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+                self.text,
+                use_tokenizer=TokenizerWrapper(textattack.shared.utils.words_from_text),
             )
             textattack.shared.utils.flair_tag(sentence)
             self._pos_tags = sentence
@@ -168,7 +173,8 @@ class AttackedText:
         """
         if not self._ner_tags:
             sentence = Sentence(
-                self.text, use_tokenizer=textattack.shared.utils.words_from_text
+                self.text,
+                use_tokenizer=TokenizerWrapper(textattack.shared.utils.words_from_text),
             )
             textattack.shared.utils.flair_tag(sentence, model_name)
             self._ner_tags = sentence

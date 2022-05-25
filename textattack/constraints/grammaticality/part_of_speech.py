@@ -5,6 +5,10 @@ Part of Speech Constraint
 import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger
+
+# To wrap function textattack.shared.utils.words_from_text as a
+# Tokenizer while calling Sentence from flair
+from flair.tokenization import TokenizerWrapper
 import lru
 import nltk
 
@@ -56,7 +60,7 @@ class PartOfSpeech(Constraint):
         self.language_nltk = language_nltk
         self.language_stanza = language_stanza
 
-        self._pos_tag_cache = lru.LRU(2 ** 14)
+        self._pos_tag_cache = lru.LRU(2**14)
         if tagger_type == "flair":
             if tagset == "universal":
                 self._flair_pos_tagger = SequenceTagger.load("upos-fast")
@@ -93,7 +97,10 @@ class PartOfSpeech(Constraint):
 
             if self.tagger_type == "flair":
                 context_key_sentence = Sentence(
-                    context_key, use_tokenizer=textattack.shared.utils.words_from_text
+                    context_key,
+                    use_tokenizer=TokenizerWrapper(
+                        textattack.shared.utils.words_from_text
+                    ),
                 )
                 self._flair_pos_tagger.predict(context_key_sentence)
                 word_list, pos_list = textattack.shared.utils.zip_flair_result(
