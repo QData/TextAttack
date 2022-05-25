@@ -1,5 +1,6 @@
 import string
 
+import flair
 import jieba
 import pycld2 as cld2
 
@@ -104,6 +105,11 @@ def words_from_text(s, words_to_ignore=[]):
     if len(word) and (word not in words_to_ignore):
         words.append(word)
     return words
+
+
+class TextAttackFlairTokenizer(flair.data.Tokenizer):
+    def tokenize(self, text: str):
+        return words_from_text(text)
 
 
 def default_class_repr(self):

@@ -19,7 +19,7 @@ class UniversalSentenceEncoder(SentenceEncoder):
         if large:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
         else:
-            tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+            tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/3"
 
         self._tfhub_url = tfhub_url
         # Lazily load the model
@@ -28,7 +28,12 @@ class UniversalSentenceEncoder(SentenceEncoder):
     def encode(self, sentences):
         if not self.model:
             self.model = hub.load(self._tfhub_url)
-        return self.model(sentences).numpy()
+        encoding = self.model(sentences)
+
+        if isinstance(encoding, dict):
+            encoding = encoding["outputs"]
+
+        return encoding.numpy()
 
     def __getstate__(self):
         state = self.__dict__.copy()

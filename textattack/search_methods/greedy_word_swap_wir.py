@@ -31,8 +31,9 @@ class GreedyWordSwapWIR(SearchMethod):
         model_wrapper: model wrapper used for gradient-based ranking
     """
 
-    def __init__(self, wir_method="unk"):
+    def __init__(self, wir_method="unk", unk_token="[UNK]"):
         self.wir_method = wir_method
+        self.unk_token = unk_token
 
     def _get_index_order(self, initial_text):
         """Returns word indices of ``initial_text`` in descending order of
@@ -41,7 +42,8 @@ class GreedyWordSwapWIR(SearchMethod):
 
         if self.wir_method == "unk":
             leave_one_texts = [
-                initial_text.replace_word_at_index(i, "[UNK]") for i in range(len_text)
+                initial_text.replace_word_at_index(i, self.unk_token)
+                for i in range(len_text)
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
@@ -49,7 +51,8 @@ class GreedyWordSwapWIR(SearchMethod):
         elif self.wir_method == "weighted-saliency":
             # first, compute word saliency
             leave_one_texts = [
-                initial_text.replace_word_at_index(i, "[UNK]") for i in range(len_text)
+                initial_text.replace_word_at_index(i, self.unk_token)
+                for i in range(len_text)
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             saliency_scores = np.array([result.score for result in leave_one_results])
