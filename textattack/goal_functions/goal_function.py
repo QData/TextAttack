@@ -15,10 +15,10 @@ from textattack.goal_function_results.goal_function_result import (
     GoalFunctionResultStatus,
 )
 from textattack.shared import validators
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import ReprMixin
 
 
-class GoalFunction(ABC):
+class GoalFunction(ReprMixin, ABC):
     """Evaluates how well a perturbed attacked_text object is achieving a
     specified goal.
 
@@ -237,5 +237,3 @@ class GoalFunction(ABC):
         self.__dict__ = state
         if self.use_cache:
             self._call_model_cache = lru.LRU(state["_call_model_cache"])
-
-    __repr__ = __str__ = default_class_repr
