@@ -209,7 +209,7 @@ def flair_tag(sentence, tag_type="upos-fast"):
         from flair.models import SequenceTagger
 
         _flair_pos_tagger = SequenceTagger.load(tag_type)
-    _flair_pos_tagger.predict(sentence)
+    _flair_pos_tagger.predict(sentence, force_token_predictions=True)
 
 
 def zip_flair_result(pred, tag_type="upos-fast"):
@@ -228,7 +228,7 @@ def zip_flair_result(pred, tag_type="upos-fast"):
         if "pos" in tag_type:
             pos_list.append(token.annotation_layers["pos"][0]._value)
         elif tag_type == "ner":
-            pos_list.append(token.get_tag("ner"))
+            pos_list.append(token.get_label("ner"))
 
     return word_list, pos_list
 
