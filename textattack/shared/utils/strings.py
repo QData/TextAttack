@@ -88,7 +88,7 @@ class ReprMixin(object):
     __str__ = __repr__
 
     def extra_repr_keys(self):
-        """extra fields to be included in the representation of a class"""
+        """extra fields to be included in the representation of a class."""
         return []
 
 
