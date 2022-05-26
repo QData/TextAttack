@@ -32,6 +32,14 @@ class WeightsAndBiasesLogger(Logger):
     def log_summary_rows(self, rows, title, window_id):
         table = wandb.Table(columns=["Attack Results", ""])
         for row in rows:
+            if isinstance(row[1], str):
+                try:
+                    row[1] = row[1].replace("%", "")
+                    row[1] = float(row[1])
+                except ValueError:
+                    raise ValueError(
+                        f'Unable to convert row value "{row[1]}" for Attack Result "{row[0]}" into float'
+                    )
             table.add_data(*row)
             metric_name, metric_score = row
             wandb.run.summary[metric_name] = metric_score
