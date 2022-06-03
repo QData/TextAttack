@@ -7,6 +7,8 @@ import torch
 import transformers
 
 import textattack
+from textattack.models.helpers import T5ForTextToText
+from textattack.models.tokenizers import T5Tokenizer
 
 from .pytorch_model_wrapper import PyTorchModelWrapper
 
@@ -18,11 +20,15 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
     def __init__(self, model, tokenizer):
         assert isinstance(
-            model, transformers.PreTrainedModel
+            model, (transformers.PreTrainedModel, T5ForTextToText)
         ), f"`model` must be of type `transformers.PreTrainedModel`, but got type {type(model)}."
         assert isinstance(
             tokenizer,
-            (transformers.PreTrainedTokenizer, transformers.PreTrainedTokenizerFast),
+            (
+                transformers.PreTrainedTokenizer,
+                transformers.PreTrainedTokenizerFast,
+                T5Tokenizer,
+            ),
         ), f"`tokenizer` must of type `transformers.PreTrainedTokenizer` or `transformers.PreTrainedTokenizerFast`, but got type {type(tokenizer)}."
 
         self.model = model
