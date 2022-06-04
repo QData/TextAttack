@@ -73,13 +73,21 @@ class GreedyWordSwapWIR(SearchMethod):
                     # no valid synonym substitutions for this word
                     delta_ps.append(0.0)
                     continue
-                swap_results, _ = self.get_goal_results(transformed_text_candidates)
+                swap_results, search_over = self.get_goal_results(
+                    transformed_text_candidates
+                )
                 score_change = [result.score for result in swap_results]
                 if not score_change:
                     delta_ps.append(0.0)
                     continue
                 max_score_change = np.max(score_change)
                 delta_ps.append(max_score_change)
+
+                # Exit Loop when search_over is True - but we need to make sure delta_ps
+                # is the same size as softmax_saliency_scores
+                if search_over:
+                    delta_ps = delta_ps + [0.0] * (len_text - len(delta_ps))
+                    break
 
             index_scores = softmax_saliency_scores * np.array(delta_ps)
 
