@@ -113,7 +113,7 @@ attack_test_params = [
     ),
     # fmt: on
     #
-    # # test: run_attack on LSTM MR using word embedding transformation and genetic algorithm. 
+    # # test: run_attack on LSTM MR using word embedding transformation and genetic algorithm.
     ## Simulate alzantot recipe without using expensive LM (still too slow)
     # (
     #     "run_attack_faster_alzantot_recipe",
