@@ -134,7 +134,7 @@ class FasterGeneticAlgorithmJia2019(AttackRecipe):
         # Perform word substitution with a genetic algorithm.
         #
         search_method = AlzantotGeneticAlgorithm(
-            pop_size=60, max_iters=20, post_crossover_check=False
+            pop_size=60, max_iters=40, post_crossover_check=False
         )
 
         return Attack(goal_function, constraints, transformation, search_method)
