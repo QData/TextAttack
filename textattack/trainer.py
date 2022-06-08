@@ -225,18 +225,24 @@ class Trainer:
             f"Attack success rate: {success_rate:.2f}% [{attack_types['SuccessfulAttackResult']} / {total_attacks}]"
         )
         # TODO: This will produce a bug if we need to manipulate ground truth output.
+
+        # To Fix Issue #498 , We need to add the Non Output columns in one tuple to represent input columns
+        # Since adversarial_example won't be an input to the model , we will have to remove it from the input
+        # dictionary in collate_fn
         adversarial_examples = [
             (
-                tuple(r.perturbed_result.attacked_text._text_input.values()),
+                tuple(r.perturbed_result.attacked_text._text_input.values())
+                + ("adversarial_example",),
                 r.perturbed_result.ground_truth_output,
-                "adversarial_example",
             )
             for r in results
             if isinstance(r, (SuccessfulAttackResult, MaximizedAttackResult))
         ]
+
+        # Name for column indicating if an example is adversarial is set as "_example_type".
         adversarial_dataset = textattack.datasets.Dataset(
             adversarial_examples,
-            input_columns=self.train_dataset.input_columns,
+            input_columns=self.train_dataset.input_columns + ("_example_type",),
             label_map=self.train_dataset.label_map,
             label_names=self.train_dataset.label_names,
             output_scale_factor=self.train_dataset.output_scale_factor,
@@ -399,9 +405,15 @@ class Trainer:
             targets = []
             is_adv_sample = []
             for item in data:
-                if len(item) == 3:
-                    # `len(item)` is 3 for adversarial training dataset
-                    _input, label, adv = item
+                if "_example_type" in item[0].keys():
+
+                    # Get example type value from OrderedDict and remove it
+
+                    adv = item[0].pop("_example_type")
+
+                    # with _example_type removed from item[0] OrderedDict
+                    # all other keys should be part of input
+                    _input, label = item
                     if adv != "adversarial_example":
                         raise ValueError(
                             "`item` has length of 3 but last element is not for marking if the item is an `adversarial example`."
