@@ -177,18 +177,40 @@ class Trainer:
         else:
             num_train_adv_examples = self.training_args.num_train_adv_examples
 
-        attack_args = AttackArgs(
-            num_successful_examples=num_train_adv_examples,
-            num_examples_offset=0,
-            query_budget=self.training_args.query_budget_train,
-            shuffle=True,
-            parallel=self.training_args.parallel,
-            num_workers_per_device=self.training_args.attack_num_workers_per_device,
-            disable_stdout=True,
-            silent=True,
-            log_to_txt=log_file_name + ".txt",
-            log_to_csv=log_file_name + ".csv",
-        )
+        # Use Different AttackArgs based on num_train_adv_examples value.
+        # If num_train_adv_examples >= 0 , num_train_adv_examples is
+        # set as number of successful examples.
+        # If num_train_adv_examples == -1 , num_examples is set to -1 to
+        # generate example for all of training data.
+        if num_train_adv_examples >= 0:
+            attack_args = AttackArgs(
+                num_successful_examples=num_train_adv_examples,
+                num_examples_offset=0,
+                query_budget=self.training_args.query_budget_train,
+                shuffle=True,
+                parallel=self.training_args.parallel,
+                num_workers_per_device=self.training_args.attack_num_workers_per_device,
+                disable_stdout=True,
+                silent=True,
+                log_to_txt=log_file_name + ".txt",
+                log_to_csv=log_file_name + ".csv",
+            )
+        elif num_train_adv_examples == -1:
+            # set num_examples when num_train_adv_examples = -1
+            attack_args = AttackArgs(
+                num_examples=num_train_adv_examples,
+                num_examples_offset=0,
+                query_budget=self.training_args.query_budget_train,
+                shuffle=True,
+                parallel=self.training_args.parallel,
+                num_workers_per_device=self.training_args.attack_num_workers_per_device,
+                disable_stdout=True,
+                silent=True,
+                log_to_txt=log_file_name + ".txt",
+                log_to_csv=log_file_name + ".csv",
+            )
+        else:
+            assert False, "num_train_adv_examples is negative and not equal to -1."
 
         attacker = Attacker(self.attack, self.train_dataset, attack_args=attack_args)
         results = attacker.attack_dataset()
@@ -609,8 +631,30 @@ class Trainer:
             )
             * num_clean_epochs
         )
+
+        # calculate total_adv_training_data_length based on type of
+        # num_train_adv_examples.
+        # if num_train_adv_examples is float , num_train_adv_examples is a portion of train_dataset.
+        if isinstance(self.training_args.num_train_adv_examples, float):
+            total_adv_training_data_length = (
+                len(self.train_dataset) * self.training_args.num_train_adv_examples
+            )
+
+        # if num_train_adv_examples is int and >=0 then it is taken as value.
+        elif (
+            isinstance(self.training_args.num_train_adv_examples, int)
+            and self.training_args.num_train_adv_examples >= 0
+        ):
+            total_adv_training_data_length = self.training_args.num_train_adv_examples
+
+        # if num_train_adv_examples is = -1 , we generate all possible adv examples.
+        # Max number of all possible adv examples would be equal to train_dataset.
+        else:
+            total_adv_training_data_length = len(self.train_dataset)
+
+        # Based on total_adv_training_data_length calculation , find total total_adv_training_steps
         total_adv_training_steps = math.ceil(
-            (len(self.train_dataset) + self.training_args.num_train_adv_examples)
+            (len(self.train_dataset) + total_adv_training_data_length)
             / (train_batch_size * self.training_args.gradient_accumulation_steps)
         ) * (self.training_args.num_epochs - num_clean_epochs)
 
