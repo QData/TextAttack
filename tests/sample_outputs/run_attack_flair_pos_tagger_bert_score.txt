@@ -69,5 +69,5 @@ mostly , [goldbacher] just lets her complicated characters be [[haphazard]] , co
 | Attack success rate:          | 100.0% |
 | Average perturbed word %:     | 17.56% |
 | Average num. words per input: | 16.25  |
-| Avg num queries:              | 45.5   |
+| Avg num queries:              | 38.5   |
 +-------------------------------+--------+

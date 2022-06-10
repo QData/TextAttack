@@ -61,7 +61,7 @@ that [[lodes]] its characters and communicates [[somethNng]] [[rathrer]] [[beaut
 | Attack success rate:          | 66.67%  |
 | Average perturbed word %:     | 30.95%  |
 | Average num. words per input: | 8.33    |
-| Avg num queries:              | 22.67   |
+| Avg num queries:              | 20.0    |
 | Average Original Perplexity:  | 734/.*/ |
 | Average Attack Perplexity:    | 1744/.*/|
 | Average Attack USE Score:     | 0.76    |

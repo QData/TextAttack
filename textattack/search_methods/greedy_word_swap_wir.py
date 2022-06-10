@@ -106,7 +106,6 @@ class GreedyWordSwapWIR(SearchMethod):
             gradient = grad_output["gradient"]
             word2token_mapping = initial_text.align_with_model_tokens(victim_model)
             for i, index in enumerate(indices_to_order):
-                word = initial_text.words[index]
                 matched_tokens = word2token_mapping[index]
                 if not matched_tokens:
                     index_scores[i] = 0.0
