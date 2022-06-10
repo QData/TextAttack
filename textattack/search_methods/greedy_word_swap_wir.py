@@ -38,12 +38,13 @@ class GreedyWordSwapWIR(SearchMethod):
     def _get_index_order(self, initial_text):
         """Returns word indices of ``initial_text`` in descending order of
         importance."""
-        len_text = len(initial_text.words)
+
+        len_text, indices_to_order = self.get_indices_to_order(initial_text)
 
         if self.wir_method == "unk":
             leave_one_texts = [
                 initial_text.replace_word_at_index(i, self.unk_token)
-                for i in range(len_text)
+                for i in indices_to_order
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
@@ -52,7 +53,7 @@ class GreedyWordSwapWIR(SearchMethod):
             # first, compute word saliency
             leave_one_texts = [
                 initial_text.replace_word_at_index(i, self.unk_token)
-                for i in range(len_text)
+                for i in indices_to_order
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             saliency_scores = np.array([result.score for result in leave_one_results])
@@ -63,7 +64,7 @@ class GreedyWordSwapWIR(SearchMethod):
 
             # compute the largest change in score we can find by swapping each word
             delta_ps = []
-            for idx in range(len_text):
+            for idx in indices_to_order:
                 transformed_text_candidates = self.get_transformations(
                     initial_text,
                     original_text=initial_text,
@@ -93,19 +94,20 @@ class GreedyWordSwapWIR(SearchMethod):
 
         elif self.wir_method == "delete":
             leave_one_texts = [
-                initial_text.delete_word_at_index(i) for i in range(len_text)
+                initial_text.delete_word_at_index(i) for i in indices_to_order
             ]
             leave_one_results, search_over = self.get_goal_results(leave_one_texts)
             index_scores = np.array([result.score for result in leave_one_results])
 
         elif self.wir_method == "gradient":
             victim_model = self.get_victim_model()
-            index_scores = np.zeros(initial_text.num_words)
+            index_scores = np.zeros(len_text)
             grad_output = victim_model.get_grad(initial_text.tokenizer_input)
             gradient = grad_output["gradient"]
             word2token_mapping = initial_text.align_with_model_tokens(victim_model)
-            for i, word in enumerate(initial_text.words):
-                matched_tokens = word2token_mapping[i]
+            for i, index in enumerate(indices_to_order):
+                word = initial_text.words[index]
+                matched_tokens = word2token_mapping[index]
                 if not matched_tokens:
                     index_scores[i] = 0.0
                 else:
@@ -115,14 +117,14 @@ class GreedyWordSwapWIR(SearchMethod):
             search_over = False
 
         elif self.wir_method == "random":
-            index_order = np.arange(len_text)
+            index_order = indices_to_order
             np.random.shuffle(index_order)
             search_over = False
         else:
             raise ValueError(f"Unsupported WIR method {self.wir_method}")
 
         if self.wir_method != "random":
-            index_order = (-index_scores).argsort()
+            index_order = np.array(indices_to_order)[(-index_scores).argsort()]
 
         return index_order, search_over
 
@@ -131,7 +133,6 @@ class GreedyWordSwapWIR(SearchMethod):
 
         # Sort words by order of importance
         index_order, search_over = self._get_index_order(attacked_text)
-
         i = 0
         cur_result = initial_result
         results = None

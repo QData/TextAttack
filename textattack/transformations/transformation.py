@@ -19,6 +19,7 @@ class Transformation(ReprMixin, ABC):
         pre_transformation_constraints=[],
         indices_to_modify=None,
         shifted_idxs=False,
+        return_indices=False,
     ):
         """Returns a list of all possible transformations for ``current_text``.
         Applies the ``pre_transformation_constraints`` then calls
@@ -32,6 +33,8 @@ class Transformation(ReprMixin, ABC):
                 ``SearchMethod``.
             shifted_idxs (bool): Whether indices could have been shifted from
                 their original position in the text.
+            return_indices (bool): Whether the function returns indices_to_modify
+                instead of the transformed_texts.
         """
         if indices_to_modify is None:
             indices_to_modify = set(range(len(current_text.words)))
@@ -47,6 +50,10 @@ class Transformation(ReprMixin, ABC):
 
         for constraint in pre_transformation_constraints:
             indices_to_modify = indices_to_modify & constraint(current_text, self)
+
+        if return_indices:
+            return indices_to_modify
+
         transformed_texts = self._get_transformations(current_text, indices_to_modify)
         for text in transformed_texts:
             text.attack_attrs["last_transformation"] = self
