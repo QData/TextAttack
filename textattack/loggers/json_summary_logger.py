@@ -3,6 +3,7 @@ Attack Summary Results Logs to Json
 ========================
 """
 
+import json
 import os
 import sys
 
@@ -12,25 +13,35 @@ from .logger import Logger
 
 
 class JsonSummaryLogger(Logger):
-
-    def __init__(self):
-        pass
-
-    def log_attack_result(self, result, examples_completed):
-        pass
+    def __init__(self, filename="results_summary.json"):
+        logger.info(f"Logging Summary to JSON at path {filename}")
+        self.filename = filename
+        self.json_dictionary = {}
+        self._flushed = True
 
     def log_summary_rows(self, rows, title, window_id):
-        pass
+        self.json_dictionary[title] = {}
+        for i in range(len(rows)):
+            row = rows[i]
+            if isinstance(row[1], str):
+                try:
+                    row[1] = row[1].replace("%", "")
+                    row[1] = float(row[1])
+                except ValueError:
+                    raise ValueError(
+                        f'Unable to convert row value "{row[1]}" for Attack Result "{row[0]}" into float'
+                    )
 
-    def log_hist(self, arr, numbins, title, window_id):
-        pass
+        for metric, summary in rows:
+            self.json_dictionary[title][metric] = summary
 
-    def log_sep(self):
-        pass
+        self._flushed = False
 
     def flush(self):
-        pass
+        with open(self.filename, "w") as f:
+            json.dump(self.json_dictionary, f, indent=4)
+
+        self._flushed = True
 
     def close(self):
-        pass
-
+        super().close()
