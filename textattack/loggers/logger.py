@@ -16,6 +16,9 @@ class Logger(ABC):
     def log_attack_result(self, result, examples_completed):
         pass
 
+    def log_attack_result(self, result):
+        pass
+
     def log_summary_rows(self, rows, title, window_id):
         pass
 
