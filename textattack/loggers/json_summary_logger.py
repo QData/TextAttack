@@ -4,8 +4,6 @@ Attack Summary Results Logs to Json
 """
 
 import json
-import os
-import sys
 
 from textattack.shared import logger
 
