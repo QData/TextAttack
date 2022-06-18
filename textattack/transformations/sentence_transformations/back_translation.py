@@ -34,7 +34,7 @@ class BackTranslation(SentenceTransformation):
         >>> from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
         >>> from textattack.augmentation import Augmenter
 
-        >>> transformation = BackTranslation
+        >>> transformation = BackTranslation()
         >>> constraints = [RepeatModification(), StopwordModification()]
         >>> augmenter = Augmenter(transformation = transformation, constraints = constraints)
         >>> s = 'What on earth are you doing here.'
