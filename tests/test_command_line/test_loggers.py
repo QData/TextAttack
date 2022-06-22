@@ -66,19 +66,36 @@ def test_logger(name, filetype, command, test_log_file, sample_log_file):
             desired_dictionary == test_dictionary
         ), f"{filetype} file {test_log_file} differs from {sample_log_file}"
 
-    elif filetype == "csv" or filetype == "txt":
+    elif filetype == "txt":
         assert (
             os.system(f"diff {test_log_file} {sample_log_file}") == 0
         ), f"{filetype} file {test_log_file} differs from {sample_log_file}"
 
+    elif filetype == "csv":
+        import numpy as np
+        import pandas as pd
+
+        # Convert them into dataframes and compare.
+        test_df = pd.read_csv(test_log_file)
+        sample_df = pd.read_csv(sample_log_file)
+        try:
+            test_df = test_df[sorted(list(test_df.columns.values))]
+            sample_df = sample_df[sorted(list(test_df.columns.values))]
+
+            for c in test_df.columns:
+                if test_df[c].dtype == int:
+                    test_df[c] = test_df[c].astype(float)
+
+                if sample_df[c].dtype == int:
+                    sample_df[c] = sample_df[c].astype(float)
+        except KeyError:
+            assert (
+                False
+            ), f"{filetype} file {test_log_file} differs from {sample_log_file}"
+
+        assert sample_df.equals(
+            test_df
+        ), f"{filetype} file {test_log_file} differs from {sample_log_file}"
+
     # cleanup
     os.remove(test_log_file)
-
-
-#     result = run_command_and_get_result(command)
-#     stdout = result.stdout.decode().strip()
-#     print("stdout =>", stdout)
-#     stderr = result.stderr.decode().strip()
-#     print("stderr =>", stderr)
-
-#     assert stdout == desired_text
