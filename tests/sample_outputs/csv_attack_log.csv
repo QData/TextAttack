@@ -1,0 +1,3 @@
+"ground_truth_output","num_queries","original_output","original_score","original_text","perturbed_output","perturbed_score","perturbed_text","result_type"
+1.0,28.0,1.0,0.09334743022918701,"lovingly photographed in the manner of a golden book sprung to [[life]] , stuart little 2 [[manages]] [[sweetness]] largely without stickiness .",0.0,0.6904040575027466,"lovingly photographed in the manner of a golden book sprung to [[ife]] , stuart little 2 [[manager]] [[seetness]] largely without stickiness .","Successful"
+1.0,16.0,1.0,0.009427368640899658,"[[consistently]] [[clever]] and [[suspenseful]] .",0.0,0.8219608664512634,"[[conisstently]] [[celver]] and [[Huspenseful]] .","Successful"
