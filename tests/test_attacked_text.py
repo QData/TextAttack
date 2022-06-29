@@ -2,7 +2,16 @@ import collections
 
 import pytest
 
-import textattack
+try:
+    import textattack
+except ModuleNotFoundError:
+    # one can do test locally without installing textattack
+    import pathlib
+    import sys
+
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
+    import textattack
+
 
 raw_text = "A person walks up stairs into a room and sees beer poured from a keg and people talking."
 
@@ -61,7 +70,7 @@ class TestAttackedText:
 
     def test_big_window_around_index(self, attacked_text):
         assert (
-            attacked_text.text_window_around_index(0, 10 ** 5) + "."
+            attacked_text.text_window_around_index(0, 10**5) + "."
         ) == attacked_text.text
 
     def test_window_around_index_start(self, attacked_text):

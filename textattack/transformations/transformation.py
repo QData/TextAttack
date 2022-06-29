@@ -6,10 +6,10 @@ Transformation Abstract Class
 
 from abc import ABC, abstractmethod
 
-from textattack.shared.utils import default_class_repr
+from textattack.shared.utils import ReprMixin
 
 
-class Transformation(ABC):
+class Transformation(ReprMixin, ABC):
     """An abstract class for transforming a sequence of text to produce a
     potential adversarial example."""
 
@@ -19,6 +19,7 @@ class Transformation(ABC):
         pre_transformation_constraints=[],
         indices_to_modify=None,
         shifted_idxs=False,
+        return_indices=False,
     ):
         """Returns a list of all possible transformations for ``current_text``.
         Applies the ``pre_transformation_constraints`` then calls
@@ -32,6 +33,8 @@ class Transformation(ABC):
                 ``SearchMethod``.
             shifted_idxs (bool): Whether indices could have been shifted from
                 their original position in the text.
+            return_indices (bool): Whether the function returns indices_to_modify
+                instead of the transformed_texts.
         """
         if indices_to_modify is None:
             indices_to_modify = set(range(len(current_text.words)))
@@ -47,6 +50,10 @@ class Transformation(ABC):
 
         for constraint in pre_transformation_constraints:
             indices_to_modify = indices_to_modify & constraint(current_text, self)
+
+        if return_indices:
+            return indices_to_modify
+
         transformed_texts = self._get_transformations(current_text, indices_to_modify)
         for text in transformed_texts:
             text.attack_attrs["last_transformation"] = self
@@ -67,8 +74,3 @@ class Transformation(ABC):
     @property
     def deterministic(self):
         return True
-
-    def extra_repr_keys(self):
-        return []
-
-    __repr__ = __str__ = default_class_repr

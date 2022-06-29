@@ -89,7 +89,16 @@ class PyTorchModelWrapper(ModelWrapper):
         loss.backward()
 
         # grad w.r.t to word embeddings
-        grad = torch.transpose(emb_grads[0], 0, 1)[0].cpu().numpy()
+
+        # Fix for Issue #601
+
+        # Check if gradient has shape [max_sequence,1,_] ( when model input in transpose of input sequence)
+
+        if emb_grads[0].shape[1] == 1:
+            grad = torch.transpose(emb_grads[0], 0, 1)[0].cpu().numpy()
+        else:
+            # gradient has shape [1,max_sequence,_]
+            grad = emb_grads[0][0].cpu().numpy()
 
         embedding_layer.weight.requires_grad = original_state
         emb_hook.remove()

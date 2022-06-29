@@ -7,7 +7,9 @@ import torch
 
 import textattack
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = os.environ.get(
+    "TA_DEVICE", torch.device("cuda" if torch.cuda.is_available() else "cpu")
+)
 
 
 def html_style_from_dict(style_dict):

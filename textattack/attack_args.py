@@ -201,6 +201,7 @@ class AttackArgs:
     num_workers_per_device: int = 1
     log_to_txt: str = None
     log_to_csv: str = None
+    log_summary_to_json: str = None
     csv_coloring_style: str = "file"
     log_to_visdom: dict = None
     log_to_wandb: dict = None
@@ -328,6 +329,15 @@ class AttackArgs:
             "If the last part of the path ends with `.csv` extension, the path is assumed to path for output file.",
         )
         parser.add_argument(
+            "--log-summary-to-json",
+            nargs="?",
+            default=default_obj.log_summary_to_json,
+            const="",
+            type=str,
+            help="Path to which to save attack summary as a JSON file. Set this argument if you want to save attack results summary in a JSON. "
+            "If the last part of the path ends with `.json` extension, the path is assumed to path for output file.",
+        )
+        parser.add_argument(
             "--csv-coloring-style",
             default=default_obj.csv_coloring_style,
             type=str,
@@ -419,6 +429,22 @@ class AttackArgs:
             )
             attack_log_manager.add_output_csv(csv_file_path, color_method)
 
+        # if '--log-summary-to-json' specified with arguments
+        if args.log_summary_to_json is not None:
+            if args.log_summary_to_json.lower().endswith(".json"):
+                summary_json_file_path = args.log_summary_to_json
+            else:
+                summary_json_file_path = os.path.join(
+                    args.log_summary_to_json, f"{timestamp}-attack_summary_log.json"
+                )
+
+            dir_path = os.path.dirname(summary_json_file_path)
+            dir_path = dir_path if dir_path else "."
+            if not os.path.exists(dir_path):
+                os.makedirs(os.path.dirname(summary_json_file_path))
+
+            attack_log_manager.add_output_summary_json(summary_json_file_path)
+
         # Visdom
         if args.log_to_visdom is not None:
             attack_log_manager.enable_visdom(**args.log_to_visdom)
@@ -479,8 +505,8 @@ class _CommandLineAttackArgs:
     interactive: bool = False
     parallel: bool = False
     model_batch_size: int = 32
-    model_cache_size: int = 2 ** 18
-    constraint_cache_size: int = 2 ** 18
+    model_cache_size: int = 2**18
+    constraint_cache_size: int = 2**18
 
     @classmethod
     def _add_parser_args(cls, parser):

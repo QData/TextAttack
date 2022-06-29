@@ -177,18 +177,40 @@ class Trainer:
         else:
             num_train_adv_examples = self.training_args.num_train_adv_examples
 
-        attack_args = AttackArgs(
-            num_successful_examples=num_train_adv_examples,
-            num_examples_offset=0,
-            query_budget=self.training_args.query_budget_train,
-            shuffle=True,
-            parallel=self.training_args.parallel,
-            num_workers_per_device=self.training_args.attack_num_workers_per_device,
-            disable_stdout=True,
-            silent=True,
-            log_to_txt=log_file_name + ".txt",
-            log_to_csv=log_file_name + ".csv",
-        )
+        # Use Different AttackArgs based on num_train_adv_examples value.
+        # If num_train_adv_examples >= 0 , num_train_adv_examples is
+        # set as number of successful examples.
+        # If num_train_adv_examples == -1 , num_examples is set to -1 to
+        # generate example for all of training data.
+        if num_train_adv_examples >= 0:
+            attack_args = AttackArgs(
+                num_successful_examples=num_train_adv_examples,
+                num_examples_offset=0,
+                query_budget=self.training_args.query_budget_train,
+                shuffle=True,
+                parallel=self.training_args.parallel,
+                num_workers_per_device=self.training_args.attack_num_workers_per_device,
+                disable_stdout=True,
+                silent=True,
+                log_to_txt=log_file_name + ".txt",
+                log_to_csv=log_file_name + ".csv",
+            )
+        elif num_train_adv_examples == -1:
+            # set num_examples when num_train_adv_examples = -1
+            attack_args = AttackArgs(
+                num_examples=num_train_adv_examples,
+                num_examples_offset=0,
+                query_budget=self.training_args.query_budget_train,
+                shuffle=True,
+                parallel=self.training_args.parallel,
+                num_workers_per_device=self.training_args.attack_num_workers_per_device,
+                disable_stdout=True,
+                silent=True,
+                log_to_txt=log_file_name + ".txt",
+                log_to_csv=log_file_name + ".csv",
+            )
+        else:
+            assert False, "num_train_adv_examples is negative and not equal to -1."
 
         attacker = Attacker(self.attack, self.train_dataset, attack_args=attack_args)
         results = attacker.attack_dataset()
@@ -203,18 +225,24 @@ class Trainer:
             f"Attack success rate: {success_rate:.2f}% [{attack_types['SuccessfulAttackResult']} / {total_attacks}]"
         )
         # TODO: This will produce a bug if we need to manipulate ground truth output.
+
+        # To Fix Issue #498 , We need to add the Non Output columns in one tuple to represent input columns
+        # Since adversarial_example won't be an input to the model , we will have to remove it from the input
+        # dictionary in collate_fn
         adversarial_examples = [
             (
-                tuple(r.perturbed_result.attacked_text._text_input.values()),
+                tuple(r.perturbed_result.attacked_text._text_input.values())
+                + ("adversarial_example",),
                 r.perturbed_result.ground_truth_output,
-                "adversarial_example",
             )
             for r in results
             if isinstance(r, (SuccessfulAttackResult, MaximizedAttackResult))
         ]
+
+        # Name for column indicating if an example is adversarial is set as "_example_type".
         adversarial_dataset = textattack.datasets.Dataset(
             adversarial_examples,
-            input_columns=self.train_dataset.input_columns,
+            input_columns=self.train_dataset.input_columns + ("_example_type",),
             label_map=self.train_dataset.label_map,
             label_names=self.train_dataset.label_names,
             output_scale_factor=self.train_dataset.output_scale_factor,
@@ -377,9 +405,15 @@ class Trainer:
             targets = []
             is_adv_sample = []
             for item in data:
-                if len(item) == 3:
-                    # `len(item)` is 3 for adversarial training dataset
-                    _input, label, adv = item
+                if "_example_type" in item[0].keys():
+
+                    # Get example type value from OrderedDict and remove it
+
+                    adv = item[0].pop("_example_type")
+
+                    # with _example_type removed from item[0] OrderedDict
+                    # all other keys should be part of input
+                    _input, label = item
                     if adv != "adversarial_example":
                         raise ValueError(
                             "`item` has length of 3 but last element is not for marking if the item is an `adversarial example`."
@@ -609,8 +643,30 @@ class Trainer:
             )
             * num_clean_epochs
         )
+
+        # calculate total_adv_training_data_length based on type of
+        # num_train_adv_examples.
+        # if num_train_adv_examples is float , num_train_adv_examples is a portion of train_dataset.
+        if isinstance(self.training_args.num_train_adv_examples, float):
+            total_adv_training_data_length = (
+                len(self.train_dataset) * self.training_args.num_train_adv_examples
+            )
+
+        # if num_train_adv_examples is int and >=0 then it is taken as value.
+        elif (
+            isinstance(self.training_args.num_train_adv_examples, int)
+            and self.training_args.num_train_adv_examples >= 0
+        ):
+            total_adv_training_data_length = self.training_args.num_train_adv_examples
+
+        # if num_train_adv_examples is = -1 , we generate all possible adv examples.
+        # Max number of all possible adv examples would be equal to train_dataset.
+        else:
+            total_adv_training_data_length = len(self.train_dataset)
+
+        # Based on total_adv_training_data_length calculation , find total total_adv_training_steps
         total_adv_training_steps = math.ceil(
-            (len(self.train_dataset) + self.training_args.num_train_adv_examples)
+            (len(self.train_dataset) + total_adv_training_data_length)
             / (train_batch_size * self.training_args.gradient_accumulation_steps)
         ) * (self.training_args.num_epochs - num_clean_epochs)
 
