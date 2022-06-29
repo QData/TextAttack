@@ -172,6 +172,7 @@ class GoalFunction(ABC):
             # Get PyTorch tensors off of other devices.
             if isinstance(batch_preds, torch.Tensor):
                 batch_preds = batch_preds.cpu()
+
             if isinstance(batch_preds, list):
                 outputs.extend(batch_preds)
             elif isinstance(batch_preds, np.ndarray):

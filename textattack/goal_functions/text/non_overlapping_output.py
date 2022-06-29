@@ -32,7 +32,6 @@ class NonOverlappingOutput(TextToTextGoalFunction):
 
     def _get_score(self, model_output, _):
         num_words_diff = word_difference_score(model_output, self.ground_truth_output)
-        print(model_output, self.ground_truth_output, "words diff:", num_words_diff)
         if num_words_diff == 0:
             return 0.0
         else:

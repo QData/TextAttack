@@ -159,7 +159,10 @@ class Attacker:
             idx = worklist.popleft()
             try:
                 example, ground_truth_output = self.dataset[idx]
-                if isinstance(ground_truth_output, dict) and "answer_start" in ground_truth_output:
+                if (
+                    isinstance(ground_truth_output, dict)
+                    and "answer_start" in ground_truth_output
+                ):
                     if ground_truth_output["text"]:
                         ground_truth_output = ground_truth_output["text"][0]
                     else:
@@ -423,6 +426,7 @@ class Attacker:
             self.attack_log_manager = AttackArgs.create_loggers_from_args(
                 self.attack_args
             )
+
         textattack.shared.utils.set_seed(self.attack_args.random_seed)
         if self.dataset.shuffled and self.attack_args.checkpoint_interval:
             # Not allowed b/c we cannot recover order of shuffled data

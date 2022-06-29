@@ -34,14 +34,12 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         (Regular PyTorch ``nn.Module`` models typically take inputs as
         positional arguments.)
         """
-
         # Default max length is set to be int(1e30), so we force 512 to enable batching.
         max_length = (
             512
             if self.tokenizer.model_max_length == int(1e30)
             else self.tokenizer.model_max_length
         )
-
         inputs_dict = self.tokenizer(
             text_input_list,
             add_special_tokens=True,

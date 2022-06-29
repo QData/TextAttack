@@ -222,9 +222,11 @@ class DatasetArgs:
     def _create_dataset_from_args(cls, args):
         """Given ``DatasetArgs``, return specified
         ``textattack.dataset.Dataset`` object."""
+
         assert isinstance(
             args, cls
         ), f"Expect args to be of type `{type(cls)}`, but got type `{type(args)}`."
+
         # Automatically detect dataset for huggingface & textattack models.
         # This allows us to use the --model shortcut without specifying a dataset.
         if hasattr(args, "model"):

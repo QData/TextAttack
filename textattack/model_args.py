@@ -171,9 +171,11 @@ class ModelArgs:
     def _create_model_from_args(cls, args):
         """Given ``ModelArgs``, return specified
         ``textattack.models.wrappers.ModelWrapper`` object."""
+
         assert isinstance(
             args, cls
         ), f"Expect args to be of type `{type(cls)}`, but got type `{type(args)}`."
+
         if args.model_from_file:
             # Support loading the model from a .py file where a model wrapper
             # is instantiated.
