@@ -119,7 +119,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)</sub></td>
 </tr>
 <tr>
-<td> <code>fast-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
+<td> <code>faster-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>Untargeted {Classification, Entailment}</sub></td>
 <td><sub>Percentage of words perturbed, Language Model perplexity, Word embedding distance</sub></td>
 <td><sub>Counter-fitted word embedding swap</sub></td>
