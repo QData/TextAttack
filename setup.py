@@ -31,7 +31,7 @@ extras["tensorflow"] = [
     "tensorflow_hub",
     "tensorflow_text>=2",
     "tensorboardX",
-    "tensorflow-estimator==2.5.0",
+    "tensorflow-estimator==2.7.0",
 ]
 
 extras["optional"] = [
