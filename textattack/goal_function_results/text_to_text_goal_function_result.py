@@ -13,6 +13,28 @@ from .goal_function_result import GoalFunctionResult
 class TextToTextGoalFunctionResult(GoalFunctionResult):
     """Represents the result of a text-to-text goal function."""
 
+    def __init__(
+        self,
+        attacked_text,
+        raw_output,
+        output,
+        goal_status,
+        score,
+        num_queries,
+        ground_truth_output,
+    ):
+
+        super().__init__(
+            attacked_text,
+            raw_output,
+            output,
+            goal_status,
+            score,
+            num_queries,
+            ground_truth_output,
+            goal_function_result_type="Text to Text",
+        )
+
     def get_text_color_input(self):
         """A string representing the color this result's changed portion should
         be if it represents the original input."""
