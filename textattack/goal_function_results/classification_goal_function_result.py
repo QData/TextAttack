@@ -16,6 +16,28 @@ from .goal_function_result import GoalFunctionResult
 class ClassificationGoalFunctionResult(GoalFunctionResult):
     """Represents the result of a classification goal function."""
 
+    def __init__(
+        self,
+        attacked_text,
+        raw_output,
+        output,
+        goal_status,
+        score,
+        num_queries,
+        ground_truth_output,
+    ):
+
+        super().__init__(
+            attacked_text,
+            raw_output,
+            output,
+            goal_status,
+            score,
+            num_queries,
+            ground_truth_output,
+            goal_function_result_type="Classification",
+        )
+
     @property
     def _processed_output(self):
         """Takes a model output (like `1`) and returns the class labeled output
