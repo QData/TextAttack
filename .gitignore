@@ -47,3 +47,4 @@ checkpoints/
 
 .vscode
 *.csv
+!tests/sample_outputs/csv_attack_log.csv

@@ -10,7 +10,13 @@ from textattack.metrics.attack_metrics import (
 )
 from textattack.metrics.quality_metrics import Perplexity, USEMetric
 
-from . import CSVLogger, FileLogger, VisdomLogger, WeightsAndBiasesLogger
+from . import (
+    CSVLogger,
+    FileLogger,
+    JsonSummaryLogger,
+    VisdomLogger,
+    WeightsAndBiasesLogger,
+)
 
 
 class AttackLogManager:
@@ -38,6 +44,9 @@ class AttackLogManager:
 
     def add_output_csv(self, filename, color_method):
         self.loggers.append(CSVLogger(filename=filename, color_method=color_method))
+
+    def add_output_summary_json(self, filename):
+        self.loggers.append(JsonSummaryLogger(filename=filename))
 
     def log_result(self, result):
         """Logs an ``AttackResult`` on each of `self.loggers`."""

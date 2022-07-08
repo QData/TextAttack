@@ -1,0 +1,21 @@
+--------------------------------------------- Result 1 ---------------------------------------------
+[[Positive (91%)]] --> [[Negative (69%)]]
+
+lovingly photographed in the manner of a golden book sprung to [[life]] , stuart little 2 [[manages]] [[sweetness]] largely without stickiness .
+
+lovingly photographed in the manner of a golden book sprung to [[ife]] , stuart little 2 [[manager]] [[seetness]] largely without stickiness .
+--------------------------------------------- Result 2 ---------------------------------------------
+[[Positive (99%)]] --> [[Negative (82%)]]
+
+[[consistently]] [[clever]] and [[suspenseful]] .
+
+[[conisstently]] [[celver]] and [[Huspenseful]] .
+Number of successful attacks: 2
+Number of failed attacks: 0
+Number of skipped attacks: 0
+Original accuracy: 100.0%
+Accuracy under attack: 0.0%
+Attack success rate: 100.0%
+Average perturbed word %: 45.0%
+Average num. words per input: 12.0
+Avg num queries: 22.0
