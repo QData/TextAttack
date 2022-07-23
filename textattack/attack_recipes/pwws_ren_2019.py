@@ -20,7 +20,7 @@ from .attack_recipe import AttackRecipe
 
 class PWWSRen2019(AttackRecipe):
     """An implementation of Probability Weighted Word Saliency from "Generating
-    Natural Langauge Adversarial Examples through Probability Weighted Word
+    Natural Language Adversarial Examples through Probability Weighted Word
     Saliency", Ren et al., 2019.
 
     Words are prioritized for a synonym-swap transformation based on
