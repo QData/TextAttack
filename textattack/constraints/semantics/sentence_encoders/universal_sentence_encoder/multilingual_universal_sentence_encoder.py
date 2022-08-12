@@ -9,6 +9,7 @@ from textattack.shared.utils import LazyLoader
 hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
 tensorflow_text = LazyLoader("tensorflow_text", globals(), "tensorflow_text")
 
+
 class MultilingualUniversalSentenceEncoder(SentenceEncoder):
     """Constraint using similarity between sentence encodings of x and x_adv
     where the text embeddings are created using the Multilingual Universal

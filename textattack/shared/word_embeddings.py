@@ -312,9 +312,7 @@ class GensimWordEmbedding(AbstractWordEmbedding):
     def __init__(self, keyed_vectors):
         gensim = utils.LazyLoader("gensim", globals(), "gensim")
 
-        if isinstance(
-            keyed_vectors, gensim.models.KeyedVectors
-        ):
+        if isinstance(keyed_vectors, gensim.models.KeyedVectors):
             self.keyed_vectors = keyed_vectors
         else:
             raise ValueError(
