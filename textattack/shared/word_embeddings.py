@@ -313,7 +313,7 @@ class GensimWordEmbedding(AbstractWordEmbedding):
         gensim = utils.LazyLoader("gensim", globals(), "gensim")
 
         if isinstance(
-            keyed_vectors, gensim.models.keyedvectors.WordEmbeddingsKeyedVectors
+            keyed_vectors, gensim.models.KeyedVectors
         ):
             self.keyed_vectors = keyed_vectors
         else:
@@ -335,11 +335,11 @@ class GensimWordEmbedding(AbstractWordEmbedding):
         """
         if isinstance(index, str):
             try:
-                index = self.keyed_vectors.vocab.get(index).index
+                index = self.keyed_vectors.key_to_index.get(index)
             except KeyError:
                 return None
         try:
-            return self.keyed_vectors.vectors_norm[index]
+            return self.keyed_vectors.get_normed_vectors()[index]
         except IndexError:
             # word embedding ID out of bounds
             return None
@@ -352,10 +352,10 @@ class GensimWordEmbedding(AbstractWordEmbedding):
         Returns:
             index (int)
         """
-        vocab = self.keyed_vectors.vocab.get(word)
+        vocab = self.keyed_vectors.key_to_index.get(word)
         if vocab is None:
             raise KeyError(word)
-        return vocab.index
+        return vocab
 
     def index2word(self, index):
         """
@@ -368,7 +368,7 @@ class GensimWordEmbedding(AbstractWordEmbedding):
         """
         try:
             # this is a list, so the error would be IndexError
-            return self.keyed_vectors.index2word[index]
+            return self.keyed_vectors.index_to_key[index]
         except IndexError:
             raise KeyError(index)
 
@@ -386,8 +386,8 @@ class GensimWordEmbedding(AbstractWordEmbedding):
         try:
             mse_dist = self._mse_dist_mat[a][b]
         except KeyError:
-            e1 = self.keyed_vectors.vectors_norm[a]
-            e2 = self.keyed_vectors.vectors_norm[b]
+            e1 = self.keyed_vectors.get_normed_vectors()[a]
+            e2 = self.keyed_vectors.get_normed_vectors()[b]
             e1 = torch.tensor(e1).to(utils.device)
             e2 = torch.tensor(e2).to(utils.device)
             mse_dist = torch.sum((e1 - e2) ** 2).item()
@@ -406,9 +406,9 @@ class GensimWordEmbedding(AbstractWordEmbedding):
             distance (float): cosine similarity
         """
         if not isinstance(a, str):
-            a = self.keyed_vectors.index2word[a]
+            a = self.keyed_vectors.index_to_key[a]
         if not isinstance(b, str):
-            b = self.keyed_vectors.index2word[b]
+            b = self.keyed_vectors.index_to_key[b]
         cos_sim = self.keyed_vectors.similarity(a, b)
         return cos_sim
 
@@ -421,7 +421,7 @@ class GensimWordEmbedding(AbstractWordEmbedding):
         Returns:
             neighbours (list[int]): List of indices of the nearest neighbours
         """
-        word = self.keyed_vectors.index2word[index]
+        word = self.keyed_vectors.index_to_key[index]
         return [
             self.word2index(i[0])
             for i in self.keyed_vectors.similar_by_word(word, topn)
