@@ -35,11 +35,11 @@ extras["tensorflow"] = [
 ]
 
 extras["optional"] = [
-    "sentence_transformers>0.2.6",
+    "sentence_transformers==2.2.0",
     "stanza",
     "visdom",
     "wandb",
-    "gensim==3.8.3",
+    "gensim==4.1.2",
 ]
 
 # For developers, install development tools along with all optional dependencies.
