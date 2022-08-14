@@ -5,13 +5,13 @@ filelock
 language_tool_python
 lemminflect
 lru-dict
-datasets==2.2.2
+datasets==2.4.0
 nltk
 numpy>=1.21.0
 pandas>=1.0.1
 scipy>=1.4.1
 torch>=1.7.0,!=1.8
-transformers>=3.3.0
+transformers>=4.21.0
 terminaltables
 tqdm
 word2number
