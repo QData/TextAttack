@@ -570,6 +570,10 @@ class AttackedText:
         """Returns the number of words in the sequence."""
         return len(self.words)
 
+    @property
+    def newly_swapped_words(self):
+        return [self.words[i] for i in self.attack_attrs["newly_modified_indices"]]
+
     def printable_text(self, key_color="bold", key_color_method=None):
         """Represents full text input. Adds field descriptions.
 

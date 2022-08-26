@@ -46,7 +46,7 @@ class ClassificationGoalFunctionResult(GoalFunctionResult):
         Also returns the associated color.
         """
         output_label = self.raw_output.argmax()
-        if self.attacked_text.attack_attrs.get("label_names"):
+        if self.attacked_text.attack_attrs.get("label_names") is not None:
             output = self.attacked_text.attack_attrs["label_names"][self.output]
             output = textattack.shared.utils.process_label_name(output)
             color = textattack.shared.utils.color_from_output(output, output_label)
