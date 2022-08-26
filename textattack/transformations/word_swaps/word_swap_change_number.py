@@ -96,7 +96,7 @@ class WordSwapChangeNumber(WordSwap):
                 num = w2n.word_to_num(word)
                 num_list = self._alter_number(num)
                 return [num2words(n) for n in num_list]
-            except ValueError:
+            except (ValueError, IndexError):
                 return []
 
     def _alter_number(self, num):
