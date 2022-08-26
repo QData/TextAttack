@@ -8,6 +8,7 @@ import json
 import os
 import sys
 import time
+from typing import Dict, Optional
 
 import textattack
 from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file
@@ -207,6 +208,7 @@ class AttackArgs:
     disable_stdout: bool = False
     silent: bool = False
     enable_advance_metrics: bool = False
+    metrics: Optional[Dict] = None
 
     def __post_init__(self):
         if self.num_successful_examples:
@@ -386,12 +388,13 @@ class AttackArgs:
 
     @classmethod
     def create_loggers_from_args(cls, args):
+        """Creates AttackLogManager from an AttackArgs object."""
         assert isinstance(
             args, cls
         ), f"Expect args to be of type `{type(cls)}`, but got type `{type(args)}`."
 
         # Create logger
-        attack_log_manager = textattack.loggers.AttackLogManager()
+        attack_log_manager = textattack.loggers.AttackLogManager(args.metrics)
 
         # Get current time for file naming
         timestamp = time.strftime("%Y-%m-%d-%H-%M")
