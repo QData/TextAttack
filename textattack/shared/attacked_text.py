@@ -470,9 +470,6 @@ class AttackedText:
             perturbed_text += adv_word_seq
         perturbed_text += original_text  # Add all of the ending punctuation.
 
-        # Add pointer to self so chain of replacements can be reconstructed.
-        new_attack_attrs["prev_attacked_text"] = self
-
         # Reform perturbed_text into an OrderedDict.
         perturbed_input_texts = perturbed_text.split(AttackedText.SPLIT_TOKEN)
         perturbed_input = OrderedDict(
