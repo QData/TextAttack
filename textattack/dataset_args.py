@@ -118,11 +118,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     ),
     "xlnet-base-cased-wnli": ("glue", "wnli", "validation"),
 }
-
-
-#
-# Models hosted by textattack.
-#
 TEXTATTACK_DATASET_BY_MODEL = {
     #
     # LSTMs
@@ -162,6 +157,13 @@ TEXTATTACK_DATASET_BY_MODEL = {
     # T5 for summarization
     #
     "t5-summarization": ("gigaword", None, "test"),
+    #
+    # PyABSA defender
+    #
+    "tadbert-ag-news": ("ag_news", None, "test"),
+    "taddeberta-ag-news": ("ag_news", None, "test"),
+    "tadbert-sst2": ("glue", "sst2", "validation"),
+    "taddeberta-sst2": ("glue", "sst2", "validation"),
 }
 
 

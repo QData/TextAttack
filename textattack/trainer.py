@@ -89,13 +89,13 @@ class Trainer:
     """
 
     def __init__(
-        self,
-        model_wrapper,
-        task_type="classification",
-        attack=None,
-        train_dataset=None,
-        eval_dataset=None,
-        training_args=None,
+            self,
+            model_wrapper,
+            task_type="classification",
+            attack=None,
+            train_dataset=None,
+            eval_dataset=None,
+            training_args=None,
     ):
         assert isinstance(
             model_wrapper, ModelWrapper
@@ -164,7 +164,7 @@ class Trainer:
     def _generate_adversarial_examples(self, epoch):
         """Generate adversarial examples using attacker."""
         assert (
-            self.attack is not None
+                self.attack is not None
         ), "`attack` is `None` but attempting to generate adversarial examples."
         base_file_name = f"attack-train-{epoch}"
         log_file_name = os.path.join(self.training_args.output_dir, base_file_name)
@@ -217,7 +217,7 @@ class Trainer:
 
         attack_types = collections.Counter(r.__class__.__name__ for r in results)
         total_attacks = (
-            attack_types["SuccessfulAttackResult"] + attack_types["FailedAttackResult"]
+                attack_types["SuccessfulAttackResult"] + attack_types["FailedAttackResult"]
         )
         success_rate = attack_types["SuccessfulAttackResult"] / total_attacks * 100
         logger.info(f"Total number of attack results: {len(results)}")
@@ -251,7 +251,7 @@ class Trainer:
         return adversarial_dataset
 
     def _print_training_args(
-        self, total_training_steps, train_batch_size, num_clean_epochs
+            self, total_training_steps, train_batch_size, num_clean_epochs
     ):
         logger.info("***** Running training *****")
         logger.info(f"  Num examples = {len(self.train_dataset)}")
@@ -269,7 +269,7 @@ class Trainer:
         logger.info(f"  Total optimization steps = {total_training_steps}")
 
     def _save_model_checkpoint(
-        self, model, tokenizer, step=None, epoch=None, best=False, last=False
+            self, model, tokenizer, step=None, epoch=None, best=False, last=False
     ):
         # Save model checkpoint
         if step:
@@ -398,6 +398,7 @@ class Trainer:
         Returns:
             :obj:`torch.utils.data.DataLoader`
         """
+
         # TODO: Add pairing option where we can pair original examples with adversarial examples.
         # Helper functions for collating data
         def collate_fn(data):
@@ -460,6 +461,7 @@ class Trainer:
         Returns:
             :obj:`torch.utils.data.DataLoader`
         """
+
         # Helper functions for collating data
         def collate_fn(data):
             input_texts = []
@@ -512,8 +514,8 @@ class Trainer:
         targets = targets.to(textattack.shared.utils.device)
 
         if isinstance(model, transformers.PreTrainedModel) or (
-            isinstance(model, torch.nn.DataParallel)
-            and isinstance(model.module, transformers.PreTrainedModel)
+                isinstance(model, torch.nn.DataParallel)
+                and isinstance(model.module, transformers.PreTrainedModel)
         ):
             input_ids = tokenizer(
                 input_texts,
@@ -637,11 +639,11 @@ class Trainer:
             num_clean_epochs = self.training_args.num_clean_epochs
 
         total_clean_training_steps = (
-            math.ceil(
-                len(self.train_dataset)
-                / (train_batch_size * self.training_args.gradient_accumulation_steps)
-            )
-            * num_clean_epochs
+                math.ceil(
+                    len(self.train_dataset)
+                    / (train_batch_size * self.training_args.gradient_accumulation_steps)
+                )
+                * num_clean_epochs
         )
 
         # calculate total_adv_training_data_length based on type of
@@ -649,13 +651,13 @@ class Trainer:
         # if num_train_adv_examples is float , num_train_adv_examples is a portion of train_dataset.
         if isinstance(self.training_args.num_train_adv_examples, float):
             total_adv_training_data_length = (
-                len(self.train_dataset) * self.training_args.num_train_adv_examples
+                    len(self.train_dataset) * self.training_args.num_train_adv_examples
             )
 
         # if num_train_adv_examples is int and >=0 then it is taken as value.
         elif (
-            isinstance(self.training_args.num_train_adv_examples, int)
-            and self.training_args.num_train_adv_examples >= 0
+                isinstance(self.training_args.num_train_adv_examples, int)
+                and self.training_args.num_train_adv_examples >= 0
         ):
             total_adv_training_data_length = self.training_args.num_train_adv_examples
 
@@ -700,7 +702,7 @@ class Trainer:
 
             if self.attack and epoch > num_clean_epochs:
                 if (
-                    epoch - num_clean_epochs - 1
+                        epoch - num_clean_epochs - 1
                 ) % self.training_args.attack_epoch_interval == 0:
                     # only generate a new adversarial training set every self.training_args.attack_period epochs after the clean epochs
                     # adv_dataset is instance of `textattack.datasets.Dataset`
@@ -752,12 +754,12 @@ class Trainer:
 
                 if self._global_step > 0:
                     prog_bar.set_description(
-                        f"Loss {self._total_loss/self._global_step:.5f}"
+                        f"Loss {self._total_loss / self._global_step:.5f}"
                     )
 
                 # TODO: Better way to handle TB and Wandb logging
                 if (self._global_step > 0) and (
-                    self._global_step % self.training_args.logging_interval_step == 0
+                        self._global_step % self.training_args.logging_interval_step == 0
                 ):
                     lr_to_log = (
                         scheduler.get_last_lr()[0]
@@ -786,12 +788,12 @@ class Trainer:
                 # Save model checkpoint to file.
                 if self.training_args.checkpoint_interval_steps:
                     if (
-                        self._global_step > 0
-                        and (
+                            self._global_step > 0
+                            and (
                             self._global_step
                             % self.training_args.checkpoint_interval_steps
-                        )
-                        == 0
+                    )
+                            == 0
                     ):
                         self._save_model_checkpoint(
                             model, tokenizer, step=self._global_step
@@ -803,7 +805,7 @@ class Trainer:
                 correct_predictions = (preds == targets).sum().item()
                 accuracy = correct_predictions / len(targets)
                 metric_log = {"train/train_accuracy": accuracy}
-                logger.info(f"Train accuracy: {accuracy*100:.2f}%")
+                logger.info(f"Train accuracy: {accuracy * 100:.2f}%")
             else:
                 pearson_correlation, pearson_pvalue = scipy.stats.pearsonr(
                     preds, targets
@@ -833,8 +835,8 @@ class Trainer:
                 )
 
             if (
-                self.training_args.checkpoint_interval_epochs
-                and (epoch % self.training_args.checkpoint_interval_epochs) == 0
+                    self.training_args.checkpoint_interval_epochs
+                    and (epoch % self.training_args.checkpoint_interval_epochs) == 0
             ):
                 self._save_model_checkpoint(model, tokenizer, epoch=epoch)
 
@@ -849,8 +851,8 @@ class Trainer:
             else:
                 epochs_since_best_eval_score += 1
                 if self.training_args.early_stopping_epochs and (
-                    epochs_since_best_eval_score
-                    > self.training_args.early_stopping_epochs
+                        epochs_since_best_eval_score
+                        > self.training_args.early_stopping_epochs
                 ):
                     logger.info(
                         f"Stopping early since it's been {self.training_args.early_stopping_epochs} steps since validation score increased."
@@ -919,7 +921,7 @@ class Trainer:
             eval_score = accuracy
 
         if self._metric_name == "accuracy":
-            logger.info(f"Eval {self._metric_name}: {eval_score*100:.2f}%")
+            logger.info(f"Eval {self._metric_name}: {eval_score * 100:.2f}%")
         else:
             logger.info(f"Eval {self._metric_name}: {eval_score:.4f}%")
 
@@ -930,8 +932,8 @@ class Trainer:
             model_name = self.training_args.model_name_or_path
         elif isinstance(self.model_wrapper.model, transformers.PreTrainedModel):
             if (
-                hasattr(self.model_wrapper.model.config, "_name_or_path")
-                and self.model_wrapper.model.config._name_or_path in HUGGINGFACE_MODELS
+                    hasattr(self.model_wrapper.model.config, "_name_or_path")
+                    and self.model_wrapper.model.config._name_or_path in HUGGINGFACE_MODELS
             ):
                 # TODO Better way than just checking HUGGINGFACE_MODELS ?
                 model_name = self.model_wrapper.model.config._name_or_path
@@ -946,17 +948,17 @@ class Trainer:
             model_name = f"`{model_name}`"
 
         if (
-            isinstance(self.training_args, CommandLineTrainingArgs)
-            and self.training_args.model_max_length
+                isinstance(self.training_args, CommandLineTrainingArgs)
+                and self.training_args.model_max_length
         ):
             model_max_length = self.training_args.model_max_length
         elif isinstance(
-            self.model_wrapper.model,
-            (
-                transformers.PreTrainedModel,
-                LSTMForClassification,
-                WordCNNForClassification,
-            ),
+                self.model_wrapper.model,
+                (
+                        transformers.PreTrainedModel,
+                        LSTMForClassification,
+                        WordCNNForClassification,
+                ),
         ):
             model_max_length = self.model_wrapper.tokenizer.model_max_length
         else:
@@ -968,13 +970,13 @@ class Trainer:
             model_max_length_str = ""
 
         if isinstance(
-            self.train_dataset, textattack.datasets.HuggingFaceDataset
+                self.train_dataset, textattack.datasets.HuggingFaceDataset
         ) and hasattr(self.train_dataset, "_name"):
             dataset_name = self.train_dataset._name
             if hasattr(self.train_dataset, "_subset"):
                 dataset_name += f" ({self.train_dataset._subset})"
         elif isinstance(
-            self.eval_dataset, textattack.datasets.HuggingFaceDataset
+                self.eval_dataset, textattack.datasets.HuggingFaceDataset
         ) and hasattr(self.eval_dataset, "_name"):
             dataset_name = self.eval_dataset._name
             if hasattr(self.eval_dataset, "_subset"):

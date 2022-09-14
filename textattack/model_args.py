@@ -93,6 +93,15 @@ HUGGINGFACE_MODELS = {
     "xlnet-base-cased-wnli": "textattack/xlnet-base-cased-WNLI",
 }
 
+PYABSA_MODELS = {
+    #
+    # PyABSA defense models
+    #
+    "tadbert-sst2": "tad-bert-sst2",
+    "taddeberta-sst2": "tad-sst2",
+    "tadbert-ag-news": "tad-agnews10k",
+    "taddeberta-ag-news": "tad-bert-agnews10k",
+}
 
 #
 # Models hosted by textattack.
@@ -143,7 +152,7 @@ class ModelArgs:
         """Adds model-related arguments to an argparser."""
         model_group = parser.add_mutually_exclusive_group()
 
-        model_names = list(HUGGINGFACE_MODELS.keys()) + list(TEXTATTACK_MODELS.keys())
+        model_names = list(HUGGINGFACE_MODELS.keys()) + list(TEXTATTACK_MODELS.keys()) + list(PYABSA_MODELS.keys())
         model_group.add_argument(
             "--model",
             type=str,
@@ -226,6 +235,18 @@ class ModelArgs:
                 model_name, use_fast=True
             )
             model = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
+        elif args.model in PYABSA_MODELS:
+            from pyabsa import TADCheckpointManager
+            colored_model_name = textattack.shared.utils.color_text(
+                args.model, color="blue", method="ansi"
+            )
+            textattack.shared.logger.info(
+                f"Loading pre-trained TAD model from https://github.com/yangheng95/PyABSA: {colored_model_name}"
+            )
+            model = TADCheckpointManager.get_tad_text_classifier(checkpoint=PYABSA_MODELS[args.model], auto_device=True)
+            model = textattack.models.wrappers.TADModelWrapper(
+                model
+            )
         elif args.model in TEXTATTACK_MODELS:
             # Support loading TextAttack pre-trained models via just a keyword.
             colored_model_name = textattack.shared.utils.color_text(

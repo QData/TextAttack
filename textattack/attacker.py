@@ -102,7 +102,35 @@ class Attacker:
         assert (len(worklist) + len(candidates)) == (end - start)
         return worklist, candidates
 
-    def _attack(self):
+    def simple_attack(self, text, label):
+        """Internal method that carries out attack.
+
+          No parallel processing is involved.
+              """
+        if torch.cuda.is_available():
+            self.attack.cuda_()
+
+        example, ground_truth_output = text, label
+        try:
+            example = textattack.shared.AttackedText(example)
+            if self.dataset.label_names is not None:
+                example.attack_attrs["label_names"] = self.dataset.label_names
+            try:
+                result = self.attack.attack(example, ground_truth_output)
+            except Exception as e:
+                raise e
+                # return
+            if (isinstance(result, SkippedAttackResult) and self.attack_args.attack_n) or (
+                    not isinstance(result, SuccessfulAttackResult)
+                    and self.attack_args.num_successful_examples
+            ):
+                return
+            else:
+                return result
+        except KeyboardInterrupt as e:
+            raise e
+
+    def _attack(self, **kwargs):
         """Internal method that carries out attack.
 
         No parallel processing is involved.
@@ -165,7 +193,7 @@ class Attacker:
             if self.dataset.label_names is not None:
                 example.attack_attrs["label_names"] = self.dataset.label_names
             try:
-                result = self.attack.attack(example, ground_truth_output)
+                result = self.attack.attack(example, ground_truth_output, **kwargs)
             except Exception as e:
                 raise e
             if (
@@ -402,7 +430,7 @@ class Attacker:
         self.attack_log_manager.flush()
         print()
 
-    def attack_dataset(self):
+    def attack_dataset(self, **kwargs):
         """Attack the dataset.
 
         Returns:
@@ -438,7 +466,7 @@ class Attacker:
                 )
             self._attack_parallel()
         else:
-            self._attack()
+            self._attack(**kwargs)
 
         if self.attack_args.silent:
             logger.setLevel(logging.INFO)

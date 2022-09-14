@@ -18,22 +18,23 @@ class UniversalSentenceEncoder(SentenceEncoder):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
         if large:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-large/5"
+            mirror_tfhub_url = "https://hub.tensorflow.google.cn/google/universal-sentence-encoder-large/5"
         else:
-            tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/3"
+            tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
+            mirror_tfhub_url = "https://hub.tensorflow.google.cn/google/universal-sentence-encoder/4"
 
         self._tfhub_url = tfhub_url
+        self.mirror_tfhub_url = mirror_tfhub_url
         # Lazily load the model
         self.model = None
 
     def encode(self, sentences):
         if not self.model:
-            self.model = hub.load(self._tfhub_url)
-        encoding = self.model(sentences)
-
-        if isinstance(encoding, dict):
-            encoding = encoding["outputs"]
-
-        return encoding.numpy()
+            try:
+                self.model = hub.load(self._tfhub_url)
+            except:
+                self.model = hub.load(self.mirror_tfhub_url)
+        return self.model(sentences).numpy()
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -42,4 +43,7 @@ class UniversalSentenceEncoder(SentenceEncoder):
 
     def __setstate__(self, state):
         self.__dict__ = state
-        self.model = None
+        try:
+            self.model = hub.load(self._tfhub_url)
+        except:
+            self.model = hub.load(self.mirror_tfhub_url)

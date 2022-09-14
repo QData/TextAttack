@@ -20,14 +20,22 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
         tensorflow_text._load()
         if large:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3"
+            mirror_tfhub_url = "https://hub.tensorflow.google.cn/google/universal-sentence-encoder-multilingual-large/3"
         else:
             tfhub_url = (
-                "https://tfhub.dev/google/universal-sentence-encoder-multilingual/3"
+                "https://https://tfhub.dev/google/universal-sentence-encoder-multilingual/3"
+            )
+            mirror_tfhub_url = (
+                "https://hub.tensorflow.google.cn/google/universal-sentence-encoder-multilingual/3"
             )
 
-        # TODO add QA SET. Details at: https://tfhub.dev/google/universal-sentence-encoder-multilingual-qa/3
+        # TODO add QA SET. Details at: https://hub.tensorflow.google.cn/google/universal-sentence-encoder-multilingual-qa/3
         self._tfhub_url = tfhub_url
-        self.model = hub.load(tfhub_url)
+        self.mirror_tfhub_url = mirror_tfhub_url
+        try:
+            self.model = hub.load(self._tfhub_url)
+        except:
+            self.model = hub.load(self.mirror_tfhub_url)
 
     def encode(self, sentences):
         return self.model(sentences).numpy()
@@ -39,4 +47,7 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
 
     def __setstate__(self, state):
         self.__dict__ = state
-        self.model = hub.load(self._tfhub_url)
+        try:
+            self.model = hub.load(self._tfhub_url)
+        except:
+            self.model = hub.load(self.mirror_tfhub_url)
