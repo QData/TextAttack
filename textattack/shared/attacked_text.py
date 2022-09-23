@@ -92,7 +92,10 @@ class AttackedText:
                     return False
             else:
                 if isinstance(self.attack_attrs[key], AttackedText):
-                    if not self.attack_attrs[key]._text_input == other.attack_attrs[key]._text_input:
+                    if (
+                        not self.attack_attrs[key]._text_input
+                        == other.attack_attrs[key]._text_input
+                    ):
                         return False
         return True
 
