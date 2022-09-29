@@ -91,8 +91,12 @@ class AttackedText:
                 elif not (self.attack_attrs[key] == other.attack_attrs[key]).all():
                     return False
             else:
-                if not self.attack_attrs[key] == other.attack_attrs[key]:
-                    return False
+                if isinstance(self.attack_attrs[key], AttackedText):
+                    if (
+                        not self.attack_attrs[key]._text_input
+                        == other.attack_attrs[key]._text_input
+                    ):
+                        return False
         return True
 
     def __hash__(self):
