@@ -117,7 +117,16 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         5.0,
     ),
     "xlnet-base-cased-wnli": ("glue", "wnli", "validation"),
+
+    # PyABSA models
+    "tadbert-ag-news": ("ag_news", None, "test"),
+    "tadbert-imdb": ("imdb", None, "test"),
+    "tadbert-sst2": ("glue", "sst2", "validation"),
+    "taddeberta-ag-news": ("ag_news", None, "test"),
+    "taddeberta-imdb": ("imdb", None, "test"),
+    "taddeberta-sst2": ("glue", "sst2", "validation"),
 }
+
 TEXTATTACK_DATASET_BY_MODEL = {
     #
     # LSTMs

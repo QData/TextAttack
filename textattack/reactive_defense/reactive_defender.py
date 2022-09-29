@@ -16,5 +16,9 @@ class ReactiveDefender(ReprMixin, ABC):
     def __init__(self, **kwargs):
         pass
 
-    def reactive_defense(self, **kwargs):
+    def warn_adversary(self, **kwargs):
+        pass
+
+
+    def repair(self, **kwargs):
         pass

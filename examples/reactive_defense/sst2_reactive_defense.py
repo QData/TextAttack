@@ -69,13 +69,13 @@ model_wrapper = TADModelWrapper(target_model)
 # | Avg num queries:              | 124.56 |
 # +-------------------------------+--------+
 
-recipe = GeneticAlgorithmAlzantot2018.build(model_wrapper)
+# recipe = GeneticAlgorithmAlzantot2018.build(model_wrapper)
 #
 # recipe = BERTAttackLi2020.build(model_wrapper)
 #
 # recipe = FasterGeneticAlgorithmJia2019.build(model_wrapper)
 #
-# recipe = DeepWordBugGao2018.build(model_wrapper)
+recipe = DeepWordBugGao2018.build(model_wrapper)
 # +-------------------------------+--------+
 # | Attack Results                |        |
 # +-------------------------------+--------+
@@ -132,5 +132,6 @@ results = attacker.attack_dataset(reactive_defender=reactive_defender)
 # https://huggingface.co/spaces/yangheng/TAD
 
 # Ref repo:
-# https://github.com/yangheng95/TextAttack
+
 # https://github.com/yangheng95/PyABSA
+# https://github.com/yangheng95/TextAttack

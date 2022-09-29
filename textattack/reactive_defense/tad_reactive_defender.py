@@ -28,6 +28,6 @@ class TADReactiveDefender(ReactiveDefender):
         self.tad_classifier = TADCheckpointManager.get_tad_text_classifier(checkpoint=PYABSA_MODELS[ckpt],
                                                                            auto_device=True)
 
-    def reactive_defense(self, text, **kwargs):
+    def repair(self, text, **kwargs):
         res = self.tad_classifier.infer(text, defense='pwws', print_result=False, **kwargs)
         return res
