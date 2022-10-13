@@ -3,7 +3,7 @@ import eukaryote.t4a.train_support.train_textattack as train
 
 from eukaryote.commands import TextAttackCommand
 
-class T4A_TrainCommand(TextAttackCommand):
+class T4A_AttackTrainCommand(TextAttackCommand):
     def run(self, args):
         model_wrapper = shared.load_model_wrapper(args)
         dataset_train = shared.load_dataset(args)
@@ -39,9 +39,13 @@ class T4A_TrainCommand(TextAttackCommand):
 
     @staticmethod
     def register_subcommand(subparsers):
-        # Add parser for training
-        parser_train = subparsers.add_parser("t4a_train", description="Train a model")
-        shared.add_arguments_model(parser_train)
-        shared.add_arguments_dataset(parser_train, default_split="train")
-        shared.add_arguments_train(parser_train, default_split_eval="test")
-        parser_train.set_defaults(func=T4A_TrainCommand(), attack=False)
+        # Add parser for training on attacked input
+        parser_attack_train = subparsers.add_parser(
+            "t4a_attack_train",
+            description="Attack and train a model",
+        )
+        shared.add_arguments_model(parser_attack_train)
+        shared.add_arguments_dataset(parser_attack_train, default_split="train")
+        shared.add_arguments_attack(parser_attack_train)
+        shared.add_arguments_train(parser_attack_train)
+        parser_attack_train.set_defaults(func=T4A_AttackTrainCommand(), attack=True)
