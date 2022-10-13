@@ -6,6 +6,8 @@ I assume it's fine. Second and third commands require a model to work with, I
 just ran train all the way through one time and used the path for that output
 for all later tests.
 
-python -m integratedTA train --model-name-or-path distilbert-base-uncased --dataset rotten_tomatoes --model-num-labels 2 --model-max-length 64 --per-device-train-batch-size 128 --num-epochs 1
-python -m integratedTA eval --num-examples 10 --model .\outputs\2022-10-12-21-55-21-981213\best_model --dataset-from-huggingface rotten_tomatoes --dataset-split test
-python -m integratedTA attack --recipe textfooler --num-examples 10 --model .\outputs\2022-10-12-21-55-21-981213\best_model --dataset-from-huggingface rotten_tomatoes --dataset-split test
+python -m pytest tests
+
+python -m eukaryote train --model-name-or-path distilbert-base-uncased --dataset rotten_tomatoes --model-num-labels 2 --model-max-length 64 --per-device-train-batch-size 128 --num-epochs 1
+python -m eukaryote eval --num-examples 10 --model .\outputs\2022-10-12-21-55-21-981213\best_model --dataset-from-huggingface rotten_tomatoes --dataset-split test
+python -m eukaryote attack --recipe textfooler --num-examples 10 --model .\outputs\2022-10-12-21-55-21-981213\best_model --dataset-from-huggingface rotten_tomatoes --dataset-split test

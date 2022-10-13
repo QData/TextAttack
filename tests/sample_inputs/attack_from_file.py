@@ -1,9 +1,9 @@
-import textattack
+import eukaryote
 
 
 def Attack(model):
-    goal_function = textattack.goal_functions.UntargetedClassification(model)
-    search_method = textattack.search_methods.GreedyWordSwapWIR()
-    transformation = textattack.transformations.WordSwapRandomCharacterSubstitution()
+    goal_function = eukaryote.goal_functions.UntargetedClassification(model)
+    search_method = eukaryote.search_methods.GreedyWordSwapWIR()
+    transformation = eukaryote.transformations.WordSwapRandomCharacterSubstitution()
     constraints = []
-    return textattack.Attack(goal_function, constraints, transformation, search_method)
+    return eukaryote.Attack(goal_function, constraints, transformation, search_method)

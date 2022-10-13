@@ -4,10 +4,10 @@ import os
 import numpy as np
 from transformers import AutoTokenizer, TFAutoModelForSequenceClassification, pipeline
 
-from textattack import Attacker
-from textattack.attack_recipes import PWWSRen2019
-from textattack.datasets import HuggingFaceDataset
-from textattack.models.wrappers import ModelWrapper
+from eukaryote import Attacker
+from eukaryote.attack_recipes import PWWSRen2019
+from eukaryote.datasets import HuggingFaceDataset
+from eukaryote.models.wrappers import ModelWrapper
 
 if "TF_CPP_MIN_LOG_LEVEL" not in os.environ:
     os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"

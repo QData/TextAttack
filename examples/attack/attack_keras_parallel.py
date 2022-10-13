@@ -19,10 +19,10 @@ from tensorflow.python.keras.layers import deserialize, serialize
 from tensorflow.python.keras.saving import saving_utils
 import torch
 
-from textattack import AttackArgs, Attacker
-from textattack.attack_recipes import PWWSRen2019
-from textattack.datasets import HuggingFaceDataset
-from textattack.models.wrappers import ModelWrapper
+from eukaryote import AttackArgs, Attacker
+from eukaryote.attack_recipes import PWWSRen2019
+from eukaryote.datasets import HuggingFaceDataset
+from eukaryote.models.wrappers import ModelWrapper
 
 NUM_WORDS = 1000
 

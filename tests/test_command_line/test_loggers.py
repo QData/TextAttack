@@ -22,14 +22,14 @@ list_test_params = [
     (
         "json_summary_logger",
         "json",
-        "textattack attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-summary-to-json attack_summary.json",
+        "eukaryote attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-summary-to-json attack_summary.json",
         "attack_summary.json",
         "tests/sample_outputs/json_attack_summary.json",
     ),
     (
         "txt_logger",
         "txt",
-        "textattack attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-to-txt attack_log.txt",
+        "eukaryote attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-to-txt attack_log.txt",
         "attack_log.txt",
         "tests/sample_outputs/txt_attack_log.txt",
     ),
@@ -37,7 +37,7 @@ list_test_params = [
     #     (
     #         "csv_logger",
     #         "csv",
-    #         "textattack attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-to-csv attack_log.csv",
+    #         "eukaryote attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-to-csv attack_log.csv",
     #         "attack_log.csv",
     #         "tests/sample_outputs/csv_attack_log.csv",
     #     ),

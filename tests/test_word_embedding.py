@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pytest
 
-from textattack.shared import GensimWordEmbedding, WordEmbedding
+from eukaryote.shared import GensimWordEmbedding, WordEmbedding
 
 
 def test_embedding_paragramcf():
@@ -15,8 +15,8 @@ def test_embedding_paragramcf():
 
 def test_embedding_gensim():
     # download a trained word2vec model
-    from textattack.shared.utils import LazyLoader
-    from textattack.shared.utils.install import TEXTATTACK_CACHE_DIR
+    from eukaryote.shared.utils import LazyLoader
+    from eukaryote.shared.utils.install import TEXTATTACK_CACHE_DIR
 
     path = os.path.join(TEXTATTACK_CACHE_DIR, "test_gensim_embedding.txt")
     f = open(path, "w")

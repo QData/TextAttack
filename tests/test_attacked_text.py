@@ -3,14 +3,14 @@ import collections
 import pytest
 
 try:
-    import textattack
+    import eukaryote
 except ModuleNotFoundError:
     # one can do test locally without installing textattack
     import pathlib
     import sys
 
     sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
-    import textattack
+    import eukaryote
 
 
 raw_text = "A person walks up stairs into a room and sees beer poured from a keg and people talking."
@@ -18,7 +18,7 @@ raw_text = "A person walks up stairs into a room and sees beer poured from a keg
 
 @pytest.fixture
 def attacked_text():
-    return textattack.shared.AttackedText(raw_text)
+    return eukaryote.shared.AttackedText(raw_text)
 
 
 raw_pokemon_text = "the threat implied in the title pokémon 4ever is terrifying  like locusts in a horde these things will keep coming ."
@@ -26,7 +26,7 @@ raw_pokemon_text = "the threat implied in the title pokémon 4ever is terrifying
 
 @pytest.fixture
 def pokemon_attacked_text():
-    return textattack.shared.AttackedText(raw_pokemon_text)
+    return eukaryote.shared.AttackedText(raw_pokemon_text)
 
 
 premise = "Among these are the red brick Royal Palace, which now houses the Patan Museum (Nepal's finest and most modern museum), and, facing the palace across the narrow brick plaza, eight temples of different styles and sizes."
@@ -40,12 +40,12 @@ raw_hyphenated_text = "It's a run-of-the-mill kind of farmer's tan."
 
 @pytest.fixture
 def hyphenated_text():
-    return textattack.shared.AttackedText(raw_hyphenated_text)
+    return eukaryote.shared.AttackedText(raw_hyphenated_text)
 
 
 @pytest.fixture
 def attacked_text_pair():
-    return textattack.shared.AttackedText(raw_text_pair)
+    return eukaryote.shared.AttackedText(raw_text_pair)
 
 
 class TestAttackedText:
