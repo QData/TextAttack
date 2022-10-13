@@ -230,8 +230,6 @@ def load_attack(args):
         raise ValueError("Unknown attack recipe name")
     result["attack_recipe"] = attack_recipe_names[args.attack_recipe]
 
-    print(args)
-
     if args.perturbation_budget:
         if args.perturbation_budget_class not in constraint_class_names:
             raise ValueError("Unknown perturbation budget class name")

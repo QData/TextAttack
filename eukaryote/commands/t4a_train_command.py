@@ -47,9 +47,9 @@ class T4A_TrainCommand(TextAttackCommand):
         shared.add_arguments_model(parser_attack_train)
         shared.add_arguments_dataset(parser_attack_train, default_split="train")
         shared.add_arguments_attack(
-            parser_attack_train,
-            enable_extra_constraints=False,
-            enable_attack_args=False,
+            parser_attack_train#,
+            #enable_extra_constraints=False,
+            #enable_attack_args=False,
         )
         shared.add_arguments_train(parser_attack_train)
         parser_attack_train.set_defaults(func=T4A_TrainCommand(), attack=True)
