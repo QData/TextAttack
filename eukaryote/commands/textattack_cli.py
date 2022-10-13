@@ -18,6 +18,9 @@ from eukaryote.commands.list_things_command import ListThingsCommand
 from eukaryote.commands.peek_dataset_command import PeekDatasetCommand
 from eukaryote.commands.train_model_command import TrainModelCommand
 
+from eukaryote.commands.t4a_attack_eval_command import T4A_AttackEvalCommand
+from eukaryote.commands.t4a_train_command import T4A_TrainCommand
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -36,6 +39,9 @@ def main():
     ListThingsCommand.register_subcommand(subparsers)
     TrainModelCommand.register_subcommand(subparsers)
     PeekDatasetCommand.register_subcommand(subparsers)
+
+    T4A_AttackEvalCommand.register_subcommand(subparsers)
+    T4A_TrainCommand.register_subcommand(subparsers)
 
     # Let's go
     args = parser.parse_args()
