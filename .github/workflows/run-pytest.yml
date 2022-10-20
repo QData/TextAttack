@@ -5,7 +5,7 @@ name: Test with PyTest
 
 on:
   push:
-    branches: [ master, coverage ]
+    branches: *
   pull_request:
     branches: [ master ]
 
