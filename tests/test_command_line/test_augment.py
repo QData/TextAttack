@@ -4,7 +4,7 @@ import pytest
 augment_test_params = [
     (
         "simple_augment_test",
-        "eukaryote augment --input-csv tests/sample_inputs/augment.csv.txt --input-column text --output-csv augment_test.csv --overwrite",
+        "python -m eukaryote augment --input-csv tests/sample_inputs/augment.csv.txt --input-column text --output-csv augment_test.csv --overwrite",
         "augment_test.csv",
         "tests/sample_outputs/augment_test.csv.txt",
     )

@@ -4,12 +4,12 @@ import pytest
 eval_test_params = [
     (
         "eval_model_hub_rt",
-        "eukaryote eval --model-from-huggingface textattack/distilbert-base-uncased-rotten-tomatoes --dataset-from-huggingface rotten_tomatoes --num-examples 4",
+        "python -m eukaryote eval --model-from-huggingface textattack/distilbert-base-uncased-rotten-tomatoes --dataset-from-huggingface rotten_tomatoes --num-examples 4",
         "tests/sample_outputs/eval_model_hub_rt.txt",
     ),
     (
         "eval_snli",
-        "eukaryote eval --model bert-base-uncased-snli --num-examples 10",
+        "python -m eukaryote eval --model bert-base-uncased-snli --num-examples 10",
         "tests/sample_outputs/eval_snli.txt",
     ),
 ]

@@ -17,7 +17,7 @@ attack_test_params = [
     (
         "attack_from_file",
         (
-            "eukaryote attack --model cnn-imdb "
+            "python -m eukaryote attack --model cnn-imdb "
             "--attack-from-file tests/sample_inputs/attack_from_file.py^Attack "
             "--num-examples 2  --num-examples-offset 18 --attack-n "
         ),
@@ -30,7 +30,7 @@ attack_test_params = [
         "interactive_mode",
         (
             'printf "All that glitters is not gold\nq\n"',
-            "eukaryote attack --recipe textfooler --model bert-base-uncased-imdb --interactive",
+            "python -m eukaryote attack --recipe textfooler --model bert-base-uncased-imdb --interactive",
         ),
         "tests/sample_outputs/interactive_mode.txt",
     ),
@@ -40,7 +40,7 @@ attack_test_params = [
     (
         "attack_from_transformers_adv_metrics",
         (
-            "eukaryote attack --model-from-huggingface "
+            "python -m eukaryote attack --model-from-huggingface "
             "distilbert-base-uncased-finetuned-sst-2-english "
             "--dataset-from-huggingface glue^sst2^train --recipe deepwordbug --num-examples 3 "
             "--enable-advance-metrics"
@@ -54,7 +54,7 @@ attack_test_params = [
     (
         "load_model_and_dataset_from_file",
         (
-            "eukaryote attack "
+            "python -m eukaryote attack "
             "--model-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--dataset-from-file tests/sample_inputs/sst_model_and_dataset.py "
             "--recipe deepwordbug --num-examples 3 "
@@ -67,7 +67,7 @@ attack_test_params = [
     (
         "run_attack_hotflip_lstm_mr_4_adv_metrics",
         (
-            "eukaryote attack --model lstm-mr --recipe hotflip "
+            "python -m eukaryote attack --model lstm-mr --recipe hotflip "
             "--num-examples 4 --num-examples-offset 3 --enable-advance-metrics "
         ),
         "tests/sample_outputs/run_attack_hotflip_lstm_mr_4_adv_metrics.txt",
@@ -78,7 +78,7 @@ attack_test_params = [
     (
         "run_attack_deepwordbug_lstm_mr_2",
         (
-            "eukaryote attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n "
+            "python -m eukaryote attack --model lstm-mr --recipe deepwordbug --num-examples 2 --attack-n "
         ),
         "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt",
     ),
@@ -105,7 +105,7 @@ attack_test_params = [
     (
         "run_attack_flair_pos_tagger_bert_score",
         (
-            "eukaryote attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding "
+            "python -m eukaryote attack --model bert-base-uncased-mr --search greedy-word-wir --transformation word-swap-embedding "
             "--constraints repeat stopword bert-score^min_bert_score=0.8 part-of-speech^tagger_type=\\'flair\\' "
             "--num-examples 4 --num-examples-offset 10 "
         ),
@@ -129,7 +129,7 @@ attack_test_params = [
     (
         "run_attack_kuleshov_nn",
         (
-            "eukaryote attack --recipe kuleshov --num-examples 2 --model cnn-sst2 "
+            "python -m eukaryote attack --recipe kuleshov --num-examples 2 --model cnn-sst2 "
             "--attack-n --query-budget 200 "
         ),
         "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
@@ -140,7 +140,7 @@ attack_test_params = [
     (
         "run_attack_stanza_pos_tagger",
         (
-            "eukaryote attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding "
+            "python -m eukaryote attack --model lstm-mr --num-examples 4 --search-method greedy --transformation word-swap-embedding "
             "--constraints repeat stopword part-of-speech^tagger_type=\\'stanza\\' "
         ),
         "tests/sample_outputs/run_attack_stanza_pos_tagger.txt",
@@ -152,7 +152,7 @@ attack_test_params = [
     (
         "run_attack_cnn_cola",
         (
-            "eukaryote attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir "
+            "python -m eukaryote attack --model cnn-yelp --num-examples 3 --search-method greedy-word-wir "
             "--transformation word-swap-wordnet --constraints cola^max_diff=0.1 bert-score^min_bert_score=0.7 "
         ),
         "tests/sample_outputs/run_attack_cnn_cola.txt",
@@ -162,7 +162,7 @@ attack_test_params = [
     (
         "run_attack_gradient_greedy_word_wir",
         (
-            "eukaryote attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' "
+            "python -m eukaryote attack --model bert-base-uncased-mr --num-examples 3 --num-examples-offset 45 --search greedy-word-wir^wir_method=\\'gradient\\' "
             "--transformation word-swap-embedding --constraints repeat stopword "
         ),
         "tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt",

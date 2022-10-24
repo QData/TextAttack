@@ -6,14 +6,24 @@ AugmenterArgs Class
 
 from dataclasses import dataclass
 
+# AUGMENTATION_RECIPE_NAMES = {
+#     "wordnet": "textattack.augmentation.WordNetAugmenter",
+#     "embedding": "textattack.augmentation.EmbeddingAugmenter",
+#     "charswap": "textattack.augmentation.CharSwapAugmenter",
+#     "eda": "textattack.augmentation.EasyDataAugmenter",
+#     "checklist": "textattack.augmentation.CheckListAugmenter",
+#     "clare": "textattack.augmentation.CLAREAugmenter",
+#     "back_trans": "textattack.augmentation.BackTranslationAugmenter",
+# }
+
 AUGMENTATION_RECIPE_NAMES = {
-    "wordnet": "textattack.augmentation.WordNetAugmenter",
-    "embedding": "textattack.augmentation.EmbeddingAugmenter",
-    "charswap": "textattack.augmentation.CharSwapAugmenter",
-    "eda": "textattack.augmentation.EasyDataAugmenter",
-    "checklist": "textattack.augmentation.CheckListAugmenter",
-    "clare": "textattack.augmentation.CLAREAugmenter",
-    "back_trans": "textattack.augmentation.BackTranslationAugmenter",
+    "wordnet": "eukaryote.augmentation.WordNetAugmenter",
+    "embedding": "eukaryote.augmentation.EmbeddingAugmenter",
+    "charswap": "eukaryote.augmentation.CharSwapAugmenter",
+    "eda": "eukaryote.augmentation.EasyDataAugmenter",
+    "checklist": "eukaryote.augmentation.CheckListAugmenter",
+    "clare": "eukaryote.augmentation.CLAREAugmenter",
+    "back_trans": "eukaryote.augmentation.BackTranslationAugmenter",
 }
 
 

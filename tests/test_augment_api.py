@@ -1,3 +1,13 @@
+try:
+    import eukaryote
+except ModuleNotFoundError:
+    # one can do test locally without installing textattack
+    import pathlib
+    import sys
+
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
+    import eukaryote
+
 def test_imports():
     import torch
 
@@ -46,7 +56,7 @@ def test_charwap_augmenter():
     s = "To be or not to be"
     augmented_text_list = augmenter.augment(s)
     augmented_s = "T be or not to be"
-    assert augmented_s in augmented_text_list
+    assert augmented_s in augmented_text_list, f"expected {augmented_s} in {augmented_text_list}"
 
 
 def test_easydata_augmenter():
@@ -116,10 +126,16 @@ def test_high_yield_fast_augment():
         >= len(augmented_text_list_fa)
         >= len(augmented_text_list)
     )
+    # if (not check1) and len(augmented_text_list_hy) < len(augmented_text_list_fa):
+    #     print("len(augmented_text_list_hy) < len(augmented_text_list_fa)")
+    # elif not check1 and len(augmented_text_list_fa) < len(augmented_text_list):
+    #     print("len(augmented_text_list_fa) < len(augmented_text_list)")
+
     check2 = True
     for augmented_text in augmented_text_list:
         if augmented_text not in augmented_text_list_hy:
             check2 = False
+            # print(augmented_text)
             break
 
     assert check1 and check2

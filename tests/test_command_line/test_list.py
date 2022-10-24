@@ -4,7 +4,7 @@ import pytest
 list_test_params = [
     (
         "list_augmentation_recipes",
-        "eukaryote list augmentation-recipes",
+        "python -m eukaryote list augmentation-recipes",
         "tests/sample_outputs/list_augmentation_recipes.txt",
     )
 ]

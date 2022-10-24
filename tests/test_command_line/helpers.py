@@ -1,6 +1,18 @@
 import shlex
 import subprocess
 
+try:
+    import eukaryote
+
+except ModuleNotFoundError:
+    # one can do test locally without installing textattack
+    import pathlib
+    import sys
+
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.parent.resolve()))
+
+    import eukaryote
+
 
 def run_command_and_get_result(command):
     """Runs a command in the console and gets the result.
@@ -28,11 +40,11 @@ def run_command_and_get_result(command):
             procs.append(proc)
         # Run last commmand
         result = subprocess.run(
-            shlex.split(command[-1]), stdin=procs[-1].stdout, stdout=PIPE, stderr=PIPE
+            shlex.split(command[-1]), stdin=procs[-1].stdout, stdout=PIPE, stderr=PIPE,
         )
         # Wait for all intermittent processes
         for proc in procs:
             proc.wait()
     else:
-        result = subprocess.run(shlex.split(command), stdout=PIPE, stderr=PIPE)
+        result = subprocess.run(shlex.split(command), stdout=PIPE, stderr=PIPE, )
     return result

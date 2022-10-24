@@ -1,3 +1,13 @@
+try:
+    import eukaryote
+except ModuleNotFoundError:
+    # one can do test locally without installing textattack
+    import pathlib
+    import sys
+
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
+    import eukaryote
+
 def test_perplexity():
     from eukaryote.attack_results import SuccessfulAttackResult
     from eukaryote.goal_function_results.classification_goal_function_result import (

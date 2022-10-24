@@ -2,7 +2,17 @@ import collections
 
 import pytest
 
-import eukaryote
+#import eukaryote
+
+try:
+    import eukaryote
+except ModuleNotFoundError:
+    # one can do test locally without installing textattack
+    import pathlib
+    import sys
+
+    sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.parent.resolve()))
+    import eukaryote
 
 # a sentence with 23 words
 sentence = "south korea's inflation rate slowed slightly in august as oil and commodity prices showed signs of stabilising, the national statistical office said monday."

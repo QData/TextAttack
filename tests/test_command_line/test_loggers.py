@@ -22,14 +22,14 @@ list_test_params = [
     (
         "json_summary_logger",
         "json",
-        "eukaryote attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-summary-to-json attack_summary.json",
+        "python -m eukaryote attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-summary-to-json attack_summary.json",
         "attack_summary.json",
         "tests/sample_outputs/json_attack_summary.json",
     ),
     (
         "txt_logger",
         "txt",
-        "eukaryote attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-to-txt attack_log.txt",
+        "python -m eukaryote attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-to-txt attack_log.txt",
         "attack_log.txt",
         "tests/sample_outputs/txt_attack_log.txt",
     ),
