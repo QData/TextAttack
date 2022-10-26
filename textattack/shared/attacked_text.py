@@ -82,21 +82,6 @@ class AttackedText:
             return False
         if len(self.attack_attrs) != len(other.attack_attrs):
             return False
-        for key in self.attack_attrs:
-            if key not in other.attack_attrs:
-                return False
-            elif isinstance(self.attack_attrs[key], np.ndarray):
-                if not (self.attack_attrs[key].shape == other.attack_attrs[key].shape):
-                    return False
-                elif not (self.attack_attrs[key] == other.attack_attrs[key]).all():
-                    return False
-            else:
-                if isinstance(self.attack_attrs[key], AttackedText):
-                    if (
-                        not self.attack_attrs[key]._text_input
-                        == other.attack_attrs[key]._text_input
-                    ):
-                        return False
         return True
 
     def __hash__(self):
@@ -576,7 +561,10 @@ class AttackedText:
 
     @property
     def newly_swapped_words(self):
-        return [self.words[i] for i in self.attack_attrs["newly_modified_indices"]]
+        return [
+            self.attack_attrs["prev_attacked_text"].words[i]
+            for i in self.attack_attrs["newly_modified_indices"]
+        ]
 
     def printable_text(self, key_color="bold", key_color_method=None):
         """Represents full text input. Adds field descriptions.

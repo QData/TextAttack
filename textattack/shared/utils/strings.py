@@ -2,8 +2,6 @@ import re
 import string
 
 import flair
-import jieba
-import pycld2 as cld2
 
 from .importing import LazyLoader
 
@@ -32,15 +30,7 @@ def add_indent(s_, numSpaces):
 def words_from_text(s, words_to_ignore=[]):
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
-    try:
-        isReliable, textBytesFound, details = cld2.detect(s)
-        if details[0][0] == "Chinese" or details[0][0] == "ChineseT":
-            seg_list = jieba.cut(s, cut_all=False)
-            s = " ".join(seg_list)
-        else:
-            s = " ".join(s.split())
-    except Exception:
-        s = " ".join(s.split())
+    s = " ".join(s.split())
 
     homos = """˗৭Ȣ𝟕бƼᏎƷᒿlO`ɑЬϲԁе𝚏ɡհіϳ𝒌ⅼｍոорԛⲅѕ𝚝սѵԝ×уᴢ"""
     exceptions = """'-_*@"""
