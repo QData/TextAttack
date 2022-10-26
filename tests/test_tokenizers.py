@@ -3,7 +3,7 @@ import collections
 import pytest
 import transformers
 
-import textattack
+import eukaryote
 
 news_article = """The unemployment rate dropped to 8.2% last
 month, but the economy only added 120,000 jobs,
@@ -36,13 +36,13 @@ def bert_tokenizer():
 
 @pytest.fixture
 def glove_tokenizer():
-    lstm = textattack.models.helpers.LSTMForClassification()
+    lstm = eukaryote.models.helpers.LSTMForClassification()
     return lstm.tokenizer
 
 
 @pytest.fixture
 def lstm():
-    lstm = textattack.models.helpers.LSTMForClassification()
+    lstm = eukaryote.models.helpers.LSTMForClassification()
     return lstm
 
 

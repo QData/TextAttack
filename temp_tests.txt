@@ -1,0 +1,17 @@
+Temporarily running a couple commands whenever I push, to check if everything
+still works. Run from in the TextAttackHMC22-23 directory.
+
+Not running all to completion for time reasons - once I see a progress bar,
+I assume it's fine. For commands that require a model to work with, I just ran
+train all the way through one time and used the path for that output for all
+later tests.
+
+python -m pytest tests
+
+python -m eukaryote train --model-name-or-path distilbert-base-uncased --dataset rotten_tomatoes --model-num-labels 2 --model-max-length 64 --per-device-train-batch-size 128 --num-epochs 1
+python -m eukaryote eval --num-examples 10 --model .\outputs\2022-10-12-21-55-21-981213\best_model --dataset-from-huggingface rotten_tomatoes --dataset-split test
+python -m eukaryote attack --recipe textfooler --num-examples 10 --model .\outputs\2022-10-12-21-55-21-981213\best_model --dataset-from-huggingface rotten_tomatoes --dataset-split test
+
+python -m eukaryote t4a_train --model_huggingface distilbert-base-uncased --dataset_huggingface rotten_tomatoes --save ./my-model-test --epochs 1
+python -m eukaryote t4a_attack_train --model_huggingface .\outputs\2022-10-12-21-55-21-981213\best_model --dataset_huggingface rotten_tomatoes --save ./my-model-after-adversarial-training --attack_recipe textfooler --epochs 1
+python -m eukaryote t4a_attack_eval --model_huggingface .\outputs\2022-10-12-21-55-21-981213\best_model --dataset_huggingface rotten_tomatoes --attack_recipe textfooler

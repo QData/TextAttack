@@ -2,17 +2,17 @@ def test_imports():
     import flair
     import torch
 
-    import textattack
+    import eukaryote
 
-    del textattack, torch, flair
+    del eukaryote, torch, flair
 
 
 def test_word_swap_change_location():
     from flair.data import Sentence
     from flair.models import SequenceTagger
 
-    from textattack.augmentation import Augmenter
-    from textattack.transformations.word_swaps import WordSwapChangeLocation
+    from eukaryote.augmentation import Augmenter
+    from eukaryote.transformations.word_swaps import WordSwapChangeLocation
 
     augmenter = Augmenter(transformation=WordSwapChangeLocation())
     s = "I am in Dallas."
@@ -37,8 +37,8 @@ def test_word_swap_change_name():
     from flair.data import Sentence
     from flair.models import SequenceTagger
 
-    from textattack.augmentation import Augmenter
-    from textattack.transformations.word_swaps import WordSwapChangeName
+    from eukaryote.augmentation import Augmenter
+    from eukaryote.transformations.word_swaps import WordSwapChangeName
 
     augmenter = Augmenter(transformation=WordSwapChangeName())
     s = "My name is Anthony Davis."

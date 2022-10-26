@@ -1,10 +1,10 @@
 def test_perplexity():
-    from textattack.attack_results import SuccessfulAttackResult
-    from textattack.goal_function_results.classification_goal_function_result import (
+    from eukaryote.attack_results import SuccessfulAttackResult
+    from eukaryote.goal_function_results.classification_goal_function_result import (
         ClassificationGoalFunctionResult,
     )
-    from textattack.metrics.quality_metrics import Perplexity
-    from textattack.shared.attacked_text import AttackedText
+    from eukaryote.metrics.quality_metrics import Perplexity
+    from eukaryote.shared.attacked_text import AttackedText
 
     sample_text = "hide new secretions from the parental units "
     sample_atck_text = "Ehide enw secretions from the parental units "
@@ -27,11 +27,11 @@ def test_perplexity():
 def test_use():
     import transformers
 
-    from textattack import AttackArgs, Attacker
-    from textattack.attack_recipes import DeepWordBugGao2018
-    from textattack.datasets import HuggingFaceDataset
-    from textattack.metrics.quality_metrics import USEMetric
-    from textattack.models.wrappers import HuggingFaceModelWrapper
+    from eukaryote import AttackArgs, Attacker
+    from eukaryote.attack_recipes import DeepWordBugGao2018
+    from eukaryote.datasets import HuggingFaceDataset
+    from eukaryote.metrics.quality_metrics import USEMetric
+    from eukaryote.models.wrappers import HuggingFaceModelWrapper
 
     model = transformers.AutoModelForSequenceClassification.from_pretrained(
         "distilbert-base-uncased-finetuned-sst-2-english"

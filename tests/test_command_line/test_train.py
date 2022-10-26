@@ -5,7 +5,7 @@ from helpers import run_command_and_get_result
 
 
 def test_train_tiny():
-    command = "textattack train --model distilbert-base-uncased --attack textfooler --dataset rotten_tomatoes --model-max-length 64  --num-epochs 1 --num-clean-epochs 0 --num-train-adv-examples 5"
+    command = "eukaryote train --model distilbert-base-uncased --attack textfooler --dataset rotten_tomatoes --model-max-length 64  --num-epochs 1 --num-clean-epochs 0 --num-train-adv-examples 5"
 
     # Run command and validate outputs.
     result = run_command_and_get_result(command)
