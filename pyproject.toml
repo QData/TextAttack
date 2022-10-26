@@ -38,6 +38,7 @@ jieba = "^0.42.1"
 OpenHowNet = "^2.0"
 pycld2 = "^0.41"
 click = "<8.1.0"
+stanza = "^1.4.2"
 
 
 [build-system]

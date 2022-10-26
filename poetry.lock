@@ -312,6 +312,17 @@ optional = false
 python-versions = ">=3.5"
 
 [[package]]
+name = "emoji"
+version = "2.1.0"
+description = "Emoji for Python"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+
+[package.extras]
+dev = ["coverage", "coveralls", "pytest"]
+
+[[package]]
 name = "etils"
 version = "0.8.0"
 description = "Collection of common python utils"
@@ -1619,6 +1630,28 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "stanza"
+version = "1.4.2"
+description = "A Python NLP Library for Many Human Languages, by the Stanford NLP Group"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+emoji = "*"
+numpy = "*"
+protobuf = "*"
+requests = "*"
+six = "*"
+torch = ">=1.3.0"
+tqdm = "*"
+
+[package.extras]
+dev = ["check-manifest"]
+test = ["coverage", "pytest"]
+transformers = ["transformers (>=3.0.0)"]
+
+[[package]]
 name = "tabulate"
 version = "0.8.10"
 description = "Pretty-print tabular data"
@@ -2276,7 +2309,7 @@ testing = ["func-timeout", "jaraco.itertools", "pytest (>=6)", "pytest-black (>=
 [metadata]
 lock-version = "1.1"
 python-versions = "3.7.1"
-content-hash = "1cde3028cf02e3c4c31d5bbacd7b9373e8c007888373490d0033fb3bb52f05c2"
+content-hash = "396655d7d68fecf8a746e2e540e208c8142d45f97856b364eccd25506a47b45a"
 
 [metadata.files]
 absl-py = [
@@ -2573,6 +2606,9 @@ editdistance = [
     {file = "editdistance-0.6.0-pp37-pypy37_pp73-manylinux2010_x86_64.whl", hash = "sha256:0ea7576c3173b27413d8200c00e69659149f8963be5fff8c2f37a05d619c1440"},
     {file = "editdistance-0.6.0-pp37-pypy37_pp73-win32.whl", hash = "sha256:a5750d11aa7eb960f0524e49a3fa2f941ba491cf18afc80a407405295ce6ab0b"},
     {file = "editdistance-0.6.0.tar.gz", hash = "sha256:82de4fb7c6a87c7c2978e5f509dc790e8657b264edbaf87ca6869e2022aa220e"},
+]
+emoji = [
+    {file = "emoji-2.1.0.tar.gz", hash = "sha256:56a8c5e906c11694eb7694b78e5452d745030869b3945f6306a8151ff5cdbc39"},
 ]
 etils = [
     {file = "etils-0.8.0-py3-none-any.whl", hash = "sha256:b6299d2a835206b063498e443bd8036edb974058899169677dd6ddb92430bb84"},
@@ -3881,6 +3917,10 @@ soupsieve = [
 ]
 sqlitedict = [
     {file = "sqlitedict-2.0.0.tar.gz", hash = "sha256:23a370416f4e1e962daa293382f3a8dbc4127e6a0abc06a5d4e58e6902f05d17"},
+]
+stanza = [
+    {file = "stanza-1.4.2-py3-none-any.whl", hash = "sha256:0f2c9d9f6f37cfe96dd77e441f7f9e62fa2484850a748e72c494163eb23827b2"},
+    {file = "stanza-1.4.2.tar.gz", hash = "sha256:2f4780ee05e4920392eebef05e1632838e68c98eccc9cc9259f37ab7a00ba700"},
 ]
 tabulate = [
     {file = "tabulate-0.8.10-py3-none-any.whl", hash = "sha256:0ba055423dbaa164b9e456abe7920c5e8ed33fcc16f6d1b2f2d152c8e1e8b4fc"},

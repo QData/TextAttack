@@ -180,6 +180,7 @@ class AugmentCommand(TextAttackCommand):
                 f"Read {len(rows)} rows from {args.input_csv}. Found columns {row_keys}."
             )
 
+            #print(AUGMENTATION_RECIPE_NAMES[args.recipe])
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
                 pct_words_to_swap=args.pct_words_to_swap,
                 transformations_per_example=args.transformations_per_example,
