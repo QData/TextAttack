@@ -4,15 +4,21 @@
 
 ## Installation
 - Clone the source repository: 
-```
-git clone git@github.com:kjohnson3595/TextAttackHMC22-23.git
-```
+```$ git clone git@github.com:kjohnson3595/TextAttackHMC22-23.git```
 
 - Install all runtime and development dependencies in a new conda env:
-```
-conda create -f env.yml
-conda activate t4a
-```
+```conda create -f env.yml
+$ conda activate t4a```
+
+## Running tests
+Tests will run by default every time you push code to a new branch (for now). Before pushing, it's generally a good idea to run the tests on your own machine.
+If you aren't working on code coverage and just want to run tests, run the following command:
+
+```$ pytest tests -v```
+
+If you want to assess test coverage, run the following commands:
+1. ```$ coverage run -m pytest tests```
+2. ```$ coverage report -m``` (this will print a nice report of per-file and overall code coverage)
 
 
 ## Citing TextAttack
