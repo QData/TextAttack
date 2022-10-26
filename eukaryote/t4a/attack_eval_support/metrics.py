@@ -103,15 +103,11 @@ def calculate_multiclass_metrics(y_true, y_pred, y_scores, class_labels=None):
 
     scores[~y_true_present] = np.nan
     for i in range(num_classes):
-        metric_labels[
-            f"precision_class{i}"
-        ] = f"Precision (class={class_label(i)})"
+        metric_labels[f"precision_class{i}"] = f"Precision (class={class_label(i)})"
         metrics[f"precision_class{i}"] = scores[i]
 
     # Recall
-    scores = sklearn.metrics.recall_score(
-        y_true, y_pred, average=None, zero_division=0
-    )
+    scores = sklearn.metrics.recall_score(y_true, y_pred, average=None, zero_division=0)
     scores.resize(num_classes)
 
     metric_labels["recall_weighted"] = "Recall [weighted avg]"
@@ -123,9 +119,7 @@ def calculate_multiclass_metrics(y_true, y_pred, y_scores, class_labels=None):
         metrics[f"recall_class{i}"] = scores[i]
 
     # F1 score
-    scores = sklearn.metrics.recall_score(
-        y_true, y_pred, average=None, zero_division=0
-    )
+    scores = sklearn.metrics.recall_score(y_true, y_pred, average=None, zero_division=0)
     scores.resize(num_classes)
 
     metric_labels["f1_score_weighted"] = "F1 Score [weighted avg]"
@@ -133,18 +127,12 @@ def calculate_multiclass_metrics(y_true, y_pred, y_scores, class_labels=None):
 
     scores[~y_true_present & ~y_pred_present] = np.nan
     for i in range(num_classes):
-        metric_labels[
-            f"f1_score_class{i}"
-        ] = f"F1 Score (class={class_label(i)})"
+        metric_labels[f"f1_score_class{i}"] = f"F1 Score (class={class_label(i)})"
         metrics[f"f1_score_class{i}"] = scores[i]
 
     # ROC AUC
-    metric_labels[
-        "roc_auc_weighted_ovr"
-    ] = "ROC AUC [weighted avg] [one-vs-rest]"
-    metric_labels[
-        "roc_auc_weighted_ovo"
-    ] = "ROC AUC [weighted avg] [one-vs-one]"
+    metric_labels["roc_auc_weighted_ovr"] = "ROC AUC [weighted avg] [one-vs-rest]"
+    metric_labels["roc_auc_weighted_ovo"] = "ROC AUC [weighted avg] [one-vs-one]"
     if np.all(y_true_present):
         metrics["roc_auc_weighted_ovr"] = sklearn.metrics.roc_auc_score(
             y_true, y_scores, average="weighted", multi_class="ovr"
@@ -156,13 +144,9 @@ def calculate_multiclass_metrics(y_true, y_pred, y_scores, class_labels=None):
         metrics["roc_auc_weighted_ovr"] = np.nan
         metrics["roc_auc_weighted_ovo"] = np.nan
     for i in range(num_classes):
-        metric_labels[
-            f"roc_auc_class{i}"
-        ] = f"ROC AUC (class={class_label(i)})"
+        metric_labels[f"roc_auc_class{i}"] = f"ROC AUC (class={class_label(i)})"
         if y_true_present[i]:
-            fpr, tpr, _ = sklearn.metrics.roc_curve(
-                Y_true[:, i], y_scores[:, i]
-            )
+            fpr, tpr, _ = sklearn.metrics.roc_curve(Y_true[:, i], y_scores[:, i])
             metrics[f"roc_auc_class{i}"] = sklearn.metrics.auc(fpr, tpr)
         else:
             metrics[f"roc_auc_class{i}"] = np.nan
@@ -175,12 +159,8 @@ def calculate_multiclass_metrics(y_true, y_pred, y_scores, class_labels=None):
                 Y_true[:, i], y_scores[:, i]
             )
 
-    metric_labels[
-        "average_precision_weighted"
-    ] = "Average Precision [weighted avg]"
-    metrics["average_precision_weighted"] = np.average(
-        scores, weights=y_true_count
-    )
+    metric_labels["average_precision_weighted"] = "Average Precision [weighted avg]"
+    metrics["average_precision_weighted"] = np.average(scores, weights=y_true_count)
 
     scores[~y_true_present] = np.nan
     for i in range(num_classes):

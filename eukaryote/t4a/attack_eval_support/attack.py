@@ -114,9 +114,7 @@ class MultiAttacker:
         if num_attacks is not None:
             if isinstance(attack_build_args, list):
                 if len(attack_build_args) != num_attacks:
-                    raise ValueError(
-                        "Unequal number of attack build args and attacks"
-                    )
+                    raise ValueError("Unequal number of attack build args and attacks")
             else:
                 if attack_build_args is None:
                     attack_build_args = {}
@@ -128,40 +126,28 @@ class MultiAttacker:
         self.attacks = []
         self.labels = []
         if perturbation_budgets is not None:
-            for pb, attack_build_kwargs in zip(
-                perturbation_budgets, attack_build_args
-            ):
-                attack = attack_recipe.build(
-                    model_wrapper, **attack_build_kwargs
-                )
+            for pb, attack_build_kwargs in zip(perturbation_budgets, attack_build_args):
+                attack = attack_recipe.build(model_wrapper, **attack_build_kwargs)
                 if pb is not None:
                     if isinstance(pb, dict):
                         pb_constraint = perturbation_budget_class(**pb)
                     else:
                         pb_constraint = perturbation_budget_class(pb)
                     if isinstance(pb_constraint, PreTransformationConstraint):
-                        attack.pre_transformation_constraints.append(
-                            pb_constraint
-                        )
+                        attack.pre_transformation_constraints.append(pb_constraint)
                     else:
                         attack.constraints.append(pb_constraint)
                 self.attacks.append(attack)
                 self.labels.append(f"Attack (pb.={pb})")
         elif attack_strengths is not None:
-            for qb, attack_build_kwargs in zip(
-                attack_strengths, attack_build_args
-            ):
-                attack = attack_recipe.build(
-                    model_wrapper, **attack_build_kwargs
-                )
+            for qb, attack_build_kwargs in zip(attack_strengths, attack_build_args):
+                attack = attack_recipe.build(model_wrapper, **attack_build_kwargs)
                 if qb is not None:
                     attack.goal_function.query_budget = qb
                 self.attacks.append(attack)
                 self.labels.append(f"Attack (as.={qb})")
         else:
-            self.attacks.append(
-                attack_recipe.build(model_wrapper, **attack_build_args)
-            )
+            self.attacks.append(attack_recipe.build(model_wrapper, **attack_build_args))
             self.labels.append("Attack")
 
         # Construct attack args

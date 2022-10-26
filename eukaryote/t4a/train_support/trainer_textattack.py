@@ -17,7 +17,7 @@ from eukaryote.attack_results import (
 from eukaryote.attacker import Attacker
 from eukaryote.shared.utils import logger
 
-from eukaryote.trainer import Trainer
+# from eukaryote.trainer import Trainer # commented out bc linter claims it's unused, keeping in case it's actually needed
 
 
 class T4A_Trainer(eukaryote.Trainer):
@@ -78,9 +78,7 @@ class T4A_Trainer(eukaryote.Trainer):
                 if isinstance(_input, collections.OrderedDict):
                     if "adv" in _input:
                         is_adv_sample.append(True)
-                        _input = tuple(
-                            v for k, v in _input.items() if k != "adv"
-                        )
+                        _input = tuple(v for k, v in _input.items() if k != "adv")
                     else:
                         is_adv_sample.append(False)
                         _input = tuple(_input.values())
@@ -198,9 +196,7 @@ class T4A_Trainer(eukaryote.Trainer):
                 os.makedirs(self.training_args.output_dir)
 
             # Save logger writes to file
-            log_txt_path = os.path.join(
-                self.training_args.output_dir, "train_log.txt"
-            )
+            log_txt_path = os.path.join(self.training_args.output_dir, "train_log.txt")
             fh = logging.FileHandler(log_txt_path)
             fh.setLevel(logging.DEBUG)
             logger.addHandler(fh)
@@ -222,12 +218,8 @@ class T4A_Trainer(eukaryote.Trainer):
             # TODO: torch.nn.parallel.DistributedDataParallel
             # Supposedly faster than DataParallel, but requires more work to setup properly.
             model = torch.nn.DataParallel(model)
-            logger.info(
-                f"Training on {num_gpus} GPUs via `torch.nn.DataParallel`."
-            )
-            train_batch_size = (
-                self.training_args.per_device_train_batch_size * num_gpus
-            )
+            logger.info(f"Training on {num_gpus} GPUs via `torch.nn.DataParallel`.")
+            train_batch_size = self.training_args.per_device_train_batch_size * num_gpus
         else:
             train_batch_size = self.training_args.per_device_train_batch_size
 
@@ -239,27 +231,16 @@ class T4A_Trainer(eukaryote.Trainer):
         total_clean_training_steps = (
             math.ceil(
                 self.num_train_examples
-                / (
-                    train_batch_size
-                    * self.training_args.gradient_accumulation_steps
-                )
+                / (train_batch_size * self.training_args.gradient_accumulation_steps)
             )
             * num_clean_epochs
         )
         total_adv_training_steps = math.ceil(
-            (
-                self.num_train_examples
-                + self.training_args.num_train_adv_examples
-            )
-            / (
-                train_batch_size
-                * self.training_args.gradient_accumulation_steps
-            )
+            (self.num_train_examples + self.training_args.num_train_adv_examples)
+            / (train_batch_size * self.training_args.gradient_accumulation_steps)
         ) * (self.training_args.num_epochs - num_clean_epochs)
 
-        total_training_steps = (
-            total_clean_training_steps + total_adv_training_steps
-        )
+        total_training_steps = total_clean_training_steps + total_adv_training_steps
 
         optimizer, scheduler = self.get_optimizer_and_scheduler(
             model, total_training_steps
@@ -286,9 +267,7 @@ class T4A_Trainer(eukaryote.Trainer):
         adv_dataset = None
 
         for epoch in range(1, self.training_args.num_epochs + 1):
-            logger.info(
-                "=========================================================="
-            )
+            logger.info("==========================================================")
             logger.info(f"Epoch {epoch}")
 
             if self.attack and epoch > num_clean_epochs:
@@ -347,9 +326,7 @@ class T4A_Trainer(eukaryote.Trainer):
                 all_is_adv_sample.append(is_adv_sample)
                 all_targets.append(targets)
 
-                if (
-                    step + 1
-                ) % self.training_args.gradient_accumulation_steps == 0:
+                if (step + 1) % self.training_args.gradient_accumulation_steps == 0:
                     optimizer.step()
                     if scheduler:
                         scheduler.step()
@@ -363,9 +340,7 @@ class T4A_Trainer(eukaryote.Trainer):
 
                 # TODO: Better way to handle TB and Wandb logging
                 if (self._global_step > 0) and (
-                    self._global_step
-                    % self.training_args.logging_interval_step
-                    == 0
+                    self._global_step % self.training_args.logging_interval_step == 0
                 ):
                     lr_to_log = (
                         scheduler.get_last_lr()[0]
@@ -426,9 +401,7 @@ class T4A_Trainer(eukaryote.Trainer):
                     "train/pearson_correlation": pearson_correlation,
                     "train/pearson_pvalue": pearson_pvalue,
                 }
-                logger.info(
-                    f"Train Pearson correlation: {pearson_correlation:.4f}%"
-                )
+                logger.info(f"Train Pearson correlation: {pearson_correlation:.4f}%")
 
             if len(targets) > 0:
                 if self.training_args.log_to_tb:
@@ -442,9 +415,7 @@ class T4A_Trainer(eukaryote.Trainer):
                 eval_score = self.evaluate()
 
                 if self.training_args.log_to_tb:
-                    self._tb_log(
-                        {f"eval/{self._metric_name}": eval_score}, epoch
-                    )
+                    self._tb_log({f"eval/{self._metric_name}": eval_score}, epoch)
                 if self.training_args.log_to_wandb:
                     self._wandb_log(
                         {
@@ -456,8 +427,7 @@ class T4A_Trainer(eukaryote.Trainer):
 
                 if (
                     self.training_args.checkpoint_interval_epochs
-                    and (epoch % self.training_args.checkpoint_interval_epochs)
-                    == 0
+                    and (epoch % self.training_args.checkpoint_interval_epochs) == 0
                     and not self.disable_save
                 ):
                     self._save_model_checkpoint(model, tokenizer, epoch=epoch)
@@ -467,9 +437,7 @@ class T4A_Trainer(eukaryote.Trainer):
                     best_eval_score_epoch = epoch
                     epochs_since_best_eval_score = 0
                     if not self.disable_save:
-                        self._save_model_checkpoint(
-                            model, tokenizer, best=True
-                        )
+                        self._save_model_checkpoint(model, tokenizer, best=True)
                         logger.info(
                             f"Best score found. Saved model to {self.training_args.output_dir}/best_model/"
                         )
@@ -514,18 +482,14 @@ class T4A_Trainer(eukaryote.Trainer):
                     model = model.__class__.from_pretrained(best_model_path)
                 else:
                     model = model.load_state_dict(
-                        torch.load(
-                            os.path.join(best_model_path, "pytorch_model.bin")
-                        )
+                        torch.load(os.path.join(best_model_path, "pytorch_model.bin"))
                     )
 
             if self.training_args.save_last:
                 self._save_model_checkpoint(model, tokenizer, last=True)
 
             self.model_wrapper.model = model
-            self._write_readme(
-                best_eval_score, best_eval_score_epoch, train_batch_size
-            )
+            self._write_readme(best_eval_score, best_eval_score_epoch, train_batch_size)
 
     def _generate_adversarial_examples(self, epoch):
         """Generate adversarial examples using attacker.
@@ -538,17 +502,12 @@ class T4A_Trainer(eukaryote.Trainer):
             self.attack is not None
         ), "`attack` is `None` but attempting to generate adversarial examples."
         base_file_name = f"attack-train-{epoch}"
-        log_file_name = os.path.join(
-            self.training_args.output_dir, base_file_name
-        )
-        logger.info(
-            "Attacking model to generate new adversarial training set..."
-        )
+        log_file_name = os.path.join(self.training_args.output_dir, base_file_name)
+        logger.info("Attacking model to generate new adversarial training set...")
 
         if isinstance(self.training_args.num_train_adv_examples, float):
             num_train_adv_examples = math.ceil(
-                len(self.train_dataset)
-                * self.training_args.num_train_adv_examples
+                len(self.train_dataset) * self.training_args.num_train_adv_examples
             )
         else:
             num_train_adv_examples = self.training_args.num_train_adv_examples
@@ -562,29 +521,18 @@ class T4A_Trainer(eukaryote.Trainer):
             num_workers_per_device=self.training_args.attack_num_workers_per_device,
             disable_stdout=True,
             silent=True,
-            log_to_txt=log_file_name + ".txt"
-            if not self.disable_save
-            else None,
-            log_to_csv=log_file_name + ".csv"
-            if not self.disable_save
-            else None,
+            log_to_txt=log_file_name + ".txt" if not self.disable_save else None,
+            log_to_csv=log_file_name + ".csv" if not self.disable_save else None,
         )
 
-        attacker = Attacker(
-            self.attack, self.train_dataset, attack_args=attack_args
-        )
+        attacker = Attacker(self.attack, self.train_dataset, attack_args=attack_args)
         results = attacker.attack_dataset()
 
-        attack_types = collections.Counter(
-            r.__class__.__name__ for r in results
-        )
+        attack_types = collections.Counter(r.__class__.__name__ for r in results)
         total_attacks = (
-            attack_types["SuccessfulAttackResult"]
-            + attack_types["FailedAttackResult"]
+            attack_types["SuccessfulAttackResult"] + attack_types["FailedAttackResult"]
         )
-        success_rate = (
-            attack_types["SuccessfulAttackResult"] / total_attacks * 100
-        )
+        success_rate = attack_types["SuccessfulAttackResult"] / total_attacks * 100
         logger.info(f"Total number of attack results: {len(results)}")
         logger.info(
             f"Attack success rate: {success_rate:.2f}% [{attack_types['SuccessfulAttackResult']} / {total_attacks}]"
@@ -593,9 +541,7 @@ class T4A_Trainer(eukaryote.Trainer):
         adversarial_examples = [
             (
                 (
-                    tuple(
-                        r.perturbed_result.attacked_text._text_input.values()
-                    )
+                    tuple(r.perturbed_result.attacked_text._text_input.values())
                     + (True,)
                 ),
                 r.perturbed_result.ground_truth_output,

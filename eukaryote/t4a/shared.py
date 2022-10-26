@@ -159,18 +159,14 @@ def add_arguments_train(parser, default_split_eval=None):
         default=default_split_eval,
         help="Name of dataset split for validation while training",
     )
-    group.add_argument(
-        "--epochs", type=int, help="Stop training after n epochs"
-    )
+    group.add_argument("--epochs", type=int, help="Stop training after n epochs")
     group.add_argument(
         "--early_stopping_epochs",
         type=int,
         help="Stop training when validation increases for m epochs",
     )
     group.add_argument("--learning_rate", type=float, help="Learning rate")
-    group.add_argument(
-        "--batch_size", type=int, help="Batch size (per device)"
-    )
+    group.add_argument("--batch_size", type=int, help="Batch size (per device)")
 
 
 def load_model_wrapper(args):
