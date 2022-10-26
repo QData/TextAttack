@@ -17,7 +17,7 @@ from eukaryote.attack_results import (
 from eukaryote.attacker import Attacker
 from eukaryote.shared.utils import logger
 
-from eukaryote.trainer import Trainer
+#from eukaryote.trainer import Trainer # commented out bc linter claims it's unused, keeping in case it's actually needed
 
 
 class T4A_Trainer(eukaryote.Trainer):
