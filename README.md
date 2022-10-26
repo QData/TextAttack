@@ -8,6 +8,7 @@
 
 2. Install all runtime and development dependencies in a new conda env:
 ```$ conda create -f env.yml```
+
 ```$ conda activate t4a```
 
 ## Running tests
@@ -17,7 +18,8 @@ If you aren't working on code coverage and just want to run tests, run the follo
 
 If you want to assess test coverage, run the following commands:
 1. ```$ coverage run -m pytest tests```
-2. ```$ coverage report -m``` (this will print a nice report of per-file and overall code coverage)
+2. 
+3. ```$ coverage report -m``` (this will print a nice report of per-file and overall code coverage)
 
 
 ## Citing TextAttack
