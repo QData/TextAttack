@@ -3,7 +3,10 @@ import numpy as np
 import sklearn.metrics
 from tabulate import tabulate
 
-from eukaryote.t4a.attack_eval_support.metrics import calculate_binary_metrics, calculate_multiclass_metrics
+from eukaryote.t4a.attack_eval_support.metrics import (
+    calculate_binary_metrics,
+    calculate_multiclass_metrics,
+)
 
 
 def default_attack_labels(n):
@@ -209,11 +212,7 @@ class Results:
         with np.load(path) as data:
             return cls(
                 data["attack_labels"].tolist(),
-                (
-                    data["class_labels"].tolist()
-                    if "class_labels" in data
-                    else None
-                ),
+                (data["class_labels"].tolist() if "class_labels" in data else None),
                 data["y_true"],
                 data["y_original_pred"],
                 data["y_original_scores"],
@@ -280,9 +279,7 @@ class Results:
             raise ValueError("Unequal number of attack labels and results")
 
         if class_labels is None:
-            class_labels = example_result.attacked_text.attack_attrs.get(
-                "label_names"
-            )
+            class_labels = example_result.attacked_text.attack_attrs.get("label_names")
         if class_labels is not None and len(class_labels) != num_classes:
             class_labels = None
 
@@ -297,17 +294,11 @@ class Results:
         for i, attack_results in enumerate(attack_results_list):
             for j, attack_result in enumerate(attack_results):
                 if i == 0:
-                    y_true[
-                        j
-                    ] = attack_result.original_result.ground_truth_output
+                    y_true[j] = attack_result.original_result.ground_truth_output
                     y_original_pred[j] = attack_result.original_result.output
-                    y_original_scores[
-                        j
-                    ] = attack_result.original_result.raw_output
+                    y_original_scores[j] = attack_result.original_result.raw_output
                 y_attack_pred[i, j] = attack_result.perturbed_result.output
-                y_attack_scores[
-                    i, j
-                ] = attack_result.perturbed_result.raw_output
+                y_attack_scores[i, j] = attack_result.perturbed_result.raw_output
 
         return cls(
             attack_labels,

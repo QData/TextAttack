@@ -1,7 +1,8 @@
 import eukaryote.t4a.shared as shared
-import eukaryote.t4a.train_support.train_textattack as train
+import eukaryote.t4a.train_support as train
 
 from eukaryote.commands import TextAttackCommand
+
 
 class T4A_AttackTrainCommand(TextAttackCommand):
     def run(self, args):

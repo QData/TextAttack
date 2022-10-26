@@ -3,6 +3,7 @@ import eukaryote.t4a.attack_eval_support.attack as attack_eval
 
 from eukaryote.commands import TextAttackCommand
 
+
 class T4A_AttackEvalCommand(TextAttackCommand):
     def run(self, args):
         """Runs an attack with a perturbation budget and strength, and then prints out a table"""
