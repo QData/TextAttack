@@ -59,7 +59,7 @@ class MinimizeBleu(TextToTextGoalFunction):
             return ["maximizable", "target_bleu"]
 
 
-@functools.lru_cache(maxsize=2**12)
+@functools.lru_cache(maxsize=2 ** 12)
 def get_bleu(a, b):
     ref = a.words
     hyp = b.words

@@ -1,4 +1,3 @@
-
 try:
     import eukaryote
 except ModuleNotFoundError:
@@ -8,6 +7,7 @@ except ModuleNotFoundError:
 
     sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
     import eukaryote
+
 
 def test_perplexity():
     from eukaryote.attack_results import SuccessfulAttackResult

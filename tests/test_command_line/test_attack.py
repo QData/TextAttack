@@ -14,7 +14,6 @@ attack_test_params = [
     #
     # test loading an attack from file
     #
-
     (
         "attack_from_file",
         (
@@ -24,13 +23,9 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_from_file.txt",
     ),
-
-
     #
     # test interactive mode
     #
-
-
     (
         "interactive_mode",
         (
@@ -39,12 +34,9 @@ attack_test_params = [
         ),
         "tests/sample_outputs/interactive_mode.txt",
     ),
-
-
     #
     # test loading an attack from the transformers model hub and calculate perplexity and use
     #
-
     (
         "attack_from_transformers_adv_metrics",
         (
@@ -56,12 +48,9 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_transformers_datasets_adv_metrics.txt",
     ),
-
     #
     # test running an attack by loading a model and dataset from file
     #
-    
-    
     (
         "load_model_and_dataset_from_file",
         (
@@ -72,13 +61,9 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_transformers_datasets.txt",
     ),
-
-
     #
     # test hotflip on 10 samples from LSTM MR and calculate perplexity and use
     #
-
-
     (
         "run_attack_hotflip_lstm_mr_4_adv_metrics",
         (
@@ -87,13 +72,9 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_hotflip_lstm_mr_4_adv_metrics.txt",
     ),
-
-
     #
     # test: run_attack deepwordbug attack on 10 samples from LSTM MR
     #
-
-
     (
         "run_attack_deepwordbug_lstm_mr_2",
         (
@@ -101,8 +82,6 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_deepwordbug_lstm_mr_2.txt",
     ),
-
-
     # #
     # # test: run_attack targeted classification of class 2 on BERT MNLI with log-to-csv
     # #   and attack_n set, using the WordNet transformation and beam search with
@@ -134,8 +113,6 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_flair_pos_tagger_bert_score.txt",
     ),
-
-
     # fmt: on
     #
     # # test: run_attack on LSTM MR using word embedding transformation and genetic algorithm.
@@ -151,8 +128,6 @@ attack_test_params = [
     #
     # test: run_attack with kuleshov recipe and sst-2 cnn
     #
-
-
     (
         "run_attack_kuleshov_nn",
         (
@@ -161,12 +136,9 @@ attack_test_params = [
         ),
         "tests/sample_outputs/kuleshov_cnn_sst_2.txt",
     ),
-
-
     #
     # test: run_attack on LSTM MR using word embedding transformation and greedy search with Stanza part-of-speech tagger as a constraint
     #
-
     (
         "run_attack_stanza_pos_tagger",
         (
@@ -175,7 +147,6 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_stanza_pos_tagger.txt",
     ),
-
     #
     # test: run_attack on CNN Yelp using the WordNet transformation and greedy search WIR
     #   with a CoLA constraint and BERT score
@@ -190,8 +161,6 @@ attack_test_params = [
     ),
     # test: run_attack on BERT MR using gradient-ranking greedy-word-wir.
     #
-
-
     (
         "run_attack_gradient_greedy_word_wir",
         (
@@ -200,8 +169,6 @@ attack_test_params = [
         ),
         "tests/sample_outputs/run_attack_gradient_greedy_word_wir.txt",
     ),
-
-
 ]
 
 

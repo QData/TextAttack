@@ -92,7 +92,9 @@ class WordCNNForClassification(nn.Module):
             :class:`~textattack.models.helpers.WordCNNForClassification` model
         """
         if name_or_path in TEXTATTACK_MODELS:
-            path = utils.download_from_s3(TEXTATTACK_MODELS[name_or_path], skip_if_cached=False)
+            path = utils.download_from_s3(
+                TEXTATTACK_MODELS[name_or_path], skip_if_cached=False
+            )
         else:
             path = name_or_path
 

@@ -8,6 +8,7 @@ from eukaryote.shared.utils import LazyLoader
 
 hub = LazyLoader("tensorflow_hub", globals(), "tensorflow_hub")
 
+
 class UniversalSentenceEncoder(SentenceEncoder):
     """Constraint using similarity between sentence encodings of x and x_adv
     where the text embeddings are created using the Universal Sentence
@@ -28,7 +29,6 @@ class UniversalSentenceEncoder(SentenceEncoder):
         if not self.model:
             self.model = hub.load(self._tfhub_url)
         return self.model(sentences).numpy()
-
 
     def __getstate__(self):
         state = self.__dict__.copy()

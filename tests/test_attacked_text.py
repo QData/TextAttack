@@ -71,7 +71,7 @@ class TestAttackedText:
 
     def test_big_window_around_index(self, attacked_text):
         assert (
-            attacked_text.text_window_around_index(0, 10**5) + "."
+            attacked_text.text_window_around_index(0, 10 ** 5) + "."
         ) == attacked_text.text
 
     def test_window_around_index_start(self, attacked_text):

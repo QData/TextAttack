@@ -2,7 +2,7 @@ import collections
 
 import pytest
 
-#import eukaryote
+# import eukaryote
 
 try:
     import eukaryote

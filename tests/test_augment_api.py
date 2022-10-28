@@ -8,6 +8,7 @@ except ModuleNotFoundError:
     sys.path.insert(0, str(pathlib.Path(__file__).parent.parent.resolve()))
     import eukaryote
 
+
 def test_imports():
     import torch
 
@@ -56,7 +57,9 @@ def test_charwap_augmenter():
     s = "To be or not to be"
     augmented_text_list = augmenter.augment(s)
     augmented_s = "T be or not to be"
-    assert augmented_s in augmented_text_list, f"expected {augmented_s} in {augmented_text_list}"
+    assert (
+        augmented_s in augmented_text_list
+    ), f"expected {augmented_s} in {augmented_text_list}"
 
 
 def test_easydata_augmenter():
