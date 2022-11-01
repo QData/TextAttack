@@ -82,7 +82,11 @@ class AttackedText:
         and it's actually much faster (cache-wise) to just compare
         by the text, and this works for lots of use cases.
         """
-        return self.text == other.text
+        if not (self.text == other.text):
+            return False
+        if len(self.attack_attrs) != len(other.attack_attrs):
+            return False
+        return True
 
     def __hash__(self) -> int:
         return hash(self.text)
@@ -466,9 +470,6 @@ class AttackedText:
             perturbed_text += adv_word_seq
         perturbed_text += original_text  # Add all of the ending punctuation.
 
-        # Add pointer to self so chain of replacements can be reconstructed.
-        new_attack_attrs["prev_attacked_text"] = self
-
         # Reform perturbed_text into an OrderedDict.
         perturbed_input_texts = perturbed_text.split(AttackedText.SPLIT_TOKEN)
         perturbed_input = OrderedDict(
@@ -570,7 +571,10 @@ class AttackedText:
 
     @property
     def newly_swapped_words(self) -> List[str]:
-        return [self.words[i] for i in self.attack_attrs["newly_modified_indices"]]
+        return [
+            self.attack_attrs["prev_attacked_text"].words[i]
+            for i in self.attack_attrs["newly_modified_indices"]
+        ]
 
     def printable_text(self, key_color="bold", key_color_method=None) -> str:
         """Represents full text input. Adds field descriptions.
