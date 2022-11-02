@@ -1,0 +1,4 @@
+[run]
+omit = 
+    # We don't care about code coverage of textattack itself.
+    ./textattack/*
