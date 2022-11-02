@@ -11,7 +11,6 @@ import datasets
 import numpy as np
 
 from textattack.datasets import HuggingFaceDataset
-from textattack.datasets.huggingface_dataset import get_datasets_dataset_columns
 
 
 class TedMultiTranslationDataset(HuggingFaceDataset):
