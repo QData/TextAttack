@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections import OrderedDict
 import math
-from typing import Iterable, List, Optional, Set, Tuple
+from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 import flair
 from flair.data import Sentence
