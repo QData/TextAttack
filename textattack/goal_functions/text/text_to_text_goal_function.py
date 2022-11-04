@@ -4,6 +4,7 @@ Goal Function for TextToText
 -------------------------------------------------------
 """
 
+import numpy as np
 
 from textattack.goal_function_results import TextToTextGoalFunctionResult
 from textattack.goal_functions import GoalFunction
@@ -22,7 +23,10 @@ class TextToTextGoalFunction(GoalFunction):
 
     def _process_model_outputs(self, _, outputs):
         """Processes and validates a list of model outputs."""
-        return outputs.flatten()
+        if isinstance(outputs, np.ndarray):
+            return outputs.flatten()
+        else:
+            return outputs
 
     def _get_displayed_output(self, raw_output):
         return raw_output
