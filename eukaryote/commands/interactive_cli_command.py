@@ -24,14 +24,11 @@ class InteractiveCliCommand(TextAttackCommand):
             "Train a model with train",
         ]
         model_choices = [
+            "bert-base-uncased",
             "distilbert-base-uncased",
-            "BERT_mini",
-            "BERT_regular",
-            "BERT_large",
-            "BagOfWords",
         ]
-        dataset_choices = ["rotten_tomatoes"]
-        attack_choices = ["textfooler"]
+        dataset_choices = ["yelp_polarity", "rotten_tomatoes"]
+        attack_choices = ["bert-attack", "deepwordbug", "textfooler"]
 
         questions = [
             {
@@ -68,29 +65,49 @@ class InteractiveCliCommand(TextAttackCommand):
 
         # semi-redundant code here, but I have a feeling keeping them separate is more clear+extensible?
         try:
-            prompt_action = prompt(questions[0], vi_mode=True)  # decide which action to take
+            prompt_action = prompt(
+                questions[0], vi_mode=True
+            )  # decide which action to take
             if prompt_action["action"] == "Attack a model with attack_eval":
-                prompt_args = prompt([questions[i] for i in [1,2,3,4]], vi_mode=True)  # set up to select arbitrary subset of questions
+                prompt_args = prompt(
+                    [questions[i] for i in [1, 2, 3, 4]], vi_mode=True
+                )  # set up to select arbitrary subset of questions
                 fake_parser = ArgumentParser()
                 # copy t4a_attack_eval_command.py's register_subcommand behavior
                 shared.add_arguments_model(fake_parser)
                 shared.add_arguments_dataset(fake_parser, default_split="test")
                 shared.add_arguments_attack(fake_parser)
                 fake_parser.set_defaults(attack=True)
-                fake_args = fake_parser.parse_args([f"--{k}={v}" for k, v in prompt_args.items() if k != 'confirmation']) # format for parser
+                fake_args = fake_parser.parse_args(
+                    [
+                        f"--{k}={v}"
+                        for k, v in prompt_args.items()
+                        if k != "confirmation"
+                    ]
+                )  # format for parser
                 T4A_AttackEvalCommand().run(args=fake_args)
             elif prompt_action["action"] == "Train a model with train":
-                prompt_args = prompt([questions[i] for i in [1,2,4]], vi_mode=True) # no need to ask q3, attack recipe. Set up to select arbitrary subset of questions
+                prompt_args = prompt(
+                    [questions[i] for i in [1, 2, 4]], vi_mode=True
+                )  # no need to ask q3, attack recipe. Set up to select arbitrary subset of questions
                 fake_parser = ArgumentParser()
                 # copy t4a_train_command.py's register_subcommand behavior
                 shared.add_arguments_model(fake_parser)
                 shared.add_arguments_dataset(fake_parser, default_split="train")
                 shared.add_arguments_train(fake_parser, default_split_eval="test")
                 fake_parser.set_defaults(attack=False)
-                fake_args = fake_parser.parse_args([f"--{k}={v}" for k, v in prompt_args.items() if k != 'confirmation']) # format for parser
+                fake_args = fake_parser.parse_args(
+                    [
+                        f"--{k}={v}"
+                        for k, v in prompt_args.items()
+                        if k != "confirmation"
+                    ]
+                )  # format for parser
                 T4A_TrainCommand().run(args=fake_args)
             elif prompt_action["action"] == "Adversarial training with attack_train":
-                prompt_args = prompt([questions[i] for i in [1,2,3,4]], vi_mode=True) # set up to select arbitrary subset of questions
+                prompt_args = prompt(
+                    [questions[i] for i in [1, 2, 3, 4]], vi_mode=True
+                )  # set up to select arbitrary subset of questions
                 fake_parser = ArgumentParser()
                 # copy t4a_attack_train_command.py's register_subcommand behavior
                 shared.add_arguments_model(fake_parser)
@@ -98,7 +115,13 @@ class InteractiveCliCommand(TextAttackCommand):
                 shared.add_arguments_attack(fake_parser)
                 shared.add_arguments_train(fake_parser)
                 fake_parser.set_defaults(attack=True)
-                fake_args = fake_parser.parse_args([f"--{k}={v}" for k, v in prompt_args.items() if k != 'confirmation']) # format for parser
+                fake_args = fake_parser.parse_args(
+                    [
+                        f"--{k}={v}"
+                        for k, v in prompt_args.items()
+                        if k != "confirmation"
+                    ]
+                )  # format for parser
                 T4A_AttackTrainCommand().run(args=fake_args)
         except InvalidArgument:
             print("No available choices")
