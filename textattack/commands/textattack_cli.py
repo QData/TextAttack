@@ -22,7 +22,7 @@ from textattack.commands.train_model_command import TrainModelCommand
 def main():
     parser = argparse.ArgumentParser(
         "TextAttack CLI",
-        usage="[python -m] texattack <command> [<args>]",
+        usage="[python -m] textattack <command> [<args>]",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     subparsers = parser.add_subparsers(help="textattack command helpers")
