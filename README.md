@@ -2,6 +2,22 @@
 
 <p align="center">A lightweight framework for testing adversarial examples on NLP models</p>
 
+# For developers
+
+## Installation
+1. Create a new conda environment with python 3.8:
+```$ conda create -n <env_name> python=3.8```
+
+```$ conda activate <env_name>```
+
+```(<env_name>) $ pip install git+https://github.com/kjohnson3595/TextAttackHMC22-23.git@development```
+
+2. To run our interactive command line interface, run the following command:
+```$ eucli interactive```
+
+
+# Contributing
+
 ## Installation
 1. Clone the source repository: 
 ```$ git clone git@github.com:kjohnson3595/TextAttackHMC22-23.git```
@@ -23,6 +39,8 @@ If you want to assess test coverage, run the following commands:
 ```$ coverage run -m pytest tests```
 
 ```$ coverage report -m``` (this will print a nice report of per-file and overall code coverage)
+
+
 
 
 ## Citing TextAttack
