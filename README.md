@@ -6,6 +6,7 @@
 
 ## Installation
 1. Create a new conda environment with python 3.8:
+
 ```$ conda create -n <env_name> python=3.8```
 
 ```$ conda activate <env_name>```
@@ -20,6 +21,7 @@
 
 ## Installation
 1. Clone the source repository: 
+
 ```$ git clone git@github.com:kjohnson3595/TextAttackHMC22-23.git```
 
 2. Install all runtime and development dependencies in a new conda env:
