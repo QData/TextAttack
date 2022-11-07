@@ -1,11 +1,6 @@
 # Version number is tracked in docs/conf.py.
 import setuptools
 
-from docs import conf as docs_conf
-
-with open("README.md", "r", encoding="utf8") as fh:
-    long_description = fh.read()
-
 extras = {}
 # Packages required for installing docs.
 extras["docs"] = [
@@ -48,16 +43,14 @@ extras["dev"] = (
 )
 
 setuptools.setup(
-    name="textattack",
-    version=docs_conf.release,
-    author="QData Lab at the University of Virginia",
-    author_email="jm8wx@virginia.edu",
-    description="A library for generating text adversarial examples",
+    name="eukaryote",
+    version="0.0.1",
+    url = "https://github.com/kjohnson3595/TextAttackHMC22-23/tree/development/eukaryote",
+    author="HMC Proofpoint clinic team",
+    author_email="dpitt@hmc.edu",
+    description="A library for testing adversarial attacks on language models",
     include_package_data=False,
     license="MIT",
-    long_description=long_description,
-    long_description_content_type="text/markdown",
-    url="https://github.com/QData/textattack",
     packages=setuptools.find_namespace_packages(
         exclude=[
             "build*",
@@ -71,13 +64,13 @@ setuptools.setup(
     ),
     extras_require=extras,
     entry_points={
-        "console_scripts": ["textattack=textattack.commands.textattack_cli:main"],
+        "console_scripts": ["eucli=eukaryote.commands.textattack_cli:main"],
     },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=open("requirements.txt").readlines(),
 )
