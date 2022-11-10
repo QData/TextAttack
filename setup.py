@@ -48,7 +48,7 @@ setuptools.setup(
     url = "https://github.com/kjohnson3595/TextAttackHMC22-23/tree/development/eukaryote",
     author="HMC Proofpoint clinic team",
     author_email="dpitt@hmc.edu",
-    description="A library for testing adversarial attacks on language models",
+    description="EuCLIDS: Eukaryote Command Line Interface for Developers. A library for testing adversarial attacks on language models",
     include_package_data=False,
     license="MIT",
     packages=setuptools.find_namespace_packages(
@@ -64,7 +64,7 @@ setuptools.setup(
     ),
     extras_require=extras,
     entry_points={
-        "console_scripts": ["eucli=eukaryote.commands.textattack_cli:main"],
+        "console_scripts": ["euclids=eukaryote.commands.textattack_cli:main"],
     },
     classifiers=[
         "Programming Language :: Python :: 3",

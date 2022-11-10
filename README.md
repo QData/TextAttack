@@ -30,6 +30,10 @@
 
 ```$ conda activate t4a```
 
+3. Install the eukaryote package:
+
+```$ pip install -e .```
+
 ## Running tests
 Tests will run by default every time you push code to a new branch (for now). Before pushing, it's generally a good idea to run the tests on your own machine.
 If you aren't working on code coverage and just want to run tests, run the following command:
