@@ -22,12 +22,8 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder-multilingual-large/3"
             mirror_tfhub_url = "https://hub.tensorflow.google.cn/google/universal-sentence-encoder-multilingual-large/3"
         else:
-            tfhub_url = (
-                "https://https://tfhub.dev/google/universal-sentence-encoder-multilingual/3"
-            )
-            mirror_tfhub_url = (
-                "https://hub.tensorflow.google.cn/google/universal-sentence-encoder-multilingual/3"
-            )
+            tfhub_url = "https://https://tfhub.dev/google/universal-sentence-encoder-multilingual/3"
+            mirror_tfhub_url = "https://hub.tensorflow.google.cn/google/universal-sentence-encoder-multilingual/3"
 
         # TODO add QA SET. Details at: https://hub.tensorflow.google.cn/google/universal-sentence-encoder-multilingual-qa/3
         self._tfhub_url = tfhub_url

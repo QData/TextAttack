@@ -37,13 +37,15 @@ class SearchMethod(ReprMixin, ABC):
         result = self.perform_search(initial_result)
 
         # The interface for apply adversarial defense, which is able to evaluate adversarial defense's performance
-        reactive_defender = kwargs.get('reactive_defender', None)
+        reactive_defender = kwargs.get("reactive_defender", None)
         if reactive_defender is not None:
             # for pyabsa-based defense
             repaired_res = reactive_defender.repair(result.attacked_text.text)
             # set the repaired result to the goal function result
             # result.restored_text = AttackedText(repaired_res['restored_text'], result.attacked_text.attack_attrs)
-            result.output = int(repaired_res['label'])  # use int() as pyabsa only returns string label, this may cause problem in the future
+            result.output = int(
+                repaired_res["label"]
+            )  # use int() as pyabsa only returns string label, this may cause problem in the future
             if result.output == result.ground_truth_output:
                 result.goal_status = 1
         # ensure that the number of queries for this GoalFunctionResult is up-to-date

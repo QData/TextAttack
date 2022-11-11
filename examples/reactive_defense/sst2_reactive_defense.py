@@ -1,23 +1,25 @@
 import os
 
 from textattack import Attacker
-from textattack.attack_recipes import (PWWSRen2019,
-                                       BAEGarg2019,
-                                       TextFoolerJin2019,
-                                       BERTAttackLi2020,
-                                       GeneticAlgorithmAlzantot2018,
-                                       CLARE2020,
-                                       FasterGeneticAlgorithmJia2019,
-                                       DeepWordBugGao2018,
-                                       PSOZang2020)
+from textattack.attack_recipes import (
+    PWWSRen2019,
+    BAEGarg2019,
+    TextFoolerJin2019,
+    BERTAttackLi2020,
+    GeneticAlgorithmAlzantot2018,
+    CLARE2020,
+    FasterGeneticAlgorithmJia2019,
+    DeepWordBugGao2018,
+    PSOZang2020,
+)
 from textattack.datasets import HuggingFaceDataset
 from textattack.models.wrappers import TADModelWrapper
 from textattack.reactive_defense.tad_reactive_defender import TADReactiveDefender
 
-dataset = HuggingFaceDataset("glue", subset='sst2', split="validation")
+dataset = HuggingFaceDataset("glue", subset="sst2", split="validation")
 
 # init reactive_defender to post fix attacked result
-reactive_defender = TADReactiveDefender('taddeberta-sst2')
+reactive_defender = TADReactiveDefender("taddeberta-sst2")
 
 # use the based tad_classifier (without defense) to test
 target_model = reactive_defender.tad_classifier

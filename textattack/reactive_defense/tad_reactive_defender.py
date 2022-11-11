@@ -13,21 +13,24 @@ from textattack.reactive_defense.reactive_defender import ReactiveDefender
 
 
 class TADReactiveDefender(ReactiveDefender):
-    """ Transformers sentiment analysis pipeline returns a list of responses
-        like
+    """Transformers sentiment analysis pipeline returns a list of responses
+    like
 
-            [{'label': 'POSITIVE', 'score': 0.7817379832267761}]
+        [{'label': 'POSITIVE', 'score': 0.7817379832267761}]
 
-        We need to convert that to a format TextAttack understands, like
+    We need to convert that to a format TextAttack understands, like
 
-            [[0.218262017, 0.7817379832267761]
+        [[0.218262017, 0.7817379832267761]
     """
 
-    def __init__(self, ckpt='tad-sst2', **kwargs):
+    def __init__(self, ckpt="tad-sst2", **kwargs):
         super().__init__(**kwargs)
-        self.tad_classifier = TADCheckpointManager.get_tad_text_classifier(checkpoint=PYABSA_MODELS[ckpt],
-                                                                           auto_device=True)
+        self.tad_classifier = TADCheckpointManager.get_tad_text_classifier(
+            checkpoint=PYABSA_MODELS[ckpt], auto_device=True
+        )
 
     def repair(self, text, **kwargs):
-        res = self.tad_classifier.infer(text, defense='pwws', print_result=False, **kwargs)
+        res = self.tad_classifier.infer(
+            text, defense="pwws", print_result=False, **kwargs
+        )
         return res

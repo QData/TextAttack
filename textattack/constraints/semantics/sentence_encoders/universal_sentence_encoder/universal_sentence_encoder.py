@@ -21,7 +21,9 @@ class UniversalSentenceEncoder(SentenceEncoder):
             mirror_tfhub_url = "https://hub.tensorflow.google.cn/google/universal-sentence-encoder-large/5"
         else:
             tfhub_url = "https://tfhub.dev/google/universal-sentence-encoder/4"
-            mirror_tfhub_url = "https://hub.tensorflow.google.cn/google/universal-sentence-encoder/4"
+            mirror_tfhub_url = (
+                "https://hub.tensorflow.google.cn/google/universal-sentence-encoder/4"
+            )
 
         self._tfhub_url = tfhub_url
         self.mirror_tfhub_url = mirror_tfhub_url

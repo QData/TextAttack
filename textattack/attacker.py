@@ -105,8 +105,8 @@ class Attacker:
     def simple_attack(self, text, label):
         """Internal method that carries out attack.
 
-          No parallel processing is involved.
-              """
+        No parallel processing is involved.
+        """
         if torch.cuda.is_available():
             self.attack.cuda_()
 
@@ -120,9 +120,11 @@ class Attacker:
             except Exception as e:
                 raise e
                 # return
-            if (isinstance(result, SkippedAttackResult) and self.attack_args.attack_n) or (
-                    not isinstance(result, SuccessfulAttackResult)
-                    and self.attack_args.num_successful_examples
+            if (
+                isinstance(result, SkippedAttackResult) and self.attack_args.attack_n
+            ) or (
+                not isinstance(result, SuccessfulAttackResult)
+                and self.attack_args.num_successful_examples
             ):
                 return
             else:

@@ -117,7 +117,6 @@ HUGGINGFACE_DATASET_BY_MODEL = {
         5.0,
     ),
     "xlnet-base-cased-wnli": ("glue", "wnli", "validation"),
-
     # PyABSA models
     "tadbert-ag-news": ("ag_news", None, "test"),
     "tadbert-imdb": ("imdb", None, "test"),
