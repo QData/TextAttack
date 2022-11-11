@@ -34,7 +34,8 @@ class UniversalSentenceEncoder(SentenceEncoder):
         if not self.model:
             try:
                 self.model = hub.load(self._tfhub_url)
-            except:
+            except Exception as e:
+                print('Error loading model from tfhub, trying mirror url')
                 self.model = hub.load(self.mirror_tfhub_url)
         return self.model(sentences).numpy()
 
@@ -47,5 +48,6 @@ class UniversalSentenceEncoder(SentenceEncoder):
         self.__dict__ = state
         try:
             self.model = hub.load(self._tfhub_url)
-        except:
+        except Exception as e:
+            print('Error loading model from tfhub, trying mirror url')
             self.model = hub.load(self.mirror_tfhub_url)

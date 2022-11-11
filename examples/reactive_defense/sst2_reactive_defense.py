@@ -1,16 +1,16 @@
-import os
+# import os
 
 from textattack import Attacker
 from textattack.attack_recipes import (
-    PWWSRen2019,
-    BAEGarg2019,
-    TextFoolerJin2019,
-    BERTAttackLi2020,
-    GeneticAlgorithmAlzantot2018,
-    CLARE2020,
-    FasterGeneticAlgorithmJia2019,
+    # PWWSRen2019,
+    # BAEGarg2019,
+    # TextFoolerJin2019,
+    # BERTAttackLi2020,
+    # GeneticAlgorithmAlzantot2018,
+    # CLARE2020,
+    # FasterGeneticAlgorithmJia2019,
     DeepWordBugGao2018,
-    PSOZang2020,
+    # PSOZang2020,
 )
 from textattack.datasets import HuggingFaceDataset
 from textattack.models.wrappers import TADModelWrapper

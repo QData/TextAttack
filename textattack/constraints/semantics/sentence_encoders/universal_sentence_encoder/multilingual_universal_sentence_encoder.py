@@ -30,7 +30,8 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
         self.mirror_tfhub_url = mirror_tfhub_url
         try:
             self.model = hub.load(self._tfhub_url)
-        except:
+        except Exception as e:
+            print('Error loading model from tfhub, trying mirror url')
             self.model = hub.load(self.mirror_tfhub_url)
 
     def encode(self, sentences):
@@ -45,5 +46,6 @@ class MultilingualUniversalSentenceEncoder(SentenceEncoder):
         self.__dict__ = state
         try:
             self.model = hub.load(self._tfhub_url)
-        except:
+        except Exception as e:
+            print('Error loading model from tfhub, trying mirror url')
             self.model = hub.load(self.mirror_tfhub_url)
