@@ -14,7 +14,7 @@
 ```(<env_name>) $ pip install git+https://github.com/kjohnson3595/TextAttackHMC22-23.git@development```
 
 2. To run our interactive command line interface, run the following command:
-```$ eucli interactive```
+```$ euclids interactive```
 
 
 # Contributing
