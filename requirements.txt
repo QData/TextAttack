@@ -23,4 +23,4 @@ jieba
 OpenHowNet
 pycld2
 click<8.1.0
-pyabsa>=1.16.16,<2.0.0
+pyabsa>=2.0.6
