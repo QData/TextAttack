@@ -258,7 +258,7 @@ class ModelArgs:
             # a HuggingFace model).
             if isinstance(model, textattack.models.helpers.T5ForTextToText):
                 model = textattack.models.wrappers.HuggingFaceModelWrapper(
-                    model, model.tokenizer
+                    model.model, model.tokenizer.tokenizer
                 )
             else:
                 model = textattack.models.wrappers.PyTorchModelWrapper(
