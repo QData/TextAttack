@@ -59,13 +59,26 @@ class BERTScore(Constraint):
             model_type=model_name, idf=False, device=utils.device, num_layers=num_layers
         )
 
+    def _sim_score(self, starting_text, transformed_text):
+        """Returns the metric similarity between the embedding of the starting
+        text and the transformed text.
+
+        Args:
+            starting_text: The ``AttackedText``to use as a starting point.
+            transformed_text: A transformed ``AttackedText``
+
+        Returns:
+            The similarity between the starting and transformed text using BERTScore metric.
+        """
+        cand = transformed_text.text
+        ref = starting_text.text
+        result = self._bert_scorer.score([cand], [ref])
+        return result[BERTScore.SCORE_TYPE2IDX[self.score_type]].item()
+
     def _check_constraint(self, transformed_text, reference_text):
         """Return `True` if BERT Score between `transformed_text` and
         `reference_text` is lower than minimum BERT Score."""
-        cand = transformed_text.text
-        ref = reference_text.text
-        result = self._bert_scorer.score([cand], [ref])
-        score = result[BERTScore.SCORE_TYPE2IDX[self.score_type]].item()
+        score = self._sim_score(reference_text, transformed_text)
         if score >= self.min_bert_score:
             return True
         else:

@@ -12,3 +12,6 @@ from .attack_metrics import AttackQueries
 
 from .quality_metrics import Perplexity
 from .quality_metrics import USEMetric
+from .quality_metrics import SBERTMetric
+from .quality_metrics import BERTScoreMetric
+from .quality_metrics import MeteorMetric
