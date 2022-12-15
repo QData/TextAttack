@@ -40,8 +40,8 @@ class BERTScore(Constraint):
     def __init__(
         self,
         min_bert_score,
-        model_name="microsoft/deberta-large-mnli",
-        num_layers=18,
+        model_name="bert-base-uncased",
+        num_layers=None,
         score_type="f1",
         compare_against_original=True,
     ):
