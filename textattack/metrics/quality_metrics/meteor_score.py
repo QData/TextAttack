@@ -6,8 +6,9 @@ Class for calculating METEOR score on AttackResults
 
 """
 
-from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 import nltk
+
+from textattack.attack_results import FailedAttackResult, SkippedAttackResult
 from textattack.metrics import Metric
 
 
@@ -54,13 +55,20 @@ class MeteorMetric(Metric):
             elif isinstance(result, SkippedAttackResult):
                 continue
             else:
-                self.original_candidates.append(result.original_result.attacked_text.text)
-                self.successful_candidates.append(result.perturbed_result.attacked_text.text)
+                self.original_candidates.append(
+                    result.original_result.attacked_text.text
+                )
+                self.successful_candidates.append(
+                    result.perturbed_result.attacked_text.text
+                )
 
         meteor_scores = []
         for c in range(len(self.original_candidates)):
             meteor_scores.append(
-                nltk.translate.meteor([nltk.word_tokenize(self.original_candidates[c])], nltk.word_tokenize(self.successful_candidates[c]))
+                nltk.translate.meteor(
+                    [nltk.word_tokenize(self.original_candidates[c])],
+                    nltk.word_tokenize(self.successful_candidates[c]),
+                )
             )
 
         self.all_metrics["avg_attack_meteor_score"] = round(

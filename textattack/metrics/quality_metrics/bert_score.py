@@ -13,7 +13,9 @@ from textattack.metrics import Metric
 
 class BERTScoreMetric(Metric):
     def __init__(self, **kwargs):
-        self.use_obj = BERTScore(min_bert_score=0.5, model_name="microsoft/deberta-large-mnli",  num_layers=18)
+        self.use_obj = BERTScore(
+            min_bert_score=0.5, model_name="microsoft/deberta-large-mnli", num_layers=18
+        )
         self.original_candidates = []
         self.successful_candidates = []
         self.all_metrics = {}
