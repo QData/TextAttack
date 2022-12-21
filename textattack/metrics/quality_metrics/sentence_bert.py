@@ -13,13 +13,14 @@ from textattack.metrics import Metric
 
 class SBERTMetric(Metric):
     def __init__(self, **kwargs):
-        self.use_obj = BERT(model_name="all-MiniLM-L6-v2",  metric="cosine")
+        self.use_obj = BERT(model_name="all-MiniLM-L6-v2", metric="cosine")
         self.original_candidates = []
         self.successful_candidates = []
         self.all_metrics = {}
 
     def calculate(self, results):
-        """Calculates average Sentence BERT similarity on all successfull attacks.
+        """Calculates average Sentence BERT similarity on all successfull
+        attacks.
 
         Args:
             results (``AttackResult`` objects):
