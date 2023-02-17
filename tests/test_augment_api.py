@@ -49,6 +49,18 @@ def test_charwap_augmenter():
     assert augmented_s in augmented_text_list
 
 
+def test_qwertyswap_augmenter():
+    from textattack.transformations.word_swaps import WordSwapQWERTY
+    from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
+    from textattack.augmentation import Augmenter
+
+    transformation = WordSwapQWERTY()
+    constraints = [RepeatModification(), StopwordModification()]
+    augmenter = Augmenter(transformation = transformation, constraints = constraints)
+    sentence = "It's an excellent movie."
+    t = augmenter.augment(sentence)
+
+
 def test_easydata_augmenter():
     from textattack.augmentation import EasyDataAugmenter
 

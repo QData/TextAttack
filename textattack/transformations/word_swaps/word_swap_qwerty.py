@@ -33,11 +33,7 @@ class WordSwapQWERTY(WordSwap):
         self.skip_last_char = skip_last_char
 
         self._keyboard_adjacency = {
-            "q": [
-                "w",
-                "a",
-                "s",
-            ],
+            "q": ["w", "a", "s"],
             "w": ["q", "e", "a", "s", "d"],
             "e": ["w", "s", "d", "f", "r"],
             "r": ["e", "d", "f", "g", "t"],
@@ -89,7 +85,10 @@ class WordSwapQWERTY(WordSwap):
             return []
 
         if self.random_one:
-            i = random.randrange(start_idx, end_idx + 1)
+            random_range = [i for i in range(start_idx, end_idx + 1) if word[i] in self._keyboard_adjacency]
+            if len(random_range) == 0:
+                return []
+            i = random.choice(random_range)
             candidate_word = (
                 word[:i] + random.choice(self._get_adjacent(word[i])) + word[i + 1 :]
             )
