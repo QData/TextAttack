@@ -51,12 +51,15 @@ def test_charwap_augmenter():
 
 def test_qwertyswap_augmenter():
     from textattack.transformations.word_swaps import WordSwapQWERTY
-    from textattack.constraints.pre_transformation import RepeatModification, StopwordModification
+    from textattack.constraints.pre_transformation import (
+        RepeatModification,
+        StopwordModification,
+    )
     from textattack.augmentation import Augmenter
 
     transformation = WordSwapQWERTY()
     constraints = [RepeatModification(), StopwordModification()]
-    augmenter = Augmenter(transformation = transformation, constraints = constraints)
+    augmenter = Augmenter(transformation=transformation, constraints=constraints)
     sentence = "It's an excellent movie."
     t = augmenter.augment(sentence)
 

@@ -85,7 +85,11 @@ class WordSwapQWERTY(WordSwap):
             return []
 
         if self.random_one:
-            random_range = [i for i in range(start_idx, end_idx + 1) if word[i] in self._keyboard_adjacency]
+            random_range = [
+                i
+                for i in range(start_idx, end_idx + 1)
+                if word[i] in self._keyboard_adjacency
+            ]
             if len(random_range) == 0:
                 return []
             i = random.choice(random_range)
