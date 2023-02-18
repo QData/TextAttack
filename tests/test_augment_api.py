@@ -50,6 +50,7 @@ def test_charwap_augmenter():
 
 
 def test_qwertyswap_augmenter():
+    import random
     from textattack.transformations.word_swaps import WordSwapQWERTY
     from textattack.constraints.pre_transformation import (
         RepeatModification,
@@ -57,11 +58,18 @@ def test_qwertyswap_augmenter():
     )
     from textattack.augmentation import Augmenter
 
+    seed = 42
+    repeat_times = (
+        100  # Repeat a few more times to avoid passing the test just by luck.
+    )
+
+    random.seed(seed)
     transformation = WordSwapQWERTY()
     constraints = [RepeatModification(), StopwordModification()]
     augmenter = Augmenter(transformation=transformation, constraints=constraints)
     sentence = "It's an excellent movie."
-    t = augmenter.augment(sentence)
+    for _ in range(repeat_times):
+        augmenter.augment(sentence)
 
 
 def test_easydata_augmenter():
