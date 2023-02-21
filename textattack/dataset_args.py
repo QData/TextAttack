@@ -27,15 +27,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "bert-base-uncased-qqp": ("glue", "qqp", "validation"),
     "bert-base-uncased-rte": ("glue", "rte", "validation"),
     "bert-base-uncased-sst2": ("glue", "sst2", "validation"),
-    "bert-base-uncased-stsb": (
-        "glue",
-        "stsb",
-        "validation",
-        None,
-        None,
-        None,
-        5.0,
-    ),
+    "bert-base-uncased-stsb": ("glue", "stsb", "validation", None, None, None, 5.0,),
     "bert-base-uncased-wnli": ("glue", "wnli", "validation"),
     "bert-base-uncased-mr": ("rotten_tomatoes", None, "test"),
     "bert-base-uncased-snli": ("snli", None, "test", None, {0: 1, 1: 2, 2: 0}),
@@ -107,15 +99,7 @@ HUGGINGFACE_DATASET_BY_MODEL = {
     "xlnet-base-cased-mr": ("rotten_tomatoes", None, "test"),
     "xlnet-base-cased-mrpc": ("glue", "mrpc", "validation"),
     "xlnet-base-cased-rte": ("glue", "rte", "validation"),
-    "xlnet-base-cased-stsb": (
-        "glue",
-        "stsb",
-        "validation",
-        None,
-        None,
-        None,
-        5.0,
-    ),
+    "xlnet-base-cased-stsb": ("glue", "stsb", "validation", None, None, None, 5.0,),
     "xlnet-base-cased-wnli": ("glue", "wnli", "validation"),
 }
 
@@ -143,21 +127,9 @@ TEXTATTACK_DATASET_BY_MODEL = {
     #
     # T5 for translation
     #
-    "t5-en-de": (
-        "textattack.datasets.helpers.TedMultiTranslationDataset",
-        "en",
-        "de",
-    ),
-    "t5-en-fr": (
-        "textattack.datasets.helpers.TedMultiTranslationDataset",
-        "en",
-        "fr",
-    ),
-    "t5-en-ro": (
-        "textattack.datasets.helpers.TedMultiTranslationDataset",
-        "en",
-        "de",
-    ),
+    "t5-en-de": ("textattack.datasets.helpers.TedMultiTranslationDataset", "en", "de",),
+    "t5-en-fr": ("textattack.datasets.helpers.TedMultiTranslationDataset", "en", "fr",),
+    "t5-en-ro": ("textattack.datasets.helpers.TedMultiTranslationDataset", "en", "de",),
     #
     # T5 for summarization
     #

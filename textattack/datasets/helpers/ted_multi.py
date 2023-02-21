@@ -17,7 +17,8 @@ class TedMultiTranslationDataset(HuggingFaceDataset):
     """Loads examples from the Ted Talk translation dataset using the
     `datasets` package.
 
-    dataset source: http://www.cs.jhu.edu/~kevinduh/a/multitarget-tedtalks/
+    dataset source: http://www.cs.jhu.edu/~kevinduh/a/multitarget-
+    tedtalks/
     """
 
     def __init__(self, source_lang="en", target_lang="de", split="test", shuffle=False):

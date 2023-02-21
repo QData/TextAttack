@@ -13,7 +13,6 @@ class WeightsAndBiasesLogger(Logger):
     """Logs attack results to Weights & Biases."""
 
     def __init__(self, **kwargs):
-
         global wandb
         wandb = LazyLoader("wandb", globals(), "wandb")
 

@@ -246,10 +246,7 @@ class TrainingArgs:
             help="If set, keep track of the best model across training and load it at the end.",
         )
         parser.add_argument(
-            "--alpha",
-            type=float,
-            default=1.0,
-            help="The weight of adversarial loss.",
+            "--alpha", type=float, default=1.0, help="The weight of adversarial loss.",
         )
         parser.add_argument(
             "--num-train-adv-examples",
@@ -470,16 +467,13 @@ class _CommandLineTrainingArgs:
             max_seq_len = args.model_max_length if args.model_max_length else 512
             num_labels = args.model_num_labels if args.model_num_labels else 2
             config = transformers.AutoConfig.from_pretrained(
-                args.model_name_or_path,
-                num_labels=num_labels,
+                args.model_name_or_path, num_labels=num_labels,
             )
             model = transformers.AutoModelForSequenceClassification.from_pretrained(
-                args.model_name_or_path,
-                config=config,
+                args.model_name_or_path, config=config,
             )
             tokenizer = transformers.AutoTokenizer.from_pretrained(
-                args.model_name_or_path,
-                model_max_length=max_seq_len,
+                args.model_name_or_path, model_max_length=max_seq_len,
             )
             model = HuggingFaceModelWrapper(model, tokenizer)
 

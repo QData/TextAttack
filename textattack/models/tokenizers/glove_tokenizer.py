@@ -155,10 +155,7 @@ class GloveTokenizer(WordLevelTokenizer):
     def batch_encode(self, input_text_list):
         """The batch equivalent of ``encode``."""
         input_text_list = list(map(self._process_text, input_text_list))
-        encodings = self.encode_batch(
-            input_text_list,
-            add_special_tokens=False,
-        )
+        encodings = self.encode_batch(input_text_list, add_special_tokens=False,)
         return [x.ids for x in encodings]
 
     def __call__(self, input_texts):

@@ -31,7 +31,6 @@ class Seq2SickCheng2018BlackBox(AttackRecipe):
 
     @staticmethod
     def build(model_wrapper, goal_function="non_overlapping"):
-
         #
         # Goal is non-overlapping output.
         #

@@ -296,8 +296,7 @@ class Trainer:
         else:
             state_dict = {k: v.cpu() for k, v in model.state_dict().items()}
             torch.save(
-                state_dict,
-                os.path.join(output_dir, "pytorch_model.bin"),
+                state_dict, os.path.join(output_dir, "pytorch_model.bin"),
             )
 
     def _tb_log(self, log, step):
@@ -516,10 +515,7 @@ class Trainer:
             and isinstance(model.module, transformers.PreTrainedModel)
         ):
             input_ids = tokenizer(
-                input_texts,
-                padding="max_length",
-                return_tensors="pt",
-                truncation=True,
+                input_texts, padding="max_length", return_tensors="pt", truncation=True,
             )
             input_ids.to(textattack.shared.utils.device)
             logits = model(**input_ids)[0]
@@ -573,10 +569,7 @@ class Trainer:
 
         if isinstance(model, transformers.PreTrainedModel):
             input_ids = tokenizer(
-                input_texts,
-                padding="max_length",
-                return_tensors="pt",
-                truncation=True,
+                input_texts, padding="max_length", return_tensors="pt", truncation=True,
             )
             input_ids.to(textattack.shared.utils.device)
             logits = model(**input_ids)[0]

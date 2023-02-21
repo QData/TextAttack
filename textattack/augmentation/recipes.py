@@ -46,16 +46,13 @@ class EasyDataAugmenter(Augmenter):
         n_aug_each = max(transformations_per_example // 4, 1)
 
         self.synonym_replacement = WordNetAugmenter(
-            pct_words_to_swap=pct_words_to_swap,
-            transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
         )
         self.random_deletion = DeletionAugmenter(
-            pct_words_to_swap=pct_words_to_swap,
-            transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
         )
         self.random_swap = SwapAugmenter(
-            pct_words_to_swap=pct_words_to_swap,
-            transformations_per_example=n_aug_each,
+            pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each,
         )
         self.random_insertion = SynonymInsertionAugmenter(
             pct_words_to_swap=pct_words_to_swap, transformations_per_example=n_aug_each

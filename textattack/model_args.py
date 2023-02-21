@@ -242,10 +242,8 @@ class ModelArgs:
                 textattack.shared.logger.info(
                     f"Loading pre-trained TextAttack CNN: {colored_model_name}"
                 )
-                model = (
-                    textattack.models.helpers.WordCNNForClassification.from_pretrained(
-                        args.model
-                    )
+                model = textattack.models.helpers.WordCNNForClassification.from_pretrained(
+                    args.model
                 )
             elif args.model.startswith("t5"):
                 model = textattack.models.helpers.T5ForTextToText.from_pretrained(
@@ -291,10 +289,8 @@ class ModelArgs:
                     )
                 else:
                     # assume the model is from HuggingFace.
-                    model = (
-                        transformers.AutoModelForSequenceClassification.from_pretrained(
-                            args.model
-                        )
+                    model = transformers.AutoModelForSequenceClassification.from_pretrained(
+                        args.model
                     )
                     tokenizer = transformers.AutoTokenizer.from_pretrained(
                         args.model, use_fast=True

@@ -10,7 +10,7 @@ def test_embedding_paragramcf():
     word_embedding = WordEmbedding.counterfitted_GLOVE_embedding()
     assert pytest.approx(word_embedding[0][0]) == -0.022007
     assert pytest.approx(word_embedding["fawn"][0]) == -0.022007
-    assert word_embedding[10**9] is None
+    assert word_embedding[10 ** 9] is None
 
 
 def test_embedding_gensim():
@@ -31,13 +31,13 @@ bye-bye -1 1
     f.close()
 
     gensim = LazyLoader("gensim", globals(), "gensim")
-    keyed_vectors = (
-        gensim.models.keyedvectors.Word2VecKeyedVectors.load_word2vec_format(path)
+    keyed_vectors = gensim.models.keyedvectors.Word2VecKeyedVectors.load_word2vec_format(
+        path
     )
     word_embedding = GensimWordEmbedding(keyed_vectors)
     assert pytest.approx(word_embedding[0][0]) == 1
     assert pytest.approx(word_embedding["bye-bye"][0]) == -1 / np.sqrt(2)
-    assert word_embedding[10**9] is None
+    assert word_embedding[10 ** 9] is None
 
     # test query functionality
     assert pytest.approx(word_embedding.get_cos_sim(1, 3)) == 0

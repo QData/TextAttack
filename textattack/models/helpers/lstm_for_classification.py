@@ -90,8 +90,7 @@ class LSTMForClassification(nn.Module):
             os.makedirs(output_path)
         state_dict = {k: v.cpu() for k, v in self.state_dict().items()}
         torch.save(
-            state_dict,
-            os.path.join(output_path, "pytorch_model.bin"),
+            state_dict, os.path.join(output_path, "pytorch_model.bin"),
         )
         with open(os.path.join(output_path, "config.json"), "w") as f:
             json.dump(self._config, f)

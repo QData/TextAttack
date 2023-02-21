@@ -25,7 +25,6 @@ flair.device = device
 
 
 class AttackedText:
-
     """A helper class that represents a string that can be attacked.
 
     Models that take multiple sentences as input separate them by ``SPLIT_TOKEN``.

@@ -43,7 +43,7 @@ class COLA(Constraint):
 
         self.max_diff = max_diff
         self.model_name = model_name
-        self._reference_score_cache = lru.LRU(2**10)
+        self._reference_score_cache = lru.LRU(2 ** 10)
         model = AutoModelForSequenceClassification.from_pretrained(model_name)
         tokenizer = AutoTokenizer.from_pretrained(model_name)
         self.model = HuggingFaceModelWrapper(model, tokenizer)
@@ -74,10 +74,7 @@ class COLA(Constraint):
         return True
 
     def extra_repr_keys(self):
-        return [
-            "max_diff",
-            "model_name",
-        ] + super().extra_repr_keys()
+        return ["max_diff", "model_name",] + super().extra_repr_keys()
 
     def __getstate__(self):
         state = self.__dict__.copy()

@@ -152,9 +152,7 @@ class AugmentCommand(TextAttackCommand):
             rows = [
                 row
                 for row in csv.DictReader(
-                    markQuotes(csv_file),
-                    dialect=dialect,
-                    skipinitialspace=True,
+                    markQuotes(csv_file), dialect=dialect, skipinitialspace=True,
                 )
             ]
 

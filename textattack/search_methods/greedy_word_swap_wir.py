@@ -75,9 +75,7 @@ class GreedyWordSwapWIR(SearchMethod):
                     break
 
                 transformed_text_candidates = self.get_transformations(
-                    initial_text,
-                    original_text=initial_text,
-                    indices_to_modify=[idx],
+                    initial_text, original_text=initial_text, indices_to_modify=[idx],
                 )
                 if not transformed_text_candidates:
                     # no valid synonym substitutions for this word

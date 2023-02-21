@@ -81,8 +81,8 @@ class Attack:
         constraints: List[Union[Constraint, PreTransformationConstraint]],
         transformation: Transformation,
         search_method: SearchMethod,
-        transformation_cache_size=2**15,
-        constraint_cache_size=2**15,
+        transformation_cache_size=2 ** 15,
+        constraint_cache_size=2 ** 15,
     ):
         """Initialize an attack object.
 
@@ -123,8 +123,7 @@ class Attack:
         self.pre_transformation_constraints = []
         for constraint in constraints:
             if isinstance(
-                constraint,
-                textattack.constraints.PreTransformationConstraint,
+                constraint, textattack.constraints.PreTransformationConstraint,
             ):
                 self.pre_transformation_constraints.append(constraint)
             else:
@@ -396,20 +395,11 @@ class Attack:
         final_result = self.search_method(initial_result)
         self.clear_cache()
         if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
-            result = SuccessfulAttackResult(
-                initial_result,
-                final_result,
-            )
+            result = SuccessfulAttackResult(initial_result, final_result,)
         elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
-            result = FailedAttackResult(
-                initial_result,
-                final_result,
-            )
+            result = FailedAttackResult(initial_result, final_result,)
         elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
-            result = MaximizedAttackResult(
-                initial_result,
-                final_result,
-            )
+            result = MaximizedAttackResult(initial_result, final_result,)
         else:
             raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
         return result
@@ -451,8 +441,9 @@ class Attack:
     def __repr__(self):
         """Prints attack parameters in a human-readable string.
 
-        Inspired by the readability of printing PyTorch nn.Modules:
-        https://github.com/pytorch/pytorch/blob/master/torch/nn/modules/module.py
+        Inspired by the readability of printing PyTorch nn.Modules: http
+        s://github.com/pytorch/pytorch/blob/master/torch/nn/modules/modu
+        le.py
         """
         main_str = "Attack" + "("
         lines = []
