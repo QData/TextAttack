@@ -57,3 +57,75 @@ def test_word_swap_change_name():
     for entity in augmented_text.get_spans("ner"):
         entity_augmented.append(entity.tag)
     assert entity_original == entity_augmented
+
+
+def test_chinese_homophone_character_swap():
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps.chn_transformations import (
+        ChineseHomophoneCharacterSwap,
+    )
+
+    augmenter = Augmenter(
+        transformation=ChineseHomophoneCharacterSwap(),
+        pct_words_to_swap=0.1,
+        transformations_per_example=1,
+        fast_augment=True,
+    )
+    s = "听见树林的呢喃，发现溪流中的知识。"
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "听见树临的呢喃，发现溪流中的知识。"
+    assert augmented_s in augmented_text_list
+
+
+def test_chinese_morphonym_character_swap():
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps.chn_transformations import (
+        ChineseMorphonymCharacterSwap,
+    )
+
+    augmenter = Augmenter(
+        transformation=ChineseMorphonymCharacterSwap(),
+        pct_words_to_swap=0.1,
+        transformations_per_example=1,
+        fast_augment=True,
+    )
+    s = "听见树林的呢喃，发现溪流中的知识。"
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "听见树林的呢喃，发现溪流中的知枳。"
+    assert augmented_s in augmented_text_list
+
+
+def test_chinese_word_swap_hownet():
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps.chn_transformations import (
+        ChineseWordSwapHowNet,
+    )
+
+    augmenter = Augmenter(
+        transformation=ChineseWordSwapHowNet(),
+        pct_words_to_swap=0.1,
+        transformations_per_example=1,
+        fast_augment=True,
+    )
+    s = "听见树林的呢喃，发现溪流中的知识。"
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "听见树林的呢喃，发现溪流之内的知识。"
+    assert augmented_s in augmented_text_list
+
+
+def test_chinese_word_swap_masked():
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps.chn_transformations import (
+        ChineseWordSwapMaskedLM,
+    )
+
+    augmenter = Augmenter(
+        transformation=ChineseWordSwapMaskedLM(),
+        pct_words_to_swap=0.1,
+        transformations_per_example=1,
+        fast_augment=True,
+    )
+    s = "听见树林的呢喃，发现溪流中的知识。"
+    augmented_text_list = augmenter.augment(s)
+    augmented_s = "听见树林的呢喃，体会溪流中的知识。"
+    assert augmented_s in augmented_text_list

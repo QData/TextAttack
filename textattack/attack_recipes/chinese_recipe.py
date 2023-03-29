@@ -7,6 +7,7 @@ from textattack.constraints.pre_transformation import (
 )
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
+from textattack.shared.data import CHN_STOPWORD
 from textattack.transformations import (
     ChineseHomophoneCharacterSwap,
     ChineseMorphonymCharacterSwap,
@@ -14,7 +15,6 @@ from textattack.transformations import (
     ChineseWordSwapMaskedLM,
     CompositeTransformation,
 )
-from textattack.shared.data import CHN_STOPWORD
 
 from .attack_recipe import AttackRecipe
 
