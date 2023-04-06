@@ -68,12 +68,12 @@ def test_chinese_homophone_character_swap():
     augmenter = Augmenter(
         transformation=ChineseHomophoneCharacterSwap(),
         pct_words_to_swap=0.1,
-        transformations_per_example=1,
+        transformations_per_example=5,
         fast_augment=True,
     )
     s = "听见树林的呢喃，发现溪流中的知识。"
     augmented_text_list = augmenter.augment(s)
-    augmented_s = "听见树临的呢喃，发现溪流中的知识。"
+    augmented_s = "听见书林的呢喃，发现溪流中的知识。"
     assert augmented_s in augmented_text_list
 
 
@@ -86,7 +86,7 @@ def test_chinese_morphonym_character_swap():
     augmenter = Augmenter(
         transformation=ChineseMorphonymCharacterSwap(),
         pct_words_to_swap=0.1,
-        transformations_per_example=1,
+        transformations_per_example=5,
         fast_augment=True,
     )
     s = "听见树林的呢喃，发现溪流中的知识。"
@@ -104,12 +104,12 @@ def test_chinese_word_swap_hownet():
     augmenter = Augmenter(
         transformation=ChineseWordSwapHowNet(),
         pct_words_to_swap=0.1,
-        transformations_per_example=1,
+        transformations_per_example=5,
         fast_augment=True,
     )
     s = "听见树林的呢喃，发现溪流中的知识。"
     augmented_text_list = augmenter.augment(s)
-    augmented_s = "听见树林的呢喃，发现溪流之内的知识。"
+    augmented_s = "可见树林的呢喃，发现溪流中的知识。"
     assert augmented_s in augmented_text_list
 
 
@@ -122,10 +122,10 @@ def test_chinese_word_swap_masked():
     augmenter = Augmenter(
         transformation=ChineseWordSwapMaskedLM(),
         pct_words_to_swap=0.1,
-        transformations_per_example=1,
+        transformations_per_example=5,
         fast_augment=True,
     )
     s = "听见树林的呢喃，发现溪流中的知识。"
     augmented_text_list = augmenter.augment(s)
-    augmented_s = "听见树林的呢喃，体会溪流中的知识。"
+    augmented_s = "听见树林的呢喃，了解溪流中的知识。"
     assert augmented_s in augmented_text_list
