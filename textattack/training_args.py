@@ -547,7 +547,6 @@ class _CommandLineTrainingArgs:
             train_dataset.output_column == "label"
             and eval_dataset.output_column == "label"
         ):
-
             train_dataset_labels = train_dataset._dataset["label"]
 
             eval_dataset_labels = eval_dataset._dataset["label"]

@@ -23,7 +23,6 @@ class ChineseWordSwapMaskedLM(WordSwap):
         super().__init__(**kwargs)
 
     def get_replacement_words(self, current_text, indice_to_modify):
-
         masked_text = current_text.replace_word_at_index(indice_to_modify, "<mask>")
         outputs = self.unmasker(masked_text.text)
         words = []

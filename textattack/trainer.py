@@ -398,6 +398,7 @@ class Trainer:
         Returns:
             :obj:`torch.utils.data.DataLoader`
         """
+
         # TODO: Add pairing option where we can pair original examples with adversarial examples.
         # Helper functions for collating data
         def collate_fn(data):
@@ -406,7 +407,6 @@ class Trainer:
             is_adv_sample = []
             for item in data:
                 if "_example_type" in item[0].keys():
-
                     # Get example type value from OrderedDict and remove it
 
                     adv = item[0].pop("_example_type")
@@ -460,6 +460,7 @@ class Trainer:
         Returns:
             :obj:`torch.utils.data.DataLoader`
         """
+
         # Helper functions for collating data
         def collate_fn(data):
             input_texts = []
