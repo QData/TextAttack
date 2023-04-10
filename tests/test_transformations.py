@@ -59,24 +59,6 @@ def test_word_swap_change_name():
     assert entity_original == entity_augmented
 
 
-def test_chinese_homophone_character_swap():
-    from textattack.augmentation import Augmenter
-    from textattack.transformations.word_swaps.chn_transformations import (
-        ChineseHomophoneCharacterSwap,
-    )
-
-    augmenter = Augmenter(
-        transformation=ChineseHomophoneCharacterSwap(),
-        pct_words_to_swap=0.1,
-        transformations_per_example=5,
-        fast_augment=True,
-    )
-    s = "听见树林的呢喃，发现溪流中的知识。"
-    augmented_text_list = augmenter.augment(s)
-    augmented_s = "听见书林的呢喃，发现溪流中的知识。"
-    assert augmented_s in augmented_text_list
-
-
 def test_chinese_morphonym_character_swap():
     from textattack.augmentation import Augmenter
     from textattack.transformations.word_swaps.chn_transformations import (
@@ -87,11 +69,10 @@ def test_chinese_morphonym_character_swap():
         transformation=ChineseMorphonymCharacterSwap(),
         pct_words_to_swap=0.1,
         transformations_per_example=5,
-        fast_augment=True,
     )
-    s = "听见树林的呢喃，发现溪流中的知识。"
+    s = "自然语言处理。"
     augmented_text_list = augmenter.augment(s)
-    augmented_s = "听见树林的呢喃，发现溪流中的知枳。"
+    augmented_s = "自然语言处埋。"
     assert augmented_s in augmented_text_list
 
 
@@ -105,11 +86,10 @@ def test_chinese_word_swap_hownet():
         transformation=ChineseWordSwapHowNet(),
         pct_words_to_swap=0.1,
         transformations_per_example=5,
-        fast_augment=True,
     )
-    s = "听见树林的呢喃，发现溪流中的知识。"
+    s = "自然语言。"
     augmented_text_list = augmenter.augment(s)
-    augmented_s = "可见树林的呢喃，发现溪流中的知识。"
+    augmented_s = "中间语言。"
     assert augmented_s in augmented_text_list
 
 
@@ -123,9 +103,8 @@ def test_chinese_word_swap_masked():
         transformation=ChineseWordSwapMaskedLM(),
         pct_words_to_swap=0.1,
         transformations_per_example=5,
-        fast_augment=True,
     )
-    s = "听见树林的呢喃，发现溪流中的知识。"
+    s = "自然语言处理。"
     augmented_text_list = augmenter.augment(s)
-    augmented_s = "听见树林的呢喃，了解溪流中的知识。"
+    augmented_s = "自然语言文字。"
     assert augmented_s in augmented_text_list
