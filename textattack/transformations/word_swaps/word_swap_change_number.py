@@ -70,7 +70,7 @@ class WordSwapChangeNumber(WordSwap):
 
         # replace original numbers with new numbers
         transformed_texts = []
-        for (idx, word) in num_words:
+        for idx, word in num_words:
             replacement_words = self._get_new_number(word)
             for r in replacement_words:
                 if r == word:
