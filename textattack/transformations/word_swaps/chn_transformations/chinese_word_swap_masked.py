@@ -3,13 +3,7 @@ Word Swap by BERT-Masked LM.
 -------------------------------
 """
 
-import itertools
-import re
-
-import torch
-from transformers import AutoModelForMaskedLM, AutoTokenizer, pipeline
-
-from textattack.shared import utils
+from transformers import pipeline
 
 from . import WordSwap
 

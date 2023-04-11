@@ -1,5 +1,3 @@
-import os
-
 from textattack.shared.data import MORPHONYM_LS
 
 from . import WordSwap
