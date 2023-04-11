@@ -3,7 +3,6 @@ import string
 
 import flair
 import jieba
-import pycld2 as cld2
 
 from .importing import LazyLoader
 
