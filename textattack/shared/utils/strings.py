@@ -33,8 +33,7 @@ def words_from_text(s, words_to_ignore=[]):
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
     try:
-        isReliable, textBytesFound, details = cld2.detect(s)
-        if details[0][0] == "Chinese" or details[0][0] == "ChineseT":
+        if re.search("[\u4e00-\u9FFF]", s):
             seg_list = jieba.cut(s, cut_all=False)
             s = " ".join(seg_list)
         else:
