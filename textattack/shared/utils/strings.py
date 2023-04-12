@@ -31,14 +31,7 @@ def add_indent(s_, numSpaces):
 def words_from_text(s, words_to_ignore=[]):
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
-    try:
-        if re.search("[\u4e00-\u9FFF]", s):
-            seg_list = jieba.cut(s, cut_all=False)
-            s = " ".join(seg_list)
-        else:
-            s = " ".join(s.split())
-    except Exception:
-        s = " ".join(s.split())
+    s = " ".join(s.split())
 
     homos = """˗৭Ȣ𝟕бƼᏎƷᒿlO`ɑЬϲԁе𝚏ɡհіϳ𝒌ⅼｍոорԛⲅѕ𝚝սѵԝ×уᴢ"""
     exceptions = """'-_*@"""
