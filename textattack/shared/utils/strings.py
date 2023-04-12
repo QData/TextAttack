@@ -31,7 +31,14 @@ def add_indent(s_, numSpaces):
 def words_from_text(s, words_to_ignore=[]):
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
-    s = " ".join(s.split())
+    try:
+        if re.search("[\u4e00-\u9FFF]", s):
+            seg_list = jieba.cut(s, cut_all=False)
+            s = " ".join(seg_list)
+        else:
+            s = " ".join(s.split())
+    except Exception:
+        s = " ".join(s.split())
 
     homos = """˗৭Ȣ𝟕бƼᏎƷᒿlO`ɑЬϲԁе𝚏ɡհіϳ𝒌ⅼｍոорԛⲅѕ𝚝սѵԝ×уᴢ"""
     exceptions = """'-_*@"""
@@ -235,7 +242,7 @@ def zip_flair_result(pred, tag_type="upos-fast"):
     for token in tokens:
         word_list.append(token.text)
         if "pos" in tag_type:
-            pos_list.append(token.annotation_layers["pos"][0]._value)
+            pos_list.append(token.annotation_layers["upos"][0]._value)
         elif tag_type == "ner":
             pos_list.append(token.get_label("ner"))
 
