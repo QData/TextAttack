@@ -11,7 +11,7 @@ numpy>=1.21.0
 pandas>=1.0.1
 scipy>=1.4.1
 torch>=1.7.0,!=1.8
-transformers>=4.21.0
+transformers==4.27.4
 terminaltables
 tqdm
 word2number
