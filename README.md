@@ -450,7 +450,7 @@ Here's an example of using one of the built-in models (the SST-2 dataset is auto
 textattack attack --model roberta-base-sst2 --recipe textfooler --num-examples 10
 ```
 
-#### HuggingFace support: `transformers` models and `datasets` datasets
+#### Hugging Face support: `transformers` models and `datasets` datasets
 
 We also provide built-in support for [`transformers` pretrained models](https://huggingface.co/models) 
 and datasets from the [`datasets` package](https://github.com/huggingface/datasets)! Here's an example of loading
