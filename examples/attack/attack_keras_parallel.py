@@ -70,7 +70,6 @@ class CustomKerasModelWrapper(ModelWrapper):
         self.model = model
 
     def __call__(self, text_input_list):
-
         x_transform = []
         for i, review in enumerate(text_input_list):
             tokens = [x.strip(",") for x in review.split()]

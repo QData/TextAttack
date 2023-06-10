@@ -24,7 +24,10 @@ MODELS_BY_GOAL_FUNCTIONS = {
         r"^textattack.models.helpers.word_cnn_for_classification.*",
         r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
     ],
-    (NonOverlappingOutput, MinimizeBleu,): [
+    (
+        NonOverlappingOutput,
+        MinimizeBleu,
+    ): [
         r"^textattack.models.helpers.t5_for_text_to_text.*",
     ],
 }

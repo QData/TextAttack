@@ -32,7 +32,6 @@ class AugmentCommand(TextAttackCommand):
 
         args = textattack.AugmenterArgs(**vars(args))
         if args.interactive:
-
             print("\nRunning in interactive mode...\n")
             augmenter = eval(AUGMENTATION_RECIPE_NAMES[args.recipe])(
                 pct_words_to_swap=args.pct_words_to_swap,

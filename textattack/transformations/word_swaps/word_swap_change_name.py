@@ -64,7 +64,6 @@ class WordSwapChangeName(WordSwap):
         return transformed_texts
 
     def _get_replacement_words(self, word, word_part_of_speech):
-
         replacement_words = []
         tag = word_part_of_speech
         if (

@@ -259,6 +259,7 @@ class AttackedText:
 
     def words_diff_num(self, other_attacked_text: AttackedText) -> int:
         """The number of words different between two AttackedText objects."""
+
         # using edit distance to calculate words diff num
         def generate_tokens(words):
             result = {}

@@ -27,7 +27,6 @@ class MorpheusTan2020(AttackRecipe):
 
     @staticmethod
     def build(model_wrapper):
-
         #
         # Goal is to minimize BLEU score between the model output given for the
         # perturbed input sequence and the reference translation
