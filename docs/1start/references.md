@@ -63,3 +63,51 @@ How to Cite TextAttack
       primaryClass={cs.CL}
 }
 ```
+
+
+## Our defense paper: Title: "Towards Improving Adversarial Training of NLP Models"
+
+
+- Abstract:  Adversarial training, a method for learning robust deep neural networks, constructs adversarial examples during training. However, recent methods for generating NLP adversarial examples involve combinatorial search and expensive sentence encoders for constraining the generated instances. As a result, it remains challenging to use vanilla adversarial training to improve NLP models' performance, and the benefits are mainly uninvestigated. This paper proposes a simple and improved vanilla adversarial training process for NLP models, which we name Attacking to Training (A2T). The core part of A2T is a new and cheaper word substitution attack optimized for vanilla adversarial training. We use A2T to train BERT and RoBERTa models on IMDB, Rotten Tomatoes, Yelp, and SNLI datasets. Our results empirically show that it is possible to train robust NLP models using a much cheaper adversary. We demonstrate that vanilla adversarial training with A2T can improve an NLP model's robustness to the attack it was originally trained with and also defend the model against other types of word substitution attacks. Furthermore, we show that A2T can improve NLP models' standard accuracy, cross-domain generalization, and interpretability. 
+
+
+### Code is available 
+
+We share all codes of this defense analysis at [https://github.com/QData/Textattack-A2T](https://github.com/QData/Textattack-A2T) .
+
+
+### Citations: 
+```
+@misc{yoo2021improving,
+      title={Towards Improving Adversarial Training of NLP Models}, 
+      author={Jin Yong Yoo and Yanjun Qi},
+      year={2021},
+      eprint={2109.00544},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
+
+## Our extended use case paper: "Expanding Scope: Adapting English Adversarial Attacks to Chinese"
+
+
+### Abstract: 
+Recent studies have revealed that NLP predictive models are vulnerable to adversarial attacks. Most existing studies focused on designing attacks to evaluate the robustness of NLP models in the English language alone. Literature has seen an increasing need for NLP solutions for other languages. We, therefore, ask one natural question: whether state-of-the-art (SOTA) attack methods generalize to other languages. This paper investigates how to adapt SOTA adversarial attack algorithms in English to the Chinese language. Our experiments show that attack methods previously applied to English NLP can generate high-quality adversarial examples in Chinese when combined with proper text segmentation and linguistic constraints. In addition, we demonstrate that the generated adversarial examples can achieve high fluency and semantic consistency by focusing on the Chinese language's morphology and phonology, which in turn can be used to improve the adversarial robustness of Chinese NLP models.
+
+### Venue: 
+TrustNLP: Third Workshop on Trustworthy Natural Language Processing Colocated with the Annual Conference of the Association for Computational
+
+### Tutorial code: 
+See notebook for using our framework to attack Chinese-NLP model.: [https://textattack.readthedocs.io/en/latest/2notebook/Example_6_Chinese_Attack.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_6_Chinese_Attack.html) 
+
+
+### Citations: 
+```
+@article{liu2023expanding,
+  title={Expanding Scope: Adapting English Adversarial Attacks to Chinese},
+  author={Liu, Hanyu and Cai, Chengyuan and Qi, Yanjun},
+  journal={arXiv preprint arXiv:2306.04874},
+  year={2023}
+}
+```
+
