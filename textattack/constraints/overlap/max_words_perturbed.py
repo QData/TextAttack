@@ -38,7 +38,6 @@ class MaxWordsPerturbed(Constraint):
         self.max_percent = max_percent
 
     def _check_constraint(self, transformed_text, reference_text):
-
         num_words_diff = len(transformed_text.all_words_diff(reference_text))
         if self.max_percent:
             min_num_words = min(len(transformed_text.words), len(reference_text.words))

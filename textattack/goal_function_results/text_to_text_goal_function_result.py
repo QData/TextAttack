@@ -23,7 +23,6 @@ class TextToTextGoalFunctionResult(GoalFunctionResult):
         num_queries,
         ground_truth_output,
     ):
-
         super().__init__(
             attacked_text,
             raw_output,

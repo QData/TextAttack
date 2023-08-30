@@ -407,7 +407,6 @@ class Trainer:
             is_adv_sample = []
             for item in data:
                 if "_example_type" in item[0].keys():
-
                     # Get example type value from OrderedDict and remove it
 
                     adv = item[0].pop("_example_type")

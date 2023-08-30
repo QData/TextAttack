@@ -65,7 +65,6 @@ class GreedyWordSwapWIR(SearchMethod):
             # compute the largest change in score we can find by swapping each word
             delta_ps = []
             for idx in indices_to_order:
-
                 # Exit Loop when search_over is True - but we need to make sure delta_ps
                 # is the same size as softmax_saliency_scores
                 if search_over:

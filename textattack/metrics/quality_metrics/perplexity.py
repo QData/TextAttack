@@ -94,7 +94,6 @@ class Perplexity(Metric):
         return self.all_metrics
 
     def calc_ppl(self, texts):
-
         with torch.no_grad():
             text = " ".join(texts)
             eval_loss = []
