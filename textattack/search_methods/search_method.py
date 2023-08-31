@@ -4,9 +4,9 @@ Search Method Abstract Class
 """
 
 
-from abc import ABC
+from abc import ABC, abstractmethod
 
-from textattack.shared import AttackedText
+# from textattack.shared import AttackedText
 from textattack.shared.utils import ReprMixin
 
 
