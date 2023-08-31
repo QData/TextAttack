@@ -6,7 +6,7 @@
 # huggingface: https://huggingface.co/yangheng
 # google scholar: https://scholar.google.com/citations?user=NPq5a_0AAAAJ&hl=en
 # Copyright (C) 2021. All Rights Reserved.
-from abc import ABC, abstractmethod
+from abc import ABC
 
 from textattack.shared.utils import ReprMixin
 
