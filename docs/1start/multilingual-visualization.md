@@ -19,6 +19,8 @@ TextAttack Extended Functions (Multilingual)
 - see example code for using our framework to attack French-BERT: [https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py](https://github.com/QData/TextAttack/blob/master/examples/attack/attack_camembert.py) . 
 
 
+- see tutorial notebook for using our framework to attack Chinese-NLP model.: [https://textattack.readthedocs.io/en/latest/2notebook/Example_6_Chinese_Attack.html](https://textattack.readthedocs.io/en/latest/2notebook/Example_6_Chinese_Attack.html)  
+
 
 ## User defined custom inputs and models 
 

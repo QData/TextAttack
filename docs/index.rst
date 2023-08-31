@@ -51,6 +51,7 @@ TextAttack Documentation
    Tutorial 8: Attacking Keras models <2notebook/Example_3_Keras.ipynb>
    Tutorial 9: Attacking multilingual models <2notebook/Example_4_CamemBERT.ipynb>
    Tutorial10: Explaining Attacking BERT model using Captum <2notebook/Example_5_Explain_BERT.ipynb>
+   Tutorial11: Attacking multilingual - Chinese NLP model using Textattack <2notebook/Example_6_Chinese_Attack.ipynb>
 
 .. toctree::
    :maxdepth: 6

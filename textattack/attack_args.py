@@ -708,6 +708,7 @@ class _CommandLineAttackArgs:
             if args.query_budget:
                 recipe.goal_function.query_budget = args.query_budget
             recipe.goal_function.model_cache_size = args.model_cache_size
+            recipe.goal_function.batch_size = args.model_batch_size
             recipe.constraint_cache_size = args.constraint_cache_size
             return recipe
         elif args.attack_from_file:

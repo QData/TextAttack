@@ -26,11 +26,9 @@
 ) 
 
 --------------------------------------------- Result 1 ---------------------------------------------
-[[Positive (100%)]] --> [[Negative (98%)]]
+[[Positive (100%)]] --> [[[FAILED]]]
 
-exposing the ways we fool ourselves is one [[hour]] photo's real [[strength]] .
-
-exposing the ways we fool ourselves is one [[stopwatch]] photo's real [[kraft]] .
+exposing the ways we fool ourselves is one hour photo's real strength .
 
 
 --------------------------------------------- Result 2 ---------------------------------------------
@@ -42,32 +40,32 @@ it's up to you to decide whether to admire these people's dedication to their ca
 
 
 --------------------------------------------- Result 3 ---------------------------------------------
-[[Positive (100%)]] --> [[Negative (96%)]]
+[[Positive (100%)]] --> [[Negative (71%)]]
 
 mostly , [goldbacher] just lets her complicated characters be [[unruly]] , confusing and , through it all , [[human]] .
 
-mostly , [goldbacher] just lets her complicated characters be [[haphazard]] , confusing and , through it all , [[humanistic]] .
+mostly , [goldbacher] just lets her complicated characters be [[disorderly]] , confusing and , through it all , [[humans]] .
 
 
 --------------------------------------------- Result 4 ---------------------------------------------
 [[Positive (99%)]] --> [[Negative (90%)]]
 
-. . . [[quite]] good at [[providing]] some good old fashioned [[spooks]] .
+. . . [[quite]] good at [[providing]] some good old [[fashioned]] [[spooks]] .
 
-. . . [[rather]] good at [[provision]] some good old fashioned [[bugging]] .
+. . . [[fairly]] good at [[deliver]] some good old [[sculpted]] [[bugging]] .
 
 
 
 +-------------------------------+--------+
 | Attack Results                |        |
 +-------------------------------+--------+
-| Number of successful attacks: | 4      |
-| Number of failed attacks:     | 0      |
+| Number of successful attacks: | 3      |
+| Number of failed attacks:     | 1      |
 | Number of skipped attacks:    | 0      |
 | Original accuracy:            | 100.0% |
-| Accuracy under attack:        | 0.0%   |
-| Attack success rate:          | 100.0% |
-| Average perturbed word %:     | 17.56% |
+| Accuracy under attack:        | 25.0%  |
+| Attack success rate:          | 75.0%  |
+| Average perturbed word %:     | 21.56% |
 | Average num. words per input: | 16.25  |
-| Avg num queries:              | 38.5   |
+| Avg num queries:              | 33.0   |
 +-------------------------------+--------+
