@@ -71,8 +71,12 @@ class A2TYoo2021(AttackRecipe):
         #
 
         max_len = getattr(model_wrapper, "max_length", None) or min(
-            1024, model_wrapper.tokenizer.model_max_length, model_wrapper.model.config.max_position_embeddings - 2
+            1024,
+            model_wrapper.tokenizer.model_max_length,
+            model_wrapper.model.config.max_position_embeddings - 2,
         )
-        search_method = GreedyWordSwapWIR(wir_method="gradient", truncate_words_to=max_len)
+        search_method = GreedyWordSwapWIR(
+            wir_method="gradient", truncate_words_to=max_len
+        )
 
         return Attack(goal_function, constraints, transformation, search_method)
