@@ -35,7 +35,7 @@ class GreedyWordSwapWIR(SearchMethod):
         self.wir_method = wir_method
         self.unk_token = unk_token
 
-    def _get_index_order(self, initial_text):
+    def _get_index_order(self, initial_text, max_len=-1):
         """Returns word indices of ``initial_text`` in descending order of
         importance."""
 

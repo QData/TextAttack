@@ -21,6 +21,7 @@ class CSVLogger(Logger):
         self.color_method = color_method
         self.row_list = []
         self._flushed = True
+        self.df = pd.DataFrame()
 
     def log_attack_result(self, result):
         original_text, perturbed_text = result.diff_color(self.color_method)
@@ -39,10 +40,10 @@ class CSVLogger(Logger):
             "result_type": result_type,
         }
         self.row_list.append(row)
+        self.df = pd.DataFrame.from_records(self.row_list)
         self._flushed = False
 
     def flush(self):
-        self.df = pd.DataFrame.from_records(self.row_list)
         self.df.to_csv(self.filename, quoting=csv.QUOTE_NONNUMERIC, index=False)
         self._flushed = True
 

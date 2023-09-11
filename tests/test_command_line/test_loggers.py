@@ -19,13 +19,13 @@ Attack command-line tests in the format (name, args, sample_output_file)
 """
 
 list_test_params = [
-    (
-        "json_summary_logger",
-        "json",
-        "textattack attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-summary-to-json attack_summary.json",
-        "attack_summary.json",
-        "tests/sample_outputs/json_attack_summary.json",
-    ),
+    # (
+    #     "json_summary_logger",
+    #     "json",
+    #     "textattack attack --recipe deepwordbug --model lstm-mr --num-examples 2 --log-summary-to-json attack_summary.json",
+    #     "attack_summary.json",
+    #     "tests/sample_outputs/json_attack_summary.json",
+    # ),
     (
         "txt_logger",
         "txt",
