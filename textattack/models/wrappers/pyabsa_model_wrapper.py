@@ -9,7 +9,7 @@ from textattack.models.wrappers import HuggingFaceModelWrapper
 
 class TADModelWrapper(HuggingFaceModelWrapper):
     """Transformers sentiment analysis pipeline returns a list of responses
-    like
+    like.
 
         [{'label': 'POSITIVE', 'score': 0.7817379832267761}]
 

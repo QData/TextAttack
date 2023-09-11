@@ -14,7 +14,7 @@ from textattack.reactive_defense.reactive_defender import ReactiveDefender
 
 class TADReactiveDefender(ReactiveDefender):
     """Transformers sentiment analysis pipeline returns a list of responses
-    like
+    like.
 
         [{'label': 'POSITIVE', 'score': 0.7817379832267761}]
 
