@@ -504,8 +504,8 @@ class _CommandLineAttackArgs:
     interactive: bool = False
     parallel: bool = False
     model_batch_size: int = 32
-    model_cache_size: int = 2**18
-    constraint_cache_size: int = 2**18
+    model_cache_size: int = 2 ** 18
+    constraint_cache_size: int = 2 ** 18
 
     @classmethod
     def _add_parser_args(cls, parser):

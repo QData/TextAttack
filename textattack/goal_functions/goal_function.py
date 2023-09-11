@@ -40,7 +40,7 @@ class GoalFunction(ReprMixin, ABC):
         use_cache=True,
         query_budget=float("inf"),
         model_batch_size=32,
-        model_cache_size=2**20,
+        model_cache_size=2 ** 20,
     ):
         validators.validate_model_goal_function_compatibility(
             self.__class__, model_wrapper.model.__class__
@@ -176,7 +176,8 @@ class GoalFunction(ReprMixin, ABC):
             if isinstance(batch_preds, list):
                 outputs.extend(batch_preds)
             elif isinstance(batch_preds, np.ndarray):
-                outputs.append(batch_preds)
+                # outputs.append(batch_preds)
+                outputs.append(torch.tensor(batch_preds))
             else:
                 outputs.append(batch_preds)
             i += self.batch_size
