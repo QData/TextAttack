@@ -9,7 +9,9 @@ from .classification_goal_function import ClassificationGoalFunction
 
 class HardLabelClassification(ClassificationGoalFunction):
     """An hard label attack on classification models which attempts to maximize
-    the semantic similarity of the label such that the target is outside of the decision boundary.
+    the semantic similarity of the label such that the target is outside of the
+    decision boundary.
+
     Args:
         target_max_score (float): If set, goal is to reduce model output to
             below this score. Otherwise, goal is to change the overall predicted
