@@ -17,6 +17,7 @@ from .attack import Attack
 from .attacker import Attacker
 from .trainer import Trainer
 from .metrics import Metric
+from .coverage import Coverage
 
 from . import (
     attack_recipes,
@@ -29,6 +30,7 @@ from . import (
     goal_functions,
     loggers,
     metrics,
+    coverage,
     models,
     search_methods,
     shared,
