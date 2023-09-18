@@ -5,28 +5,29 @@ python measure_coverage.py --split test --ratio 1.0 --coverage attention --lengt
 
 """
 
-import torch
+import argparse
+from math import floor
 import os
-import textattack
 import pickle
-from textattack.models.tokenizers import AutoTokenizer
-from textattack.models.wrappers import HuggingFaceModelWrapper
-from textattack.models.wrappers import ModelWrapper
+import random
+
+import numpy as np
+import torch
 from transformers import AutoModelForSequenceClassification
-from textattack.coverage import neuronMultiSectionCoverage
-from textattack.attack_results import SuccessfulAttackResult
-from textattack.datasets import HuggingFaceDataset
+
+import textattack
 from textattack.attack_recipes import (
-    TextFoolerJin2019,
-    HotFlipEbrahimi2017,
+    BAEGarg2019,
     DeepWordBugGao2018,
     FasterGeneticAlgorithmJia2019,
-    BAEGarg2019,
+    HotFlipEbrahimi2017,
+    TextFoolerJin2019,
 )
-from math import floor
-import random
-import numpy as np
-import argparse
+from textattack.attack_results import SuccessfulAttackResult
+from textattack.coverage import neuronMultiSectionCoverage
+from textattack.datasets import HuggingFaceDataset
+from textattack.models.tokenizers import AutoTokenizer
+from textattack.models.wrappers import HuggingFaceModelWrapper, ModelWrapper
 
 
 def random_seed(seed):
