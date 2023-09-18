@@ -18,9 +18,9 @@ class AdvancedAttackMetric(Metric):
     def calculate(self, results):
         advanced_metrics = {}
         if "use" in self.achoices:
-            advanced_metrics["use_stats"] = USEMetric().calculate(results)
+            advanced_metrics["use"] = USEMetric().calculate(results)
         if "perplexity" in self.achoices:
-            advanced_metrics["perplexity_stats"] = Perplexity().calculate(results)
+            advanced_metrics["perplexity"] = Perplexity().calculate(results)
         if "bert_score" in self.achoices:
             advanced_metrics["bert_score"] = BERTScoreMetric().calculate(results)
         if "meteor_score" in self.achoices:
