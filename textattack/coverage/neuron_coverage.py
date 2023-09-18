@@ -1,13 +1,14 @@
+from collections import defaultdict
+import copy
+import itertools
 import logging
 
 import torch
-import transformers
 from tqdm import tqdm
-import itertools
-import copy
+import transformers
 
 import textattack
-from collections import defaultdict
+
 from .coverage import ExtrinsicCoverage
 
 logging.getLogger("transformers.tokenization_utils_base").setLevel(logging.ERROR)
@@ -34,16 +35,15 @@ class neuronCoverage(ExtrinsicCoverage):
         self,
         test_model="textattack/bert-base-uncased-ag-news",
         tokenizer=None,
-				num_labels = 2,
+        num_labels=2,
         max_seq_len=-1,
         threshold=0.0,
         coarse_coverage=True,
     ):
-
         self.coarse_coverage = coarse_coverage
 
         config = transformers.AutoConfig.from_pretrained(
-            test_model, output_hidden_states=True,num_labels=num_labels
+            test_model, output_hidden_states=True, num_labels=num_labels
         )
         if config.model_type in COVERAGE_MODEL_TYPES:
             self.test_model = (
@@ -72,7 +72,7 @@ class neuronCoverage(ExtrinsicCoverage):
         self.coverage_tracker = self._init_coverage()
 
     def _init_coverage(self):
-        """Initialize `coverage_tracker` dictionary
+        """Initialize `coverage_tracker` dictionary.
 
         Returns:
         `coverage_tracker`(dict): a dictionary with key: neuron and value: (bool) intialized False
@@ -143,7 +143,6 @@ class neuronCoverage(ExtrinsicCoverage):
             self.coverage_tracker[("embedding")][0:sentence_length, ...],
         )
         for h_index, hidden_vector in enumerate(outputs[1][1:]):
-
             self.coverage_tracker[(h_index, "output")][
                 0:sentence_length, ...
             ] = torch.where(
@@ -170,7 +169,7 @@ class neuronCoverage(ExtrinsicCoverage):
         """
 
     def _compute_coverage(self):
-        """Calculate `neuron_coverage` for current model"""
+        """Calculate `neuron_coverage` for current model."""
 
         neuron_coverage = sum(
             [entry.sum().item() for entry in self.coverage_tracker.values()]
@@ -198,7 +197,6 @@ class neuronCoverage(ExtrinsicCoverage):
                         neuron coverage (float)
         """
         for t in tqdm(testset):
-
             self._update_coverage(t[0]["text"])
         neuron_coverage = self._compute_coverage()
         return neuron_coverage
