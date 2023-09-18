@@ -1,6 +1,6 @@
 """
 
-python measure_coverage.py --split test --ratio 1.0 --coverage attention --length 128 --prespecify-limits  --attack textfooler --test-ratio 1000 --save-dir ./coverage_workshop/ --seed 1 --dataset sst2
+python measure_coverage.py --split test --ratio 1.0 --coverage attention --length 128 --prespecify-limits  --attack textfooler --test-ratio 1000 --save-dir ./coverage_wp/ --seed 1 --dataset sst2
 
 
 """

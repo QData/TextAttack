@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 
 
 class Metric(ABC):
-    """A metric for evaluating Adversarial Attack candidates."""
+    """A metric for evaluating results and data quality."""
 
     @abstractmethod
     def __init__(self, **kwargs):
