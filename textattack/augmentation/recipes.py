@@ -190,7 +190,8 @@ class CheckListAugmenter(Augmenter):
 class CLAREAugmenter(Augmenter):
     """Li, Zhang, Peng, Chen, Brockett, Sun, Dolan.
 
-    "Contextualized Perturbation for Textual Adversarial Attack" (Li et al., 2020)
+    "Contextualized Perturbation for Textual Adversarial Attack" (Li et
+    al., 2020)
 
     https://arxiv.org/abs/2009.07502
 

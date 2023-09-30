@@ -128,6 +128,7 @@ GOAL_FUNCTION_CLASS_NAMES = {
 @dataclass
 class AttackArgs:
     """Attack arguments to be passed to :class:`~textattack.Attacker`.
+
     Args:
         num_examples (:obj:`int`, 'optional`, defaults to :obj:`10`):
             The number of examples to attack. :obj:`-1` for entire dataset.
@@ -464,7 +465,9 @@ class AttackArgs:
 
 @dataclass
 class _CommandLineAttackArgs:
-    """Attack args for command line execution. This requires more arguments to
+    """Attack args for command line execution.
+
+    This requires more arguments to
     create ``Attack`` object as specified.
     Args:
         transformation (:obj:`str`, `optional`, defaults to :obj:`"word-swap-embedding"`):

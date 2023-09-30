@@ -43,7 +43,7 @@ Besides, we highly recommend you to use virtual environment for textattack use,
 see [information here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment). Here is one conda example: 
 
 ```bash
-conda create -n textattackenv python=3.7
+conda create -n textattackenv python=3.8
 conda activate textattackenv
 conda env list
 ```

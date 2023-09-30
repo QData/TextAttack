@@ -28,8 +28,8 @@ from .attack_recipe import AttackRecipe
 class DeepWordBugGao2018(AttackRecipe):
     """Gao, Lanchantin, Soffa, Qi.
 
-    Black-box Generation of Adversarial Text Sequences to Evade Deep Learning
-    Classifiers.
+    Black-box Generation of Adversarial Text Sequences to Evade Deep
+    Learning Classifiers.
 
     https://arxiv.org/abs/1801.04354
     """
