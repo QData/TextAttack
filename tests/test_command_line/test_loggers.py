@@ -5,10 +5,7 @@ from helpers import run_command_and_get_result
 import pytest
 
 DEBUG = False
-
-"""
-Attack command-line tests in the format (name, args, sample_output_file)
-"""
+"""Attack command-line tests in the format (name, args, sample_output_file)"""
 
 """
  list_test_params data structure requires

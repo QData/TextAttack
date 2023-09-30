@@ -20,7 +20,8 @@ from .attack_recipe import AttackRecipe
 class MorpheusTan2020(AttackRecipe):
     """Samson Tan, Shafiq Joty, Min-Yen Kan, Richard Socher.
 
-    It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations
+    It’s Morphin’ Time! Combating Linguistic Discrimination with
+    Inflectional Perturbations
 
     https://www.aclweb.org/anthology/2020.acl-main.263/
     """

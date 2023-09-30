@@ -17,17 +17,16 @@ from .language_model_helpers import QueryHandler
 class LearningToWriteLanguageModel(LanguageModelConstraint):
     """A constraint based on the L2W language model.
 
-    The RNN-based language model from "Learning to Write With Cooperative
-    Discriminators" (Holtzman et al, 2018).
+    The RNN-based language model from "Learning to Write With
+    Cooperative Discriminators" (Holtzman et al, 2018).
 
     https://arxiv.org/pdf/1805.06087.pdf
 
     https://github.com/windweller/l2w
 
-
-    Reused by Jia et al., 2019, as a substitution for the Google 1-billion
-    words language model (in a revised version the attack of Alzantot et
-    al., 2018).
+     Reused by Jia et al., 2019, as a substitution for the Google
+    1-billion words language model (in a revised version the attack of
+    Alzantot et al., 2018).
 
     https://worksheets.codalab.org/worksheets/0x79feda5f1998497db75422eca8fcd689
     """

@@ -100,7 +100,7 @@ class WordSwapChangeNumber(WordSwap):
                 return []
 
     def _alter_number(self, num):
-        """helper function of _get_new_number, replace a number with another
+        """Helper function of _get_new_number, replace a number with another
         random number within the range of self.max_change."""
         if num not in [0, 2, 4]:
             change = int(num * self.max_change) + 1

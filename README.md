@@ -319,6 +319,7 @@ for data augmentation:
 - `eda` augments text with a combination of word insertions, substitutions and deletions.
 - `checklist` augments text by contraction/extension and by substituting names, locations, numbers.
 - `clare` augments text by replacing, inserting, and merging with a pre-trained masked language model.
+- `back_trans` augments text by backtranslation approach. 
 
 
 #### Augmentation Command-Line Interface

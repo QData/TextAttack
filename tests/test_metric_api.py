@@ -31,6 +31,7 @@ def test_use():
     from textattack.attack_recipes import DeepWordBugGao2018
     from textattack.datasets import HuggingFaceDataset
     from textattack.metrics.quality_metrics import USEMetric
+    from textattack.metrics.recipe import AdvancedAttackMetric
     from textattack.models.wrappers import HuggingFaceModelWrapper
 
     model = transformers.AutoModelForSequenceClassification.from_pretrained(
@@ -56,3 +57,6 @@ def test_use():
     usem = USEMetric().calculate(results)
 
     assert usem["avg_attack_use_score"] == 0.76
+
+    adv_score = AdvancedAttackMetric(["use", "perplexity"]).calculate(results)
+    assert adv_score["use"]["avg_attack_use_score"] == 0.76

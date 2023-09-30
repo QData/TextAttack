@@ -25,7 +25,8 @@ from .attack_recipe import AttackRecipe
 class TextFoolerJin2019(AttackRecipe):
     """Jin, D., Jin, Z., Zhou, J.T., & Szolovits, P. (2019).
 
-    Is BERT Really Robust? Natural Language Attack on Text Classification and Entailment.
+    Is BERT Really Robust? Natural Language Attack on Text
+    Classification and Entailment.
 
     https://arxiv.org/abs/1907.11932
     """

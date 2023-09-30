@@ -16,9 +16,9 @@ from textattack.shared import logger, utils
 class EmbeddingLayer(nn.Module):
     """A layer of a model that replaces word IDs with their embeddings.
 
-    This is a useful abstraction for any nn.module which wants to take word IDs
-    (a sequence of text) as input layer but actually manipulate words'
-    embeddings.
+    This is a useful abstraction for any nn.module which wants to take
+    word IDs (a sequence of text) as input layer but actually manipulate
+    words' embeddings.
 
     Requires some pre-trained embedding with associated word IDs.
     """
