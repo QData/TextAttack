@@ -58,7 +58,6 @@ def test_use():
 
 
 def test_metric_recipe():
-
     import transformers
 
     from textattack import AttackArgs, Attacker
