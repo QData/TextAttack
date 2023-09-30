@@ -63,7 +63,6 @@ def test_metric_recipe():
     from textattack import AttackArgs, Attacker
     from textattack.attack_recipes import DeepWordBugGao2018
     from textattack.datasets import HuggingFaceDataset
-    from textattack.metrics.quality_metrics import USEMetric
     from textattack.metrics.recipe import AdvancedAttackMetric
     from textattack.models.wrappers import HuggingFaceModelWrapper
 

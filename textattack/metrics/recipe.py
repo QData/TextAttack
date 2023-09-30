@@ -3,7 +3,6 @@ Attack Metric Quality Recipes:
 ==============================
 
 """
-import random
 
 from textattack.metrics.quality_metrics.bert_score import BERTScoreMetric
 from textattack.metrics.quality_metrics.meteor_score import MeteorMetric
