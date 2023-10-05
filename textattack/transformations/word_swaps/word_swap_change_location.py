@@ -96,11 +96,13 @@ class WordSwapChangeLocation(WordSwap):
                             for j in range(1, len(idx)):
                                 indices_to_delete.append(i + j)
 
-                    transformed_texts.append(current_text.replace_words_at_indices(
-                        location_to_indices[word] + indices_to_delete,
-                        ([r] * len(location_to_indices[word]))
-                        + ([""] * len(indices_to_delete)),
-                    ))
+                    transformed_texts.append(
+                        current_text.replace_words_at_indices(
+                            location_to_indices[word] + indices_to_delete,
+                            ([r] * len(location_to_indices[word]))
+                            + ([""] * len(indices_to_delete)),
+                        )
+                    )
 
                     # Delete this word to mark it as replaced
                     del location_to_indices[word]
@@ -108,7 +110,12 @@ class WordSwapChangeLocation(WordSwap):
                     # If the original location is more than a single word, keep only the starting word
                     # and replace the starting word with the new word
                     indices_to_delete = idx[1:]
-                    transformed_texts.append(current_text.replace_words_at_indices([idx[0]] + indices_to_delete, [r] + [""] * len(indices_to_delete)))
+                    transformed_texts.append(
+                        current_text.replace_words_at_indices(
+                            [idx[0]] + indices_to_delete,
+                            [r] + [""] * len(indices_to_delete),
+                        )
+                    )
 
         return transformed_texts
 
