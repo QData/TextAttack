@@ -57,8 +57,6 @@ def test_word_swap_change_location_consistent():
     for entity in augmented_text.get_spans("ner"):
         entity_augmented.append(entity.tag)
 
-    print(entity_original)
-
     assert entity_original == entity_augmented
     assert s_augmented[0].count("New York") == 0
 
