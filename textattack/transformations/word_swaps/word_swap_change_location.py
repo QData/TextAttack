@@ -159,7 +159,6 @@ class WordSwapChangeLocation(WordSwap):
         max_length = location_words[0][0][-1] - location_words[0][0][0] + 1
 
         for idx, location in location_words:
-
             words_in_location = idx[-1] - idx[0] + 1
             found = False
             location_start = idx[0]
