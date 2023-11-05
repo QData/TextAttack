@@ -5,13 +5,25 @@
 # Required
 version: 2
 
+# Set the OS, Python version and other tools you might need
+build:
+  os: ubuntu-latest
+  tools:
+    python: "3.8"
+    # You can also specify other tool versions:
+    # nodejs: "20"
+    # rust: "1.70"
+    # golang: "1.20"
+  jobs:
+    post_checkout:
+      - git fetch --unshallow || true
+      
 # Build documentation in the docs/ directory with Sphinx
 sphinx:
   configuration: docs/conf.py
 
 # Optionally set the version of Python and requirements required to build your docs
 python:
-   version: 3.7
    install:
       - requirements: docs/requirements.txt
       - requirements: requirements.txt
