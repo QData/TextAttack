@@ -1,3 +1,8 @@
+"""
+Word Swap by chinese hownet
+-------------------------------------
+"""
+
 import OpenHowNet
 
 from . import WordSwap

@@ -1,3 +1,11 @@
+"""
+Attack Chinese Recipe
+=====================
+
+(Contextualized Perturbation for Chinese NLP Adversarial Attack)
+
+"""
+
 import string
 
 from textattack import Attack

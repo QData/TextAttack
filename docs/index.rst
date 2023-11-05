@@ -69,7 +69,7 @@ TextAttack Documentation
    
 
 .. toctree::
-   :maxdepth: 6
+   :maxdepth: 7
    :glob:
    :caption: Full Reference
 
