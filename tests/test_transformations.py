@@ -33,6 +33,34 @@ def test_word_swap_change_location():
     assert entity_original == entity_augmented
 
 
+def test_word_swap_change_location_consistent():
+    from flair.data import Sentence
+    from flair.models import SequenceTagger
+
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps import WordSwapChangeLocation
+
+    augmenter = Augmenter(transformation=WordSwapChangeLocation(consistent=True))
+    s = "I am in New York. I love living in New York."
+    s_augmented = augmenter.augment(s)
+    augmented_text = Sentence(s_augmented[0])
+    tagger = SequenceTagger.load("flair/ner-english")
+    original_text = Sentence(s)
+    tagger.predict(original_text)
+    tagger.predict(augmented_text)
+
+    entity_original = []
+    entity_augmented = []
+
+    for entity in original_text.get_spans("ner"):
+        entity_original.append(entity.tag)
+    for entity in augmented_text.get_spans("ner"):
+        entity_augmented.append(entity.tag)
+
+    assert entity_original == entity_augmented
+    assert s_augmented[0].count("New York") == 0
+
+
 def test_word_swap_change_name():
     from flair.data import Sentence
     from flair.models import SequenceTagger
@@ -57,6 +85,34 @@ def test_word_swap_change_name():
     for entity in augmented_text.get_spans("ner"):
         entity_augmented.append(entity.tag)
     assert entity_original == entity_augmented
+
+
+def test_word_swap_change_name_consistent():
+    from flair.data import Sentence
+    from flair.models import SequenceTagger
+
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps import WordSwapChangeName
+
+    augmenter = Augmenter(transformation=WordSwapChangeName(consistent=True))
+    s = "My name is Anthony Davis. Anthony Davis plays basketball."
+    s_augmented = augmenter.augment(s)
+    augmented_text = Sentence(s_augmented[0])
+    tagger = SequenceTagger.load("flair/ner-english")
+    original_text = Sentence(s)
+    tagger.predict(original_text)
+    tagger.predict(augmented_text)
+
+    entity_original = []
+    entity_augmented = []
+
+    for entity in original_text.get_spans("ner"):
+        entity_original.append(entity.tag)
+    for entity in augmented_text.get_spans("ner"):
+        entity_augmented.append(entity.tag)
+
+    assert entity_original == entity_augmented
+    assert s_augmented[0].count("Anthony") == 0 or s_augmented[0].count("Davis") == 0
 
 
 def test_chinese_morphonym_character_swap():
