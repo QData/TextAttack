@@ -1,5 +1,5 @@
 """
-BERT for Sentence Similarity
+sBERT for Sentence Similarity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 """
 

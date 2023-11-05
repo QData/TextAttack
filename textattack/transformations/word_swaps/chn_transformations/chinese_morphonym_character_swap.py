@@ -1,3 +1,8 @@
+"""
+Word Swap by chinese morphonym
+-------------------------------------
+"""
+
 from textattack.shared.data import MORPHONYM_LS
 
 from . import WordSwap

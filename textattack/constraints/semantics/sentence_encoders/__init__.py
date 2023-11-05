@@ -1,6 +1,6 @@
 """
-Sentence Encoder
----------------------
+Sentence Encoder Constraint
+----------------------------
 """
 
 

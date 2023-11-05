@@ -1,3 +1,11 @@
+"""
+Attack French Recipe
+====================
+
+(Contextualized Perturbation for French NLP Adversarial Attack)
+
+"""
+
 from textattack import Attack
 from textattack.constraints.pre_transformation import (
     RepeatModification,
