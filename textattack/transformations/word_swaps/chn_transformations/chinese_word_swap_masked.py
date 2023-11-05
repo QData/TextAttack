@@ -1,6 +1,6 @@
 """
-Word Swap by BERT-Masked LM.
--------------------------------
+Word Swap by chinese BERT-Masked LM.
+-------------------------------------
 """
 
 from transformers import pipeline
