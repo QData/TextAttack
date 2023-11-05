@@ -3,6 +3,8 @@ Word Swap by Changing Name
 -------------------------------
 """
 
+from collections import defaultdict
+
 import numpy as np
 
 from textattack.shared.data import PERSON_NAMES
@@ -18,6 +20,7 @@ class WordSwapChangeName(WordSwap):
         last_only=False,
         confidence_score=0.7,
         language="en",
+        consistent=False,
         **kwargs
     ):
         """Transforms an input by replacing names of recognized name entity.
@@ -26,6 +29,7 @@ class WordSwapChangeName(WordSwap):
         :param first_only: Whether to change first name only
         :param last_only: Whether to change last name only
         :param confidence_score: Name will only be changed when it's above confidence score
+        :param consistent: Whether to change all instances of the same name to the same new name
         >>> from textattack.transformations import WordSwapChangeName
         >>> from textattack.augmentation import Augmenter
 
@@ -42,6 +46,7 @@ class WordSwapChangeName(WordSwap):
         self.last_only = last_only
         self.confidence_score = confidence_score
         self.language = language
+        self.consistent = consistent
 
     def _get_transformations(self, current_text, indices_to_modify):
         transformed_texts = []
@@ -52,14 +57,38 @@ class WordSwapChangeName(WordSwap):
         else:
             model_name = "flair/ner-multi-fast"
 
+        if self.consistent:
+            word_to_indices = defaultdict(list)
+            for i in indices_to_modify:
+                word_to_replace = current_text.words[i].capitalize()
+                word_to_indices[word_to_replace].append(i)
+
         for i in indices_to_modify:
             word_to_replace = current_text.words[i].capitalize()
+            # If we're doing consistent replacements, only replace the word
+            # if it hasn't already been replaced in a previous iteration
+            if self.consistent and word_to_replace not in word_to_indices:
+                continue
             word_to_replace_ner = current_text.ner_of_word_index(i, model_name)
+
             replacement_words = self._get_replacement_words(
                 word_to_replace, word_to_replace_ner
             )
+
             for r in replacement_words:
-                transformed_texts.append(current_text.replace_word_at_index(i, r))
+                if self.consistent:
+                    transformed_texts.append(
+                        current_text.replace_words_at_indices(
+                            word_to_indices[word_to_replace],
+                            [r] * len(word_to_indices[word_to_replace]),
+                        )
+                    )
+                else:
+                    transformed_texts.append(current_text.replace_word_at_index(i, r))
+
+            # Delete this word to mark it as replaced
+            if self.consistent and len(replacement_words) != 0:
+                del word_to_indices[word_to_replace]
 
         return transformed_texts
 

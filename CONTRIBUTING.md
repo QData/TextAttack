@@ -117,7 +117,7 @@ Follow these steps to start contributing:
    
    ```bash
    $ cd TextAttack
-   $ pip install -e . ".[dev]"
+   $ pip install -e .[dev]
    $ pip install black docformatter isort pytest pytest-xdist
    ```
    

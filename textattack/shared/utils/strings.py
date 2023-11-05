@@ -86,7 +86,7 @@ class ReprMixin(object):
     __str__ = __repr__
 
     def extra_repr_keys(self):
-        """extra fields to be included in the representation of a class."""
+        """Extra fields to be included in the representation of a class."""
         return []
 
 
@@ -164,7 +164,7 @@ class ANSI_ESCAPE_CODES:
     FAIL = "\033[91m"
     BOLD = "\033[1m"
     UNDERLINE = "\033[4m"
-    """ This color stops the current color sequence. """
+    """This color stops the current color sequence."""
     STOP = "\033[0m"
 
 

@@ -3,9 +3,14 @@ Attack Metric Quality Recipes:
 ==============================
 
 """
-import random
 
-from . import metric
+from textattack.metrics.quality_metrics.bert_score import BERTScoreMetric
+from textattack.metrics.quality_metrics.meteor_score import MeteorMetric
+from textattack.metrics.quality_metrics.perplexity import Perplexity
+from textattack.metrics.quality_metrics.sentence_bert import SBERTMetric
+from textattack.metrics.quality_metrics.use import USEMetric
+
+from .metric import Metric
 
 
 class AdvancedAttackMetric(Metric):
@@ -18,13 +23,13 @@ class AdvancedAttackMetric(Metric):
     def calculate(self, results):
         advanced_metrics = {}
         if "use" in self.achoices:
-            advanced_metrics["use"] = USEMetric().calculate(results)
+            advanced_metrics.update(USEMetric().calculate(results))
         if "perplexity" in self.achoices:
-            advanced_metrics["perplexity"] = Perplexity().calculate(results)
+            advanced_metrics.update(Perplexity().calculate(results))
         if "bert_score" in self.achoices:
-            advanced_metrics["bert_score"] = BERTScoreMetric().calculate(results)
+            advanced_metrics.update(BERTScoreMetric().calculate(results))
         if "meteor_score" in self.achoices:
-            advanced_metrics["meteor_score"] = MeteorMetric().calculate(results)
+            advanced_metrics.update(MeteorMetric().calculate(results))
         if "sbert_score" in self.achoices:
-            advanced_metrics["sbert_score"] = SBERTMetric().calculate(results)
+            advanced_metrics.update(SBERTMetric().calculate(results))
         return advanced_metrics

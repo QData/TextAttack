@@ -40,6 +40,16 @@ jobs:
         sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
         docker rmi $(docker image ls -aq) >/dev/null 2>&1
         df -h
+    - name: Increase swap space
+      run: |
+        swapon --show
+        export SWAP_FILE=$(swapon --show=NAME | tail -n 1)
+        sudo swapoff $SWAP_FILE
+        sudo dd if=/dev/zero of=$SWAP_FILE bs=1M count=8k oflag=append conv=notrunc # Increase by 8GB
+        sudo chmod 0600 $SWAP_FILE
+        sudo mkswap $SWAP_FILE
+        sudo swapon $SWAP_FILE
+        swapon --show
     - name: Test with pytest
       run: |
         pytest tests -v
