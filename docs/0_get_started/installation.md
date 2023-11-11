@@ -30,17 +30,17 @@ This installs additional dependencies required for development.
 
 
 ## Optional Dependencies
-For quick installation, TextAttack only installs esssential packages as dependencies (e.g. Transformers, PyTorch). However, you might need to install additional packages to run certain attacks or features.
+For quick installation, TextAttack only installs essential packages as dependencies (e.g. Transformers, PyTorch). However, you might need to install additional packages to run certain attacks or features.
 For example, Tensorflow and Tensorflow Hub are required to use the TextFooler attack, which was proposed in [Is BERT Really Robust? A Strong Baseline for Natural Language Attack on Text Classification and Entailment](https://arxiv.org/abs/1907.11932) by Di Jin, Zhijing Jin, Joey Tianyi Zhou, and Peter Szolov.
 
-If you attempting to use a feature that requires additional dependencies, TextAttack will let you know which ones you need to install.
+If you are attempting to use a feature that requires additional dependencies, TextAttack will let you know which ones you need to install.
 
 However, during installation step, you can also install them together with TextAttack.
 You can install Tensorflow and its related packages by running
 
     pip install textattack[tensorflow]
 
-You can also install other miscallenous optional dependencies by running
+You can also install other miscellaneous optional dependencies by running
 
     pip install textattack[optional]
 
