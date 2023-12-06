@@ -11,7 +11,7 @@ textattack.constraints.semantics.sentence\_encoders package
 .. toctree::
    :maxdepth: 6
 
-   textattack.constraints.semantics.sentence_encoders.bert
+   textattack.constraints.semantics.sentence_encoders.sentence_bert
    textattack.constraints.semantics.sentence_encoders.infer_sent
    textattack.constraints.semantics.sentence_encoders.universal_sentence_encoder
 
