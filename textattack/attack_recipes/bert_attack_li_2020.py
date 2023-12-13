@@ -38,7 +38,8 @@ class BERTAttackLi2020(AttackRecipe):
     def build(model_wrapper):
         # [from correspondence with the author]
         # Candidate size K is set to 48 for all data-sets.
-        transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=48)
+        # In some instances, using a candidate size of 48 can lead to significant time consumption. It is recommended to reduce this to fewer than 8.
+        transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=4)
         #
         # Don't modify the same word twice or stopwords.
         #
