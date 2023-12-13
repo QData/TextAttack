@@ -103,3 +103,34 @@ class TestPretransformationConstraints:
             set(range(len(entailment_attacked_text.words)))
             - {1, 2, 3, 8, 9, 11, 16, 17, 20, 22, 25, 31, 34, 39, 40, 41, 43, 44}
         )
+
+    def test_unmodifiable_indices(
+        self, sentence_attacked_text, entailment_attacked_text
+    ):
+        constraint = textattack.constraints.pre_transformation.UnmodifiableIndices(
+            [4, 5]
+        )
+        assert constraint._get_modifiable_indices(sentence_attacked_text) == (
+            set(range(len(sentence_attacked_text.words))) - {4, 5}
+        )
+        sentence_attacked_text = sentence_attacked_text.delete_word_at_index(2)
+        assert constraint._get_modifiable_indices(sentence_attacked_text) == (
+            set(range(len(sentence_attacked_text.words))) - {3, 4}
+        )
+        assert constraint._get_modifiable_indices(entailment_attacked_text) == (
+            set(range(len(entailment_attacked_text.words))) - {4, 5}
+        )
+        entailment_attacked_text = (
+            entailment_attacked_text.insert_text_after_word_index(0, "two words")
+        )
+        assert constraint._get_modifiable_indices(entailment_attacked_text) == (
+            set(range(len(entailment_attacked_text.words))) - {6, 7}
+        )
+
+    def test_unmodifiable_phrases(self, sentence_attacked_text):
+        constraint = textattack.constraints.pre_transformation.UnmodifablePhrases(
+            ["South Korea's", "oil", "monday"]
+        )
+        assert constraint._get_modifiable_indices(sentence_attacked_text) == (
+            set(range(len(sentence_attacked_text.words))) - {0, 1, 9, 22}
+        )

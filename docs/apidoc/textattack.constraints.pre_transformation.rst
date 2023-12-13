@@ -43,3 +43,15 @@ textattack.constraints.pre\_transformation package
    :members:
    :undoc-members:
    :show-inheritance:
+
+
+.. automodule:: textattack.constraints.pre_transformation.unmodifiable_indices
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.constraints.pre_transformation.unmodifiable_phrases
+   :members:
+   :undoc-members:
+   :show-inheritance:
