@@ -317,7 +317,7 @@ class AttackedText:
         elif isinstance(idxs, set):
             idxs = list(idxs)
 
-        elif not isinstance(idxs, [list, np.ndarray]):
+        elif not isinstance(idxs, (list, np.ndarray)):
             raise TypeError(
                 f"convert_from_original_idxs got invalid idxs type {type(idxs)}"
             )
