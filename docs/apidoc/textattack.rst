@@ -22,6 +22,7 @@ textattack package
    textattack.loggers
    textattack.metrics
    textattack.models
+   textattack.prompt_augmentation
    textattack.search_methods
    textattack.shared
    textattack.transformations
