@@ -140,7 +140,13 @@ def test_back_transcription():
     from textattack.augmentation import Augmenter
     from textattack.transformations.sentence_transformations import BackTranscription
 
-    augmenter = Augmenter(transformation=BackTranscription())
-    s = "What on earth are you doing?"
-    augmented_text_list = augmenter.augment(s)
-    assert augmented_text_list
+    try:
+        augmenter = Augmenter(transformation=BackTranscription())
+    except ModuleNotFoundError:
+        print(
+            "To use BackTranscription augmenter, install `fairseq`, `g2p_en` and `librosa` libraries"
+        )
+    else:
+        s = "What on earth are you doing?"
+        augmented_text_list = augmenter.augment(s)
+        assert augmented_text_list

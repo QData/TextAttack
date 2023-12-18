@@ -5,9 +5,6 @@ BackTranscription class
 """
 
 
-from fairseq.checkpoint_utils import load_model_ensemble_and_task_from_hf_hub
-from fairseq.models.text_to_speech.hub_interface import TTSHubInterface
-import librosa
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 
 from textattack.shared import AttackedText
@@ -44,6 +41,9 @@ class BackTranscription(SentenceTransformation):
         asr_model="openai/whisper-base",
     ):
         # TTS model
+        from fairseq.checkpoint_utils import load_model_ensemble_and_task_from_hf_hub
+        from fairseq.models.text_to_speech.hub_interface import TTSHubInterface
+
         self.tts_model_name = tts_model
         models, cfg, self.tts_task = load_model_ensemble_and_task_from_hf_hub(
             self.tts_model_name,
@@ -64,12 +64,16 @@ class BackTranscription(SentenceTransformation):
 
     def back_transcribe(self, text):
         # speech synthesis
+        from fairseq.models.text_to_speech.hub_interface import TTSHubInterface
+
         sample = TTSHubInterface.get_model_input(self.tts_task, text)
         wav, rate = TTSHubInterface.get_prediction(
             self.tts_task, self.tts_model, self.tts_generator, sample
         )
 
         # speech recognition
+        import librosa
+
         resampled_wav = librosa.resample(
             wav.numpy(), orig_sr=rate, target_sr=self.asr_sampling_rate
         )
