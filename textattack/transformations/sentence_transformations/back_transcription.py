@@ -33,6 +33,27 @@ class BackTranscription(SentenceTransformation):
         >>> s = 'What on earth are you doing here.'
 
         >>> augmenter.augment(s)
+
+    You can find more about the back transcription method in the following paper:
+
+        @inproceedings{kubis-etal-2023-back,
+            title = "Back Transcription as a Method for Evaluating Robustness of Natural Language Understanding Models to Speech Recognition Errors",
+            author = "Kubis, Marek  and
+                Sk{\\'o}rzewski, Pawe{\\l}  and
+                Sowa{\\'n}nski, Marcin  and
+                Zietkiewicz, Tomasz",
+            editor = "Bouamor, Houda  and
+                Pino, Juan  and
+                Bali, Kalika",
+            booktitle = "Proceedings of the 2023 Conference on Empirical Methods in Natural Language Processing",
+            month = dec,
+            year = "2023",
+            address = "Singapore",
+            publisher = "Association for Computational Linguistics",
+            url = "https://aclanthology.org/2023.emnlp-main.724",
+            doi = "10.18653/v1/2023.emnlp-main.724",
+            pages = "11824--11835",
+        }
     """
 
     def __init__(

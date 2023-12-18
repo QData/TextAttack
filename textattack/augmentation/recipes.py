@@ -263,3 +263,15 @@ class BackTranslationAugmenter(Augmenter):
 
         transformation = BackTranslation(chained_back_translation=5)
         super().__init__(transformation, **kwargs)
+
+
+class BackTranscriptionAugmenter(Augmenter):
+    """Sentence level augmentation that uses back transcription (TTS+ASR)."""
+
+    def __init__(self, **kwargs):
+        from textattack.transformations.sentence_transformations import (
+            BackTranscription,
+        )
+
+        transformation = BackTranscription()
+        super().__init__(transformation, **kwargs)

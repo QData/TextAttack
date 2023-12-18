@@ -14,6 +14,7 @@ AUGMENTATION_RECIPE_NAMES = {
     "checklist": "textattack.augmentation.CheckListAugmenter",
     "clare": "textattack.augmentation.CLAREAugmenter",
     "back_trans": "textattack.augmentation.BackTranslationAugmenter",
+    "back_transcription": "textattack.augmentation.BackTranscriptionAugmenter",
 }
 
 
