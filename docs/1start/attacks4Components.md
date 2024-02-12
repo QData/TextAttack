@@ -123,7 +123,7 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 <td ><sub>Greedy replace-1 scoring and multi-transformation character-swap attack (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)</sub></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"> <code>fast-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
+<td style="text-align: left;"> <code>faster-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td style="text-align: left;"><sub>Untargeted {Classification, Entailment}</sub></td>
 <td style="text-align: left;"><sub>Percentage of words perturbed, Language Model perplexity, Word embedding distance</sub></td>
 <td style="text-align: left;"><sub>Counter-fitted word embedding swap</sub></td>
