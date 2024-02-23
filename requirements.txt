@@ -4,6 +4,7 @@ flair
 filelock
 language_tool_python
 lemminflect
+lru-dict
 datasets>=2.4.0
 nltk
 numpy>=1.21.0
