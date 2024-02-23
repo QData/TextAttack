@@ -4,7 +4,6 @@ flair
 filelock
 language_tool_python
 lemminflect
-lru-dict
 datasets>=2.4.0
 nltk
 numpy>=1.21.0
@@ -17,11 +16,7 @@ tqdm
 word2number
 num2words
 more-itertools
-PySocks!=1.5.7,>=1.5.6
 pinyin>=0.4.0
 jieba
 OpenHowNet
-pycld2
-click<8.1.0
 pinyin
-
