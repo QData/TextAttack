@@ -27,11 +27,11 @@ extras["test"] = [
 ]
 
 extras["tensorflow"] = [
-    "tensorflow~=2.13.1",
+    "tensorflow>=2.9.1",
     "tensorflow_hub",
-    "tensorflow_text~=2.13.0",
+    "tensorflow_text>=2.9.0",
     "tensorboardX",
-    "tensorflow-estimator~=2.13.0",
+    "tensorflow-estimator>=2.9.0",
 ]
 
 extras["optional"] = [
@@ -39,7 +39,7 @@ extras["optional"] = [
     "stanza",
     "visdom",
     "wandb",
-    "gensim==4.1.2",
+    "gensim",
 ]
 
 # For developers, install development tools along with all optional dependencies.
