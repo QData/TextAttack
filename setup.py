@@ -27,11 +27,11 @@ extras["test"] = [
 ]
 
 extras["tensorflow"] = [
-    "tensorflow==2.9.1",
+    "tensorflow~=2.13.1",
     "tensorflow_hub",
-    "tensorflow_text>=2",
+    "tensorflow_text~=2.13.0",
     "tensorboardX",
-    "tensorflow-estimator==2.9.0",
+    "tensorflow-estimator~=2.13.0",
 ]
 
 extras["optional"] = [
@@ -78,6 +78,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     install_requires=open("requirements.txt").readlines(),
 )
