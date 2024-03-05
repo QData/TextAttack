@@ -168,7 +168,7 @@ textattack attack --model lstm-mr --num-examples 20 \
 <td ><sub>贪心搜索 replace-1 分数，多种变换的字符交换式的攻击 (["Black-box Generation of Adversarial Text Sequences to Evade Deep Learning Classifiers" (Gao et al., 2018)](https://arxiv.org/abs/1801.04354)</sub></td>
 </tr>
 <tr>
-<td> <code>fast-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
+<td> <code>faster-alzantot</code> <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>无目标<br/>{分类，蕴含}</sub></td>
 <td><sub>被扰动词的比例，语言模型的困惑度，词嵌入的距离</sub></td>
 <td><sub>Counter-fitted 词嵌入替换</sub></td>

@@ -5,7 +5,7 @@ Alzantot Genetic Algorithm
 (Generating Natural Language Adversarial Examples)
 
 .. warning::
-    This attack uses a very slow language model. Consider using the ``fast-alzantot``
+    This attack uses a very slow language model. Consider using the ``faster-alzantot``
     recipe instead.
 
 """

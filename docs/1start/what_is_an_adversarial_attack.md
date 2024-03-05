@@ -70,7 +70,7 @@ TextAttack attack recipes that fall under this category: deepwordbug, hotflip, p
 
 Some NLP models are trained to measure semantic similarity. Adversarial attacks based on the notion of semantic indistinguishability typically use another NLP model to enforce that perturbations are grammatically valid and semantically similar to the original input.
 
-TextAttack attack recipes that fall under this category: alzantot, bae, bert-attack, fast-alzantot, iga, kuleshov, pso, pwws, textbugger\*, textfooler
+TextAttack attack recipes that fall under this category: alzantot, bae, bert-attack, faster-alzantot, iga, kuleshov, pso, pwws, textbugger\*, textfooler
 
 \*The textbugger attack generates perturbations using both typo-like character edits and synonym substitutions. It could be considered to use both definitions of indistinguishability.
 
