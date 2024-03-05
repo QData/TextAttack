@@ -15,6 +15,12 @@ textattack.transformations.sentence\_transformations package
    :show-inheritance:
 
 
+.. automodule:: textattack.transformations.sentence_transformations.back_transcription
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. automodule:: textattack.transformations.sentence_transformations.sentence_transformation
    :members:
    :undoc-members:
