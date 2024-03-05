@@ -1,7 +1,7 @@
 textattack.constraints.semantics.sentence\_encoders.bert package
 ================================================================
 
-.. automodule:: textattack.constraints.semantics.sentence_encoders.bert
+.. automodule:: textattack.constraints.semantics.sentence_encoders.sentence_bert
    :members:
    :undoc-members:
    :show-inheritance:
@@ -9,7 +9,7 @@ textattack.constraints.semantics.sentence\_encoders.bert package
 
 
 
-.. automodule:: textattack.constraints.semantics.sentence_encoders.bert.bert
+.. automodule:: textattack.constraints.semantics.sentence_encoders.sentence_bert.sbert
    :members:
    :undoc-members:
    :show-inheritance:

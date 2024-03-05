@@ -67,7 +67,7 @@ CONSTRAINT_CLASS_NAMES = {
     # Semantics constraints
     #
     "embedding": "textattack.constraints.semantics.WordEmbeddingDistance",
-    "bert": "textattack.constraints.semantics.sentence_encoders.BERT",
+    "sbert": "textattack.constraints.semantics.sentence_encoders.SBERT",
     "infer-sent": "textattack.constraints.semantics.sentence_encoders.InferSent",
     "thought-vector": "textattack.constraints.semantics.sentence_encoders.ThoughtVector",
     "use": "textattack.constraints.semantics.sentence_encoders.UniversalSentenceEncoder",
