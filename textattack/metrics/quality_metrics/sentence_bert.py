@@ -7,13 +7,13 @@ Class for calculating SentenceBERT similarity on AttackResults
 """
 
 from textattack.attack_results import FailedAttackResult, SkippedAttackResult
-from textattack.constraints.semantics.sentence_encoders import BERT
+from textattack.constraints.semantics.sentence_encoders import SBERT
 from textattack.metrics import Metric
 
 
 class SBERTMetric(Metric):
     def __init__(self, **kwargs):
-        self.use_obj = BERT(model_name="all-MiniLM-L6-v2", metric="cosine")
+        self.use_obj = SBERT(model_name="all-MiniLM-L6-v2", metric="cosine")
         self.original_candidates = []
         self.successful_candidates = []
         self.all_metrics = {}

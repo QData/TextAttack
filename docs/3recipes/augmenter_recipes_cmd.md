@@ -1,8 +1,8 @@
-# Augmenter Recipes CommandLine Use 
+# Augmenter Recipes CommandLine Use
 
-Transformations and constraints can be used for simple NLP data augmentations. 
+Transformations and constraints can be used for simple NLP data augmentations.
 
-The [`examples/`](https://github.com/QData/TextAttack/tree/master/examples) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file. 
+The [`examples/`](https://github.com/QData/TextAttack/tree/master/examples) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file.
 
 The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
@@ -18,11 +18,12 @@ for data augmentation:
 - `eda` augments text with a combination of word insertions, substitutions and deletions.
 - `checklist` augments text by contraction/extension and by substituting names, locations, numbers.
 - `clare` augments text by replacing, inserting, and merging with a pre-trained masked language model.
-- `back_trans` augments text by backtranslation method. 
+- `back_trans` augments text by backtranslation method.
+- `back_transcription` augments text by back transcription approach.
 
 
 ### Augmentation Command-Line Interface
-The easiest way to use our data augmentation tools is with `textattack augment <args>`. 
+The easiest way to use our data augmentation tools is with `textattack augment <args>`.
 
 `textattack augment`
 takes an input CSV file, the "text" column to augment, along with the number of words to change per augmentation
@@ -65,4 +66,3 @@ it's a enigma how the filmmaking wo be publicized in this condition .,0
 ```
 
 The 'embedding' augmentation recipe uses counterfitted embedding nearest-neighbors to augment data.
-

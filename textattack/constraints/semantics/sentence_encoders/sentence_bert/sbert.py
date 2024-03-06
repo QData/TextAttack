@@ -11,7 +11,7 @@ sentence_transformers = utils.LazyLoader(
 )
 
 
-class BERT(SentenceEncoder):
+class SBERT(SentenceEncoder):
     """Constraint using similarity between sentence encodings of x and x_adv
     where the text embeddings are created using BERT, trained on NLI data, and
     fine- tuned on the STS benchmark dataset.

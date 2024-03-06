@@ -13,7 +13,7 @@ from textattack.constraints.pre_transformation import (
     StopwordModification,
 )
 from textattack.constraints.semantics import WordEmbeddingDistance
-from textattack.constraints.semantics.sentence_encoders import BERT
+from textattack.constraints.semantics.sentence_encoders import SBERT
 from textattack.goal_functions import UntargetedClassification
 from textattack.search_methods import GreedyWordSwapWIR
 from textattack.transformations import WordSwapEmbedding, WordSwapMaskedLM
@@ -49,7 +49,7 @@ class A2TYoo2021(AttackRecipe):
         constraints.append(input_column_modification)
         constraints.append(PartOfSpeech(allow_verb_noun_swap=False))
         constraints.append(MaxModificationRate(max_rate=0.1, min_threshold=4))
-        sent_encoder = BERT(
+        sent_encoder = SBERT(
             model_name="stsb-distilbert-base", threshold=0.9, metric="cosine"
         )
         constraints.append(sent_encoder)
