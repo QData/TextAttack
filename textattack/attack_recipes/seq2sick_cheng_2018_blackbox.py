@@ -4,6 +4,7 @@ Seq2Sick
 ================================================
 (Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples)
 """
+
 from textattack import Attack
 from textattack.constraints.overlap import LevenshteinEditDistance
 from textattack.constraints.pre_transformation import (

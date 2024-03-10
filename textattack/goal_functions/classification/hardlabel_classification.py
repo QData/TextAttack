@@ -3,7 +3,6 @@ Determine if an attack has been successful in Hard Label Classficiation.
 ------------------------------------------------------------------------
 """
 
-
 from .classification_goal_function import ClassificationGoalFunction
 
 

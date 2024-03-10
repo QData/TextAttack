@@ -3,7 +3,6 @@ Attack Logger Wrapper
 ========================
 """
 
-
 from abc import ABC
 
 

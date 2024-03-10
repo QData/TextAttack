@@ -17,11 +17,7 @@ tqdm
 word2number
 num2words
 more-itertools
-PySocks!=1.5.7,>=1.5.6
 pinyin>=0.4.0
 jieba
 OpenHowNet
-pycld2
-click<8.1.0
-pinyin
-
+click==8.0.2

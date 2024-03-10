@@ -5,6 +5,7 @@ HotFlip
 (HotFlip: White-Box Adversarial Examples for Text Classification)
 
 """
+
 from textattack import Attack
 from textattack.constraints.grammaticality import PartOfSpeech
 from textattack.constraints.overlap import MaxWordsPerturbed

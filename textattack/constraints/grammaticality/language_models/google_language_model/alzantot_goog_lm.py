@@ -7,7 +7,6 @@ Google Language Models from Alzantot
     All rights reserved.
 """
 
-
 import os
 
 import lru

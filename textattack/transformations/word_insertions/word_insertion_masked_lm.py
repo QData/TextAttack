@@ -2,6 +2,7 @@
 WordInsertionMaskedLM Class
 -------------------------------
 """
+
 import re
 
 import torch

@@ -4,7 +4,6 @@ Determine if an attack has been successful in targeted Classification
 -----------------------------------------------------------------------
 """
 
-
 from .classification_goal_function import ClassificationGoalFunction
 
 

@@ -4,7 +4,6 @@ Util function for Model Wrapper
 
 """
 
-
 import glob
 import os
 

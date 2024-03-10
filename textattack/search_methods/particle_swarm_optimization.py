@@ -10,6 +10,7 @@ al
 `<https://www.aclweb.org/anthology/2020.acl-main.540.pdf>`_
 `<https://github.com/thunlp/SememePSO-Attack>`_
 """
+
 import copy
 
 import numpy as np
@@ -119,9 +120,9 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
                 & indices_to_replace
             )
             if "last_transformation" in source_text.attacked_text.attack_attrs:
-                new_text.attack_attrs[
-                    "last_transformation"
-                ] = source_text.attacked_text.attack_attrs["last_transformation"]
+                new_text.attack_attrs["last_transformation"] = (
+                    source_text.attacked_text.attack_attrs["last_transformation"]
+                )
 
             if not self.post_turn_check or (new_text.words == source_text.words):
                 break

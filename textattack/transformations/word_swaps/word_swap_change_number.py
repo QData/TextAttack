@@ -3,6 +3,7 @@ Word Swap by Changing Number
 -------------------------------
 
 """
+
 import more_itertools as mit
 from num2words import num2words
 import numpy as np

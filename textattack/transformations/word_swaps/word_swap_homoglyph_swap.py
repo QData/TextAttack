@@ -2,6 +2,7 @@
 Word Swap by Homoglyph
 -------------------------------
 """
+
 import numpy as np
 
 # from textattack.shared import utils

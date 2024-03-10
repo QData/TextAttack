@@ -2,6 +2,7 @@
 Word Swap by Changing Location
 -------------------------------
 """
+
 from collections import defaultdict
 
 import more_itertools as mit

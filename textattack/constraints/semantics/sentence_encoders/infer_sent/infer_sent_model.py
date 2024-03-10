@@ -7,7 +7,6 @@ https://arxiv.org/pdf/1705.02364.pdf.
 
 """
 
-
 # Copyright (c) 2017-present, Facebook, Inc.
 # All rights reserved.
 #
@@ -209,9 +208,11 @@ class InferSentModel(nn.Module):
 
     def prepare_samples(self, sentences, bsize, tokenize, verbose):
         sentences = [
-            [self.bos] + s.split() + [self.eos]
-            if not tokenize
-            else [self.bos] + self.tokenize(s) + [self.eos]
+            (
+                [self.bos] + s.split() + [self.eos]
+                if not tokenize
+                else [self.bos] + self.tokenize(s) + [self.eos]
+            )
             for s in sentences
         ]
         n_w = np.sum([len(x) for x in sentences])

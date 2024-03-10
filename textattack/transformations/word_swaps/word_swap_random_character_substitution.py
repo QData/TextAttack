@@ -2,6 +2,7 @@
 Word Swap by Random Character Substitution
 ------------------------------------------------
 """
+
 import numpy as np
 
 # from textattack.shared import utils

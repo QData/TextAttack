@@ -3,7 +3,6 @@ Moderl Helpers
 ------------------
 """
 
-
 # Helper stuff, like embeddings.
 from . import utils
 from .glove_embedding_layer import GloveEmbeddingLayer

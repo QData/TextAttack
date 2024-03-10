@@ -2,6 +2,7 @@
 LanguageTool Grammar Checker
 ------------------------------
 """
+
 import language_tool_python
 
 from textattack.constraints import Constraint

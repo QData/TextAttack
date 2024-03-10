@@ -2,6 +2,7 @@
 Part of Speech Constraint
 --------------------------
 """
+
 import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger

@@ -5,6 +5,7 @@ Input Reduction
 (Pathologies of Neural Models Make Interpretations Difficult)
 
 """
+
 from textattack import Attack
 from textattack.constraints.pre_transformation import (
     RepeatModification,

@@ -4,7 +4,6 @@ Ted Multi TranslationDataset Class
 ------------------------------------
 """
 
-
 import collections
 
 import datasets
