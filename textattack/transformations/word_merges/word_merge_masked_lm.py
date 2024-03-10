@@ -3,6 +3,7 @@ WordMergeMaskedLM class
 ------------------------------------------------
 
 """
+
 import re
 
 import torch

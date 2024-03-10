@@ -5,6 +5,7 @@ Word Merge transformations act by taking two adjacent words, and "merges" them i
 For example, if we can merge the words "the" and "movie" in the text "I like the movie" and get following text: "I like film".
 When we choose to "merge" word at index ``i``, we merge it with the next word at ``i+1``.
 """
+
 from textattack.transformations import Transformation
 
 

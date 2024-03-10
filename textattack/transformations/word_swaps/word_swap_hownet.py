@@ -3,7 +3,6 @@ Word Swap by OpenHowNet
 -------------------------------
 """
 
-
 import pickle
 
 from textattack.shared import utils

@@ -10,6 +10,7 @@ BERT-Attack:
     Consider using smaller values for "max_candidates".
 
 """
+
 from textattack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (

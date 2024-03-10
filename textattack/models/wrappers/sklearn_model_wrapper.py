@@ -3,7 +3,6 @@ scikit-learn Model Wrapper
 --------------------------
 """
 
-
 import pandas as pd
 
 from .model_wrapper import ModelWrapper

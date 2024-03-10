@@ -3,7 +3,6 @@ PyTorch Model Wrapper
 --------------------------
 """
 
-
 import torch
 from torch.nn import CrossEntropyLoss
 

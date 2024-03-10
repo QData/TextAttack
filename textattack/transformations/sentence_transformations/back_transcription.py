@@ -4,7 +4,6 @@ BackTranscription class
 
 """
 
-
 from transformers import WhisperForConditionalGeneration, WhisperProcessor
 
 from textattack.shared import AttackedText

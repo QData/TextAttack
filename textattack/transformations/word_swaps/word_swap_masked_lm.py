@@ -3,7 +3,6 @@ Word Swap by BERT-Masked LM.
 -------------------------------
 """
 
-
 import itertools
 import re
 

@@ -83,8 +83,8 @@ class Attack:
         constraints: List[Union[Constraint, PreTransformationConstraint]],
         transformation: Transformation,
         search_method: SearchMethod,
-        transformation_cache_size=2 ** 15,
-        constraint_cache_size=2 ** 15,
+        transformation_cache_size=2**15,
+        constraint_cache_size=2**15,
     ):
         """Initialize an attack object.
 
@@ -372,9 +372,9 @@ class Attack:
                 uncached_texts.append(transformed_text)
             else:
                 # promote transformed_text to the top of the LRU cache
-                self.constraints_cache[
-                    (current_text, transformed_text)
-                ] = self.constraints_cache[(current_text, transformed_text)]
+                self.constraints_cache[(current_text, transformed_text)] = (
+                    self.constraints_cache[(current_text, transformed_text)]
+                )
                 if self.constraints_cache[(current_text, transformed_text)]:
                     filtered_texts.append(transformed_text)
         filtered_texts += self._filter_transformations_uncached(

@@ -6,6 +6,7 @@ Particle Swarm Optimization
 (Word-level Textual Adversarial Attacking as Combinatorial Optimization)
 
 """
+
 from textattack import Attack
 from textattack.constraints.pre_transformation import (
     InputColumnModification,

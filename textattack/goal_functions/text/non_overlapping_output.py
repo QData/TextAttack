@@ -4,7 +4,6 @@ Goal Function for seq2sick
 -------------------------------------------------------
 """
 
-
 import functools
 
 import numpy as np
@@ -38,12 +37,12 @@ class NonOverlappingOutput(TextToTextGoalFunction):
             return num_words_diff / len(get_words_cached(self.ground_truth_output))
 
 
-@functools.lru_cache(maxsize=2 ** 12)
+@functools.lru_cache(maxsize=2**12)
 def get_words_cached(s):
     return np.array(words_from_text(s))
 
 
-@functools.lru_cache(maxsize=2 ** 12)
+@functools.lru_cache(maxsize=2**12)
 def word_difference_score(s1, s2):
     """Returns the number of words that are non-overlapping between s1 and
     s2."""

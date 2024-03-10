@@ -7,7 +7,6 @@ Google Language Models from Alzantot
     All rights reserved.
 """
 
-
 import os
 
 import lru
@@ -49,7 +48,7 @@ class GoogLMHelper:
                 self.sess, self.graph, self.PBTXT_PATH, self.CKPT_PATH
             )
 
-        self.lm_cache = lru.LRU(2 ** 18)
+        self.lm_cache = lru.LRU(2**18)
 
     def clear_cache(self):
         self.lm_cache.clear()

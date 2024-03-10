@@ -3,7 +3,6 @@ Word Swap Transformation by swapping the order of words
 ==========================================================
 """
 
-
 import random
 
 from textattack.transformations import Transformation

@@ -3,7 +3,6 @@ Search Method Abstract Class
 ===============================
 """
 
-
 from abc import ABC, abstractmethod
 
 from textattack.shared.utils import ReprMixin

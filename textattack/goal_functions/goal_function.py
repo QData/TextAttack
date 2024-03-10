@@ -4,7 +4,6 @@ GoalFunction Class
 ===========================================================
 """
 
-
 from abc import ABC, abstractmethod
 
 import lru
@@ -40,7 +39,7 @@ class GoalFunction(ReprMixin, ABC):
         use_cache=True,
         query_budget=float("inf"),
         model_batch_size=32,
-        model_cache_size=2 ** 20,
+        model_cache_size=2**20,
     ):
         validators.validate_model_goal_function_compatibility(
             self.__class__, model_wrapper.model.__class__

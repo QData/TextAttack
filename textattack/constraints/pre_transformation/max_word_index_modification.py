@@ -4,6 +4,7 @@ Max Word Index Modification
 -----------------------------
 
 """
+
 from textattack.constraints import PreTransformationConstraint
 
 

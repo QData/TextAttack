@@ -2,6 +2,7 @@
 Part of Speech Constraint
 --------------------------
 """
+
 import flair
 from flair.data import Sentence
 from flair.models import SequenceTagger
@@ -56,7 +57,7 @@ class PartOfSpeech(Constraint):
         self.language_nltk = language_nltk
         self.language_stanza = language_stanza
 
-        self._pos_tag_cache = lru.LRU(2 ** 14)
+        self._pos_tag_cache = lru.LRU(2**14)
         if tagger_type == "flair":
             if tagset == "universal":
                 self._flair_pos_tagger = SequenceTagger.load("upos-fast")
