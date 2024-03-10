@@ -20,3 +20,4 @@ more-itertools
 pinyin>=0.4.0
 jieba
 OpenHowNet
+click==8.0.2
