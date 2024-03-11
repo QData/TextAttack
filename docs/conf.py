@@ -17,11 +17,11 @@ sys.path.insert(0, os.path.abspath("../"))
 
 # -- Project information -----------------------------------------------------
 project = "TextAttack"
-copyright = "2021, UVA QData Lab"
+copyright = "2021-24, UVA QData Lab"
 author = "UVA QData Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.3.9"
+release = "0.3.10"
 
 # Set master doc to `index.rst`.
 master_doc = "index"
