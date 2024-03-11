@@ -3,7 +3,7 @@ Word Swap by chinese BERT-Masked LM.
 -------------------------------------
 """
 
-from transformers import pipeline
+import torch
 
 from . import WordSwap
 
@@ -13,8 +13,7 @@ class ChineseWordSwapMaskedLM(WordSwap):
     model."""
 
     def __init__(self, task="fill-mask", model="xlm-roberta-base", **kwargs):
-        from transformers import BertTokenizer, BertForMaskedLM
-        import torch
+        from transformers import BertForMaskedLM, BertTokenizer
 
         self.tt = BertTokenizer.from_pretrained(model)
         self.mm = BertForMaskedLM.from_pretrained(model)
