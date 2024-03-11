@@ -392,6 +392,27 @@ You can also create your own augmenter from scratch by importing transformations
 ['What I cannot creae, I do not understand.', 'What I cannot creat, I do not understand.', 'What I cannot create, I do not nderstand.', 'What I cannot create, I do nt understand.', 'Wht I cannot create, I do not understand.']
 ```
 
+#### Prompt Augmentation
+In additional to augmentation of regular text, you can augment prompts and then generate responses to 
+the augmented prompts using a large language model (LLMs). The augmentation is performed using the same
+`Augmenter` as above. To generate responses, you can use your own LLM, a HuggingFace LLM, or an OpenAI LLM.
+Here's an example using a pretrained HuggingFace LLM: 
+
+```python
+>>> from textattack.augmentation import EmbeddingAugmenter
+>>> from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+>>> from textattack.llms import HuggingFaceLLMWrapper
+>>> from textattack.prompt_augmentation import PromptAugmentationPipeline
+>>> augmenter = EmbeddingAugmenter(transformations_per_example=3)
+>>> model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-small")
+>>> tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-small")
+>>> model_wrapper = HuggingFaceLLMWrapper(model, tokenizer)
+>>> pipeline = PromptAugmentationPipeline(augmenter, model_wrapper)
+>>> pipeline("Classify the following piece of text as `positive` or `negative`: This movie is great!")
+[('Classify the following piece of text as `positive` or `negative`: This film is great!', ['positive']), ('Classify the following piece of text as `positive` or `negative`: This movie is fabulous!', ['positive']), ('Classify the following piece of text as `positive` or `negative`: This movie is wonderful!', ['positive'])]
+```
+
+
 ### Training Models:  `textattack train`
 
 Our model training code is available via `textattack train` to help you train LSTMs,

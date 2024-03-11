@@ -19,9 +19,11 @@ textattack package
    textattack.datasets
    textattack.goal_function_results
    textattack.goal_functions
+   textattack.llms
    textattack.loggers
    textattack.metrics
    textattack.models
+   textattack.prompt_augmentation
    textattack.search_methods
    textattack.shared
    textattack.transformations
