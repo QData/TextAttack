@@ -3,7 +3,6 @@ Attack Logs to WandB
 ========================
 """
 
-
 from textattack.shared.utils import LazyLoader, html_table_from_rows
 
 from .logger import Logger

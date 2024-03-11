@@ -3,6 +3,7 @@ Google 1-Billion Words Language Model
 --------------------------------------
 
 """
+
 from collections import defaultdict
 
 import numpy as np

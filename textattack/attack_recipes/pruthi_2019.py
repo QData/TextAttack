@@ -3,6 +3,7 @@ Pruthi2019: Combating with Robust Word Recognition
 =================================================================
 
 """
+
 from textattack import Attack
 from textattack.constraints.overlap import MaxWordsPerturbed
 from textattack.constraints.pre_transformation import (

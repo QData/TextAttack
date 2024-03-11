@@ -5,7 +5,6 @@ Word Swap by inflections
 
 """
 
-
 import random
 
 import lemminflect

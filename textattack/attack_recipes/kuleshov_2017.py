@@ -4,6 +4,7 @@ Kuleshov2017
 (Adversarial Examples for Natural Language Classification Problems)
 
 """
+
 from textattack import Attack
 from textattack.constraints.grammaticality.language_models import GPT2
 from textattack.constraints.overlap import MaxWordsPerturbed

@@ -3,7 +3,6 @@ Word Swap by swapping synonyms in WordNet
 ------------------------------------------------
 """
 
-
 import nltk
 from nltk.corpus import wordnet
 

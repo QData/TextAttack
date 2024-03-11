@@ -3,6 +3,7 @@ Word CNN for Classification
 ---------------------------------------------------------------------
 
 """
+
 import json
 import os
 

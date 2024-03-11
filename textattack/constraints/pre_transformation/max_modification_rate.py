@@ -4,6 +4,7 @@ Max Modification Rate
 -----------------------------
 
 """
+
 import math
 
 from textattack.constraints import PreTransformationConstraint

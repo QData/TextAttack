@@ -3,7 +3,6 @@ Sentence Encoder Constraint
 ----------------------------
 """
 
-
 from .sentence_encoder import SentenceEncoder
 
 from .bert import BERT

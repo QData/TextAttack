@@ -3,7 +3,6 @@ AugmenterArgs Class
 ===================
 """
 
-
 from dataclasses import dataclass
 
 AUGMENTATION_RECIPE_NAMES = {

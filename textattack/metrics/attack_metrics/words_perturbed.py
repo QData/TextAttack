@@ -65,9 +65,9 @@ class WordsPerturbed(Metric):
         self.all_metrics["avg_word_perturbed"] = self.avg_number_word_perturbed_num()
         self.all_metrics["avg_word_perturbed_perc"] = self.avg_perturbation_perc()
         self.all_metrics["max_words_changed"] = self.max_words_changed
-        self.all_metrics[
-            "num_words_changed_until_success"
-        ] = self.num_words_changed_until_success
+        self.all_metrics["num_words_changed_until_success"] = (
+            self.num_words_changed_until_success
+        )
 
         return self.all_metrics
 
