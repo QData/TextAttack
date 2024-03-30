@@ -20,7 +20,7 @@ class ChineseWordSwapHowNet(WordSwap):
     def _get_replacement_words(self, word):
         """Returns a list containing all possible words with N characters
         replaced by a homoglyph."""
-        if word in self.wordCache: # use cache
+        if word in self.wordCache:
             return self.wordCache[word]
         results = self.hownet_dict.get_nearest_words(word, language="zh", K=self.topk)
         synonyms = []
