@@ -18,12 +18,10 @@ from scipy.special import gamma as gamma
 from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import ParticleSwarmOptimization
 
-
 def sigmax(alpha):
     numerator = gamma(alpha + 1.0) * np.sin(np.pi * alpha / 2.0)
     denominator = gamma((alpha + 1) / 2.0) * alpha * np.power(2.0, (alpha - 1.0) / 2.0)
     return np.power(numerator / denominator, 1.0 / alpha)
-
 
 def vf(alpha):
     x = np.random.normal(0, 1)
@@ -32,7 +30,6 @@ def vf(alpha):
     x = x * sigmax(alpha)
 
     return x / np.power(np.abs(y), 1.0 / alpha)
-
 
 def K(alpha):
     k = alpha * gamma((alpha + 1.0) / (2.0 * alpha)) / gamma(1.0 / alpha)
@@ -44,7 +41,6 @@ def K(alpha):
     )
 
     return k
-
 
 def C(alpha):
     x = np.array(
@@ -71,7 +67,6 @@ def C(alpha):
 
     return np.interp(alpha, x, y)
 
-
 def levy(alpha, gamma=1, n=1):
     w = 0
     for i in range(0, n):
@@ -86,9 +81,8 @@ def levy(alpha, gamma=1, n=1):
 
     return z
 
-
 def get_one_levy(min, max):
-    while 1:
+    while True:
         temp = levy(1.5, 1)
         if min <= temp <= max:
             break
@@ -126,11 +120,11 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
         
-        # Initialize  velocities
+        # Initialize velocities
         v_init = []
         v_init_rand = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
         v_init_levy = []
-        while 1:
+        while True:
             temp = levy(1.5, 1)
             if -self.v_max <= temp <= self.v_max:
                 v_init_levy.append(temp)

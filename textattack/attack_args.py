@@ -37,6 +37,7 @@ ATTACK_RECIPE_NAMES = {
     "checklist": "textattack.attack_recipes.CheckList2020",
     "clare": "textattack.attack_recipes.CLARE2020",
     "a2t": "textattack.attack_recipes.A2TYoo2021",
+    "leap": "textattack.attack_recipes.LEAP2023",
 }
 
 
