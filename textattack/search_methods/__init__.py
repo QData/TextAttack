@@ -15,3 +15,4 @@ from .genetic_algorithm import GeneticAlgorithm
 from .alzantot_genetic_algorithm import AlzantotGeneticAlgorithm
 from .improved_genetic_algorithm import ImprovedGeneticAlgorithm
 from .particle_swarm_optimization import ParticleSwarmOptimization
+from .leap_particle_swarm_optimization import LEAPParticleSwarmOptimization
