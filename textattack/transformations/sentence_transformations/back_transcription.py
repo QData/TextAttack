@@ -12,8 +12,9 @@ from .sentence_transformation import SentenceTransformation
 
 
 class BackTranscription(SentenceTransformation):
-    """A type of sentence level transformation that takes in a text input, converts it into
-    synthesized speech using ASR, and transcribes it back to text using TTS.
+    """A type of sentence level transformation that takes in a text input,
+    converts it into synthesized speech using ASR, and transcribes it back to
+    text using TTS.
 
     tts_model: text-to-speech model from huggingface
     asr_model: automatic speech recognition model from huggingface
