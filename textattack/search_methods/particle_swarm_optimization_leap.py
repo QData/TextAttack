@@ -15,13 +15,16 @@ import copy
 
 import numpy as np
 from scipy.special import gamma as gamma
+
 from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import ParticleSwarmOptimization
+
 
 def sigmax(alpha):
     numerator = gamma(alpha + 1.0) * np.sin(np.pi * alpha / 2.0)
     denominator = gamma((alpha + 1) / 2.0) * alpha * np.power(2.0, (alpha - 1.0) / 2.0)
     return np.power(numerator / denominator, 1.0 / alpha)
+
 
 def vf(alpha):
     x = np.random.normal(0, 1)
@@ -30,6 +33,7 @@ def vf(alpha):
     x = x * sigmax(alpha)
 
     return x / np.power(np.abs(y), 1.0 / alpha)
+
 
 def K(alpha):
     k = alpha * gamma((alpha + 1.0) / (2.0 * alpha)) / gamma(1.0 / alpha)
@@ -41,6 +45,7 @@ def K(alpha):
     )
 
     return k
+
 
 def C(alpha):
     x = np.array(
@@ -67,6 +72,7 @@ def C(alpha):
 
     return np.interp(alpha, x, y)
 
+
 def levy(alpha, gamma=1, n=1):
     w = 0
     for i in range(0, n):
@@ -81,6 +87,7 @@ def levy(alpha, gamma=1, n=1):
 
     return z
 
+
 def get_one_levy(min, max):
     while True:
         temp = levy(1.5, 1)
@@ -89,6 +96,7 @@ def get_one_levy(min, max):
         else:
             continue
     return temp
+
 
 def softmax(x, axis=1):
     row_max = x.max(axis=axis)
@@ -103,10 +111,11 @@ def softmax(x, axis=1):
     s = x_exp / x_sum
     return s
 
+
 class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
-    """Attacks a model with word substiutitions using a variant of Particle Swarm
-    Optimization (PSO) algorithm called LEAP.
-    """
+    """Attacks a model with word substiutitions using a variant of Particle
+    Swarm Optimization (PSO) algorithm called LEAP."""
+
     def _greedy_perturb(self, pop_member, original_result):
         best_neighbors, prob_list = self._get_best_neighbors(
             pop_member.result, original_result
@@ -115,11 +124,11 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
         pop_member.attacked_text = random_result.attacked_text
         pop_member.result = random_result
         return True
-    
+
     def perform_search(self, initial_result):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
-        
+
         # Initialize velocities
         v_init = []
         v_init_rand = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
@@ -133,7 +142,10 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
             if len(v_init_levy) == self.pop_size:
                 break
         for i in range(self.pop_size):
-            if np.random.uniform(-self.v_max, self.v_max, ) < levy(1.5, 1):
+            if np.random.uniform(
+                -self.v_max,
+                self.v_max,
+            ) < levy(1.5, 1):
                 v_init.append(v_init_rand[i])
             else:
                 v_init.append(v_init_levy[i])
@@ -167,9 +179,14 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
         for i in range(self.max_iters):
             for k in range(len(population)):
                 if population[k].score < fit_ave:
-                    omega.append(self.omega_2 + ((population[k].score - fit_min) *
-                                                   (self.omega_1 - self.omega_2)) /
-                                 (fit_ave - fit_min))
+                    omega.append(
+                        self.omega_2
+                        + (
+                            (population[k].score - fit_min)
+                            * (self.omega_1 - self.omega_2)
+                        )
+                        / (fit_ave - fit_min)
+                    )
                 else:
                     omega.append(get_one_levy(0.5, 0.8))
             C1 = self.c1_origin - i / self.max_iters * (self.c1_origin - self.c2_origin)

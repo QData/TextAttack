@@ -17,6 +17,7 @@ from textattack.transformations import WordSwapWordNet
 
 from .attack_recipe import AttackRecipe
 
+
 class LEAP2023(AttackRecipe):
     @staticmethod
     def build(model_wrapper):
@@ -36,6 +37,8 @@ class LEAP2023(AttackRecipe):
         #
         # Perform word substitution with LEAP algorithm.
         #
-        search_method = ParticleSwarmOptimizationLEAP(pop_size=60, max_iters=20, post_turn_check=True, max_turn_retries=20)
+        search_method = ParticleSwarmOptimizationLEAP(
+            pop_size=60, max_iters=20, post_turn_check=True, max_turn_retries=20
+        )
 
         return Attack(goal_function, constraints, transformation, search_method)
