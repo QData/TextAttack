@@ -12,7 +12,7 @@ from textattack.constraints.pre_transformation import (
     StopwordModification,
 )
 from textattack.goal_functions import UntargetedClassification
-from textattack.search_methods import LEAPParticleSwarmOptimization
+from textattack.search_methods import ParticleSwarmOptimizationLEAP
 from textattack.transformations import WordSwapWordNet
 
 from .attack_recipe import AttackRecipe
@@ -36,6 +36,6 @@ class LEAP2023(AttackRecipe):
         #
         # Perform word substitution with LEAP algorithm.
         #
-        search_method = LEAPParticleSwarmOptimization(pop_size=60, max_iters=20, post_turn_check=True, max_turn_retries=20)
+        search_method = ParticleSwarmOptimizationLEAP(pop_size=60, max_iters=20, post_turn_check=True, max_turn_retries=20)
 
         return Attack(goal_function, constraints, transformation, search_method)

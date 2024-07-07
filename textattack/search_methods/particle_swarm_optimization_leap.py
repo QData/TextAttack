@@ -16,15 +16,14 @@ import copy
 import numpy as np
 from scipy.special import gamma as gamma
 from textattack.goal_function_results import GoalFunctionResultStatus
-from textattack.search_methods import ParticleSwarmOptimization, PopulationMember
-from textattack.shared import utils
-from textattack.shared.validators import transformation_consists_of_word_swaps
+from textattack.search_methods import ParticleSwarmOptimization
+
 
 def sigmax(alpha):
     numerator = gamma(alpha + 1.0) * np.sin(np.pi * alpha / 2.0)
     denominator = gamma((alpha + 1) / 2.0) * alpha * np.power(2.0, (alpha - 1.0) / 2.0)
-
     return np.power(numerator / denominator, 1.0 / alpha)
+
 
 def vf(alpha):
     x = np.random.normal(0, 1)
@@ -34,18 +33,44 @@ def vf(alpha):
 
     return x / np.power(np.abs(y), 1.0 / alpha)
 
+
 def K(alpha):
     k = alpha * gamma((alpha + 1.0) / (2.0 * alpha)) / gamma(1.0 / alpha)
-    k *= np.power(alpha * gamma((alpha + 1.0) / 2.0) / (gamma(alpha + 1.0) * np.sin(np.pi * alpha / 2.0)), 1.0 / alpha)
+    k *= np.power(
+        alpha
+        * gamma((alpha + 1.0) / 2.0)
+        / (gamma(alpha + 1.0) * np.sin(np.pi * alpha / 2.0)),
+        1.0 / alpha,
+    )
 
     return k
 
+
 def C(alpha):
-    x = np.array((0.75, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.95, 1.99))
+    x = np.array(
+        (0.75, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.95, 1.99)
+    )
     y = np.array(
-        (2.2085, 2.483, 2.7675, 2.945, 2.941, 2.9005, 2.8315, 2.737, 2.6125, 2.4465, 2.206, 1.7915, 1.3925, 0.6089))
+        (
+            2.2085,
+            2.483,
+            2.7675,
+            2.945,
+            2.941,
+            2.9005,
+            2.8315,
+            2.737,
+            2.6125,
+            2.4465,
+            2.206,
+            1.7915,
+            1.3925,
+            0.6089,
+        )
+    )
 
     return np.interp(alpha, x, y)
+
 
 def levy(alpha, gamma=1, n=1):
     w = 0
@@ -60,6 +85,7 @@ def levy(alpha, gamma=1, n=1):
     z = 1.0 / np.power(n, 1.0 / alpha) * w * gamma
 
     return z
+
 
 def get_one_levy(min, max):
     while 1:
@@ -83,7 +109,10 @@ def softmax(x, axis=1):
     s = x_exp / x_sum
     return s
 
-class LEAPParticleSwarmOptimization(ParticleSwarmOptimization):
+class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
+    """Attacks a model with word substiutitions using a variant of Particle Swarm
+    Optimization (PSO) algorithm called LEAP.
+    """
     def _greedy_perturb(self, pop_member, original_result):
         best_neighbors, prob_list = self._get_best_neighbors(
             pop_member.result, original_result
