@@ -36,6 +36,7 @@ Attacks on classification models
 14. TextBugger (TextBugger: Generating Adversarial Text Against Real-world Applications)
 15. Pruthi (Combating Adversarial Misspellings with Robust Word Recognition 2019)
 16. CLARE (Contextualized Perturbation for Textual Adversarial Attack 2020)
+17. LEAP (LEAP: Efficient and Automated Test Method for NLP Software 2023)
 
 
 
@@ -136,7 +137,9 @@ Attacks on classification models
    :members:
    :noindex:
 
-
+.. automodule:: textattack.attack_recipes.leap_2023
+   :members:
+   :noindex:
 
 
 
