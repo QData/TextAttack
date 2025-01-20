@@ -10,11 +10,10 @@ import numpy as np
 import transformers
 
 class RemoteModelWrapper():
-    """This model wrapper queries a remote model with a list of text inputs. 
-    
-    It sends the input to a remote endpoint provided in api_url.
+    """This model wrapper queries a remote model with a list of text inputs.  It sends the input to a remote endpoint provided in api_url.
 
-
+    Args:
+        api_url (:obj:`<TYPE HERE>`): <DESCRIPTION HERE>
     """
     def __init__(self, api_url):
         self.api_url = api_url
