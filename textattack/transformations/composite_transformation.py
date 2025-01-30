@@ -11,7 +11,7 @@ from textattack.transformations import Transformation
 
 class CompositeTransformation(Transformation):
     """A transformation which applies each of a list of transformations,
-    returning a set of all optoins.
+    returning a set of all options.
 
     Args:
         transformations: The list of ``Transformation`` to apply.
