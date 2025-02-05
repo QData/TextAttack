@@ -156,11 +156,17 @@ class Attack:
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
         self.search_method.get_goal_results = self.goal_function.get_results
+        self.search_method.get_goal_result = self.goal_function.get_result
 
         # Give search method access to get indices which need to be ordered / searched
         self.search_method.get_indices_to_order = self.get_indices_to_order
 
         self.search_method.filter_transformations = self.filter_transformations
+
+        self.search_method.apply_perturbation = self.apply_perturbation
+        self.search_method.bounds = self.bounds
+
+        self.search_method.get_glyph_map = self.get_glyph_map
 
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
@@ -315,6 +321,15 @@ class Attack:
         return self.filter_transformations(
             transformed_texts, current_text, original_text
         )
+
+    def apply_perturbation(self, sentence, perturbation_vector: List[float], glyph_map):
+        return self.transformation._apply_perturbation(sentence, perturbation_vector, glyph_map)
+
+    def bounds(self, sentence, max_perturbs):
+        return self.transformation.bounds(sentence, max_perturbs)
+
+    def get_glyph_map(self, sentence):
+        return self.transformation.get_glyph_map(sentence)
 
     def _filter_transformations_uncached(
         self, transformed_texts, current_text, original_text=None

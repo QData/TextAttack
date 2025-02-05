@@ -2,6 +2,7 @@ import numpy as np
 from textattack.search_methods import SearchMethod
 from textattack.goal_function_results import GoalFunctionResultStatus
 from scipy.optimize import differential_evolution
+from typing import List
 
 class DifferentialEvolutionSearch(SearchMethod):
     """
@@ -19,27 +20,33 @@ class DifferentialEvolutionSearch(SearchMethod):
         crossover_probability (float): The probability of crossover (CR).
     """
 
-    def __init__(self, population_size=20, max_iterations=10):
-        self.population_size = population_size
-        self.max_iterations = max_iterations
+    def __init__(self, popsize=3, maxiter=5, verbose=True):
+        self.popsize = popsize
+        self.maxiter = maxiter
+        self.verbose = verbose
+
+    def _obj(self, perturbation_vector: List[float], initial_result, glyph_map):
+        print("perturbation_vector: ", perturbation_vector)
+        cand = self._candidate(perturbation_vector, initial_result, glyph_map)
+        result, _ = self.get_goal_result(cand)
+        print("result:", result)
+        return -result.score
+
+    def _candidate(self, perturbation_vector: List[float], initial_result, glyph_map):
+        ret = self.apply_perturbation(initial_result.attacked_text, perturbation_vector, glyph_map)
+        return ret
+
 
     def perform_search(self, initial_result):
         """Performs the differential evolution search."""
         print("Starting differential evolution...")
-        def obj():
-            def _obj(perturbation_vector):
-                candidate = candidate(perturbation_vector)
-                result, _ = self.get_result(candidate)
-                return result.score
-            return _obj
-        def bounds():
-            return self.bounds(initial_result.attacked_text, max_perturbs=3)
-        def candidate(perturbation_vector):
-            ret = self.apply_perturbation(initial_result.attacked_text, perturbation_vector)
-            return ret
-        result = differential_evolution(obj(), bounds(), disp=verbose, maxiter=self.max_iterations, popsize=self.population_size)
-        candidate = candidate(result.x)
-        ret = self.get_result(candidate)
+        glyph_map = self.get_glyph_map(initial_result.attacked_text)
+        def obj(perturbation_vector):
+            return self._obj(perturbation_vector, initial_result, glyph_map)
+        _bounds = self.bounds(initial_result.attacked_text, max_perturbs=3)
+        result = differential_evolution(obj, _bounds, disp=self.verbose, maxiter=self.maxiter, popsize=self.popsize)
+        cand = self._candidate(result.x, initial_result, glyph_map)
+        ret, _ = self.get_goal_result(cand)
         return ret
 
     def check_transformation_compatibility(self, transformation):

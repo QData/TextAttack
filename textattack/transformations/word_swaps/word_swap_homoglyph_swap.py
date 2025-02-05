@@ -4,6 +4,10 @@ Word Swap by Homoglyph
 """
 
 import numpy as np
+from scipy.optimize import differential_evolution
+import random
+from typing import List
+from textattack.shared import AttackedText
 
 # from textattack.shared import utils
 from .word_swap import WordSwap
@@ -66,11 +70,22 @@ class WordSwapHomoglyphSwap(WordSwap):
         }
         self.random_one = random_one
 
+    def get_glyph_map(self, sentence): # attacked text object to glyph_map
+        
+        glyph_map = []
+        for i, char in enumerate(sentence.text):
+            if char in self.homos:
+                glyph_map.append((i, self.homos[char]))
+        return glyph_map
+
+    def bounds(self, sentence, max_perturbs):
+        glyph_map = self.get_glyph_map(sentence)
+        return [(-1, len(glyph_map) - 1)] * max_perturbs
+
     def _get_replacement_words(self, word):
         """Returns a list containing all possible words with 1 character
         replaced by a homoglyph."""
         candidate_words = []
-
         if self.random_one:
             i = np.random.randint(0, len(word))
             if word[i] in self.homos:
@@ -85,6 +100,19 @@ class WordSwapHomoglyphSwap(WordSwap):
                     candidate_words.append(candidate_word)
 
         return candidate_words
+
+    def natural(self, x: float) -> int:
+        """Rounds float to the nearest natural number (positive int)"""
+        return max(0, round(float(x)))
+
+    def _apply_perturbation(self, sentence, perturbation_vector: List[float], glyph_map): # AttackedText object to AttackedText object
+        print(type(perturbation_vector))
+        sentence = list(sentence.text)
+        for perturb in map(self.natural, perturbation_vector):
+            if (perturb >= 0):
+                i, char = glyph_map[perturb]
+                sentence[i] = char
+        return AttackedText(''.join(sentence))
 
     @property
     def deterministic(self):
