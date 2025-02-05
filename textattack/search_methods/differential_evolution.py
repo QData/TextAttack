@@ -26,10 +26,8 @@ class DifferentialEvolutionSearch(SearchMethod):
         self.verbose = verbose
 
     def _obj(self, perturbation_vector: List[float], initial_result, glyph_map):
-        print("perturbation_vector: ", perturbation_vector)
         cand = self._candidate(perturbation_vector, initial_result, glyph_map)
         result, _ = self.get_goal_result(cand)
-        print("result:", result)
         return -result.score
 
     def _candidate(self, perturbation_vector: List[float], initial_result, glyph_map):
@@ -43,7 +41,7 @@ class DifferentialEvolutionSearch(SearchMethod):
         glyph_map = self.get_glyph_map(initial_result.attacked_text)
         def obj(perturbation_vector):
             return self._obj(perturbation_vector, initial_result, glyph_map)
-        _bounds = self.bounds(initial_result.attacked_text, max_perturbs=3)
+        _bounds = self.bounds(initial_result.attacked_text, max_perturbs=1)
         result = differential_evolution(obj, _bounds, disp=self.verbose, maxiter=self.maxiter, popsize=self.popsize)
         cand = self._candidate(result.x, initial_result, glyph_map)
         ret, _ = self.get_goal_result(cand)

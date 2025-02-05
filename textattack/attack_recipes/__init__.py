@@ -42,3 +42,5 @@ from .clare_li_2020 import CLARE2020
 from .french_recipe import FrenchRecipe
 from .spanish_recipe import SpanishRecipe
 from .chinese_recipe import ChineseRecipe
+
+from .homoglyphs import Homoglyphs

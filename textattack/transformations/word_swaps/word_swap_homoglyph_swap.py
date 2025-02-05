@@ -106,7 +106,6 @@ class WordSwapHomoglyphSwap(WordSwap):
         return max(0, round(float(x)))
 
     def _apply_perturbation(self, sentence, perturbation_vector: List[float], glyph_map): # AttackedText object to AttackedText object
-        print(type(perturbation_vector))
         sentence = list(sentence.text)
         for perturb in map(self.natural, perturbation_vector):
             if (perturb >= 0):
