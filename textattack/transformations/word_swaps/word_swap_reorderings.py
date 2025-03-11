@@ -9,11 +9,14 @@ class WordSwapReorderings(WordSwap):
 
     def __init__(self):
         super().__init__()
-        self.PDF = "\u202C"
-        self.LRO = "\u202D"
-        self.RLO = "\u202E"
-        self.PDI = "\u2069"
-        self.LRI = "\u2066"
+        self.PDF = chr(0x202C)
+        self.LRE = chr(0x202A)
+        self.RLE = chr(0x202B)
+        self.LRO = chr(0x202D)
+        self.RLO = chr(0x202E)
+        self.PDI = chr(0x2069)
+        self.LRI = chr(0x2066)
+        self.RLI = chr(0x2067)
 
     class Swap:
         """Represents swapped elements in a string of text."""
@@ -30,98 +33,94 @@ class WordSwapReorderings(WordSwap):
         def __hash__(self):
             return hash((self.one, self.two))
 
-    @staticmethod
-    def _some(*els):
-        """Filters out None values and returns a tuple."""
-        return tuple(filter(None, els))
+    # def some(self, *els):
+    #     """Returns the arguments as a tuple with Nones removed."""
+    #     return tuple(filter(None, els))
 
-    def _generate_swaps(self, chars):
-        """Generates all possible swaps for a string."""
-        def pairs(chars, pre=(), suf=()):
-            orders = set()
-            for i in range(len(chars) - 1):
-                prefix = pre + tuple(chars[:i])
-                suffix = suf + tuple(chars[i + 2:])
-                swap = self.Swap(chars[i + 1], chars[i])
-                pair = self._some(prefix, swap, suffix)
-                orders.add(pair)
-                # Recursive calls
-                orders.update(pairs(suffix, pre=self._some(prefix, swap)))
-                orders.update(pairs(self._some(prefix, swap), suf=suffix))
-            return orders
+    # def swaps(self, chars: str) -> set:
+    #     """Generates all possible swaps for a string."""
+    #     def pairs(chars, pre=(), suf=()):
+    #         orders = set()
+    #         for i in range(len(chars)-1):
+    #             prefix = pre + tuple(chars[:i])
+    #             suffix = suf + tuple(chars[i+2:])
+    #             swap = self.Swap(chars[i+1], chars[i])
+    #             pair = self.some(prefix, swap, suffix)
+    #             orders.add(pair)
+    #             orders.update(pairs(suffix, pre=some(prefix, swap)))
+    #             orders.update(pairs(self.some(prefix, swap), suf=suffix))
+    #         return orders
+    #     return pairs(chars) | {tuple(chars)}
 
-        return pairs(chars) | {tuple(chars)}
+    # def unswap(self, el: tuple) -> str:
+    #     """Reverts a tuple of swaps to the original string."""
+    #     if isinstance(el, str):
+    #         return el
+    #     elif isinstance(el, self.Swap):
+    #         return self.unswap((el.two, el.one))
+    #     else:
+    #         res = ""
+    #         for e in el:
+    #             res += self.unswap(e)
+    #         return res
 
-    def _unswap(self, el):
-        """Reverts a tuple of swaps to the original string."""
-        if isinstance(el, str):
-            return el
-        elif isinstance(el, self.Swap):
-            return self._unswap((el.two, el.one))
-        else:
-            res = ""
-            for e in el:
-                res += self._unswap(e)
-            return res
-
-    def _uniswap(self, els):
-        """Encodes the elements into a Unicode Bidi representation."""
-        res = ""
-        for el in els:
-            if isinstance(el, self.Swap):
-                res += self._uniswap([
-                    self.LRO, self.LRI, self.RLO, self.LRI,
-                    el.one, self.PDI, self.LRI, el.two, self.PDI,
-                    self.PDF, self.PDI, self.PDF
-                ])
-            elif isinstance(el, str):
-                res += el
-            else:
-                for subel in el:
-                    res += self._uniswap([subel])
-        return res
+    # def uniswap(self, els):
+    #     """Encodes the elements into a Unicode Bidi representation."""
+    #     res = ""
+    #     for el in els:
+    #         if isinstance(el, self.Swap):
+    #             res += self.uniswap([
+    #                 self.LRO, self.LRI, self.RLO, self.LRI,
+    #                 el.one, self.PDI, self.LRI, el.two, self.PDI,
+    #                 self.PDF, self.PDI, self.PDF
+    #             ])
+    #         elif isinstance(el, str):
+    #             res += el
+    #         else:
+    #             for subel in el:
+    #                 res += self.uniswap([subel])
+    #     return res
 
     def _get_replacement_words(self, word):
-        """
-        Returns a list of visually identical reorderings of the input word
-        encoded with Unicode Bidi characters.
-        """
-        # Edge case: Single character words cannot be reordered
-        if len(word) <= 1:
-            return []
+        candidate_words = []
+        return candidate_words
 
-        # Generate all possible swaps of the word
-        orderings = self._generate_swaps(word)
+    # def strings_to_file(self, file, string):
+    #     """Writes all reordered strings to a file."""
+    #     with open(file, 'w') as f:
+    #         for swap in self.swaps(string):
+    #             uni = self.uniswap(swap)
+    #             print(uni, file=f)
 
-        # Encode each ordering into a visually identical Unicode string
-        replacements = [self._uniswap(ordering) for ordering in orderings]
+    # def print_strings(self, string):
+    #     """Prints all reordered strings."""
+    #     for swap in self.swaps(string):
+    #         uni = self.uniswap(swap)
+    #         print(uni)
 
-        return replacements
+    def natural(self, x: float) -> int:
+        """Rounds float to the nearest natural number (positive int)"""
+        return max(0, round(float(x)))
 
+    def bounds(self, sentence, max_perturbs):
+        return [(-1, len(sentence.text) - 1)] * max_perturbs
 
-    def strings_to_file(self, file, string):
-        """Writes all reordered strings to a file."""
-        with open(file, 'w') as f:
-            for swap in self._generate_swaps(string):
-                uni = self._uniswap(swap)
-                print(uni, file=f)
+    def apply_perturbation(self, sentence, perturbation_vector: List[float]): # AttackedText object to AttackedText object
+        def swaps(els) -> str:
+            res = ""
+            for el in els:
+                if isinstance(el, self.Swap):
+                    res += swaps([LRO, LRI, RLO, LRI, el.one, PDI, LRI, el.two, PDI, PDF, PDI, PDF])
+                elif isinstance(el, str):
+                    res += el
+                else:
+                    for subel in el:
+                        res += swaps([subel])
+            return res
+        candidate = list(sentence.text)
+        for perturb in map(self.natural, perturbation_vector):
+            if (perturb >= 0 and len(candidate) >= 2):
+                perturb = min(perturb, len(candidate) - 2)
+                candidate = candidate[:perturb] + [self.Swap(candidate[perturb+1], candidate[perturb])] + candidate[perturb+2:]
 
-    def display_control_characters(self, s):
-        """
-        Replaces Unicode control characters with visible placeholders for debugging.
-        """
-        control_map = {
-            "\u202C": "<PDF>",
-            "\u202D": "<LRO>",
-            "\u202E": "<RLO>",
-            "\u2069": "<PDI>",
-            "\u2066": "<LRI>",
-        }
-        return "".join(control_map.get(c, c) for c in s)
-
-    def print_strings(self, string):
-        """Prints all reordered strings."""
-        for swap in self._generate_swaps(string):
-            uni = self._uniswap(swap)
-            # print(self.display_control_characters(uni))
-            print(repr(uni))
+        return AttackedText(swaps(candidate))

@@ -15,5 +15,4 @@ from .genetic_algorithm import GeneticAlgorithm
 from .alzantot_genetic_algorithm import AlzantotGeneticAlgorithm
 from .improved_genetic_algorithm import ImprovedGeneticAlgorithm
 from .particle_swarm_optimization import ParticleSwarmOptimization
-from .differential_evolution_homoglyph import DifferentialEvolutionSearchHomoglyph
-from .differential_evolution_invisiblechars import DifferentialEvolutionSearchInvisibleChars
+from .imperceptible_de import ImperceptibleDE

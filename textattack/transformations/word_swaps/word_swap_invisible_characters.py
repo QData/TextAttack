@@ -19,16 +19,6 @@ class WordSwapInvisibleCharacters(WordSwap):
 
     def _get_replacement_words(self, word):
         candidate_words = []
-        # word_len = len(word)
-        # if self.random_one:
-        #     char = np.random.choice(self.invisible_chars)
-        #     pos = np.random.randint(0, word_len + 1)
-        #     candidate_words.append(word[:pos] + char + word[pos:])
-        # else:
-        #     for char in self.invisible_chars:
-        #         for pos in range(word_len + 1):
-        #             transformed_word = word[:pos] + char + word[pos:]
-        #             candidate_words.append(transformed_word)
         return candidate_words
 
     def natural(self, x: float) -> int:

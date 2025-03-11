@@ -10,58 +10,29 @@ class WordSwapDeletions(WordSwap):
 
     def __init__(self):
         super().__init__()
-        self.BKSP = chr(0x8)  # Backspace character
-        self.DEL = chr(0x7F)  # Delete character
-        self.CR = chr(0xD)    # Carriage return character
+        self.del_chr = chr(0x8)
+        self.ins_chr_min = '!'
+        self.ins_chr_max = '~'
 
-    def _generate_transformations(self, text):
-        """
-        Inserts deletion-related control characters into text to create transformations.
-
-        Args:
-            text (str): The input string.
-
-        Returns:
-            List[str]: A list of transformed strings with deletion characters.
-        """
-        transformations = []
-
-        # Insert BKSP (Backspace) characters
-        for i in range(len(text) + 1):
-            transformations.append(text[:i] + self.BKSP * max(1, len(text) - i))
-
-        # Insert DEL (Delete) characters
-        for i in range(len(text) + 1):
-            transformations.append(text[:i] + self.DEL + text[i:])
-
-        # Insert CR (Carriage Return) characters
-        for i in range(1, len(text) + 1):
-            transformations.append(text[:i] + self.CR + text[i:])
-
-        return transformations
+    def bounds(self, sentence, max_perturbs):
+        return [(-1, len(sentence.text) - 1), (ord(self.ins_chr_min), ord(self.ins_chr_max))] * max_perturbs
 
     def _get_replacement_words(self, word):
-        """
-        Returns transformations for a given word by embedding deletion-related control characters.
+        candidate_words = []
+        return candidate_words
 
-        Args:
-            word (str): The input word.
+    def natural(self, x: float) -> int:
+        """Rounds float to the nearest natural number (positive int)"""
+        return max(0, round(float(x)))
+    
+    def apply_perturbation(self, sentence, perturbation_vector: List[float]): # AttackedText object to AttackedText object
+        candidate = list(sentence.text)
+        for i in range(0, len(perturbation_vector), 2):
+            idx = self.natural(perturbation_vector[i])
+            char = chr(self.natural(perturbations[i+1]))
+            candidate = candidate[:idx] + [char, self.del_chr] + candidate[idx:]
+            for j in range(i, len(perturbation_vector), 2):
+                perturbation_vector[j] += 2
+        return AttackedText(''.join(candidate))
 
-        Returns:
-            List[str]: A list of transformed strings with deletion characters.
-        """
-        if len(word) <= 1:
-            return []  # No meaningful transformations for single-character words
-
-        return self._generate_transformations(word)
-
-    def print_transformations(self, word):
-        """
-        Prints all transformations of the input word for debugging or demonstration purposes.
-
-        Args:
-            word (str): The input word.
-        """
-        transformations = self._get_replacement_words(word)
-        for t in transformations:
-            print(t)
+    
