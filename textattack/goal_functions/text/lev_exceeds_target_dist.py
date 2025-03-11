@@ -11,7 +11,7 @@ class LevenshteinExceedsTargetDistance(TextToTextGoalFunction):
     edits (insertions, deletions, or substitutions) required to change one string into another.
     """
 
-    def __init__(self, model_wrapper, *args, target_distance=1000, **kwargs):
+    def __init__(self, *args, target_distance=1000, **kwargs):
         """
         Args:
             model_wrapper: The model wrapper used for generating outputs.
@@ -19,7 +19,7 @@ class LevenshteinExceedsTargetDistance(TextToTextGoalFunction):
             target_distance: The target Levenshtein distance.
         """
         self.target_distance = target_distance
-        super().__init__(model_wrapper, *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def clear_cache(self):
         if self.use_cache:
@@ -27,14 +27,13 @@ class LevenshteinExceedsTargetDistance(TextToTextGoalFunction):
 
     def _is_goal_complete(self, model_output, _):
         distance = self._get_score(model_output, _)
-        return distance > self.target_distance
+        return distance < -self.target_distance
 
     def _get_score(self, model_output, _):
-        # Decode the model output from token IDs to a string
         # Calculate Levenshtein distance between the model output and ground truth
         distance = levenshtein_distance(model_output, self.ground_truth_output)
 
-        return distance
+        return -distance
 
     def extra_repr_keys(self):
         if self.maximizable:
