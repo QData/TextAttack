@@ -2,6 +2,9 @@ import textattack
 
 from .word_swap import WordSwap
 
+from typing import List
+from textattack.shared import AttackedText
+
 
 class WordSwapReorderings(WordSwap):
     """Generates visually identical reorderings of a string using swap and encoding procedures."""
@@ -110,7 +113,7 @@ class WordSwapReorderings(WordSwap):
             res = ""
             for el in els:
                 if isinstance(el, self.Swap):
-                    res += swaps([LRO, LRI, RLO, LRI, el.one, PDI, LRI, el.two, PDI, PDF, PDI, PDF])
+                    res += swaps([self.LRO, self.LRI, self.RLO, self.LRI, el.one, self.PDI, self.LRI, el.two, self.PDI, self.PDF, self.PDI, self.PDF])
                 elif isinstance(el, str):
                     res += el
                 else:

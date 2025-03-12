@@ -1,6 +1,9 @@
 import random
 from .word_swap import WordSwap
 
+from typing import List
+from textattack.shared import AttackedText
+
 class WordSwapDeletions(WordSwap):
     """
     Generates text transformations by embedding Unicode control characters 
@@ -29,7 +32,7 @@ class WordSwapDeletions(WordSwap):
         candidate = list(sentence.text)
         for i in range(0, len(perturbation_vector), 2):
             idx = self.natural(perturbation_vector[i])
-            char = chr(self.natural(perturbations[i+1]))
+            char = chr(self.natural(perturbation_vector[i+1]))
             candidate = candidate[:idx] + [char, self.del_chr] + candidate[idx:]
             for j in range(i, len(perturbation_vector), 2):
                 perturbation_vector[j] += 2

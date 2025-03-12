@@ -2,7 +2,7 @@ import functools
 import textattack
 from .text_to_text_goal_function import TextToTextGoalFunction
 
-class Toxic(ClassificationGoalFunction):
+class Toxic(TextToTextGoalFunction):
     """Attempts to minimize the Levenshtein distance between the current output
     translation and the reference translation.
 

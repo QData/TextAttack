@@ -51,9 +51,9 @@ class ImperceptibleDE(SearchMethod):
 
     def check_transformation_compatibility(self, transformation):
         """Differential evolution works with word swaps, deletions, and insertions."""
-        is_imperceptible, *category = transformation_is_imperceptible
+        is_imperceptible, *category = transformation_is_imperceptible(transformation)
         if (is_imperceptible):
-            self.transformation_type = category
+            self.transformation_type = category[0]
         return is_imperceptible
 
     @property
