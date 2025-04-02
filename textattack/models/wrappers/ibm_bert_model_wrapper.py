@@ -8,8 +8,8 @@ import logging
 
 from .model_wrapper import ModelWrapper
 
-from toxic.core.bert_pytorch import BertForMultiLabelSequenceClassification, InputExample, convert_examples_to_features
-from toxic.config import DEFAULT_MODEL_PATH, LABEL_LIST
+from imperceptible_experiments.toxic.toxic.core.bert_pytorch import BertForMultiLabelSequenceClassification, InputExample, convert_examples_to_features
+from imperceptible_experiments.toxic.toxic.config import DEFAULT_MODEL_PATH, LABEL_LIST
 
 logger = logging.getLogger()
 

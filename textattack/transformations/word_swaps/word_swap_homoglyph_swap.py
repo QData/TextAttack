@@ -31,6 +31,9 @@ class WordSwapHomoglyphSwap(WordSwap):
         # Intentional homoglyphs
         self.homos = dict()
         # Retrieve Unicode Intentional homoglyph characters
+
+
+        # todo: save a copy to cache, try pull from web, else get from cache
         int_resp = requests.get("https://www.unicode.org/Public/security/latest/intentional.txt", stream=True)
         for line in int_resp.iter_lines():
             if len(line):
