@@ -16,3 +16,5 @@ from .sklearn_model_wrapper import SklearnModelWrapper
 from .tensorflow_model_wrapper import TensorFlowModelWrapper
 from .huggingface_model_wrapper_lang import HuggingFaceModelWrapperLang
 from .ibm_bert_model_wrapper import IBMBertModelWrapper
+from .pipeline_model_wrapper import PipelineModelWrapper
+from .mnli_model_wrapper import MnliModelWrapper
