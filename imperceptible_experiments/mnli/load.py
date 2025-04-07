@@ -6,22 +6,22 @@ import zipfile
 import os
 import json
 
-model = torch.hub.load('pytorch/fairseq',
-                       'roberta.large.mnli').eval()
+# model = torch.hub.load('pytorch/fairseq',
+#                        'roberta.large.mnli').eval()
 
-premise = "Roberta is a heavily optimized version of BERT."
-hypothesis = "Roberta is based on BERT."
+# premise = "Roberta is a heavily optimized version of BERT."
+# hypothesis = "Roberta is based on BERT."
 
-tokens = model.encode(premise, hypothesis)
-predict = model.predict('mnli', tokens)
-probs = softmax(predict, dim=1).cpu().detach().numpy()[0]
+# tokens = model.encode(premise, hypothesis)
+# predict = model.predict('mnli', tokens)
+# probs = softmax(predict, dim=1).cpu().detach().numpy()[0]
 
-# url = "https://cims.nyu.edu/~sbowman/multinli/multinli_1.0.zip"
-# zip_path = "multinli_1.0.zip"
-# urllib.request.urlretrieve(url, zip_path)
-# with zipfile.ZipFile(zip_path, 'r') as zip_ref:
-#     zip_ref.extractall('.')
-# os.remove(zip_path)
+url = "https://cims.nyu.edu/~sbowman/multinli/multinli_1.0.zip"
+zip_path = "multinli_1.0.zip"
+urllib.request.urlretrieve(url, zip_path)
+with zipfile.ZipFile(zip_path, 'r') as zip_ref:
+    zip_ref.extractall('.')
+os.remove(zip_path)
 
 # cur_dir = os.path.dirname(os.path.abspath(__file__))
 
@@ -38,12 +38,12 @@ probs = softmax(predict, dim=1).cpu().detach().numpy()[0]
 
 # print(mnli_test[0])
 
-print(tokens)
-print(predict)
-print(probs)
+# print(tokens)
+# print(predict)
+# print(probs)
 
-from transformers import AutoModelForSequenceClassification, AutoTokenizer
-import torch
+# from transformers import AutoModelForSequenceClassification, AutoTokenizer
+# import torch
 
 # model_name = "FacebookAI/roberta-large-mnli"
 # tokenizer = AutoTokenizer.from_pretrained(model_name)
