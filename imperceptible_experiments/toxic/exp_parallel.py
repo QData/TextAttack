@@ -40,120 +40,171 @@ maxiter = 5
 
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-to_run = [False, False, False, True] # invis, reorderings, homoglyphs, deletions
+to_run = [True, False, False, False] # invis, reorderings, homoglyphs, deletions
+
+import os
+
+def get_attack_config(task_id):
+    transformations = [
+        ("invis", WordSwapInvisibleCharacters()),
+        ("reorderings", WordSwapReorderings()),
+        ("homoglyphs", WordSwapHomoglyphSwap()),
+        ("deletions", WordSwapDeletions())
+    ]
+    
+    popsize = 10
+    maxiter = 5
+    index = task_id // 5
+    perturbs = task_id % 5 + 1
+
+    name, transformation = transformations[index]
+
+    search_method = ImperceptibleDE(
+        popsize=popsize, 
+        maxiter=maxiter, 
+        verbose=True,
+        max_perturbs=perturbs
+    )
+
+    return name, transformation, search_method, perturbs
 
 if __name__ == "__main__":
 
-    # valid_dataset_path = os.path.join(cur_dir, "toxic_test.json")
+    valid_dataset_path = os.path.join(cur_dir, "toxic_test.json")
     valid_dataset_path = "toxic_test.json"
 
     results_dir = os.path.join("results", timestamp)
-    # results_dir = os.path.join(cur_dir, "results", timestamp)
     os.makedirs(results_dir, exist_ok=True)
+    task_id = int(os.environ.get("SLURM_ARRAY_TASK_ID", 0))
 
-    # invis
-    if (to_run[0]):
-        for max_perturbs in range(1, 2): 
-            transformation = WordSwapInvisibleCharacters()
-            search_method = ImperceptibleDE(
-                popsize=popsize, 
-                maxiter=maxiter, 
-                verbose=True,
-                max_perturbs=max_perturbs
-            )
+    name, transformation, search_method, max_perturbs = get_attack_config(task_id)
 
-            results_path = os.path.join(results_dir, f"toxic_invis_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
+    results_path = os.path.join(results_dir, f"toxic_{name}_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
 
-            print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
+    toxic_attack_parallel(
+        goal_function=goal_function,
+        constraints=constraints,
+        transformation=transformation,
+        search_method=search_method,
+        model_wrapper=model_wrapper,
+        valid_dataset_path=valid_dataset_path,
+        num_rows=50,
+        results_path=results_path
+    )
 
-            toxic_attack_parallel(
-                goal_function=goal_function, 
-                constraints=constraints, 
-                transformation=transformation, 
-                search_method=search_method,
-                model_wrapper=model_wrapper,
-                valid_dataset_path=valid_dataset_path, 
-                num_rows=5,
-                results_path=results_path
-            )
 
-    # reorderings
-    if (to_run[1]):
-        for max_perturbs in range(1, 2): 
-            transformation = WordSwapReorderings()
-            search_method = ImperceptibleDE(
-                popsize=popsize, 
-                maxiter=maxiter, 
-                verbose=True,
-                max_perturbs=max_perturbs
-            )
+# if __name__ == "__main__":
 
-            results_path = os.path.join(results_dir, f"toxic_reorderings_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
+#     # valid_dataset_path = os.path.join(cur_dir, "toxic_test.json")
+#     valid_dataset_path = "toxic_test.json"
 
-            print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
+#     results_dir = os.path.join("results", timestamp)
+#     # results_dir = os.path.join(cur_dir, "results", timestamp)
+#     os.makedirs(results_dir, exist_ok=True)
 
-            toxic_attack_parallel(
-                goal_function=goal_function, 
-                constraints=constraints, 
-                transformation=transformation, 
-                search_method=search_method,
-                model_wrapper=model_wrapper,
-                valid_dataset_path=valid_dataset_path, 
-                num_rows=5,
-                results_path=results_path
-            )
+#     # invis
+#     if (to_run[0]):
+#         for max_perturbs in range(1, 6): 
+#             transformation = WordSwapInvisibleCharacters()
+#             search_method = ImperceptibleDE(
+#                 popsize=popsize, 
+#                 maxiter=maxiter, 
+#                 verbose=True,
+#                 max_perturbs=max_perturbs
+#             )
 
-    # homoglyphs
-    if (to_run[2]):
-        for max_perturbs in range(1, 2): 
-            transformation = WordSwapHomoglyphSwap()
-            search_method = ImperceptibleDE(
-                popsize=popsize, 
-                maxiter=maxiter, 
-                verbose=True,
-                max_perturbs=max_perturbs
-            )
+#             results_path = os.path.join(results_dir, f"toxic_invis_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
+
+#             print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
+
+#             toxic_attack_parallel(
+#                 goal_function=goal_function, 
+#                 constraints=constraints, 
+#                 transformation=transformation, 
+#                 search_method=search_method,
+#                 model_wrapper=model_wrapper,
+#                 valid_dataset_path=valid_dataset_path, 
+#                 num_rows=500,
+#                 results_path=results_path
+#             )
+
+#     # reorderings
+#     if (to_run[1]):
+#         for max_perturbs in range(1, 2): 
+#             transformation = WordSwapReorderings()
+#             search_method = ImperceptibleDE(
+#                 popsize=popsize, 
+#                 maxiter=maxiter, 
+#                 verbose=True,
+#                 max_perturbs=max_perturbs
+#             )
+
+#             results_path = os.path.join(results_dir, f"toxic_reorderings_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
+
+#             print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
+
+#             toxic_attack_parallel(
+#                 goal_function=goal_function, 
+#                 constraints=constraints, 
+#                 transformation=transformation, 
+#                 search_method=search_method,
+#                 model_wrapper=model_wrapper,
+#                 valid_dataset_path=valid_dataset_path, 
+#                 num_rows=500,
+#                 results_path=results_path
+#             )
+
+#     # homoglyphs
+#     if (to_run[2]):
+#         for max_perturbs in range(1, 2): 
+#             transformation = WordSwapHomoglyphSwap()
+#             search_method = ImperceptibleDE(
+#                 popsize=popsize, 
+#                 maxiter=maxiter, 
+#                 verbose=True,
+#                 max_perturbs=max_perturbs
+#             )
             
-            results_path = os.path.join(results_dir, f"toxic_homoglyphs_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
+#             results_path = os.path.join(results_dir, f"toxic_homoglyphs_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
 
-            print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
+#             print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
 
-            toxic_attack_parallel(
-                goal_function=goal_function, 
-                constraints=constraints, 
-                transformation=transformation, 
-                search_method=search_method,
-                model_wrapper=model_wrapper,
-                valid_dataset_path=valid_dataset_path, 
-                num_rows=5,
-                results_path=results_path
-            )
+#             toxic_attack_parallel(
+#                 goal_function=goal_function, 
+#                 constraints=constraints, 
+#                 transformation=transformation, 
+#                 search_method=search_method,
+#                 model_wrapper=model_wrapper,
+#                 valid_dataset_path=valid_dataset_path, 
+#                 num_rows=500,
+#                 results_path=results_path
+#             )
 
-    # deletions
-    if (to_run[3]):
-        for max_perturbs in range(1, 2): 
-            transformation = WordSwapDeletions()
-            search_method = ImperceptibleDE(
-                popsize=popsize, 
-                maxiter=maxiter, 
-                verbose=True,
-                max_perturbs=max_perturbs
-            )
+#     # deletions
+#     if (to_run[3]):
+#         for max_perturbs in range(1, 2): 
+#             transformation = WordSwapDeletions()
+#             search_method = ImperceptibleDE(
+#                 popsize=popsize, 
+#                 maxiter=maxiter, 
+#                 verbose=True,
+#                 max_perturbs=max_perturbs
+#             )
 
-            results_path = os.path.join(results_dir, f"toxic_deletions_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
+#             results_path = os.path.join(results_dir, f"toxic_deletions_pop{popsize}_iter{maxiter}_perturbs{max_perturbs}.jsonl")
 
-            print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
+#             print(f"Running attack with max_perturbs={max_perturbs}... Output: {results_path}")
 
-            toxic_attack_parallel(
-                goal_function=goal_function, 
-                constraints=constraints, 
-                transformation=transformation, 
-                search_method=search_method,
-                model_wrapper=model_wrapper,
-                valid_dataset_path=valid_dataset_path, 
-                num_rows=5,
-                results_path=results_path
-            )
+#             toxic_attack_parallel(
+#                 goal_function=goal_function, 
+#                 constraints=constraints, 
+#                 transformation=transformation, 
+#                 search_method=search_method,
+#                 model_wrapper=model_wrapper,
+#                 valid_dataset_path=valid_dataset_path, 
+#                 num_rows=500,
+#                 results_path=results_path
+#             )
     
 
-    print("Finished running all attacks!")
+#     print("Finished running all attacks!")

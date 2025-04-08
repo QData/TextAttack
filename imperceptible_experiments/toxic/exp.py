@@ -151,7 +151,7 @@ if __name__ == "__main__":
                 search_method=search_method,
                 model_wrapper=model_wrapper,
                 valid_dataset_path=valid_dataset_path, 
-                num_rows=5,
+                num_rows=1,
                 results_path=results_path
             )
     

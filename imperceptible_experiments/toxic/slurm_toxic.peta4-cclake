@@ -1,9 +1,16 @@
 #!/bin/bash
-#SBATCH -J job1
-#SBATCH -A BERESFORD-SL3-CPU
+#SBATCH -J toxic-imperceptible
+#SBATCH -A BERESFORD-SL2-CPU
 #SBATCH -p cclake
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
-#SBATCH --time=00:00:10
+#SBATCH --cpus-per-task=56
+#SBATCH --mem=180G
+#SBATCH --time=00:30:00
+#SBATCH --array=0-19
+#SBATCH --output=logs/job_%A_%a.out
+#SBATCH --error=logs/job_%A_%a.err
 
-python imperceptible_experiments/toxic/exp.py
+source /usr/local/software/archive/linux-scientific7-x86_64/gcc-9/miniconda3-4.7.12.1-rmuek6r3f6p3v6fdj7o2klyzta3qhslh/etc/profile.d/conda.sh
+conda activate py39
+python TextAttack/imperceptible_experiments/toxic/exp_parallel.py
