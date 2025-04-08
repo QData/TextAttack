@@ -1,0 +1,9 @@
+#!/bin/bash
+#SBATCH -J job1
+#SBATCH -A BERESFORD-SL3-CPU
+#SBATCH -p cclake
+#SBATCH --nodes=1
+#SBATCH --ntasks=1
+#SBATCH --time=00:00:10
+
+python imperceptible_experiments/toxic/exp.py
