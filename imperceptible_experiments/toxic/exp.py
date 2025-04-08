@@ -22,6 +22,8 @@ import datetime
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
+os.chdir(cur_dir)
+
 # Load Model
 tokenizer = BertTokenizer.from_pretrained(DEFAULT_MODEL_PATH, do_lower_case=True)
 model_state_dict = torch.load(DEFAULT_MODEL_PATH + "pytorch_model.bin", map_location='cpu')
@@ -42,9 +44,11 @@ to_run = [False, False, False, True] # invis, reorderings, homoglyphs, deletions
 
 if __name__ == "__main__":
 
-    valid_dataset_path = os.path.join(cur_dir, "toxic_test.json")
+    # valid_dataset_path = os.path.join(cur_dir, "toxic_test.json")
+    valid_dataset_path = "toxic_test.json"
 
-    results_dir = os.path.join(cur_dir, "results", timestamp)
+    results_dir = os.path.join("results", timestamp)
+    # results_dir = os.path.join(cur_dir, "results", timestamp)
     os.makedirs(results_dir, exist_ok=True)
 
     # invis
