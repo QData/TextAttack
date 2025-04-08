@@ -69,7 +69,7 @@ def run_single_attack(index, input_text, attack):
 
 def toxic_attack_parallel(goal_function, constraints, transformation, search_method, model_wrapper, valid_dataset_path, num_rows, results_path):
     # Build the attack object ONCE
-    attack = Attack(goal_function, constraints, transformation, search_method, model_wrapper)
+    attack = Attack(goal_function, constraints, transformation, search_method)
 
     # Load dataset
     dataset = load_dataset(valid_dataset_path, num_rows)
