@@ -4,11 +4,7 @@ from .text_to_text_goal_function import TextToTextGoalFunction
 import numpy as np
 
 class Ner(TextToTextGoalFunction):
-    """Attempts to minimize the Levenshtein distance between the current output
-    translation and the reference translation.
-
-    Levenshtein distance is defined as the minimum number of single-character
-    edits (insertions, deletions, or substitutions) required to change one string into another.
+    """This is a targeted attack on named entity recognition models.
     """
 
     def clear_cache(self):
@@ -21,16 +17,18 @@ class Ner(TextToTextGoalFunction):
 
     def _get_score(self, model_output, _):
 
+        """
+        model_output is a list of dictionaries, each with keys (entity, score, index, word, start, end)
+        example: [{'entity': 'I-MISC', 'score': 0.99509996, 'index': 6, 'word': 'J', 'start': 8, 'end': 9}]
+        ground_truth_output stores the target suffix entity we are trying to achieve
+        We aim to maximise the scores of all words for which the model outputs an "entity" value ending in ground_truth_output.
+        """
+
         predicts = model_output
+        print(predicts)
         # print(predicts)
         score = 0
         for predict in predicts:
             if predict['entity'].endswith(self.ground_truth_output):
                 score += predict['score']
         return -score
-
-    # def extra_repr_keys(self):
-    #     if self.maximizable:
-    #         return ["maximizable"]
-    #     else:
-    #         return ["maximizable", "target_distance"]

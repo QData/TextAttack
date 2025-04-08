@@ -4,11 +4,7 @@ from .text_to_text_goal_function import TextToTextGoalFunction
 import numpy as np
 
 class Emotion(TextToTextGoalFunction):
-    """Attempts to minimize the Levenshtein distance between the current output
-    translation and the reference translation.
-
-    Levenshtein distance is defined as the minimum number of single-character
-    edits (insertions, deletions, or substitutions) required to change one string into another.
+    """This is a targeted attack on a sentiment analysis model.
     """
 
     def clear_cache(self):
@@ -20,11 +16,13 @@ class Emotion(TextToTextGoalFunction):
         return False
 
     def _get_score(self, model_output, _):
-
-        # emotion_classes = ['sadness', 'joy', 'love', 'anger', 'fear', 'surprise']
-
-        # print(model_output)
-
+        """
+        emotion_classes = ['sadness', 'joy', 'love', 'anger', 'fear', 'surprise']
+        ground_truth_output stores the target class' index in the above list (0 to 5).
+        It maximises the probability that the model emits for the target class, adding a bonus of 1 
+        if the target class has the highest probability emitted by the model among all classes. 
+        """
+        print(model_output)
         predicts = model_output[0]
         score = predicts[self.ground_truth_output]['score']
 
@@ -32,9 +30,3 @@ class Emotion(TextToTextGoalFunction):
             score += 1
         
         return -score
-
-    # def extra_repr_keys(self):
-    #     if self.maximizable:
-    #         return ["maximizable"]
-    #     else:
-    #         return ["maximizable", "target_distance"]

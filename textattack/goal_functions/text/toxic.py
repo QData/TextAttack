@@ -3,11 +3,10 @@ import textattack
 from .text_to_text_goal_function import TextToTextGoalFunction
 
 class Toxic(TextToTextGoalFunction):
-    """Attempts to minimize the Levenshtein distance between the current output
-    translation and the reference translation.
-
-    Levenshtein distance is defined as the minimum number of single-character
-    edits (insertions, deletions, or substitutions) required to change one string into another.
+    """This is a targeted attack on toxic classification models.
+    The model emits a series of probabilities for various toxic labels.
+    We aim to minimise the sum of all probabilities (i.e. one should start with an originally toxic sentence 
+    and attempt to perturb it such that the model think it is not toxic.)
     """
 
     def clear_cache(self):
@@ -22,6 +21,8 @@ class Toxic(TextToTextGoalFunction):
             return False
 
     def _get_score(self, model_output, _):
+        # the model output looks like this: {'toxic': 0.9773269, 'severe_toxic': 0.001563263, 'obscene': 0.028068777, 'threat': 0.0014984279, 'insult': 0.550452, 'identity_hate': 0.006552372}
+        # We aim to minimise the sum of all labels
         return sum(model_output.values())
 
     def extra_repr_keys(self):

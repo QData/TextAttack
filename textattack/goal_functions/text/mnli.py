@@ -4,11 +4,8 @@ from .text_to_text_goal_function import TextToTextGoalFunction
 import numpy as np
 
 class Mnli(TextToTextGoalFunction):
-    """Attempts to minimize the Levenshtein distance between the current output
-    translation and the reference translation.
-
-    Levenshtein distance is defined as the minimum number of single-character
-    edits (insertions, deletions, or substitutions) required to change one string into another.
+    """This is a targeted attack on mnli models.
+    It aims to maximise the probability that the model emits for a given target label.
     """
 
     def clear_cache(self):
@@ -21,27 +18,12 @@ class Mnli(TextToTextGoalFunction):
 
     def _get_score(self, model_output, _):
 
-        # emotion_classes = ['sadness', 'joy', 'love', 'anger', 'fear', 'surprise']
+        # self.ground_truth_output contains the target label (int) based on 
+        # the label map = {'contradiction': 0, 'neutral': 1, 'entailment': 2}
 
-        # print(model_output)
+        # model_output is a tensor containing the probabilities for the three classes 
+        # in the same order as in the label map above (contradiction, neutral, entailment).
 
-        # predicts = model_output[0]
-        # score = predicts[self.ground_truth_output]['score']
-
-        # if np.argmax(list(map(lambda x: x['score'], predicts))) == self.ground_truth_output:
-        #     score += 1
-        
-        # return -score
-
-        # self.ground_truth_output is the target label in int
+        # we return the negative of the probability 
 
         return -model_output[self.ground_truth_output]
-
-    
-        
-
-    # def extra_repr_keys(self):
-    #     if self.maximizable:
-    #         return ["maximizable"]
-    #     else:
-    #         return ["maximizable", "target_distance"]

@@ -4,7 +4,7 @@ import textattack
 from .text_to_text_goal_function import TextToTextGoalFunction
 
 class LevenshteinExceedsTargetDistance(TextToTextGoalFunction):
-    """Attempts to minimize the Levenshtein distance between the current output
+    """Attempts to maximise the Levenshtein distance between the current output
     translation and the reference translation.
 
     Levenshtein distance is defined as the minimum number of single-character
@@ -31,6 +31,8 @@ class LevenshteinExceedsTargetDistance(TextToTextGoalFunction):
 
     def _get_score(self, model_output, _):
         # Calculate Levenshtein distance between the model output and ground truth
+        # model_output : str (model's output on perturbed input)
+        # ground_truth_output : str (correct translation from dataset on original input)
         distance = levenshtein_distance(model_output, self.ground_truth_output)
 
         return -distance
