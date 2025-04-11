@@ -3,37 +3,27 @@ Word Swap by Homoglyph
 -------------------------------
 """
 
-from typing import List
-from textattack.shared import AttackedText
-
-# from textattack.shared import utils
 from .word_swap import WordSwap
-
+from typing import List, Tuple
+from textattack.shared import AttackedText
 import requests
 
 
 class WordSwapHomoglyphSwap(WordSwap):
-    """Transforms an input by replacing its words with visually similar words
+    """
+    Transforms an input by replacing its words with visually similar words
     using homoglyph swaps.
 
-    >>> from textattack.transformations import WordSwapHomoglyphSwap
-    >>> from textattack.augmentation import Augmenter
-
-    >>> transformation = WordSwapHomoglyphSwap()
-    >>> augmenter = Augmenter(transformation=transformation)
-    >>> s = 'I am fabulous.'
-    >>> augmenter.augment(s)
+    Based off of Bad Characters: Imperceptible NLP Attacks (Boucher et al., 2021).
+    https://arxiv.org/abs/2106.09898 
     """
 
-    def __init__(self, random_one=False, **kwargs):
+    def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
         # Intentional homoglyphs
         self.homos = dict()
         # Retrieve Unicode Intentional homoglyph characters
-
-
-        # todo: save a copy to cache, try pull from web, else get from cache
         int_resp = requests.get("https://www.unicode.org/Public/security/latest/intentional.txt", stream=True)
         for line in int_resp.iter_lines():
             if len(line):
@@ -45,32 +35,23 @@ class WordSwapHomoglyphSwap(WordSwap):
                         self.homos[line[3]] = []
                     self.homos[line[3]].append(line[7])
 
-
-        self.random_one = random_one
-
-    def get_glyph_map(self, sentence): # attacked text object to glyph_map
-        
+    def get_glyph_map(self, sentence: AttackedText) -> List[Tuple[int, str]]:
         glyph_map = []
         for i, char in enumerate(sentence.text):
             if char in self.homos:
                 for replacement in self.homos[char]:
-                    # glyph_map.append((i, self.homos[char]))
                     glyph_map.append((i, replacement))
         return glyph_map
 
-    def bounds(self, sentence, max_perturbs):
+    def bounds(self, sentence: AttackedText, max_perturbs: int) -> List[Tuple[int, int]]:  
         glyph_map = self.get_glyph_map(sentence)
         return [(-1, len(glyph_map) - 1)] * max_perturbs
-
-    def _get_replacement_words(self, word):
-        candidate_words = []
-        return candidate_words
 
     def natural(self, x: float) -> int:
         """Rounds float to the nearest natural number (positive int)"""
         return max(0, round(float(x)))
 
-    def apply_perturbation(self, sentence, perturbation_vector: List[float], glyph_map): # AttackedText object to AttackedText object
+    def apply_perturbation(self, sentence: AttackedText, perturbation_vector: List[float], glyph_map: List[Tuple[int, str]]) -> AttackedText: 
         candidate = list(sentence.text)
         for perturb in map(self.natural, perturbation_vector):
             if (perturb >= 0):
@@ -78,9 +59,12 @@ class WordSwapHomoglyphSwap(WordSwap):
                 candidate[i] = char
         return AttackedText(''.join(candidate))
 
-    @property
-    def deterministic(self):
-        return not self.random_one
-
-    def extra_repr_keys(self):
-        return super().extra_repr_keys()
+    def _get_replacement_words(self, word: str) -> List[str]:
+        candidate_words = []
+        for i in range(len(word)):
+            char = word[i]
+            if char in self.homos:
+                for replacement in self.homos[char]:
+                    candidate_word = word[:i] + replacement + word[i+1:]
+                    candidate_words.append(candidate_word)
+        return candidate_words
