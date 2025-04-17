@@ -156,7 +156,6 @@ class Attack:
         # The search method only needs access to the first argument. The second is only used
         # by the attack class when checking whether to skip the sample
         self.search_method.get_goal_results = self.goal_function.get_results
-        self.search_method.get_goal_result = self.goal_function.get_result
 
         # Give search method access to get indices which need to be ordered / searched
         self.search_method.get_indices_to_order = self.get_indices_to_order

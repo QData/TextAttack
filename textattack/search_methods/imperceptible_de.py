@@ -26,7 +26,8 @@ class ImperceptibleDE(SearchMethod):
             cand = self._candidate(perturbation_vector, initial_result, glyph_map)
         else:
             cand = self._candidate(perturbation_vector, initial_result)
-        result, _ = self.get_goal_result(cand)
+        result, _ = self.get_goal_results([cand])
+        result = result[0]
         return result.score
 
     def _candidate(self, perturbation_vector: List[float], initial_result, glyph_map=None):
@@ -68,7 +69,8 @@ class ImperceptibleDE(SearchMethod):
             cand = self._candidate(result.x, initial_result, glyph_map)
         else:
             cand = self._candidate(result.x, initial_result)
-        ret, _ = self.get_goal_result(cand)
+        ret, _ = self.get_goal_results([cand])
+        ret = ret[0]
         return ret
 
     def check_transformation_compatibility(self, transformation):
