@@ -6,6 +6,7 @@ Word Swap by Invisible Characters
 from .word_swap import WordSwap
 from typing import List, Tuple
 from textattack.shared import AttackedText
+import random
 
 class WordSwapInvisibleCharacters(WordSwap):
     """
@@ -25,6 +26,10 @@ class WordSwapInvisibleCharacters(WordSwap):
 
     def _get_replacement_words(self, word: str) -> List[str]:
         candidate_words = []
+        for i in range(1, len(word)):  
+            for inv_char in self.invisible_chars:
+                new_word = word[:i] + inv_char + word[i:]
+                candidate_words.append(new_word)
         return candidate_words
 
     def natural(self, x: float) -> int:
