@@ -26,25 +26,23 @@ def mnli_targeted_attack(goal_function, constraints, transformation, search_meth
     with open(results_path, "a", encoding="utf8") as results:
         index = 0
         for tc in mnli_test[:num_rows]:
-
-            target = label_map[tc['gold_label']]
-            inp = OrderedDict([('premise', tc['sentence1']), ('hypothesis', tc['sentence2'])])
-            start_time = time.time()
-            attack_result = attack.attack(inp, target)
-            print(attack_result)
-            elapsed_time = time.time() - start_time
-            result_entry = {
-                "index": index,
-                "elapsed_time": elapsed_time,
-                "input_text": inp,
-                # "correct_output": labels,
-                "target": target,
-                "perturbed_text": attack_result.attacked_text.text,
-                # "perturbed_output": attack_result.output,
-                "score": attack_result.score,
-                "goal_status": attack_result.goal_status
-            }
-            results.write(json.dumps(result_entry, ensure_ascii=False) + "\n")
-            index += 1
-            print(f"Processed: {index} / {num_rows}")
+            for target in range(0, 3):
+                inp = OrderedDict([('premise', tc['sentence1']), ('hypothesis', tc['sentence2'])])
+                start_time = time.time()
+                attack_result = attack.attack(inp, target).perturbed_result
+                print(attack_result)
+                elapsed_time = time.time() - start_time
+                result_entry = {
+                    "index": index,
+                    "elapsed_time": elapsed_time,
+                    "input_text": inp,
+                    "target": target,
+                    "perturbed_text": attack_result.attacked_text.text,
+                    "perturbed_output": attack_result.output,
+                    "score": attack_result.score,
+                    "goal_status": attack_result.goal_status
+                }
+                results.write(json.dumps(result_entry, ensure_ascii=False) + "\n")
+                index += 1
+                print(f"Processed: {index} / {num_rows}")
     

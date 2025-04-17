@@ -163,13 +163,17 @@ class Attack:
 
         self.search_method.filter_transformations = self.filter_transformations
 
-
+        """Give search method access to special transformation methods 
+        if any the following transformations are used:
+        - WordSwapHomoglyphSwap (apply_perturbation, bounds, get_glyph_map)
+        - WordSwapDeletions (apply_perturbation, bounds)
+        - WordSwapInvisibleCharacters (apply_perturbation, bounds)
+        - WordSwapReorderings (apply_perturbation, bounds)
+        """
         if (hasattr(self.transformation, "apply_perturbation")):
             self.search_method.apply_perturbation = self.transformation.apply_perturbation
-
         if (hasattr(self.transformation, "bounds")):
             self.search_method.bounds = self.transformation.bounds
-        
         if (hasattr(self.transformation, "get_glyph_map")):
             self.search_method.get_glyph_map = self.transformation.get_glyph_map
 
@@ -327,15 +331,6 @@ class Attack:
             transformed_texts, current_text, original_text
         )
 
-    # def apply_perturbation(self, sentence, perturbation_vector: List[float], glyph_map):
-    #     return self.transformation._apply_perturbation(sentence, perturbation_vector, glyph_map)
-
-    # def bounds(self, sentence, max_perturbs):
-    #     return self.transformation.bounds(sentence, max_perturbs)
-
-    # def get_glyph_map(self, sentence):
-    #     return self.transformation.get_glyph_map(sentence)
-
     def _filter_transformations_uncached(
         self, transformed_texts, current_text, original_text=None
     ):
@@ -416,26 +411,25 @@ class Attack:
                 or ``MaximizedAttackResult``.
         """
         final_result = self.search_method(initial_result)
-        return final_result
-        # self.clear_cache()
-        # if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
-        #     result = SuccessfulAttackResult(
-        #         initial_result,
-        #         final_result,
-        #     )
-        # elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
-        #     result = FailedAttackResult(
-        #         initial_result,
-        #         final_result,
-        #     )
-        # elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
-        #     result = MaximizedAttackResult(
-        #         initial_result,
-        #         final_result,
-        #     )
-        # else:
-        #     raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
-        # return result
+        self.clear_cache()
+        if final_result.goal_status == GoalFunctionResultStatus.SUCCEEDED:
+            result = SuccessfulAttackResult(
+                initial_result,
+                final_result,
+            )
+        elif final_result.goal_status == GoalFunctionResultStatus.SEARCHING:
+            result = FailedAttackResult(
+                initial_result,
+                final_result,
+            )
+        elif final_result.goal_status == GoalFunctionResultStatus.MAXIMIZING:
+            result = MaximizedAttackResult(
+                initial_result,
+                final_result,
+            )
+        else:
+            raise ValueError(f"Unrecognized goal status {final_result.goal_status}")
+        return result
 
     def attack(self, example, ground_truth_output):
         """Attack a single example.

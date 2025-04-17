@@ -2,8 +2,8 @@ from transformers import pipeline
 from datasets import load_dataset, load_from_disk
 import os
 
-def load_ner_data(num_exmaples):
-  return load_dataset("conll2003", split=f'test[:{num_exmaples}]')
+def load_ner_data(num_examples):
+  return load_dataset("conll2003", split=f'test[:{num_examples}]')
 
 def load_ner_data_all():
   return load_dataset("conll2003", split=f'test')
@@ -21,17 +21,17 @@ def load_ner_from_local_cache(model_path, tokenizer_path):
 
 # print(ner_data[0])
 
-cur_dir = os.path.dirname(os.path.abspath(__file__))
+# cur_dir = os.path.dirname(os.path.abspath(__file__))
 
-ner_data_all = load_ner_data_all()
-ner_data_all.save_to_disk(os.path.join(cur_dir, "ner_data_all"))
+# ner_data_all = load_ner_data_all()
+# ner_data_all.save_to_disk(os.path.join(cur_dir, "ner_data_all"))
 
-# emotion_data = load_emotion_data(5)
+# # emotion_data = load_emotion_data(5)
 
-model = load_ner()
+# model = load_ner()
 
-model.model.save_pretrained(os.path.join(cur_dir, "./local_ner_model"))
-model.tokenizer.save_pretrained(os.path.join(cur_dir, "./local_ner_tokenizer"))
+# model.model.save_pretrained(os.path.join(cur_dir, "./local_ner_model"))
+# model.tokenizer.save_pretrained(os.path.join(cur_dir, "./local_ner_tokenizer"))
 
 # model = load_emotion_from_local_cache('./local_emotion_model', './local_emotion_tokenizer')
 

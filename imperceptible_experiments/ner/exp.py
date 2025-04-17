@@ -3,7 +3,7 @@ import textattack
 from textattack.goal_functions import Ner
 from textattack.search_methods import ImperceptibleDE
 from textattack.transformations import WordSwapHomoglyphSwap
-from load import load_ner_from_local_cache, load_ner_data_from_local_cache
+from load import load_ner_from_local_cache, load_ner_data_from_local_cache, load_ner
 from helper import detokenize, ner_tags
 from att import ner_targeted_attack
 
@@ -20,14 +20,15 @@ import datetime
 
 cur_dir = os.path.dirname(os.path.abspath(__file__))
 
-model_path = os.path.join(cur_dir, 'local_ner_model')
-tokenizer_path = os.path.join(cur_dir, 'local_ner_tokenizer')
+# model_path = os.path.join(cur_dir, 'local_ner_model')
+# tokenizer_path = os.path.join(cur_dir, 'local_ner_tokenizer')
 data_path = os.path.join(cur_dir, 'ner_data_all')
  
-model = load_ner_from_local_cache(model_path, tokenizer_path)
+# model = load_ner_from_local_cache(model_path, tokenizer_path)
+model = load_ner()
 model_wrapper = textattack.models.wrappers.PipelineModelWrapper(model)
 
-# data = load_ner_data_from_local_cache(data_path)
+data = load_ner_data_from_local_cache(data_path)
 
 # test = data[0]
 # inp = detokenize(test['tokens'])

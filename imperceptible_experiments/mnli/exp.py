@@ -21,7 +21,7 @@ import torch
 model = torch.hub.load('pytorch/fairseq',
                        'roberta.large.mnli').eval()
 
-model_wrapper = textattack.models.wrappers.MnliModelWrapper(model)
+model_wrapper = textattack.models.wrappers.FairseqMnliWrapper(model)
 
 
 # Attack params

@@ -15,7 +15,9 @@ import json
 from imperceptible_experiments.toxic.toxic.config import DEFAULT_MODEL_PATH, LABEL_LIST, MODEL_META_DATA as model_meta
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 import torch
-from imperceptible_experiments.toxic.toxic.core.bert_pytorch import BertForMultiLabelSequenceClassification
+# from imperceptible_experiments.toxic.toxic.core.bert_pytorch import BertForMultiLabelSequenceClassification
+
+from imperceptible_experiments.toxic.toxic.core.model import ModelWrapper
 
 import os
 import datetime
@@ -25,22 +27,24 @@ cur_dir = os.path.dirname(os.path.abspath(__file__))
 os.chdir(cur_dir)
 
 # Load Model
-tokenizer = BertTokenizer.from_pretrained(DEFAULT_MODEL_PATH, do_lower_case=True)
-model_state_dict = torch.load(DEFAULT_MODEL_PATH + "pytorch_model.bin", map_location='cpu')
-model = BertForMultiLabelSequenceClassification.from_pretrained(DEFAULT_MODEL_PATH,
-                                                                             num_labels=len(LABEL_LIST),
-                                                                             state_dict=model_state_dict)
-model_wrapper = textattack.models.wrappers.IBMBertModelWrapper(model, tokenizer)
+# tokenizer = BertTokenizer.from_pretrained(DEFAULT_MODEL_PATH, do_lower_case=True)
+# model_state_dict = torch.load(DEFAULT_MODEL_PATH + "pytorch_model.bin", map_location='cpu')
+# model = BertForMultiLabelSequenceClassification.from_pretrained(DEFAULT_MODEL_PATH,
+#                                                                              num_labels=len(LABEL_LIST),
+#                                                                              state_dict=model_state_dict)
+
+model = ModelWrapper()
+model_wrapper = textattack.models.wrappers.IBMMAXToxicWrapper(model)
 
 # Attack params
-goal_function = Toxic(model_wrapper)
+goal_function = Toxic(model_wrapper, target_max_score=0.5)
 constraints = []
 popsize = 10
 maxiter = 5
 
 timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
-to_run = [False, False, False, True] # invis, reorderings, homoglyphs, deletions
+to_run = [True, False, False, False] # invis, reorderings, homoglyphs, deletions
 
 if __name__ == "__main__":
 
@@ -99,7 +103,7 @@ if __name__ == "__main__":
                 search_method=search_method,
                 model_wrapper=model_wrapper,
                 valid_dataset_path=valid_dataset_path, 
-                num_rows=5,
+                num_rows=1,
                 results_path=results_path
             )
 
@@ -125,7 +129,7 @@ if __name__ == "__main__":
                 search_method=search_method,
                 model_wrapper=model_wrapper,
                 valid_dataset_path=valid_dataset_path, 
-                num_rows=5,
+                num_rows=1,
                 results_path=results_path
             )
 

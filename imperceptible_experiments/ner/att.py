@@ -29,7 +29,7 @@ def ner_targeted_attack(goal_function, constraints, transformation, search_metho
             target = ner_classes[0]
 
             start_time = time.time()
-            attack_result = attack.attack(inp, target)
+            attack_result = attack.attack(inp, target).perturbed_result
             print(attack_result)
             elapsed_time = time.time() - start_time
             result_entry = {
@@ -39,7 +39,7 @@ def ner_targeted_attack(goal_function, constraints, transformation, search_metho
                 # "correct_output": labels,
                 "target": target,
                 "perturbed_text": attack_result.attacked_text.text,
-                # "perturbed_output": attack_result.output,
+                "perturbed_output": attack_result.output,
                 "score": attack_result.score,
                 "goal_status": attack_result.goal_status
             }

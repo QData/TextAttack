@@ -6,10 +6,7 @@ Goal Function for Text to Text case
 """
 
 from .minimize_bleu import MinimizeBleu
+from .maximize_bleu import MaximizeBleu
 from .non_overlapping_output import NonOverlappingOutput
-from .lev_exceeds_target_dist import LevenshteinExceedsTargetDistance
+from .maximize_levenshtein import MaximizeLevenshtein
 from .text_to_text_goal_function import TextToTextGoalFunction
-from .toxic import Toxic
-from .emotion import Emotion
-from .ner import Ner
-from .mnli import Mnli
