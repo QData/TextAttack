@@ -50,11 +50,3 @@ checkpoints/
 !tests/sample_outputs/csv_attack_log.csv
 tests/test_command_line/attack_log.txt
 textattack/=22.3.0
-
-# toxic
-imperceptible_experiments/toxic/toxic
-imperceptible_experiments/toxic/results
-
-# translation_en_ru
-imperceptible_experiments/translation_en_ru/results
-imperceptible_experiments/translation_en_ru/wmt19_ru_en_validation
