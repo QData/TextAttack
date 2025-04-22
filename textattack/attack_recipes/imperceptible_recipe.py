@@ -5,7 +5,7 @@ Imperceptible Perturbations Algorithm
 """
 
 from .attack_recipe import AttackRecipe
-from textattack.goal_functions import Emotion, Mnli, Ner, Toxic, MaximizeBleu, MaximizeLevenshtein
+from textattack.goal_functions import Emotion, Mnli, Ner, Toxic, MaximizeLevenshtein, MinimizeBleu
 from textattack.transformations import WordSwapInvisibleCharacters, WordSwapHomoglyphSwap, WordSwapDeletions, WordSwapReorderings
 from textattack.search_methods import ImperceptibleDE
 from textattack import Attack
@@ -117,7 +117,7 @@ class ImperceptibleRecipe(AttackRecipe):
         elif task_type == "toxic":
             goal_function = Toxic(model_wrapper, target_max_score=0.5)
         elif task_type == "translation_bleu":
-            goal_function = MaximizeBleu(model_wrapper)
+            goal_function = MinimizeBleu(model_wrapper)
         elif task_type == "translation_levenshtein":
             goal_function = MaximizeLevenshtein(model_wrapper)
         
