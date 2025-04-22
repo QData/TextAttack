@@ -89,4 +89,4 @@ class ImperceptibleDE(SearchMethod):
         return True
 
     def extra_repr_keys(self):
-        return ["population_size", "max_iterations", "differential_weight", "crossover_probability"]
+        return ["popsize", "maxiter", "max_perturbs", "verbose"]
