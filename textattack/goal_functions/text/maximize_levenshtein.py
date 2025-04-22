@@ -20,7 +20,7 @@ class MaximizeLevenshtein(TextToTextGoalFunction):
             self._call_model_cache.clear()
 
     def _is_goal_complete(self, model_output, _):
-        if target_distance:
+        if self.target_distance:
             distance = -self._get_score(model_output, _)
             return distance >= self.target_distance
         else:
