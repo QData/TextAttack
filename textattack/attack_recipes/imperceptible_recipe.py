@@ -7,7 +7,7 @@ Imperceptible Perturbations Algorithm
 from .attack_recipe import AttackRecipe
 from textattack.goal_functions import Emotion, Mnli, Ner, Toxic, MaximizeLevenshtein, MinimizeBleu
 from textattack.transformations import WordSwapInvisibleCharacters, WordSwapHomoglyphSwap, WordSwapDeletions, WordSwapReorderings
-from textattack.search_methods import ImperceptibleDE
+from textattack.search_methods import DifferentialEvolution
 from textattack import Attack
 
 
@@ -17,7 +17,7 @@ class ImperceptibleRecipe(AttackRecipe):
     This attack recipe can be used to create some of the attacks outlined in the https://arxiv.org/abs/2106.09898 paper.
 
     It attacks a model with an imperceptible transformation and uses the search method 
-    textattack.search_methods.ImperceptibleDE, an implementation of differential evolution.
+    textattack.search_methods.DifferentialEvolution, an implementation of differential evolution.
 
     The imperceptible transformations supported are as follows:
     - textattack.transformations.WordSwapInvisibleCharacters: 
@@ -92,8 +92,8 @@ class ImperceptibleRecipe(AttackRecipe):
 
     Note: It is possible to use other goal functions such as textattack.goal_functions.UntargetedClassfication with the imperceptible transformations.
     These are not implemented in this recipe. It is important to ensure that the search method and model wrapper chosen are compatible with the goal function.
-    For example, simply using ImperceptibleDE on UntargetedClassification may return unexpected results because the custom goal functions we have written
-    override the _get_score method in UntargetedClassification to return something sensible for ImperceptibleDE's objective function.
+    For example, simply using DifferentialEvolution on UntargetedClassification may return unexpected results because the custom goal functions we have written
+    override the _get_score method in UntargetedClassification to return something sensible for DifferentialEvolution's objective function.
 
     """
 
@@ -130,7 +130,7 @@ class ImperceptibleRecipe(AttackRecipe):
         elif perturbation_type == "reorderings":
             transformation = WordSwapReorderings
         
-        search_method = ImperceptibleDE(
+        search_method = DifferentialEvolution(
             popsize=popsize, 
             maxiter=maxiter, 
             verbose=True,

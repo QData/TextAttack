@@ -23,10 +23,6 @@ class Emotion(TargetedClassification):
         ground_truth_output stores the target class' index (int) in the above list (0 to 5).
 
         model_output is a tensor of probabilities, one for each emotion_class.
-
-        When used with ImperceptibleDE, this method maximises the probability that the model 
-        emits for the target class, adding a bonus of 1 if the target class has the highest probability
-        emitted by the model among all classes. 
         """
 
         if np.argmax(model_output) == self.ground_truth_output:

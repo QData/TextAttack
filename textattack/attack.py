@@ -162,20 +162,6 @@ class Attack:
 
         self.search_method.filter_transformations = self.filter_transformations
 
-        """Give search method access to special transformation methods 
-        if any the following transformations are used:
-        - WordSwapHomoglyphSwap (apply_perturbation, bounds, get_glyph_map)
-        - WordSwapDeletions (apply_perturbation, bounds)
-        - WordSwapInvisibleCharacters (apply_perturbation, bounds)
-        - WordSwapReorderings (apply_perturbation, bounds)
-        """
-        if (hasattr(self.transformation, "apply_perturbation")):
-            self.search_method.apply_perturbation = self.transformation.apply_perturbation
-        if (hasattr(self.transformation, "bounds")):
-            self.search_method.bounds = self.transformation.bounds
-        if (hasattr(self.transformation, "get_glyph_map")):
-            self.search_method.get_glyph_map = self.transformation.get_glyph_map
-
     def clear_cache(self, recursive=True):
         self.constraints_cache.clear()
         if self.use_transformation_cache:

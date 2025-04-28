@@ -6,8 +6,6 @@ class Toxic(UnnormalizedClassification, UntargetedClassification):
     def _get_score(self, model_output, _):
         """
         model_output is a tensor of logits, one for each label.
-        
-        When used with ImperceptibleDE, this method allows us to minimize the sum of the logits.
         """
         return sum(model_output)
 

@@ -3,13 +3,13 @@ Word Swap by Homoglyph
 -------------------------------
 """
 
-from .word_swap import WordSwap
+from .word_swap_differential_evolution import WordSwapDifferentialEvolution
 from typing import List, Tuple
 from textattack.shared import AttackedText
 import requests
 
 
-class WordSwapHomoglyphSwap(WordSwap):
+class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
     """
     Transforms an input by replacing its words with visually similar words
     using homoglyph swaps.
@@ -21,9 +21,8 @@ class WordSwapHomoglyphSwap(WordSwap):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        # Intentional homoglyphs
-        self.homos = dict()
         # Retrieve Unicode Intentional homoglyph characters
+        self.homos = dict()
         int_resp = requests.get("https://www.unicode.org/Public/security/latest/intentional.txt", stream=True)
         for line in int_resp.iter_lines():
             if len(line):
@@ -35,24 +34,28 @@ class WordSwapHomoglyphSwap(WordSwap):
                         self.homos[line[3]] = []
                     self.homos[line[3]].append(line[7])
 
-    def get_glyph_map(self, sentence: AttackedText) -> List[Tuple[int, str]]:
+    def get_precomputed(self, current_text: AttackedText) -> List[List[Tuple[int, str]]]:
+        return [self.get_glyph_map(current_text)]
+
+    def get_glyph_map(self, current_text: AttackedText) -> List[Tuple[int, str]]:
         glyph_map = []
-        for i, char in enumerate(sentence.text):
+        for i, char in enumerate(current_text.text):
             if char in self.homos:
                 for replacement in self.homos[char]:
                     glyph_map.append((i, replacement))
         return glyph_map
 
-    def bounds(self, sentence: AttackedText, max_perturbs: int) -> List[Tuple[int, int]]:  
-        glyph_map = self.get_glyph_map(sentence)
+    def get_bounds(self, current_text: AttackedText, max_perturbs: int, precomputed: List[List[Tuple[int, str]]]) -> List[Tuple[int, int]]:  
+        glyph_map = precomputed[0]
         return [(-1, len(glyph_map) - 1)] * max_perturbs
 
     def natural(self, x: float) -> int:
-        """Rounds float to the nearest natural number (positive int)"""
+        """Helper function that rounds float to the nearest natural number (positive int)"""
         return max(0, round(float(x)))
 
-    def apply_perturbation(self, sentence: AttackedText, perturbation_vector: List[float], glyph_map: List[Tuple[int, str]]) -> AttackedText: 
-        candidate = list(sentence.text)
+    def apply_perturbation(self, current_text: AttackedText, perturbation_vector: List[float], precomputed: List[List[Tuple[int, str]]]) -> AttackedText: 
+        glyph_map = precomputed[0]
+        candidate = list(current_text.text)
         for perturb in map(self.natural, perturbation_vector):
             if (perturb >= 0):
                 i, char = glyph_map[perturb]

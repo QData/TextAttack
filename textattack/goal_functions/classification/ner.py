@@ -22,9 +22,6 @@ class Ner(TargetedClassification, UnprocessedClassification):
         model_output is a list of dictionaries, each with keys (entity, score, index, word, start, end)
         example: [{'entity': 'I-MISC', 'score': 0.99509996, 'index': 6, 'word': 'J', 'start': 8, 'end': 9}]
         ground_truth_output stores the target suffix entity we are trying to achieve.
-
-        When used with ImperceptibleDE, this method allows us to maximise the sum of scores of 
-        all words for which the model outputs an "entity" value ending in ground_truth_output.
         """
 
         predicts = model_output

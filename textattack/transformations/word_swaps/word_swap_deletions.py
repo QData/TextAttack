@@ -1,8 +1,8 @@
-from .word_swap import WordSwap
+from .word_swap_differential_evolution import WordSwapDifferentialEvolution
 from typing import List, Tuple
 from textattack.shared import AttackedText
 
-class WordSwapDeletions(WordSwap):
+class WordSwapDeletions(WordSwapDifferentialEvolution):
     """
     Generates visually similar text transformations by embedding Unicode control characters 
     (e.g., backspace, delete, carriage return).
@@ -17,19 +17,15 @@ class WordSwapDeletions(WordSwap):
         self.ins_chr_min = '!'
         self.ins_chr_max = '~'
 
-    def bounds(self, sentence: AttackedText, max_perturbs: int) -> List[Tuple[int, int]]:
-        return [(-1, len(sentence.text) - 1), (ord(self.ins_chr_min), ord(self.ins_chr_max))] * max_perturbs
-
-    def _get_replacement_words(self, word: str) -> List[str]:
-        candidate_words = []
-        return candidate_words
+    def get_bounds(self, current_text: AttackedText, max_perturbs: int, _) -> List[Tuple[int, int]]:
+        return [(-1, len(current_text.text) - 1), (ord(self.ins_chr_min), ord(self.ins_chr_max))] * max_perturbs
 
     def natural(self, x: float) -> int:
         """Rounds float to the nearest natural number (positive int)"""
         return max(0, round(float(x)))
     
-    def apply_perturbation(self, sentence: AttackedText, perturbation_vector: List[float]) -> AttackedText: 
-        candidate = list(sentence.text)
+    def apply_perturbation(self, current_text: AttackedText, perturbation_vector: List[float], _) -> AttackedText: 
+        candidate = list(current_text.text)
         for i in range(0, len(perturbation_vector), 2):
             idx = self.natural(perturbation_vector[i])
             char = chr(self.natural(perturbation_vector[i+1]))

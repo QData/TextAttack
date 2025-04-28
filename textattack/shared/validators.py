@@ -132,16 +132,6 @@ def transformation_consists_of_word_swaps_and_deletions(transformation):
         transformation, [WordDeletion, WordSwap, WordSwapGradientBased]
     )
 
-def transformation_is_imperceptible(transformation):
-    from textattack.transformations import WordSwapHomoglyphSwap, WordSwapDeletions, WordSwapInvisibleCharacters, WordSwapReorderings
-    if (transformation_consists_of(transformation, [WordSwapHomoglyphSwap])):
-        return (True, "homoglyphs")
-    elif (transformation_consists_of(transformation, [WordSwapDeletions])):
-        return (True, "deletions")
-    elif (transformation_consists_of(transformation, [WordSwapInvisibleCharacters])):
-        return (True, "invisible_characters")
-    elif (transformation_consists_of(transformation, [WordSwapReorderings])):
-        return (True, "word_swap_reorderings")
-    else:
-        return (False, )
-
+def transformation_consists_of_word_swaps_differential_evolution(transformation):
+    from textattack.transformations import WordSwapDifferentialEvolution
+    return transformation_consists_of(transformation, [WordSwapDifferentialEvolution])

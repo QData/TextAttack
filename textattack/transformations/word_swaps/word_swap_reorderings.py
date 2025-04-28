@@ -1,10 +1,10 @@
 from __future__ import annotations
-from .word_swap import WordSwap
+from .word_swap_differential_evolution import WordSwapDifferentialEvolution
 from typing import List, Tuple, Union
 from textattack.shared import AttackedText
 from dataclasses import dataclass
 
-class WordSwapReorderings(WordSwap):
+class WordSwapReorderings(WordSwapDifferentialEvolution):
     """
     Generates visually identical reorderings of a string using swap and encoding procedures.
     
@@ -30,11 +30,11 @@ class WordSwapReorderings(WordSwap):
         two: str
 
     def natural(self, x: float) -> int:
-        """Rounds float to the nearest natural number (positive int)"""
+        """Helper function that rounds float to the nearest natural number (positive int)"""
         return max(0, round(float(x)))
 
-    def bounds(self, sentence: AttackedText, max_perturbs: int) -> List[Tuple[int, int]]:
-        return [(-1, len(sentence.text) - 1)] * max_perturbs
+    def get_bounds(self, current_text: AttackedText, max_perturbs: int, _) -> List[Tuple[int, int]]:
+        return [(-1, len(current_text.text) - 1)] * max_perturbs
 
     def _apply_swaps(self, elements: List[Union[str, Swap]]) -> str:
         res = ""
@@ -49,8 +49,8 @@ class WordSwapReorderings(WordSwap):
                 res += el
         return res
 
-    def apply_perturbation(self, sentence: AttackedText, perturbation_vector: List[float]) -> AttackedText: 
-        candidate: List[Union[str, self.Swap]] = list(sentence.text)
+    def apply_perturbation(self, current_text: AttackedText, perturbation_vector: List[float], _) -> AttackedText: 
+        candidate: List[Union[str, self.Swap]] = list(current_text.text)
         for perturb in map(self.natural, perturbation_vector):
             if (perturb >= 0 and len(candidate) >= 2):
                 perturb = min(perturb, len(candidate) - 2)

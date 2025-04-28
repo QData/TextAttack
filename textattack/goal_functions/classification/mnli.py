@@ -23,8 +23,6 @@ class Mnli(TargetedClassification):
 
         model_output is a tensor containing the probabilities for the three classes 
         in the same order as in the label map above (contradiction, neutral, entailment).
-
-        When used with ImperceptibleDE, this method maximises the probability of the target label.
         """
 
         return -model_output[self.ground_truth_output]
