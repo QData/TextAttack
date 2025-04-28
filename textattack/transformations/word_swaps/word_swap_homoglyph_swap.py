@@ -18,7 +18,7 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
     https://arxiv.org/abs/2106.09898 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, random_one=False, **kwargs):
         super().__init__(**kwargs)
 
         # Retrieve Unicode Intentional homoglyph characters
@@ -63,11 +63,26 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
         return AttackedText(''.join(candidate))
 
     def _get_replacement_words(self, word: str) -> List[str]:
+        """Returns a list containing all possible words with 1 character
+        replaced by a homoglyph."""
         candidate_words = []
-        for i in range(len(word)):
-            char = word[i]
-            if char in self.homos:
-                for replacement in self.homos[char]:
-                    candidate_word = word[:i] + replacement + word[i+1:]
+        if self.random_one:
+            i = np.random.randint(0, len(word))
+            if word[i] in self.homos:
+                repl_letter = self.homos[word[i]]
+                candidate_word = word[:i] + repl_letter + word[i + 1 :]
+                candidate_words.append(candidate_word)
+        else:
+            for i in range(len(word)):
+                if word[i] in self.homos:
+                    repl_letter = self.homos[word[i]]
+                    candidate_word = word[:i] + repl_letter + word[i + 1 :]
                     candidate_words.append(candidate_word)
         return candidate_words
+
+    @property
+    def deterministic(self):
+        return not self.random_one
+
+    def extra_repr_keys(self):
+        return super().extra_repr_keys()
