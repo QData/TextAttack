@@ -10,7 +10,7 @@ from .word_swap import WordSwap
 from .chn_transformations import *
 from .word_swap_embedding import WordSwapEmbedding
 from .word_swap_hownet import WordSwapHowNet
-
+from .word_swap_homoglyph_swap import WordSwapHomoglyphSwap
 from .word_swap_inflections import WordSwapInflections
 from .word_swap_neighboring_character_swap import WordSwapNeighboringCharacterSwap
 from .word_swap_random_character_deletion import WordSwapRandomCharacterDeletion
@@ -29,7 +29,6 @@ from .word_swap_change_name import WordSwapChangeName
 from .word_swap_gradient_based import WordSwapGradientBased
 
 from .word_swap_differential_evolution import WordSwapDifferentialEvolution
-from .word_swap_homoglyph_swap import WordSwapHomoglyphSwap
 from .word_swap_invisible_characters import WordSwapInvisibleCharacters
 from .word_swap_reorderings import WordSwapReorderings
 from .word_swap_deletions import WordSwapDeletions
