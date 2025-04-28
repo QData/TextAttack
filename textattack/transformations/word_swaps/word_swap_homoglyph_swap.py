@@ -21,8 +21,50 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
     def __init__(self, random_one=False, **kwargs):
         super().__init__(**kwargs)
 
+        self.homos = {
+            "-": "˗",
+            "9": "৭",
+            "8": "Ȣ",
+            "7": "𝟕",
+            "6": "б",
+            "5": "Ƽ",
+            "4": "Ꮞ",
+            "3": "Ʒ",
+            "2": "ᒿ",
+            "1": "l",
+            "0": "O",
+            "'": "`",
+            "a": "ɑ",
+            "b": "Ь",
+            "c": "ϲ",
+            "d": "ԁ",
+            "e": "е",
+            "f": "𝚏",
+            "g": "ɡ",
+            "h": "հ",
+            "i": "і",
+            "j": "ϳ",
+            "k": "𝒌",
+            "l": "ⅼ",
+            "m": "ｍ",
+            "n": "ո",
+            "o": "о",
+            "p": "р",
+            "q": "ԛ",
+            "r": "ⲅ",
+            "s": "ѕ",
+            "t": "𝚝",
+            "u": "ս",
+            "v": "ѵ",
+            "w": "ԝ",
+            "x": "×",
+            "y": "у",
+            "z": "ᴢ",
+        }
+        self.random_one = random_one
+
         # Retrieve Unicode Intentional homoglyph characters
-        self.homos = dict()
+        self.homos_intentional = dict()
         int_resp = requests.get("https://www.unicode.org/Public/security/latest/intentional.txt", stream=True)
         for line in int_resp.iter_lines():
             if len(line):
@@ -30,9 +72,9 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
                 if line[0] != '#':
                     line = line.replace("#*", "#")
                     _, line = line.split("#", maxsplit=1)
-                    if line[3] not in self.homos:
-                        self.homos[line[3]] = []
-                    self.homos[line[3]].append(line[7])
+                    if line[3] not in self.homos_intentional:
+                        self.homos_intentional[line[3]] = []
+                    self.homos_intentional[line[3]].append(line[7])
 
     def get_precomputed(self, current_text: AttackedText) -> List[List[Tuple[int, str]]]:
         return [self.get_glyph_map(current_text)]
@@ -40,8 +82,8 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
     def get_glyph_map(self, current_text: AttackedText) -> List[Tuple[int, str]]:
         glyph_map = []
         for i, char in enumerate(current_text.text):
-            if char in self.homos:
-                for replacement in self.homos[char]:
+            if char in self.homos_intentional:
+                for replacement in self.homos_intentional[char]:
                     glyph_map.append((i, replacement))
         return glyph_map
 
