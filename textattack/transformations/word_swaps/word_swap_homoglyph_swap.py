@@ -2,7 +2,7 @@
 Word Swap by Homoglyph
 -------------------------------
 """
-
+import numpy as np
 from .word_swap_differential_evolution import WordSwapDifferentialEvolution
 from typing import List, Tuple
 from textattack.shared import AttackedText
