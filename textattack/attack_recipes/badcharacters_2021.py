@@ -11,13 +11,13 @@ from textattack.search_methods import DifferentialEvolution
 from textattack import Attack
 
 
-class ImperceptibleRecipe(AttackRecipe):
+class BadCharacters2021(AttackRecipe):
 
     """
     Imperceptible Perturbations Attack Recipe
     ==========================================
 
-    Implements imperceptible adversarial attacks on NLP models as outlined in 
+    Implements imperceptible adversarial attacks on NLP models as outlined in the Bad Characters paper
     https://arxiv.org/abs/2106.09898.
 
     This recipe combines imperceptible transformations with the Differential Evolution 
