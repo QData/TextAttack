@@ -2,22 +2,23 @@
 
 We provide a number of pre-built attack recipes, which correspond to attacks from the literature.
 
-
 ## Help: `textattack --help`
 
 TextAttack's main features can all be accessed via the `textattack` command. Two very
 common commands are `textattack attack <args>`, and `textattack augment <args>`. You can see more
 information about all commands using
+
 ```bash
 textattack --help
 ```
+
 or a specific command using, for example,
+
 ```bash
 textattack attack --help
 ```
 
 The [`examples/`](https://github.com/QData/TextAttack/tree/master/examples) folder includes scripts showing common TextAttack usage for training models, running attacks, and augmenting a CSV file.
-
 
 The [documentation website](https://textattack.readthedocs.io/en/latest) contains walkthroughs explaining basic usage of TextAttack, including building a custom transformation and a custom constraint..
 
@@ -29,17 +30,20 @@ The easiest way to try out an attack is via the command-line interface, `textatt
 
 Here are some concrete examples:
 
-*TextFooler on BERT trained on the MR sentiment classification dataset*:
+_TextFooler on BERT trained on the MR sentiment classification dataset_:
+
 ```bash
 textattack attack --recipe textfooler --model bert-base-uncased-mr --num-examples 100
 ```
 
-*DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset*:
+_DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset_:
+
 ```bash
 textattack attack --model distilbert-base-uncased-cola --recipe deepwordbug --num-examples 100
 ```
 
-*Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM*:
+_Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM_:
+
 ```bash
 textattack attack --model lstm-mr --num-examples 20 \
  --search-method beam-search^beam_width=4 --transformation word-swap-embedding \
@@ -54,7 +58,6 @@ textattack attack --model lstm-mr --num-examples 20 \
 We include attack recipes which implement attacks from the literature. You can list attack recipes using `textattack list attack-recipes`.
 
 To run an attack recipe: `textattack attack --recipe [recipe_name]`
-
 
 <table  style="width:100%" border="1">
 <thead>
@@ -220,23 +223,33 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper, from <a href="https://arxiv.org/abs/1803.01128">"Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)</a></sub>  </td>
 </tr>
 
+<tr><td style="text-align: center;" colspan="6"><strong><br>General: <br></strong></td></tr>
+
+<tr>
+<td><code>bad-characters</code> <span class="citation" data-cites=""></span></td>
+<td><sub>Targeted classification, Strict targeted classification, Named entity recognition, Logit sum, Minimize Bleu score, Maximize Levenshtein score</sub> </td>
+<td></td>
+<td><sub>(Homoglyph, Invisible Characters, Reorderings, Deletions) Word Swap</sub> </td>
+<td><sub>DifferentialEvolution</sub></td>
+<td ><sub> (["Bad Characters: Imperceptible NLP Attacks" (Boucher et al., 2021)](https://arxiv.org/abs/2106.09898)) </sub>  </td>
+</tr>
 
 </tbody>
 </font>
 </table>
 
-
-
 ## Recipe Usage Examples
 
 Here are some examples of testing attacks from the literature from the command-line:
 
-*TextFooler against BERT fine-tuned on SST-2:*
+_TextFooler against BERT fine-tuned on SST-2:_
+
 ```bash
 textattack attack --model bert-base-uncased-sst2 --recipe textfooler --num-examples 10
 ```
 
-*seq2sick (black-box) against T5 fine-tuned for English-German translation:*
+_seq2sick (black-box) against T5 fine-tuned for English-German translation:_
+
 ```bash
  textattack attack --model t5-en-de --recipe seq2sick --num-examples 100
 ```
