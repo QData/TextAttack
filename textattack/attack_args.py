@@ -123,7 +123,7 @@ GOAL_FUNCTION_CLASS_NAMES = {
     "input-reduction": "textattack.goal_functions.classification.InputReduction",
     "logit-sum": "textattack.goal_functions.classification.LogitSum",
     "named-entity-recognition": "textattack.goal_functions.NamedEntityRecognition",
-    "targeted-strct": "textattack.goal_functions.TargetedStrict"
+    "targeted-strict": "textattack.goal_functions.TargetedStrict"
     #
     # Text goal functions
     #

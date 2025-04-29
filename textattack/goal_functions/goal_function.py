@@ -54,6 +54,7 @@ class GoalFunction(ReprMixin, ABC):
             self._call_model_cache = lru.LRU(model_cache_size)
         else:
             self._call_model_cache = None
+        self.allow_skip = allow_skip
 
     def clear_cache(self):
         if self.use_cache:
