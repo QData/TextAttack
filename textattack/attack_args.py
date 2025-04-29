@@ -37,6 +37,7 @@ ATTACK_RECIPE_NAMES = {
     "checklist": "textattack.attack_recipes.CheckList2020",
     "clare": "textattack.attack_recipes.CLARE2020",
     "a2t": "textattack.attack_recipes.A2TYoo2021",
+    "bad-characters-2021": "textattack.attack_recipes.BadCharacters2021"
 }
 
 
@@ -54,6 +55,9 @@ BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     "word-swap-masked-lm": "textattack.transformations.WordSwapMaskedLM",
     "word-swap-hownet": "textattack.transformations.WordSwapHowNet",
     "word-swap-qwerty": "textattack.transformations.WordSwapQWERTY",
+    "word-swap-deletions": "textattack.transformations.WordSwapDeletions",
+    "word-swap-invisible-characters": "textattack.transformations.WordSwapInvisibleCharacters",
+    "word-swap-reorderings": "textattack.transformations.WordSwapReorderings"
 }
 
 
@@ -105,6 +109,7 @@ SEARCH_METHOD_CLASS_NAMES = {
     "ga-word": "textattack.search_methods.GeneticAlgorithm",
     "greedy-word-wir": "textattack.search_methods.GreedyWordSwapWIR",
     "pso": "textattack.search_methods.ParticleSwarmOptimization",
+    "differential-evolution": "textattack.search_methods.DifferentialEvolution"
 }
 
 
@@ -116,12 +121,16 @@ GOAL_FUNCTION_CLASS_NAMES = {
     "targeted-classification": "textattack.goal_functions.classification.TargetedClassification",
     "untargeted-classification": "textattack.goal_functions.classification.UntargetedClassification",
     "input-reduction": "textattack.goal_functions.classification.InputReduction",
+    "logit-sum": "textattack.goal_functions.classification.LogitSum",
+    "named-entity-recognition": "textattack.goal_functions.NamedEntityRecognition",
+    "targeted-strct": "textattack.goal_functions.TargetedStrict"
     #
     # Text goal functions
     #
     "minimize-bleu": "textattack.goal_functions.text.MinimizeBleu",
     "non-overlapping-output": "textattack.goal_functions.text.NonOverlappingOutput",
     "text-to-text": "textattack.goal_functions.text.TextToTextGoalFunction",
+    "maximize-levenshtein": "textattack.goal_functions.text.MaximimzeLevenshtein"
 }
 
 
