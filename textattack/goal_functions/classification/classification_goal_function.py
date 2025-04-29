@@ -14,12 +14,25 @@ class ClassificationGoalFunction(GoalFunction):
     """A goal function defined on a model that outputs a probability for some
     number of classes."""
 
+    def __init__(self, *args, validate_outputs=True, display_raw_output=False, **kwargs):
+        """
+        Args:
+            apply_softmax (bool): Whether to apply softmax normalization to model outputs.
+            validate_outputs (bool): Whether to validate outputs for correct shape and properties.
+        """
+        self.validate_outputs = validate_outputs
+        self.display_raw_output = display_raw_output
+        super().__init__(*args, **kwargs)
+
     def _process_model_outputs(self, inputs, scores):
         """Processes and validates a list of model outputs.
 
         This is a task-dependent operation. For example, classification
         outputs need to have a softmax applied.
         """
+        if (validate_outputs == False):
+            return scores
+
         # Automatically cast a list or ndarray of predictions to a tensor.
         if isinstance(scores, list) or isinstance(scores, np.ndarray):
             scores = torch.tensor(scores)
@@ -68,4 +81,6 @@ class ClassificationGoalFunction(GoalFunction):
         return []
 
     def _get_displayed_output(self, raw_output):
+        if self.display_raw_output:
+            return raw_output.tolist()
         return int(raw_output.argmax())

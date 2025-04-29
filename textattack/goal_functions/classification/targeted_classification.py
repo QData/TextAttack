@@ -15,6 +15,8 @@ class TargetedClassification(ClassificationGoalFunction):
     """
 
     def __init__(self, *args, target_class=0, **kwargs):
+        if kwargs.get("validate_outputs", True) is False:
+            raise ValueError("TargetedClassification must be created with validate_outputs=True.")
         super().__init__(*args, **kwargs)
         self.target_class = target_class
 
