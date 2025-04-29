@@ -1,5 +1,3 @@
-import functools
-import textattack
 from .classification_goal_function import ClassificationGoalFunction
 import numpy as np
 import json

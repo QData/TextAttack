@@ -30,7 +30,7 @@ class ClassificationGoalFunction(GoalFunction):
         This is a task-dependent operation. For example, classification
         outputs need to have a softmax applied.
         """
-        if (validate_outputs == False):
+        if (self.validate_outputs == False):
             return scores
 
         # Automatically cast a list or ndarray of predictions to a tensor.

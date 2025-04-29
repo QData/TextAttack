@@ -1,5 +1,3 @@
-import functools
-import textattack
 from .targeted_classification import TargetedClassification
 import numpy as np
 

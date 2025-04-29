@@ -1,6 +1,4 @@
-import functools
 from Levenshtein import distance as levenshtein_distance
-import textattack
 from .text_to_text_goal_function import TextToTextGoalFunction
 
 class MaximizeLevenshtein(TextToTextGoalFunction):
