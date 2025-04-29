@@ -292,7 +292,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <tr><td style="text-align: center;" colspan="6"><strong><br>General: <br></strong></td></tr>
 
 <tr>
-<td><code>bad-characters</code> :(black-box) <span class="citation" data-cites=""></span></td>
+<td><code>bad-characters</code> <span class="citation" data-cites=""></span></td>
 <td><sub>Targeted classification, Strict targeted classification, Named entity recognition, Logit sum, Minimize Bleu score, Maximize Levenshtein score</sub> </td>
 <td></td>
 <td><sub>(Homoglyph, Invisible Characters, Reorderings, Deletions) Word Swap</sub> </td>
