@@ -37,7 +37,7 @@ ATTACK_RECIPE_NAMES = {
     "checklist": "textattack.attack_recipes.CheckList2020",
     "clare": "textattack.attack_recipes.CLARE2020",
     "a2t": "textattack.attack_recipes.A2TYoo2021",
-    "bad-characters-2021": "textattack.attack_recipes.BadCharacters2021"
+    "bad-characters": "textattack.attack_recipes.BadCharacters2021"
 }
 
 
