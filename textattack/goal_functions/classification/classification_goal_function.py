@@ -84,6 +84,6 @@ class ClassificationGoalFunction(GoalFunction):
         return []
 
     def _get_displayed_output(self, raw_output):
-        if self.display_raw_output or self.validate_outputs:
+        if self.display_raw_output:
             return raw_output.tolist()
         return int(raw_output.argmax())
