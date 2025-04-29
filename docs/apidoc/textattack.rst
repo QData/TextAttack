@@ -6,7 +6,8 @@ textattack package
    :undoc-members:
    :show-inheritance:
 
-
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 6
@@ -28,7 +29,8 @@ textattack package
    textattack.shared
    textattack.transformations
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.attack
@@ -62,6 +64,12 @@ textattack package
 
 
 .. automodule:: textattack.model_args
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.seq2seqtrainer
    :members:
    :undoc-members:
    :show-inheritance:

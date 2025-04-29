@@ -6,7 +6,16 @@ textattack.transformations.word\_swaps package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
 
+.. toctree::
+   :maxdepth: 6
+
+   textattack.transformations.word_swaps.chn_transformations
+
+Submodules
+----------
 
 
 .. automodule:: textattack.transformations.word_swaps.word_swap
@@ -34,6 +43,18 @@ textattack.transformations.word\_swaps package
 
 
 .. automodule:: textattack.transformations.word_swaps.word_swap_contract
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_swaps.word_swap_deletions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_swaps.word_swap_differential_evolution
    :members:
    :undoc-members:
    :show-inheritance:
@@ -75,6 +96,12 @@ textattack.transformations.word\_swaps package
    :show-inheritance:
 
 
+.. automodule:: textattack.transformations.word_swaps.word_swap_invisible_characters
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. automodule:: textattack.transformations.word_swaps.word_swap_masked_lm
    :members:
    :undoc-members:
@@ -106,6 +133,12 @@ textattack.transformations.word\_swaps package
 
 
 .. automodule:: textattack.transformations.word_swaps.word_swap_random_character_substitution
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.transformations.word_swaps.word_swap_reorderings
    :members:
    :undoc-members:
    :show-inheritance:

@@ -76,10 +76,10 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
                         self.homos_intentional[line[3]] = []
                     self.homos_intentional[line[3]].append(line[7])
 
-    def get_precomputed(self, current_text: AttackedText) -> List[List[Tuple[int, str]]]:
-        return [self.get_glyph_map(current_text)]
+    def _get_precomputed(self, current_text: AttackedText) -> List[List[Tuple[int, str]]]:
+        return [self._get_glyph_map(current_text)]
 
-    def get_glyph_map(self, current_text: AttackedText) -> List[Tuple[int, str]]:
+    def _get_glyph_map(self, current_text: AttackedText) -> List[Tuple[int, str]]:
         glyph_map = []
         for i, char in enumerate(current_text.text):
             if char in self.homos_intentional:
@@ -87,18 +87,18 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
                     glyph_map.append((i, replacement))
         return glyph_map
 
-    def get_bounds(self, current_text: AttackedText, max_perturbs: int, precomputed: List[List[Tuple[int, str]]]) -> List[Tuple[int, int]]:  
+    def _get_bounds(self, current_text: AttackedText, max_perturbs: int, precomputed: List[List[Tuple[int, str]]]) -> List[Tuple[int, int]]:  
         glyph_map = precomputed[0]
         return [(-1, len(glyph_map) - 1)] * max_perturbs
 
-    def natural(self, x: float) -> int:
+    def _natural(self, x: float) -> int:
         """Helper function that rounds float to the nearest natural number (positive int)"""
         return max(0, round(float(x)))
 
     def apply_perturbation(self, current_text: AttackedText, perturbation_vector: List[float], precomputed: List[List[Tuple[int, str]]]) -> AttackedText: 
         glyph_map = precomputed[0]
         candidate = list(current_text.text)
-        for perturb in map(self.natural, perturbation_vector):
+        for perturb in map(self._natural, perturbation_vector):
             if (perturb >= 0):
                 i, char = glyph_map[perturb]
                 candidate[i] = char

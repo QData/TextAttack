@@ -6,10 +6,17 @@ textattack.goal\_functions.classification package
    :undoc-members:
    :show-inheritance:
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.goal_functions.classification.classification_goal_function
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.goal_functions.classification.hardlabel_classification
    :members:
    :undoc-members:
    :show-inheritance:
@@ -21,7 +28,25 @@ textattack.goal\_functions.classification package
    :show-inheritance:
 
 
+.. automodule:: textattack.goal_functions.classification.logit_sum
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.goal_functions.classification.named_entity_recognition
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. automodule:: textattack.goal_functions.classification.targeted_classification
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.goal_functions.classification.targeted_strict
    :members:
    :undoc-members:
    :show-inheritance:

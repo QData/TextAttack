@@ -6,14 +6,16 @@ textattack.constraints.grammaticality package
    :undoc-members:
    :show-inheritance:
 
-
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 6
 
    textattack.constraints.grammaticality.language_models
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.constraints.grammaticality.cola

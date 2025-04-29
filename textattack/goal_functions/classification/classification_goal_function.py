@@ -17,8 +17,11 @@ class ClassificationGoalFunction(GoalFunction):
     def __init__(self, *args, validate_outputs=True, display_raw_output=False, **kwargs):
         """
         Args:
-            apply_softmax (bool): Whether to apply softmax normalization to model outputs.
-            validate_outputs (bool): Whether to validate outputs for correct shape and properties.
+            validate_outputs (bool, optional): If True, validates that model outputs are tensors
+                of shape `(batch_size, num_classes)` and represent valid probability distributions.
+                Applies softmax to force sum to 1. Set to False if model outputs need to bypass this restriction (e.g. logit sum).
+            display_raw_output (bool, optional): If True, the displayed output will include the full
+                raw model outputs. If False, only the predicted class (argmax) will be shown.
         """
         self.validate_outputs = validate_outputs
         self.display_raw_output = display_raw_output
@@ -81,6 +84,6 @@ class ClassificationGoalFunction(GoalFunction):
         return []
 
     def _get_displayed_output(self, raw_output):
-        if self.display_raw_output:
+        if self.display_raw_output or self.validate_outputs:
             return raw_output.tolist()
         return int(raw_output.argmax())

@@ -29,6 +29,21 @@ InputReduction
 .. autoclass:: textattack.goal_functions.classification.InputReduction
    :members:
 
+LogitSum
+--------------------------
+.. autoclass:: textattack.goal_functions.classification.LogitSum
+   :members:
+
+NamedEntityRecognition
+--------------------------
+.. autoclass:: textattack.goal_functions.classification.NamedEntityRecognition
+   :members:
+
+TargetedStrict
+--------------------------
+.. autoclass:: textattack.goal_functions.classification.TargetedStrict
+   :members:
+
 TextToTextGoalFunction
 -----------------------
 .. autoclass:: textattack.goal_functions.text.TextToTextGoalFunction
@@ -44,3 +59,7 @@ NonOverlappingOutput
 .. autoclass:: textattack.goal_functions.text.NonOverlappingOutput
    :members:
 
+MaximizeLevenshtein
+--------------------------
+.. autoclass:: textattack.goal_functions.text.MaximizeLevenshtein
+   :members:

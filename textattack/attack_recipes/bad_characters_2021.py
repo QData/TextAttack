@@ -1,6 +1,6 @@
 """
 Imperceptible Perturbations Algorithm
-========================
+======================================
 
 """
 
@@ -15,7 +15,7 @@ class BadCharacters2021(AttackRecipe):
 
     """
     Imperceptible Perturbations Attack Recipe
-    ==========================================
+    =======================================================
 
     Implements imperceptible adversarial attacks on NLP models as outlined in the Bad Characters paper
     https://arxiv.org/abs/2106.09898.
@@ -147,7 +147,7 @@ class BadCharacters2021(AttackRecipe):
         search_method = DifferentialEvolution(
             popsize=popsize, 
             maxiter=maxiter, 
-            verbose=True,
+            verbose=False,
             max_perturbs=perturbs
         )
 

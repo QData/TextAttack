@@ -6,7 +6,8 @@ textattack.transformations package
    :undoc-members:
    :show-inheritance:
 
-
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 6
@@ -16,7 +17,8 @@ textattack.transformations package
    textattack.transformations.word_merges
    textattack.transformations.word_swaps
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.transformations.composite_transformation

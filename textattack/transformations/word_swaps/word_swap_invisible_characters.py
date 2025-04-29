@@ -1,6 +1,6 @@
 """
 Word Swap by Invisible Characters
--------------------------------
+-----------------------------------
 """
 
 from .word_swap_differential_evolution import WordSwapDifferentialEvolution
@@ -21,19 +21,19 @@ class WordSwapInvisibleCharacters(WordSwapDifferentialEvolution):
         super().__init__(**kwargs)
         self.invisible_chars = ["\u200B", "\u200C", "\u200D"]
 
-    def get_bounds(self, current_text: AttackedText, max_perturbs: int, _) -> List[Tuple[int, int]]:
+    def _get_bounds(self, current_text: AttackedText, max_perturbs: int, _) -> List[Tuple[int, int]]:
         return [(0, len(self.invisible_chars) - 1), (-1, len(current_text.text) - 1)] * max_perturbs
 
-    def natural(self, x: float) -> int:
+    def _natural(self, x: float) -> int:
         """Helper function that rounds float to the nearest natural number (positive int)"""
         return max(0, round(float(x)))
 
     def apply_perturbation(self, current_text: AttackedText, perturbation_vector: List[float], _) -> AttackedText:
         candidate = list(current_text.text)
         for i in range(0, len(perturbation_vector), 2):
-            inp_index = self.natural(perturbation_vector[i+1])
+            inp_index = self._natural(perturbation_vector[i+1])
             if (inp_index >= 0):
-                inv_char = self.invisible_chars[self.natural(perturbation_vector[i])]
+                inv_char = self.invisible_chars[self._natural(perturbation_vector[i])]
                 candidate = candidate[:inp_index] + [inv_char] + candidate[inp_index:]
         return AttackedText(''.join(candidate))
 
