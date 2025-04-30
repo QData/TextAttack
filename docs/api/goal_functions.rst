@@ -24,6 +24,11 @@ TargetedStrict
 .. autoclass:: textattack.goal_functions.TargetedStrict
    :members:
 
+TargetedBonus
+--------------------------
+.. autoclass:: textattack.goal_functions.TargetedBonus
+   :members:
+
 ClassificationGoalFunction
 --------------------------
 .. autoclass:: textattack.goal_functions.classification.ClassificationGoalFunction

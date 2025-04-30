@@ -1,5 +1,7 @@
 from textattack.goal_functions import GoalFunction
 from textattack.goal_function_results import LogitSumGoalFunctionResult
+import torch
+import numpy as np
 
 class LogitSum(GoalFunction):
     """

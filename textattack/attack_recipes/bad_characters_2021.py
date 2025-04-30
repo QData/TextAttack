@@ -5,7 +5,7 @@ Imperceptible Perturbations Algorithm
 """
 
 from .attack_recipe import AttackRecipe
-from textattack.goal_functions import TargetedClassification, TargetedStrict, NamedEntityRecognition, LogitSum, MaximizeLevenshtein, MinimizeBleu
+from textattack.goal_functions import TargetedClassification, TargetedStrict, TargetedBonus, NamedEntityRecognition, LogitSum, MaximizeLevenshtein, MinimizeBleu
 from textattack.transformations import WordSwapInvisibleCharacters, WordSwapHomoglyphSwap, WordSwapDeletions, WordSwapReorderings
 from textattack.search_methods import DifferentialEvolution
 from textattack import Attack
@@ -47,7 +47,7 @@ class BadCharacters2021(AttackRecipe):
     """
 
     @staticmethod
-    def build(model_wrapper, goal_function_type: str = None, perturbation_type: str = None, allow_skip: bool = False, perturbs=1, popsize=32, maxiter=10, **goal_function_kwargs):
+    def build(model_wrapper, goal_function_type: str, perturbation_type: str = None, allow_skip: bool = False, perturbs=1, popsize=32, maxiter=10, **goal_function_kwargs):
         """
         Builds an imperceptible attack instance.
 
@@ -56,6 +56,7 @@ class BadCharacters2021(AttackRecipe):
             goal_function_type (str, optional): One of:
                 - "targeted_classification": targeted attack on a classification model (default).
                 - "targeted_strict": stricter targeted attack on a classification model.
+                - "targeted_bonus": targeted attack on a classification model that gives a bonus score of 1 if the prediction for the target class is the max of all classes.
                 - "named_entity_recognition": token-level targeted attack on a NER model.
                 - "logit_sum": untargeted attack minimizing total logits.
                 - "minimize_bleu": attack minimizing BLEU score between original and perturbed translations.
@@ -75,7 +76,7 @@ class BadCharacters2021(AttackRecipe):
             textattack.Attack: Configured Attack instance.
         """
 
-        if goal_function_type is None:
+        if goal_function_type == "targeted_classification":
             """
             Defaults to TargetedClassification
             **goal_function_kwargs:
@@ -89,13 +90,13 @@ class BadCharacters2021(AttackRecipe):
             - target_class: int = 0
             """
             goal_function = TargetedStrict(model_wrapper, allow_skip = allow_skip, **goal_function_kwargs)
-        elif goal_function_type == "targeted_classification":
+        elif goal_function_type == "targeted_bonus":
             """
             Pass in a model wrapper that returns an array of probabilities
             **goal_function_kwargs:
             - target_class: int = 0
             """
-            goal_function = TargetedClassification(model_wrapper, allow_skip = allow_skip, **goal_function_kwargs)
+            goal_function = TargetedBonus(model_wrapper, allow_skip = allow_skip, **goal_function_kwargs)
         elif goal_function_type == "named_entity_recognition":
             """
             Pass in a model wrapper that returns a list of dictionaries each containing 'entity' and 'score' keys

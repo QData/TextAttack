@@ -1,11 +1,10 @@
 from textattack.goal_functions import GoalFunction
-from textattack.goal_function_results import TargetedStrictGoalFunctionResult
+from textattack.goal_function_results import TargetedBonusGoalFunctionResult
 import numpy as np
 import torch
 
-class TargetedStrict(GoalFunction):
-    """A modified targeted attack on classification models which only sets _is_goal_complete to True if argmax(model_output) matches the target_class.
-    In TargetedClassification, if either argmax(model_output) == target_class or ground_truth_output == target_class, then _is_goal_complete returns True.
+class TargetedBonus(GoalFunction):
+    """A modified targeted attack on classification models which awards a bonus score of 1 if the class with the highest predicted probability is exactly equal to the target_class.
     """
 
     def __init__(self, *args, target_class=0, **kwargs):
@@ -59,11 +58,14 @@ class TargetedStrict(GoalFunction):
         return scores.cpu()
 
     def _is_goal_complete(self, model_output, _):
-        return self.target_class == model_output.argmax()
+        return self._get_score(model_output, None) >= 1
 
     def _get_score(self, model_output, _):
+        if np.argmax(model_output) == self.target_class:
+            return model_output[self.target_class] + 1
+        
         return model_output[self.target_class]
 
     def _goal_function_result_type(self):
         """Returns the class of this goal function's results."""
-        return TargetedStrictGoalFunctionResult
+        return TargetedBonusGoalFunctionResult

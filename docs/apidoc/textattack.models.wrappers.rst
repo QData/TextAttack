@@ -10,37 +10,13 @@ Submodules
 ----------
 
 
-.. automodule:: textattack.models.wrappers.fairseq_mnli_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: textattack.models.wrappers.fairseq_translation_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.models.wrappers.huggingface_model_wrapper
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-.. automodule:: textattack.models.wrappers.ibm_max_toxic_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.models.wrappers.model_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: textattack.models.wrappers.pipeline_model_wrapper
    :members:
    :undoc-members:
    :show-inheritance:
