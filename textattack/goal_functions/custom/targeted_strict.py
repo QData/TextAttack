@@ -1,18 +1,15 @@
-"""
-Determine for if an attack has been successful in Classification
----------------------------------------------------------------------
-"""
-
+from textattack.goal_functions import GoalFunction
+from textattack.goal_function_results import TargetedStrictGoalFunctionResult
 import numpy as np
 import torch
 
-from textattack.goal_function_results import ClassificationGoalFunctionResult
-from textattack.goal_functions import GoalFunction
+class TargetedStrict(GoalFunction):
+    """A modified targeted attack on classification models which awards a bonus score of 1 if the class with the highest predicted probability is exactly equal to the target_class.
+    """
 
-
-class ClassificationGoalFunction(GoalFunction):
-    """A goal function defined on a model that outputs a probability for some
-    number of classes."""
+    def __init__(self, *args, target_class=0, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.target_class = target_class
 
     def _process_model_outputs(self, inputs, scores):
         """Processes and validates a list of model outputs.
@@ -60,12 +57,15 @@ class ClassificationGoalFunction(GoalFunction):
                 raise ValueError("Model scores do not add up to 1.")
         return scores.cpu()
 
+    def _is_goal_complete(self, model_output, _):
+        return self._get_score(model_output, None) >= 1
+
+    def _get_score(self, model_output, _):
+        if np.argmax(model_output) == self.target_class:
+            return model_output[self.target_class] + 1
+        
+        return model_output[self.target_class]
+
     def _goal_function_result_type(self):
         """Returns the class of this goal function's results."""
-        return ClassificationGoalFunctionResult
-
-    def extra_repr_keys(self):
-        return []
-
-    def _get_displayed_output(self, raw_output):
-        return int(raw_output.argmax())
+        return TargetedStrictGoalFunctionResult

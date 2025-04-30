@@ -13,6 +13,7 @@ Subpackages
    :maxdepth: 6
 
    textattack.goal_functions.classification
+   textattack.goal_functions.custom
    textattack.goal_functions.text
 
 Submodules

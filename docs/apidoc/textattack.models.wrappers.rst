@@ -10,12 +10,6 @@ Submodules
 ----------
 
 
-.. automodule:: textattack.models.wrappers.emotion_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.models.wrappers.fairseq_mnli_wrapper
    :members:
    :undoc-members:
@@ -28,18 +22,6 @@ Submodules
    :show-inheritance:
 
 
-.. automodule:: textattack.models.wrappers.gpt2_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: textattack.models.wrappers.gpt4_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.models.wrappers.huggingface_model_wrapper
    :members:
    :undoc-members:
@@ -47,12 +29,6 @@ Submodules
 
 
 .. automodule:: textattack.models.wrappers.ibm_max_toxic_wrapper
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: textattack.models.wrappers.marian_wrapper
    :members:
    :undoc-members:
    :show-inheritance:

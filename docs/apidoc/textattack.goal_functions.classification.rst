@@ -28,25 +28,7 @@ Submodules
    :show-inheritance:
 
 
-.. automodule:: textattack.goal_functions.classification.logit_sum
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: textattack.goal_functions.classification.named_entity_recognition
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.goal_functions.classification.targeted_classification
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-.. automodule:: textattack.goal_functions.classification.targeted_strict
    :members:
    :undoc-members:
    :show-inheritance:

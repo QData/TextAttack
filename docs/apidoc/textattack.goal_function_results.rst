@@ -6,6 +6,14 @@ textattack.goal\_function\_results package
    :undoc-members:
    :show-inheritance:
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 6
+
+   textattack.goal_function_results.custom
+
 Submodules
 ----------
 

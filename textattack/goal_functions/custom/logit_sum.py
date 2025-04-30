@@ -1,6 +1,7 @@
-from .classification_goal_function import ClassificationGoalFunction
+from textattack.goal_functions import GoalFunction
+from textattack.goal_function_results import LogitSumGoalFunctionResult
 
-class LogitSum(ClassificationGoalFunction):
+class LogitSum(GoalFunction):
     """
     A goal function that minimizes the sum of output logits for classification models.
 
@@ -18,7 +19,6 @@ class LogitSum(ClassificationGoalFunction):
         first_element_threshold (float, optional): A fallback threshold for the first logit only.
 
     Note:
-        This goal function cannot be instantiated with `validate_outputs=True`.
         Only one of `target_logit_sum` or `first_element_threshold` may be set.
     """
 
@@ -35,18 +35,7 @@ class LogitSum(ClassificationGoalFunction):
             first_element_threshold (float, optional): If `target_logit_sum` is not set,
                 this threshold is used to determine success based on whether the first logit's
                 value falls below it. Defaults to 0.5 if not specified.
-
-        Keyword Args:
-            validate_outputs (bool): Must be False. This goal function expects raw logits
-                and does not support output validation.
-
-        Raises:
-            ValueError: If `validate_outputs=True`, or if both `target_logit_sum` and 
-            `first_element_threshold` are set at the same time.
         """
-        if kwargs.get("validate_outputs", False) is True:
-            raise ValueError("LogitSum must be created with validate_outputs=False.")
-        
         if ((target_logit_sum is not None) and (first_element_threshold is not None)):
             raise ValueError("Cannot set both target_logit_sum to True and first_element_threshold!")
 
@@ -57,7 +46,45 @@ class LogitSum(ClassificationGoalFunction):
         else:
             self.first_element_threshold = 0.5 # default
 
-        super().__init__(*args, validate_outputs=False, **kwargs)
+        super().__init__(*args, **kwargs)
+
+    def _process_model_outputs(self, inputs, scores):
+        """Processes and validates a list of model outputs.
+
+        This is a task-dependent operation. For example, classification
+        outputs need to have a softmax applied.
+        """
+        # Automatically cast a list or ndarray of predictions to a tensor.
+        if isinstance(scores, list) or isinstance(scores, np.ndarray):
+            scores = torch.tensor(scores)
+
+        # Ensure the returned value is now a tensor.
+        if not isinstance(scores, torch.Tensor):
+            raise TypeError(
+                "Must have list, np.ndarray, or torch.Tensor of "
+                f"scores. Got type {type(scores)}"
+            )
+
+        # Validation check on model score dimensions
+        if scores.ndim == 1:
+            # Unsqueeze prediction, if it's been squeezed by the model.
+            if len(inputs) == 1:
+                scores = scores.unsqueeze(dim=0)
+            else:
+                raise ValueError(
+                    f"Model return score of shape {scores.shape} for {len(inputs)} inputs."
+                )
+        elif scores.ndim != 2:
+            # If model somehow returns too may dimensions, throw an error.
+            raise ValueError(
+                f"Model return score of shape {scores.shape} for {len(inputs)} inputs."
+            )
+        elif scores.shape[0] != len(inputs):
+            # If model returns an incorrect number of scores, throw an error.
+            raise ValueError(
+                f"Model return score of shape {scores.shape} for {len(inputs)} inputs."
+            )
+        return scores.cpu()
 
     def _is_goal_complete(self, model_output, attacked_text):
 
@@ -71,3 +98,7 @@ class LogitSum(ClassificationGoalFunction):
         model_output is a tensor of logits, one for each label.
         """
         return -sum(model_output)
+
+    def _goal_function_result_type(self):
+        """Returns the class of this goal function's results."""
+        return LogitSumGoalFunctionResult

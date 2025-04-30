@@ -18,8 +18,6 @@ class UntargetedClassification(ClassificationGoalFunction):
     """
 
     def __init__(self, *args, target_max_score=None, **kwargs):
-        if kwargs.get("validate_outputs", True) is False:
-            raise ValueError("TargetedClassification must be created with validate_outputs=True.")
         self.target_max_score = target_max_score
         super().__init__(*args, **kwargs)
 

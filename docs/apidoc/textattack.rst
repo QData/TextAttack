@@ -69,12 +69,6 @@ Submodules
    :show-inheritance:
 
 
-.. automodule:: textattack.seq2seqtrainer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
 .. automodule:: textattack.trainer
    :members:
    :undoc-members:

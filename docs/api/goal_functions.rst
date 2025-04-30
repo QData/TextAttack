@@ -9,6 +9,21 @@ GoalFunction
 .. autoclass:: textattack.goal_functions.GoalFunction
    :members:
 
+LogitSum
+--------------------------
+.. autoclass:: textattack.goal_functions.LogitSum
+   :members:
+
+NamedEntityRecognition
+--------------------------
+.. autoclass:: textattack.goal_functions.NamedEntityRecognition
+   :members:
+
+TargetedStrict
+--------------------------
+.. autoclass:: textattack.goal_functions.TargetedStrict
+   :members:
+
 ClassificationGoalFunction
 --------------------------
 .. autoclass:: textattack.goal_functions.classification.ClassificationGoalFunction
@@ -27,21 +42,6 @@ UntargetedClassification
 InputReduction
 --------------
 .. autoclass:: textattack.goal_functions.classification.InputReduction
-   :members:
-
-LogitSum
---------------------------
-.. autoclass:: textattack.goal_functions.classification.LogitSum
-   :members:
-
-NamedEntityRecognition
---------------------------
-.. autoclass:: textattack.goal_functions.classification.NamedEntityRecognition
-   :members:
-
-TargetedStrict
---------------------------
-.. autoclass:: textattack.goal_functions.classification.TargetedStrict
    :members:
 
 TextToTextGoalFunction
@@ -63,3 +63,4 @@ MaximizeLevenshtein
 --------------------------
 .. autoclass:: textattack.goal_functions.text.MaximizeLevenshtein
    :members:
+

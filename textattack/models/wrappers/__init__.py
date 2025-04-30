@@ -14,8 +14,3 @@ from .huggingface_model_wrapper import HuggingFaceModelWrapper
 from .pytorch_model_wrapper import PyTorchModelWrapper
 from .sklearn_model_wrapper import SklearnModelWrapper
 from .tensorflow_model_wrapper import TensorFlowModelWrapper
-from .ibm_max_toxic_wrapper import IBMMAXToxicWrapper
-from .pipeline_model_wrapper import PipelineModelWrapper
-from .fairseq_mnli_wrapper import FairseqMnliWrapper
-from .fairseq_translation_wrapper import FairseqTranslationWrapper
-from .emotion_wrapper import EmotionWrapper

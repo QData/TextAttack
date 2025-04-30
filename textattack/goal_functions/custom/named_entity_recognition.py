@@ -1,8 +1,9 @@
-from .classification_goal_function import ClassificationGoalFunction
+from textattack.goal_functions import GoalFunction
+from textattack.goal_function_results import NamedEntityRecognitionGoalFunctionResult
 import numpy as np
 import json
 
-class NamedEntityRecognition(ClassificationGoalFunction):
+class NamedEntityRecognition(GoalFunction):
     """
     A goal function for attacking named entity recognition (NER) models.
 
@@ -12,9 +13,6 @@ class NamedEntityRecognition(ClassificationGoalFunction):
 
     The goal is to reduce the total confidence of all entities ending with a specified suffix
     (e.g., "PER" for person names), effectively suppressing target entity types.
-
-    Note:
-        This goal function cannot be instantiated with `validate_outputs=True`.
     """
     
     def __init__(self, *args, target_suffix: str, **kwargs):
@@ -25,25 +23,15 @@ class NamedEntityRecognition(ClassificationGoalFunction):
             target_suffix (str): The suffix of entity labels to target. 
                 Only entities whose label ends with this suffix will contribute
                 to the score.
-
-        Keyword Args:
-            validate_outputs (bool): Must be False. This goal function expects raw model outputs
-                and does not support output validation.
-
-        Raises:
-            ValueError: If `validate_outputs` is set to True.
         """
-        if kwargs.get("validate_outputs", False) is True:
-            raise ValueError("NamedEntityRecognition must be created with validate_outputs=False.")
-        super().__init__(*args, validate_outputs=False, **kwargs)
         self.target_suffix = target_suffix
-
-    def clear_cache(self):
-        if self.use_cache:
-            self._call_model_cache.clear()
+        super().__init__(*args, **kwargs)
+        
+    def _process_model_outputs(self, inputs, scores):
+        return scores
 
     def _is_goal_complete(self, model_output, _):
-        score = self._get_score(model_output)
+        score = self._get_score(model_output, None)
         return (-score < 0)
 
     def _get_score(self, model_output, _):
@@ -65,3 +53,7 @@ class NamedEntityRecognition(ClassificationGoalFunction):
 
         json_str = json.dumps(serialisable, ensure_ascii=False, indent=2)
         return json_str
+
+    def _goal_function_result_type(self):
+        """Returns the class of this goal function's results."""
+        return NamedEntityRecognitionGoalFunctionResult
