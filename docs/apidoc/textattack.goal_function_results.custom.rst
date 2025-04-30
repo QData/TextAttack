@@ -22,6 +22,12 @@ Submodules
    :show-inheritance:
 
 
+.. automodule:: textattack.goal_function_results.custom.targeted_bonus_goal_function_result
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. automodule:: textattack.goal_function_results.custom.targeted_strict_goal_function_result
    :members:
    :undoc-members:
