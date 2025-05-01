@@ -65,7 +65,6 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
 
         # Retrieve Unicode Intentional homoglyph characters
         self.homos_intentional = dict()
-        # int_resp = requests.get("https://www.unicode.org/Public/security/latest/intentional.txt", stream=True)
         path = os.path.dirname(os.path.abspath(__file__))
         path_list = path.split(os.sep)
         path_list = path_list[:-2]
