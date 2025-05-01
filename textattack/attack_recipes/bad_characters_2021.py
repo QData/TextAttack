@@ -15,35 +15,37 @@ class BadCharacters2021(AttackRecipe):
 
     """
     Imperceptible Perturbations Attack Recipe
-    =======================================================
+    =========================================
 
-    Implements imperceptible adversarial attacks on NLP models as outlined in the Bad Characters paper
-    https://arxiv.org/abs/2106.09898.
+    Implements imperceptible adversarial attacks on NLP models as outlined in the
+    `Bad Characters paper <https://arxiv.org/abs/2106.09898>`_.
 
-    This recipe combines imperceptible transformations with the Differential Evolution 
-    search method. It supports a variety of goal functions (targeted, untargeted, 
+    This recipe combines imperceptible transformations with the Differential Evolution
+    search method. It supports a variety of goal functions (targeted, untargeted,
     NER, translation) and several types of character-level perturbations.
 
-    Transformations supported:
-    - WordSwapInvisibleCharacters: injects invisible Unicode characters
-    - WordSwapHomoglyphSwap: replaces characters with homoglyphs
-    - WordSwapDeletions: inserts deletion control characters
-    - WordSwapReorderings: inserts reordering control characters
+    **Transformations supported:**
 
-    Goal functions supported:
-    - Targeted classification (probability output)
-    - Strict targeted classification (probability output)
-    - Named Entity Recognition (list of entity dicts output)
-    - Logit sum (for logits-based classifiers like toxic comment detection)
-    - Translation BLEU score minimization
-    - Translation Levenshtein distance maximization
+    - ``WordSwapInvisibleCharacters``: injects invisible Unicode characters
+    - ``WordSwapHomoglyphSwap``: replaces characters with homoglyphs
+    - ``WordSwapDeletions``: inserts deletion control characters
+    - ``WordSwapReorderings``: inserts reordering control characters
+
+    **Goal functions supported:**
+
+    - ``TargetedClassification`` 
+    - ``TargetedStrict`` 
+    - ``TargetedBonus``
+    - ``LogitSum`` (for logits-based classifiers like toxic comment detection)
+    - ``MinimizeBleu`` (translation BLEU score minimization)
+    - ``MaximizeLevenshtein`` (translation Levenshtein distance maximization)
 
     All transformations are compatible with all goal functions.
 
-    Note: This recipe assumes the model wrapper is compatible with the goal function 
-    chosen. For example, a Named Entity Recognition goal function expects a model wrapper 
-    that outputs a list of dictionaries per input, while classification goals expect 
-    probability or logit arrays.
+    Note:
+    This recipe assumes the model wrapper is compatible with the goal function chosen.
+    For example, a ``NamedEntityRecognition`` goal function expects a model wrapper
+    that outputs a list of dictionaries per input, while ``LogitSum`` expects an array of logits.
     """
 
     @staticmethod
@@ -51,29 +53,42 @@ class BadCharacters2021(AttackRecipe):
         """
         Builds an imperceptible attack instance.
 
-        Args:
-            model_wrapper: A TextAttack model wrapper compatible with the selected goal function.
-            goal_function_type (str, optional): One of:
-                - "targeted_classification": targeted attack on a classification model (default).
-                - "targeted_strict": stricter targeted attack on a classification model.
-                - "targeted_bonus": targeted attack on a classification model that gives a bonus score of 1 if the prediction for the target class is the max of all classes.
-                - "named_entity_recognition": token-level targeted attack on a NER model.
-                - "logit_sum": untargeted attack minimizing total logits.
-                - "minimize_bleu": attack minimizing BLEU score between original and perturbed translations.
-                - "maximize_levenshtein": attack maximizing Levenshtein distance between original and perturbed translations.
-            perturbation_type (str, optional): One of:
-                - "homoglyphs" (default)
-                - "invisible"
-                - "deletions"
-                - "reorderings"
-            allow_skip (bool): If set to False, the attack will continue even if attacking the unperturbed input string already completes the goal. Set to False in the paper.
-            perturbs (int): Maximum number of perturbations allowed per input string. Values from 1 to 5 were used in the paper.
-            popsize (int): Population size for differential evolution. Set to 32 in the paper.
-            maxiter (int): Maximum number of generations for differential evolution. Set to 10 in the paper.
-            **goal_function_kwargs: Additional arguments passed to the goal function.
+        Parameters
+        ----------
+        model_wrapper : ModelWrapper
+            A TextAttack model wrapper compatible with the selected goal function.
+        goal_function_type : str, optional
+            Goal function type. One of:
+            
+            - ``"targeted_classification"``: targeted attack on a classification model (default).
+            - ``"targeted_strict"``: stricter targeted attack.
+            - ``"targeted_bonus"``: bonus if prediction for target class is highest.
+            - ``"named_entity_recognition"``: token-level NER attack.
+            - ``"logit_sum"``: untargeted attack minimizing total logits.
+            - ``"minimize_bleu"``: translation attack minimizing BLEU.
+            - ``"maximize_levenshtein"``: translation attack maximizing Levenshtein distance.
+        perturbation_type : str, optional
+            Type of character-level perturbation. One of:
 
-        Returns:
-            textattack.Attack: Configured Attack instance.
+            - ``"homoglyphs"`` (default)
+            - ``"invisible"``
+            - ``"deletions"``
+            - ``"reorderings"``
+        allow_skip : bool
+            If False, the attack will continue even if the goal is already satisfied.
+        perturbs : int
+            Maximum number of perturbations allowed per input string.
+        popsize : int
+            Population size for differential evolution. Typically 32.
+        maxiter : int
+            Maximum number of generations for differential evolution. Typically 10.
+        **goal_function_kwargs : dict
+            Additional arguments passed to the goal function.
+
+        Returns
+        -------
+        textattack.Attack
+            Configured Attack instance.
         """
 
         if goal_function_type == "targeted_classification":

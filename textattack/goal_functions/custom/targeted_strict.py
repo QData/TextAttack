@@ -1,3 +1,9 @@
+"""
+
+Goal Function for Strict targeted classification
+-------------------------------------------------------
+"""
+
 from textattack.goal_functions import GoalFunction
 from textattack.goal_function_results import TargetedStrictGoalFunctionResult
 import numpy as np

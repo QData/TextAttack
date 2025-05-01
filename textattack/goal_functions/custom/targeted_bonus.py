@@ -1,3 +1,9 @@
+"""
+
+Goal Function for Targeted classification with bonus score
+------------------------------------------------------------
+"""
+
 from textattack.goal_functions import GoalFunction
 from textattack.goal_function_results import TargetedBonusGoalFunctionResult
 import numpy as np

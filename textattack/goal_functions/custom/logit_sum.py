@@ -1,3 +1,9 @@
+"""
+
+Goal Function for Logit sum
+-------------------------------------------------------
+"""
+
 from textattack.goal_functions import GoalFunction
 from textattack.goal_function_results import LogitSumGoalFunctionResult
 import torch

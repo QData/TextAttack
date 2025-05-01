@@ -1,3 +1,9 @@
+"""
+
+Goal Function for NamedEntityRecognition
+-------------------------------------------------------
+"""
+
 from textattack.goal_functions import GoalFunction
 from textattack.goal_function_results import NamedEntityRecognitionGoalFunctionResult
 import numpy as np
