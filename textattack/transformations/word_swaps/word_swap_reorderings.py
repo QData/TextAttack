@@ -8,6 +8,7 @@ from .word_swap_differential_evolution import WordSwapDifferentialEvolution
 from typing import List, Tuple, Union
 from textattack.shared import AttackedText
 from dataclasses import dataclass
+import numpy as np
 
 class WordSwapReorderings(WordSwapDifferentialEvolution):
     """
@@ -17,7 +18,7 @@ class WordSwapReorderings(WordSwapDifferentialEvolution):
     https://arxiv.org/abs/2106.09898 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, random_one=False, **kwargs):
         super().__init__(**kwargs)
         self.PDF = chr(0x202C)
         self.LRE = chr(0x202A)
@@ -27,6 +28,7 @@ class WordSwapReorderings(WordSwapDifferentialEvolution):
         self.PDI = chr(0x2069)
         self.LRI = chr(0x2066)
         self.RLI = chr(0x2067)
+        self.random_one = random_one
 
     @dataclass(eq=True, repr=True)
     class _Swap:
@@ -68,9 +70,27 @@ class WordSwapReorderings(WordSwapDifferentialEvolution):
     def _get_replacement_words(self, word: str) -> List[str]:
         candidate_words = []
         chars = list(word)
-        for i in range(len(chars) - 1):
+
+        if self.random_one:
+            if len(chars) < 2:
+                return []
+            i = np.random.randint(0, len(chars) - 1)
             perturbed = chars[:]
             perturbed[i:i+2] = [self._Swap(chars[i+1], chars[i])]
             transformed = self._apply_swaps(perturbed)
             candidate_words.append(transformed)
+        else:
+            for i in range(len(chars) - 1):
+                perturbed = chars[:]
+                perturbed[i:i+2] = [self._Swap(chars[i+1], chars[i])]
+                transformed = self._apply_swaps(perturbed)
+                candidate_words.append(transformed)
+
         return candidate_words
+    
+    @property
+    def deterministic(self):
+        return not self.random_one
+    
+    def extra_repr_keys(self):
+        return super().extra_repr_keys()
