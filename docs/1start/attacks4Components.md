@@ -1,15 +1,20 @@
-# Four Components of TextAttack Attacks
+Four Components of TextAttack Attacks
+========================================
 
-To unify adversarial attack methods into one system, We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. The attack attempts to perturb an input text such that the model output fulfills the goal function (i.e., indicating whether the attack is successful) and the perturbation adheres to the set of constraints (e.g., grammar constraint, semantic similarity constraint). A search method is used to find a sequence of transformations that produce a successful adversarial example.
+To unify adversarial attack methods into one system, We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations.  The attack attempts to perturb an input text such that the model output fulfills the goal function (i.e., indicating whether the attack is successful) and the perturbation adheres to the set of constraints (e.g., grammar constraint, semantic similarity constraint). A search method is used to find a sequence of transformations that produce a successful adversarial example.
+
+
 
 This modular design enables us to easily assemble attacks from the literature while re-using components that are shared across attacks. TextAttack provides clean, readable implementations of 16 adversarial attacks from the literature. For the first time, these attacks can be benchmarked, compared, and analyzed in a standardized setting.
 
+
 - Two examples showing four components of two SOTA attacks
-  ![two-categorized-attacks](/_static/imgs/intro/01-categorized-attacks.png)
+![two-categorized-attacks](/_static/imgs/intro/01-categorized-attacks.png)
 
-- You can create one new attack (in one line of code!!!) from composing members of four components we proposed, for instance:
 
-```bash
+- You can create one new attack (in one line of code!!!) from composing members of four components we proposed, for instance: 
+
+```bash 
 # Shows how to build an attack from components and use it on a pre-trained model on the Yelp dataset.
 textattack attack --attack-n --model bert-base-uncased-yelp --num-examples 8 \
     --goal-function untargeted-classification \
@@ -34,19 +39,26 @@ A `Transformation` takes as input an `AttackedText` and returns a list of possib
 
 A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a final `GoalFunctionResult` The search is given access to the `get_transformations` function, which takes as input an `AttackedText` object and outputs a list of possible transformations filtered by meeting all of the attack’s constraints. A search consists of successive calls to `get_transformations` until the search succeeds (determined using `get_goal_results`) or is exhausted.
 
+
+
 ### On Benchmarking Attack Recipes
 
-- Please read our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackBoxNLP](https://arxiv.org/abs/2009.06368).
+- Please read our analysis paper: Searching for a Search Method: Benchmarking Search Algorithms for Generating NLP Adversarial Examples at [EMNLP BlackBoxNLP](https://arxiv.org/abs/2009.06368). 
 
-- As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box.
+- As we emphasized in the above paper, we don't recommend to directly compare Attack Recipes out of the box. 
 
-- This is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could come from an improved search or a better transformation method or a less restrictive search space.
+- This is due to that attack recipes in the recent literature used different ways or thresholds in setting up their constraints. Without the constraint space held constant, an increase in attack success rate could come from an improved search or a better transformation method or a less restrictive search space. 
 
-### Four components in Attack Recipes we have implemented
+
+
+### Four components in Attack Recipes we have implemented 
+
 
 - TextAttack provides clean, readable implementations of 16 adversarial attacks from the literature.
 
 - To run an attack recipe: `textattack attack --recipe [recipe_name]`
+
+
 
 <table  style="width:100%" border="1">
 <thead>
@@ -212,20 +224,12 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 <td ><sub>Greedy attack with goal of changing every word in the output translation. Currently implemented as black-box with plans to change to white-box as done in paper (["Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples" (Cheng et al., 2018)](https://arxiv.org/abs/1803.01128)) </sub>  </td>
 </tr>
 
-<tr><td style="text-align: center;" colspan="6"><strong><br>General: <br></strong></td></tr>
-
-<tr class="odd">
-<td style="text-align: left;"><code>bad-characters</code> <span class="citation" data-cites=""></span></td>
-<td style="text-align: left;"><sub>TargetedClassification, TargetedStrict, TargetedBonus, NamedEntityRecognition, LogitSum, MinimizeBleu, MaximizeLevenshtein</sub></td>
-<td style="text-align: left;"></td>
-<td style="text-align: left;"><sub>(Homoglyph, Invisible Characters, Reorderings, Deletions) Word Swap</sub></td>
-<td style="text-align: left;"><sub>DifferentialEvolution</sub></td>
-<td><sub>Uses imperceptible character-level perturbations including homoglyph substitutions, Unicode reordering, deletions, and invisibles. Based on (["Bad Characters: Imperceptible NLP Attacks" (Boucher et al., 2021)](https://arxiv.org/abs/2106.09898)).</sub></td>
-</tr>
 
 </tbody>
 </font>
 </table>
+
+
 
 - Citations
 
