@@ -6,7 +6,7 @@ import numpy as np
 from .word_swap_differential_evolution import WordSwapDifferentialEvolution
 from typing import List, Tuple
 from textattack.shared import AttackedText
-import requests
+import os
 
 
 class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
@@ -65,16 +65,23 @@ class WordSwapHomoglyphSwap(WordSwapDifferentialEvolution):
 
         # Retrieve Unicode Intentional homoglyph characters
         self.homos_intentional = dict()
-        int_resp = requests.get("https://www.unicode.org/Public/security/latest/intentional.txt", stream=True)
-        for line in int_resp.iter_lines():
-            if len(line):
-                line = line.decode('utf-8-sig')
-                if line[0] != '#':
+        # int_resp = requests.get("https://www.unicode.org/Public/security/latest/intentional.txt", stream=True)
+        path = os.path.dirname(os.path.abspath(__file__))
+        path_list = path.split(os.sep)
+        path_list = path_list[:-2]
+        path_list.append("shared/intentional_homoglyphs.txt")
+        homoglyphs_path = os.sep.join(path_list)
+        with open(homoglyphs_path, "r", encoding="utf-8-sig") as f:
+            for line in f:
+                if line.strip() and not line.startswith("#"):
                     line = line.replace("#*", "#")
-                    _, line = line.split("#", maxsplit=1)
-                    if line[3] not in self.homos_intentional:
-                        self.homos_intentional[line[3]] = []
-                    self.homos_intentional[line[3]].append(line[7])
+                    try:
+                        _, data = line.split("#", maxsplit=1)
+                        key = data[3]
+                        value = data[7]
+                        self.homos_intentional.setdefault(key, []).append(value)
+                    except IndexError:
+                        continue  # skip malformed lines
 
     def _get_precomputed(self, current_text: AttackedText) -> List[List[Tuple[int, str]]]:
         return [self._get_glyph_map(current_text)]
