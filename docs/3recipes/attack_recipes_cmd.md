@@ -227,11 +227,11 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
 <tr>
 <td><code>bad-characters</code> <span class="citation" data-cites=""></span></td>
-<td><sub>Targeted classification, Strict targeted classification, Named entity recognition, Logit sum, Minimize Bleu score, Maximize Levenshtein score</sub> </td>
+<td><sub>TargetedClassification, TargetedStrict, TargetedBonus, NamedEntityRecognition, LogitSum, MinimizeBleu, MaximizeLevenshtein</sub> </td>
 <td></td>
 <td><sub>(Homoglyph, Invisible Characters, Reorderings, Deletions) Word Swap</sub> </td>
 <td><sub>DifferentialEvolution</sub></td>
-<td ><sub> (["Bad Characters: Imperceptible NLP Attacks" (Boucher et al., 2021)](https://arxiv.org/abs/2106.09898)) </sub>  </td>
+<td ><sub>Uses imperceptible character-level perturbations including homoglyph substitutions, Unicode reordering, deletions, and invisibles. Based on (["Bad Characters: Imperceptible NLP Attacks" (Boucher et al., 2021)](https://arxiv.org/abs/2106.09898)).</sub>  </td>
 </tr>
 
 </tbody>
