@@ -160,5 +160,16 @@ Attacks on sequence-to-sequence models
    :noindex:
 
 
+General
+############################################
+
+19. BadCharacters (Bad Characters: Imperceptible NLP Attacks)
+
+
+.. automodule:: textattack.attack_recipes.bad_characters_2021
+   :members:
+   :noindex:
+
+
 
 

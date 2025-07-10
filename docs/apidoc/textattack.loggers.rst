@@ -6,7 +6,8 @@ textattack.loggers package
    :undoc-members:
    :show-inheritance:
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.loggers.attack_log_manager
@@ -22,6 +23,12 @@ textattack.loggers package
 
 
 .. automodule:: textattack.loggers.file_logger
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.loggers.json_summary_logger
    :members:
    :undoc-members:
    :show-inheritance:

@@ -6,10 +6,17 @@ textattack.goal\_functions.classification package
    :undoc-members:
    :show-inheritance:
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.goal_functions.classification.classification_goal_function
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.goal_functions.classification.hardlabel_classification
    :members:
    :undoc-members:
    :show-inheritance:

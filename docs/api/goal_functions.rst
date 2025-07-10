@@ -9,6 +9,26 @@ GoalFunction
 .. autoclass:: textattack.goal_functions.GoalFunction
    :members:
 
+LogitSum
+--------------------------
+.. autoclass:: textattack.goal_functions.LogitSum
+   :members:
+
+NamedEntityRecognition
+--------------------------
+.. autoclass:: textattack.goal_functions.NamedEntityRecognition
+   :members:
+
+TargetedStrict
+--------------------------
+.. autoclass:: textattack.goal_functions.TargetedStrict
+   :members:
+
+TargetedBonus
+--------------------------
+.. autoclass:: textattack.goal_functions.TargetedBonus
+   :members:
+
 ClassificationGoalFunction
 --------------------------
 .. autoclass:: textattack.goal_functions.classification.ClassificationGoalFunction
@@ -42,5 +62,10 @@ MinimizeBleu
 NonOverlappingOutput
 ----------------------
 .. autoclass:: textattack.goal_functions.text.NonOverlappingOutput
+   :members:
+
+MaximizeLevenshtein
+--------------------------
+.. autoclass:: textattack.goal_functions.text.MaximizeLevenshtein
    :members:
 

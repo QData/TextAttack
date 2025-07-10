@@ -6,7 +6,8 @@ textattack.constraints.grammaticality.language\_models package
    :undoc-members:
    :show-inheritance:
 
-
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 6
@@ -14,7 +15,8 @@ textattack.constraints.grammaticality.language\_models package
    textattack.constraints.grammaticality.language_models.google_language_model
    textattack.constraints.grammaticality.language_models.learning_to_write
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.constraints.grammaticality.language_models.gpt2

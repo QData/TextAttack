@@ -6,7 +6,8 @@ textattack.constraints.pre\_transformation package
    :undoc-members:
    :show-inheritance:
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.constraints.pre_transformation.input_column_modification
@@ -16,6 +17,12 @@ textattack.constraints.pre\_transformation package
 
 
 .. automodule:: textattack.constraints.pre_transformation.max_modification_rate
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.constraints.pre_transformation.max_num_words_modified
    :members:
    :undoc-members:
    :show-inheritance:

@@ -131,3 +131,7 @@ def transformation_consists_of_word_swaps_and_deletions(transformation):
     return transformation_consists_of(
         transformation, [WordDeletion, WordSwap, WordSwapGradientBased]
     )
+
+def transformation_consists_of_word_swaps_differential_evolution(transformation):
+    from textattack.transformations import WordSwapDifferentialEvolution
+    return transformation_consists_of(transformation, [WordSwapDifferentialEvolution])

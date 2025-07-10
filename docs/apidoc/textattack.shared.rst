@@ -6,14 +6,16 @@ textattack.shared package
    :undoc-members:
    :show-inheritance:
 
-
+Subpackages
+-----------
 
 .. toctree::
    :maxdepth: 6
 
    textattack.shared.utils
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.shared.attacked_text

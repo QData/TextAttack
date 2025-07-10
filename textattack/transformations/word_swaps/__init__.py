@@ -27,3 +27,8 @@ from .word_swap_change_name import WordSwapChangeName
 
 # White box transformation
 from .word_swap_gradient_based import WordSwapGradientBased
+
+from .word_swap_differential_evolution import WordSwapDifferentialEvolution
+from .word_swap_invisible_characters import WordSwapInvisibleCharacters
+from .word_swap_reorderings import WordSwapReorderings
+from .word_swap_deletions import WordSwapDeletions
