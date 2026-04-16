@@ -19,7 +19,6 @@ def test_embedding_paragramcf():
 @pytest.mark.skipif(not _gensim_available, reason="gensim is not installed")
 def test_embedding_gensim():
     # download a trained word2vec model
-    from textattack.shared.utils import LazyLoader
     from textattack.shared.utils.install import TEXTATTACK_CACHE_DIR
 
     path = os.path.join(TEXTATTACK_CACHE_DIR, "test_gensim_embedding.txt")

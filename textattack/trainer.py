@@ -753,7 +753,7 @@ class Trainer:
 
                 if self._global_step > 0:
                     prog_bar.set_description(
-                        f"Loss {self._total_loss/self._global_step:.5f}"
+                        f"Loss {self._total_loss / self._global_step:.5f}"
                     )
 
                 # TODO: Better way to handle TB and Wandb logging
@@ -804,7 +804,7 @@ class Trainer:
                 correct_predictions = (preds == targets).sum().item()
                 accuracy = correct_predictions / len(targets)
                 metric_log = {"train/train_accuracy": accuracy}
-                logger.info(f"Train accuracy: {accuracy*100:.2f}%")
+                logger.info(f"Train accuracy: {accuracy * 100:.2f}%")
             else:
                 pearson_correlation, pearson_pvalue = scipy.stats.pearsonr(
                     preds, targets
@@ -920,7 +920,7 @@ class Trainer:
             eval_score = accuracy
 
         if self._metric_name == "accuracy":
-            logger.info(f"Eval {self._metric_name}: {eval_score*100:.2f}%")
+            logger.info(f"Eval {self._metric_name}: {eval_score * 100:.2f}%")
         else:
             logger.info(f"Eval {self._metric_name}: {eval_score:.4f}%")
 

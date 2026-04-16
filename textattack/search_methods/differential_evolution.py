@@ -1,5 +1,3 @@
-from typing import List
-
 import numpy as np
 from scipy.optimize import differential_evolution
 
@@ -60,6 +58,7 @@ class DifferentialEvolution(SearchMethod):
             result = self.get_goal_results([cand])[0][0]
             cur_score = -result.score
             if cur_score <= best_score:
+                best_score = cur_score
                 best_result_found = result
             return cur_score
 

@@ -6,8 +6,6 @@ Goal Function for NamedEntityRecognition
 
 import json
 
-import numpy as np
-
 from textattack.goal_function_results import NamedEntityRecognitionGoalFunctionResult
 from textattack.goal_functions import GoalFunction
 

@@ -3,7 +3,6 @@ Word Swap by Invisible Characters
 -----------------------------------
 """
 
-import random
 from typing import List, Tuple
 
 import numpy as np

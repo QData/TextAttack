@@ -1,9 +1,9 @@
 """
 Word Swap for Differential Evolution
 -------------------------------------
-Extends WordSwap. 
+Extends WordSwap.
 
-If a Transformation wants to be compatible with 
+If a Transformation wants to be compatible with
 textattack.search_methods.DifferentialEvolution,
 then it must extend from this class.
 """
