@@ -27,6 +27,9 @@ jobs:
         python setup.py install_egg_info
         pip install -e .[test]
         pip freeze
+    - name: Download NLTK data
+      run: |
+        python -c "import nltk; nltk.download('punkt_tab'); nltk.download('averaged_perceptron_tagger'); nltk.download('stopwords'); nltk.download('omw-1.4'); nltk.download('wordnet')"
     - name: Free disk space
       run: |
         sudo rm -rf /usr/local/lib/android >/dev/null 2>&1
