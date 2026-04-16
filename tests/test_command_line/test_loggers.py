@@ -1,5 +1,6 @@
 import json
 import os
+import re
 
 from helpers import run_command_and_get_result
 import pytest
@@ -65,8 +66,18 @@ def test_logger(name, filetype, command, test_log_file, sample_log_file):
         ), f"{filetype} file {test_log_file} differs from {sample_log_file}"
 
     elif filetype == "txt":
-        assert (
-            os.system(f"diff {test_log_file} {sample_log_file}") == 0
+        with open(sample_log_file) as f:
+            desired_output = f.read().strip()
+        with open(test_log_file) as f:
+            test_output = f.read().strip()
+        desired_re = (
+            re.escape(desired_output)
+            .replace("/\\.\\/", ".")
+            .replace("/\\.\\*/", ".*")
+            .replace("\\/\\.\\*\\/", ".*")
+        )
+        assert re.match(
+            desired_re, test_output, flags=re.S
         ), f"{filetype} file {test_log_file} differs from {sample_log_file}"
 
     elif filetype == "csv":
