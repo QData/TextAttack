@@ -13,11 +13,13 @@ class ChineseWordSwapMaskedLM(WordSwap):
     model."""
 
     def __init__(self, task="fill-mask", model="xlm-roberta-base", **kwargs):
-        from transformers import BertForMaskedLM, BertTokenizer
+        from transformers import AutoModelForMaskedLM, AutoTokenizer
 
-        self.tt = BertTokenizer.from_pretrained(model)
-        self.mm = BertForMaskedLM.from_pretrained(model)
-        self.mm.to("cuda")
+        self.tt = AutoTokenizer.from_pretrained(model)
+        self.mm = AutoModelForMaskedLM.from_pretrained(model)
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.mm.to(device)
+        self._device = device
         super().__init__(**kwargs)
 
     def get_replacement_words(self, current_text, indice_to_modify):
@@ -26,7 +28,7 @@ class ChineseWordSwapMaskedLM(WordSwap):
         )  # 修改前<mask>，xlmrberta的模型
         tokens = self.tt.tokenize(masked_text.text)
         input_ids = self.tt.convert_tokens_to_ids(tokens)
-        input_tensor = torch.tensor([input_ids]).to("cuda")
+        input_tensor = torch.tensor([input_ids]).to(self._device)
         with torch.no_grad():
             outputs = self.mm(input_tensor)
             predictions = outputs.logits

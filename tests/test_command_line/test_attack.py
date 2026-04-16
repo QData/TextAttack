@@ -1,8 +1,11 @@
+import importlib
 import pdb
 import re
 
 from helpers import run_command_and_get_result
 import pytest
+
+_tensorflow_hub_available = importlib.util.find_spec("tensorflow_hub") is not None
 
 DEBUG = False
 """Attack command-line tests in the format (name, args, sample_output_file)"""
@@ -171,6 +174,9 @@ attack_test_params = [
 @pytest.mark.slow
 def test_command_line_attack(name, command, sample_output_file):
     """Runs attack tests and compares their outputs to a reference file."""
+    _tf_hub_tests = {"interactive_mode", "attack_from_transformers_adv_metrics", "run_attack_hotflip_lstm_mr_4_adv_metrics"}
+    if name in _tf_hub_tests and not _tensorflow_hub_available:
+        pytest.skip("tensorflow_hub is not installed")
     # read in file and create regex
     desired_output = open(sample_output_file, "r").read().strip()
     print("desired_output.encoded =>", desired_output.encode())

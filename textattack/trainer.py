@@ -361,7 +361,7 @@ class Trainer:
                 },
             ]
 
-            optimizer = transformers.optimization.AdamW(
+            optimizer = torch.optim.AdamW(
                 optimizer_grouped_parameters, lr=self.training_args.learning_rate
             )
             if isinstance(self.training_args.num_warmup_steps, float):
