@@ -39,7 +39,7 @@ class GoalFunction(ReprMixin, ABC):
         use_cache=True,
         query_budget=float("inf"),
         model_batch_size=32,
-        model_cache_size=2**20,
+        model_cache_size=2 ** 20,
         allow_skip=True,
     ):
         validators.validate_model_goal_function_compatibility(
@@ -115,7 +115,11 @@ class GoalFunction(ReprMixin, ABC):
         return results, self.num_queries == self.query_budget
 
     def _get_goal_status(self, model_output, attacked_text, check_skip=False):
-        should_skip = check_skip and self._should_skip(model_output, attacked_text) and self.allow_skip
+        should_skip = (
+            check_skip
+            and self._should_skip(model_output, attacked_text)
+            and self.allow_skip
+        )
         if should_skip:
             return GoalFunctionResultStatus.SKIPPED
         if self.maximizable:

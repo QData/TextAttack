@@ -4,14 +4,20 @@ Goal Function for Strict targeted classification
 -------------------------------------------------------
 """
 
-from textattack.goal_functions import GoalFunction
-from textattack.goal_function_results import TargetedStrictGoalFunctionResult
 import numpy as np
 import torch
 
+from textattack.goal_function_results import TargetedStrictGoalFunctionResult
+from textattack.goal_functions import GoalFunction
+
+
 class TargetedStrict(GoalFunction):
-    """A modified targeted attack on classification models which only sets _is_goal_complete to True if argmax(model_output) matches the target_class.
-    In TargetedClassification, if either argmax(model_output) == target_class or ground_truth_output == target_class, then _is_goal_complete returns True.
+    """A modified targeted attack on classification models which only sets
+    _is_goal_complete to True if argmax(model_output) matches the target_class.
+
+    In TargetedClassification, if either argmax(model_output) ==
+    target_class or ground_truth_output == target_class, then
+    _is_goal_complete returns True.
     """
 
     def __init__(self, *args, target_class=0, **kwargs):

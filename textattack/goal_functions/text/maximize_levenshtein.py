@@ -1,12 +1,15 @@
 from Levenshtein import distance as levenshtein_distance
+
 from .text_to_text_goal_function import TextToTextGoalFunction
+
 
 class MaximizeLevenshtein(TextToTextGoalFunction):
     """Attempts to maximise the Levenshtein distance between the current output
     translation and the reference translation.
 
-    Levenshtein distance is defined as the minimum number of single-character
-    edits (insertions, deletions, or substitutions) required to change one string into another.
+    Levenshtein distance is defined as the minimum number of single-
+    character edits (insertions, deletions, or substitutions) required
+    to change one string into another.
     """
 
     def __init__(self, *args, target_distance=None, **kwargs):

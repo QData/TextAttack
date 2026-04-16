@@ -8,7 +8,9 @@ import pytest
 _tensorflow_hub_available = importlib.util.find_spec("tensorflow_hub") is not None
 
 
-@pytest.mark.skipif(not _tensorflow_hub_available, reason="tensorflow_hub is not installed")
+@pytest.mark.skipif(
+    not _tensorflow_hub_available, reason="tensorflow_hub is not installed"
+)
 def test_train_tiny():
     command = "textattack train --model distilbert-base-uncased --attack textfooler --dataset rotten_tomatoes --model-max-length 64  --num-epochs 1 --num-clean-epochs 0 --num-train-adv-examples 2"
 

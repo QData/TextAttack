@@ -174,7 +174,11 @@ attack_test_params = [
 @pytest.mark.slow
 def test_command_line_attack(name, command, sample_output_file):
     """Runs attack tests and compares their outputs to a reference file."""
-    _tf_hub_tests = {"interactive_mode", "attack_from_transformers_adv_metrics", "run_attack_hotflip_lstm_mr_4_adv_metrics"}
+    _tf_hub_tests = {
+        "interactive_mode",
+        "attack_from_transformers_adv_metrics",
+        "run_attack_hotflip_lstm_mr_4_adv_metrics",
+    }
     if name in _tf_hub_tests and not _tensorflow_hub_available:
         pytest.skip("tensorflow_hub is not installed")
     # read in file and create regex
