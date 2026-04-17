@@ -4,14 +4,16 @@ Goal Function for Logit sum
 -------------------------------------------------------
 """
 
-from textattack.goal_functions import GoalFunction
-from textattack.goal_function_results import LogitSumGoalFunctionResult
-import torch
 import numpy as np
+import torch
+
+from textattack.goal_function_results import LogitSumGoalFunctionResult
+from textattack.goal_functions import GoalFunction
+
 
 class LogitSum(GoalFunction):
-    """
-    A goal function that minimizes the sum of output logits for classification models.
+    """A goal function that minimizes the sum of output logits for
+    classification models.
 
     This can be used for tasks where the objective is to suppress the model's overall confidence,
     or specifically the logit of the most probable label.
@@ -30,9 +32,10 @@ class LogitSum(GoalFunction):
         Only one of `target_logit_sum` or `first_element_threshold` may be set.
     """
 
-    def __init__(self, *args, target_logit_sum=None, first_element_threshold=None, **kwargs):
-        """
-        Initializes the LogitSum goal function.
+    def __init__(
+        self, *args, target_logit_sum=None, first_element_threshold=None, **kwargs
+    ):
+        """Initializes the LogitSum goal function.
 
         This goal function is used to reduce the model's overall logit output, either by
         minimizing the sum of all logits or by lowering a specific logit's value.
@@ -44,15 +47,17 @@ class LogitSum(GoalFunction):
                 this threshold is used to determine success based on whether the first logit's
                 value falls below it. Defaults to 0.5 if not specified.
         """
-        if ((target_logit_sum is not None) and (first_element_threshold is not None)):
-            raise ValueError("Cannot set both target_logit_sum to True and first_element_threshold!")
+        if (target_logit_sum is not None) and (first_element_threshold is not None):
+            raise ValueError(
+                "Cannot set both target_logit_sum to True and first_element_threshold!"
+            )
 
         self.target_logit_sum = target_logit_sum
-        
+
         if (target_logit_sum is not None) or (first_element_threshold is not None):
             self.first_element_threshold = first_element_threshold
         else:
-            self.first_element_threshold = 0.5 # default
+            self.first_element_threshold = 0.5  # default
 
         super().__init__(*args, **kwargs)
 
@@ -102,9 +107,7 @@ class LogitSum(GoalFunction):
         return model_output[0] < self.first_element_threshold
 
     def _get_score(self, model_output, _):
-        """
-        model_output is a tensor of logits, one for each label.
-        """
+        """model_output is a tensor of logits, one for each label."""
         return -sum(model_output)
 
     def _goal_function_result_type(self):

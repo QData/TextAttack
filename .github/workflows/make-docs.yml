@@ -1,6 +1,3 @@
-# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
-
 name: Build documentation with Sphinx
 
 on:
@@ -10,29 +7,23 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  docs:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: [3.8]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v5
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.11"
     - name: Install dependencies
       run: |
-        sudo sed -i 's/azure\.//' /etc/apt/sources.list # workaround for flaky pandoc install
-        sudo apt-get update # from here https://github.com/actions/virtual-environments/issues/675
-        sudo apt-get install pandoc -o Acquire::Retries=3 # install pandoc
-        python -m pip install --upgrade pip setuptools wheel # update python
-        pip install ipython --upgrade # needed for Github for whatever reason
-        python setup.py install_egg_info # Workaround https://github.com/pypa/pip/issues/4537
-        pip install -e .[dev]
-        pip install jupyter 'ipykernel<5.0.0' 'ipython<7.0.0' # ipykernel workaround: github.com/jupyter/notebook/issues/4050
+        sudo apt-get update
+        sudo apt-get install pandoc -o Acquire::Retries=3
+        python -m pip install --upgrade pip setuptools wheel
+        python setup.py install_egg_info
+        pip install -e .[docs]
+        pip install jupyter ipykernel
     - name: Build docs with Sphinx and check for errors
       run: |
         sphinx-build -b html docs docs/_build/html
