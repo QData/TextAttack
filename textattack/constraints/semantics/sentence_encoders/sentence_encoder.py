@@ -215,6 +215,7 @@ def get_angular_sim(emb1, emb2):
     """Returns the _angular_ similarity between a batch of vector and a batch
     of vectors."""
     cos_sim = torch.nn.CosineSimilarity(dim=1)(emb1, emb2)
+    cos_sim = torch.clamp(cos_sim, -1.0, 1.0)
     return 1 - (torch.acos(cos_sim) / math.pi)
 
 
