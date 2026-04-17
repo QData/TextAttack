@@ -50,3 +50,5 @@ checkpoints/
 !tests/sample_outputs/csv_attack_log.csv
 tests/test_command_line/attack_log.txt
 textattack/=22.3.0
+
+venv/

@@ -17,19 +17,30 @@ class AdvancedAttackMetric(Metric):
     """Calculate a suite of advanced metrics to evaluate attackResults'
     quality."""
 
-    def __init__(self, choices=["use"]):
+    def __init__(self, choices: list[str] = ["use"]):
         self.achoices = choices
+        available_metrics = {
+            "use": USEMetric,
+            "perplexity": Perplexity,
+            "bert_score": BERTScoreMetric,
+            "meteor_score": MeteorMetric,
+            "sbert_score": SBERTMetric,
+        }
+        self.selected_metrics = {}
+        for choice in self.achoices:
+            if choice not in available_metrics:
+                raise KeyError(f"'{choice}' is not a valid metric name")
+            metric = available_metrics[choice]()
+            self.selected_metrics.update({choice: metric})
 
-    def calculate(self, results):
+    def add_metric(self, name: str, metric: Metric):
+        if not isinstance(metric, Metric):
+            raise ValueError(f"Object {metric} must be a subtype of Metric")
+        self.selected_metrics.update({name: metric})
+
+    def calculate(self, results) -> dict[str, float]:
         advanced_metrics = {}
-        if "use" in self.achoices:
-            advanced_metrics.update(USEMetric().calculate(results))
-        if "perplexity" in self.achoices:
-            advanced_metrics.update(Perplexity().calculate(results))
-        if "bert_score" in self.achoices:
-            advanced_metrics.update(BERTScoreMetric().calculate(results))
-        if "meteor_score" in self.achoices:
-            advanced_metrics.update(MeteorMetric().calculate(results))
-        if "sbert_score" in self.achoices:
-            advanced_metrics.update(SBERTMetric().calculate(results))
+        # TODO: Would like to guarantee unique keys from calls to calculate()
+        for metric in self.selected_metrics.values():
+            advanced_metrics.update(metric.calculate(results))
         return advanced_metrics

@@ -100,8 +100,11 @@ class Perplexity(Metric):
             input_ids = torch.tensor(
                 self.ppl_tokenizer.encode(text, add_special_tokens=True)
             ).unsqueeze(0)
+            if not (input_ids_size := input_ids.size(1)):
+                raise ValueError("No tokens recognized for input text")
+
             # Strided perplexity calculation from huggingface.co/transformers/perplexity.html
-            for i in range(0, input_ids.size(1), self.stride):
+            for i in range(0, input_ids_size, self.stride):
                 begin_loc = max(i + self.stride - self.max_length, 0)
                 end_loc = min(i + self.stride, input_ids.size(1))
                 trg_len = end_loc - i
