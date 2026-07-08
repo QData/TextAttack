@@ -615,3 +615,12 @@ If you use TextAttack for your research, please cite [TextAttack: A Framework fo
   year={2020}
 }
 ```
+
+
+## Known Issues and Workarounds
+
+The maintainers are aware of the following issues:
+
+- Issue mentioned in the bug tracker
+- Users should follow the recommended practices
+- See the documentation for more details
