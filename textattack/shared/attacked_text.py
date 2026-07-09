@@ -483,7 +483,7 @@ class AttackedText:
         Note that current text and `x` must have same number of words.
         """
         assert self.num_words == x.num_words
-        return float(np.sum(self.words != x.words)) / self.num_words
+        return float(np.sum(np.array(self.words) != np.array(x.words))) / self.num_words
 
     def align_with_model_tokens(
         self, model_wrapper: textattack.models.wrappers.ModelWrapper
