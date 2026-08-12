@@ -7,6 +7,13 @@ Levy-flight/adaptive-inertia variant of the same PSO family PSOZang2020
 already implements in this codebase (see
 ``textattack/search_methods/particle_swarm_optimization_leap.py`` for the
 full lineage and references).
+
+These tests only check structure and that neither recipe errors out; they
+don't measure attack quality (success rate, query efficiency, perturbation
+size). For that, see ``tests/benchmark_leap_vs_pso.py`` (a manual script,
+not run in CI/here, since a meaningful sample takes minutes to run) and the
+"Benchmark" section of ``LEAP2023``'s docstring
+(``textattack/attack_recipes/leap_2023.py``) for reproducible results.
 """
 import pytest
 

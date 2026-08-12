@@ -20,6 +20,15 @@ loosely follows [Keep a Changelog](https://keepachangelog.com/).
   for the algorithmic relationship between the two.
 - `tests/test_attack_recipes.py`: structural and functional tests comparing
   `LEAP2023` against `PSOZang2020`, its closest existing recipe.
+- `tests/benchmark_leap_vs_pso.py`: a manual (not CI-run) benchmark script
+  comparing `LEAP2023` against a WordNet-transformation variant of vanilla
+  `ParticleSwarmOptimization`, isolating the search algorithm from the
+  candidate-word transformation. Results (`cnn-ag-news`, AG News test set)
+  are documented in the "Benchmark" section of `LEAP2023`'s docstring:
+  under an unrestricted query budget, both hit ~95% success (n=20), with
+  LEAP using ~6% fewer queries and running ~2.25x faster; under a 2000-query
+  budget (n=100), success collapses to ~23-24% for both, with LEAP still
+  modestly ahead on every metric but by a much smaller margin.
 
 ### Changed
 
