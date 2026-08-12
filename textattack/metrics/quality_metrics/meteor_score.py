@@ -48,6 +48,8 @@ class MeteorMetric(Metric):
         """
 
         self.results = results
+        self.original_candidates = []
+        self.successful_candidates = []
 
         for i, result in enumerate(self.results):
             if isinstance(result, FailedAttackResult):
@@ -61,6 +63,9 @@ class MeteorMetric(Metric):
                 self.successful_candidates.append(
                     result.perturbed_result.attacked_text.text
                 )
+
+        if not self.original_candidates:
+            raise ValueError("No successful attack results to calculate METEOR score")
 
         meteor_scores = []
         for c in range(len(self.original_candidates)):
