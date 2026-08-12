@@ -175,8 +175,10 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
         fit_min = pop_fit.min()
 
         # start iterations
-        omega = []
         for i in range(self.max_iters):
+            # Recomputed every iteration: `omega[k]` is indexed by population
+            # position below, so this must not accumulate across iterations.
+            omega = []
             for k in range(len(population)):
                 # `fit_ave`/`fit_min` are fixed at the initial population's
                 # statistics, so a population member's score can drift below

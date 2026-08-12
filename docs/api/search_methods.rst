@@ -45,6 +45,6 @@ ParticleSwarmOptimization
    :members:
 
 ParticleSwarmOptimizationLEAP
---------------------------
+-----------------------------
 .. autoclass:: textattack.search_methods.ParticleSwarmOptimizationLEAP
    :members:
