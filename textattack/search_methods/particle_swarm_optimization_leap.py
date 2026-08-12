@@ -88,14 +88,15 @@ def levy(alpha, gamma=1, n=1):
     return z
 
 
-def get_one_levy(min, max):
-    while True:
+def get_one_levy(min, max, max_tries=1000):
+    for _ in range(max_tries):
         temp = levy(1.5, 1)
         if min <= temp <= max:
-            break
-        else:
-            continue
-    return temp
+            return temp
+    # Exceedingly unlikely with a [0.5, 0.8]/[-v_max, v_max]-sized band, but
+    # avoid an unbounded retry loop on an unlucky streak from the heavy-tailed
+    # Levy distribution: fall back to a uniform draw within the target range.
+    return np.random.uniform(min, max)
 
 
 def softmax(x, axis=1):
@@ -132,15 +133,9 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
         # Initialize velocities
         v_init = []
         v_init_rand = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
-        v_init_levy = []
-        while True:
-            temp = levy(1.5, 1)
-            if -self.v_max <= temp <= self.v_max:
-                v_init_levy.append(temp)
-            else:
-                continue
-            if len(v_init_levy) == self.pop_size:
-                break
+        v_init_levy = [
+            get_one_levy(-self.v_max, self.v_max) for _ in range(self.pop_size)
+        ]
         for i in range(self.pop_size):
             if np.random.uniform(
                 -self.v_max,
