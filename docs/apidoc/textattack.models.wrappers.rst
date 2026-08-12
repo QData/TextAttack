@@ -28,6 +28,12 @@ Submodules
    :show-inheritance:
 
 
+.. automodule:: textattack.models.wrappers.remote_model_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
 .. automodule:: textattack.models.wrappers.sklearn_model_wrapper
    :members:
    :undoc-members:

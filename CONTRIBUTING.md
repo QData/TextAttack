@@ -218,5 +218,26 @@ Follow these steps to start contributing:
 
 You can run TextAttack tests with `pytest`. Just type `make test`.
 
+#### Opt-in live tests
+
+A small number of tests talk to a real, locally-running service instead of a
+mock, to sanity-check the code against an actual API rather than assumptions
+about one. These are skipped by default (and always skipped in CI) so the
+regular suite stays fast and deterministic; they only run when you set the
+env var they check for.
+
+For example, `tests/test_remote_model_wrapper.py::test_call_against_real_user_provided_url`
+exercises `RemoteModelWrapper` against a real HTTP endpoint, such as a local
+[Ollama](https://ollama.com) server:
+
+```bash
+REMOTE_MODEL_WRAPPER_TEST_URL=http://localhost:11434/api/generate \
+REMOTE_MODEL_WRAPPER_TEST_MODEL=qwen2.5:7b-instruct \
+    pytest tests/test_remote_model_wrapper.py -v
+```
+
+Leave `REMOTE_MODEL_WRAPPER_TEST_URL` unset to skip it and run only the
+mocked cases, which is what `make test`/CI do.
+
 
 #### This guide was heavily inspired by the awesome [transformers guide to contributing](https://github.com/huggingface/transformers/blob/master/CONTRIBUTING.md)
