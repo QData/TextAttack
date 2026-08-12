@@ -63,7 +63,7 @@ def test_perplexity_empty_results():
 
 
 def test_perplexity_no_model():
-    from textattack.attack_results import FailedAttackResult, SuccessfulAttackResult
+    from textattack.attack_results import SuccessfulAttackResult
     from textattack.goal_function_results.classification_goal_function_result import (
         ClassificationGoalFunctionResult,
     )
