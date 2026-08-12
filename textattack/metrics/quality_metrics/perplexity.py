@@ -68,8 +68,8 @@ class Perplexity(Metric):
             >> ppl = textattack.metrics.quality_metrics.Perplexity().calculate(results)
         """
         self.results = results
-        self.original_candidates_ppl = []
-        self.successful_candidates_ppl = []
+        self.original_candidates = []
+        self.successful_candidates = []
 
         for i, result in enumerate(self.results):
             if isinstance(result, FailedAttackResult):

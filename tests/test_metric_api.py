@@ -171,10 +171,11 @@ def test_metric_ad_hoc():
     from textattack.metrics.quality_metrics import Perplexity
     from textattack.metrics.recipe import AdvancedAttackMetric
 
-    metrics = AdvancedAttackMetric()
+    metrics = AdvancedAttackMetric(choices=[])
     metrics.add_metric("perplexity", Perplexity(
         model_name="distilbert-base-uncased"))
 
     metric_results = metrics.calculate([])
 
-    assert "perplexity" in metric_results
+    assert "avg_original_perplexity" in metric_results
+    assert "avg_attack_perplexity" in metric_results
