@@ -8,25 +8,35 @@ swarm optimization integrated with textual features to generate adversarial test
 
 Subclasses :class:`~textattack.search_methods.ParticleSwarmOptimization`
 (the reimplementation of Zang et al.'s PSO search used by
-:class:`~textattack.attack_recipes.PSOZang2020`), overriding population
-initialization (Levy-flight-sampled velocities), the per-particle inertia
-weight computation, and the mutation step (:meth:`_greedy_perturb` instead
-of the inherited, probabilistic :meth:`_perturb`) to more directly balance
-exploration and exploitation across iterations.
+:class:`~textattack.attack_recipes.PSOZang2020`) via the parent class's
+hook methods, overriding population-velocity initialization (Levy-flight
+sampled), the per-particle inertia weight (:meth:`_compute_omega`), the
+turn-probability normalization (:meth:`_compute_turn_prob`), the mutation
+change-ratio reference point (:meth:`_compute_change_ratio`), and the
+mutation step itself (:meth:`_perturb`, greedy instead of the parent's
+probabilistic sampling) to more directly balance exploration and
+exploitation across iterations. ``perform_search`` itself is inherited
+unchanged.
 
 `<https://arxiv.org/abs/2308.11284>`_
 `<https://github.com/lumos-xiao/LEAP>`_
 """
 
-import copy
+from functools import lru_cache
 
 import numpy as np
 from scipy.special import gamma as gamma
+from scipy.special import softmax
 
-from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import ParticleSwarmOptimization
 
+# alpha is hardcoded to 1.5 everywhere this module calls `levy`/`get_one_levy`,
+# so the alpha-dependent constants below (each a handful of `scipy.special.gamma`
+# evaluations) are cached rather than recomputed on every one of the up to
+# `pop_size * max_iters` calls into this sampler during a single search.
 
+
+@lru_cache(maxsize=None)
 def sigmax(alpha):
     numerator = gamma(alpha + 1.0) * np.sin(np.pi * alpha / 2.0)
     denominator = gamma((alpha + 1) / 2.0) * alpha * np.power(2.0, (alpha - 1.0) / 2.0)
@@ -42,6 +52,7 @@ def vf(alpha):
     return x / np.power(np.abs(y), 1.0 / alpha)
 
 
+@lru_cache(maxsize=None)
 def K(alpha):
     k = alpha * gamma((alpha + 1.0) / (2.0 * alpha)) / gamma(1.0 / alpha)
     k *= np.power(
@@ -54,6 +65,7 @@ def K(alpha):
     return k
 
 
+@lru_cache(maxsize=None)
 def C(alpha):
     x = np.array(
         (0.75, 0.8, 0.9, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 1.95, 1.99)
@@ -80,7 +92,7 @@ def C(alpha):
     return np.interp(alpha, x, y)
 
 
-def levy(alpha, gamma=1, n=1):
+def levy(alpha, scale=1, n=1):
     w = 0
     for i in range(0, n):
         v = vf(alpha)
@@ -90,7 +102,7 @@ def levy(alpha, gamma=1, n=1):
 
         w += v * ((K(alpha) - 1.0) * np.exp(-v / C(alpha)) + 1.0)
 
-    z = 1.0 / np.power(n, 1.0 / alpha) * w * gamma
+    z = 1.0 / np.power(n, 1.0 / alpha) * w * scale
 
     return z
 
@@ -106,20 +118,6 @@ def get_one_levy(min, max, max_tries=1000):
     return np.random.uniform(min, max)
 
 
-def softmax(x, axis=1):
-    row_max = x.max(axis=axis)
-
-    # Each element of the row needs to be subtracted from the corresponding maximum value, otherwise exp(x) will overflow, resulting in the inf case
-    row_max = row_max.reshape(-1, 1)
-    x = x - row_max
-
-    # Calculate the exponential power of e
-    x_exp = np.exp(x)
-    x_sum = np.sum(x_exp, axis=axis, keepdims=True)
-    s = x_exp / x_sum
-    return s
-
-
 class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
     """Attacks a model with word substitutions using LEAP, a Levy-flight and
     per-particle-adaptive-inertia variant of the Particle Swarm Optimization
@@ -128,167 +126,65 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
     :class:`~textattack.attack_recipes.PSOZang2020`). See the module-level
     docstring above for what specifically differs from the parent class."""
 
-    def _greedy_perturb(self, pop_member, original_result):
+    def _perturb(self, pop_member, original_result):
+        """LEAP's mutation step: replace `pop_member` with the single best
+        neighbor found across all word positions (greedy), rather than the
+        parent's probabilistic sample among per-word best neighbors."""
         best_neighbors, prob_list = self._get_best_neighbors(
             pop_member.result, original_result
         )
         random_result = best_neighbors[np.argsort(prob_list)[-1]]
-        pop_member.attacked_text = random_result.attacked_text
-        pop_member.result = random_result
-        return True
 
-    def perform_search(self, initial_result):
-        self._search_over = False
-        population = self._initialize_population(initial_result, self.pop_size)
+        if random_result == pop_member.result:
+            return False
+        else:
+            pop_member.attacked_text = random_result.attacked_text
+            pop_member.result = random_result
+            return True
 
-        # Initialize velocities
-        v_init = []
+    def _initialize_velocities(self, num_words):
+        v_init = np.empty(self.pop_size)
         v_init_rand = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
-        v_init_levy = [
-            get_one_levy(-self.v_max, self.v_max) for _ in range(self.pop_size)
-        ]
         for i in range(self.pop_size):
-            if np.random.uniform(
-                -self.v_max,
-                self.v_max,
-            ) < levy(1.5, 1):
-                v_init.append(v_init_rand[i])
+            if np.random.uniform(-self.v_max, self.v_max) < levy(1.5, 1):
+                v_init[i] = v_init_rand[i]
             else:
-                v_init.append(v_init_levy[i])
-        v_init = np.array(v_init)
-
-        velocities = np.array(
-            [
-                [v_init[t] for _ in range(initial_result.attacked_text.num_words)]
-                for t in range(self.pop_size)
-            ]
+                # Only sample the (comparatively expensive) Levy draw when
+                # the coin flip above actually selects this branch.
+                v_init[i] = get_one_levy(-self.v_max, self.v_max)
+        return np.array(
+            [[v_init[t] for _ in range(num_words)] for t in range(self.pop_size)]
         )
 
-        global_elite = max(population, key=lambda x: x.score)
-        if (
-            self._search_over
-            or global_elite.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
-        ):
-            return global_elite.result
+    def _pre_iteration_setup(self, population):
+        pop_fit = np.array([p.score for p in population])
+        self._fit_ave = round(pop_fit.mean(), 3)
+        self._fit_min = pop_fit.min()
 
-        local_elites = copy.copy(population)
+    def _compute_omega(self, i, population):
+        # `self._fit_ave`/`self._fit_min` are fixed at the initial population's
+        # statistics (see `_pre_iteration_setup`), so a population member's
+        # score can drift below `self._fit_min` in later iterations without
+        # `self._fit_ave > self._fit_min` strictly holding; guard the
+        # interpolation below against a zero (or negative) denominator.
+        omega = np.empty(len(population))
+        for k in range(len(population)):
+            if population[k].score < self._fit_ave and self._fit_ave > self._fit_min:
+                omega[k] = self.omega_2 + (
+                    (population[k].score - self._fit_min)
+                    * (self.omega_1 - self.omega_2)
+                ) / (self._fit_ave - self._fit_min)
+            else:
+                omega[k] = get_one_levy(0.5, 0.8)
+        return omega
 
-        pop_fit_list = []
-        for i in range(len(population)):
-            pop_fit_list.append(population[i].score)
-        pop_fit = np.array(pop_fit_list)
-        fit_ave = round(pop_fit.mean(), 3)
-        fit_min = pop_fit.min()
+    def _compute_turn_prob(self, velocities_k):
+        # Unlike the parent class (which uses an independent per-word
+        # sigmoid), LEAP normalizes turn probabilities across the whole
+        # sentence with softmax, so on average ~1 word turns per call.
+        # This matches the authors' reference implementation and is
+        # intentional, not a drop-in-compatible substitute for sigmoid.
+        return softmax(np.array([velocities_k]), axis=1)[0]
 
-        # start iterations
-        for i in range(self.max_iters):
-            # Recomputed every iteration: `omega[k]` is indexed by population
-            # position below, so this must not accumulate across iterations.
-            omega = []
-            for k in range(len(population)):
-                # `fit_ave`/`fit_min` are fixed at the initial population's
-                # statistics, so a population member's score can drift below
-                # `fit_ave` without `fit_ave > fit_min` strictly holding; guard
-                # the interpolation below against a zero (or negative) denominator.
-                if population[k].score < fit_ave and fit_ave > fit_min:
-                    omega.append(
-                        self.omega_2
-                        + (
-                            (population[k].score - fit_min)
-                            * (self.omega_1 - self.omega_2)
-                        )
-                        / (fit_ave - fit_min)
-                    )
-                else:
-                    omega.append(get_one_levy(0.5, 0.8))
-            C1 = self.c1_origin - i / self.max_iters * (self.c1_origin - self.c2_origin)
-            C2 = self.c2_origin + i / self.max_iters * (self.c1_origin - self.c2_origin)
-            P1 = C1
-            P2 = C2
-
-            for k in range(len(population)):
-                # calculate the probability of turning each word
-                pop_mem_words = population[k].words
-                local_elite_words = local_elites[k].words
-                assert len(pop_mem_words) == len(
-                    local_elite_words
-                ), "PSO word length mismatch!"
-
-                for d in range(len(pop_mem_words)):
-                    velocities[k][d] = omega[k] * velocities[k][d] + (1 - omega[k]) * (
-                        self._equal(pop_mem_words[d], local_elite_words[d])
-                        + self._equal(pop_mem_words[d], global_elite.words[d])
-                    )
-                # Unlike the parent class (which uses an independent per-word
-                # sigmoid), LEAP normalizes turn probabilities across the whole
-                # sentence with softmax, so on average ~1 word turns per call.
-                # This matches the authors' reference implementation and is
-                # intentional, not a drop-in-compatible substitute for sigmoid.
-                turn_list = np.array([velocities[k]])
-                turn_prob = softmax(turn_list)[0]
-
-                if np.random.uniform() < P1:
-                    # Move towards local elite
-                    population[k] = self._turn(
-                        local_elites[k],
-                        population[k],
-                        turn_prob,
-                        initial_result.attacked_text,
-                    )
-
-                if np.random.uniform() < P2:
-                    # Move towards global elite
-                    population[k] = self._turn(
-                        global_elite,
-                        population[k],
-                        turn_prob,
-                        initial_result.attacked_text,
-                    )
-
-            # Check if there is any successful attack in the current population
-            pop_results, self._search_over = self.get_goal_results(
-                [p.attacked_text for p in population]
-            )
-            if self._search_over:
-                # if `get_goal_results` gets cut short by query budget, resize population
-                population = population[: len(pop_results)]
-            for k in range(len(pop_results)):
-                population[k].result = pop_results[k]
-
-            top_member = max(population, key=lambda x: x.score)
-            if (
-                self._search_over
-                or top_member.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
-            ):
-                return top_member.result
-
-            # Mutation based on the current change rate
-            for k in range(len(population)):
-                change_ratio = population[k].attacked_text.words_diff_ratio(
-                    local_elites[k].attacked_text
-                )
-                # Referred from the original source code
-                p_change = 1 - 2 * change_ratio
-                if np.random.uniform() < p_change:
-                    self._greedy_perturb(population[k], initial_result)
-
-                if self._search_over:
-                    break
-
-            # Check if there is any successful attack in the current population
-            top_member = max(population, key=lambda x: x.score)
-            if (
-                self._search_over
-                or top_member.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
-            ):
-                return top_member.result
-
-            # Update the elite if the score is increased
-            for k in range(len(population)):
-                if population[k].score > local_elites[k].score:
-                    local_elites[k] = copy.copy(population[k])
-
-            if top_member.score > global_elite.score:
-                global_elite = copy.copy(top_member)
-
-        return global_elite.result
+    def _compute_change_ratio(self, pop_member, local_elite, initial_result):
+        return pop_member.attacked_text.words_diff_ratio(local_elite.attacked_text)
