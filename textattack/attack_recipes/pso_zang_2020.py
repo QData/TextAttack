@@ -37,6 +37,10 @@ class PSOZang2020(AttackRecipe):
     (Eberhart and Kennedy, 1995) as the adversarial example searching algorithm."
 
     And "Following the settings in Alzantot et al. (2018), we set the max iteration time G to 20."
+
+    See also :class:`~textattack.attack_recipes.LEAP2023`, a Levy-flight/
+    adaptive-inertia variant of this recipe's Particle Swarm Optimization
+    search.
     """
 
     @staticmethod

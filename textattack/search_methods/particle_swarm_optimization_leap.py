@@ -6,7 +6,14 @@ LEAP Particle Swarm Optimization
 LEAP, an automated test method that uses LEvy flight-based Adaptive Particle
 swarm optimization integrated with textual features to generate adversarial test cases.
 
-al
+Subclasses :class:`~textattack.search_methods.ParticleSwarmOptimization`
+(the reimplementation of Zang et al.'s PSO search used by
+:class:`~textattack.attack_recipes.PSOZang2020`), overriding population
+initialization (Levy-flight-sampled velocities), the per-particle inertia
+weight computation, and the mutation step (:meth:`_greedy_perturb` instead
+of the inherited, probabilistic :meth:`_perturb`) to more directly balance
+exploration and exploitation across iterations.
+
 `<https://arxiv.org/abs/2308.11284>`_
 `<https://github.com/lumos-xiao/LEAP>`_
 """
@@ -114,8 +121,12 @@ def softmax(x, axis=1):
 
 
 class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
-    """Attacks a model with word substiutitions using a variant of Particle
-    Swarm Optimization (PSO) algorithm called LEAP."""
+    """Attacks a model with word substitutions using LEAP, a Levy-flight and
+    per-particle-adaptive-inertia variant of the Particle Swarm Optimization
+    (PSO) algorithm implemented by the parent class
+    :class:`~textattack.search_methods.ParticleSwarmOptimization` (used by
+    :class:`~textattack.attack_recipes.PSOZang2020`). See the module-level
+    docstring above for what specifically differs from the parent class."""
 
     def _greedy_perturb(self, pop_member, original_result):
         best_neighbors, prob_list = self._get_best_neighbors(

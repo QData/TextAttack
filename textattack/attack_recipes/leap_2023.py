@@ -19,6 +19,22 @@ from .attack_recipe import AttackRecipe
 
 
 class LEAP2023(AttackRecipe):
+    """LEAP: Efficient and Automated Test Method for NLP Software.
+
+    https://arxiv.org/abs/2308.11284
+
+    LEAP is a Levy-flight/adaptive-inertia variant of the Particle Swarm
+    Optimization search used by :class:`~textattack.attack_recipes.PSOZang2020`
+    (see :class:`~textattack.search_methods.ParticleSwarmOptimizationLEAP`,
+    which subclasses :class:`~textattack.search_methods.ParticleSwarmOptimization`).
+    Where PSOZang2020 swaps HowNet sememes and uses a fixed, globally-shared
+    inertia weight, LEAP swaps WordNet synonyms, caps the total fraction of
+    words modified via `MaxModificationRate`, and computes a per-particle
+    inertia weight (Levy-flight sampled for above-average particles, fitness-
+    interpolated otherwise) intended to better balance exploration and
+    exploitation than PSOZang2020's shared decaying weight.
+    """
+
     @staticmethod
     def build(model_wrapper):
         #
