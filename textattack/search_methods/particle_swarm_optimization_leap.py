@@ -178,7 +178,11 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
         omega = []
         for i in range(self.max_iters):
             for k in range(len(population)):
-                if population[k].score < fit_ave:
+                # `fit_ave`/`fit_min` are fixed at the initial population's
+                # statistics, so a population member's score can drift below
+                # `fit_ave` without `fit_ave > fit_min` strictly holding; guard
+                # the interpolation below against a zero (or negative) denominator.
+                if population[k].score < fit_ave and fit_ave > fit_min:
                     omega.append(
                         self.omega_2
                         + (
@@ -207,6 +211,11 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
                         self._equal(pop_mem_words[d], local_elite_words[d])
                         + self._equal(pop_mem_words[d], global_elite.words[d])
                     )
+                # Unlike the parent class (which uses an independent per-word
+                # sigmoid), LEAP normalizes turn probabilities across the whole
+                # sentence with softmax, so on average ~1 word turns per call.
+                # This matches the authors' reference implementation and is
+                # intentional, not a drop-in-compatible substitute for sigmoid.
                 turn_list = np.array([velocities[k]])
                 turn_prob = softmax(turn_list)[0]
 

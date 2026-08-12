@@ -141,7 +141,10 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
 
         if self.post_turn_check and not passed_constraints:
             # If we cannot find a turn that passes the constraints, we do not move.
-            return source_text
+            # Return a copy rather than `source_text` itself, since `source_text` is
+            # often `local_elites[k]` or `global_elite` and the caller may later
+            # mutate the returned PopulationMember in place.
+            return copy.copy(source_text)
         else:
             return PopulationMember(new_text)
 
