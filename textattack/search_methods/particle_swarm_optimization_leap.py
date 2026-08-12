@@ -247,13 +247,13 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
 
             # Mutation based on the current change rate
             for k in range(len(population)):
-                change_ratio = initial_result.attacked_text.words_diff_ratio(
-                    population[k].attacked_text
+                change_ratio = population[k].attacked_text.words_diff_ratio(
+                    local_elites[k].attacked_text
                 )
                 # Referred from the original source code
                 p_change = 1 - 2 * change_ratio
                 if np.random.uniform() < p_change:
-                    self._perturb(population[k], initial_result)
+                    self._greedy_perturb(population[k], initial_result)
 
                 if self._search_over:
                     break
