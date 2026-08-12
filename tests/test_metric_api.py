@@ -18,8 +18,7 @@ def test_perplexity():
                 AttackedText(sample_text), None, None, None, None, None, None
             ),
             ClassificationGoalFunctionResult(
-                AttackedText(
-                    sample_atck_text), None, None, None, None, None, None
+                AttackedText(sample_atck_text), None, None, None, None, None, None
             ),
         )
     ]
@@ -80,8 +79,7 @@ def test_perplexity_no_model():
                 AttackedText(sample_text), None, None, None, None, None, None
             ),
             ClassificationGoalFunctionResult(
-                AttackedText(
-                    sample_atck_text), None, None, None, None, None, None
+                AttackedText(sample_atck_text), None, None, None, None, None, None
             ),
         )
     ]
@@ -162,8 +160,7 @@ def test_metric_recipe():
     attacker = Attacker(attack, dataset, attack_args)
     results = attacker.attack_dataset()
 
-    adv_score = AdvancedAttackMetric(
-        ["meteor_score", "perplexity"]).calculate(results)
+    adv_score = AdvancedAttackMetric(["meteor_score", "perplexity"]).calculate(results)
     assert adv_score["avg_attack_meteor_score"] == 0.71
 
 
@@ -172,8 +169,7 @@ def test_metric_ad_hoc():
     from textattack.metrics.recipe import AdvancedAttackMetric
 
     metrics = AdvancedAttackMetric(choices=[])
-    metrics.add_metric("perplexity", Perplexity(
-        model_name="distilbert-base-uncased"))
+    metrics.add_metric("perplexity", Perplexity(model_name="distilbert-base-uncased"))
 
     metric_results = metrics.calculate([])
 
