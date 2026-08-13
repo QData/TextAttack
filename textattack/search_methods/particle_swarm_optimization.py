@@ -124,9 +124,7 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
         drift from the original input; overridable for subclasses (e.g.
         LEAP) that instead measure drift from the particle's local elite.
         """
-        return initial_result.attacked_text.words_diff_ratio(
-            pop_member.attacked_text
-        )
+        return initial_result.attacked_text.words_diff_ratio(pop_member.attacked_text)
 
     def _turn(self, source_text, target_text, prob, original_text):
         """
