@@ -414,7 +414,26 @@ class AttackedText:
         # Create the new attacked text by swapping out words from the original
         # text with a sequence of 0+ words in the new text.
         for i, (input_word, adv_word_seq) in enumerate(zip(self.words, new_words)):
-            word_start = original_text.index(input_word)
+            # `input_word` can be a character substring of `SPLIT_TOKEN` itself
+            # (e.g. "I" is a substring of "<SPLIT>"), which makes a naive
+            # `.index(input_word)` match inside the token instead of the real
+            # word when it directly follows a split. Route around the split
+            # token's span in that case. See
+            # https://github.com/QData/TextAttack/issues/631
+            if (
+                input_word in AttackedText.SPLIT_TOKEN
+                and AttackedText.SPLIT_TOKEN in original_text
+            ):
+                split_start = original_text.index(AttackedText.SPLIT_TOKEN)
+                split_end = split_start + len(AttackedText.SPLIT_TOKEN)
+                if split_start <= original_text.index(input_word) < split_end:
+                    word_start = original_text.replace(
+                        AttackedText.SPLIT_TOKEN, ""
+                    ).index(input_word) + len(AttackedText.SPLIT_TOKEN)
+                else:
+                    word_start = original_text.index(input_word)
+            else:
+                word_start = original_text.index(input_word)
             word_end = word_start + len(input_word)
             perturbed_text += original_text[:word_start]
             original_text = original_text[word_end:]

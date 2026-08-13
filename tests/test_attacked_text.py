@@ -48,6 +48,16 @@ def attacked_text_pair():
     return textattack.shared.AttackedText(raw_text_pair)
 
 
+raw_text_pair_split_word_collision = collections.OrderedDict(
+    [("premise", "hello there"), ("hypothesis", "I am fine.")]
+)
+
+
+@pytest.fixture
+def attacked_text_pair_split_word_collision():
+    return textattack.shared.AttackedText(raw_text_pair_split_word_collision)
+
+
 class TestAttackedText:
     def test_words(self, attacked_text, pokemon_attacked_text):
         # fmt: off
@@ -70,7 +80,7 @@ class TestAttackedText:
 
     def test_big_window_around_index(self, attacked_text):
         assert (
-            attacked_text.text_window_around_index(0, 10 ** 5) + "."
+            attacked_text.text_window_around_index(0, 10**5) + "."
         ) == attacked_text.text
 
     def test_window_around_index_start(self, attacked_text):
@@ -143,6 +153,18 @@ class TestAttackedText:
             new_text.text
             == "A person walks a long way up stairs into a room and sees beer poured from a keg and people on the couch talking."
         )
+
+    def test_pair_word_replacement_split_token_collision(
+        self, attacked_text_pair_split_word_collision
+    ):
+        # Regression test for https://github.com/QData/TextAttack/issues/631:
+        # replacing the first word of the second segment ("I") used to match
+        # inside the "<SPLIT>" join token instead of the real word, since "I"
+        # is a character substring of "<SPLIT>".
+        new_text = attacked_text_pair_split_word_collision.replace_word_at_index(
+            2, "You"
+        )
+        assert new_text.text == "hello there\nYou am fine."
 
     def test_pair_word_insertion(self, attacked_text_pair):
         new_text = attacked_text_pair.insert_text_after_word_index(3, "old decrepit")
