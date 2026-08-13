@@ -174,5 +174,32 @@ General
    :noindex:
 
 
+Multi-lingual attacks
+############################################
+
+TextAttack also includes recipes for non-English classification models, each a
+language-specific adaptation of a contextualized-perturbation attack (see
+https://github.com/QData/TextAttack/issues/423):
+
+20. FrenchRecipe -- Attack French Recipe (Contextualized Perturbation for French NLP Adversarial Attack)
+21. SpanishRecipe -- Attack Spanish Recipe (Contextualized Perturbation for Spanish NLP Adversarial Attack)
+22. ChineseRecipe -- Attack Chinese Recipe (Contextualized Perturbation for Chinese NLP Adversarial Attack)
+
+
+.. automodule:: textattack.attack_recipes.french_recipe
+   :members:
+   :noindex:
+
+
+.. automodule:: textattack.attack_recipes.spanish_recipe
+   :members:
+   :noindex:
+
+
+.. automodule:: textattack.attack_recipes.chinese_recipe
+   :members:
+   :noindex:
+
+
 
 

@@ -518,7 +518,11 @@ class Trainer:
         ):
             input_ids = tokenizer(
                 input_texts,
-                padding="max_length",
+                # Pad to the longest sequence in this batch rather than the
+                # tokenizer's static max length: avoids wasted compute on
+                # batches much shorter than the model's max length. See
+                # https://github.com/QData/TextAttack/issues/737
+                padding=True,
                 return_tensors="pt",
                 truncation=True,
             )
@@ -575,7 +579,11 @@ class Trainer:
         if isinstance(model, transformers.PreTrainedModel):
             input_ids = tokenizer(
                 input_texts,
-                padding="max_length",
+                # Pad to the longest sequence in this batch rather than the
+                # tokenizer's static max length: avoids wasted compute on
+                # batches much shorter than the model's max length. See
+                # https://github.com/QData/TextAttack/issues/737
+                padding=True,
                 return_tensors="pt",
                 truncation=True,
             )

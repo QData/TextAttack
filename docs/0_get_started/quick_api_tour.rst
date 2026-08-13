@@ -35,3 +35,17 @@ Next, let's build the attack that we want to use. TextAttack provides prebuilt a
 
 
 .. image:: ../_static/imgs/overview.png
+
+
+Attacking a single example
+------------------------------
+The :class:`~textattack.Attacker`/:class:`~textattack.datasets.Dataset` flow above is for running an
+attack over many examples with logging, checkpointing, and parallelism built in. If you just want to
+attack one piece of text, no dataset is needed — call ``.attack()`` directly on the ``Attack`` object
+returned by a recipe's ``build()`` (see https://github.com/QData/TextAttack/issues/673):
+
+.. code-block::
+
+    >>> attack = textattack.attack_recipes.TextFoolerJin2019.build(model_wrapper)
+    >>> result = attack.attack("I really enjoyed this movie.", 1)  # (text, ground_truth_label)
+    >>> print(result.__str__(color_method="ansi"))

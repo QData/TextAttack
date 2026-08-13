@@ -28,6 +28,29 @@ class Seq2SickCheng2018BlackBox(AttackRecipe):
 
     This is a greedy re-implementation of the seq2sick attack method. It does
     not use gradient descent.
+
+    Works against any encoder-decoder generation model loaded via
+    :class:`~textattack.models.wrappers.HuggingFaceModelWrapper` (e.g. a raw
+    ``transformers.BartForConditionalGeneration`` or
+    ``transformers.T5ForConditionalGeneration``), not just TextAttack's own
+    ``T5ForTextToText`` helper. See
+    https://github.com/QData/TextAttack/issues/771 and
+    https://github.com/QData/TextAttack/issues/772.
+
+    Example, attacking a BART summarization model directly from
+    ``transformers``::
+
+        import transformers
+        from textattack.attack_recipes import Seq2SickCheng2018BlackBox
+        from textattack.models.wrappers import HuggingFaceModelWrapper
+
+        model = transformers.AutoModelForSeq2SeqLM.from_pretrained("facebook/bart-large-cnn")
+        tokenizer = transformers.AutoTokenizer.from_pretrained("facebook/bart-large-cnn")
+        model_wrapper = HuggingFaceModelWrapper(model, tokenizer)
+
+        attack = Seq2SickCheng2018BlackBox.build(model_wrapper)
+        result = attack.attack(input_text, original_summary)
+        print(result.__str__(color_method="ansi"))
     """
 
     @staticmethod
