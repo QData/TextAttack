@@ -83,8 +83,8 @@ class Attack:
         constraints: List[Union[Constraint, PreTransformationConstraint]],
         transformation: Transformation,
         search_method: SearchMethod,
-        transformation_cache_size=2**15,
-        constraint_cache_size=2**15,
+        transformation_cache_size=2 ** 15,
+        constraint_cache_size=2 ** 15,
     ):
         """Initialize an attack object.
 

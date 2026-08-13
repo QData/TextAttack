@@ -1,10 +1,13 @@
-textattack.prompt_augmentation package
+textattack.prompt\_augmentation package
 =======================================
 
 .. automodule:: textattack.prompt_augmentation
    :members:
    :undoc-members:
    :show-inheritance:
+
+Submodules
+----------
 
 
 .. automodule:: textattack.prompt_augmentation.prompt_augmentation_pipeline

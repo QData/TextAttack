@@ -92,7 +92,7 @@ class Attacker:
     def _get_worklist(self, start, end, num_examples, shuffle):
         if end - start < num_examples:
             logger.warn(
-                f"Attempting to attack {num_examples} samples when only {end-start} are available."
+                f"Attempting to attack {num_examples} samples when only {end - start} are available."
             )
         candidates = list(range(start, end))
         if shuffle:

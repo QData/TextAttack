@@ -149,7 +149,7 @@ class HuggingFaceDataset(Dataset):
 
         self.shuffled = shuffle
         if shuffle:
-            self._dataset.shuffle()
+            self._dataset = self._dataset.shuffle()
 
     def _format_as_dict(self, example):
         input_dict = collections.OrderedDict(
@@ -190,5 +190,5 @@ class HuggingFaceDataset(Dataset):
             ]
 
     def shuffle(self):
-        self._dataset.shuffle()
+        self._dataset = self._dataset.shuffle()
         self.shuffled = True

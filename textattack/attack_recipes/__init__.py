@@ -43,3 +43,4 @@ from .leap_2023 import LEAP2023
 from .french_recipe import FrenchRecipe
 from .spanish_recipe import SpanishRecipe
 from .chinese_recipe import ChineseRecipe
+from .bad_characters_2021 import BadCharacters2021

@@ -6,7 +6,8 @@ textattack.models.wrappers package
    :undoc-members:
    :show-inheritance:
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.models.wrappers.huggingface_model_wrapper
@@ -22,6 +23,12 @@ textattack.models.wrappers package
 
 
 .. automodule:: textattack.models.wrappers.pytorch_model_wrapper
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+.. automodule:: textattack.models.wrappers.remote_model_wrapper
    :members:
    :undoc-members:
    :show-inheritance:

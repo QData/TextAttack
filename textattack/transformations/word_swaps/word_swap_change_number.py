@@ -104,7 +104,7 @@ class WordSwapChangeNumber(WordSwap):
         """Helper function of _get_new_number, replace a number with another
         random number within the range of self.max_change."""
         if num not in [0, 2, 4]:
-            change = int(num * self.max_change) + 1
+            change = abs(int(num * self.max_change)) + 1
             if num >= 0:
                 num_list = np.random.randint(max(num - change, 1), num + change, self.n)
             else:

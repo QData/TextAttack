@@ -557,7 +557,7 @@ class _CommandLineTrainingArgs:
                 label >= 0
                 for label in train_dataset_labels_set
                 if isinstance(label, int)
-            ), f"Train dataset has negative label/s {[label for label in train_dataset_labels_set if isinstance(label,int) and label < 0 ]} which is/are not supported by pytorch.Use --filter-train-by-labels to keep suitable labels"
+            ), f"Train dataset has negative label/s {[label for label in train_dataset_labels_set if isinstance(label, int) and label < 0]} which is/are not supported by pytorch. Use --filter-train-by-labels to keep suitable labels"
 
             assert num_labels >= len(
                 train_dataset_labels_set
@@ -569,7 +569,7 @@ class _CommandLineTrainingArgs:
                 label >= 0
                 for label in eval_dataset_labels_set
                 if isinstance(label, int)
-            ), f"Eval dataset has negative label/s {[label for label in eval_dataset_labels_set if isinstance(label,int) and label < 0 ]} which is/are not supported by pytorch.Use --filter-eval-by-labels to keep suitable labels"
+            ), f"Eval dataset has negative label/s {[label for label in eval_dataset_labels_set if isinstance(label, int) and label < 0]} which is/are not supported by pytorch. Use --filter-eval-by-labels to keep suitable labels"
 
             assert num_labels >= len(
                 set(eval_dataset_labels_set)

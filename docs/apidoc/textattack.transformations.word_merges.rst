@@ -6,7 +6,8 @@ textattack.transformations.word\_merges package
    :undoc-members:
    :show-inheritance:
 
-
+Submodules
+----------
 
 
 .. automodule:: textattack.transformations.word_merges.word_merge

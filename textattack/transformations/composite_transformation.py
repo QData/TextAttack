@@ -11,7 +11,7 @@ from textattack.transformations import Transformation
 
 class CompositeTransformation(Transformation):
     """A transformation which applies each of a list of transformations,
-    returning a set of all optoins.
+    returning a set of all options.
 
     Args:
         transformations: The list of ``Transformation`` to apply.
@@ -34,10 +34,11 @@ class CompositeTransformation(Transformation):
         )
 
     def __call__(self, *args, **kwargs):
-        new_attacked_texts = set()
+        new_attacked_texts = []
         for transformation in self.transformations:
-            new_attacked_texts.update(transformation(*args, **kwargs))
-        return list(new_attacked_texts)
+            new_attacked_texts.extend(transformation(*args, **kwargs))
+        seen = set()
+        return [t for t in new_attacked_texts if not (t in seen or seen.add(t))]
 
     def __repr__(self):
         main_str = "CompositeTransformation" + "("

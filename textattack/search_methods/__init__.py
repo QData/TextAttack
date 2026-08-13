@@ -16,3 +16,4 @@ from .alzantot_genetic_algorithm import AlzantotGeneticAlgorithm
 from .improved_genetic_algorithm import ImprovedGeneticAlgorithm
 from .particle_swarm_optimization import ParticleSwarmOptimization
 from .particle_swarm_optimization_leap import ParticleSwarmOptimizationLEAP
+from .differential_evolution import DifferentialEvolution

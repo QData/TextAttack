@@ -2,14 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
-This file was started alongside the `leap` attack recipe addition below;
-it does not attempt to reconstruct history prior to that point. Format
-loosely follows [Keep a Changelog](https://keepachangelog.com/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
 ### Added
 
+- `RemoteModelWrapper` (`textattack.models.wrappers.RemoteModelWrapper`): query a model served behind a remote HTTP API instead of running it locally. Request/response handling is adaptable to different endpoint schemas via `request_fn`/`response_fn`.
 - New attack recipe `leap` (`LEAP2023`, see `textattack/attack_recipes/leap_2023.py`)
   implementing LEAP: Efficient and Automated Test Method for NLP Software
   ([arXiv:2308.11284](https://arxiv.org/abs/2308.11284)). LEAP is a

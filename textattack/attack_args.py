@@ -38,6 +38,7 @@ ATTACK_RECIPE_NAMES = {
     "clare": "textattack.attack_recipes.CLARE2020",
     "a2t": "textattack.attack_recipes.A2TYoo2021",
     "leap": "textattack.attack_recipes.LEAP2023",
+    "bad-characters": "textattack.attack_recipes.BadCharacters2021",
 }
 
 
@@ -55,6 +56,10 @@ BLACK_BOX_TRANSFORMATION_CLASS_NAMES = {
     "word-swap-masked-lm": "textattack.transformations.WordSwapMaskedLM",
     "word-swap-hownet": "textattack.transformations.WordSwapHowNet",
     "word-swap-qwerty": "textattack.transformations.WordSwapQWERTY",
+    "word-swap-deletions": "textattack.transformations.WordSwapDeletions",
+    "word-swap-invisible-characters": "textattack.transformations.WordSwapInvisibleCharacters",
+    "word-swap-reorderings": "textattack.transformations.WordSwapReorderings",
+    "word-swap-differential-evolution": "textattack.transformations.WordSwapDifferentialEvolution",
 }
 
 
@@ -106,6 +111,7 @@ SEARCH_METHOD_CLASS_NAMES = {
     "ga-word": "textattack.search_methods.GeneticAlgorithm",
     "greedy-word-wir": "textattack.search_methods.GreedyWordSwapWIR",
     "pso": "textattack.search_methods.ParticleSwarmOptimization",
+    "differential-evolution": "textattack.search_methods.DifferentialEvolution",
 }
 
 
@@ -123,6 +129,14 @@ GOAL_FUNCTION_CLASS_NAMES = {
     "minimize-bleu": "textattack.goal_functions.text.MinimizeBleu",
     "non-overlapping-output": "textattack.goal_functions.text.NonOverlappingOutput",
     "text-to-text": "textattack.goal_functions.text.TextToTextGoalFunction",
+    "maximize-levenshtein": "textattack.goal_functions.text.MaximimzeLevenshtein",
+    #
+    # General goal functions
+    #
+    "logit-sum": "textattack.goal_functions.classification.LogitSum",
+    "named-entity-recognition": "textattack.goal_functions.NamedEntityRecognition",
+    "targeted-strict": "textattack.goal_functions.TargetedStrict",
+    "targeted-bonus": "textattack.goal_functions.TargetedBonus",
 }
 
 
@@ -508,8 +522,8 @@ class _CommandLineAttackArgs:
     interactive: bool = False
     parallel: bool = False
     model_batch_size: int = 32
-    model_cache_size: int = 2**18
-    constraint_cache_size: int = 2**18
+    model_cache_size: int = 2 ** 18
+    constraint_cache_size: int = 2 ** 18
 
     @classmethod
     def _add_parser_args(cls, parser):

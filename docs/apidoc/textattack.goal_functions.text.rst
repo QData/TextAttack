@@ -6,7 +6,14 @@ textattack.goal\_functions.text package
    :undoc-members:
    :show-inheritance:
 
+Submodules
+----------
 
+
+.. automodule:: textattack.goal_functions.text.maximize_levenshtein
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 
 .. automodule:: textattack.goal_functions.text.minimize_bleu

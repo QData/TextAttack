@@ -48,3 +48,8 @@ ParticleSwarmOptimizationLEAP
 -----------------------------
 .. autoclass:: textattack.search_methods.ParticleSwarmOptimizationLEAP
    :members:
+
+DifferentialEvolution
+--------------------------
+.. autoclass:: textattack.search_methods.DifferentialEvolution
+   :members:
