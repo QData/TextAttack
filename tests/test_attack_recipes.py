@@ -102,19 +102,31 @@ def test_leap_and_pso_zang_2020_attack_without_error():
     model_wrapper = HuggingFaceModelWrapper(model, tokenizer)
     dataset = HuggingFaceDataset("glue", "sst2", split="train")
 
-    for recipe in (LEAP2023, PSOZang2020):
-        attack = recipe.build(model_wrapper)
-        attack_args = AttackArgs(
-            num_examples=1,
-            query_budget=300,
-            random_seed=765,
-            disable_stdout=True,
-        )
-        attacker = Attacker(attack, dataset, attack_args)
-        results = attacker.attack_dataset()
+    # PSOZang2020's WordSwapHowNet calls AttackedText.pos_of_word_index, which
+    # lazily loads a flair POS-tagger into a module-level cache
+    # (textattack.shared.utils.strings._flair_pos_tagger) with no
+    # invalidation. Loading it here has been observed to corrupt a
+    # *different* flair model (an NER tagger) loaded later in the same
+    # process by tests/test_transformations.py's flair-based tests -- reset
+    # it afterward so this test doesn't leak that state into later tests.
+    import textattack.shared.utils.strings as ta_strings
 
-        assert len(results) == 1
-        assert isinstance(
-            results[0],
-            (SuccessfulAttackResult, FailedAttackResult, SkippedAttackResult),
-        )
+    try:
+        for recipe in (LEAP2023, PSOZang2020):
+            attack = recipe.build(model_wrapper)
+            attack_args = AttackArgs(
+                num_examples=1,
+                query_budget=300,
+                random_seed=765,
+                disable_stdout=True,
+            )
+            attacker = Attacker(attack, dataset, attack_args)
+            results = attacker.attack_dataset()
+
+            assert len(results) == 1
+            assert isinstance(
+                results[0],
+                (SuccessfulAttackResult, FailedAttackResult, SkippedAttackResult),
+            )
+    finally:
+        ta_strings._flair_pos_tagger = None
