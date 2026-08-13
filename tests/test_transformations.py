@@ -149,6 +149,39 @@ def test_chinese_word_swap_hownet():
     assert augmented_s or s in augmented_text_list
 
 
+def test_word_swap_inflections_pos_matching():
+    # Regression test for https://github.com/QData/TextAttack/issues/713 and
+    # https://github.com/QData/TextAttack/issues/727: AttackedText.pos_of_word_index
+    # returns flair's upos-fast tags (e.g. "NOUN", "VERB"), so
+    # WordSwapInflections's POS-to-lemma mapping must have entries for those
+    # tags, not just legacy fine-grained en-ptb tags (e.g. "NN", "VBD"), or it
+    # silently returns zero candidates for ordinary words.
+    import textattack
+    from textattack.transformations.word_swaps import WordSwapInflections
+
+    transformation = WordSwapInflections()
+    attacked_text = textattack.shared.AttackedText("The cats were running quickly.")
+
+    # Confirm the tagger is actually giving us the upos-fast tag, not a
+    # legacy en-ptb one, so this test exercises the real mismatch and isn't
+    # trivially passing for the wrong reason.
+    cats_index = attacked_text.words.index("cats")
+    cats_pos = attacked_text.pos_of_word_index(cats_index)
+    assert cats_pos == "NOUN"
+    # Before the fix, "NOUN" wasn't a key in the mapping (only "NN" was), so
+    # this lookup missed and _get_replacement_words returned [] for every
+    # ordinary noun.
+    noun_candidates = transformation._get_replacement_words("cats", cats_pos)
+    assert "cat" in noun_candidates
+
+    were_index = attacked_text.words.index("were")
+    were_pos = attacked_text.pos_of_word_index(were_index)
+    assert were_pos == "VERB"
+    # Same failure mode as above, for verbs ("VERB" vs. the legacy "VBD").
+    verb_candidates = transformation._get_replacement_words("were", were_pos)
+    assert "was" in verb_candidates
+
+
 def test_chinese_word_swap_masked():
     from textattack.augmentation import Augmenter
     from textattack.transformations.word_swaps.chn_transformations import (
