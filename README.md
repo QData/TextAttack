@@ -229,6 +229,14 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>(["Adversarial Examples for Natural Language Classification Problems" (Kuleshov et al., 2018)](https://openreview.net/pdf?id=r1QZ3zbAZ)) </sub></td>
 </tr>
 <tr>
+<td><code>leap</code> <span class="citation" data-cites="leap2023efficient"></span></td>
+<td><sub>Untargeted Classification</sub></td>
+<td><sub>Percentage of words perturbed</sub></td>
+<td><sub>WordNet-based synonym swap</sub></td>
+<td><sub>Adaptive Particle Swarm Optimization (Levy flight)</sub></td>
+<td ><sub>Levy-flight-based adaptive variant of the <code>pso</code> recipe's Particle Swarm Optimization search (["LEAP: Efficient and Automated Test Method for NLP Software" (2023)](https://arxiv.org/abs/2308.11284))</sub></td>
+</tr>
+<tr>
 <td><code>pruthi</code> <span class="citation" data-cites="pruthi2019combating"></span></td>
 <td><sub>Untargeted Classification</sub></td>
 <td><sub>Minimum word length, Maximum number of words perturbed</sub></td>

@@ -80,6 +80,52 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
     def _equal(self, a, b):
         return -self.v_max if a == b else self.v_max
 
+    def _initialize_velocities(self, num_words):
+        """Return the initial ``(pop_size, num_words)`` velocity matrix.
+
+        Overridable so subclasses (e.g. LEAP) can use a different sampling
+        scheme for the initial per-particle velocity.
+        """
+        v_init = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
+        return np.array(
+            [[v_init[t] for _ in range(num_words)] for t in range(self.pop_size)]
+        )
+
+    def _pre_iteration_setup(self, population):
+        """Hook called once, after the initial population/elites are built
+        and before the main iteration loop starts. No-op by default;
+        overridable for subclasses that need to cache statistics (e.g.
+        fitness mean/min) computed from the initial population."""
+
+    def _compute_omega(self, i, population):
+        """Return the per-particle inertia weight for iteration `i`, as an
+        array of length ``len(population)``.
+
+        The base implementation applies the same linearly-decaying weight
+        to every particle; overridable for subclasses (e.g. LEAP) that
+        instead compute a per-particle, fitness-adaptive weight.
+        """
+        omega = (self.omega_1 - self.omega_2) * (
+            self.max_iters - i
+        ) / self.max_iters + self.omega_2
+        return np.full(len(population), omega)
+
+    def _compute_turn_prob(self, velocities_k):
+        """Convert a particle's per-word velocities into per-word turn
+        probabilities. The base implementation treats each word
+        independently via sigmoid; overridable for subclasses (e.g. LEAP)
+        that instead normalize turn probability across the whole sentence.
+        """
+        return utils.sigmoid(velocities_k)
+
+    def _compute_change_ratio(self, pop_member, local_elite, initial_result):
+        """Return the change-rate used to decide whether `pop_member`
+        undergoes mutation this iteration. The base implementation measures
+        drift from the original input; overridable for subclasses (e.g.
+        LEAP) that instead measure drift from the particle's local elite.
+        """
+        return initial_result.attacked_text.words_diff_ratio(pop_member.attacked_text)
+
     def _turn(self, source_text, target_text, prob, original_text):
         """
         Based on given probabilities, "move" to `target_text` from `source_text`
@@ -141,7 +187,10 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
 
         if self.post_turn_check and not passed_constraints:
             # If we cannot find a turn that passes the constraints, we do not move.
-            return source_text
+            # Return a copy rather than `source_text` itself, since `source_text` is
+            # often `local_elites[k]` or `global_elite` and the caller may later
+            # mutate the returned PopulationMember in place.
+            return copy.copy(source_text)
         else:
             return PopulationMember(new_text)
 
@@ -216,29 +265,28 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
     def perform_search(self, initial_result):
         self._search_over = False
         population = self._initialize_population(initial_result, self.pop_size)
-        # Initialize  up velocities of each word for each population
-        v_init = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
-        velocities = np.array(
-            [
-                [v_init[t] for _ in range(initial_result.attacked_text.num_words)]
-                for t in range(self.pop_size)
-            ]
-        )
+        velocities = self._initialize_velocities(initial_result.attacked_text.num_words)
 
-        global_elite = max(population, key=lambda x: x.score)
+        # `copy.copy` each PopulationMember individually (not just the list)
+        # so `global_elite`/`local_elites` never alias the same object as an
+        # entry in `population` -- otherwise an in-place mutation of a
+        # population member (e.g. via `_perturb`) could silently corrupt the
+        # elite it was copied from, whenever that member happens to not be
+        # reassigned to a new object by `_turn` during an iteration.
+        global_elite = copy.copy(max(population, key=lambda x: x.score))
         if (
             self._search_over
             or global_elite.result.goal_status == GoalFunctionResultStatus.SUCCEEDED
         ):
             return global_elite.result
 
-        local_elites = copy.copy(population)
+        local_elites = [copy.copy(p) for p in population]
+
+        self._pre_iteration_setup(population)
 
         # start iterations
         for i in range(self.max_iters):
-            omega = (self.omega_1 - self.omega_2) * (
-                self.max_iters - i
-            ) / self.max_iters + self.omega_2
+            omega = self._compute_omega(i, population)
             C1 = self.c1_origin - i / self.max_iters * (self.c1_origin - self.c2_origin)
             C2 = self.c2_origin + i / self.max_iters * (self.c1_origin - self.c2_origin)
             P1 = C1
@@ -253,11 +301,11 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
                 ), "PSO word length mismatch!"
 
                 for d in range(len(pop_mem_words)):
-                    velocities[k][d] = omega * velocities[k][d] + (1 - omega) * (
+                    velocities[k][d] = omega[k] * velocities[k][d] + (1 - omega[k]) * (
                         self._equal(pop_mem_words[d], local_elite_words[d])
                         + self._equal(pop_mem_words[d], global_elite.words[d])
                     )
-                turn_prob = utils.sigmoid(velocities[k])
+                turn_prob = self._compute_turn_prob(velocities[k])
 
                 if np.random.uniform() < P1:
                     # Move towards local elite
@@ -296,8 +344,8 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
 
             # Mutation based on the current change rate
             for k in range(len(population)):
-                change_ratio = initial_result.attacked_text.words_diff_ratio(
-                    population[k].attacked_text
+                change_ratio = self._compute_change_ratio(
+                    population[k], local_elites[k], initial_result
                 )
                 # Referred from the original source code
                 p_change = 1 - 2 * change_ratio
