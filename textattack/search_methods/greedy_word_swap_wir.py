@@ -29,17 +29,25 @@ class GreedyWordSwapWIR(SearchMethod):
     Args:
         wir_method: method for ranking most important words
         model_wrapper: model wrapper used for gradient-based ranking
+        truncate_words_to: if set, only consider the first N word indices
+            (by position) when ranking/searching, to bound cost on very long
+            inputs (e.g. for ``wir_method="gradient"`` against models with a
+            limited context window).
     """
 
-    def __init__(self, wir_method="unk", unk_token="[UNK]"):
+    def __init__(self, wir_method="unk", unk_token="[UNK]", truncate_words_to=None):
         self.wir_method = wir_method
         self.unk_token = unk_token
+        self.truncate_words_to = truncate_words_to
 
     def _get_index_order(self, initial_text, max_len=-1):
         """Returns word indices of ``initial_text`` in descending order of
         importance."""
 
         len_text, indices_to_order = self.get_indices_to_order(initial_text)
+        if self.truncate_words_to is not None:
+            indices_to_order = indices_to_order[: self.truncate_words_to]
+            len_text = len(indices_to_order)
 
         if self.wir_method == "unk":
             leave_one_texts = [

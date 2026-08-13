@@ -32,7 +32,7 @@ def words_from_text(s, words_to_ignore=[]):
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
     try:
-        if re.search("[\u4e00-\u9FFF]", s):
+        if re.search("[\u4e00-\u9fff]", s):
             seg_list = jieba.cut(s, cut_all=False)
             s = " ".join(seg_list)
         else:
@@ -48,9 +48,14 @@ def words_from_text(s, words_to_ignore=[]):
     filter_pattern = f"[\\w{filter_pattern}]+"
     words = []
     for word in s.split():
-        # Allow apostrophes, hyphens, underscores, asterisks and at signs as long as they don't begin the word.
-        word = word.lstrip(exceptions)
-        filt = [w.lstrip(exceptions) for w in re.findall(filter_pattern, word)]
+        # Allow apostrophes, hyphens, underscores, asterisks and at signs as
+        # long as they don't begin or end the word (e.g. so quote marks
+        # around a word, as in "'CCC'", don't get kept as part of it; see
+        # https://github.com/QData/TextAttack/issues/723). Internal
+        # apostrophes/hyphens (contractions, compound words) are unaffected
+        # since strip() only trims the ends.
+        word = word.strip(exceptions)
+        filt = [w.strip(exceptions) for w in re.findall(filter_pattern, word)]
         words.extend(filt)
     words = list(filter(lambda w: w not in words_to_ignore + [""], words))
     return words

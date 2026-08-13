@@ -483,7 +483,12 @@ class AttackedText:
         Note that current text and `x` must have same number of words.
         """
         assert self.num_words == x.num_words
-        return float(np.sum(self.words != x.words)) / self.num_words
+        # `self.words != x.words` compares two Python lists and yields a
+        # single bool, not an elementwise mask, so wrap both in np.array
+        # first; otherwise this always returns 0 or 1 regardless of how many
+        # words actually differ. See
+        # https://github.com/QData/TextAttack/issues/787
+        return float(np.sum(np.array(self.words) != np.array(x.words))) / self.num_words
 
     def align_with_model_tokens(
         self, model_wrapper: textattack.models.wrappers.ModelWrapper

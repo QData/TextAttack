@@ -23,7 +23,11 @@ MODELS_BY_GOAL_FUNCTIONS = {
     (TargetedClassification, UntargetedClassification, InputReduction): [
         r"^textattack.models.helpers.lstm_for_classification.*",
         r"^textattack.models.helpers.word_cnn_for_classification.*",
-        r"^transformers.modeling_\w*\.\w*ForSequenceClassification$",
+        # transformers>=4.x moved model classes from
+        # `transformers.modeling_<model>` to
+        # `transformers.models.<model>.modeling_<model>`; match both layouts.
+        # See https://github.com/QData/TextAttack/issues/722
+        r"^transformers\.(models\.\w+\.)?modeling_\w*\.\w*ForSequenceClassification$",
     ],
     (NonOverlappingOutput, MinimizeBleu,): [
         r"^textattack.models.helpers.t5_for_text_to_text.*",

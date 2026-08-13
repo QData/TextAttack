@@ -58,6 +58,29 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         inputs_dict.to(model_device)
 
         with torch.no_grad():
+            # `T5ForTextToText` (TextAttack's own helper, not a
+            # `transformers.PreTrainedModel`) has no `.config` at all, so
+            # look it up defensively rather than via `self.model.config`
+            # directly.
+            model_config = getattr(self.model, "config", None)
+            if getattr(model_config, "is_encoder_decoder", False) and hasattr(
+                self.model, "generate"
+            ):
+                # Seq2seq generation models (e.g. a raw `BartForConditionalGeneration`
+                # or `T5ForConditionalGeneration` loaded directly from
+                # `transformers`, as opposed to TextAttack's own
+                # `T5ForTextToText` helper) need `.generate()` + decoding to
+                # produce text. A plain forward pass only returns logits,
+                # which breaks text-to-text goal functions (e.g.
+                # `NonOverlappingOutput`, `MinimizeBleu`) expecting strings.
+                # See https://github.com/QData/TextAttack/issues/771
+                generated_ids = self.model.generate(
+                    input_ids=inputs_dict["input_ids"],
+                    attention_mask=inputs_dict.get("attention_mask"),
+                )
+                return self.tokenizer.batch_decode(
+                    generated_ids, skip_special_tokens=True
+                )
             outputs = self.model(**inputs_dict)
 
         if isinstance(outputs[0], str):

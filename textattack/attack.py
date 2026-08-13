@@ -212,7 +212,16 @@ class Attack:
         def to_cuda(obj):
             visited.add(id(obj))
             if isinstance(obj, torch.nn.Module):
-                obj.to(textattack.shared.utils.device)
+                if getattr(obj, "hf_device_map", None):
+                    # Model was already loaded with `device_map=...` (e.g.
+                    # split across multiple GPUs via `accelerate`);
+                    # `hf_device_map` is the marker attribute HuggingFace
+                    # sets in that case. Forcing it onto a single device
+                    # here breaks that placement. See
+                    # https://github.com/QData/TextAttack/issues/798
+                    pass
+                else:
+                    obj.to(textattack.shared.utils.device)
             elif isinstance(
                 obj,
                 (

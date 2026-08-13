@@ -11,7 +11,7 @@ import time
 from typing import Dict, Optional
 
 import textattack
-from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file
+from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file, logger
 
 from .attack import Attack
 from .dataset_args import DatasetArgs
@@ -226,6 +226,19 @@ class AttackArgs:
 
     def __post_init__(self):
         if self.num_successful_examples:
+            if self.num_examples not in (None, 10):
+                # `num_examples` was explicitly set to something other than
+                # its default alongside `num_successful_examples`, which
+                # silently overrides it below. Without this, users combining
+                # both (expecting a total cap *and* a success target) can't
+                # tell why `num_examples` came back unset.
+                # See https://github.com/QData/TextAttack/issues/728
+                logger.warn(
+                    f"`num_successful_examples={self.num_successful_examples}` was "
+                    f"set alongside `num_examples={self.num_examples}`; "
+                    "`num_successful_examples` takes priority and `num_examples` "
+                    "will be ignored (set to None)."
+                )
             self.num_examples = None
         if self.num_examples:
             assert (
