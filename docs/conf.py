@@ -21,7 +21,7 @@ copyright = "2021-24, UVA QData Lab"
 author = "UVA QData Lab"
 
 # The full version, including alpha/beta/rc tags
-release = "0.3.10"
+release = "0.3.11"
 
 # Set master doc to `index.rst`.
 master_doc = "index"
