@@ -4,10 +4,11 @@ BERT-Attack:
 
 (BERT-Attack: Adversarial Attack Against BERT Using BERT)
 
-.. warning::
-    This attack is super slow
-    (see https://github.com/QData/TextAttack/issues/586)
-    Consider using smaller values for "max_candidates".
+.. note::
+    Candidate size ``max_candidates`` defaults to 8 (down from the paper's 48)
+    to keep runtime tractable; see https://github.com/QData/TextAttack/issues/586.
+    Pass a larger ``max_candidates`` to ``WordSwapMaskedLM`` for closer
+    fidelity to the original paper at the cost of much slower attacks.
 
 """
 
@@ -39,7 +40,11 @@ class BERTAttackLi2020(AttackRecipe):
     def build(model_wrapper):
         # [from correspondence with the author]
         # Candidate size K is set to 48 for all data-sets.
-        transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=48)
+        # In practice K=48 makes the number of masked-LM candidate combinations
+        # explode for multi-subword tokens (48**n), causing multi-hour runtimes;
+        # see https://github.com/QData/TextAttack/issues/586. K=8 keeps the attack
+        # tractable with a small accuracy/ASR tradeoff.
+        transformation = WordSwapMaskedLM(method="bert-attack", max_candidates=8)
         #
         # Don't modify the same word twice or stopwords.
         #

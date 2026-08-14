@@ -26,9 +26,25 @@ class WordSwapInflections(WordSwap):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # fine-grained en-ptb POS to universal POS mapping
-        # (mapping info: https://github.com/slavpetrov/universal-pos-tags)
+        # `AttackedText.pos_of_word_index` now returns flair's "upos-fast" tags
+        # directly (Universal Dependencies UPOS, e.g. "NOUN", "VERB", "PROPN"),
+        # not the old fine-grained en-ptb tags this dict's keys used to assume
+        # (see https://github.com/QData/TextAttack/issues/713,
+        # https://github.com/QData/TextAttack/issues/727). Without the plain
+        # "NOUN"/"VERB"/"ADJ" entries below, this lookup always misses and the
+        # transformation silently returns no candidates for ordinary words.
+        # Kept the legacy en-ptb keys too in case a caller wires up a
+        # PTB-style tagger.
+        # (mapping info: https://universaldependencies.org/u/pos/,
+        # https://github.com/slavpetrov/universal-pos-tags)
         self._enptb_to_universal = {
+            # current flair "upos-fast" (Universal Dependencies) tags
+            "NOUN": "NOUN",
+            "PROPN": "NOUN",
+            "VERB": "VERB",
+            "AUX": "VERB",
+            "ADJ": "ADJ",
+            # legacy fine-grained en-ptb tags
             "JJRJR": "ADJ",
             "VBN": "VERB",
             "VBP": "VERB",

@@ -48,6 +48,16 @@ def attacked_text_pair():
     return textattack.shared.AttackedText(raw_text_pair)
 
 
+raw_text_pair_split_word_collision = collections.OrderedDict(
+    [("premise", "hello there"), ("hypothesis", "I am fine.")]
+)
+
+
+@pytest.fixture
+def attacked_text_pair_split_word_collision():
+    return textattack.shared.AttackedText(raw_text_pair_split_word_collision)
+
+
 class TestAttackedText:
     def test_words(self, attacked_text, pokemon_attacked_text):
         # fmt: off
@@ -144,6 +154,18 @@ class TestAttackedText:
             == "A person walks a long way up stairs into a room and sees beer poured from a keg and people on the couch talking."
         )
 
+    def test_pair_word_replacement_split_token_collision(
+        self, attacked_text_pair_split_word_collision
+    ):
+        # Regression test for https://github.com/QData/TextAttack/issues/631:
+        # replacing the first word of the second segment ("I") used to match
+        # inside the "<SPLIT>" join token instead of the real word, since "I"
+        # is a character substring of "<SPLIT>".
+        new_text = attacked_text_pair_split_word_collision.replace_word_at_index(
+            2, "You"
+        )
+        assert new_text.text == "hello there\nYou am fine."
+
     def test_pair_word_insertion(self, attacked_text_pair):
         new_text = attacked_text_pair.insert_text_after_word_index(3, "old decrepit")
         assert new_text.text == (
@@ -204,3 +226,20 @@ class TestAttackedText:
         ]
 
     # TODO: test align_words_with_tokens
+
+
+def test_pos_of_word_index_after_ner_of_word_index():
+    # Regression test for a CI failure (KeyError: 'upos', later reproduced
+    # locally as an empty flair annotation layer): `flair_tag` cached a
+    # single `SequenceTagger` in a module-global slot keyed by nothing, so
+    # once anything called `ner_of_word_index` (loading the "ner" tagger)
+    # in the same process, every later `pos_of_word_index` call silently
+    # reused that NER tagger instead of loading "upos-fast", producing
+    # wrong or empty POS labels. Calling NER before POS on a fresh
+    # AttackedText reproduces the exact ordering that broke in CI.
+    ner_text = textattack.shared.AttackedText("I am in Dallas.")
+    ner_text.ner_of_word_index(3)
+
+    pos_text = textattack.shared.AttackedText("The cats were running quickly.")
+    assert pos_text.pos_of_word_index(1) == "NOUN"
+    assert pos_text.pos_of_word_index(2) == "VERB"
