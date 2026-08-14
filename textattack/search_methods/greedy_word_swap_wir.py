@@ -17,6 +17,7 @@ from torch.nn.functional import softmax
 
 from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
+from textattack.shared import AttackedText
 from textattack.shared.validators import (
     transformation_consists_of_word_swaps_and_deletions,
 )
@@ -112,9 +113,38 @@ class GreedyWordSwapWIR(SearchMethod):
         elif self.wir_method == "gradient":
             victim_model = self.get_victim_model()
             index_scores = np.zeros(len_text)
-            grad_output = victim_model.get_grad(initial_text.tokenizer_input)
+            gradient_text = initial_text
+            if (
+                self.truncate_words_to is not None
+                and indices_to_order
+                and isinstance(initial_text.tokenizer_input, str)
+            ):
+                # `truncate_words_to` above only shortens the cheap post-hoc
+                # index-scoring loop; the actual expensive step is
+                # `get_grad`'s tokenize + forward + backward pass, which
+                # otherwise still runs over the full untruncated text. Bound
+                # it too by feeding it only the same word span
+                # `indices_to_order` was already limited to. Build a
+                # separate `AttackedText` for this (rather than just slicing
+                # the string passed to `get_grad`) and use it for the
+                # `align_with_model_tokens` call below too, so the returned
+                # `gradient` array and `word2token_mapping`'s token indices
+                # stay consistent with each other.
+                #
+                # Only done for single-sequence inputs: for paired inputs
+                # (e.g. premise/hypothesis), `tokenizer_input` is a tuple and
+                # truncating it here would need to preserve that pair
+                # structure (and the per-segment word budget) to avoid
+                # breaking the tokenizer's dual-sequence encoding, which is
+                # out of scope here. Those still fall back on the
+                # tokenizer's own `model_max_length` truncation inside
+                # `get_grad` as a (looser) bound.
+                last_index = max(indices_to_order)
+                truncated_str = initial_text.text_window_around_index(0, last_index + 1)
+                gradient_text = AttackedText(truncated_str)
+            grad_output = victim_model.get_grad(gradient_text.tokenizer_input)
             gradient = grad_output["gradient"]
-            word2token_mapping = initial_text.align_with_model_tokens(victim_model)
+            word2token_mapping = gradient_text.align_with_model_tokens(victim_model)
             for i, index in enumerate(indices_to_order):
                 matched_tokens = word2token_mapping[index]
                 if not matched_tokens:
