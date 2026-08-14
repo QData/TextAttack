@@ -17,6 +17,7 @@ from torch.nn.functional import softmax
 
 from textattack.goal_function_results import GoalFunctionResultStatus
 from textattack.search_methods import SearchMethod
+from textattack.shared import AttackedText
 from textattack.shared.validators import (
     transformation_consists_of_word_swaps_and_deletions,
 )
@@ -29,17 +30,33 @@ class GreedyWordSwapWIR(SearchMethod):
     Args:
         wir_method: method for ranking most important words
         model_wrapper: model wrapper used for gradient-based ranking
+        truncate_words_to: if set, only consider the first N word indices
+            (by position) when ranking/searching, to bound cost on very long
+            inputs (e.g. for ``wir_method="gradient"`` against models with a
+            limited context window).
     """
 
-    def __init__(self, wir_method="unk", unk_token="[UNK]"):
+    def __init__(self, wir_method="unk", unk_token="[UNK]", truncate_words_to=None):
         self.wir_method = wir_method
         self.unk_token = unk_token
+        self.truncate_words_to = truncate_words_to
 
     def _get_index_order(self, initial_text, max_len=-1):
         """Returns word indices of ``initial_text`` in descending order of
         importance."""
 
         len_text, indices_to_order = self.get_indices_to_order(initial_text)
+        if self.truncate_words_to is not None:
+            # `indices_to_order` comes from a `set` intersection in
+            # `Transformation.__call__`, so its iteration order isn't
+            # guaranteed to ascend by word position (CPython set order
+            # depends on hash-table layout, not insertion/value order).
+            # Sort first so "first N" below really means the first N
+            # positions, not an arbitrary N-element subset that could
+            # still span the whole text and defeat the cost bound this
+            # is meant to enforce (e.g. for `wir_method="gradient"`).
+            indices_to_order = sorted(indices_to_order)[: self.truncate_words_to]
+            len_text = len(indices_to_order)
 
         if self.wir_method == "unk":
             leave_one_texts = [
@@ -104,9 +121,38 @@ class GreedyWordSwapWIR(SearchMethod):
         elif self.wir_method == "gradient":
             victim_model = self.get_victim_model()
             index_scores = np.zeros(len_text)
-            grad_output = victim_model.get_grad(initial_text.tokenizer_input)
+            gradient_text = initial_text
+            if (
+                self.truncate_words_to is not None
+                and indices_to_order
+                and isinstance(initial_text.tokenizer_input, str)
+            ):
+                # `truncate_words_to` above only shortens the cheap post-hoc
+                # index-scoring loop; the actual expensive step is
+                # `get_grad`'s tokenize + forward + backward pass, which
+                # otherwise still runs over the full untruncated text. Bound
+                # it too by feeding it only the same word span
+                # `indices_to_order` was already limited to. Build a
+                # separate `AttackedText` for this (rather than just slicing
+                # the string passed to `get_grad`) and use it for the
+                # `align_with_model_tokens` call below too, so the returned
+                # `gradient` array and `word2token_mapping`'s token indices
+                # stay consistent with each other.
+                #
+                # Only done for single-sequence inputs: for paired inputs
+                # (e.g. premise/hypothesis), `tokenizer_input` is a tuple and
+                # truncating it here would need to preserve that pair
+                # structure (and the per-segment word budget) to avoid
+                # breaking the tokenizer's dual-sequence encoding, which is
+                # out of scope here. Those still fall back on the
+                # tokenizer's own `model_max_length` truncation inside
+                # `get_grad` as a (looser) bound.
+                last_index = max(indices_to_order)
+                truncated_str = initial_text.text_of_first_n_words(last_index + 1)
+                gradient_text = AttackedText(truncated_str)
+            grad_output = victim_model.get_grad(gradient_text.tokenizer_input)
             gradient = grad_output["gradient"]
-            word2token_mapping = initial_text.align_with_model_tokens(victim_model)
+            word2token_mapping = gradient_text.align_with_model_tokens(victim_model)
             for i, index in enumerate(indices_to_order):
                 matched_tokens = word2token_mapping[index]
                 if not matched_tokens:

@@ -8,6 +8,7 @@ from typing import List, Union
 
 import lru
 import torch
+import transformers
 
 import textattack
 from textattack.attack_results import (
@@ -179,7 +180,15 @@ class Attack:
         def to_cpu(obj):
             visited.add(id(obj))
             if isinstance(obj, torch.nn.Module):
-                obj.cpu()
+                if isinstance(obj, transformers.PreTrainedModel) and getattr(
+                    obj, "hf_device_map", None
+                ):
+                    # See the matching guard in `cuda_`/`to_cuda` below for
+                    # why this is scoped to `transformers.PreTrainedModel`
+                    # specifically and skipped rather than moved.
+                    pass
+                else:
+                    obj.cpu()
             elif isinstance(
                 obj,
                 (
@@ -212,7 +221,26 @@ class Attack:
         def to_cuda(obj):
             visited.add(id(obj))
             if isinstance(obj, torch.nn.Module):
-                obj.to(textattack.shared.utils.device)
+                if isinstance(obj, transformers.PreTrainedModel) and getattr(
+                    obj, "hf_device_map", None
+                ):
+                    # Model was already loaded with `device_map=...` (e.g.
+                    # split across multiple GPUs via `accelerate`);
+                    # `hf_device_map` is the marker attribute HuggingFace
+                    # sets in that case. Forcing it onto a single device
+                    # here breaks that placement. See
+                    # https://github.com/QData/TextAttack/issues/798
+                    #
+                    # Scoped to `transformers.PreTrainedModel` specifically
+                    # (rather than any `torch.nn.Module`) since this visitor
+                    # also traverses non-HuggingFace models (TensorFlow,
+                    # sklearn, custom PyTorch modules, ...) reachable from
+                    # a Constraint/GoalFunction/Transformation, and only
+                    # `transformers`-loaded models actually get this
+                    # attribute set by `from_pretrained(device_map=...)`.
+                    pass
+                else:
+                    obj.to(textattack.shared.utils.device)
             elif isinstance(
                 obj,
                 (

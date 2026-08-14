@@ -43,6 +43,14 @@ def hyphenated_text():
     return textattack.shared.AttackedText(raw_hyphenated_text)
 
 
+raw_quoted_text = "AAA BBB 'CCC'"
+
+
+@pytest.fixture
+def quoted_text():
+    return textattack.shared.AttackedText(raw_quoted_text)
+
+
 @pytest.fixture
 def attacked_text_pair():
     return textattack.shared.AttackedText(raw_text_pair)
@@ -77,6 +85,13 @@ class TestAttackedText:
             attacked_text.text_window_around_index(5, float("inf"))
             == "A person walks up stairs into a room and sees beer poured from a keg and people talking"
         )
+
+    def test_text_of_first_n_words(self, attacked_text):
+        assert attacked_text.text_of_first_n_words(0) == ""
+        assert attacked_text.text_of_first_n_words(1) == "A"
+        assert attacked_text.text_of_first_n_words(3) == "A person walks"
+        # n beyond the text's word count clamps to the full text.
+        assert attacked_text.text_of_first_n_words(10**5) == attacked_text.text[:-1]
 
     def test_big_window_around_index(self, attacked_text):
         assert (
@@ -213,6 +228,12 @@ class TestAttackedText:
             new_text.text
             == "person walks a very long way up stairs into a room and sees beer poured and people on the couch."
         )
+
+    def test_quoted_word(self, quoted_text):
+        # Regression test for https://github.com/QData/TextAttack/issues/723:
+        # a word wrapped in quote marks should have both quotes stripped,
+        # not just the leading one.
+        assert quoted_text.words == ["AAA", "BBB", "CCC"]
 
     def test_hyphen_apostrophe_words(self, hyphenated_text):
         assert hyphenated_text.words == [

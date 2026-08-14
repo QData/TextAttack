@@ -118,7 +118,20 @@ class Augmenter:
             int(self.pct_words_to_swap * len(attacked_text.words)), 1
         )
         augmentation_results = []
-        for _ in range(self.transformations_per_example):
+        num_attempts = 0
+        # Bound retries so a transformation with limited output diversity
+        # (e.g. BackTranslation, whose stochastic language chaining can
+        # land on the same result across attempts for short inputs) doesn't
+        # silently return fewer than `transformations_per_example` unique
+        # augmentations. Transformations with large search spaces rarely
+        # produce a duplicate, so this is a no-op for them in practice.
+        # See https://github.com/QData/TextAttack/issues/800.
+        max_attempts = self.transformations_per_example * 3
+        while (
+            num_attempts < self.transformations_per_example
+            or len(all_transformed_texts) < self.transformations_per_example
+        ) and num_attempts < max_attempts:
+            num_attempts += 1
             current_text = attacked_text
             words_swapped = len(current_text.attack_attrs["modified_indices"])
 
@@ -178,7 +191,7 @@ class Augmenter:
             ):
                 if not self.high_yield:
                     all_transformed_texts = random.sample(
-                        all_transformed_texts, self.transformations_per_example
+                        list(all_transformed_texts), self.transformations_per_example
                     )
                 break
 

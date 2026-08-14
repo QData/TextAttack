@@ -123,6 +123,16 @@ class AttackedText:
         text_idx_end = self._text_index_of_word_index(end) + len(self.words[end])
         return self.text[text_idx_start:text_idx_end]
 
+    def text_of_first_n_words(self, n: int) -> str:
+        """The text spanning the first ``n`` words (from the start of the
+        text, not centered around any index)."""
+        n = min(max(n, 0), self.num_words)
+        if n == 0:
+            return ""
+        end = n - 1
+        text_idx_end = self._text_index_of_word_index(end) + len(self.words[end])
+        return self.text[:text_idx_end]
+
     def pos_of_word_index(self, desired_word_idx: int) -> str:
         """Returns the part-of-speech of the word at index `word_idx`.
 
@@ -502,7 +512,12 @@ class AttackedText:
         Note that current text and `x` must have same number of words.
         """
         assert self.num_words == x.num_words
-        return float(np.sum(self.words != x.words)) / self.num_words
+        # `self.words != x.words` compares two Python lists and yields a
+        # single bool, not an elementwise mask, so wrap both in np.array
+        # first; otherwise this always returns 0 or 1 regardless of how many
+        # words actually differ. See
+        # https://github.com/QData/TextAttack/issues/787
+        return float(np.sum(np.array(self.words) != np.array(x.words))) / self.num_words
 
     def align_with_model_tokens(
         self, model_wrapper: textattack.models.wrappers.ModelWrapper

@@ -3,6 +3,7 @@ AttackArgs Class
 ================
 """
 
+import argparse
 from dataclasses import dataclass, field
 import json
 import os
@@ -11,11 +12,13 @@ import time
 from typing import Dict, Optional
 
 import textattack
-from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file
+from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file, logger
 
 from .attack import Attack
 from .dataset_args import DatasetArgs
 from .model_args import ModelArgs
+
+_NUM_EXAMPLES_UNSET = object()
 
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
@@ -202,7 +205,7 @@ class AttackArgs:
             Enable calculation and display of optional advance post-hoc metrics like perplexity, grammar errors, etc.
     """
 
-    num_examples: int = 10
+    num_examples: int = _NUM_EXAMPLES_UNSET
     num_successful_examples: int = None
     num_examples_offset: int = 0
     attack_n: bool = False
@@ -226,7 +229,25 @@ class AttackArgs:
 
     def __post_init__(self):
         if self.num_successful_examples:
+            if (
+                self.num_examples is not None
+                and self.num_examples is not _NUM_EXAMPLES_UNSET
+            ):
+                # `num_examples` was explicitly set (even to its default
+                # value of 10) alongside `num_successful_examples`, which
+                # silently overrides it below. Without this, users combining
+                # both (expecting a total cap *and* a success target) can't
+                # tell why `num_examples` came back unset.
+                # See https://github.com/QData/TextAttack/issues/728
+                logger.warn(
+                    f"`num_successful_examples={self.num_successful_examples}` was "
+                    f"set alongside `num_examples={self.num_examples}`; "
+                    "`num_successful_examples` takes priority and `num_examples` "
+                    "will be ignored (set to None)."
+                )
             self.num_examples = None
+        elif self.num_examples is _NUM_EXAMPLES_UNSET:
+            self.num_examples = 10
         if self.num_examples:
             assert (
                 self.num_examples >= 0 or self.num_examples == -1
@@ -257,8 +278,20 @@ class AttackArgs:
             "--num-examples",
             "-n",
             type=int,
-            default=default_obj.num_examples,
-            help="The number of examples to process, -1 for entire dataset.",
+            # `argparse.SUPPRESS` (not `_NUM_EXAMPLES_UNSET` or
+            # `default_obj.num_examples`) means the attribute is simply
+            # absent from the parsed namespace when the user never passes
+            # `--num-examples`, rather than being set to some default value.
+            # `CommandLineAttackArgs(**vars(args))` then omits the kwarg
+            # entirely, so the dataclass field's own default
+            # (`_NUM_EXAMPLES_UNSET`) applies. That keeps `__post_init__`
+            # able to tell "never set" apart from an explicit `10` alongside
+            # `--num-successful-examples` (see #728), while also letting
+            # `ArgumentDefaultsHelpFormatter` skip its automatic
+            # `(default: ...)` suffix here instead of printing the
+            # sentinel's raw repr - we supply an accurate one by hand below.
+            default=argparse.SUPPRESS,
+            help="The number of examples to process, -1 for entire dataset. (default: 10)",
         )
         num_ex_group.add_argument(
             "--num-successful-examples",
