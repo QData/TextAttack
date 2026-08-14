@@ -47,7 +47,15 @@ class GreedyWordSwapWIR(SearchMethod):
 
         len_text, indices_to_order = self.get_indices_to_order(initial_text)
         if self.truncate_words_to is not None:
-            indices_to_order = indices_to_order[: self.truncate_words_to]
+            # `indices_to_order` comes from a `set` intersection in
+            # `Transformation.__call__`, so its iteration order isn't
+            # guaranteed to ascend by word position (CPython set order
+            # depends on hash-table layout, not insertion/value order).
+            # Sort first so "first N" below really means the first N
+            # positions, not an arbitrary N-element subset that could
+            # still span the whole text and defeat the cost bound this
+            # is meant to enforce (e.g. for `wir_method="gradient"`).
+            indices_to_order = sorted(indices_to_order)[: self.truncate_words_to]
             len_text = len(indices_to_order)
 
         if self.wir_method == "unk":

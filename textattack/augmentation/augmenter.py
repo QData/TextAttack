@@ -128,9 +128,9 @@ class Augmenter:
         # See https://github.com/QData/TextAttack/issues/800.
         max_attempts = self.transformations_per_example * 3
         while (
-            len(all_transformed_texts) < self.transformations_per_example
-            and num_attempts < max_attempts
-        ):
+            num_attempts < self.transformations_per_example
+            or len(all_transformed_texts) < self.transformations_per_example
+        ) and num_attempts < max_attempts:
             num_attempts += 1
             current_text = attacked_text
             words_swapped = len(current_text.attack_attrs["modified_indices"])
@@ -191,7 +191,7 @@ class Augmenter:
             ):
                 if not self.high_yield:
                     all_transformed_texts = random.sample(
-                        all_transformed_texts, self.transformations_per_example
+                        list(all_transformed_texts), self.transformations_per_example
                     )
                 break
 

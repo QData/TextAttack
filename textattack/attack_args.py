@@ -277,7 +277,13 @@ class AttackArgs:
             "--num-examples",
             "-n",
             type=int,
-            default=default_obj.num_examples,
+            # Use the unresolved sentinel (not `default_obj.num_examples`,
+            # which has already been resolved to `10` by `__post_init__`)
+            # so that a user who never passes `--num-examples` still reaches
+            # `AttackArgs.__post_init__` with the sentinel, not a concrete
+            # `10` that would look like an explicit value alongside
+            # `--num-successful-examples` and trigger a spurious warning.
+            default=_NUM_EXAMPLES_UNSET,
             help="The number of examples to process, -1 for entire dataset.",
         )
         num_ex_group.add_argument(

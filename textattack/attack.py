@@ -180,7 +180,15 @@ class Attack:
         def to_cpu(obj):
             visited.add(id(obj))
             if isinstance(obj, torch.nn.Module):
-                obj.cpu()
+                if isinstance(obj, transformers.PreTrainedModel) and getattr(
+                    obj, "hf_device_map", None
+                ):
+                    # See the matching guard in `cuda_`/`to_cuda` below for
+                    # why this is scoped to `transformers.PreTrainedModel`
+                    # specifically and skipped rather than moved.
+                    pass
+                else:
+                    obj.cpu()
             elif isinstance(
                 obj,
                 (
