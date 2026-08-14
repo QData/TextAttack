@@ -189,7 +189,7 @@ Follow these steps to start contributing:
    documentation for a new code file should just be two lines. Our docs will 
    automatically generate from the comments you added to your code. If you're 
    adding an attack recipe, add a reference in `attack_recipes.rst`. 
-   If you're adding a transformation, add a reference in `transformation.rst`, etc. 
+   If you're adding a transformation, add a reference in `docs/api/transformations.rst`, etc. 
 
    You can build the docs and view the updates using `make docs`. If you're 
    adding a tutorial or something where you want to update the docs multiple

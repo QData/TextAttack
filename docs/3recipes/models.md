@@ -393,9 +393,9 @@ All evaluations shown are on the full validation or test set up to 1000 examples
 ## How we have trained the TextAttack Models
 
 
-- By Oct 2020, TextAttack provides users with 82 pre-trained TextAttack models, including word-level LSTM, word-level CNN, BERT, and other transformer based models pre-trained on various datasets provided by [HuggingFace](https://github.com/huggingface/nlp/). 
+- By Oct 2020, TextAttack provides users with 82 pre-trained TextAttack models, including word-level LSTM, word-level CNN, BERT, and other transformer based models pre-trained on various datasets provided by [HuggingFace](https://github.com/huggingface/datasets/). 
 
-- Since TextAttack is integrated with the  [https://github.com/huggingface/nlp/](https://github.com/huggingface/nlp) library, it can automatically load the test or validation data set for the corresponding pre-trained model. While the literature has mainly focused on classification and entailment, TextAttack's pretrained models enable research on the robustness of models across all GLUE tasks.
+- Since TextAttack is integrated with the  [https://github.com/huggingface/datasets/](https://github.com/huggingface/datasets) library, it can automatically load the test or validation data set for the corresponding pre-trained model. While the literature has mainly focused on classification and entailment, TextAttack's pretrained models enable research on the robustness of models across all GLUE tasks.
 
 - We host all TextAttack Models at huggingface Model Hub: [https://huggingface.co/textattack](https://huggingface.co/textattack)
 

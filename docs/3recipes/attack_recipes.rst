@@ -149,8 +149,8 @@ Attacks on classification models
 Attacks on sequence-to-sequence models
 ############################################
 
-17. MORPHEUS (It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations)
-18. Seq2Sick (Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples)
+18. MORPHEUS (It’s Morphin’ Time! Combating Linguistic Discrimination with Inflectional Perturbations)
+19. Seq2Sick (Seq2Sick: Evaluating the Robustness of Sequence-to-Sequence Models with Adversarial Examples)
 
 
 .. automodule:: textattack.attack_recipes.morpheus_tan_2020
@@ -166,7 +166,7 @@ Attacks on sequence-to-sequence models
 General
 ############################################
 
-19. BadCharacters (Bad Characters: Imperceptible NLP Attacks)
+20. BadCharacters (Bad Characters: Imperceptible NLP Attacks)
 
 
 .. automodule:: textattack.attack_recipes.bad_characters_2021
@@ -181,9 +181,9 @@ TextAttack also includes recipes for non-English classification models, each a
 language-specific adaptation of a contextualized-perturbation attack (see
 https://github.com/QData/TextAttack/issues/423):
 
-20. FrenchRecipe -- Attack French Recipe (Contextualized Perturbation for French NLP Adversarial Attack)
-21. SpanishRecipe -- Attack Spanish Recipe (Contextualized Perturbation for Spanish NLP Adversarial Attack)
-22. ChineseRecipe -- Attack Chinese Recipe (Contextualized Perturbation for Chinese NLP Adversarial Attack)
+21. FrenchRecipe -- Attack French Recipe (Contextualized Perturbation for French NLP Adversarial Attack)
+22. SpanishRecipe -- Attack Spanish Recipe (Contextualized Perturbation for Spanish NLP Adversarial Attack)
+23. ChineseRecipe -- Attack Chinese Recipe (Contextualized Perturbation for Chinese NLP Adversarial Attack)
 
 
 .. automodule:: textattack.attack_recipes.french_recipe

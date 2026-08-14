@@ -14,14 +14,14 @@ Let us attack a BERT model fine-tuned for sentimental classification task. We ar
     >>> tokenizer = transformers.AutoTokenizer.from_pretrained("textattack/bert-base-uncased-imdb")
 
 
-TextAttack requires both the model and the tokenizer to be wrapped by a :class:`~transformers.models.wrapper.ModelWrapper` class that implements the forward pass operation given a list of input texts. For models provided by Transformers library, we can also simply use :class:`~transformers.models.wrapper.HuggingFaceModelWrapper` class which implements both the forward pass and tokenization.
+TextAttack requires both the model and the tokenizer to be wrapped by a :class:`~textattack.models.wrappers.ModelWrapper` class that implements the forward pass operation given a list of input texts. For models provided by Transformers library, we can also simply use :class:`~textattack.models.wrappers.HuggingFaceModelWrapper` class which implements both the forward pass and tokenization.
 
 .. code-block::
 
     >>> import textattack
     >>> model_wrapper = textattack.models.wrappers.HuggingFaceModelWrapper(model, tokenizer)
 
-Next, let's build the attack that we want to use. TextAttack provides prebuilt attacks in the form of :class:`~transformers.attack_recipes.AttackRecipe`. For this example, we will use :ref:TextFooler attack 
+Next, let's build the attack that we want to use. TextAttack provides prebuilt attacks in the form of :class:`~textattack.attack_recipes.AttackRecipe`. For this example, we will use the TextFooler attack.
 
 
 .. code-block::

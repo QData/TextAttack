@@ -53,7 +53,7 @@ Naturally, many have wondered about what adversarial examples for NLP models mig
 
 ![Two definitions of NLP adversarial examples](/_static/imgs/intro/mr_aes.png)
 
-*Two different ideas of adversarial examples in NLP. These results were generated using TextAttack on an LSTM trained on the Rotten Tomatoes Movie Review sentiment classification dataset. These are *real* adversarial examples, generated using the DeepWordBug and TextFooler attacks. To generate them yourself, after installing TextAttack, run ‘textattack attack — model lstm-mr — num-examples 1 — recipe RECIPE — num-examples-offset 19’ where RECIPE is ‘deepwordbug’ or ‘textfooler’.*
+*Two different ideas of adversarial examples in NLP. These results were generated using TextAttack on an LSTM trained on the Rotten Tomatoes Movie Review sentiment classification dataset. These are *real* adversarial examples, generated using the DeepWordBug and TextFooler attacks. To generate them yourself, after installing TextAttack, run ‘textattack attack --model lstm-mr --num-examples 1 --recipe RECIPE --num-examples-offset 19’ where RECIPE is ‘deepwordbug’ or ‘textfooler’.*
 
 Because two text sequences are never indistinguishable, researchers have proposed various alternative definitions for adversarial examples in NLP. We find it useful to group adversarial attacks based on their chosen definitions of adversarial examples. 
 

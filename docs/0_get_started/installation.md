@@ -1,7 +1,7 @@
 Installation
 ==============
 
-To use TextAttack, you must be running Python 3.6 or above. A CUDA-compatible GPU is optional but will greatly improve speed. 
+To use TextAttack, you must be running Python 3.9 or above. A CUDA-compatible GPU is optional but will greatly improve speed. 
 
 We recommend installing TextAttack in a virtual environment (check out this [guide](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)).
 
@@ -67,7 +67,7 @@ Besides, we highly recommend you to use virtual environment for textattack use,
 see [information here](https://conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html#removing-an-environment). Here is one conda example: 
 
 ```bash
-conda create -n textattackenv python=3.8
+conda create -n textattackenv python=3.9
 conda activate textattackenv
 conda env list
 ```
