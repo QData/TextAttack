@@ -11,6 +11,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 
 - `RemoteModelWrapper` (`textattack.models.wrappers.RemoteModelWrapper`): query a model served behind a remote HTTP API instead of running it locally. Request/response handling is adaptable to different endpoint schemas via `request_fn`/`response_fn`.
+- New attack recipe `bad-characters` (`BadCharacters2021`, see
+  `textattack/attack_recipes/bad_characters_2021.py`) implementing
+  [Bad Characters: Imperceptible NLP Attacks](https://arxiv.org/abs/2106.09898):
+  perturbations invisible on some rendering systems (invisible characters,
+  homoglyphs, reorderings, deletions of zero-width characters), combining a
+  new `differential-evolution` search method (`WordSwapDifferentialEvolution`
+  transformation family) with new `LogitSum`/`NamedEntityRecognition`/
+  `TargetedStrict`/`TargetedBonus` goal functions ([#817](https://github.com/QData/TextAttack/issues/817)).
 - New attack recipe `leap` (`LEAP2023`, see `textattack/attack_recipes/leap_2023.py`)
   implementing LEAP: Efficient and Automated Test Method for NLP Software
   ([arXiv:2308.11284](https://arxiv.org/abs/2308.11284)). LEAP is a
@@ -46,6 +54,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Changed
 
+- Modernized CI: bumped GitHub Actions (`actions/checkout` v2->v4,
+  `actions/setup-python` v2->v5, `github/codeql-action/*` v1->v3), fixed
+  the pre-existing lint errors this surfaced, and re-enabled `pytest`
+  execution in CI (it had been disabled) ([#822](https://github.com/QData/TextAttack/issues/822)).
+- `ChineseWordSwapHowNet`: cache HowNet replacement-word lookups to speed
+  up repeated candidate generation, without changing results ([#786](https://github.com/QData/TextAttack/issues/786)).
 - Refactored `ParticleSwarmOptimization.perform_search` (shared base class)
   to expose its per-iteration deltas as overridable hook methods
   (`_initialize_velocities`, `_pre_iteration_setup`, `_compute_omega`,
@@ -68,6 +82,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   the module-level `from scipy.special import gamma as gamma` import.
 
 ### Fixed
+
+- `EDA` augmentation recipe (`textattack augment` CLI with `--recipe eda`):
+  didn't accept the default arguments defined on the `Augmentation`
+  superclass, since it didn't forward `**kwargs` to its component
+  `Augmenter` objects.
+- `HuggingFaceDataset`: `shuffle()` (and `shuffle=True` at construction)
+  had no effect, since `datasets.Dataset.shuffle()` returns a new
+  `Dataset` rather than shuffling in place, and the return value wasn't
+  being assigned back ([#791](https://github.com/QData/TextAttack/issues/791)).
+- `WordSwapChangeNumber._alter_number`: raised `ValueError: high is out
+  of bounds for int64` on negative numbers, since `int(num *
+  self.max_change) + 1` can compute a negative `change` that flips the
+  `randrange`/`randint` bounds ([#741](https://github.com/QData/TextAttack/issues/741)).
+- `sentence_encoder.py`'s `get_angular_sim`: clamp `cos_sim` to `[-1, 1]`
+  before `torch.acos`, since floating-point error can push an equal pair
+  of embeddings' cosine similarity slightly above `1` (e.g. `1.00004`),
+  making `acos` return `NaN` instead of `1`.
+- `CompositeTransformation`: iterated its sub-transformations' results
+  through a `set`, making output order (and therefore downstream
+  behavior relying on it) non-deterministic across runs; switched to a
+  list-based dedup that preserves order.
+- Typo fix in `composite_transformation.py`'s docstring ("optoins" ->
+  "options").
 
 Several correctness issues found while porting LEAP against its authors'
 reference implementation, some of which also affect the pre-existing `pso`
