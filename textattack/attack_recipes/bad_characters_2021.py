@@ -69,7 +69,7 @@ class BadCharacters2021(AttackRecipe):
         perturbs=1,
         popsize=32,
         maxiter=10,
-        **goal_function_kwargs
+        **goal_function_kwargs,
     ):
         """Builds an imperceptible attack instance.
 

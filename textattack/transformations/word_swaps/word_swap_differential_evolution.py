@@ -7,6 +7,7 @@ If a Transformation wants to be compatible with
 textattack.search_methods.DifferentialEvolution,
 then it must extend from this class.
 """
+
 from typing import Any, List, Optional, Tuple
 
 from textattack.shared import AttackedText

@@ -39,7 +39,7 @@ class GoalFunction(ReprMixin, ABC):
         use_cache=True,
         query_budget=float("inf"),
         model_batch_size=32,
-        model_cache_size=2 ** 20,
+        model_cache_size=2**20,
         allow_skip=True,
     ):
         validators.validate_model_goal_function_compatibility(

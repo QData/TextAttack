@@ -54,11 +54,14 @@ def test_cuda_skips_hf_device_map_model_but_moves_unrelated_module():
 
     attack = _build_attack(model, tokenizer, transformation)
 
-    with patch.object(model, "to", wraps=model.to) as model_to_spy, patch.object(
-        transformation.some_unrelated_module,
-        "to",
-        wraps=transformation.some_unrelated_module.to,
-    ) as marker_to_spy:
+    with (
+        patch.object(model, "to", wraps=model.to) as model_to_spy,
+        patch.object(
+            transformation.some_unrelated_module,
+            "to",
+            wraps=transformation.some_unrelated_module.to,
+        ) as marker_to_spy,
+    ):
         attack.cuda_()
 
     assert model_to_spy.called is False
@@ -82,11 +85,14 @@ def test_cpu_skips_hf_device_map_model_but_moves_unrelated_module():
 
     attack = _build_attack(model, tokenizer, transformation)
 
-    with patch.object(model, "cpu", wraps=model.cpu) as model_cpu_spy, patch.object(
-        transformation.some_unrelated_module,
-        "cpu",
-        wraps=transformation.some_unrelated_module.cpu,
-    ) as marker_cpu_spy:
+    with (
+        patch.object(model, "cpu", wraps=model.cpu) as model_cpu_spy,
+        patch.object(
+            transformation.some_unrelated_module,
+            "cpu",
+            wraps=transformation.some_unrelated_module.cpu,
+        ) as marker_cpu_spy,
+    ):
         attack.cpu_()
 
     assert model_cpu_spy.called is False

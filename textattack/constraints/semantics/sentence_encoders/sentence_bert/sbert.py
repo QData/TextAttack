@@ -24,7 +24,7 @@ class SBERT(SentenceEncoder):
         threshold=0.7,
         metric="cosine",
         model_name="bert-base-nli-stsb-mean-tokens",
-        **kwargs
+        **kwargs,
     ):
         super().__init__(threshold=threshold, metric=metric, **kwargs)
         self.model = sentence_transformers.SentenceTransformer(model_name)

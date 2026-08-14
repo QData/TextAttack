@@ -6,6 +6,7 @@ LEAP
 (LEAP: Efficient and Automated Test Method for NLP Software)
 
 """
+
 from textattack import Attack
 from textattack.constraints.pre_transformation import (
     MaxModificationRate,

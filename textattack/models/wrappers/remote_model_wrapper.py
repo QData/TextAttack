@@ -11,9 +11,9 @@ from .model_wrapper import ModelWrapper
 
 
 class RemoteModelWrapper(ModelWrapper):
-    """This model wrapper queries a remote model with a list of text inputs.
-    It sends each input to a remote HTTP endpoint provided in ``api_url``
-    and parses the JSON response into class scores.
+    """This model wrapper queries a remote model with a list of text inputs. It
+    sends each input to a remote HTTP endpoint provided in ``api_url`` and
+    parses the JSON response into class scores.
 
     Since the request and response format of a remote model is
     API-specific, ``request_fn`` and ``response_fn`` can be provided to

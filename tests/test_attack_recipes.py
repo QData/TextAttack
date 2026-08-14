@@ -15,6 +15,7 @@ not run in CI/here, since a meaningful sample takes minutes to run) and the
 "Benchmark" section of ``LEAP2023``'s docstring
 (``textattack/attack_recipes/leap_2023.py``) for reproducible results.
 """
+
 import pytest
 
 from textattack.attack_recipes import LEAP2023, PSOZang2020
@@ -78,10 +79,10 @@ def test_leap_recipe_shares_pso_lineage_with_pso_zang_2020():
 
 @pytest.mark.slow
 def test_leap_and_pso_zang_2020_attack_without_error():
-    """Run both recipes end-to-end on the same tiny sample and confirm
-    neither raises -- a regression guard for the LEAP search method's
-    perform_search wiring (mutation step, omega/velocity bookkeeping)
-    against the working PSOZang2020 implementation it was adapted from."""
+    """Run both recipes end-to-end on the same tiny sample and confirm neither
+    raises -- a regression guard for the LEAP search method's perform_search
+    wiring (mutation step, omega/velocity bookkeeping) against the working
+    PSOZang2020 implementation it was adapted from."""
     import transformers
 
     from textattack import AttackArgs, Attacker
