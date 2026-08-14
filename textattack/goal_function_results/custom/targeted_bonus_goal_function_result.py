@@ -1,7 +1,7 @@
 """
 
 TargetedBonusGoalFunctionResult Class
-====================================
+=====================================
 
 targeted bonus goal function Result
 

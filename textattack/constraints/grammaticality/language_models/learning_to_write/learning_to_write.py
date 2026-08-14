@@ -24,7 +24,7 @@ class LearningToWriteLanguageModel(LanguageModelConstraint):
 
     https://github.com/windweller/l2w
 
-     Reused by Jia et al., 2019, as a substitution for the Google
+    Reused by Jia et al., 2019, as a substitution for the Google
     1-billion words language model (in a revised version the attack of
     Alzantot et al., 2018).
 

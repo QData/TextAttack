@@ -34,7 +34,7 @@ class BackTranscription(SentenceTransformation):
 
         >>> augmenter.augment(s)
 
-    You can find more about the back transcription method in the following paper:
+    You can find more about the back transcription method in the following paper::
 
         @inproceedings{kubis-etal-2023-back,
             title = "Back Transcription as a Method for Evaluating Robustness of Natural Language Understanding Models to Speech Recognition Errors",

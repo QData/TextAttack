@@ -1,7 +1,7 @@
 """
 
 TargetedStrictGoalFunctionResult Class
-====================================
+======================================
 
 targeted strict goal function Result
 

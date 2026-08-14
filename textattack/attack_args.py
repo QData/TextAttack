@@ -154,9 +154,10 @@ class AttackArgs:
             The number of successful adversarial examples we want. This is different from :obj:`num_examples`
             as :obj:`num_examples` only cares about attacking `N` samples while :obj:`num_successful_examples` aims to keep attacking
             until we have `N` successful cases.
+
             .. note::
                 If set, this argument overrides `num_examples` argument.
-        num_examples_offset (:obj: `int`, `optional`, defaults to :obj:`0`):
+        num_examples_offset (:obj:`int`, `optional`, defaults to :obj:`0`):
             The offset index to start at in the dataset.
         attack_n (:obj:`bool`, `optional`, defaults to :obj:`False`):
             Whether to run attack until total of `N` examples have been attacked (and not skipped).
@@ -167,6 +168,7 @@ class AttackArgs:
         query_budget (:obj:`int`, `optional`, defaults to :obj:`None`):
             The maximum number of model queries allowed per example attacked.
             If not set, we use the query budget set in the :class:`~textattack.goal_functions.GoalFunction` object (which by default is :obj:`float("inf")`).
+
             .. note::
                 Setting this overwrites the query budget set in :class:`~textattack.goal_functions.GoalFunction` object.
         checkpoint_interval (:obj:`int`, `optional`, defaults to :obj:`None`):
