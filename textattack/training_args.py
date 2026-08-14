@@ -16,7 +16,7 @@ from textattack.models.wrappers import (
     PyTorchModelWrapper,
 )
 from textattack.shared import logger
-from textattack.shared.utils import ARGS_SPLIT_TOKEN
+from textattack.shared.utils import ARGS_SPLIT_TOKEN, load_module_from_file
 
 from .attack import Attack
 from .attack_args import ATTACK_RECIPE_NAMES
@@ -342,11 +342,13 @@ class _CommandLineTrainingArgs:
         model_num_labels (int): The number of labels for classification (1 for regression).
         dataset_train_split (str): Name of the train split. If not provided will try `train` as the split name.
         dataset_eval_split (str): Name of the train split. If not provided will try `dev`, `validation`, or `eval` as split name.
+        dataset_from_file (str): Path (optionally `path^module_prefix`) to a Python module that defines
+            `train_dataset` and `eval_dataset`, each a `textattack.datasets.Dataset`. Alternative to `dataset`.
     """
 
     model_name_or_path: str
     attack: str
-    dataset: str
+    dataset: str = None
     task_type: str = "classification"
     model_max_length: int = None
     model_num_labels: int = None
@@ -354,6 +356,7 @@ class _CommandLineTrainingArgs:
     dataset_eval_split: str = None
     filter_train_by_labels: list = None
     filter_eval_by_labels: list = None
+    dataset_from_file: str = None
 
     @classmethod
     def _add_parser_args(cls, parser):
@@ -394,11 +397,20 @@ class _CommandLineTrainingArgs:
         parser.add_argument(
             "--dataset",
             type=str,
-            required=True,
-            default="yelp",
+            required=False,
+            default=None,
             help="dataset for training; will be loaded from "
             "`datasets` library. if dataset has a subset, separate with a colon. "
-            " ex: `glue^sst2` or `rotten_tomatoes`",
+            " ex: `glue^sst2` or `rotten_tomatoes`. Alternative to `--dataset-from-file`.",
+        )
+        parser.add_argument(
+            "--dataset-from-file",
+            type=str,
+            required=False,
+            default=None,
+            help="Path to a Python file (optionally `path^module_prefix`) that defines "
+            "`train_dataset` and `eval_dataset`, each a `textattack.datasets.Dataset`. "
+            "Alternative to `--dataset`. See https://github.com/QData/TextAttack/issues/625",
         )
         parser.add_argument(
             "--dataset-train-split",
@@ -490,6 +502,42 @@ class _CommandLineTrainingArgs:
 
     @classmethod
     def _create_dataset_from_args(cls, args):
+        if args.dataset_from_file:
+            if ARGS_SPLIT_TOKEN in args.dataset_from_file:
+                dataset_file, module_prefix = args.dataset_from_file.split(
+                    ARGS_SPLIT_TOKEN
+                )
+            else:
+                dataset_file, module_prefix = args.dataset_from_file, ""
+            try:
+                dataset_module = load_module_from_file(dataset_file)
+            except Exception:
+                raise ValueError(f"Failed to import file {args.dataset_from_file}")
+            train_var_name = (
+                f"{module_prefix}train_dataset" if module_prefix else "train_dataset"
+            )
+            eval_var_name = (
+                f"{module_prefix}eval_dataset" if module_prefix else "eval_dataset"
+            )
+            try:
+                train_dataset = getattr(dataset_module, train_var_name)
+            except AttributeError:
+                raise AttributeError(
+                    f"Variable `{train_var_name}` not found in module {dataset_file}"
+                )
+            try:
+                eval_dataset = getattr(dataset_module, eval_var_name)
+            except AttributeError:
+                raise AttributeError(
+                    f"Variable `{eval_var_name}` not found in module {dataset_file}"
+                )
+            if args.filter_train_by_labels:
+                train_dataset.filter_by_labels_(args.filter_train_by_labels)
+            if args.filter_eval_by_labels:
+                eval_dataset.filter_by_labels_(args.filter_eval_by_labels)
+            return train_dataset, eval_dataset
+        if not args.dataset:
+            raise ValueError("Must supply either `--dataset` or `--dataset-from-file`.")
         dataset_args = args.dataset.split(ARGS_SPLIT_TOKEN)
         # TODO `HuggingFaceDataset` -> `HuggingFaceDataset`
         if args.dataset_train_split:
