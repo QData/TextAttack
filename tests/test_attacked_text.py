@@ -81,7 +81,7 @@ class TestAttackedText:
         assert attacked_text.text_of_first_n_words(1) == "A"
         assert attacked_text.text_of_first_n_words(3) == "A person walks"
         # n beyond the text's word count clamps to the full text.
-        assert attacked_text.text_of_first_n_words(10**5) == attacked_text.text[:-1]
+        assert attacked_text.text_of_first_n_words(10 ** 5) == attacked_text.text[:-1]
 
     def test_big_window_around_index(self, attacked_text):
         assert (
