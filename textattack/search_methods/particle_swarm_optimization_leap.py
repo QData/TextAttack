@@ -123,8 +123,11 @@ class ParticleSwarmOptimizationLEAP(ParticleSwarmOptimization):
     per-particle-adaptive-inertia variant of the Particle Swarm Optimization
     (PSO) algorithm implemented by the parent class
     :class:`~textattack.search_methods.ParticleSwarmOptimization` (used by
-    :class:`~textattack.attack_recipes.PSOZang2020`). See the module-level
-    docstring above for what specifically differs from the parent class."""
+    :class:`~textattack.attack_recipes.PSOZang2020`).
+
+    See the module-level docstring above for what specifically differs
+    from the parent class.
+    """
 
     def _perturb(self, pop_member, original_result):
         """LEAP's mutation step: replace `pop_member` with the single best

@@ -32,7 +32,7 @@ def words_from_text(s, words_to_ignore=[]):
     """Lowercases a string, removes all non-alphanumeric characters, and splits
     into words."""
     try:
-        if re.search("[\u4e00-\u9FFF]", s):
+        if re.search("[\u4e00-\u9fff]", s):
             seg_list = jieba.cut(s, cut_all=False)
             s = " ".join(seg_list)
         else:

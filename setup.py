@@ -18,10 +18,10 @@ extras["docs"] = [
 ]
 # Packages required for formatting code & running tests.
 extras["test"] = [
-    "black==20.8b1",
+    "black==25.11.0",
     "docformatter",
-    "isort==5.6.4",
-    "flake8",
+    "isort==6.1.0",
+    "flake8==7.3.0",
     "pytest",
     "pytest-xdist",
 ]
@@ -78,6 +78,6 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=open("requirements.txt").readlines(),
 )

@@ -2,6 +2,7 @@
 Word Swap by Homoglyph
 -------------------------------
 """
+
 import os
 from typing import List, Tuple
 

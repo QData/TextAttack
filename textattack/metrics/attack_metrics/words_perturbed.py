@@ -31,7 +31,7 @@ class WordsPerturbed(Metric):
         self.total_attacks = len(self.results)
         self.all_num_words = np.zeros(len(self.results))
         self.perturbed_word_percentages = np.zeros(len(self.results))
-        self.num_words_changed_until_success = np.zeros(2 ** 16)
+        self.num_words_changed_until_success = np.zeros(2**16)
         self.max_words_changed = 0
 
         for i, result in enumerate(self.results):
@@ -65,9 +65,9 @@ class WordsPerturbed(Metric):
         self.all_metrics["avg_word_perturbed"] = self.avg_number_word_perturbed_num()
         self.all_metrics["avg_word_perturbed_perc"] = self.avg_perturbation_perc()
         self.all_metrics["max_words_changed"] = self.max_words_changed
-        self.all_metrics[
-            "num_words_changed_until_success"
-        ] = self.num_words_changed_until_success
+        self.all_metrics["num_words_changed_until_success"] = (
+            self.num_words_changed_until_success
+        )
 
         return self.all_metrics
 

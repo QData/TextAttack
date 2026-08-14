@@ -23,6 +23,7 @@ identical between the two attacks; only the search method's internals
 (LEAP's Levy-flight/adaptive-inertia/greedy mutation vs. vanilla PSO's
 uniform-velocity/linear-decay/probabilistic mutation) differ.
 """
+
 import argparse
 import time
 
@@ -46,8 +47,8 @@ RANDOM_SEED = 765
 
 def build_pso_wordnet(model_wrapper):
     """Vanilla ParticleSwarmOptimization with LEAP2023's transformation,
-    constraints, and search hyperparameters, so it differs from LEAP2023
-    only in the search method's internals."""
+    constraints, and search hyperparameters, so it differs from LEAP2023 only
+    in the search method's internals."""
     transformation = WordSwapWordNet()
     constraints = [MaxModificationRate(max_rate=0.16), StopwordModification()]
     goal_function = UntargetedClassification(model_wrapper)

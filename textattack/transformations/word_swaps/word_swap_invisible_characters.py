@@ -22,7 +22,7 @@ class WordSwapInvisibleCharacters(WordSwapDifferentialEvolution):
 
     def __init__(self, random_one=False, **kwargs):
         super().__init__(**kwargs)
-        self.invisible_chars = ["\u200B", "\u200C", "\u200D"]
+        self.invisible_chars = ["\u200b", "\u200c", "\u200d"]
         self.random_one = random_one
 
     def _get_bounds(
