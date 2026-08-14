@@ -149,6 +149,29 @@ def test_chinese_word_swap_hownet():
     assert augmented_s or s in augmented_text_list
 
 
+def test_zip_flair_result_annotation_layer_key_independent():
+    # zip_flair_result used to hardcode the annotation layer's key name
+    # ("upos"), the same failure class as #727 (which hardcoded "pos" and
+    # broke when flair started using "upos"). The actual CI failure this was
+    # investigating turned out to be caused by a different bug (flair_tag's
+    # single-slot tagger cache getting poisoned by a different tag_type, see
+    # test_pos_of_word_index_after_ner_of_word_index in test_attacked_text.py
+    # for the real regression test), but hardcoding the annotation key name
+    # is still fragile on its own, so keep this as a defense-in-depth check
+    # that zip_flair_result doesn't assume one specific key name.
+    from flair.data import Sentence
+
+    from textattack.shared.utils import zip_flair_result
+
+    sentence = Sentence("cats run")
+    for token, tag in zip(sentence.tokens, ["NOUN", "VERB"]):
+        token.add_label("pos", tag)
+
+    word_list, pos_list = zip_flair_result(sentence, tag_type="upos-fast")
+    assert word_list == ["cats", "run"]
+    assert pos_list == ["NOUN", "VERB"]
+
+
 def test_word_swap_inflections_pos_matching():
     # Regression test for https://github.com/QData/TextAttack/issues/713 and
     # https://github.com/QData/TextAttack/issues/727: AttackedText.pos_of_word_index

@@ -226,3 +226,20 @@ class TestAttackedText:
         ]
 
     # TODO: test align_words_with_tokens
+
+
+def test_pos_of_word_index_after_ner_of_word_index():
+    # Regression test for a CI failure (KeyError: 'upos', later reproduced
+    # locally as an empty flair annotation layer): `flair_tag` cached a
+    # single `SequenceTagger` in a module-global slot keyed by nothing, so
+    # once anything called `ner_of_word_index` (loading the "ner" tagger)
+    # in the same process, every later `pos_of_word_index` call silently
+    # reused that NER tagger instead of loading "upos-fast", producing
+    # wrong or empty POS labels. Calling NER before POS on a fresh
+    # AttackedText reproduces the exact ordering that broke in CI.
+    ner_text = textattack.shared.AttackedText("I am in Dallas.")
+    ner_text.ner_of_word_index(3)
+
+    pos_text = textattack.shared.AttackedText("The cats were running quickly.")
+    assert pos_text.pos_of_word_index(1) == "NOUN"
+    assert pos_text.pos_of_word_index(2) == "VERB"

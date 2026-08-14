@@ -215,17 +215,21 @@ def color_text(text, color=None, method=None):
         return "[[" + text + "]]"
 
 
-_flair_pos_tagger = None
+_flair_taggers = {}
 
 
 def flair_tag(sentence, tag_type="upos-fast"):
     """Tags a `Sentence` object using `flair` part-of-speech tagger."""
-    global _flair_pos_tagger
-    if not _flair_pos_tagger:
+    # Cache one tagger per `tag_type`: this function is used for both POS
+    # ("upos-fast") and NER ("ner", "flair/ner-french", ...) tagging, and a
+    # single shared slot used to silently reuse whichever tagger loaded
+    # first for every later call regardless of the requested `tag_type`,
+    # corrupting results for the other tagging purpose.
+    if tag_type not in _flair_taggers:
         from flair.models import SequenceTagger
 
-        _flair_pos_tagger = SequenceTagger.load(tag_type)
-    _flair_pos_tagger.predict(sentence, force_token_predictions=True)
+        _flair_taggers[tag_type] = SequenceTagger.load(tag_type)
+    _flair_taggers[tag_type].predict(sentence, force_token_predictions=True)
 
 
 def zip_flair_result(pred, tag_type="upos-fast"):
@@ -242,7 +246,18 @@ def zip_flair_result(pred, tag_type="upos-fast"):
     for token in tokens:
         word_list.append(token.text)
         if "pos" in tag_type:
-            pos_list.append(token.annotation_layers["upos"][0]._value)
+            # The annotation layer's key (e.g. "pos", "upos") is set by
+            # whichever flair tagger/version produced these labels, and has
+            # changed across flair releases (see #727). Read the key that's
+            # actually present on the token instead of hardcoding one.
+            pos_label_type = next(iter(token.annotation_layers), None)
+            if pos_label_type is None:
+                raise ValueError(
+                    f"No part-of-speech label found for token {token.text!r}; "
+                    f"the flair `Sentence` may have been tagged with a "
+                    f"tagger that doesn't match tag_type={tag_type!r}."
+                )
+            pos_list.append(token.annotation_layers[pos_label_type][0]._value)
         elif tag_type == "ner":
             pos_list.append(token.get_label("ner"))
 
