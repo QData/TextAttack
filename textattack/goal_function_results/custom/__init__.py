@@ -1,6 +1,6 @@
 """
 Custom Goal Function Result package:
-=============================
+====================================
 
 Custom goal function results
 

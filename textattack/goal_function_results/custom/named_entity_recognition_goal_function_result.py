@@ -1,9 +1,9 @@
 """
 
-NamedEntityRecognitionoalFunctionResult Class
-====================================
+NamedEntityRecognitionGoalFunctionResult Class
+===============================================
 
-logit sum goal function Result
+named entity recognition goal function Result
 
 """
 
