@@ -166,6 +166,13 @@ Attacks on sequence-to-sequence models
 General
 ############################################
 
+Unlike the recipes above, which are each locked to one task and one goal
+function, ``BadCharacters2021`` takes a ``goal_function_type`` argument and
+can be configured to attack classification models, NER models, or
+seq2seq/translation models. Since it spans both of the sections above (and
+NER, which is neither), it's listed here instead of being duplicated or
+assigned to one arbitrarily.
+
 20. BadCharacters (Bad Characters: Imperceptible NLP Attacks)
 
 

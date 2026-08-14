@@ -240,6 +240,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 </tr>
 
 <tr><td style="text-align: center;" colspan="6"><strong><br>General: <br></strong></td></tr>
+<tr><td colspan="6"><sub>Every other recipe here is locked to one task and one goal function, which is why the table splits into "classification" vs. "sequence-to-sequence" sections. <code>bad-characters</code> is different: its <code>--recipe</code> build takes a goal-function-type argument and can be configured to attack classification models, NER models, or seq2seq/translation models. Since it spans both task types (and NER, which is neither), it doesn't fit either section above, so it's listed here under "General" instead.</sub></td></tr>
 
 <tr>
 <td><code>bad-characters</code> <span class="citation" data-cites=""></span></td>

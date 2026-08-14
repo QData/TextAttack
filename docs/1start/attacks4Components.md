@@ -229,6 +229,7 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 </tr>
 
 <tr><td style="text-align: center;" colspan="6"><strong><br>General: <br></strong></td></tr>
+<tr><td style="text-align: left;" colspan="6"><sub>Every other recipe here is locked to one task and one goal function, which is why the table splits into "classification" vs. "sequence-to-sequence" sections. <code>bad-characters</code> is different: its <code>build()</code> takes a <code>goal_function_type</code> argument and can be configured to attack classification models, NER models, or seq2seq/translation models. Since it spans both task types (and NER, which is neither), it doesn't fit either section above, so it's listed here under "General" instead.</sub></td></tr>
 
 <tr class="odd">
 <td style="text-align: left;"><code>bad-characters</code> <span class="citation" data-cites=""></span></td>
