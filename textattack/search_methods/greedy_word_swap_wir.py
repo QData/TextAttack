@@ -148,7 +148,7 @@ class GreedyWordSwapWIR(SearchMethod):
                 # tokenizer's own `model_max_length` truncation inside
                 # `get_grad` as a (looser) bound.
                 last_index = max(indices_to_order)
-                truncated_str = initial_text.text_window_around_index(0, last_index + 1)
+                truncated_str = initial_text.text_of_first_n_words(last_index + 1)
                 gradient_text = AttackedText(truncated_str)
             grad_output = victim_model.get_grad(gradient_text.tokenizer_input)
             gradient = grad_output["gradient"]

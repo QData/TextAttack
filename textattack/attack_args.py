@@ -3,6 +3,7 @@ AttackArgs Class
 ================
 """
 
+import argparse
 from dataclasses import dataclass, field
 import json
 import os
@@ -277,14 +278,20 @@ class AttackArgs:
             "--num-examples",
             "-n",
             type=int,
-            # Use the unresolved sentinel (not `default_obj.num_examples`,
-            # which has already been resolved to `10` by `__post_init__`)
-            # so that a user who never passes `--num-examples` still reaches
-            # `AttackArgs.__post_init__` with the sentinel, not a concrete
-            # `10` that would look like an explicit value alongside
-            # `--num-successful-examples` and trigger a spurious warning.
-            default=_NUM_EXAMPLES_UNSET,
-            help="The number of examples to process, -1 for entire dataset.",
+            # `argparse.SUPPRESS` (not `_NUM_EXAMPLES_UNSET` or
+            # `default_obj.num_examples`) means the attribute is simply
+            # absent from the parsed namespace when the user never passes
+            # `--num-examples`, rather than being set to some default value.
+            # `CommandLineAttackArgs(**vars(args))` then omits the kwarg
+            # entirely, so the dataclass field's own default
+            # (`_NUM_EXAMPLES_UNSET`) applies. That keeps `__post_init__`
+            # able to tell "never set" apart from an explicit `10` alongside
+            # `--num-successful-examples` (see #728), while also letting
+            # `ArgumentDefaultsHelpFormatter` skip its automatic
+            # `(default: ...)` suffix here instead of printing the
+            # sentinel's raw repr - we supply an accurate one by hand below.
+            default=argparse.SUPPRESS,
+            help="The number of examples to process, -1 for entire dataset. (default: 10)",
         )
         num_ex_group.add_argument(
             "--num-successful-examples",

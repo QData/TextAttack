@@ -123,6 +123,16 @@ class AttackedText:
         text_idx_end = self._text_index_of_word_index(end) + len(self.words[end])
         return self.text[text_idx_start:text_idx_end]
 
+    def text_of_first_n_words(self, n: int) -> str:
+        """The text spanning the first ``n`` words (from the start of the
+        text, not centered around any index)."""
+        n = min(max(n, 0), self.num_words)
+        if n == 0:
+            return ""
+        end = n - 1
+        text_idx_end = self._text_index_of_word_index(end) + len(self.words[end])
+        return self.text[:text_idx_end]
+
     def pos_of_word_index(self, desired_word_idx: int) -> str:
         """Returns the part-of-speech of the word at index `word_idx`.
 
