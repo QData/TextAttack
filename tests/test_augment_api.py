@@ -93,6 +93,61 @@ def test_deletion_augmenter():
     assert augmented_s in augmented_text_list
 
 
+def test_high_yield_scales_with_transformations_per_example():
+    # Regression test: the retry-bound fix for issue #800 (stop a
+    # low-diversity transformation from silently returning fewer than
+    # `transformations_per_example` unique augmentations) had an
+    # intermediate version whose outer loop exited as soon as the target
+    # count was reached. In `high_yield=True` mode a single outer
+    # iteration can add many results to the set at once, so that made
+    # output plateau around the same size regardless of
+    # `transformations_per_example` instead of scaling with it (~4-13x
+    # fewer results, verified against pre-regression output for the same
+    # input/seed range).
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps import WordSwapWordNet
+
+    s = "A person walks up stairs into a room and sees beer poured from a keg and people talking."
+
+    def unique_count(n):
+        augmenter = Augmenter(
+            transformation=WordSwapWordNet(),
+            pct_words_to_swap=0.15,
+            transformations_per_example=n,
+            high_yield=True,
+        )
+        return len(set(augmenter.augment(s)))
+
+    small = unique_count(5)
+    large = unique_count(20)
+    # Loose bound (transformation output is stochastic): `large` should be
+    # meaningfully bigger than `small`, not roughly flat.
+    assert large > small * 2
+
+
+def test_augment_dedup_sample_from_set_no_crash():
+    # Regression test: the final downsampling step called
+    # `random.sample(all_transformed_texts, n)` where
+    # `all_transformed_texts` is a `set`. Python 3.11+ raises
+    # `TypeError: Population must be a sequence` for a set argument, since
+    # `random.sample` stopped accepting arbitrary sized iterables/sets.
+    # `fast_augment=True, high_yield=False` is what exercises this
+    # particular downsampling branch.
+    from textattack.augmentation import Augmenter
+    from textattack.transformations.word_swaps import WordSwapWordNet
+
+    augmenter = Augmenter(
+        transformation=WordSwapWordNet(),
+        pct_words_to_swap=0.2,
+        transformations_per_example=3,
+        high_yield=False,
+        fast_augment=True,
+    )
+    s = "A person walks up stairs into a room and sees beer poured from a keg and people talking."
+    augmented_text_list = augmenter.augment(s)
+    assert len(augmented_text_list) <= 3
+
+
 def test_high_yield_fast_augment():
     from textattack.augmentation import WordNetAugmenter
 

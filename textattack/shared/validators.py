@@ -29,10 +29,7 @@ MODELS_BY_GOAL_FUNCTIONS = {
         # See https://github.com/QData/TextAttack/issues/722
         r"^transformers\.(models\.\w+\.)?modeling_\w*\.\w*ForSequenceClassification$",
     ],
-    (
-        NonOverlappingOutput,
-        MinimizeBleu,
-    ): [
+    (NonOverlappingOutput, MinimizeBleu): [
         r"^textattack.models.helpers.t5_for_text_to_text.*",
         # Raw `transformers` encoder-decoder generation models (e.g. a
         # `BartForConditionalGeneration` or `T5ForConditionalGeneration`
