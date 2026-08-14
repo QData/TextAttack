@@ -18,7 +18,7 @@ torch.cuda.empty_cache()
 class HuggingFaceModelWrapper(PyTorchModelWrapper):
     """Loads a HuggingFace ``transformers`` model and tokenizer."""
 
-    def __init__(self, model, tokenizer):
+    def __init__(self, model, tokenizer, max_length=None):
         assert isinstance(
             model, (transformers.PreTrainedModel, T5ForTextToText)
         ), f"`model` must be of type `transformers.PreTrainedModel`, but got type {type(model)}."
@@ -33,6 +33,12 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
 
         self.model = model
         self.tokenizer = tokenizer
+        # Only used for raw `transformers` encoder-decoder generation models
+        # (see the `.generate()` branch in `__call__`). Left unset by default
+        # so `.generate()` falls back to the model's own `generation_config`
+        # (e.g. many summarization checkpoints ship a sensible `max_length`
+        # there) instead of this wrapper silently imposing one.
+        self.max_length = max_length
 
     def __call__(self, text_input_list):
         """Passes inputs to HuggingFace models as keyword arguments.
@@ -74,10 +80,13 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
                 # which breaks text-to-text goal functions (e.g.
                 # `NonOverlappingOutput`, `MinimizeBleu`) expecting strings.
                 # See https://github.com/QData/TextAttack/issues/771
-                generated_ids = self.model.generate(
-                    input_ids=inputs_dict["input_ids"],
-                    attention_mask=inputs_dict.get("attention_mask"),
-                )
+                generate_kwargs = {
+                    "input_ids": inputs_dict["input_ids"],
+                    "attention_mask": inputs_dict.get("attention_mask"),
+                }
+                if self.max_length is not None:
+                    generate_kwargs["max_length"] = self.max_length
+                generated_ids = self.model.generate(**generate_kwargs)
                 return self.tokenizer.batch_decode(
                     generated_ids, skip_special_tokens=True
                 )
