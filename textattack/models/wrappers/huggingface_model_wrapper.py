@@ -38,6 +38,16 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
         # so `.generate()` falls back to the model's own `generation_config`
         # (e.g. many summarization checkpoints ship a sensible `max_length`
         # there) instead of this wrapper silently imposing one.
+        #
+        # Caveat: leaving this unset does not, by itself, guarantee
+        # untruncated output. A checkpoint with no `generation_config`
+        # entry for `max_length` still falls back to `transformers`'
+        # library-wide default of 20 tokens, same order of magnitude as
+        # `T5ForTextToText`'s hardcoded `output_max_length=20`
+        # (t5_for_text_to_text.py). Callers doing BLEU/overlap comparisons
+        # (`MinimizeBleu`, `NonOverlappingOutput`) against a
+        # `ground_truth_output` that's likely to exceed that should pass
+        # `max_length` explicitly rather than rely on this default.
         self.max_length = max_length
 
     def __call__(self, text_input_list):
@@ -69,8 +79,24 @@ class HuggingFaceModelWrapper(PyTorchModelWrapper):
             # look it up defensively rather than via `self.model.config`
             # directly.
             model_config = getattr(self.model, "config", None)
-            if getattr(model_config, "is_encoder_decoder", False) and hasattr(
-                self.model, "generate"
+            # Prefer `can_generate()` over `hasattr(self.model, "generate")`:
+            # on older `transformers` versions, `generate` was defined on
+            # every `PreTrainedModel` regardless of whether it actually had
+            # a generation-capable head, so `hasattr` alone could misroute a
+            # seq2seq-backbone classification model (e.g.
+            # `BartForSequenceClassification`, whose config also sets
+            # `is_encoder_decoder=True`) into `.generate()`. Fall back to
+            # `hasattr` only if this version of `transformers` predates
+            # `can_generate()`.
+            can_generate = getattr(self.model, "can_generate", None)
+            is_generation_model = (
+                can_generate()
+                if callable(can_generate)
+                else hasattr(self.model, "generate")
+            )
+            if (
+                getattr(model_config, "is_encoder_decoder", False)
+                and is_generation_model
             ):
                 # Seq2seq generation models (e.g. a raw `BartForConditionalGeneration`
                 # or `T5ForConditionalGeneration` loaded directly from

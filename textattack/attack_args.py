@@ -17,6 +17,8 @@ from .attack import Attack
 from .dataset_args import DatasetArgs
 from .model_args import ModelArgs
 
+_NUM_EXAMPLES_UNSET = object()
+
 ATTACK_RECIPE_NAMES = {
     "alzantot": "textattack.attack_recipes.GeneticAlgorithmAlzantot2018",
     "bae": "textattack.attack_recipes.BAEGarg2019",
@@ -202,7 +204,7 @@ class AttackArgs:
             Enable calculation and display of optional advance post-hoc metrics like perplexity, grammar errors, etc.
     """
 
-    num_examples: int = 10
+    num_examples: int = _NUM_EXAMPLES_UNSET
     num_successful_examples: int = None
     num_examples_offset: int = 0
     attack_n: bool = False
@@ -226,9 +228,12 @@ class AttackArgs:
 
     def __post_init__(self):
         if self.num_successful_examples:
-            if self.num_examples not in (None, 10):
-                # `num_examples` was explicitly set to something other than
-                # its default alongside `num_successful_examples`, which
+            if (
+                self.num_examples is not None
+                and self.num_examples is not _NUM_EXAMPLES_UNSET
+            ):
+                # `num_examples` was explicitly set (even to its default
+                # value of 10) alongside `num_successful_examples`, which
                 # silently overrides it below. Without this, users combining
                 # both (expecting a total cap *and* a success target) can't
                 # tell why `num_examples` came back unset.
@@ -240,6 +245,8 @@ class AttackArgs:
                     "will be ignored (set to None)."
                 )
             self.num_examples = None
+        elif self.num_examples is _NUM_EXAMPLES_UNSET:
+            self.num_examples = 10
         if self.num_examples:
             assert (
                 self.num_examples >= 0 or self.num_examples == -1
