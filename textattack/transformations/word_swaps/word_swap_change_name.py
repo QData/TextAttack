@@ -21,7 +21,7 @@ class WordSwapChangeName(WordSwap):
         confidence_score=0.7,
         language="en",
         consistent=False,
-        **kwargs
+        **kwargs,
     ):
         """Transforms an input by replacing names of recognized name entity.
 

@@ -83,8 +83,8 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
     def _initialize_velocities(self, num_words):
         """Return the initial ``(pop_size, num_words)`` velocity matrix.
 
-        Overridable so subclasses (e.g. LEAP) can use a different sampling
-        scheme for the initial per-particle velocity.
+        Overridable so subclasses (e.g. LEAP) can use a different
+        sampling scheme for the initial per-particle velocity.
         """
         v_init = np.random.uniform(-self.v_max, self.v_max, self.pop_size)
         return np.array(
@@ -92,18 +92,21 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
         )
 
     def _pre_iteration_setup(self, population):
-        """Hook called once, after the initial population/elites are built
-        and before the main iteration loop starts. No-op by default;
-        overridable for subclasses that need to cache statistics (e.g.
-        fitness mean/min) computed from the initial population."""
+        """Hook called once, after the initial population/elites are built and
+        before the main iteration loop starts.
+
+        No-op by default; overridable for subclasses that need to cache
+        statistics (e.g. fitness mean/min) computed from the initial
+        population.
+        """
 
     def _compute_omega(self, i, population):
         """Return the per-particle inertia weight for iteration `i`, as an
         array of length ``len(population)``.
 
-        The base implementation applies the same linearly-decaying weight
-        to every particle; overridable for subclasses (e.g. LEAP) that
-        instead compute a per-particle, fitness-adaptive weight.
+        The base implementation applies the same linearly-decaying
+        weight to every particle; overridable for subclasses (e.g. LEAP)
+        that instead compute a per-particle, fitness-adaptive weight.
         """
         omega = (self.omega_1 - self.omega_2) * (
             self.max_iters - i
@@ -112,17 +115,21 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
 
     def _compute_turn_prob(self, velocities_k):
         """Convert a particle's per-word velocities into per-word turn
-        probabilities. The base implementation treats each word
-        independently via sigmoid; overridable for subclasses (e.g. LEAP)
-        that instead normalize turn probability across the whole sentence.
+        probabilities.
+
+        The base implementation treats each word independently via
+        sigmoid; overridable for subclasses (e.g. LEAP) that instead
+        normalize turn probability across the whole sentence.
         """
         return utils.sigmoid(velocities_k)
 
     def _compute_change_ratio(self, pop_member, local_elite, initial_result):
-        """Return the change-rate used to decide whether `pop_member`
-        undergoes mutation this iteration. The base implementation measures
-        drift from the original input; overridable for subclasses (e.g.
-        LEAP) that instead measure drift from the particle's local elite.
+        """Return the change-rate used to decide whether `pop_member` undergoes
+        mutation this iteration.
+
+        The base implementation measures drift from the original input;
+        overridable for subclasses (e.g. LEAP) that instead measure
+        drift from the particle's local elite.
         """
         return initial_result.attacked_text.words_diff_ratio(pop_member.attacked_text)
 
@@ -166,9 +173,9 @@ class ParticleSwarmOptimization(PopulationBasedSearch):
                 & indices_to_replace
             )
             if "last_transformation" in source_text.attacked_text.attack_attrs:
-                new_text.attack_attrs[
-                    "last_transformation"
-                ] = source_text.attacked_text.attack_attrs["last_transformation"]
+                new_text.attack_attrs["last_transformation"] = (
+                    source_text.attacked_text.attack_attrs["last_transformation"]
+                )
 
             if not self.post_turn_check or (new_text.words == source_text.words):
                 break
