@@ -2,7 +2,7 @@
 
 To unify adversarial attack methods into one system, We formulate an attack as consisting of four components: a **goal function** which determines if the attack has succeeded, **constraints** defining which perturbations are valid, a **transformation** that generates potential modifications given an input, and a **search method** which traverses through the search space of possible perturbations. The attack attempts to perturb an input text such that the model output fulfills the goal function (i.e., indicating whether the attack is successful) and the perturbation adheres to the set of constraints (e.g., grammar constraint, semantic similarity constraint). A search method is used to find a sequence of transformations that produce a successful adversarial example.
 
-This modular design enables us to easily assemble attacks from the literature while re-using components that are shared across attacks. TextAttack provides clean, readable implementations of 16 adversarial attacks from the literature. For the first time, these attacks can be benchmarked, compared, and analyzed in a standardized setting.
+This modular design enables us to easily assemble attacks from the literature while re-using components that are shared across attacks. TextAttack provides clean, readable implementations of 24 adversarial attacks from the literature. For the first time, these attacks can be benchmarked, compared, and analyzed in a standardized setting.
 
 - Two examples showing four components of two SOTA attacks
   ![two-categorized-attacks](/_static/imgs/intro/01-categorized-attacks.png)
@@ -44,7 +44,7 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 
 ### Four components in Attack Recipes we have implemented
 
-- TextAttack provides clean, readable implementations of 16 adversarial attacks from the literature.
+- TextAttack provides clean, readable implementations of 24 adversarial attacks from the literature.
 
 - To run an attack recipe: `textattack attack --recipe [recipe_name]`
 
@@ -62,6 +62,14 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 <tbody>
   <tr><td style="text-align: center;" colspan="6"><strong><br>Attacks on classification tasks, like sentiment classification and entailment:<br></strong></td></tr>
 
+<tr class="odd">
+<td style="text-align: left;"><code>a2t</code> <span class="citation" data-cites="yoo2021a2t"></span></td>
+<td style="text-align: left;"><sub>Untargeted Classification</sub></td>
+<td style="text-align: left;"><sub>Part-of-speech match, Max modification rate, SBERT sentence encoding cosine similarity, Word embedding distance</sub></td>
+<td style="text-align: left;"><sub>Counter-fitted word embedding swap (or BERT Masked Token Prediction, in the `mlm` variant)</sub></td>
+<td style="text-align: left;"><sub>Greedy-WIR (gradient)</sub></td>
+<td ><sub>Attack tuned for use in adversarial training, from (["Towards Improving Adversarial Training of NLP Models" (Yoo et al., 2021)](https://arxiv.org/abs/2109.00544))</sub></td>
+</tr>
 <tr class="even">
 <td style="text-align: left;"><code>alzantot</code>  <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td style="text-align: left;"><sub>Untargeted {Classification, Entailment}</sub></td>
@@ -142,6 +150,14 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 <td style="text-align: left;"><sub>Greedy-WIR</sub></td>
 <td ><sub>Greedy attack with word importance ranking , Reducing the input while maintaining the prediction through word importance ranking (["Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)](https://arxiv.org/pdf/1804.07781.pdf))</sub></td>
 </tr>
+<tr class="even">
+<td style="text-align: left;"><code>leap</code> <span class="citation" data-cites="ma2023leap"></span></td>
+<td style="text-align: left;"><sub>Untargeted Classification</sub></td>
+<td style="text-align: left;"><sub>Max modification rate, Stopword modification</sub></td>
+<td style="text-align: left;"><sub>WordNet-based synonym swap</sub></td>
+<td style="text-align: left;"><sub>Particle Swarm Optimization (Levy-flight/adaptive-inertia variant)</sub></td>
+<td ><sub>Levy-flight/adaptive-inertia variant of the `pso` search method, from (["LEAP: Efficient and Automated Test Method for NLP Software" (Ma et al., 2023)](https://arxiv.org/abs/2308.11284))</sub></td>
+</tr>
 <tr class="odd">
 <td style="text-align: left;"><code>kuleshov</code> <span class="citation" data-cites="Kuleshov2018AdversarialEF"></span></td>
 <td style="text-align: left;"><sub>Untargeted Classification</sub></td>
@@ -213,6 +229,7 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 </tr>
 
 <tr><td style="text-align: center;" colspan="6"><strong><br>General: <br></strong></td></tr>
+<tr><td style="text-align: left;" colspan="6"><sub>Every other recipe here is locked to one task and one goal function, which is why the table splits into "classification" vs. "sequence-to-sequence" sections. <code>bad-characters</code> is different: its <code>build()</code> takes a <code>goal_function_type</code> argument and can be configured to attack classification models, NER models, or seq2seq/translation models. Since it spans both task types (and NER, which is neither), it doesn't fit either section above, so it's listed here under "General" instead.</sub></td></tr>
 
 <tr class="odd">
 <td style="text-align: left;"><code>bad-characters</code> <span class="citation" data-cites=""></span></td>
@@ -221,6 +238,33 @@ A `SearchMethod` takes as input an initial `GoalFunctionResult` and returns a fi
 <td style="text-align: left;"><sub>(Homoglyph, Invisible Characters, Reorderings, Deletions) Word Swap</sub></td>
 <td style="text-align: left;"><sub>DifferentialEvolution</sub></td>
 <td><sub>Uses imperceptible character-level perturbations including homoglyph substitutions, Unicode reordering, deletions, and invisibles. Based on (["Bad Characters: Imperceptible NLP Attacks" (Boucher et al., 2021)](https://arxiv.org/abs/2106.09898)).</sub></td>
+</tr>
+
+<tr><td style="text-align: center;" colspan="6"><strong><br>Multi-lingual attacks on non-English classification models (Python API only, no CLI recipe name -- see <a href="https://github.com/QData/TextAttack/issues/423">#423</a>):<br></strong></td></tr>
+
+<tr class="even">
+<td style="text-align: left;"><code>FrenchRecipe</code></td>
+<td style="text-align: left;"><sub>Untargeted Classification</sub></td>
+<td style="text-align: left;"><sub>Repeat modification, Stopword modification (French)</sub></td>
+<td style="text-align: left;"><sub>WordNet synonym swap, location swap, name swap (French)</sub></td>
+<td style="text-align: left;"><sub>Greedy-WIR</sub></td>
+<td ><sub>Contextualized-perturbation attack adapted for French NLP models.</sub></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>SpanishRecipe</code></td>
+<td style="text-align: left;"><sub>Untargeted Classification</sub></td>
+<td style="text-align: left;"><sub>Repeat modification, Stopword modification (Spanish)</sub></td>
+<td style="text-align: left;"><sub>WordNet synonym swap, location swap, name swap (Spanish)</sub></td>
+<td style="text-align: left;"><sub>Greedy-WIR</sub></td>
+<td ><sub>Contextualized-perturbation attack adapted for Spanish NLP models.</sub></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ChineseRecipe</code></td>
+<td style="text-align: left;"><sub>Untargeted Classification</sub></td>
+<td style="text-align: left;"><sub>Repeat modification, Stopword modification (Chinese)</sub></td>
+<td style="text-align: left;"><sub>HowNet word swap, Masked-LM word swap, Morphonym &amp; Homophone character swap</sub></td>
+<td style="text-align: left;"><sub>Greedy-WIR (weighted-saliency)</sub></td>
+<td ><sub>Contextualized-perturbation attack adapted for Chinese NLP models.</sub></td>
 </tr>
 
 </tbody>

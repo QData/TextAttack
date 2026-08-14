@@ -39,7 +39,7 @@ textattack attack --recipe textfooler --model bert-base-uncased-mr --num-example
 _DeepWordBug on DistilBERT trained on the Quora Question Pairs paraphrase identification dataset_:
 
 ```bash
-textattack attack --model distilbert-base-uncased-cola --recipe deepwordbug --num-examples 100
+textattack attack --model distilbert-base-cased-qqp --recipe deepwordbug --num-examples 100
 ```
 
 _Beam search with beam width 4 and word embedding transformation and untargeted goal function on an LSTM_:
@@ -73,6 +73,14 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <tbody>
   <tr><td style="text-align: center;" colspan="6"><strong><br>Attacks on classification tasks, like sentiment classification and entailment:<br></strong></td></tr>
 
+<tr>
+<td><code>a2t</code> <span class="citation" data-cites="yoo2021a2t"></span></td>
+<td><sub>Untargeted Classification</sub></td>
+<td><sub>Part-of-speech match, Max modification rate, SBERT sentence encoding cosine similarity, Word embedding distance</sub></td>
+<td><sub>Counter-fitted word embedding swap (or BERT Masked Token Prediction, in the `mlm` variant)</sub></td>
+<td><sub>Greedy-WIR (gradient)</sub></td>
+<td ><sub>Attack tuned for use in adversarial training, from <a href="https://arxiv.org/abs/2109.00544">"Towards Improving Adversarial Training of NLP Models" (Yoo et al., 2021)</a></sub></td>
+</tr>
 <tr>
 <td><code>alzantot</code>  <span class="citation" data-cites="Alzantot2018GeneratingNL Jia2019CertifiedRT"></span></td>
 <td><sub>Untargeted {Classification, Entailment}</sub></td>
@@ -154,6 +162,14 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td ><sub>Greedy attack with word importance ranking, reducing the input while maintaining the prediction through word importance ranking, from <a href="https://arxiv.org/pdf/1804.07781.pdf">"Pathologies of Neural Models Make Interpretation Difficult" (Feng et al., 2018)</a></sub></td>
 </tr>
 <tr>
+<td><code>leap</code> <span class="citation" data-cites="ma2023leap"></span></td>
+<td><sub>Untargeted Classification</sub></td>
+<td><sub>Max modification rate, Stopword modification</sub></td>
+<td><sub>WordNet-based synonym swap</sub></td>
+<td><sub>Particle Swarm Optimization (Levy-flight/adaptive-inertia variant)</sub></td>
+<td ><sub>Levy-flight/adaptive-inertia variant of the `pso` search method, from <a href="https://arxiv.org/abs/2308.11284">"LEAP: Efficient and Automated Test Method for NLP Software" (Ma et al., 2023)</a></sub></td>
+</tr>
+<tr>
 <td><code>kuleshov</code> <span class="citation" data-cites="Kuleshov2018AdversarialEF"></span></td>
 <td><sub>Untargeted Classification</sub></td>
 <td><sub>Thought vector encoding cosine similarity, Language model similarity probability</sub></td>
@@ -224,6 +240,7 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 </tr>
 
 <tr><td style="text-align: center;" colspan="6"><strong><br>General: <br></strong></td></tr>
+<tr><td colspan="6"><sub>Every other recipe here is locked to one task and one goal function, which is why the table splits into "classification" vs. "sequence-to-sequence" sections. <code>bad-characters</code> is different: its <code>--recipe</code> build takes a goal-function-type argument and can be configured to attack classification models, NER models, or seq2seq/translation models. Since it spans both task types (and NER, which is neither), it doesn't fit either section above, so it's listed here under "General" instead.</sub></td></tr>
 
 <tr>
 <td><code>bad-characters</code> <span class="citation" data-cites=""></span></td>
@@ -232,6 +249,33 @@ To run an attack recipe: `textattack attack --recipe [recipe_name]`
 <td><sub>(Homoglyph, Invisible Characters, Reorderings, Deletions) Word Swap</sub> </td>
 <td><sub>DifferentialEvolution</sub></td>
 <td ><sub>Uses imperceptible character-level perturbations including homoglyph substitutions, Unicode reordering, deletions, and invisibles. Based on (["Bad Characters: Imperceptible NLP Attacks" (Boucher et al., 2021)](https://arxiv.org/abs/2106.09898)).</sub>  </td>
+</tr>
+
+<tr><td style="text-align: center;" colspan="6"><strong><br>Multi-lingual attacks on non-English classification models (Python API only, no CLI recipe name -- see <a href="https://github.com/QData/TextAttack/issues/423">#423</a>):<br></strong></td></tr>
+
+<tr>
+<td><code>FrenchRecipe</code></td>
+<td><sub>Untargeted Classification</sub></td>
+<td><sub>Repeat modification, Stopword modification (French)</sub></td>
+<td><sub>WordNet synonym swap, location swap, name swap (French)</sub></td>
+<td><sub>Greedy-WIR</sub></td>
+<td ><sub>Contextualized-perturbation attack adapted for French NLP models.</sub></td>
+</tr>
+<tr>
+<td><code>SpanishRecipe</code></td>
+<td><sub>Untargeted Classification</sub></td>
+<td><sub>Repeat modification, Stopword modification (Spanish)</sub></td>
+<td><sub>WordNet synonym swap, location swap, name swap (Spanish)</sub></td>
+<td><sub>Greedy-WIR</sub></td>
+<td ><sub>Contextualized-perturbation attack adapted for Spanish NLP models.</sub></td>
+</tr>
+<tr>
+<td><code>ChineseRecipe</code></td>
+<td><sub>Untargeted Classification</sub></td>
+<td><sub>Repeat modification, Stopword modification (Chinese)</sub></td>
+<td><sub>HowNet word swap, Masked-LM word swap, Morphonym &amp; Homophone character swap</sub></td>
+<td><sub>Greedy-WIR (weighted-saliency)</sub></td>
+<td ><sub>Contextualized-perturbation attack adapted for Chinese NLP models.</sub></td>
 </tr>
 
 </tbody>
