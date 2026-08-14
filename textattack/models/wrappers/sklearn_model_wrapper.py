@@ -23,7 +23,7 @@ class SklearnModelWrapper(ModelWrapper):
     def __call__(self, text_input_list, batch_size=None):
         encoded_text_matrix = self.tokenizer.transform(text_input_list).toarray()
         tokenized_text_df = pd.DataFrame(
-            encoded_text_matrix, columns=self.tokenizer.get_feature_names()
+            encoded_text_matrix, columns=self.tokenizer.get_feature_names_out()
         )
         return self.model.predict_proba(tokenized_text_df)
 
