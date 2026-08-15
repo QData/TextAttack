@@ -51,6 +51,15 @@ class Seq2SickCheng2018BlackBox(AttackRecipe):
         attack = Seq2SickCheng2018BlackBox.build(model_wrapper)
         result = attack.attack(input_text, original_summary)
         print(result.__str__(color_method="ansi"))
+
+    This also works against translation models (e.g. attacking BART/MarianMT
+    on an en-de translation task): pass the model's own unperturbed
+    translation as the second argument to ``.attack()``, since
+    ``NonOverlappingOutput`` (unlike ``MinimizeBleu``, used by
+    :class:`~textattack.attack_recipes.MorpheusTan2020`) compares against
+    that rather than a ground-truth reference translation. See
+    :class:`~textattack.attack_recipes.MorpheusTan2020` for a worked
+    translation example and https://github.com/QData/TextAttack/issues/725.
     """
 
     @staticmethod
