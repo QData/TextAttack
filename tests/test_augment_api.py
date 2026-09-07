@@ -93,6 +93,32 @@ def test_deletion_augmenter():
     assert augmented_s in augmented_text_list
 
 
+def test_augment_text_with_ids_keeps_each_original_once(monkeypatch):
+    from textattack.augmentation import Augmenter
+    from textattack.transformations import WordDeletion
+
+    augmenter = Augmenter(WordDeletion())
+    monkeypatch.setattr(
+        augmenter,
+        "augment",
+        lambda text: [f"{text} augmented-1", f"{text} augmented-2"],
+    )
+
+    texts, ids = augmenter.augment_text_with_ids(
+        ["first", "second"], [1, 2], show_progress=False
+    )
+
+    assert texts == [
+        "first",
+        "first augmented-1",
+        "first augmented-2",
+        "second",
+        "second augmented-1",
+        "second augmented-2",
+    ]
+    assert ids == [1, 1, 1, 2, 2, 2]
+
+
 def test_high_yield_scales_with_transformations_per_example():
     # Regression test: the retry-bound fix for issue #800 (stop a
     # low-diversity transformation from silently returning fewer than
