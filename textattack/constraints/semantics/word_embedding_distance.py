@@ -37,7 +37,7 @@ class WordEmbeddingDistance(Constraint):
         self.include_unknown_words = include_unknown_words
         self.cased = cased
 
-        if bool(min_cos_sim) == bool(max_mse_dist):
+        if (min_cos_sim is None) == (max_mse_dist is None):
             raise ValueError("You must choose either `min_cos_sim` or `max_mse_dist`.")
         self.min_cos_sim = min_cos_sim
         self.max_mse_dist = max_mse_dist
@@ -92,12 +92,12 @@ class WordEmbeddingDistance(Constraint):
                 return False
 
             # Check cosine distance.
-            if self.min_cos_sim:
+            if self.min_cos_sim is not None:
                 cos_sim = self.get_cos_sim(ref_id, transformed_id)
                 if cos_sim < self.min_cos_sim:
                     return False
             # Check MSE distance.
-            if self.max_mse_dist:
+            if self.max_mse_dist is not None:
                 mse_dist = self.get_mse_dist(ref_id, transformed_id)
                 if mse_dist > self.max_mse_dist:
                     return False

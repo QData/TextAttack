@@ -4,9 +4,50 @@ import os
 import numpy as np
 import pytest
 
-from textattack.shared import GensimWordEmbedding, WordEmbedding
+from textattack.constraints.semantics import WordEmbeddingDistance
+from textattack.shared import AttackedText, GensimWordEmbedding, WordEmbedding
 
 _gensim_available = importlib.util.find_spec("gensim") is not None
+
+
+@pytest.fixture
+def small_embedding():
+    return WordEmbedding(
+        np.array([[1.0, 0.0], [-1.0, 0.0], [1.0, 1.0]]),
+        {"source": 0, "opposite": 1, "different": 2},
+        {0: "source", 1: "opposite", 2: "different"},
+    )
+
+
+def test_word_embedding_distance_accepts_zero_thresholds(small_embedding):
+    WordEmbeddingDistance(embedding=small_embedding, min_cos_sim=0.0)
+    WordEmbeddingDistance(embedding=small_embedding, max_mse_dist=0.0)
+
+
+@pytest.mark.parametrize(
+    ("min_cos_sim", "max_mse_dist"),
+    [(None, None), (0.0, 0.0), (0.5, 1.0)],
+)
+def test_word_embedding_distance_requires_exactly_one_threshold(
+    small_embedding, min_cos_sim, max_mse_dist
+):
+    with pytest.raises(ValueError):
+        WordEmbeddingDistance(
+            embedding=small_embedding,
+            min_cos_sim=min_cos_sim,
+            max_mse_dist=max_mse_dist,
+        )
+
+
+def test_word_embedding_distance_enforces_zero_thresholds(small_embedding):
+    reference = AttackedText("source")
+
+    assert not WordEmbeddingDistance(
+        embedding=small_embedding, min_cos_sim=0.0
+    )._check_constraint(reference.generate_new_attacked_text(["opposite"]), reference)
+    assert not WordEmbeddingDistance(
+        embedding=small_embedding, max_mse_dist=0.0
+    )._check_constraint(reference.generate_new_attacked_text(["different"]), reference)
 
 
 def test_embedding_paragramcf():
